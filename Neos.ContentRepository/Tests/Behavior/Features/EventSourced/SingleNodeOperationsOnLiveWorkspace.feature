@@ -52,7 +52,7 @@ Feature: Single Node operations on live workspace
 
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node "[node-identifier]" to exist in the graph projection
     And I expect the Node "[node-identifier]" to have the properties:
       | Key  | Value |
@@ -73,7 +73,7 @@ Feature: Single Node operations on live workspace
 
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node "[node-identifier]" to exist in the graph projection
     And I expect the Node "[node-identifier]" is hidden
 
@@ -92,6 +92,6 @@ Feature: Single Node operations on live workspace
 
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node "[node-identifier]" to exist in the graph projection
     And I expect the Node "[node-identifier]" is shown

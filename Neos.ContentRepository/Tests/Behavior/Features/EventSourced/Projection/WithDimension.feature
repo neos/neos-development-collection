@@ -32,7 +32,7 @@ Feature: Reading of our Graph Projection
       | value                   | {"value": "original value", "type": "string"} | PropertyValue |
 
     When the graph projection is fully up to date
-    And I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {"coordinates":{"language": "mul"}}
+    And I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {"language": "mul"}
 
     Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
     And I expect the node "5387cb08-2aaf-44dc-a8a1-483497aa0a03" to have the following child nodes:
@@ -83,7 +83,7 @@ Feature: Reading of our Graph Projection
       | visibleDimensionSpacePoints     | {"points":[{"coordinates":{"language":"en"}}]} | json |
 
     When the graph projection is fully up to date
-    And I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {"coordinates":{"language": "en"}}
+    And I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {"language": "en"}
 
     Then I expect a node "01831e48-a20c-11e7-851a-dfef4f55c64c" to exist in the graph projection
     And I expect the path "/sites/text1" to lead to the node "01831e48-a20c-11e7-851a-dfef4f55c64c"

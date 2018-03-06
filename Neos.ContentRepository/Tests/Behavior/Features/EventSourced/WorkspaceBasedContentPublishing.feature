@@ -104,13 +104,13 @@ Feature: Workspace based content publishing
 
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
     And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
       | Key  | Value    |
       | text | Original |
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
     And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
       | Key  | Value    |
@@ -124,7 +124,7 @@ Feature: Workspace based content publishing
 
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
     And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
       | Key  | Value    |
@@ -165,7 +165,7 @@ Feature: Workspace based content publishing
 
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
     And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
       | Key  | Value                      |

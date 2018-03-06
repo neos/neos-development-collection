@@ -506,7 +506,7 @@ final class NodeCommandHandler
                 $oldParentAggregates = $this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
                 foreach ($oldParentAggregates as $oldParentAggregate) {
                     $oldParentAggregatesNodeType = $this->nodeTypeManager->getNodeType((string)$oldParentAggregate->getNodeTypeName());
-                    if (isset($oldParentAggregatesNodeType->getAutoCreatedChildNodes()[(string) $node->getName()])) {
+                    if (isset($oldParentAggregatesNodeType->getAutoCreatedChildNodes()[(string) $node->getNodeName()])) {
                         throw new NodeConstraintException('Cannot move auto-generated node "' . $command->getNodeAggregateIdentifier() . '" into new parent "' . $newParentAggregate->getNodeAggregateIdentifier() . '"', 1519920594);
                     }
                 }

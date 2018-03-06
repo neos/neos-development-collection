@@ -100,17 +100,15 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * @param Domain\ValueObject\NodeIdentifier $sibling
-     * @param Domain\Service\Context|null $contentContext
      * @return Domain\Model\NodeInterface|null
      */
-    public function findSucceedingSibling(Domain\ValueObject\NodeIdentifier $sibling, Domain\Service\Context $contentContext = null): ?Domain\Model\NodeInterface;
+    public function findSucceedingSibling(Domain\ValueObject\NodeIdentifier $sibling): ?NodeInterface;
 
     /**
      * @param NodeIdentifier $sibling
-     * @param Domain\Service\Context|null $contentContext
      * @return Domain\Model\NodeInterface|null
      */
-    public function findPrecedingSibling(Domain\ValueObject\NodeIdentifier $sibling, Domain\Service\Context $contentContext = null): ?Domain\Model\NodeInterface;
+    public function findPrecedingSibling(Domain\ValueObject\NodeIdentifier $sibling): ?NodeInterface;
 
     /**
      * @param Domain\ValueObject\NodeTypeName $nodeTypeName

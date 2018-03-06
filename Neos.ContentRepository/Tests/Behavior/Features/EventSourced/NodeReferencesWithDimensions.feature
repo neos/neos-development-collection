@@ -72,7 +72,7 @@ Feature: Node References with Dimensions
 
   Scenario: Ensure that the reference can be read in current dimension
 
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"coordinates":{"language": "de"}}
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {"language": "de"}
 
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key               | Value                   | Type   |
@@ -80,7 +80,7 @@ Feature: Node References with Dimensions
 
   Scenario: Ensure that the reference can be read in fallback dimension
 
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"coordinates":{"language": "ch"}}
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {"language": "ch"}
 
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key               | Value                   | Type   |
@@ -88,7 +88,7 @@ Feature: Node References with Dimensions
 
   Scenario: Ensure that the reference cannot be read in independent dimension
 
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"coordinates":{"language": "en"}}
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {"language": "en"}
 
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key               | Value | Type   |

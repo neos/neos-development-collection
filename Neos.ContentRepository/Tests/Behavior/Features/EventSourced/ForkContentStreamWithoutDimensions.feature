@@ -46,7 +46,7 @@ Feature: ForkContentStream Without Dimensions
       | sourceContentStreamIdentifier | c75ae6a2-7254-4d42-a31b-a629e264069d |      |
 
     And the graph projection is fully up to date
-    And I am in content stream "d548f014-884f-4208-a49a-eafc417b83a3" and Dimension Space Point {"coordinates": []}
+    And I am in content stream "d548f014-884f-4208-a49a-eafc417b83a3" and Dimension Space Point {}
 
     Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
 
@@ -69,14 +69,14 @@ Feature: ForkContentStream Without Dimensions
     And the graph projection is fully up to date
 
       # live
-    When I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {"coordinates": []}
+    When I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {}
     Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
     And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
       | Key  | Value          |
       | test | original value |
 
     # forked content stream
-    When I am in content stream "d548f014-884f-4208-a49a-eafc417b83a3" and Dimension Space Point {"coordinates": []}
+    When I am in content stream "d548f014-884f-4208-a49a-eafc417b83a3" and Dimension Space Point {}
     Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
     And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
       | Key  | Value          |
@@ -103,14 +103,14 @@ Feature: ForkContentStream Without Dimensions
     And the graph projection is fully up to date
 
     # live
-    When I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {"coordinates": []}
+    When I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {}
     Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
     And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
       | Key  | Value          |
       | test | modified value |
 
     # forked content stream
-    When I am in content stream "d548f014-884f-4208-a49a-eafc417b83a3" and Dimension Space Point {"coordinates": []}
+    When I am in content stream "d548f014-884f-4208-a49a-eafc417b83a3" and Dimension Space Point {}
     Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
     And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
       | Key  | Value          |

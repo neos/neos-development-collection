@@ -260,8 +260,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
 
     public function countChildNodes(
         ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier,
-        ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
-        ContentRepository\Service\Context $contentContext = null
+        ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null
     ): int
     {
         $query = new SqlQueryBuilder();
@@ -285,7 +284,6 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
     /**
      * @param ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier
      * @param ContentRepository\ValueObject\PropertyName $nodeTypeConstraints
-     * @param ContentRepository\Service\Context|null $contentContext
      * @return NodeInterface[]
      */
     public function findReferencedNodes(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentRepository\ValueObject\PropertyName $name = null) :array
@@ -478,7 +476,6 @@ ORDER BY hc.position LIMIT 1',
     /**
      * @param NodeAggregateIdentifier $parentAggregateIdentifier
      * @param NodeName $edgeName
-     * @param ContentRepository\Service\Context|null $contentContext
      * @return ContentRepository\Model\NodeInterface|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
@@ -487,7 +484,7 @@ ORDER BY hc.position LIMIT 1',
      */
     public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(
         ContentRepository\ValueObject\NodeAggregateIdentifier $parentAggregateIdentifier,
-        ContentRepository\ValueObject\NodeName $edgeName,
+        ContentRepository\ValueObject\NodeName $edgeName
     ): ?NodeInterface {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
@@ -506,20 +503,16 @@ ORDER BY hc.position LIMIT 1',
             ]
         )->fetch();
 
-        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData, $contentContext) : null;
+        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData) : null;
     }
 
 
     /**
      * @param NodeIdentifier $sibling
-     * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
-     * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
-     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findSucceedingSibling(ContentRepository\ValueObject\NodeIdentifier $sibling, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
+    public function findSucceedingSibling(ContentRepository\ValueObject\NodeIdentifier $sibling): ?NodeInterface
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery($this->getSiblingBaseQuery() . '
   AND h.position > (
@@ -537,19 +530,18 @@ ORDER BY hc.position LIMIT 1',
             ]
         )->fetch();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
     }
 
     /**
      * @param NodeIdentifier $sibling
-     * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findPrecedingSibling(ContentRepository\ValueObject\NodeIdentifier $sibling, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
+    public function findPrecedingSibling(ContentRepository\ValueObject\NodeIdentifier $sibling): ?NodeInterface
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery($this->getSiblingBaseQuery() . '
   AND h.position < (
@@ -567,7 +559,7 @@ ORDER BY hc.position LIMIT 1',
             ]
         )->fetch();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
     }
 
     /**
