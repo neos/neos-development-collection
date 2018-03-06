@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Context\Node;
  */
 
 use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollection;
+use Neos\ContentRepository\Domain\Projection\Content\NodePropertyCollection;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
@@ -52,10 +52,10 @@ interface ReadOnlyNodeInterface
      * If the node has a content object attached, the properties will be fetched
      * there.
      *
-     * @return PropertyCollection Property values, indexed by their name
+     * @return NodePropertyCollection Property values, indexed by their name
      * @api
      */
-    public function getProperties(): PropertyCollection;
+    public function getProperties(): NodePropertyCollection;
 
 
     /**

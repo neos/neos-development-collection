@@ -47,13 +47,12 @@ interface NodeInterface extends CacheAwareInterface
     public function getDimensionSpacePoint(): DimensionSpacePoint;
 
     /**
-     * Returns all properties of this node; with references and object NOT YET resolved!
+     * Returns all properties of this node. References are NOT part of this API; there you need to check getReference() and getReferences()
      *
      * @return array Property values, indexed by their name
      * @api
      */
     public function getProperties(): array;
-
 
     /**
      * Returns the specified property.

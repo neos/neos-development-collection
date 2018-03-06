@@ -605,7 +605,7 @@ trait EventSourcedTrait
             $destinationNodes = $subgraph->findReferencedNodes(new NodeIdentifier($nodeIdentifier), new PropertyName($propertyName), $context);
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
-                    if ($item instanceof \Neos\ContentRepository\Domain\Model\NodeInterface) {
+                    if ($item instanceof \Neos\ContentRepository\Domain\Projection\Content\NodeInterface) {
                         return (string)$item->getNodeAggregateIdentifier();
                     } else {
                         return $item;

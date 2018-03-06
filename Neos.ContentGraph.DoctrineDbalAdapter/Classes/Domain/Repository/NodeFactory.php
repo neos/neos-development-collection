@@ -11,23 +11,11 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\Domain as ContentRepository;
-use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
-use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\ContentRepository\Utility;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Utility\Now;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
-use Neos\Neos\Domain\Projection\Site\Site;
-use Neos\Neos\Domain\Projection\Site\SiteFinder;
-use Neos\Neos\Domain\Service\ContentContext;
-
 
 
 /**
@@ -37,54 +25,11 @@ use Neos\Neos\Domain\Service\ContentContext;
  */
 final class NodeFactory
 {
-
-    /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-
-    /**
-     * @Flow\Inject
-     * @var SiteFinder
-     */
-    protected $siteFinder;
-
-
     /**
      * @Flow\Inject
      * @var ContentRepository\Service\NodeTypeManager
      */
     protected $nodeTypeManager;
-
-    /**
-     * @param $contentQuery
-     * @return array
-     */
-    public function findNodeForContentQuery(ContentQuery $contentQuery): ContentProjection\NodeInterface
-    {
-        $inBackend = !$contentQuery->getWorkspaceName()->isLive();
-        $workspace = $this->workspaceFinder->findOneByName($contentQuery->getWorkspaceName());
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $workspace->getCurrentContentStreamIdentifier(),
-            $contentQuery->getDimensionSpacePoint()
-        );
-
-        // todo move out of here
-        $contextParameters = $this->createContextParameters($inBackend);
-
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getNodeAggregateIdentifier());
-
-        return $node;
-    }
-
 
     /**
      * @param array $nodeRow Node Row from projection (neos_contentgraph_node table)
@@ -97,9 +42,6 @@ final class NodeFactory
     {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
         $className = $nodeType->getNodeInterfaceImplementationClassName();
-
-        //$referenceProperties = array_keys(array_filter($nodeType->getProperties(), function($propertyConfiguration) {return $propertyConfiguration['type'] == 'reference';}));
-        //$referencesProperties = array_keys(array_filter($nodeType->getProperties(), function($propertyConfiguration) {return $propertyConfiguration['type'] == 'references';}));
 
         // $serializedSubgraphIdentifier is empty for the root node
         if (!empty($nodeRow['dimensionspacepointhash'])) {
@@ -117,6 +59,15 @@ final class NodeFactory
 
             $nodeIdentifier = new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']);
 
+            $properties = json_decode($nodeRow['properties'], true);
+
+            // Reference and References "are no properties" anymore by definition; so Node does not know
+            // anything about it.
+            $properties = array_filter($properties, function($propertyName) use ($nodeType) {
+                $propertyType = $nodeType->getPropertyType($propertyName);
+                return $propertyType !== 'reference' && $propertyType !== 'references';
+            }, ARRAY_FILTER_USE_KEY);
+
             /* @var $node ContentProjection\NodeInterface */
             $node = new $className(
                 $contentStreamIdentifier,
@@ -127,7 +78,7 @@ final class NodeFactory
                 $nodeType,
                 new ContentRepository\ValueObject\NodeName($nodeRow['name']),
                 $nodeRow['hidden'],
-                json_decode($nodeRow['properties'], true)
+                $properties
             );
                 //new ContentProjection\PropertyCollection(, $referenceProperties, $referencesProperties, $nodeIdentifier, $contentSubgraph),
 

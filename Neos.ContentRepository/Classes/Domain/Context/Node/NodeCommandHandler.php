@@ -43,6 +43,7 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
@@ -663,7 +664,7 @@ final class NodeCommandHandler
 
         return $events;
     }
-    
+
 
     /**
      * @param NodeTypeName $nodeTypeName
@@ -704,7 +705,7 @@ final class NodeCommandHandler
      * @return Node
      * @throws NodeNotFoundException
      */
-    private function getNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): Node
+    private function getNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): NodeInterface
     {
         /** @var Node $node */
         $node = $this->contentGraph->findNodeByIdentifierInContentStream($contentStreamIdentifier, $nodeIdentifier);
