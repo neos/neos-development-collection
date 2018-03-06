@@ -1201,6 +1201,17 @@ class NodeDataRepository extends Repository
     }
 
     /**
+     * Persists the passed entity and all cascading dependencies
+     *
+     * @param NodeData $entity
+     * @return void
+     */
+    public function persistEntity(NodeData $entity)
+    {
+        $this->entityManager->flush($entity);
+    }
+
+    /**
      * Signals that persistEntities() in this repository finished correctly.
      *
      * @Flow\Signal

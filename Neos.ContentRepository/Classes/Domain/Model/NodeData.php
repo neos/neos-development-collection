@@ -947,8 +947,16 @@ class NodeData extends AbstractNodeData
             $referencedShadowNode = $this->nodeDataRepository->findOneByMovedTo($sourceNodeData);
             if ($targetPathShadowNodeData === null) {
                 if ($referencedShadowNode === null) {
-                    // There is no shadow node on the original or target path, so the current node data will be turned to a shadow node and a new node data will be created for the moved node.
+                    // There is no shadow node on the original or target path, so the current node data will be turned to a shadow node
+                    // and a new node data will be created for the moved node.
+
                     // We cannot just create a new shadow node, since the order of Doctrine queries would cause unique key conflicts
+                    // And since we need to insert the target node of a move operation (before we can make a shadow node point to it)
+                    // we must first mark the source nodedata as moved, before adding the target nodedata.
+                    $sourceNodeData->isMoved = true;
+                    $this->addOrUpdate($sourceNodeData);
+                    $this->nodeDataRepository->persistEntity($sourceNodeData);
+
                     $movedNodeData = new NodeData($targetPath, $sourceNodeData->getWorkspace(), $sourceNodeData->getIdentifier(), $sourceNodeData->getDimensionValues());
                     $movedNodeData->similarize($sourceNodeData);
                     $this->addOrUpdate($movedNodeData);
