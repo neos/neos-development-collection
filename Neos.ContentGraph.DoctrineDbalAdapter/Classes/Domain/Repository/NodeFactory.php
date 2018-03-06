@@ -139,9 +139,9 @@ final class NodeFactory
             // ROOT node!
             /* @var $node \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
             $node = new $className(
-                ContentRepository\ValueObject\ContentStreamIdentifier::root(),
-                ContentRepository\ValueObject\DimensionSpacePoint::root(),
-                ContentRepository\ValueObject\NodeAggregateIdentifier::root(),
+                ContentProjection\RootNodeIdentifiers::rootContentStreamIdentifier(),
+                ContentProjection\RootNodeIdentifiers::rootDimensionSpacePoint(),
+                ContentProjection\RootNodeIdentifiers::rootNodeAggregateIdentifier(),
                 new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']),
                 new NodeTypeName($nodeRow['nodetypename']),
                 $nodeType,

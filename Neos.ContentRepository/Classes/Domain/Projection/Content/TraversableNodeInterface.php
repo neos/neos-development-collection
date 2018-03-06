@@ -27,6 +27,8 @@ use Neos\Cache\CacheAwareInterface;
  * A convenience wrapper.
  *
  * Immutable. Read-only. With traversal operations.
+ *
+ * !! Reference resolving happens HERE!
  */
 interface TraversableNodeInterface extends NodeInterface
 {

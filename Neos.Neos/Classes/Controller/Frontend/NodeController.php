@@ -245,7 +245,7 @@ class NodeController extends ActionController
         $nodeByNodeIdentifierCache->add($currentDocumentNode->getNodeIdentifier(), $currentDocumentNode);
 
         foreach ($subtree->getChildren() as $childSubtree) {
-            $this->fillCache($childSubtree, $subgraph);
+            //$this->fillCache($childSubtree, $subgraph);
         }
     }
 }

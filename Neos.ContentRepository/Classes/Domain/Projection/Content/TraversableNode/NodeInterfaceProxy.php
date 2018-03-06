@@ -100,4 +100,8 @@ trait NodeInterfaceProxy
         return $this->node->getLabel();
     }
 
+    public function getContextPath(): string
+    {
+        return $this->node->getContextPath();
+    }
 }

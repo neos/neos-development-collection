@@ -11,12 +11,13 @@ namespace Neos\Neos\Fusion\ExceptionHandlers;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
-use Neos\Neos\Service\ContentElementWrappingService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Neos\Service\ContentElementWrappingServiceInterface;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
 
@@ -35,7 +36,7 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 
     /**
      * @Flow\Inject
-     * @var ContentElementWrappingService
+     * @var ContentElementWrappingServiceInterface
      */
     protected $contentElementWrappingService;
 
@@ -69,12 +70,16 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
         if (isset($currentContext['node'])) {
             /** @var NodeInterface $node */
             $node = $currentContext['node'];
+            $subgraph = $currentContext['subgraph'] ?? null;
+            if (!$subgraph && $node instanceof TraversableNodeInterface) {
+                $subgraph = $node->getSubgraph();
+            }
             $applicationContext = $this->environment->getContext();
             if ($applicationContext->isProduction() && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess') && $node->getContext()->getWorkspaceName() !== 'live') {
                 $output = '<div class="neos-rendering-exception"><div class="neos-rendering-exception-title">Failed to render element' . $output . '</div></div>';
             }
 
-            return $this->contentElementWrappingService->wrapContentObject($node, $output, $fusionPath);
+            return $this->contentElementWrappingService->wrapContentObject($node, $subgraph, $output, $fusionPath);
         }
 
         return $output;

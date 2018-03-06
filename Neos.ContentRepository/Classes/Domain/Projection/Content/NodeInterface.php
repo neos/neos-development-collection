@@ -24,6 +24,8 @@ use Neos\Cache\CacheAwareInterface;
 /**
  * The "new" Event-Sourced NodeInterface. Supersedes the old Neos\ContentRepository\Domain\Model\NodeInterface.
  *
+ * !! Reference resolving NOT in NodeInterface
+ *
  * Immutable. Read-only. Detached from storage.
  */
 interface NodeInterface extends CacheAwareInterface
@@ -91,4 +93,6 @@ interface NodeInterface extends CacheAwareInterface
      * @return string
      */
     public function getLabel(): string;
+
+    public function getContextPath(): string;
 }

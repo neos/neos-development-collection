@@ -6,8 +6,8 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
 	node = ${node}
 
   // defaults to work with TraversableNode
-  subgraph = ${this.node.subgraph}
-  contextParameters = ${this.node.contextParameters}
+  subgraph = ${node.subgraph}
+  contextParameters = ${node.contextParameters}
 
 	items = ${this.items}
 

@@ -6,6 +6,10 @@
 prototype(Neos.Neos:ContentElementEditable) {
 	@class = 'Neos\\Neos\\Fusion\\ContentElementEditableImplementation'
 	node = ${node}
+
+  // default subgraph for TraversableNodeInterface
+  subgraph = ${node.subgraph}
+
 	property = ${property}
 	value = ${value}
 }

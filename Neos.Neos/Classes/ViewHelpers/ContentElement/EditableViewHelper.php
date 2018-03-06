@@ -11,15 +11,17 @@ namespace Neos\Neos\ViewHelpers\ContentElement;
  * source code.
  */
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
-use Neos\Neos\Service\ContentElementEditableService;
+use Neos\Neos\Service\ContentElementEditableServiceInterface;
 
 /**
  * Renders a wrapper around the inner contents of the tag to enable frontend editing.
@@ -51,7 +53,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
-     * @var ContentElementEditableService
+     * @var ContentElementEditableServiceInterface
      */
     protected $contentElementEditableService;
 
@@ -71,10 +73,11 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
      * @param string $property Name of the property to render. Note: If this tag has child nodes, they overrule this argument!
      * @param string $tag The name of the tag that should be wrapped around the property. By default this is a <div>
      * @param NodeInterface $node The node of the content element. Optional, will be resolved from the Fusion context by default.
+     * @param ContentSubgraph|null $subgraph
      * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
      * @throws ViewHelperException
      */
-    public function render($property, $tag = 'div', NodeInterface $node = null)
+    public function render($property, $tag = 'div', NodeInterface $node = null, ContentSubgraph $subgraph = null)
     {
         $this->tag->setTagName($tag);
         $this->tag->forceClosingTag(true);
@@ -88,6 +91,13 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
             throw new ViewHelperException('A node is required, but one was not supplied and could not be found in the Fusion context.', 1408521638);
         }
 
+        if ($subgraph === null && $node instanceof TraversableNodeInterface) {
+            $subgraph = $node->getSubgraph();
+        }
+        if ($subgraph === null) {
+            throw new ViewHelperException('A subgraph is required, but it was neither specified explicitely nor through specifying a TraversableNode', 1520351890);
+        }
+
         if ($content === null) {
             if (!$this->templateVariableContainer->exists($property)) {
                 throw new ViewHelperException(sprintf('The property "%1$s" was not set as a template variable. If you use this ViewHelper in a partial, make sure to pass the node property "%1$s" as an argument.', $property), 1384507046);
@@ -96,7 +106,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
         }
         $this->tag->setContent($content);
 
-        return $this->contentElementEditableService->wrapContentProperty($node, $property, $this->tag->render());
+        return $this->contentElementEditableService->wrapContentProperty($node, $subgraph, $property, $this->tag->render());
     }
 
     /**

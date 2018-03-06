@@ -11,10 +11,11 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Service\ContentElementEditableService;
+use Neos\Neos\Service\ContentElementEditableServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
@@ -31,7 +32,7 @@ class ContentElementEditableImplementation extends AbstractFusionObject
 
     /**
      * @Flow\Inject
-     * @var ContentElementEditableService
+     * @var ContentElementEditableServiceInterface
      */
     protected $contentElementEditableService;
 
@@ -43,6 +44,11 @@ class ContentElementEditableImplementation extends AbstractFusionObject
     public function getValue()
     {
         return $this->fusionValue('value');
+    }
+
+    public function getSubgraph(): ContentSubgraphInterface
+    {
+        return $this->fusionValue('subgraph');
     }
 
     /**
@@ -76,6 +82,6 @@ class ContentElementEditableImplementation extends AbstractFusionObject
         if ($node->isRemoved()) {
             $content = '';
         }
-        return $this->contentElementEditableService->wrapContentProperty($node, $property, $content);
+        return $this->contentElementEditableService->wrapContentProperty($node, $this->getSubgraph(), $property, $content);
     }
 }
