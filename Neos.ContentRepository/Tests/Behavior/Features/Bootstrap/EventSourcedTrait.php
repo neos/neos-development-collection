@@ -107,6 +107,20 @@ trait EventSourcedTrait
     public function theEventNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
+        if (empty($eventPayload['dimensionSpacePoint'])) {
+            $eventPayload['dimensionSpacePoint'] = ['coordinates' => []];
+        }
+        if (empty($eventPayload['visibleDimensionSpacePoints'])) {
+            $eventPayload['visibleDimensionSpacePoints'] =  new DimensionSpacePointSet(
+                [
+                    new DimensionSpacePoint([])
+                ]
+            );
+        }
+        if (empty($eventPayload['propertyDefaultValuesAndTypes'])) {
+            $eventPayload['propertyDefaultValuesAndTypes'] = [];
+        }
+
         $streamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStream\ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
@@ -356,10 +370,12 @@ trait EventSourcedTrait
      * @Given /^the command "([^"]*)" was executed with payload:$/
      * @throws Exception
      */
-    public function theCommandIsExecutedWithPayload($shortCommandName, TableNode $payloadTable)
+    public function theCommandIsExecutedWithPayload($shortCommandName, TableNode $payloadTable = null, $commandArguments = null)
     {
         list($commandClassName, $commandHandlerClassName, $commandHandlerMethod) = self::resolveShortCommandName($shortCommandName);
-        $commandArguments = $this->readPayloadTable($payloadTable);
+        if ($commandArguments === null) {
+            $commandArguments = $this->readPayloadTable($payloadTable);
+        }
 
         switch ($commandClassName) {
             case \Neos\ContentRepository\Domain\Context\Node\Command\MoveNode::class:
@@ -384,6 +400,28 @@ trait EventSourcedTrait
         if (isset($commandArguments['rootNodeIdentifier'])) {
             $this->rootNodeIdentifier = new NodeIdentifier($commandArguments['rootNodeIdentifier']);
         }
+    }
+
+    /**
+     * @When /^the command CreateWorkspace is executed with payload:$/
+     * @throws Exception
+     */
+    public function theCommandCreateWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        $commandArguments['workspaceTitle'] = ucfirst($commandArguments['workspaceName']);
+        $commandArguments['workspaceDescription'] = 'The workspace "' . $commandArguments['workspaceName'] . '".';
+        $commandArguments['initiatingUserIdentifier'] = $this->replaceUuidIdentifiers('[initiatingUserIdentifier]');
+        $commandArguments['rootNodeTypeName'] = !empty($commandArguments['rootNodeTypeName']) ? $commandArguments['rootNodeTypeName'] : 'Neos.ContentRepository:Root';
+
+        $commandName = 'CreateRootWorkspace';
+        if (!empty($commandArguments['baseWorkspaceName'])) {
+            $commandArguments['workspaceOwner'] = $this->replaceUuidIdentifiers('[workspaceOwner]');
+            $commandName = 'CreateWorkspace';
+        }
+
+        $this->theCommandIsExecutedWithPayload($commandName, null, $commandArguments);
     }
 
     /**

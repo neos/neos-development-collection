@@ -5,15 +5,11 @@ Feature: Node References without Dimensions
 
   Background:
     Given I have no content dimensions
-    And the command "CreateRootWorkspace" is executed with payload:
+    And the command CreateWorkspace is executed with payload:
       | Key                      | Value                                | Type |
       | workspaceName            | live                                 |      |
-      | workspaceTitle           | Live                                 |      |
-      | workspaceDescription     | The live workspace                   |      |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
       | contentStreamIdentifier  | cs-identifier                        | Uuid |
       | rootNodeIdentifier       | rn-identifier                        | Uuid |
-      | rootNodeTypeName         | Neos.ContentRepository:Root          |      |
 
     And I have the following NodeTypes configuration:
     """
@@ -27,54 +23,45 @@ Feature: Node References without Dimensions
           type: references
     """
 
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:[cs-identifier]:NodeAggregate:[source-nodeAgg-identifier]" with payload:
+    And the Event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     | Type                   |
       | contentStreamIdentifier       | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier       | source-nodeAgg-identifier                 | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences |                        |
-      | dimensionSpacePoint           | {"coordinates": []}                       | json                   |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":[]}]}           | DimensionSpacePointSet |
       | nodeIdentifier                | source-node-identifier                    | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
       | nodeName                      | source                                    |                        |
-      | propertyDefaultValuesAndTypes | {}                                        | json                   |
 
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:[cs-identifier]:NodeAggregate:[dest-nodeAgg-identifier]" with payload:
+    And the Event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     | Type                   |
       | contentStreamIdentifier       | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier       | dest-1-nodeAgg-identifier                 | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences |                        |
-      | dimensionSpacePoint           | {"coordinates": []}                       | json                   |
       | visibleDimensionSpacePoints   | {"points":[{"coordinates":[]}]}           | DimensionSpacePointSet |
       | nodeIdentifier                | dest-1-node-identifier                    | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
       | nodeName                      | dest-1                                    |                        |
-      | propertyDefaultValuesAndTypes | {}                                        | json                   |
 
 
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:[cs-identifier]:NodeAggregate:[dest-nodeAgg-identifier]" with payload:
+    And the Event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     | Type                   |
       | contentStreamIdentifier       | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier       | dest-2-nodeAgg-identifier                 | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences |                        |
-      | dimensionSpacePoint           | {"coordinates": []}                       | json                   |
       | visibleDimensionSpacePoints   | {"points":[{"coordinates":[]}]}           | DimensionSpacePointSet |
       | nodeIdentifier                | dest-2-node-identifier                    | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
       | nodeName                      | dest-2                                    |                        |
-      | propertyDefaultValuesAndTypes | {}                                        | json                   |
 
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:[cs-identifier]:NodeAggregate:[dest-nodeAgg-identifier]" with payload:
+    And the Event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     | Type                   |
       | contentStreamIdentifier       | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier       | dest-3-nodeAgg-identifier                 | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences |                        |
-      | dimensionSpacePoint           | {"coordinates": []}                       | json                   |
       | visibleDimensionSpacePoints   | {"points":[{"coordinates":[]}]}           | DimensionSpacePointSet |
       | nodeIdentifier                | dest-3-node-identifier                    | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
       | nodeName                      | dest-3                                    |                        |
-      | propertyDefaultValuesAndTypes | {}                                        | json                   |
 
   Scenario: Ensure that a reference between nodes can be set and read
 
