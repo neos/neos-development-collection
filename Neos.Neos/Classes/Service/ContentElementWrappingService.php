@@ -75,7 +75,6 @@ class ContentElementWrappingService
         }
 
         $attributes = [];
-        $attributes['data-node-__typoscript-path'] = $fusionPath; // @deprecated
         $attributes['data-node-__fusion-path'] = $fusionPath;
         $attributes['tabindex'] = 0;
         $attributes = $this->addGenericEditingMetadata($attributes, $node);
@@ -98,7 +97,6 @@ class ContentElementWrappingService
         }
 
         $attributes = [];
-        $attributes['data-node-__typoscript-path'] = $fusionPath; // @deprecated
         $attributes['data-node-__fusion-path'] = $fusionPath;
         $attributes = $this->addGenericEditingMetadata($attributes, $node);
         $attributes = $this->addNodePropertyAttributes($attributes, $node);
