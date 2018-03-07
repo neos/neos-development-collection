@@ -16,7 +16,7 @@
 			<target xml:lang="tl" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
       <trans-unit id="field.name" xml:space="preserve">
 				<source>Name</source>
-			<target xml:lang="tl" state="needs-translation">Name</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pangalan</target></trans-unit>
       <trans-unit id="field.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="tl" state="translated">Pamagat</target></trans-unit>
@@ -58,10 +58,10 @@
 			<target xml:lang="tl" state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="tl" state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target xml:lang="tl" state="translated">I-sort ang direksyon pataas</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="tl" state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target xml:lang="tl" state="translated">I-sort ang direksyon pababa</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="tl" state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
@@ -100,7 +100,7 @@
 			<target xml:lang="tl" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="tl" state="needs-translation">Replace asset resource</target></trans-unit>
+			<target xml:lang="tl" state="translated">Palitan ang asset resource</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="tl" state="needs-translation">Save</target></trans-unit>
@@ -151,10 +151,10 @@
 			<target xml:lang="tl" state="needs-translation">Only display audio assets</target></trans-unit>
       <trans-unit id="filter.all" xml:space="preserve">
 				<source>All</source>
-			<target xml:lang="tl" state="needs-translation">All</target></trans-unit>
+			<target xml:lang="tl" state="translated">Lahat</target></trans-unit>
       <trans-unit id="filter.images" xml:space="preserve">
 				<source>Images</source>
-			<target xml:lang="tl" state="needs-translation">Images</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga imahe</target></trans-unit>
       <trans-unit id="filter.documents" xml:space="preserve" approved="yes">
 				<source>Documents</source>
 			<target xml:lang="tl">Mga dokyumento</target></trans-unit>
@@ -199,7 +199,7 @@
 			<target xml:lang="tl" state="needs-translation">Tags</target></trans-unit>
       <trans-unit id="editTags" xml:space="preserve">
 				<source>Edit tags</source>
-			<target xml:lang="tl" state="needs-translation">Edit tags</target></trans-unit>
+			<target xml:lang="tl" state="translated">I-edit ang mga tag</target></trans-unit>
       <trans-unit id="editTag" xml:space="preserve">
 				<source>Edit tag</source>
 			<target xml:lang="tl" state="needs-translation">Edit tag</target></trans-unit>
@@ -217,7 +217,7 @@
 			<target xml:lang="tl" state="needs-translation">All assets</target></trans-unit>
       <trans-unit id="tags.all" xml:space="preserve">
 				<source>All</source>
-			<target xml:lang="tl" state="needs-translation">All</target></trans-unit>
+			<target xml:lang="tl" state="translated">Lahat</target></trans-unit>
       <trans-unit id="untaggedAssets" xml:space="preserve">
 				<source>Untagged assets</source>
 			<target xml:lang="tl" state="needs-translation">Untagged assets</target></trans-unit>
@@ -386,13 +386,13 @@
 			<target xml:lang="tl" state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target xml:lang="tl" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga resources na type "{0}" ay maaaring palitan ng kaparehang resource. Kailangan i-type ang "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target xml:lang="tl" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target xml:lang="tl" state="translated">Walang accdss sa workspace "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target xml:lang="tl" state="needs-translation">No document node found for this node</target></trans-unit>
+			<target xml:lang="tl" state="translated">Walang nakitang node na dokumento para sa node na ito</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -18,12 +18,12 @@
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
 			<target xml:lang="es-ES" state="translated">Aplicar cambios</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="es-ES" state="translated">Cancelar</target></trans-unit>
-      <trans-unit id="back" xml:space="preserve">
+			<target xml:lang="es-ES">Cancelar</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
-			<target xml:lang="es-ES" state="translated">Atrás</target></trans-unit>
+			<target xml:lang="es-ES">Atrás</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			<target xml:lang="es-ES" state="translated">Elegir</target></trans-unit>
@@ -132,9 +132,9 @@
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
 			<target xml:lang="es-ES" state="translated">Contraseña</target></trans-unit>
-      <trans-unit id="preview" xml:space="preserve">
+      <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target xml:lang="es-ES" state="translated">Vista previa</target></trans-unit>
+			<target xml:lang="es-ES">Vista previa</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
 			<target xml:lang="es-ES" state="translated">Publicar</target></trans-unit>
@@ -171,18 +171,18 @@
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
 			<target xml:lang="es-ES" state="translated">Actualizar</target></trans-unit>
-      <trans-unit id="save" xml:space="preserve">
+      <trans-unit id="save" xml:space="preserve" approved="yes">
 				<source>Save</source>
-			<target xml:lang="es-ES" state="translated">Guardar</target></trans-unit>
+			<target xml:lang="es-ES">Guardar</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
 			<target xml:lang="es-ES" state="translated">Guardando...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
 			<target xml:lang="es-ES" state="translated">Guardado</target></trans-unit>
-      <trans-unit id="search" xml:space="preserve">
+      <trans-unit id="search" xml:space="preserve" approved="yes">
 				<source>Search</source>
-			<target xml:lang="es-ES" state="translated">Buscar</target></trans-unit>
+			<target xml:lang="es-ES">Buscar</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
 			<target xml:lang="es-ES" state="translated">Alternar inspector</target></trans-unit>
@@ -225,9 +225,9 @@
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
 			<target xml:lang="es-ES" state="translated">Última publicación</target></trans-unit>
-      <trans-unit id="identifier" xml:space="preserve">
+      <trans-unit id="identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
-			<target xml:lang="es-ES" state="translated">Identificador</target></trans-unit>
+			<target xml:lang="es-ES">Identificador</target></trans-unit>
       <trans-unit id="name" xml:space="preserve">
 				<source>Name</source>
 			<target xml:lang="es-ES" state="translated">Nombre</target></trans-unit>
@@ -328,18 +328,18 @@
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
 			<target xml:lang="es-ES" state="translated">Descartar todo</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target xml:lang="es-ES" state="translated">Descartar todos los cambios</target></trans-unit>
+			<target xml:lang="es-ES">Descartar todos los cambios</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target xml:lang="es-ES" state="translated">¿Está seguro de que desea descartar todos los cambios en este espacio de trabajo?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target xml:lang="es-ES" state="translated">Publicar todo</target></trans-unit>
-      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
+      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
-			<target xml:lang="es-ES" state="translated">Publicar todos los cambios</target></trans-unit>
+			<target xml:lang="es-ES">Publicar todos los cambios</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
 			<target xml:lang="es-ES" state="translated">¿Seguro que quiere publicar todos los cambios?</target><alt-trans><target xml:lang="es-ES">¿Seguro que quieres publicar todos los cambios?</target></alt-trans></trans-unit>
@@ -411,7 +411,7 @@
 			<target xml:lang="es-ES" state="translated">Información adicional</target></trans-unit>
       <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="es-ES" state="translated">Visibilidad</target></trans-unit>
+			<target xml:lang="es-ES" state="needs-translation">Visibility</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
 			<target xml:lang="es-ES" state="translated">Opciones de documento</target></trans-unit>
@@ -535,9 +535,9 @@
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="es-ES" state="translated">Esta acción se puede deshacer en el gestor de espacios de trabajo.</target><alt-trans><target xml:lang="es-ES">Esta acción se puede deshacer en el gestor de áreas de trabajo.</target></alt-trans></trans-unit>
-      <trans-unit id="media" xml:space="preserve">
+      <trans-unit id="media" xml:space="preserve" approved="yes">
 				<source>Media</source>
-			<target xml:lang="es-ES" state="translated">Media</target></trans-unit>
+			<target xml:lang="es-ES">Media</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
 			<target xml:lang="es-ES" state="translated">Recortar</target></trans-unit>
@@ -550,9 +550,9 @@
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
 			<target xml:lang="es-ES" state="translated">Espacio de Trabajo</target></trans-unit>
-      <trans-unit id="workspaces" xml:space="preserve">
+      <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target xml:lang="es-ES" state="translated">Espacios de Trabajo</target></trans-unit>
+			<target xml:lang="es-ES">Espacios de Trabajo</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
 			<target xml:lang="es-ES" state="translated">Se produjo un error mientras se guardaba</target></trans-unit>
