@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\ContentRepository\Domain\Context\Node\RelationDistributionStrategyIsInvalid;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Context\Node\Command;
@@ -64,7 +64,7 @@ class Node implements NodeInterface, CacheAwareInterface
     protected $nodeIdentifier;
 
     /**
-     * @var Domain\ValueObject\NodeAggregateIdentifier
+     * @var \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier
      */
     protected $nodeAggregateIdentifier;
 
@@ -174,7 +174,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param NodeTypeName $nodeTypeName
      * @param NodeType $nodeType
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
      * @param NodePropertyCollection $properties
      * @param NodeName $nodeName
@@ -182,7 +182,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param Context|null $context
      * @Flow\Autowiring(false)
      */
-    public function __construct(NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, ?DimensionSpacePoint $dimensionSpacePoint, ?Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier, ?Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier, ?NodePropertyCollection $properties, ?NodeName $nodeName, bool $hidden = false, Context $context = null)
+    public function __construct(NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, ?DimensionSpacePoint $dimensionSpacePoint, ?Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier, ?Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier, ?NodePropertyCollection $properties, ?NodeName $nodeName, bool $hidden = false, Context $context = null)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -399,9 +399,9 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * @return Domain\ValueObject\NodeAggregateIdentifier
+     * @return \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier
      */
-    public function getNodeAggregateIdentifier(): Domain\ValueObject\NodeAggregateIdentifier
+    public function getNodeAggregateIdentifier(): Domain\Context\NodeAggregate\NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }

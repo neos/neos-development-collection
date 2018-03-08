@@ -12,7 +12,7 @@ namespace Neos\Neos\Fusion;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Neos\Domain\Context\Content\ContentQuery;

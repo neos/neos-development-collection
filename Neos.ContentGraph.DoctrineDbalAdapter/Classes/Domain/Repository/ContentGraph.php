@@ -20,7 +20,7 @@ use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;

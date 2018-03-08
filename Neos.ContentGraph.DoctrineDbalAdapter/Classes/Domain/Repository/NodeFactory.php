@@ -72,7 +72,7 @@ final class NodeFactory
             $node = new $className(
                 $contentStreamIdentifier,
                 $dimensionSpacePoint,
-                new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']),
+                new ContentRepository\Context\NodeAggregate\NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']),
                 $nodeIdentifier,
                 new NodeTypeName($nodeRow['nodetypename']),
                 $nodeType,

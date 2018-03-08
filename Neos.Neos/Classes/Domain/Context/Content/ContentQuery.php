@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Context\Content\Exception\InvalidContentQuerySerializationException;
 use Neos\Neos\Domain\Service\ContentContext;

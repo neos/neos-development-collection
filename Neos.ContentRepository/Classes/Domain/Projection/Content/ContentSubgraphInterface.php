@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
 
 use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Domain\Context\Node\SubtreeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
 
@@ -53,10 +53,10 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findReferencedNodes(Domain\ValueObject\NodeIdentifier $nodeIdentifier, Domain\ValueObject\PropertyName $name = null): array;
 
     /**
-     * @param Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeInterface|null
      */
-    public function findNodeByNodeAggregateIdentifier(Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface;
+    public function findNodeByNodeAggregateIdentifier(Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface;
 
     /**
      * @param Domain\ValueObject\NodeIdentifier $parentIdentifier
@@ -92,11 +92,11 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findChildNodeConnectedThroughEdgeName(Domain\ValueObject\NodeIdentifier $parentIdentifier, Domain\ValueObject\NodeName $edgeName): ?NodeInterface;
 
     /**
-     * @param Domain\ValueObject\NodeAggregateIdentifier $parentAggregateIdentifier
+     * @param \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier $parentAggregateIdentifier
      * @param Domain\ValueObject\NodeName $edgeName
      * @return NodeInterface|null
      */
-    public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(Domain\ValueObject\NodeAggregateIdentifier $parentAggregateIdentifier, Domain\ValueObject\NodeName $edgeName): ?NodeInterface;
+    public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(Domain\Context\NodeAggregate\NodeAggregateIdentifier $parentAggregateIdentifier, Domain\ValueObject\NodeName $edgeName): ?NodeInterface;
 
     /**
      * @param Domain\ValueObject\NodeIdentifier $sibling

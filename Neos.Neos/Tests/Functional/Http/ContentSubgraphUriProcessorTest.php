@@ -12,7 +12,7 @@ namespace Neos\Neos\Tests\Functional\Http;
  */
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Tests\FunctionalTestCase;

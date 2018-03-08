@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\Domain\Context\Node\ReadOnlyNodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 

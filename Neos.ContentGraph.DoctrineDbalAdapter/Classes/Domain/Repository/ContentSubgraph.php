@@ -18,7 +18,7 @@ use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
@@ -483,7 +483,7 @@ ORDER BY hc.position LIMIT 1',
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(
-        ContentRepository\ValueObject\NodeAggregateIdentifier $parentAggregateIdentifier,
+        ContentRepository\Context\NodeAggregate\NodeAggregateIdentifier $parentAggregateIdentifier,
         ContentRepository\ValueObject\NodeName $edgeName
     ): ?NodeInterface {
         $nodeData = $this->getDatabaseConnection()->executeQuery(

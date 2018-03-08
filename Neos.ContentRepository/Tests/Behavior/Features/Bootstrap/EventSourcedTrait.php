@@ -18,7 +18,7 @@ use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\PropertyName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;

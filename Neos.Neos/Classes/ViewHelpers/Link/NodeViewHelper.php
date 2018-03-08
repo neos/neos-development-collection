@@ -13,7 +13,7 @@ namespace Neos\Neos\ViewHelpers\Link;
 
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;

@@ -113,13 +113,13 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
     /**
      * @param Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint
      * @param Dimension\ContentDimensionIdentifier $contentDimensionIdentifier
-     * @param Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeInterface|null
      */
     protected function findClosestGeneralizationMatchingDimensionValue(
         Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint,
         Dimension\ContentDimensionIdentifier $contentDimensionIdentifier,
-        Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
+        Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeInterface {
         $generalizations = $this->interDimensionalVariationGraph->getWeightedGeneralizations($dimensionSpacePoint);
         ksort($generalizations);
