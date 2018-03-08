@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Domain\Context\Workspace\Event;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;

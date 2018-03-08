@@ -20,7 +20,7 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;

@@ -109,7 +109,7 @@ class Node implements NodeInterface, CacheAwareInterface
     protected $dimensionSpacePoint;
 
     /**
-     * @var Domain\ValueObject\ContentStreamIdentifier
+     * @var \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
@@ -175,14 +175,14 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param NodeType $nodeType
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
+     * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
      * @param NodePropertyCollection $properties
      * @param NodeName $nodeName
      * @param bool $hidden
      * @param Context|null $context
      * @Flow\Autowiring(false)
      */
-    public function __construct(NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, ?DimensionSpacePoint $dimensionSpacePoint, ?Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier, ?Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ?NodePropertyCollection $properties, ?NodeName $nodeName, bool $hidden = false, Context $context = null)
+    public function __construct(NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, ?DimensionSpacePoint $dimensionSpacePoint, ?Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier, ?Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier, ?NodePropertyCollection $properties, ?NodeName $nodeName, bool $hidden = false, Context $context = null)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -391,9 +391,9 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * @return Domain\ValueObject\ContentStreamIdentifier
+     * @return \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): Domain\ValueObject\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }

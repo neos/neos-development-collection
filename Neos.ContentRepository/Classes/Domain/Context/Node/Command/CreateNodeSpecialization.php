@@ -21,7 +21,7 @@ use Neos\ContentRepository\Domain;
 final class CreateNodeSpecialization
 {
     /**
-     * @var Domain\ValueObject\ContentStreamIdentifier
+     * @var \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
@@ -42,14 +42,14 @@ final class CreateNodeSpecialization
 
 
     /**
-     * @param Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
      * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier
+     * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
      * @param Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint
      * @param Domain\ValueObject\NodeIdentifier $specializationIdentifier
      */
     public function __construct(
-        Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier,
         Domain\ValueObject\NodeIdentifier $nodeIdentifier,
+        Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
         Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint,
         Domain\ValueObject\NodeIdentifier $specializationIdentifier
     ) {
@@ -60,9 +60,9 @@ final class CreateNodeSpecialization
     }
 
     /**
-     * @return Domain\ValueObject\ContentStreamIdentifier
+     * @return \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): Domain\ValueObject\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }

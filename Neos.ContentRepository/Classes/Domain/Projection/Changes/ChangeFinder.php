@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Domain\Projection\Changes;
 
 use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**

@@ -20,7 +20,7 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
@@ -469,7 +469,7 @@ class GraphProjector implements ProjectorInterface
     public function whenNodeSpecializationWasCreated(Event\NodeSpecializationWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
-            $sourceNode = $this->projectionContentGraph->getNode($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+            $sourceNode = $this->projectionContentGraph->getNode($event->getNodeAggregateIdentifier(), $event->getContentStreamIdentifier());
 
             $specializedNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
             $specializedNode = new Node(

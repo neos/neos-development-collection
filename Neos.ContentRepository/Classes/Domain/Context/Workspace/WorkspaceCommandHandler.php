@@ -38,7 +38,7 @@ use Neos\ContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBe
 use Neos\ContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\EventStore\EventAndRawEvent;
 use Neos\EventSourcing\EventStore\EventStoreManager;

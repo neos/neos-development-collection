@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain;
@@ -22,12 +22,12 @@ use Neos\ContentRepository\Domain;
 interface ContentGraphInterface
 {
     /**
-     * @param Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
+     * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
      * @param Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint
      * @return ContentSubgraphInterface|null
      */
     public function getSubgraphByIdentifier(
-        Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier,
+        Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
         Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint
     ): ?ContentSubgraphInterface;
 

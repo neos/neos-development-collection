@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\ContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;

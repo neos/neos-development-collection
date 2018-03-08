@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Domain\Service;
  */
 
 use Neos\ContentRepository\Domain;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;

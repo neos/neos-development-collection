@@ -16,7 +16,7 @@ use Neos\ContentRepository\Domain;
 final class ChangeNodeAggregateType
 {
     /**
-     * @var Domain\ValueObject\ContentStreamIdentifier
+     * @var \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
@@ -37,13 +37,13 @@ final class ChangeNodeAggregateType
 
 
     /**
-     * @param Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
+     * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
      * @param Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param Domain\ValueObject\NodeTypeName $newNodeTypeName
      * @param Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|null $strategy
      */
     public function __construct(
-        Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier,
+        Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
         Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier,
         Domain\ValueObject\NodeTypeName $newNodeTypeName,
         ?Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy
@@ -55,9 +55,9 @@ final class ChangeNodeAggregateType
     }
 
     /**
-     * @return Domain\ValueObject\ContentStreamIdentifier
+     * @return \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): Domain\ValueObject\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }

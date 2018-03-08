@@ -64,7 +64,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $inMemoryCache;
 
     /**
-     * @var ContentRepository\ValueObject\ContentStreamIdentifier
+     * @var \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
@@ -74,7 +74,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $dimensionSpacePoint;
 
 
-    public function __construct(ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint)
+    public function __construct(ContentRepository\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -111,7 +111,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     }
 
 
-    public function getContentStreamIdentifier(): ContentRepository\ValueObject\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): ContentRepository\Context\ContentStream\ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }

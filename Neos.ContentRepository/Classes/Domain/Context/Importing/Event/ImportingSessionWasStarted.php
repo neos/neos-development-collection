@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Context\Importing\Event;
  */
 
 use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\ImportingSessionIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 

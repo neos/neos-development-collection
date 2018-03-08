@@ -123,9 +123,9 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findNodePath(Domain\ValueObject\NodeIdentifier $nodeIdentifier): Domain\ValueObject\NodePath;
 
     /**
-     * @return Domain\ValueObject\ContentStreamIdentifier
+     * @return \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): Domain\ValueObject\ContentStreamIdentifier;
+    public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier;
 
     /**
      * @return Domain\ValueObject\DimensionSpacePoint

@@ -2,7 +2,7 @@
 
 namespace Neos\ContentRepository\Domain\Context\Node\Event;
 
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**

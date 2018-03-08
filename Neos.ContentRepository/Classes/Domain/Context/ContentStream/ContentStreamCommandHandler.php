@@ -15,7 +15,6 @@ use Neos\ContentRepository\Domain\Context\ContentStream\Command\CreateContentStr
 use Neos\ContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\StreamNameFilter;
 use Neos\Flow\Annotations as Flow;

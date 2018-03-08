@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Domain\ValueObject;
+namespace Neos\ContentRepository\Domain\Context\ContentStream;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Domain\Projection\Content\RootNodeIdentifiers;
+use Neos\ContentRepository\Domain\ValueObject\AbstractIdentifier;
 
 final class ContentStreamIdentifier extends AbstractIdentifier implements CacheAwareInterface
 {

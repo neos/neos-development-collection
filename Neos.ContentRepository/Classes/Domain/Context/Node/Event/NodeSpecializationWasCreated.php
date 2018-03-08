@@ -20,7 +20,7 @@ use Neos\EventSourcing\Event\EventInterface;
 final class NodeSpecializationWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
-     * @var Domain\ValueObject\ContentStreamIdentifier
+     * @var \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
@@ -46,15 +46,15 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
 
 
     /**
-     * @param Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
      * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier
+     * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
      * @param Domain\ValueObject\NodeIdentifier $specializationIdentifier
      * @param Domain\ValueObject\DimensionSpacePoint $specializationLocation
      * @param Domain\ValueObject\DimensionSpacePointSet $specializationVisibility
      */
     public function __construct(
-        Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier,
         Domain\ValueObject\NodeIdentifier $nodeIdentifier,
+        Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
         Domain\ValueObject\NodeIdentifier $specializationIdentifier,
         Domain\ValueObject\DimensionSpacePoint $specializationLocation,
         Domain\ValueObject\DimensionSpacePointSet $specializationVisibility
@@ -68,9 +68,9 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
 
 
     /**
-     * @return Domain\ValueObject\ContentStreamIdentifier
+     * @return \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): Domain\ValueObject\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
@@ -109,10 +109,10 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
 
 
     /**
-     * @param Domain\ValueObject\ContentStreamIdentifier $targetContentStream
+     * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $targetContentStream
      * @return NodeSpecializationWasCreated
      */
-    public function createCopyForContentStream(Domain\ValueObject\ContentStreamIdentifier $targetContentStream): NodeSpecializationWasCreated
+    public function createCopyForContentStream(Domain\Context\ContentStream\ContentStreamIdentifier $targetContentStream): NodeSpecializationWasCreated
     {
         return new NodeSpecializationWasCreated(
             $targetContentStream,
