@@ -58,10 +58,10 @@
 			<target xml:lang="ar" state="translated">تنازلي</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="ar" state="translated">اتجاه الفرز تصاعدي</target></trans-unit>
+			<target xml:lang="ar" state="translated">ترتيب الاتجاه تصاعدي</target><alt-trans><target xml:lang="ar">اتجاه الفرز تصاعدي</target></alt-trans></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="ar" state="translated">اتجاه الفرز تنازلي</target></trans-unit>
+			<target xml:lang="ar" state="translated">ترتيب الاتجاه تنازليا</target><alt-trans><target xml:lang="ar">اتجاه الفرز تنازلي</target></alt-trans></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="ar" state="translated">سحب وإسقاط على العلامة أو المجموعة</target></trans-unit>
@@ -100,7 +100,7 @@
 			<target xml:lang="ar" state="translated">تعويض</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="ar" state="needs-translation">Replace asset resource</target></trans-unit>
+			<target xml:lang="ar" state="translated">استبدال مورد مادة العرض</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="ar" state="translated">حفظ</target></trans-unit>

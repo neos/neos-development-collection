@@ -149,9 +149,9 @@ class DomainCommandController extends CommandController
     }
 
     /**
-     * Delete a domain record by hostname
+     * Delete a domain record by hostname (with globbing)
      *
-     * @param string $hostname The hostname to match on, e.g. "flow.neos.io"
+     * @param string $hostname The hostname to remove (globbing is supported)
      * @param null|string $uriScheme The scheme for linking (http/https)
      * @param null|string $domainPort The port for linking (0-49151)
      * @return void
@@ -176,12 +176,22 @@ class DomainCommandController extends CommandController
         } catch (\Exception $e) {
             $this->outputLine('<error>' . $e->getMessage() . '</error>');
         }
+        /*
+        $domains = $this->findDomainsByHostnamePattern($hostname);
+        if (empty($domains)) {
+            $this->outputLine('<error>No domain found for hostname-pattern "%s".</error>', [$hostname]);
+            $this->quit(1);
+        }
+        foreach ($domains as $domain) {
+            $this->domainRepository->remove($domain);
+            $this->outputLine('Domain entry "%s" deleted.', [$domain->getHostname()]);
+        }*/
     }
 
     /**
-     * Activate a domain record by hostname
+     * Activate a domain record by hostname (with globbing)
      *
-     * @param string $hostname The hostname to activate
+     * @param string $hostname The hostname to activate (globbing is supported)
      * @param string $uriScheme
      * @param string $domainPort
      * @return void
@@ -207,14 +217,26 @@ class DomainCommandController extends CommandController
         } catch (\Exception $e) {
             $this->outputLine('<error>' . $e->getMessage() . '</error>');
         }
+        /*
+        $domains = $this->findDomainsByHostnamePattern($hostname);
+        if (empty($domains)) {
+            $this->outputLine('<error>No domain found for hostname-pattern "%s".</error>', [$hostname]);
+            $this->quit(1);
+        }
+        foreach ($domains as $domain) {
+            $domain->setActive(true);
+            $this->domainRepository->update($domain);
+            $this->outputLine('Domain entry "%s" was activated.', [$domain->getHostname()]);
+        }*/
     }
 
     /**
-     * Deactivate a domain record by hostname
+     * Deactivate a domain record by hostname (with globbing)
      *
-     * @param $hostname
+     * @param string $hostname The hostname to deactivate (globbing is supported)
      * @param $uriScheme
      * @param $domainPort
+     * @return void
      */
     public function deactivateCommand(string $hostname, ?string $uriScheme = null, ?string $domainPort = null)
     {
@@ -237,5 +259,32 @@ class DomainCommandController extends CommandController
         } catch (\Exception $e) {
             $this->outputLine('<error>' . $e->getMessage() . '</error>');
         }
+        /*
+        $domains = $this->findDomainsByHostnamePattern($hostname);
+        if (empty($domains)) {
+            $this->outputLine('<error>No domain found for hostname-pattern "%s".</error>', [$hostname]);
+            $this->quit(1);
+        }
+        foreach ($domains as $domain) {
+            $domain->setActive(false);
+            $this->domainRepository->update($domain);
+            $this->outputLine('Domain entry "%s" was deactivated.', [$domain->getHostname()]);
+        }*/
+    }
+
+    /**
+     * Find domains that match the given hostname with globbing support
+     *
+     * @param string $hostnamePattern pattern for the hostname of the domains
+     * @return array<Domain>
+     */
+    protected function findDomainsByHostnamePattern($hostnamePattern)
+    {
+        return array_filter(
+            $this->domainRepository->findAll()->toArray(),
+            function ($domain) use ($hostnamePattern) {
+                return fnmatch($hostnamePattern, $domain->getHostname());
+            }
+        );
     }
 }

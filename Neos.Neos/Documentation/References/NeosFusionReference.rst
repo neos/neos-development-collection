@@ -525,9 +525,6 @@ The Fusion objects defined in the Neos package contain all Fusion objects which
 are needed to integrate a site. Often, it contains generic Fusion objects
 which do not need a particular node type to work on.
 
-As Neos.Neos is the default namespace, the Fusion objects do not need to be
-prefixed with Neos.Neos.
-
 .. _Neos_Neos__Page:
 
 Page

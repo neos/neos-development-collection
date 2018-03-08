@@ -125,16 +125,6 @@ class FusionService
     protected $packageManager;
 
     /**
-     * Initializes the parser
-     *
-     * @return void
-     */
-    public function initializeObject()
-    {
-        $this->fusionParser->setObjectTypeNamespace('default', 'Neos.Neos');
-    }
-
-    /**
      * Create a runtime for the given site node
      *
      * @param \Neos\ContentRepository\Domain\Model\NodeInterface $currentSiteNode

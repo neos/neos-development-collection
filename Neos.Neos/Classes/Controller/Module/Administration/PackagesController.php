@@ -33,7 +33,7 @@ class PackagesController extends AbstractModuleController
     public function indexAction()
     {
         $packageGroups = array();
-        foreach ($this->packageManager->getActivePackages() as $package) {
+        foreach ($this->packageManager->getAvailablePackages() as $package) {
             /** @var Package $package */
             $packagePath = substr($package->getPackagepath(), strlen(FLOW_PATH_PACKAGES));
             $packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
