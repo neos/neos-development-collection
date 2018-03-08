@@ -98,6 +98,9 @@ class NodeEvent extends Event
         return $this->workspaceName;
     }
 
+    /**
+     * @return bool
+     */
     public function isDocumentEvent()
     {
         return $this->documentNodeIdentifier === $this->nodeIdentifier;
@@ -234,7 +237,7 @@ class NodeEvent extends Event
     }
 
     /**
-     * Prevents invalid calls to the site respository in case the site data property is not available.
+     * Prevents invalid calls to the site repository in case the site data property is not available.
      *
      * @return null|object
      */
