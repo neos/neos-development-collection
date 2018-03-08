@@ -58,10 +58,10 @@
 			<target xml:lang="da">Faldende</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="da" state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target xml:lang="da" state="translated">Sorteringsretning stigende</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="da" state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target xml:lang="da" state="translated">Sorteringsretning faldende</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="da">Træk og slip på tag eller samling</target></trans-unit>
@@ -100,7 +100,7 @@
 			<target xml:lang="da">Erstat</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="da" state="needs-translation">Replace asset resource</target></trans-unit>
+			<target xml:lang="da" state="translated">Erstat filresurse</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="da">Gem</target></trans-unit>
@@ -386,13 +386,13 @@
 			<target xml:lang="da">Opret omdirigeringer fra den oprindelige fil URL hen til den nye fil URL</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target xml:lang="da" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target xml:lang="da" state="translated">'Resurser af typen "{0}" kan kun erstattes af samme type resurse. Forsøgt type "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target xml:lang="da" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target xml:lang="da" state="translated">Ingen adgang til arbejdsrum "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target xml:lang="da" state="needs-translation">No document node found for this node</target></trans-unit>
+			<target xml:lang="da" state="translated">Ingen dokument node fundet for denne node</target></trans-unit>
     </body>
   </file>
 </xliff>
