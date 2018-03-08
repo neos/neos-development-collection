@@ -11,13 +11,7 @@ namespace Neos\ContentRepository\Domain\Context\ContentStream;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Context\ContentStream\Command\CreateContentStream;
-use Neos\ContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
-use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
-use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
-use Neos\EventSourcing\EventStore\EventStoreManager;
-use Neos\EventSourcing\EventStore\StreamNameFilter;
-use Neos\Flow\Annotations as Flow;
+use Neos\EventSourcing\Event\EventPublisher;
 
 /**
  * ContentStreamCommandHandler
@@ -25,56 +19,56 @@ use Neos\Flow\Annotations as Flow;
 final class ContentStreamCommandHandler
 {
     /**
-     * @Flow\Inject
-     * @var \Neos\EventSourcing\Event\EventPublisher
+     * @var ContentStreamRepository
+     */
+    protected $contentStreamRepository;
+
+    /**
+     * @var EventPublisher
      */
     protected $eventPublisher;
 
-    /**
-     * @Flow\Inject
-     * @var EventStoreManager
-     */
-    protected $eventStoreManager;
+
+    public function __construct(ContentStreamRepository $contentStreamRepository, EventPublisher $eventPublisher)
+    {
+        $this->contentStreamRepository = $contentStreamRepository;
+        $this->eventPublisher = $eventPublisher;
+    }
+
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @return string
+     * @deprecated fetch a content stream and ask it instead
      */
     public static function getStreamNameForContentStream(ContentStreamIdentifier $contentStreamIdentifier)
     {
         return 'Neos.ContentRepository:ContentStream:' . $contentStreamIdentifier;
     }
 
-    /**
-     * @param CreateContentStream $command
-     */
-    public function handleCreateContentStream(CreateContentStream $command)
+    public function handleCreateContentStream(Command\CreateContentStream $command)
     {
+        $contentStream = $this->contentStreamRepository->getContentStream($command->getContentStreamIdentifier());
         $this->eventPublisher->publish(
-            self::getStreamNameForContentStream($command->getContentStreamIdentifier()),
-            new ContentStreamWasCreated(
+            $contentStream->getStreamName(),
+            new Event\ContentStreamWasCreated(
                 $command->getContentStreamIdentifier(),
                 $command->getInitiatingUserIdentifier()
             )
         );
     }
 
-    /**
-     * @param ForkContentStream $command
-     */
-    public function handleForkContentStream(ForkContentStream $command)
+    public function handleForkContentStream(Command\ForkContentStream $command)
     {
-        $streamName = self::getStreamNameForContentStream($command->getContentStreamIdentifier());
-        $sourceContentStreamName = self::getStreamNameForContentStream($command->getSourceContentStreamIdentifier());
+        $sourceContentStream = $this->contentStreamRepository->getContentStream($command->getSourceContentStreamIdentifier());
+        $contentStream = $this->contentStreamRepository->getContentStream($command->getContentStreamIdentifier());
 
-        $store = $this->eventStoreManager->getEventStoreForStreamName($sourceContentStreamName);
-        $versionOfSourceContentStream = $store->getStreamVersion(new StreamNameFilter($sourceContentStreamName));
         $this->eventPublisher->publish(
-            $streamName,
-            new ContentStreamWasForked(
+            $contentStream->getStreamName(),
+            new Event\ContentStreamWasForked(
                 $command->getContentStreamIdentifier(),
                 $command->getSourceContentStreamIdentifier(),
-                $versionOfSourceContentStream
+                $sourceContentStream->getVersion()
             )
         );
     }
