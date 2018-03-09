@@ -209,7 +209,7 @@ class NodeData extends AbstractNodeData
      * If a node data is moved a "shadow" node data is inserted that references the new node data
      *
      * @var NodeData
-     * @ORM\ManyToOne
+     * @ORM\OneToOne
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
     protected $movedTo;
