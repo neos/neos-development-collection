@@ -191,7 +191,7 @@
 			<target xml:lang="da">Brugernavn</target></trans-unit>
       <trans-unit id="you" xml:space="preserve" approved="yes">
 				<source>You</source>
-			<target xml:lang="da">Dig</target></trans-unit>
+			<target xml:lang="da">Du</target><alt-trans><target xml:lang="da">Dig</target></alt-trans></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve" approved="yes">
 				<source>[no title]</source>
 			<target xml:lang="da">[uden titel]</target></trans-unit>
