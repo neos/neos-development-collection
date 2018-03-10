@@ -246,28 +246,28 @@
 			<target xml:lang="fr">Aucun événement n'a été enregistré qui peut être affiché dans le module d'historique.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target xml:lang="fr" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target xml:lang="fr" state="translated">{0} a créé le {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target xml:lang="fr" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target xml:lang="fr" state="translated">{0} a supprimé le {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target xml:lang="fr" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target xml:lang="fr" state="translated">{0} a créé la variante {1} de {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target xml:lang="fr" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target xml:lang="fr" state="translated">{0} a modifié la {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target xml:lang="fr" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+			<target xml:lang="fr" state="translated">{0} a déplacé {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
-			<target xml:lang="fr" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
+			<target xml:lang="fr" state="translated">{0} a copié le {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target xml:lang="fr" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+			<target xml:lang="fr" state="translated">{0} a renommé le {1} "{2}" en "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target xml:lang="fr" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target xml:lang="fr" state="translated">{0} a modifié le contenu de {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve" approved="yes">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="fr">{0} a créé un nouvel utilisateur "{1}" pour {2}.</target></trans-unit>
@@ -961,7 +961,7 @@
       <target xml:lang="fr" state="translated">Pas d’accès à l’espace de travail "{0}"</target></trans-unit>
       <trans-unit id="media.missingDocumentNode" xml:space="preserve">
         <source>No document node found for this node</source>
-      <target xml:lang="fr" state="needs-translation">No document node found for this node</target></trans-unit>
+      <target xml:lang="fr" state="translated">Aucun nœud de document trouvé pour ce nœud</target></trans-unit>
     </body>
   </file>
 </xliff>
