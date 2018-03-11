@@ -49,6 +49,19 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * If this node type or any of the direct or indirect super types
+     * has the given name.
+     *
+     * @param NodeInterface $node
+     * @param string $nodeType
+     * @return bool
+     */
+    public function isOfType(NodeInterface $node, string $nodeType): bool
+    {
+        return $node->getNodeType()->isOfType($nodeType);
+    }
+
+    /**
      * @param string $methodName
      * @return boolean
      */
