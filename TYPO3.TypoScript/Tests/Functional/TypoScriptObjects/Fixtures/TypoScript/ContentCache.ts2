@@ -584,3 +584,25 @@ contentCache.dynamicSegmentWithNestedCachedSegment = TYPO3.TypoScript:Array {
 		mode = 'cached'
 	}
 }
+
+contentCache.cachedSegmentWithNestedDynamicSegment = TYPO3.TypoScript:Value {
+	value = TYPO3.TypoScript:Value {
+		value = TYPO3.TypoScript:Value {
+			value = 'inner'
+			@cache {
+				mode = 'dynamic'
+				entryDiscriminator = 'static'
+				context {
+					1 = 'someContextVariable'
+				}
+			}
+		}
+
+	}
+	@cache {
+		mode = 'cached'
+		entryTags {
+			1 = 'testing'
+		}
+	}
+}

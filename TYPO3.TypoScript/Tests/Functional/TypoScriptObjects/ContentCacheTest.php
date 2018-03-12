@@ -692,4 +692,26 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
         $this->assertSame('Cached segment|counter=1|Nested dynamic segment|counter=2|Nested cached segment|counter=3', $firstRenderResult);
         $this->assertSame($firstRenderResult, $secondRenderResult);
     }
+
+    /**
+     * @test
+     */
+    public function cachedSegmentWithNestedDynamicSegmentCanReRenderWithCacheEntryFlushTest()
+    {
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->assign('someContextVariable', 'prettyUnused');
+        $view->setTypoScriptPath('contentCache/cachedSegmentWithNestedDynamicSegment');
+
+        $firstRenderResult = $view->render();
+
+        $this->contentCache->flushByTag('testing');
+
+        $secondRenderResult = $view->render();
+        $thirdRenderResult = $view->render();
+
+        $this->assertSame('inner', $firstRenderResult);
+        $this->assertSame('inner', $secondRenderResult);
+        $this->assertSame('inner', $thirdRenderResult);
+    }
 }
