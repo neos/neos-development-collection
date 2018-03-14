@@ -15,7 +15,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineFinder;
 use Neos\Flow\Annotations as Flow;
 
-
 /**
  * Site Finder
  * @Flow\Scope("singleton")

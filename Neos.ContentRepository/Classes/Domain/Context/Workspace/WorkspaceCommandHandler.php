@@ -227,7 +227,7 @@ final class WorkspaceCommandHandler
      */
     protected static function extractSingleForkedContentStreamEvent(array $stream) : ContentStreamWasForked
     {
-        $contentStreamWasForkedEvents = array_filter($stream, function(EventAndRawEvent $eventAndRawEvent) {
+        $contentStreamWasForkedEvents = array_filter($stream, function (EventAndRawEvent $eventAndRawEvent) {
             return $eventAndRawEvent->getEvent() instanceof ContentStreamWasForked;
         });
 
@@ -324,7 +324,6 @@ final class WorkspaceCommandHandler
                     default:
                         throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($commandToRebase)));
                 }
-
             }
         }
 

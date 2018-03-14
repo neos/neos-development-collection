@@ -113,5 +113,4 @@ final class NodeAddress
     {
         return new NodeAddress($this->contentStreamIdentifier, $dimensionSpacePoint, $this->nodeAggregateIdentifier);
     }
-
 }

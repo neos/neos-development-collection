@@ -73,5 +73,4 @@ final class ChangeNodeName
     {
         return $this->newNodeName;
     }
-
 }

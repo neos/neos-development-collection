@@ -20,5 +20,4 @@ final class SiteAlreadyExists extends Exception
         $message = 'The site already exists: ' . $siteNodeName;
         parent::__construct($message, $code, $previous);
     }
-
 }

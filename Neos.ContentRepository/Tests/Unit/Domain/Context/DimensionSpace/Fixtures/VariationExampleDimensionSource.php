@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Context\DimensionSpace\Fixtur
 
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Annotations as Flow;
+
 /**
  * The dimension source fixture with variation examples
  *

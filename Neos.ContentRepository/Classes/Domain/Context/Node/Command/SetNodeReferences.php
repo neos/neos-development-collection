@@ -85,6 +85,4 @@ final class SetNodeReferences
     {
         return $this->propertyName;
     }
-
-
 }

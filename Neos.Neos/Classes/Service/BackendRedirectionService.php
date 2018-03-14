@@ -189,5 +189,4 @@ class BackendRedirectionService
 
         return $this->contextFactory->create($contextProperties);
     }
-
 }

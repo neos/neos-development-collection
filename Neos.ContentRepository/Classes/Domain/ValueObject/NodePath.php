@@ -45,7 +45,7 @@ final class NodePath implements \JsonSerializable
         }
         $pathParts = explode('/', $path);
 
-        return array_map(function($pathPart) {
+        return array_map(function ($pathPart) {
             return new NodeName($pathPart);
         }, $pathParts);
     }
@@ -59,5 +59,4 @@ final class NodePath implements \JsonSerializable
     {
         return $this->path;
     }
-
 }

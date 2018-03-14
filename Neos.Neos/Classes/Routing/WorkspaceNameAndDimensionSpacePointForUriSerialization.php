@@ -141,6 +141,4 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
     {
         return $this->dimensionSpacePoint;
     }
-
-
 }

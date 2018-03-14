@@ -751,7 +751,7 @@ class Node implements NodeInterface, CacheAwareInterface
                 }
 
                 $destinationNodeAggregateIdentifiers = array_filter(array_map(
-                    function($node) {
+                    function ($node) {
                         if ($node instanceof NodeInterface) {
                             return $node->getNodeAggregateIdentifier();
                         }
@@ -955,7 +955,7 @@ class Node implements NodeInterface, CacheAwareInterface
 
         // If an identifier is given: Check if a node aggregate already exists and then just add another node to the aggregate.
         // (the legacy API allows to specify the same identifier multiple times for different "node variants")
-            // TODO Add a contentGraph->hasNodeAggregateInContentStream method (or getNodeAggregateInContentStream)
+        // TODO Add a contentGraph->hasNodeAggregateInContentStream method (or getNodeAggregateInContentStream)
         // The root node does not have a content stream identifier --> and when adding a node directly next to the root node,
         // it can never exist yet.
         $isRootNode = $this->contentStreamIdentifier === null;

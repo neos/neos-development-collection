@@ -27,5 +27,4 @@ final class SiteDoesNotExist extends Exception
         $message = 'The site does not exists: ' . $siteNodeName;
         parent::__construct($message, $code, $previous);
     }
-
 }

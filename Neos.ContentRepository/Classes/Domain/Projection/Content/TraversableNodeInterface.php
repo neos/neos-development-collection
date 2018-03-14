@@ -32,7 +32,6 @@ use Neos\Cache\CacheAwareInterface;
  */
 interface TraversableNodeInterface extends NodeInterface
 {
-
     public function getSubgraph(): ContentSubgraphInterface;
     public function getContextParameters(): Domain\Context\Parameters\ContextParameters;
 

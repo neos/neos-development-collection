@@ -54,8 +54,7 @@ class Change
         NodeIdentifier $nodeIdentifier,
         bool $changed = false,
         bool $moved = false
-    )
-    {
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->changed = $changed;

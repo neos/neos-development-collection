@@ -37,5 +37,4 @@ final class DeactivateSite
     {
         return $this->nodeName;
     }
-
 }

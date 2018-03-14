@@ -152,7 +152,7 @@ class SiteCommandController extends CommandController
         }
 
         try {
-           $this->siteCommandHandler->handleCreateSite(
+            $this->siteCommandHandler->handleCreateSite(
                 new CreateSite(
                     new NodeName($name),
                     new PackageKey($packageKey),

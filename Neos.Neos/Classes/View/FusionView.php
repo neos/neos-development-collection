@@ -115,14 +115,15 @@ class FusionView extends AbstractView
     /**
      * @throws Exception
      */
-    protected function initializeLanguage() {
+    protected function initializeLanguage()
+    {
         $languageIdentifier = new ContentDimensionIdentifier('language');
         if ($this->getCurrentSubgraph()->getDimensionSpacePoint()->hasCoordinate($languageIdentifier)) {
             $language = $this->contentDimensionSource->getDimension($languageIdentifier);
             $requestedLanguage = $language->getValue($this->getCurrentSubgraph()->getDimensionSpacePoint()->getCoordinates()['language']);
             $currentLocale = new Locale((string) $requestedLanguage);
             $fallbackOrder = [];
-            $language->traverseGeneralizations($requestedLanguage, function(ContentDimensionValue $generalization) use(&$fallbackOrder) {
+            $language->traverseGeneralizations($requestedLanguage, function (ContentDimensionValue $generalization) use (&$fallbackOrder) {
                 $fallbackOrder[] = (string) $generalization;
             });
             $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
