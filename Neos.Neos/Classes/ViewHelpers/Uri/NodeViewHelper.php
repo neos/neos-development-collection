@@ -12,13 +12,14 @@ namespace Neos\Neos\ViewHelpers\Uri;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressService;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 
 /**
@@ -99,6 +100,13 @@ class NodeViewHelper extends AbstractViewHelper
      */
     protected $nodeShortcutResolver;
 
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressService
+     */
+    protected $nodeAddressService;
+
     /**
      * Renders the URI.
      *
@@ -125,23 +133,32 @@ class NodeViewHelper extends AbstractViewHelper
         $resolveShortcuts = true,
         ContentSubgraphInterface $subgraph = null
     ) {
-        /** @var ContentQuery $contentQuery */
-        $contentQuery = $this->getContextVariable('contentQuery');
         $uri = null;
+        $nodeAddress = null;
+
 
         if ($node instanceof NodeInterface) {
             // the latter case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
             // a link towards the *shortcut itself*, and not to its target.
-            $resolvedNode = $resolveShortcuts ? $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node) : $node;
+            // TODO: fix shortcuts!
+            //$resolvedNode = $resolveShortcuts ? $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node) : $node;
+            $resolvedNode = $node;
             if ($resolvedNode instanceof NodeInterface) {
-                $contentQuery = $contentQuery->withNodeAggregateIdentifier($resolvedNode->getNodeAggregateIdentifier());
+                $nodeAddress = NodeAddress::fromNode($node);
             } else {
                 $uri = $resolvedNode;
             }
         } elseif ($node === '~') {
-            $contentQuery = $contentQuery->withNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
+            /* @var $documentNode \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
+            $documentNode = $this->getContextVariable('documentNode');
+            $nodeAddress = NodeAddress::fromNode($documentNode);
+            $siteNode = $this->nodeAddressService->findSiteNodeForNodeAddress($nodeAddress);
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($siteNode->getNodeAggregateIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
-            $contentQuery = $contentQuery->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
+            /* @var $documentNode \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
+            $documentNode = $this->getContextVariable('documentNode');
+            $nodeAddress = NodeAddress::fromNode($documentNode);
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
         } else {
             // @todo add path support
             return '';
@@ -149,7 +166,7 @@ class NodeViewHelper extends AbstractViewHelper
 
         if (!$uri) {
             if ($subgraph) {
-                $contentQuery = $contentQuery->withDimensionSpacePoint($subgraph->getDimensionSpacePoint());
+                $nodeAddress = $nodeAddress->withDimensionSpacePoint($subgraph->getDimensionSpacePoint());
             }
 
             $uriBuilder = new UriBuilder();
@@ -164,7 +181,7 @@ class NodeViewHelper extends AbstractViewHelper
             $uri = $uriBuilder->uriFor(
                 'show',
                 [
-                    'node' => $contentQuery
+                    'node' => $nodeAddress
                 ],
                 'Frontend\Node',
                 'Neos.Neos'

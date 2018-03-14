@@ -23,7 +23,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
@@ -115,13 +115,6 @@ class LinkingService
      * @var SiteRepository
      */
     protected $siteRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ContentGraph
-     */
-    protected $contentGraph;
-
 
     /**
      * @param string|Uri $uri
@@ -296,7 +289,7 @@ class LinkingService
             ->setAddQueryString($addQueryString)
             ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
             ->setFormat($format ?: $request->getFormat())
-            ->uriFor('show', array('node' => ContentQuery::fromNode($resolvedNode, $this->getRootNodeIdentifier())), 'Frontend\Node', 'Neos.Neos');
+            ->uriFor('show', array('node' => NodeAddress::fromNode($resolvedNode)), 'Frontend\Node', 'Neos.Neos');
 
         $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
         if (NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {
@@ -358,10 +351,5 @@ class LinkingService
     public function getLastLinkedNode()
     {
         return $this->lastLinkedNode;
-    }
-
-    protected function getRootNodeIdentifier(): \Neos\ContentRepository\Domain\ValueObject\NodeIdentifier
-    {
-        return $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'))->getNodeIdentifier();
     }
 }

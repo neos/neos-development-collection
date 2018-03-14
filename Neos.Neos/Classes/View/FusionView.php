@@ -22,7 +22,6 @@ use Neos\Flow\Http\Response;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\View\AbstractView;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
 use Neos\Fusion\Core\Runtime;
@@ -99,7 +98,6 @@ class FusionView extends AbstractView
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSite,
             'subgraph' => $this->getCurrentSubgraph(),
-            'contentQuery' => $this->getCurrentContentQuery(),
             'contextParameters' => $this->getCurrentContextParameters(),
             'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
         ]);
@@ -244,19 +242,6 @@ class FusionView extends AbstractView
             throw new Exception('FusionView needs a variable \'site\' set with a NodeInterface object.', 1329736456);
         }
         return $currentSite;
-    }
-
-    /**
-     * @return ContentQuery
-     * @throws Exception
-     */
-    protected function getCurrentContentQuery(): ContentQuery
-    {
-        $currentContentQuery = $this->variables['contentQuery'] ?? null;
-        if (!$currentContentQuery instanceof ContentQuery) {
-            throw new Exception('FusionView needs a variable \'contentQuery\' set with a ContentQuery object.', 1519167174);
-        }
-        return $currentContentQuery;
     }
 
     /**

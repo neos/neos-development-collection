@@ -26,7 +26,8 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressService;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\View\FusionView;
@@ -107,32 +108,37 @@ class NodeController extends ActionController
     protected $nodeTypeConstraintService;
 
     /**
-     * Initializes the view with the necessary parameters encoded in the given ContentQuery
+     * @Flow\Inject
+     * @var NodeAddressService
+     */
+    protected $nodeAddressService;
+
+    /**
+     * Initializes the view with the necessary parameters encoded in the given NodeAddress
      *
-     * @param ContentQuery $node Legacy name for backwards compatibility of route components
+     * @param NodeAddress $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
      * @throws UnresolvableShortcutException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
      * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function showAction(ContentQuery $node)
+    public function showAction(NodeAddress $node)
     {
-        $contentQuery = $node;
+        $nodeAddress = $node;
 
-        $inBackend = !$contentQuery->getWorkspaceName()->isLive();
-        $workspace = $this->workspaceFinder->findOneByName($contentQuery->getWorkspaceName());
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $workspace->getCurrentContentStreamIdentifier(),
-            $contentQuery->getDimensionSpacePoint()
+            $nodeAddress->getContentStreamIdentifier(),
+            $nodeAddress->getDimensionSpacePoint()
         );
 
+        $inBackend = !$this->nodeAddressService->isInLiveWorkspace($nodeAddress);
+
         $contextParameters = $this->createContextParameters($inBackend);
+        $site = $this->nodeAddressService->findSiteNodeForNodeAddress($nodeAddress);
 
-        $site = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
-
-        $this->fillCacheWithContentNodes($subgraph, $contentQuery, $contextParameters);
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getNodeAggregateIdentifier());
+        $this->fillCacheWithContentNodes($subgraph, $nodeAddress, $contextParameters);
+        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
         if (is_null($node)) {
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
@@ -149,8 +155,7 @@ class NodeController extends ActionController
             'value' => $traversableNode,
             'subgraph' => $subgraph,
             'site' => $traversableSite,
-            'contextParameters' => $contextParameters,
-            'contentQuery' => $contentQuery
+            'contextParameters' => $contextParameters
         ]);
 
         if ($inBackend) {
@@ -229,9 +234,9 @@ class NodeController extends ActionController
         }
     }
 
-    private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, ContentQuery $contentQuery, ContextParameters $contextParameters)
+    private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, NodeAddress $nodeAddress, ContextParameters $contextParameters)
     {
-        $subtree = $subgraph->findSubtrees([$contentQuery->getNodeAggregateIdentifier()], 10, $contextParameters, $this->nodeTypeConstraintService->unserializeFilters('!Neos.Neos:Document'));
+        $subtree = $subgraph->findSubtrees([$nodeAddress->getNodeAggregateIdentifier()], 10, $contextParameters, $this->nodeTypeConstraintService->unserializeFilters('!Neos.Neos:Document'));
         $subtree = $subtree->getChildren()[0];
 
         $parentNodeIdentifierByChildNodeIdentifierCache = $subgraph->getInMemoryCache()->getParentNodeIdentifierByChildNodeIdentifierCache();

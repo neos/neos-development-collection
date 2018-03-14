@@ -14,7 +14,8 @@ namespace Neos\Neos\Http;
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressService;
 use Neos\Neos\Http\ContentDimensionLinking\ContentDimensionValueUriProcessorResolver;
 
 /**
@@ -35,22 +36,28 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
     protected $contentDimensionValueUriProcessorResolver;
 
     /**
+     * @Flow\Inject
+     * @var NodeAddressService
+     */
+    protected $nodeAddressService;
+
+    /**
      * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions")
      * @var boolean
      */
     protected $supportEmptySegmentForDimensions;
 
     /**
-     * @param ContentQuery $contentQuery
+     * @param NodeAddress $nodeAddress
      * @param bool $currentNodeIsSiteNode
      * @return UriConstraints
      * @throws ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException
      */
-    public function resolveDimensionUriConstraints(ContentQuery $contentQuery, bool $currentNodeIsSiteNode = false): UriConstraints
+    public function resolveDimensionUriConstraints(NodeAddress $nodeAddress, bool $currentNodeIsSiteNode = false): UriConstraints
     {
         $uriConstraints = UriConstraints::create();
 
-        if ($contentQuery->getWorkspaceName()->isLive()) {
+        if ($this->nodeAddressService->isInLiveWorkspace($nodeAddress)) {
             $dimensions = $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
             $this->sortDimensionsByOffset($dimensions);
             $uriPathSegmentOffset = 0;
@@ -63,7 +70,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
                     ? new BasicContentDimensionResolutionMode($contentDimension->getConfigurationValue('resolution.mode'))
                     : null;
 
-                $contentDimensionValue = $contentDimension->getValue($contentQuery->getDimensionSpacePoint()->getCoordinates()[$rawContentDimensionIdentifier]);
+                $contentDimensionValue = $contentDimension->getValue($nodeAddress->getDimensionSpacePoint()->getCoordinates()[$rawContentDimensionIdentifier]);
                 $linkProcessor = $this->contentDimensionValueUriProcessorResolver->resolveContentDimensionValueUriProcessor($contentDimension);
                 if ($resolutionMode !== null && $resolutionMode->getMode() === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
                     if (!isset($resolutionOptions['offset'])) {
