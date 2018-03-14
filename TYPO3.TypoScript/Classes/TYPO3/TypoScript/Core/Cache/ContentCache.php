@@ -252,7 +252,8 @@ class ContentCache
      */
     public function getCachedSegment($uncachedCommandCallback, $typoScriptPath, $cacheIdentifierValues, $addCacheSegmentMarkersToPlaceholders = false, $cacheDiscriminator = null)
     {
-        if ($cacheDiscriminator === false) {
+        // If $addCacheSegmentMarkersToPlaceholders was set, the outer segment was a cache miss and we need to re-evaluate dynamic cached segments.
+        if ($cacheDiscriminator === false || ($addCacheSegmentMarkersToPlaceholders && $cacheDiscriminator !== null)) {
             return false;
         }
         $cacheIdentifier = $this->renderContentCacheEntryIdentifier($typoScriptPath, $cacheIdentifierValues);
