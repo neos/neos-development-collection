@@ -33,7 +33,6 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
  */
 interface ReadOnlyNodeInterface
 {
-
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
 
     public function getNodeIdentifier(): NodeIdentifier;

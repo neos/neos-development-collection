@@ -113,7 +113,6 @@ class DomainCommandController extends CommandController
         } catch (\Exception $e) {
             $this->outputLine('<error>' . $e->getMessage() . '</error>');
         }
-
     }
 
     /**

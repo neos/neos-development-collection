@@ -30,7 +30,6 @@ use Neos\Cache\CacheAwareInterface;
  */
 final class TraversableNode implements TraversableNodeInterface
 {
-
     use NodeInterfaceProxy;
 
     /**

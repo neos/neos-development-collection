@@ -23,7 +23,6 @@ use Neos\ContentRepository\Exception\WorkspaceException;
  */
 interface PublishingServiceInterface
 {
-
     public function getUnpublishedNodes(WorkspaceName $workspaceName);
     /**
      * Returns the number of unpublished nodes contained in the given workspace

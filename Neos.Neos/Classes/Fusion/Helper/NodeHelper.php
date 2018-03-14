@@ -42,7 +42,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                 throw new Exception(sprintf('No content collection of type %s could be found in the current node and no node path was provided. You might want to configure the nodePath property with a relative path to the content collection.', $contentCollectionType), 1409300545);
             }
             // TODO: support NodePath here??
-                $subNode = $node->findNamedChildNode(new NodeName($nodePath));
+            $subNode = $node->findNamedChildNode(new NodeName($nodePath));
             if ($subNode !== null && $subNode->getNodeType()->isOfType($contentCollectionType)) {
                 return $subNode;
             } else {

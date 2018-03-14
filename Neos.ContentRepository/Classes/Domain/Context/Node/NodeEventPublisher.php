@@ -82,7 +82,6 @@ final class NodeEventPublisher
         } finally {
             $this->currentlyInCommandClosure = false;
         }
-
     }
 
     /**

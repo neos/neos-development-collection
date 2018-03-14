@@ -25,7 +25,8 @@ final class SiteWasDeactivated implements EventInterface
      * CreateSite constructor.
      * @param NodeName $nodeName
      */
-    public function __construct(NodeName $nodeName) {
+    public function __construct(NodeName $nodeName)
+    {
         $this->nodeName = $nodeName;
     }
 

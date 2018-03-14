@@ -27,5 +27,4 @@ final class DomainAlreadyExists extends Exception
         $message = 'The domain already exists: ' . (string)$schemeHostPort;
         parent::__construct($message, $code, $previous);
     }
-
 }

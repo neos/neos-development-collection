@@ -21,7 +21,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
-
 final class RootNodeIdentifiers
 {
     /**
@@ -80,5 +79,4 @@ final class RootNodeIdentifiers
         }
         return self::$rootNodeAggregateIdentifier;
     }
-
 }

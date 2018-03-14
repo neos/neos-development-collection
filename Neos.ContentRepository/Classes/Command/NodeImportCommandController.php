@@ -60,7 +60,6 @@ class NodeImportCommandController extends CommandController
 
         $handle = fopen($dumpFile, "r");
         while (($line = fgets($handle)) !== false) {
-
             $parsed = json_decode($line, true);
             $stream = $parsed['stream'];
             $type = $parsed['type'];
