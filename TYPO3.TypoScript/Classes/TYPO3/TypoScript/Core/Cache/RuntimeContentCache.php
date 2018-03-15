@@ -175,25 +175,11 @@ class RuntimeContentCache
                         $result = $self->evaluateUncached($path, $unserializedContext);
                         return $result;
                     } elseif (strpos($command, 'evalCached=') === 0) {
-                        $identifier = substr($command, 11);
-                        $cacheDiscriminator = $this->runtime->evaluate($additionalData['path'] . '/__meta/cache/entryDiscriminator');
-                        if ($cacheDiscriminator === false) {
-                            $unserializedContext = $self->unserializeContext($additionalData['context']);
-                            return $self->evaluateUncached($additionalData['path'], $unserializedContext);
-                        }
-                        $cacheIdentifier = substr($identifier, 0, strpos($identifier, '_')) . '_' . md5($cacheDiscriminator);
-                        $result = $cache->get($cacheIdentifier);
-                        if ($result === false) {
-                            $unserializedContext = $self->unserializeContext($additionalData['context']);
-                            $maximumLifetime = null;
-                            if (isset($evaluateContext['configuration']['maximumLifetime'])) {
-                                $maximumLifetime = $this->runtime->evaluate($evaluateContext['typoScriptPath'] . '/__meta/cache/maximumLifetime', $tsObject);
-                            }
-                            $cacheTags = $this->buildCacheTags($evaluateContext['configuration'], $evaluateContext['typoScriptPath'], $tsObject);
-                            $result = $self->evaluateUncached($additionalData['path'], $unserializedContext);
-                            $cache->set($cacheIdentifier, $result, $cacheTags, $maximumLifetime);
-                        }
-
+                        $self->inCacheEntryPoint = null;
+                        $unserializedContext = $self->unserializeContext($additionalData['context']);
+                        $this->runtime->pushContextArray($unserializedContext);
+                        $result = $this->runtime->evaluate($additionalData['path']);
+                        $this->runtime->popContext();
                         return $result;
                     } else {
                         throw new Exception(sprintf('Unknown uncached command "%s"', $command), 1392837596);
