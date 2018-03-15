@@ -13,6 +13,7 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
 
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
 use TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Model\TestModel;
 
@@ -691,5 +692,58 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
 
         $this->assertSame('Cached segment|counter=1|Nested dynamic segment|counter=2|Nested cached segment|counter=3', $firstRenderResult);
         $this->assertSame($firstRenderResult, $secondRenderResult);
+    }
+
+    /**
+     * @test
+     */
+    public function cachedSegmentWithNestedDynamicSegmentCanReRenderWithCacheEntryFlushTest()
+    {
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->assign('someContextVariable', 'prettyUnused');
+        $view->setTypoScriptPath('contentCache/cachedSegmentWithNestedDynamicSegment');
+
+        $firstRenderResult = $view->render();
+
+        $this->contentCache->flushByTag('testing');
+
+        $secondRenderResult = $view->render();
+        $thirdRenderResult = $view->render();
+
+        $this->assertSame('prettyUnused', $firstRenderResult);
+        $this->assertSame('prettyUnused', $secondRenderResult);
+        $this->assertSame('prettyUnused', $thirdRenderResult);
+    }
+    /**
+     * @test
+     */
+    public function contextIsCorrectlyEvaluated()
+    {
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->assign('someContextVariable', 'prettyUnused');
+        $view->setTypoScriptPath('contentCache/dynamicWithChangingDiscriminator');
+
+        /** @var ActionRequest $actionRequest */
+        $actionRequest = $this->controllerContext->getRequest();
+        $actionRequest->setArgument('testArgument', '1');
+        $firstRenderResult = $view->render();
+
+        $this->contentCache->flushByTag('testing');
+
+        $actionRequest->setArgument('testArgument', '2');
+        $secondRenderResult = $view->render();
+
+        $actionRequest->setArgument('testArgument', '3');
+        $thirdRenderResult = $view->render();
+
+        $actionRequest->setArgument('testArgument', '4');
+        $fourthRenderResult = $view->render();
+
+        $this->assertSame('1', $firstRenderResult);
+        $this->assertSame('2', $secondRenderResult);
+        $this->assertSame('3', $thirdRenderResult);
+        $this->assertSame('4', $fourthRenderResult);
     }
 }

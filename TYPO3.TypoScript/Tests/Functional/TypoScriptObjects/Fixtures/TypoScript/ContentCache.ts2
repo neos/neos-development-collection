@@ -584,3 +584,44 @@ contentCache.dynamicSegmentWithNestedCachedSegment = TYPO3.TypoScript:Array {
 		mode = 'cached'
 	}
 }
+
+contentCache.cachedSegmentWithNestedDynamicSegment = TYPO3.TypoScript:Value {
+	value = TYPO3.TypoScript:Value {
+		value = ${someContextVariable}
+		@cache {
+			mode = 'dynamic'
+			entryDiscriminator = 'static'
+			context {
+				1 = 'someContextVariable'
+			}
+		}
+	}
+	@cache {
+		mode = 'cached'
+		entryTags {
+			1 = 'testing'
+		}
+	}
+}
+
+contentCache.dynamicWithChangingDiscriminator = TYPO3.TypoScript:Value {
+	value = TYPO3.TypoScript:Value {
+		value = ${request.arguments.testArgument}
+		@cache {
+			mode = 'dynamic'
+			entryDiscriminator = ${request.arguments.testArgument}
+			context {
+				1 = 'someContextVariable'
+			}
+			entryTags {
+				1 = 'dynamicTag'
+			}
+		}
+	}
+	@cache {
+		mode = 'cached'
+		entryTags {
+			1 = 'testing'
+		}
+	}
+}
