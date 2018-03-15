@@ -66,6 +66,9 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
             $im->setImageFormat('png');
             $im->setImageBackgroundColor('white');
             $im->setImageCompose(\Imagick::COMPOSITE_OVER);
+            if (defined('\Imagick::ALPHACHANNEL_FLATTEN')) {
+                $im->setImageAlphaChannel(\Imagick::ALPHACHANNEL_FLATTEN);
+            }
             if (defined('\Imagick::ALPHACHANNEL_OFF')) {
                 // ImageMagick >= 7.0, Imagick >= 3.4.3RC1
                 // @see https://pecl.php.net/package/imagick/3.4.3RC1
