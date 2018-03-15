@@ -575,6 +575,7 @@ contentCache.dynamicSegmentWithNestedCachedSegment = TYPO3.TypoScript:Array {
 		}
 		@cache {
 			mode = 'dynamic'
+			entryDiscriminator = 'static'
 			context {
 				1 = 'renderObject'
 			}
