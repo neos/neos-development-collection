@@ -157,7 +157,7 @@ class NodeUriImplementation extends AbstractFusionObject
             [
                 'node' => $nodeAddress
             ],
-            'Frontend/Node',
+            'Frontend\\Node',
             'Neos.Neos'
         );
     }
