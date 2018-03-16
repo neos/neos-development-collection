@@ -2,13 +2,6 @@
  * Root Fusion for the {siteName} site
  */
 
-root {
-    default {
-        type = ${q(node).property('_nodeType') + '.Document'}
-        renderPath >
-    }
-}
-
 prototype({packageKey}:DefaultPage) < prototype(Page) {
     head {
         stylesheets.site = Neos.Fusion:Template {
