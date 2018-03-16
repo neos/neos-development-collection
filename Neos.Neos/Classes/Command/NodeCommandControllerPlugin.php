@@ -192,9 +192,9 @@ HELPTEXT;
         if ($sitesNode === null) {
             if ($dryRun === false) {
                 $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
-                $this->output->outputLine('Created "%s" node', [SiteService::SITES_ROOT_PATH]);
+                $this->output->outputLine('Missing "%s" node was created', [SiteService::SITES_ROOT_PATH]);
             } else {
-                $this->output->outputLine('Found missing "%s" node', [SiteService::SITES_ROOT_PATH]);
+                $this->output->outputLine('"%s" node is missing!', [SiteService::SITES_ROOT_PATH]);
             }
         }
 
