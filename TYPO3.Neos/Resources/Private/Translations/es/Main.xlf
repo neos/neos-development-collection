@@ -44,7 +44,7 @@
 			<target xml:lang="es-ES" state="translated">Crear después</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="es-ES" state="translated">Crear nuevo</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Crear nuevo</target><alt-trans><target xml:lang="es-ES">Crear nueva</target></alt-trans></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
 			<target xml:lang="es-ES" state="translated">Cerrar</target></trans-unit>
@@ -411,7 +411,7 @@
 			<target xml:lang="es-ES" state="translated">Información adicional</target></trans-unit>
       <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="es-ES" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Visiblidad</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
 			<target xml:lang="es-ES" state="translated">Opciones de documento</target></trans-unit>
@@ -504,10 +504,10 @@
 			<target xml:lang="es-ES" state="translated">Contenido</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
-			<target xml:lang="es-ES" state="needs-translation">Toggle menu group</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Mostrar grupo de menús</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
-			<target xml:lang="es-ES" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Activar modo menú permanente</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
 			<target xml:lang="es-ES" state="translated">Realmente quiere borrar</target><alt-trans><target xml:lang="es-ES">Realmente quieres borrar</target></alt-trans></trans-unit>
