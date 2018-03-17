@@ -61,7 +61,7 @@ final class ContentStream
     }
 
 
-    public function getNodeAggregate(NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier)
+    public function getNodeAggregate(NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate\NodeAggregate
     {
         if (!isset($this->nodeAggregates[(string)$nodeAggregateIdentifier])) {
             $nodeAggregateStreamName = $this->getStreamName() . ':NodeAggregate:' . $nodeAggregateIdentifier;

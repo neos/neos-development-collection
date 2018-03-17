@@ -13,11 +13,12 @@ namespace Neos\ContentRepository\Domain\Context\NodeAggregate\Command;
 
 use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Domain\Context\NodeAggregate;
+use Neos\ContentRepository\Domain\Context\ContentStream;
 
 final class ChangeNodeAggregateType
 {
     /**
-     * @var \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @var ContentStream\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
@@ -32,16 +33,16 @@ final class ChangeNodeAggregateType
     protected $newNodeTypeName;
 
     /**
-     * @var Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+     * @var NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
      */
     protected $strategy;
 
 
     public function __construct(
-        Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier,
         Domain\ValueObject\NodeTypeName $newNodeTypeName,
-        ?Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy
+        ?NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -50,9 +51,9 @@ final class ChangeNodeAggregateType
     }
 
     /**
-     * @return \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @return ContentStream\ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): ContentStream\ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
@@ -74,9 +75,9 @@ final class ChangeNodeAggregateType
     }
 
     /**
-     * @return Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|null
+     * @return NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|null
      */
-    public function getStrategy(): ?Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+    public function getStrategy(): ?NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
     {
         return $this->strategy;
     }

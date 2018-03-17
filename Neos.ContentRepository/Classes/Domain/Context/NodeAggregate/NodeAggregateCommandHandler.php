@@ -11,27 +11,64 @@ namespace Neos\ContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\ContentStream;
+use Neos\ContentRepository\Domain\Context\DimensionSpace;
+use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeSpecialization;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Exception\NodeConstraintException;
-use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
 final class NodeAggregateCommandHandler
 {
     /**
-     * @Flow\Inject
+     * @var ContentStream\ContentStreamRepository
+     */
+    protected $contentStreamRepository;
+
+    /**
+     * Used for constraint checks against the current outside configuration state of node types
+     *
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * Used for constraint checks against the current outside configuration state of content dimensions
+     *
+     * @var DimensionSpace\AllowedDimensionSubspace
+     */
+    protected $allowedDimensionSubspace;
+
+    /**
+     * The graph projection used for soft constraint checks
+     *
      * @var ContentGraphInterface
      */
     protected $contentGraph;
 
     /**
-     * @Flow\Inject
-     * @var NodeTypeManager
+     * Used for variation resolution from the current outside state of content dimensions
+     *
+     * @var DimensionSpace\InterDimensionalVariationGraph
      */
-    protected $nodeTypeManager;
+    protected $interDimensionalVariationGraph;
+
+
+    public function __construct(
+        ContentStream\ContentStreamRepository $contentStreamRepository,
+        NodeTypeManager $nodeTypeManager,
+        DimensionSpace\AllowedDimensionSubspace $allowedDimensionSubspace,
+        ContentGraphInterface $contentGraph,
+        DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph
+    ) {
+        $this->contentStreamRepository = $contentStreamRepository;
+        $this->nodeTypeManager = $nodeTypeManager;
+        $this->allowedDimensionSubspace = $allowedDimensionSubspace;
+        $this->contentGraph = $contentGraph;
+        $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
+    }
 
 
     /**
@@ -113,5 +150,12 @@ final class NodeAggregateCommandHandler
                 }
             }
         }
+    }
+
+    protected function getNodeAggregate(ContentStream\ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate
+    {
+        $contentStream = $this->contentStreamRepository->getContentStream($contentStreamIdentifier);
+
+        return $contentStream->getNodeAggregate($nodeAggregateIdentifier);
     }
 }
