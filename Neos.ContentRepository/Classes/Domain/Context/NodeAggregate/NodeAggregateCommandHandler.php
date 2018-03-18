@@ -296,7 +296,7 @@ final class NodeAggregateCommandHandler
 
     protected function getNodeAggregate(ContentStream\ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate
     {
-        $contentStream = $this->contentStreamRepository->getContentStream($contentStreamIdentifier);
+        $contentStream = $this->contentStreamRepository->findContentStream($contentStreamIdentifier);
 
         return $contentStream->getNodeAggregate($nodeAggregateIdentifier);
     }

@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Context\Node;
  */
 
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\ContentRepository\Domain\Context\DimensionSpace\AllowedDimensionSubspace;
 use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSession;
@@ -109,7 +110,7 @@ final class NodeCommandHandler
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): void
     {
         $this->nodeEventPublisher->withCommand($command, function () use ($command) {
-            $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
+            $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
 
             $events = $this->nodeAggregateWithNodeWasCreatedFromCommand($command);
 
@@ -204,7 +205,7 @@ final class NodeCommandHandler
     public function handleAddNodeToAggregate(AddNodeToAggregate $command): void
     {
         $this->nodeEventPublisher->withCommand($command, function () use ($command) {
-            $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
+            $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
 
             $events = $this->nodeWasAddedToAggregateFromCommand($command);
 
@@ -370,7 +371,7 @@ final class NodeCommandHandler
             );
 
             $this->nodeEventPublisher->publish(
-                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier),
                 $event
             );
         });
@@ -395,7 +396,7 @@ final class NodeCommandHandler
             );
 
             $this->nodeEventPublisher->publish(
-                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier),
                 $event
             );
         });
@@ -428,7 +429,7 @@ final class NodeCommandHandler
             );
 
             $this->nodeEventPublisher->publishMany(
-                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier),
                 $events
             );
         });
@@ -451,7 +452,7 @@ final class NodeCommandHandler
             );
 
             $this->nodeEventPublisher->publish(
-                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier),
                 $event
             );
         });
@@ -474,7 +475,7 @@ final class NodeCommandHandler
             );
 
             $this->nodeEventPublisher->publish(
-                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier),
                 $event
             );
         });
@@ -569,7 +570,7 @@ final class NodeCommandHandler
             );
 
             $this->nodeEventPublisher->publish(
-                ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier()),
                 $nodesWereMoved
             );
         });
@@ -646,7 +647,7 @@ final class NodeCommandHandler
             );
 
             $this->nodeEventPublisher->publish(
-                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier),
                 $event
             );
         });
@@ -663,7 +664,7 @@ final class NodeCommandHandler
 
             $events = $this->nodeInAggregateWasTranslatedFromCommand($command);
             $this->nodeEventPublisher->publishMany(
-                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier),
                 $events
             );
         });

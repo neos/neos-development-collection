@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Domain\Context\Workspace;
 use Neos\ContentRepository\Domain\Context\ContentStream\Command\CreateContentStream;
 use Neos\ContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\ChangeNodeName;
@@ -195,7 +196,7 @@ final class WorkspaceCommandHandler
         // - copy all events from the "user" content stream which implement "CopyableAcrossContentStreamsInterface"
         // - extract the initial ContentStreamWasForked event, to read the version of the source content stream when the fork occurred
         // - ensure that no other changes have been done in the meantime in the base content stream
-        $workspaceContentStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($workspace->getCurrentContentStreamIdentifier());
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
 
         /* @var $workspaceContentStream EventAndRawEvent[] */
@@ -213,7 +214,7 @@ final class WorkspaceCommandHandler
 
         $contentStreamWasForked = $this->extractSingleForkedContentStreamEvent($workspaceContentStream);
         try {
-            $baseWorkspaceContentStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($baseWorkspace->getCurrentContentStreamIdentifier());
+            $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($baseWorkspace->getCurrentContentStreamIdentifier());
             $this->eventPublisher->publishMany($baseWorkspaceContentStreamName, $events, $contentStreamWasForked->getVersionOfSourceContentStream());
         } catch (ConcurrencyException $e) {
             throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf('The base workspace has been modified in the meantime; please rebase. Expected version %d of source content stream %s', $contentStreamWasForked->getVersionOfSourceContentStream(), $baseWorkspace->getCurrentContentStreamIdentifier()));
@@ -277,7 +278,7 @@ final class WorkspaceCommandHandler
             )
         );
 
-        $workspaceContentStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($workspace->getCurrentContentStreamIdentifier());
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
 
         $workspaceContentStream = $eventStore->get(new StreamNameFilter($workspaceContentStreamName));

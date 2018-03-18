@@ -12,7 +12,6 @@ Feature: Node References with Dimensions
       | Identifier | Default | Values          | Generalizations      |
       | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
 
-
     And the command "CreateRootWorkspace" is executed with payload:
       | Key                      | Value                                | Type |
       | workspaceName            | live                                 |      |

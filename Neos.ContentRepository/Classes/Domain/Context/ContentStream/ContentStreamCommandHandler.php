@@ -37,20 +37,15 @@ final class ContentStreamCommandHandler
 
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @return string
-     * @deprecated fetch a content stream and ask it instead
+     * @param Command\CreateContentStream $command
+     * @throws ContentStreamAlreadyExists
      */
-    public static function getStreamNameForContentStream(ContentStreamIdentifier $contentStreamIdentifier)
-    {
-        return 'Neos.ContentRepository:ContentStream:' . $contentStreamIdentifier;
-    }
-
     public function handleCreateContentStream(Command\CreateContentStream $command)
     {
-        $contentStream = $this->contentStreamRepository->getContentStream($command->getContentStreamIdentifier());
+        $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
+
         $this->eventPublisher->publish(
-            $contentStream->getStreamName(),
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier()),
             new Event\ContentStreamWasCreated(
                 $command->getContentStreamIdentifier(),
                 $command->getInitiatingUserIdentifier()
@@ -58,18 +53,48 @@ final class ContentStreamCommandHandler
         );
     }
 
+    /**
+     * @param Command\ForkContentStream $command
+     * @throws ContentStreamAlreadyExists
+     * @throws ContentStreamDoesNotExistYet
+     */
     public function handleForkContentStream(Command\ForkContentStream $command)
     {
-        $sourceContentStream = $this->contentStreamRepository->getContentStream($command->getSourceContentStreamIdentifier());
-        $contentStream = $this->contentStreamRepository->getContentStream($command->getContentStreamIdentifier());
+        $this->requireContentStreamToExist($command->getSourceContentStreamIdentifier());
+        $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
+
+        $sourceContentStream = $this->contentStreamRepository->findContentStream($command->getSourceContentStreamIdentifier());
 
         $this->eventPublisher->publish(
-            $contentStream->getStreamName(),
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier()),
             new Event\ContentStreamWasForked(
                 $command->getContentStreamIdentifier(),
                 $command->getSourceContentStreamIdentifier(),
                 $sourceContentStream->getVersion()
             )
         );
+    }
+
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @throws ContentStreamAlreadyExists
+     */
+    protected function requireContentStreamToNotExistYet(ContentStreamIdentifier $contentStreamIdentifier)
+    {
+        if ($this->contentStreamRepository->findContentStream($contentStreamIdentifier)) {
+            throw new ContentStreamAlreadyExists('Content stream "' . $contentStreamIdentifier . '" already exists.', 1521386345);
+        }
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @throws ContentStreamDoesNotExistYet
+     */
+    protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier)
+    {
+        if (!$this->contentStreamRepository->findContentStream($contentStreamIdentifier)) {
+            throw new ContentStreamDoesNotExistYet('Content stream "' . $contentStreamIdentifier . '" does not exist yet.', 1521386692);
+        }
     }
 }

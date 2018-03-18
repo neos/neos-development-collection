@@ -13,6 +13,8 @@ namespace Neos\ContentRepository\Domain\Context\ContentStream;
 
 use Neos\ContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcing\EventStore\EventStoreManager;
+use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
+use Neos\EventSourcing\EventStore\StreamNameFilter;
 
 /**
  * A content stream to write events into
@@ -48,9 +50,22 @@ final class ContentStreamRepository
     }
 
 
-    public function getContentStream(ContentStreamIdentifier $contentStreamIdentifier): ContentStream
+    public function findContentStream(ContentStreamIdentifier $contentStreamIdentifier): ?ContentStream
     {
         if (!isset($this->contentStreams[(string)$contentStreamIdentifier])) {
+            $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
+            $eventStore = $this->eventStoreManager->getEventStoreForStreamName($eventStreamName);
+            try {
+                $eventStream = $eventStore->get(new StreamNameFilter($eventStreamName));
+                $eventStream->rewind();
+                if (!$eventStream->current()) {
+                    // a content stream without events in its event stream does not exist yet
+                    return null;
+                }
+            } catch (EventStreamNotFoundException $e) {
+                return null;
+            }
+
             $this->contentStreams[(string)$contentStreamIdentifier] = new ContentStream($contentStreamIdentifier, $this->eventStoreManager, $this->nodeEventPublisher);
         }
 
