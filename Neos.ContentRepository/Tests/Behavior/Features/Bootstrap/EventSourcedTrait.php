@@ -351,7 +351,6 @@ trait EventSourcedTrait
         }
     }
 
-
     /**
      * @When /^the command "([^"]*)" is executed with payload:$/
      * @Given /^the command "([^"]*)" was executed with payload:$/
@@ -390,7 +389,7 @@ trait EventSourcedTrait
     /**
      * @When /^the command "([^"]*)" is executed with payload and exceptions are caught:$/
      */
-    public function theCommandIsExecutedWithPayloadAndExceptionsAreCatched($shortCommandName, TableNode $payloadTable)
+    public function theCommandIsExecutedWithPayloadAndExceptionsAreCaught($shortCommandName, TableNode $payloadTable)
     {
         try {
             $this->theCommandIsExecutedWithPayload($shortCommandName, $payloadTable);

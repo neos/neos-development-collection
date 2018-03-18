@@ -62,7 +62,7 @@ final class ContentStreamRepository
                     // a content stream without events in its event stream does not exist yet
                     return null;
                 }
-            } catch (EventStreamNotFoundException $e) {
+            } catch (EventStreamNotFoundException $eventStreamNotFound) {
                 return null;
             }
 
