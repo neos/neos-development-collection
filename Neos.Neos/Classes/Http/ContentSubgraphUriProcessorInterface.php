@@ -12,7 +12,7 @@ namespace Neos\Neos\Http;
  */
 
 use Neos\Flow\Mvc\Routing;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
 
 /**
  * The interface for content subgraph URI processors
@@ -20,8 +20,8 @@ use Neos\Neos\Domain\Context\Content\ContentQuery;
 interface ContentSubgraphUriProcessorInterface
 {
     /**
-     * @param ContentQuery $contentQuery
+     * @param NodeAddress $nodeAddress
      * @return Routing\Dto\UriConstraints
      */
-    public function resolveDimensionUriConstraints(ContentQuery $contentQuery): Routing\Dto\UriConstraints;
+    public function resolveDimensionUriConstraints(NodeAddress $nodeAddress): Routing\Dto\UriConstraints;
 }

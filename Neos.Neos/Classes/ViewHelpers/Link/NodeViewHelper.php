@@ -17,7 +17,8 @@ use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressService;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 
@@ -122,6 +123,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     protected $nodeShortcutResolver;
 
     /**
+     * @Flow\Inject
+     * @var NodeAddressService
+     */
+    protected $nodeAddressService;
+
+    /**
      * Initialize arguments
      *
      * @return void
@@ -153,9 +160,8 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      */
     public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $nodeVariableName = 'linkedNode', $resolveShortcuts = true, ContentSubgraphInterface $subgraph = null)
     {
-        /** @var ContentQuery $contentQuery */
-        $contentQuery = $this->getContextVariable('contentQuery');
         $uri = null;
+        $nodeAddress = null;
 
         $resolvedNode = null;
         if ($node instanceof NodeInterface) {
@@ -165,14 +171,21 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             //$resolvedNode = $resolveShortcuts ? $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node) : $node;
             $resolvedNode = $node;
             if ($resolvedNode instanceof NodeInterface) {
-                $contentQuery = $contentQuery->withNodeAggregateIdentifier($resolvedNode->getNodeAggregateIdentifier());
+                $nodeAddress = NodeAddress::fromNode($node);
             } else {
                 $uri = $resolvedNode;
             }
         } elseif ($node === '~') {
-            $contentQuery = $contentQuery->withNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
+            /* @var $documentNode \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
+            $documentNode = $this->getContextVariable('documentNode');
+            $nodeAddress = NodeAddress::fromNode($documentNode);
+            $siteNode = $this->nodeAddressService->findSiteNodeForNodeAddress($nodeAddress);
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($siteNode->getNodeAggregateIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
-            $contentQuery = $contentQuery->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
+            /* @var $documentNode \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
+            $documentNode = $this->getContextVariable('documentNode');
+            $nodeAddress = NodeAddress::fromNode($documentNode);
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
         } else {
             // @todo add path support
             return '';
@@ -180,7 +193,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
         if (!$uri) {
             if ($subgraph) {
-                $contentQuery = $contentQuery->withDimensionSpacePoint($subgraph->getDimensionSpacePoint());
+                $nodeAddress = $nodeAddress->withDimensionSpacePoint($subgraph->getDimensionSpacePoint());
             }
 
             $uriBuilder = new UriBuilder();
@@ -195,7 +208,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             $uri = $uriBuilder->uriFor(
                 'show',
                 [
-                    'node' => $contentQuery
+                    'node' => $nodeAddress
                 ],
                 'Frontend\Node',
                 'Neos.Neos'

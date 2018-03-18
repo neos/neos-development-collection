@@ -30,8 +30,8 @@ use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
 use Neos\Flow\Security\Context;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
-use Neos\Neos\Domain\Context\Content\Exception\InvalidContentQuerySerializationException;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressService;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Http\ContentSubgraphUriProcessor;
 
@@ -69,6 +69,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressService
+     */
+    protected $nodeAddressService;
 
     /**
      * @Flow\Inject
@@ -120,11 +126,11 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         if ($this->onlyMatchSiteNodes() && \mb_substr_count($requestPath, '/') > $this->getUriPathSegmentOffset()) {
             return false;
         }
-        /** @var Node $matchingRootNode */
+        /** @var NodeInterface $matchingRootNode */
         $matchingRootNode = null;
-        /** @var Node $matchingNode */
+        /** @var NodeInterface $matchingNode */
         $matchingNode = null;
-        /** @var Node $matchingSite */
+        /** @var NodeInterface $matchingSite */
         $matchingSite = null;
         $tagArray = [];
 
@@ -152,13 +158,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             throw new Exception\NoHomepageException('Homepage could not be loaded. Probably you haven\'t imported a site yet', 1346950755);
         }
 
-        return new MatchResult((string)new ContentQuery(
-            $matchingNode->getNodeAggregateIdentifier(),
-            $this->getWorkspaceNameFromParameters() ?: WorkspaceName::forLive(),
-            $this->getDimensionSpacePointFromParameters(),
-            $matchingSite->getNodeAggregateIdentifier(),
-            $matchingRootNode->getNodeIdentifier()
-        ), RouteTags::createFromArray($tagArray));
+
+
+        return new MatchResult(NodeAddress::fromNode($matchingNode)->serializeForUri(), RouteTags::createFromArray($tagArray));
     }
 
     /**
@@ -280,7 +282,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     }
 
     /**
-     * Checks, whether given value is a ContentQuery object and if so, sets $this->value to the respective route path.
+     * Checks, whether given value is a NodeAddress object and if so, sets $this->value to the respective route path.
      *
      * In order to render a suitable frontend URI, this function strips off the path to the site node and only keeps
      * the actual node path relative to that site node. In practice this function would set $this->value as follows:
@@ -298,26 +300,23 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function resolveValue($node)
     {
-        $contentQuery = $node;
-        if (!$contentQuery instanceof ContentQuery && !is_string($contentQuery)) {
+        $nodeAddress = $node;
+        if (!$nodeAddress instanceof NodeAddress && !is_string($nodeAddress)) {
             return false;
         }
 
-        if (is_string($contentQuery)) {
+        if (is_string($nodeAddress)) {
             try {
-                $contentQuery = ContentQuery::fromJson($contentQuery);
-            } catch (InvalidContentQuerySerializationException $exception) {
+                $nodeAddress = NodeAddress::fromUriString($nodeAddress);
+            } catch (\Throwable $exception) {
                 $this->exceptionLogger->logThrowable($exception);
 
                 return false;
             }
         }
-        /** @var ContentQuery $contentQuery */
-
-        $workspace = $this->workspaceFinder->findOneByName($contentQuery->getWorkspaceName());
-
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($workspace->getCurrentContentStreamIdentifier(), $contentQuery->getDimensionSpacePoint());
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getNodeAggregateIdentifier());
+        /** @var NodeAddress $nodeAddress */
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint());
+        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
         if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {
             return false;
@@ -329,10 +328,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         $routePath = $isSiteNode ? '' : $this->getRequestPathByNode($subgraph, $node);
-        if (!$contentQuery->getWorkspaceName()->isLive()) {
+
+        if (!$this->nodeAddressService->isInLiveWorkspace($nodeAddress)) {
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($nodeAddress->getContentStreamIdentifier());
             $routePath .= WorkspaceNameAndDimensionSpacePointForUriSerialization::fromWorkspaceAndDimensionSpacePoint($workspace->getWorkspaceName(), $subgraph->getDimensionSpacePoint())->toBackendUriSuffix();
         }
-        $uriConstraints = $this->contentSubgraphUriProcessor->resolveDimensionUriConstraints($contentQuery, $isSiteNode);
+        $uriConstraints = $this->contentSubgraphUriProcessor->resolveDimensionUriConstraints($nodeAddress, $isSiteNode);
 
         return new ResolveResult($routePath, $uriConstraints);
     }

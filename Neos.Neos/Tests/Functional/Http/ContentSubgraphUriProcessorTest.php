@@ -16,7 +16,6 @@ use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Neos\Http\BasicContentDimensionResolutionMode;
 use Neos\Neos\Http\ContentSubgraphUriProcessor;
 use Neos\Utility\ObjectAccess;

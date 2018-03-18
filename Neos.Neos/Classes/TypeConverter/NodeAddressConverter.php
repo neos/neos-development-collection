@@ -14,7 +14,7 @@ namespace Neos\Neos\TypeConverter;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
 
 /**
  * An Object Converter for content queries which can be used for routing (but also for other
@@ -22,33 +22,32 @@ use Neos\Neos\Domain\Context\Content\ContentQuery;
  *
  * @Flow\Scope("singleton")
  */
-class ContentQueryToStringConverter extends AbstractTypeConverter
+class NodeAddressConverter extends AbstractTypeConverter
 {
     /**
      * @var array
      */
-    protected $sourceTypes = [ContentQuery::class];
+    protected $sourceTypes = ['string'];
 
     /**
      * @var string
      */
-    protected $targetType = 'string';
+    protected $targetType = NodeAddress::class;
 
     /**
      * @var int
      */
     protected $priority = 1;
 
-
     /**
-     * @param ContentQuery $source
+     * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return string
+     * @return NodeAddress
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): string
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): NodeAddress
     {
-        return json_encode($source);
+        return NodeAddress::fromUriString($source);
     }
 }

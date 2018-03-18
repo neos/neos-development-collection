@@ -15,7 +15,8 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressService;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
@@ -60,6 +61,12 @@ class ConvertUrisImplementation extends AbstractFusionObject
     protected $linkingService;
 
     /**
+     * @Flow\Inject
+     * @var NodeAddressService
+     */
+    protected $nodeAddressService;
+
+    /**
      * Convert URIs matching a supported scheme with generated URIs
      *
      * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
@@ -80,29 +87,27 @@ class ConvertUrisImplementation extends AbstractFusionObject
             throw new Exception(sprintf('Only strings can be processed by this Fusion object, given: "%s".', gettype($text)), 1382624080);
         }
 
+        /* @var $node NodeInterface */
         $node = $this->fusionValue('node');
 
         if (!$node instanceof NodeInterface) {
             throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
         }
 
-        /** @var ContentQuery $contentQuery */
-        $contentQuery = $this->getRuntime()->getCurrentContext()['contentQuery'];
-        if (!$contentQuery) {
-            throw new Exception(sprintf('The request content query must be available in the current Fusion runtime.'), 1519740215);
-        }
 
-        if (!$contentQuery->getWorkspaceName()->isLive() && !($this->fusionValue('forceConversion'))) {
+        $nodeAddress = NodeAddress::fromNode($node);
+
+        if (!$this->nodeAddressService->isInLiveWorkspace($nodeAddress) && !($this->fusionValue('forceConversion'))) {
             return $text;
         }
 
         $unresolvedUris = [];
         $absolute = $this->fusionValue('absolute');
 
-        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use (&$unresolvedUris, $absolute, $contentQuery) {
+        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use (&$unresolvedUris, $absolute, $nodeAddress) {
             switch ($matches[1]) {
                 case 'node':
-                    $contentQuery = $contentQuery->withNodeAggregateIdentifier(new NodeAggregateIdentifier($matches[2]));
+                    $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(new NodeAggregateIdentifier($matches[2]));
                     $uriBuilder = new UriBuilder();
                     $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
                     $uriBuilder->setCreateAbsoluteUri($absolute);
@@ -110,7 +115,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     $resolvedUri = $uriBuilder->uriFor(
                         'show',
                         [
-                            'node' => $contentQuery
+                            'node' => $nodeAddress
                         ],
                         'Frontend\Node',
                         'Neos.Neos'

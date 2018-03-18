@@ -11,19 +11,26 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressService;
 
 /**
  * Create a link to a node
  */
 class NodeUriImplementation extends AbstractFusionObject
 {
+    /**
+     * @Flow\Inject
+     * @var NodeAddressService
+     */
+    protected $nodeAddressService;
+
     /**
      * A node object or a string node path or NULL to resolve the current document node
      *
@@ -120,20 +127,19 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        /** @var ContentQuery $contentQuery */
-        $contentQuery = $this->runtime->getCurrentContext()['contentQuery'];
         $node = $this->getNode();
+        $nodeAddress = NodeAddress::fromNode($node);
         if ($node instanceof NodeInterface) {
-            $contentQuery = $contentQuery->withNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
         } elseif ($node === '~') {
-            $contentQuery = $contentQuery->withNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($this->nodeAddressService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
-            $contentQuery = $contentQuery->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
         } else {
             return '';
         }
         if ($this->getSubgraph()) {
-            $contentQuery = $contentQuery->withDimensionSpacePoint($this->getSubgraph()->getDimensionSpacePoint());
+            $nodeAddress = $nodeAddress->withDimensionSpacePoint($this->getSubgraph()->getDimensionSpacePoint());
         }
 
         $uriBuilder = new UriBuilder();
@@ -149,9 +155,9 @@ class NodeUriImplementation extends AbstractFusionObject
         return $uriBuilder->uriFor(
             'show',
             [
-                'node' => $contentQuery
+                'node' => $nodeAddress
             ],
-            'Frontend/Node',
+            'Frontend\\Node',
             'Neos.Neos'
         );
     }

@@ -16,7 +16,6 @@ use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
 
 /**
  * An Object Converter for content subgraphs

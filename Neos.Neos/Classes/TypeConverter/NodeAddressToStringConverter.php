@@ -14,25 +14,25 @@ namespace Neos\Neos\TypeConverter;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Neos\Domain\Context\Content\ContentQuery;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
 
 /**
- * An Object Converter for content queries which can be used for routing (but also for other
+ * An Object Converter for Node Addresses which can be used for routing (but also for other
  * purposes) as a plugin for the Property Mapper.
  *
  * @Flow\Scope("singleton")
  */
-class ContentQueryConverter extends AbstractTypeConverter
+class NodeAddressToStringConverter extends AbstractTypeConverter
 {
     /**
      * @var array
      */
-    protected $sourceTypes = ['string'];
+    protected $sourceTypes = [NodeAddress::class];
 
     /**
      * @var string
      */
-    protected $targetType = ContentQuery::class;
+    protected $targetType = 'string';
 
     /**
      * @var int
@@ -41,25 +41,14 @@ class ContentQueryConverter extends AbstractTypeConverter
 
 
     /**
-     * @param mixed $source
-     * @param string $targetType
-     * @return bool
-     */
-    public function canConvertFrom($source, $targetType): bool
-    {
-        return !is_null(json_decode($source));
-    }
-
-    /**
-     * @param mixed $source
+     * @param NodeAddress $source
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return ContentQuery
-     * @throws \Neos\Neos\Domain\Context\Content\Exception\InvalidContentQuerySerializationException
+     * @return string
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): ContentQuery
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): string
     {
-        return ContentQuery::fromJson($source);
+        return $source->serializeForUri();
     }
 }
