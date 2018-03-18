@@ -44,7 +44,7 @@
 			<target xml:lang="es-ES" state="translated">Crear después</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="es-ES" state="translated">Crear nuevo</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Crear nuevo</target><alt-trans><target xml:lang="es-ES">Crear nueva</target></alt-trans></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
 			<target xml:lang="es-ES" state="translated">Cerrar</target></trans-unit>
