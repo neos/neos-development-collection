@@ -163,13 +163,13 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeName                      | content                                                                                                                                                                                                                       |                        |
       | propertyDefaultValuesAndTypes | {}                                                                                                                                                                                                                            | json                   |
     When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              | Type                         |
-      | contentStreamIdentifier                     | cs-identifier                      | Uuid                         |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} | DimensionSpacePoint          |
-      | nodeAggregateIdentifier                     | cdoc-agg-identifier                | Uuid                         |
-      | newParentNodeAggregateIdentifier            | content-agg-identifier             | Uuid                         |
-      | newSucceedingSiblingNodeAggregateIdentifier |                                    | null                         |
-      | relationDistributionStrategy                | scatter                            | RelationDistributionStrategy |
+      | Key                                         | Value                              | Type                |
+      | contentStreamIdentifier                     | cs-identifier                      | Uuid                |
+      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} | DimensionSpacePoint |
+      | nodeAggregateIdentifier                     | cdoc-agg-identifier                | Uuid                |
+      | newParentNodeAggregateIdentifier            | content-agg-identifier             | Uuid                |
+      | newSucceedingSiblingNodeAggregateIdentifier |                                    | null                |
+      | relationDistributionStrategy                | scatter                            |                     |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move a node to a parent whose parent's node type does not allow grand child nodes of the node's type
