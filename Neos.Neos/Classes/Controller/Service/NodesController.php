@@ -11,6 +11,7 @@ namespace Neos\Neos\Controller\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\Exception;
@@ -108,8 +109,19 @@ class NodesController extends ActionController
         }
 
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
+        $nodes = [];
+
+        if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $searchTerm) !== 0
+            && $contentContext->getNodeByIdentifier($searchTerm) instanceof NodeInterface
+        ) {
+            $nodes[] = $contentContext->getNodeByIdentifier($searchTerm);
+        }
+
         if ($nodeIdentifiers === array()) {
-            $nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode);
+            $nodes = array_merge(
+                $nodes,
+                $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode)
+            );
         } else {
             $nodes = array_map(function ($identifier) use ($contentContext) {
                 return $contentContext->getNodeByIdentifier($identifier);

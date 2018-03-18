@@ -22,7 +22,6 @@ use Neos\Flow\Annotations as Flow;
  */
 interface ContentElementEditableServiceInterface
 {
-
     /**
      * Wrap the $content identified by $node with the needed markup for the backend.
      *

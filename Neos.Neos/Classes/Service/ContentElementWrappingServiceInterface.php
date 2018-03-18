@@ -21,8 +21,6 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
  */
 interface ContentElementWrappingServiceInterface
 {
-
-
     /**
      * Wrap the $content identified by $node with the needed markup for the backend.
      *
@@ -32,5 +30,15 @@ interface ContentElementWrappingServiceInterface
      * @param string $fusionPath
      * @return string
      */
-    public function wrapContentObject(NodeInterface $node, ContentSubgraphInterface $subgraph, $content, $fusionPath);
+    public function wrapContentObject(NodeInterface $node, ContentSubgraphInterface $subgraph, $content, $fusionPath): string;
+
+    /**
+     * @param NodeInterface $node
+     * @param ContentSubgraphInterface $subgraph
+     * @param $content
+     * @param $fusionPath
+     * @param array $additionalAttributes
+     * @return string
+     */
+    function wrapCurrentDocumentMetadata(NodeInterface $node, ContentSubgraphInterface $subgraph, $content, $fusionPath, array $additionalAttributes = []): string;
 }

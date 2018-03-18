@@ -4,13 +4,15 @@
 # This is used to render required data-node-* attributes to content elements in the backend
 #
 prototype(Neos.Neos:ContentElementWrapping) {
-	@class = 'Neos\\Neos\\Fusion\\ContentElementWrappingImplementation'
-	node = ${node}
+    @class = 'Neos\\Neos\\Fusion\\ContentElementWrappingImplementation'
+    node = ${node}
 
-  // default subgraph for TraversableNodeInterface
-  subgraph = ${node.subgraph}
+    // default subgraph for TraversableNodeInterface
+    subgraph = ${node.subgraph}
 
-  value = ${value}
-	# This should only be set to TRUE to render the metadata for the currently rendered document node as that is treated differently.
-	renderCurrentDocumentMetadata = FALSE
+    value = ${value}
+    # Additional attributes in the form '<attribute-name>': '<attribute-value>' that will be rendered in the ContentElementWrapping
+    additionalAttributes = Neos.Fusion:RawArray
+    # This should only be set to TRUE to render the metadata for the currently rendered document node as that is treated differently.
+    renderCurrentDocumentMetadata = FALSE
 }

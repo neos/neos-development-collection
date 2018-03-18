@@ -53,6 +53,16 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
 
 
     /**
+     * Additional attributes to be rendered in the ContentElementWrapping
+     *
+     * @return array
+     */
+    public function getAdditionalAttributes()
+    {
+        return $this->fusionValue('additionalAttributes') ?? [];
+    }
+
+    /**
      * Evaluate this Fusion object and return the result
      *
      * @return mixed
@@ -75,6 +85,11 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
         //if ($node->isRemoved()) {
         //    $content = '';
         //}
+
+
+        if ($this->fusionValue('renderCurrentDocumentMetadata')) {
+            return $this->contentElementWrappingService->wrapCurrentDocumentMetadata($node, $this->getSubgraph(), $content, $this->getContentElementFusionPath(), $this->getAdditionalAttributes());
+        }
 
         return $this->contentElementWrappingService->wrapContentObject($node, $this->getSubgraph(), $content, $this->getContentElementFusionPath());
     }
