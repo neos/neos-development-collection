@@ -104,31 +104,6 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
     abstract protected function buildItems();
 
     /**
-     * Helper Method: Calculates the state of the given menu item (node) depending on the currentNode.
-     *
-     * This method needs to be called inside buildItems() in the subclasses.
-     *
-     * @param NodeInterface $node
-     * @return string
-     */
-    protected function calculateItemState(NodeInterface $node = null)
-    {
-        if ($node === null) {
-            return self::STATE_ABSENT;
-        }
-
-        if ($node === $this->currentNode) {
-            return self::STATE_CURRENT;
-        }
-
-        if ($node !== $this->currentNode->getContext()->getCurrentSiteNode() && in_array($node, $this->getCurrentNodeRootline(), true)) {
-            return self::STATE_ACTIVE;
-        }
-
-        return self::STATE_NORMAL;
-    }
-
-    /**
      * Return TRUE/FALSE if the node is currently hidden or not in the menu; taking the "renderHiddenInIndex" configuration
      * of the Menu Fusion object into account.
      *
