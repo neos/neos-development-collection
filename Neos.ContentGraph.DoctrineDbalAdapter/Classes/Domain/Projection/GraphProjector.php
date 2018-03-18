@@ -463,10 +463,10 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
-     * @param Event\NodeSpecializationWasCreated $event
+     * @param \Neos\ContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationWasCreated $event
      * @throws \Exception
      */
-    public function whenNodeSpecializationWasCreated(Event\NodeSpecializationWasCreated $event): void
+    public function whenNodeSpecializationWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeSpecializationWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getNodeAggregateIdentifier(), $event->getContentStreamIdentifier(), $event->getSourceDimensionSpacePoint());
@@ -501,18 +501,18 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
-     * @param Event\NodeGeneralizationWasCreated $event
+     * @param \Neos\ContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationWasCreated $event
      * @throws \Exception
      */
-    public function whenNodeGeneralizationWasCreated(Event\NodeGeneralizationWasCreated $event): void
+    public function whenNodeGeneralizationWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeGeneralizationWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
-            $sourceNode = $this->projectionContentGraph->getNode($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getNodeAggregateIdentifier(), $event->getContentStreamIdentifier(), $event->getSourceDimensionSpacePoint());
             $sourceHierarchyRelation = $this->projectionContentGraph->findInboundHierarchyRelationsForNode(
                 $sourceNode->relationAnchorPoint,
                 $event->getContentStreamIdentifier(),
-                new DimensionSpacePointSet([$event->getSourceLocation()])
-            )[$event->getSourceLocation()->getHash()] ?? null;
+                new DimensionSpacePointSet([$event->getSourceDimensionSpacePoint()])
+            )[$event->getSourceDimensionSpacePoint()->getHash()] ?? null;
             if (is_null($sourceHierarchyRelation)) {
                 throw new \Exception('Seems someone tried to generalize a root node and I don\'t have a proper name yet', 1519995795);
             }

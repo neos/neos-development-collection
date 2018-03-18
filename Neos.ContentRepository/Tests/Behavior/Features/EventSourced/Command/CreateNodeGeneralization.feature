@@ -26,37 +26,38 @@ Feature: Create node generalization
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                          | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                  | Uuid                   |
-      | nodeAggregateIdentifier       | doc-agg-identifier                                             | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository:Document                                |                        |
-      | dimensionSpacePoint           | {"market":"CH", "language":"gsw"}                              | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"market":"CH", "language":"gsw"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | doc-identifier-ch-gsw                                          | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                                                  | Uuid                   |
-      | nodeName                      | document                                                       |                        |
-      | propertyDefaultValuesAndTypes | {}                                                             | json                   |
+      | Key                           | Value                                                          | Type                    |
+      | contentStreamIdentifier       | cs-identifier                                                  | Uuid                    |
+      | nodeAggregateIdentifier       | doc-agg-identifier                                             | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document                                |                         |
+      | dimensionSpacePoint           | {"market":"CH", "language":"gsw"}                              | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"market":"CH", "language":"gsw"}}]} | DimensionSpacePointSet  |
+      | nodeIdentifier                | doc-identifier-ch-gsw                                          | Uuid                    |
+      | parentNodeIdentifier          | rn-identifier                                                  | Uuid                    |
+      | nodeName                      | document                                                       |                         |
+      | propertyDefaultValuesAndTypes | {}                                                             | json                    |
     # We also want to add a child node to make sure it is still reachable after creating a generalization of the parent
     # Node /document/child-document
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                          | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                  | Uuid                   |
-      | nodeAggregateIdentifier       | cdoc-agg-identifier                                            | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository:Document                                |                        |
-      | dimensionSpacePoint           | {"market":"CH", "language":"gsw"}                              | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"market":"CH", "language":"gsw"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | cdoc-identifier-ch-gsw                                         | Uuid                   |
-      | parentNodeIdentifier          | doc-identifier-ch-gsw                                          | Uuid                   |
-      | nodeName                      | child-document                                                 |                        |
-      | propertyDefaultValuesAndTypes | {}                                                             | json                   |
+      | Key                           | Value                                                          | Type                    |
+      | contentStreamIdentifier       | cs-identifier                                                  | Uuid                    |
+      | nodeAggregateIdentifier       | cdoc-agg-identifier                                            | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document                                |                         |
+      | dimensionSpacePoint           | {"market":"CH", "language":"gsw"}                              | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"market":"CH", "language":"gsw"}}]} | DimensionSpacePointSet  |
+      | nodeIdentifier                | cdoc-identifier-ch-gsw                                         | Uuid                    |
+      | parentNodeIdentifier          | doc-identifier-ch-gsw                                          | Uuid                    |
+      | nodeName                      | child-document                                                 |                         |
+      | propertyDefaultValuesAndTypes | {}                                                             | json                    |
 
   Scenario: Create generalization of node to dimension space point without further generalizations
     When the command CreateNodeGeneralization was published with payload:
-      | Key                       | Value                            | Type                |
-      | contentStreamIdentifier   | cs-identifier                    | Uuid                |
-      | nodeIdentifier            | doc-identifier-ch-gsw            | Uuid                |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"de"} | DimensionSpacePoint |
-      | generalizationIdentifier  | doc-identifier-de-de             | Uuid                |
+      | Key                       | Value                             | Type                    |
+      | contentStreamIdentifier   | cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier   | doc-agg-identifier                | NodeAggregateIdentifier |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} | DimensionSpacePoint     |
+      | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  | DimensionSpacePoint     |
+      | generalizationIdentifier  | doc-identifier-de-de              | Uuid                    |
     And the graph projection is fully up to date
     And I am in content stream "[cs-identifier]" and Dimension Space Point {"market":"CH", "language":"gsw"}
     Then I expect a node "[doc-identifier-ch-gsw]" to exist in the graph projection
@@ -85,11 +86,12 @@ Feature: Create node generalization
 
   Scenario: Create generalization of node to dimension space point with further generalizations
     When the command CreateNodeGeneralization was published with payload:
-      | Key                       | Value                             | Type                |
-      | contentStreamIdentifier   | cs-identifier                     | Uuid                |
-      | nodeIdentifier            | doc-identifier-ch-gsw             | Uuid                |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"gsw"} | DimensionSpacePoint |
-      | generalizationIdentifier  | doc-identifier-de-gsw             | Uuid                |
+      | Key                       | Value                             | Type                    |
+      | contentStreamIdentifier   | cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier   | doc-agg-identifier                | NodeAggregateIdentifier |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} | DimensionSpacePoint     |
+      | targetDimensionSpacePoint | {"market":"DE", "language":"gsw"} | DimensionSpacePoint     |
+      | generalizationIdentifier  | doc-identifier-de-gsw             | Uuid                    |
     And the graph projection is fully up to date
     And I am in content stream "[cs-identifier]" and Dimension Space Point {"market":"CH", "language":"gsw"}
     Then I expect a node "[doc-identifier-ch-gsw]" to exist in the graph projection
@@ -119,38 +121,31 @@ Feature: Create node generalization
     # @todo test against already existing variants in the extended visibility subspace
   # @todo test against parent visibility subspace
 
-  Scenario: Try to create a generalization of a node to a more specialized dimension space point
-    Given the event NodeGeneralizationWasCreated was published with payload:
-      | Key                      | Value                                                                                                                                                              | Type                   |
-      | contentStreamIdentifier  | cs-identifier                                                                                                                                                      | Uuid                   |
-      | nodeIdentifier           | doc-identifier-ch-gsw                                                                                                                                              | Uuid                   |
-      | sourceLocation           | {"market":"CH", "language":"gsw"}                                                                                                                                  | DimensionSpacePoint    |
-      | generalizationIdentifier | doc-identifier-de-de                                                                                                                                               | Uuid                   |
-      | generalizationLocation   | {"market":"DE", "language":"de"}                                                                                                                                   | DimensionSpacePoint    |
-      | generalizationVisibility | {"points":[{"coordinates":{"market":"DE", "language":"de"}}, {"coordinates":{"market":"DE", "language":"gsw"}}, {"coordinates":{"market":"CH", "language":"de"}}]} | DimensionSpacePointSet |
-
+  Scenario: Try to create a generalization of a node in a more specialized dimension space point
     When the command CreateNodeGeneralization was published with payload and exceptions are caught:
-      | Key                       | Value                             | Type                |
-      | contentStreamIdentifier   | cs-identifier                     | Uuid                |
-      | nodeIdentifier            | doc-identifier-de-de              | Uuid                |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"gsw"} | DimensionSpacePoint |
-      | generalizationIdentifier  | doc-identifier-de-gsw             | Uuid                |
+      | Key                       | Value                             | Type                    |
+      | contentStreamIdentifier   | cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier   | doc-agg-identifier                | NodeAggregateIdentifier |
+      | sourceDimensionSpacePoint | {"market":"DE", "language":"de"}  | DimensionSpacePoint     |
+      | targetDimensionSpacePoint | {"market":"DE", "language":"gsw"} | DimensionSpacePoint     |
+      | generalizationIdentifier  | doc-identifier-de-gsw             | Uuid                    |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsNoGeneralization"
 
   Scenario: Try to create a generalization of a node to an already occupied dimension space point
     Given the event NodeGeneralizationWasCreated was published with payload:
-      | Key                      | Value                                                                                                                                                              | Type                   |
-      | contentStreamIdentifier  | cs-identifier                                                                                                                                                      | Uuid                   |
-      | nodeIdentifier           | doc-identifier-ch-gsw                                                                                                                                              | Uuid                   |
-      | sourceLocation           | {"market":"CH", "language":"gsw"}                                                                                                                                  | DimensionSpacePoint    |
-      | generalizationIdentifier | doc-identifier-de-de                                                                                                                                               | Uuid                   |
-      | generalizationLocation   | {"market":"DE", "language":"de"}                                                                                                                                   | DimensionSpacePoint    |
-      | generalizationVisibility | {"points":[{"coordinates":{"market":"DE", "language":"de"}}, {"coordinates":{"market":"DE", "language":"gsw"}}, {"coordinates":{"market":"CH", "language":"de"}}]} | DimensionSpacePointSet |
+      | Key                       | Value                                                                                                                                                              | Type                    |
+      | contentStreamIdentifier   | cs-identifier                                                                                                                                                      | Uuid                    |
+      | nodeAggregateIdentifier   | doc-agg-identifier                                                                                                                                                 | NodeAggregateIdentifier |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                                                                                  | DimensionSpacePoint     |
+      | generalizationIdentifier  | doc-identifier-de-de                                                                                                                                               | Uuid                    |
+      | generalizationLocation    | {"market":"DE", "language":"de"}                                                                                                                                   | DimensionSpacePoint     |
+      | generalizationVisibility  | {"points":[{"coordinates":{"market":"DE", "language":"de"}}, {"coordinates":{"market":"DE", "language":"gsw"}}, {"coordinates":{"market":"CH", "language":"de"}}]} | DimensionSpacePointSet  |
 
     When the command CreateNodeGeneralization was published with payload and exceptions are caught:
-      | Key                       | Value                            | Type                |
-      | contentStreamIdentifier   | cs-identifier                    | Uuid                |
-      | nodeIdentifier            | doc-identifier-ch-gsw            | Uuid                |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"de"} | DimensionSpacePoint |
-      | generalizationIdentifier  | doc-identifier-de-de             | Uuid                |
-    Then the last command should have thrown an exception of type "DimensionSpacePointIsAlreadyOccupiedInNodeAggregate"
+      | Key                       | Value                             | Type                    |
+      | contentStreamIdentifier   | cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier   | doc-agg-identifier                | NodeAggregateIdentifier |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} | DimensionSpacePoint     |
+      | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  | DimensionSpacePoint     |
+      | generalizationIdentifier  | doc-identifier-de-de              | Uuid                    |
+    Then the last command should have thrown an exception of type "DimensionSpacePointIsAlreadyOccupied"

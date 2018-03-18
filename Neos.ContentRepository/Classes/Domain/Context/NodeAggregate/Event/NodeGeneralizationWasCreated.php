@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Domain\Context\Node\Event;
+namespace Neos\ContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +12,9 @@ namespace Neos\ContentRepository\Domain\Context\Node\Event;
  */
 
 use Neos\ContentRepository\Domain;
+use Neos\ContentRepository\Domain\Context\ContentStream;
+use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
+use Neos\ContentRepository\Domain\Context\NodeAggregate;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
@@ -20,19 +23,19 @@ use Neos\EventSourcing\Event\EventInterface;
 final class NodeGeneralizationWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
-     * @var \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @var ContentStream\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
     /**
-     * @var Domain\ValueObject\NodeIdentifier
+     * @var NodeAggregate\NodeAggregateIdentifier
      */
-    protected $nodeIdentifier;
+    protected $nodeAggregateIdentifier;
 
     /**
      * @var Domain\ValueObject\DimensionSpacePoint
      */
-    protected $sourceLocation;
+    protected $sourceDimensionSpacePoint;
 
     /**
      * @var Domain\ValueObject\NodeIdentifier
@@ -51,24 +54,24 @@ final class NodeGeneralizationWasCreated implements EventInterface, CopyableAcro
 
 
     /**
-     * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
-     * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier
-     * @param Domain\ValueObject\DimensionSpacePoint $sourceLocation
+     * @param ContentStream\ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint
      * @param Domain\ValueObject\NodeIdentifier $generalizationIdentifier
      * @param Domain\ValueObject\DimensionSpacePoint $generalizationLocation
      * @param Domain\ValueObject\DimensionSpacePointSet $generalizationVisibility
      */
     public function __construct(
-        Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
-        Domain\ValueObject\NodeIdentifier $nodeIdentifier,
-        Domain\ValueObject\DimensionSpacePoint $sourceLocation,
+        ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier,
+        Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint,
         Domain\ValueObject\NodeIdentifier $generalizationIdentifier,
         Domain\ValueObject\DimensionSpacePoint $generalizationLocation,
         Domain\ValueObject\DimensionSpacePointSet $generalizationVisibility
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
-        $this->sourceLocation = $sourceLocation;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
         $this->generalizationIdentifier = $generalizationIdentifier;
         $this->generalizationLocation = $generalizationLocation;
         $this->generalizationVisibility = $generalizationVisibility;
@@ -76,27 +79,27 @@ final class NodeGeneralizationWasCreated implements EventInterface, CopyableAcro
 
 
     /**
-     * @return \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @return ContentStream\ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): ContentStream\ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
     /**
-     * @return Domain\ValueObject\NodeIdentifier
+     * @return NodeAggregate\NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): Domain\ValueObject\NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregate\NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
     }
 
     /**
      * @return Domain\ValueObject\DimensionSpacePoint
      */
-    public function getSourceLocation(): Domain\ValueObject\DimensionSpacePoint
+    public function getSourceDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
     {
-        return $this->sourceLocation;
+        return $this->sourceDimensionSpacePoint;
     }
 
     /**
@@ -125,15 +128,15 @@ final class NodeGeneralizationWasCreated implements EventInterface, CopyableAcro
 
 
     /**
-     * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $targetContentStream
+     * @param ContentStream\ContentStreamIdentifier $targetContentStream
      * @return NodeGeneralizationWasCreated
      */
-    public function createCopyForContentStream(Domain\Context\ContentStream\ContentStreamIdentifier $targetContentStream): NodeGeneralizationWasCreated
+    public function createCopyForContentStream(ContentStream\ContentStreamIdentifier $targetContentStream): NodeGeneralizationWasCreated
     {
         return new NodeGeneralizationWasCreated(
             $targetContentStream,
-            $this->nodeIdentifier,
-            $this->sourceLocation,
+            $this->nodeAggregateIdentifier,
+            $this->sourceDimensionSpacePoint,
             $this->generalizationIdentifier,
             $this->generalizationLocation,
             $this->generalizationVisibility

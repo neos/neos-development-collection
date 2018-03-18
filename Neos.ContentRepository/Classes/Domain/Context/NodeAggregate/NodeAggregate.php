@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Domain\Context\NodeAggregate;
  */
 
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Domain\Context\Node\Event\NodeSpecializationWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
@@ -97,9 +96,13 @@ final class NodeAggregate
                         /** @var NodeAggregateWithNodeWasCreated $event */
                         $occupiedDimensionSpacePoints[$event->getDimensionSpacePoint()->getHash()] = $event->getDimensionSpacePoint();
                         break;
-                    case NodeSpecializationWasCreated::class:
-                        /** @var NodeSpecializationWasCreated $event */
+                    case Event\NodeSpecializationWasCreated::class:
+                        /** @var Event\NodeSpecializationWasCreated $event */
                         $occupiedDimensionSpacePoints[$event->getSpecializationLocation()->getHash()] = $event->getSpecializationLocation();
+                        break;
+                    case Event\NodeGeneralizationWasCreated::class:
+                        /** @var Event\NodeGeneralizationWasCreated $event */
+                        $occupiedDimensionSpacePoints[$event->getGeneralizationLocation()->getHash()] = $event->getGeneralizationLocation();
                         break;
                     default:
                         continue;
@@ -108,6 +111,42 @@ final class NodeAggregate
         }
 
         return new DimensionSpacePointSet($occupiedDimensionSpacePoints);
+    }
+
+    public function getVisibleDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        $visibleDimensionSpacePoints = [];
+
+        $eventStream = $this->getEventStream();
+        if ($eventStream) {
+            foreach ($eventStream as $eventAndRawEvent) {
+                $event = $eventAndRawEvent->getEvent();
+                switch (get_class($event)) {
+                    case NodeAggregateWithNodeWasCreated::class:
+                        /** @var NodeAggregateWithNodeWasCreated $event */
+                        foreach ($event->getVisibleDimensionSpacePoints()->getPoints() as $visibleDimensionSpacePoint) {
+                            $visibleDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
+                        }
+                        break;
+                    case Event\NodeSpecializationWasCreated::class:
+                        /** @var Event\NodeSpecializationWasCreated $event */
+                        foreach ($event->getSpecializationVisibility()->getPoints() as $visibleDimensionSpacePoint) {
+                            $visibleDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
+                        }
+                        break;
+                    case Event\NodeGeneralizationWasCreated::class:
+                        /** @var Event\NodeGeneralizationWasCreated $event */
+                        foreach ($event->getGeneralizationVisibility()->getPoints() as $visibleDimensionSpacePoint) {
+                            $visibleDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
+                        }
+                        break;
+                    default:
+                        continue;
+                }
+            }
+        }
+
+        return new DimensionSpacePointSet($visibleDimensionSpacePoints);
     }
 
     public function isDimensionSpacePointOccupied(DimensionSpacePoint $dimensionSpacePoint): bool
@@ -122,9 +161,13 @@ final class NodeAggregate
                         /** @var NodeAggregateWithNodeWasCreated $event */
                         $dimensionSpacePointOccupied |= $event->getDimensionSpacePoint()->equals($dimensionSpacePoint);
                         break;
-                    case NodeSpecializationWasCreated::class:
-                        /** @var NodeSpecializationWasCreated $event */
+                    case Event\NodeSpecializationWasCreated::class:
+                        /** @var Event\NodeSpecializationWasCreated $event */
                         $dimensionSpacePointOccupied |= $event->getSpecializationLocation()->equals($dimensionSpacePoint);
+                        break;
+                    case Event\NodeGeneralizationWasCreated::class:
+                        /** @var Event\NodeGeneralizationWasCreated $event */
+                        $dimensionSpacePointOccupied |= $event->getGeneralizationLocation()->equals($dimensionSpacePoint);
                         break;
                     default:
                         continue;

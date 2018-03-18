@@ -13,19 +13,15 @@ namespace Neos\ContentRepository\Domain\Context\Node;
 
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\ContentRepository\Domain\Context\DimensionSpace\AllowedDimensionSubspace;
-use Neos\ContentRepository\Domain\Context\DimensionSpace\DimensionSpacePointIsNoGeneralization;
-use Neos\ContentRepository\Domain\Context\DimensionSpace\DimensionSpacePointIsNoSpecialization;
 use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasFinalized;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasStarted;
 use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
-use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeSpecialization;
 use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeReferences;
-use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeGeneralization;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
@@ -35,7 +31,6 @@ use Neos\ContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\ChangeNodeName;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Domain\Context\Node\Event\NodeGeneralizationWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeMoveMapping;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
@@ -45,9 +40,7 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
-use Neos\ContentRepository\Domain\Context\Node\Event\NodeSpecializationWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
-use Neos\ContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
@@ -66,9 +59,7 @@ use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\ContentRepository\Exception\NodeNotFoundException;
 use Neos\EventSourcing\EventStore\EventStoreManager;
-use Neos\EventSourcing\EventStore\EventStreamFilterInterface;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
-use Neos\EventSourcing\EventStore\StreamNameFilter;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -656,43 +647,6 @@ final class NodeCommandHandler
 
             $this->nodeEventPublisher->publish(
                 ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
-                $event
-            );
-        });
-    }
-
-    /**
-     * @param CreateNodeGeneralization $command
-     */
-    public function handleCreateNodeGeneralization(CreateNodeGeneralization $command): void
-    {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
-            $sourceNode = $this->contentGraph->findNodeByIdentifierInContentStream($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
-            if (!$this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint())->contains($sourceNode->getDimensionSpacePoint())) {
-                throw new DimensionSpacePointIsNoGeneralization($command->getTargetDimensionSpacePoint() . ' is no generalization of ' . $sourceNode->getDimensionSpacePoint(), 1519989009);
-            }
-            // @todo hard constraint
-            $targetSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $command->getTargetDimensionSpacePoint());
-            $occupant = $targetSubgraph->findNodeByNodeAggregateIdentifier($sourceNode->getNodeAggregateIdentifier());
-            if ($occupant && $occupant->getDimensionSpacePoint()->equals($command->getTargetDimensionSpacePoint())) {
-                throw new DimensionSpacePointIsAlreadyOccupied($command->getTargetDimensionSpacePoint() . ' is already occupied by node ' . $occupant->getNodeIdentifier(), 1519986184);
-            }
-
-            $event = new NodeGeneralizationWasCreated(
-                $command->getContentStreamIdentifier(),
-                $command->getNodeIdentifier(),
-                $sourceNode->getDimensionSpacePoint(),
-                $command->getGeneralizationIdentifier(),
-                $command->getTargetDimensionSpacePoint(),
-                $this->interDimensionalVariationGraph->getSpecializationSet(
-                    $command->getTargetDimensionSpacePoint(),
-                    true,
-                    $this->contentGraph->findVisibleDimensionSpacePointsOfNodeAggregate($command->getContentStreamIdentifier(), $sourceNode->getNodeAggregateIdentifier())
-                )
-            );
-
-            $this->nodeEventPublisher->publish(
-                ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
                 $event
             );
         });

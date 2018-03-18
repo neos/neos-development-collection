@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Domain\Context\Node\Command;
+namespace Neos\ContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.

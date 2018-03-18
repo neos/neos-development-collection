@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Domain\Context\Node\Event;
+namespace Neos\ContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +12,9 @@ namespace Neos\ContentRepository\Domain\Context\Node\Event;
  */
 
 use Neos\ContentRepository\Domain;
+use Neos\ContentRepository\Domain\Context\ContentStream;
+use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
+use Neos\ContentRepository\Domain\Context\NodeAggregate;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
@@ -20,12 +23,12 @@ use Neos\EventSourcing\Event\EventInterface;
 final class NodeSpecializationWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
-     * @var \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @var ContentStream\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
     /**
-     * @var \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier
+     * @var NodeAggregate\NodeAggregateIdentifier
      */
     protected $nodeAggregateIdentifier;
 
@@ -51,16 +54,16 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
 
 
     /**
-     * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
-     * @param \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentStream\ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint
      * @param Domain\ValueObject\NodeIdentifier $specializationIdentifier
      * @param Domain\ValueObject\DimensionSpacePoint $specializationLocation
      * @param Domain\ValueObject\DimensionSpacePointSet $specializationVisibility
      */
     public function __construct(
-        Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
-        Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier,
         Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint,
         Domain\ValueObject\NodeIdentifier $specializationIdentifier,
         Domain\ValueObject\DimensionSpacePoint $specializationLocation,
@@ -76,17 +79,17 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
 
 
     /**
-     * @return \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @return ContentStream\ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): ContentStream\ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
     /**
-     * @return \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier
+     * @return NodeAggregate\NodeAggregateIdentifier
      */
-    public function getNodeAggregateIdentifier(): Domain\Context\NodeAggregate\NodeAggregateIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregate\NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
@@ -125,10 +128,10 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
 
 
     /**
-     * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $targetContentStream
+     * @param ContentStream\ContentStreamIdentifier $targetContentStream
      * @return NodeSpecializationWasCreated
      */
-    public function createCopyForContentStream(Domain\Context\ContentStream\ContentStreamIdentifier $targetContentStream): NodeSpecializationWasCreated
+    public function createCopyForContentStream(ContentStream\ContentStreamIdentifier $targetContentStream): NodeSpecializationWasCreated
     {
         return new NodeSpecializationWasCreated(
             $targetContentStream,

@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Domain\Context\Node\Command;
+namespace Neos\ContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,6 +12,8 @@ namespace Neos\ContentRepository\Domain\Context\Node\Command;
  */
 
 use Neos\ContentRepository\Domain;
+use Neos\ContentRepository\Domain\Context\ContentStream;
+use Neos\ContentRepository\Domain\Context\NodeAggregate;
 
 /**
  * Create a generalization of a node in a content stream
@@ -21,14 +23,19 @@ use Neos\ContentRepository\Domain;
 final class CreateNodeGeneralization
 {
     /**
-     * @var \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @var ContentStream\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
     /**
-     * @var Domain\ValueObject\NodeIdentifier
+     * @var NodeAggregate\NodeAggregateIdentifier
      */
-    protected $nodeIdentifier;
+    protected $nodeAggregateIdentifier;
+
+    /**
+     * @var Domain\ValueObject\DimensionSpacePoint
+     */
+    protected $sourceDimensionSpacePoint;
 
     /**
      * @var Domain\ValueObject\DimensionSpacePoint
@@ -42,37 +49,48 @@ final class CreateNodeGeneralization
 
 
     /**
-     * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
-     * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier
+     * @param ContentStream\ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint
      * @param Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint
      * @param Domain\ValueObject\NodeIdentifier $generalizationIdentifier
      */
     public function __construct(
-        Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
-        Domain\ValueObject\NodeIdentifier $nodeIdentifier,
+        ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier,
+        Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint,
         Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint,
         Domain\ValueObject\NodeIdentifier $generalizationIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
         $this->targetDimensionSpacePoint = $targetDimensionSpacePoint;
         $this->generalizationIdentifier = $generalizationIdentifier;
     }
 
     /**
-     * @return \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @return ContentStream\ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): ContentStream\ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
     /**
-     * @return Domain\ValueObject\NodeIdentifier
+     * @return NodeAggregate\NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): Domain\ValueObject\NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregate\NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
+    }
+
+    /**
+     * @return Domain\ValueObject\DimensionSpacePoint
+     */
+    public function getSourceDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
+    {
+        return $this->sourceDimensionSpacePoint;
     }
 
     /**

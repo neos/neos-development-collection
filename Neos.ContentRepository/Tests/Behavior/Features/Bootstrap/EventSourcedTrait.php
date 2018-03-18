@@ -263,7 +263,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
 
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, \Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeSpecialization::class, $configuration);
+        $command = $this->propertyMapper->convert($commandArguments, \Neos\ContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeSpecialization::class, $configuration);
         /** @var \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->objectManager->get(\Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler::class);
 
@@ -296,9 +296,9 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
 
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, \Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeGeneralization::class, $configuration);
-        /** @var \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler $commandHandler */
-        $commandHandler = $this->objectManager->get(\Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class);
+        $command = $this->propertyMapper->convert($commandArguments, \Neos\ContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization::class, $configuration);
+        /** @var \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler $commandHandler */
+        $commandHandler = $this->objectManager->get(\Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler::class);
 
         $commandHandler->handleCreateNodeGeneralization($command);
     }
