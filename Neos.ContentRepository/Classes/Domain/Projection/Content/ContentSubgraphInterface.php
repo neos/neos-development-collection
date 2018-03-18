@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
 
 use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Domain\Context\Node\SubtreeInterface;
-use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
 
@@ -70,6 +69,12 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @return NodeInterface|null
      */
     public function findParentNode(Domain\ValueObject\NodeIdentifier $childIdentifier): ?NodeInterface;
+
+    /**
+     * @param Domain\Context\NodeAggregate\NodeAggregateIdentifier $childNodeAggregateIdentifier
+     * @return NodeInterface|null
+     */
+    public function findParentNodeByNodeAggregateIdentifier(Domain\Context\NodeAggregate\NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface;
 
     /**
      * @param Domain\ValueObject\NodeIdentifier $parentIdentifier

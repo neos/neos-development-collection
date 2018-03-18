@@ -16,7 +16,8 @@ use Neos\ContentRepository\Domain;
 /**
  * Create a specialization of a node in a content stream
  *
- * Copy a node to a specialized dimension space point respecting further specialization mechanisms
+ * Copy a node identified by node aggregate identifier and source dimension space point to a specialized dimension space point in a content stream
+ * respecting further specialization mechanisms.
  */
 final class CreateNodeSpecialization
 {
@@ -26,9 +27,14 @@ final class CreateNodeSpecialization
     protected $contentStreamIdentifier;
 
     /**
-     * @var Domain\ValueObject\NodeIdentifier
+     * @var \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier
      */
-    protected $nodeIdentifier;
+    protected $nodeAggregateIdentifier;
+
+    /**
+     * @var Domain\ValueObject\DimensionSpacePoint
+     */
+    protected $sourceDimensionSpacePoint;
 
     /**
      * @var Domain\ValueObject\DimensionSpacePoint
@@ -42,19 +48,22 @@ final class CreateNodeSpecialization
 
 
     /**
-     * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier
      * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
+     * @param \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint
      * @param Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint
      * @param Domain\ValueObject\NodeIdentifier $specializationIdentifier
      */
     public function __construct(
-        Domain\ValueObject\NodeIdentifier $nodeIdentifier,
         Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
+        Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier,
+        Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint,
         Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint,
         Domain\ValueObject\NodeIdentifier $specializationIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
         $this->targetDimensionSpacePoint = $targetDimensionSpacePoint;
         $this->specializationIdentifier = $specializationIdentifier;
     }
@@ -68,11 +77,19 @@ final class CreateNodeSpecialization
     }
 
     /**
-     * @return Domain\ValueObject\NodeIdentifier
+     * @return \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): Domain\ValueObject\NodeIdentifier
+    public function getNodeAggregateIdentifier(): Domain\Context\NodeAggregate\NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
+    }
+
+    /**
+     * @return Domain\ValueObject\DimensionSpacePoint
+     */
+    public function getSourceDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
+    {
+        return $this->sourceDimensionSpacePoint;
     }
 
     /**

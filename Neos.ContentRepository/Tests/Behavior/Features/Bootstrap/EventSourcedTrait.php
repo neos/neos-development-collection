@@ -110,6 +110,7 @@ trait EventSourcedTrait
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamCommandHandler::getStreamNameForContentStream(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
+        $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
         $this->publishEvent('Neos.ContentRepository:NodeAggregateWithNodeWasCreated', $streamName, $eventPayload);
     }
 
@@ -122,6 +123,7 @@ trait EventSourcedTrait
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamCommandHandler::getStreamNameForContentStream(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
+        $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
         $this->publishEvent('Neos.ContentRepository:NodeSpecializationWasCreated', $streamName, $eventPayload);
     }
 
@@ -134,6 +136,7 @@ trait EventSourcedTrait
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamCommandHandler::getStreamNameForContentStream(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
+        $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
         $this->publishEvent('Neos.ContentRepository:NodeGeneralizationWasCreated', $streamName, $eventPayload);
     }
 
@@ -164,7 +167,7 @@ trait EventSourcedTrait
         switch ($eventClassName) {
             case \Neos\ContentRepository\Domain\Context\Node\Event\NodesWereMoved::class:
                 \Neos\Flow\var_dump($eventPayload, 'hello from publishEvent');
-            exit();
+                exit();
             default:
                 $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
                 $event = $this->propertyMapper->convert($eventPayload, $eventClassName, $configuration);
@@ -200,6 +203,9 @@ trait EventSourcedTrait
                             }
                         }
                         $eventPayload[$line['Key']] = new DimensionSpacePointSet($convertedPoints);
+                        break;
+                    case 'NodeAggregateIdentifier':
+                        $eventPayload[$line['Key']] = new NodeAggregateIdentifier($line['Value']);
                         break;
                     case 'PropertyValue':
                         $tmp = json_decode($line['Value'], true);
@@ -258,8 +264,8 @@ trait EventSourcedTrait
 
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
         $command = $this->propertyMapper->convert($commandArguments, \Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeSpecialization::class, $configuration);
-        /** @var \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler $commandHandler */
-        $commandHandler = $this->objectManager->get(\Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class);
+        /** @var \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler $commandHandler */
+        $commandHandler = $this->objectManager->get(\Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler::class);
 
         $commandHandler->handleCreateNodeSpecialization($command);
     }
@@ -367,7 +373,7 @@ trait EventSourcedTrait
                     is_string($commandArguments['newSucceedingSiblingNodeAggregateIdentifier']) ? new NodeAggregateIdentifier($commandArguments['newSucceedingSiblingNodeAggregateIdentifier']) : $commandArguments['newSucceedingSiblingNodeAggregateIdentifier'],
                     is_string($commandArguments['relationDistributionStrategy']) ? RelationDistributionStrategy::fromConfigurationValue($commandArguments['relationDistributionStrategy']) : $commandArguments['relationDistributionStrategy']
                 );
-            break;
+                break;
             default:
                 $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
                 $command = $this->propertyMapper->convert($commandArguments, $commandClassName, $configuration);
@@ -441,8 +447,12 @@ trait EventSourcedTrait
                 Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeConstraintException::class, $this->lastCommandException);
 
                 return;
-            case 'DimensionSpacePointIsAlreadyOccupiedInNodeAggregate':
-                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\Node\DimensionSpacePointIsAlreadyOccupiedInNodeAggregate::class, $this->lastCommandException);
+            case 'DimensionSpacePointIsAlreadyOccupied':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied::class, $this->lastCommandException);
+
+                return;
+            case 'DimensionSpacePointIsNotYetOccupied':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied::class, $this->lastCommandException);
 
                 return;
             case 'DimensionSpacePointIsNoGeneralization':
@@ -451,6 +461,14 @@ trait EventSourcedTrait
                 return;
             case 'NodeTypeNotFound':
                 Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\NodeAggregate\NodeTypeNotFound::class, $this->lastCommandException);
+
+                return;
+            case 'DimensionSpacePointNotFound':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Exception\DimensionSpacePointNotFound::class, $this->lastCommandException);
+
+                return;
+            case 'ParentsNodeAggregateNotVisibleInDimensionSpacePoint':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint::class, $this->lastCommandException);
 
                 return;
             default:
@@ -787,7 +805,8 @@ trait EventSourcedTrait
     {
         $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         /** @var \Neos\ContentRepository\Domain\Model\Node $node */
-        $this->currentNode = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        $this->currentNode = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier,
+            $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
         $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
     }
 
@@ -831,7 +850,8 @@ trait EventSourcedTrait
                 },
                 $destinationNodes
             );
-            Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers, 'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
+            Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers,
+                'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
         }
     }
 

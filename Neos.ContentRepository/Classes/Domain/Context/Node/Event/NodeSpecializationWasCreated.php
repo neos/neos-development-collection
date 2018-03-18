@@ -15,7 +15,7 @@ use Neos\ContentRepository\Domain;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * A node was specialized
+ * A node specialization was created
  */
 final class NodeSpecializationWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
@@ -25,9 +25,14 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
     protected $contentStreamIdentifier;
 
     /**
-     * @var Domain\ValueObject\NodeIdentifier
+     * @var \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier
      */
-    protected $nodeIdentifier;
+    protected $nodeAggregateIdentifier;
+
+    /**
+     * @var Domain\ValueObject\DimensionSpacePoint
+     */
+    protected $sourceDimensionSpacePoint;
 
     /**
      * @var Domain\ValueObject\NodeIdentifier
@@ -46,21 +51,24 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
 
 
     /**
-     * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier
      * @param \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
+     * @param \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint
      * @param Domain\ValueObject\NodeIdentifier $specializationIdentifier
      * @param Domain\ValueObject\DimensionSpacePoint $specializationLocation
      * @param Domain\ValueObject\DimensionSpacePointSet $specializationVisibility
      */
     public function __construct(
-        Domain\ValueObject\NodeIdentifier $nodeIdentifier,
         Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
+        Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier,
+        Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint,
         Domain\ValueObject\NodeIdentifier $specializationIdentifier,
         Domain\ValueObject\DimensionSpacePoint $specializationLocation,
         Domain\ValueObject\DimensionSpacePointSet $specializationVisibility
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
         $this->specializationIdentifier = $specializationIdentifier;
         $this->specializationLocation = $specializationLocation;
         $this->specializationVisibility = $specializationVisibility;
@@ -76,11 +84,19 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
     }
 
     /**
-     * @return Domain\ValueObject\NodeIdentifier
+     * @return \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): Domain\ValueObject\NodeIdentifier
+    public function getNodeAggregateIdentifier(): Domain\Context\NodeAggregate\NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
+    }
+
+    /**
+     * @return Domain\ValueObject\DimensionSpacePoint
+     */
+    public function getSourceDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
+    {
+        return $this->sourceDimensionSpacePoint;
     }
 
     /**
@@ -116,7 +132,8 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
     {
         return new NodeSpecializationWasCreated(
             $targetContentStream,
-            $this->nodeIdentifier,
+            $this->nodeAggregateIdentifier,
+            $this->sourceDimensionSpacePoint,
             $this->specializationIdentifier,
             $this->specializationLocation,
             $this->specializationVisibility

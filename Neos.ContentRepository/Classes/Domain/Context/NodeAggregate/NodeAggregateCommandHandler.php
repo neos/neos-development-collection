@@ -14,6 +14,9 @@ namespace Neos\ContentRepository\Domain\Context\NodeAggregate;
 use Neos\ContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\Domain\Context\DimensionSpace;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeSpecialization;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeSpecializationWasCreated;
+use Neos\ContentRepository\Domain\Context\Node\NodeEventPublisher;
+use Neos\ContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
@@ -55,19 +58,28 @@ final class NodeAggregateCommandHandler
      */
     protected $interDimensionalVariationGraph;
 
+    /**
+     * Used for publishing events
+     *
+     * @var NodeEventPublisher
+     */
+    protected $nodeEventPublisher;
+
 
     public function __construct(
         ContentStream\ContentStreamRepository $contentStreamRepository,
         NodeTypeManager $nodeTypeManager,
         DimensionSpace\AllowedDimensionSubspace $allowedDimensionSubspace,
         ContentGraphInterface $contentGraph,
-        DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph
+        DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        NodeEventPublisher $nodeEventPublisher
     ) {
         $this->contentStreamRepository = $contentStreamRepository;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->allowedDimensionSubspace = $allowedDimensionSubspace;
         $this->contentGraph = $contentGraph;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
+        $this->nodeEventPublisher = $nodeEventPublisher;
     }
 
 
@@ -150,6 +162,94 @@ final class NodeAggregateCommandHandler
                 }
             }
         }
+    }
+
+    /**
+     * @param CreateNodeSpecialization $command
+     * @throws DimensionSpacePointIsAlreadyOccupied
+     * @throws DimensionSpacePointIsNotYetOccupied
+     * @throws DimensionSpacePointNotFound
+     * @throws DimensionSpace\DimensionSpacePointIsNoSpecialization
+     * @throws ParentsNodeAggregateNotVisibleInDimensionSpacePoint
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
+    public function handleCreateNodeSpecialization(CreateNodeSpecialization $command): void
+    {
+        $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+
+        $this->requireDimensionSpacePointToExist($command->getTargetDimensionSpacePoint());
+        $this->requireDimensionSpacePointToBeSpecialization($command->getTargetDimensionSpacePoint(), $command->getSourceDimensionSpacePoint());
+
+        $nodeAggregate->requireDimensionSpacePointToBeOccupied($command->getSourceDimensionSpacePoint());
+        $nodeAggregate->requireDimensionSpacePointToBeUnoccupied($command->getTargetDimensionSpacePoint());
+
+        $this->requireParentNodesAggregateToBeVisibleInDimensionSpacePoint(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier(),
+            $command->getSourceDimensionSpacePoint(),
+            $command->getTargetDimensionSpacePoint()
+        );
+
+        $event = new NodeSpecializationWasCreated(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier(),
+            $command->getSourceDimensionSpacePoint(),
+            $command->getSpecializationIdentifier(),
+            $command->getTargetDimensionSpacePoint(),
+            $this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint(), true, $nodeAggregate->getOccupiedDimensionSpacePoints())
+        );
+
+        $this->nodeEventPublisher->publish($nodeAggregate->getStreamName(), $event);
+    }
+
+    /**
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @throws DimensionSpacePointNotFound
+     */
+    protected function requireDimensionSpacePointToExist(DimensionSpacePoint $dimensionSpacePoint)
+    {
+        if (!$this->allowedDimensionSubspace->contains($dimensionSpacePoint)) {
+            throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace', $dimensionSpacePoint), 1520260137);
+        }
+    }
+
+    /**
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePoint $generalization
+     * @throws DimensionSpacePointNotFound
+     * @throws DimensionSpace\DimensionSpacePointIsNoSpecialization
+     */
+    protected function requireDimensionSpacePointToBeSpecialization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $generalization)
+    {
+        if (!$this->interDimensionalVariationGraph->getSpecializationSet($generalization)->contains($dimensionSpacePoint)) {
+            throw new DimensionSpace\DimensionSpacePointIsNoSpecialization($dimensionSpacePoint . ' is no specialization of ' . $generalization, 1519931770);
+        }
+    }
+
+    /**
+     * @param ContentStream\ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $sourceDimensionSpacePoint
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @throws ParentsNodeAggregateNotVisibleInDimensionSpacePoint
+     */
+    protected function requireParentNodesAggregateToBeVisibleInDimensionSpacePoint(
+        ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $sourceDimensionSpacePoint,
+        DimensionSpacePoint $dimensionSpacePoint
+    ) {
+        $sourceSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $sourceDimensionSpacePoint);
+        $sourceParentNode = $sourceSubgraph->findParentNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+        if (!$sourceParentNode // the root node is visible in all dimension space points
+            || $this->contentGraph->findVisibleDimensionSpacePointsOfNodeAggregate($contentStreamIdentifier, $sourceParentNode->getNodeAggregateIdentifier())
+                ->contains($dimensionSpacePoint)) {
+            return;
+        }
+
+        throw new ParentsNodeAggregateNotVisibleInDimensionSpacePoint('No suitable parent could be found for node "' . $nodeAggregateIdentifier . '" in target dimension space point ' . $dimensionSpacePoint,
+            1521322565);
     }
 
     protected function getNodeAggregate(ContentStream\ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate

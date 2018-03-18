@@ -387,8 +387,10 @@ final class ContentGraph implements ContentGraphInterface
      * @return Domain\ValueObject\DimensionSpacePointSet
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function findVisibleDimensionSpacePointsOfNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): Domain\ValueObject\DimensionSpacePointSet
-    {
+    public function findVisibleDimensionSpacePointsOfNodeAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): Domain\ValueObject\DimensionSpacePointSet {
         $connection = $this->client->getConnection();
 
         $query = 'SELECT h.dimensionspacepoint, h.dimensionspacepointhash FROM neos_contentgraph_node n

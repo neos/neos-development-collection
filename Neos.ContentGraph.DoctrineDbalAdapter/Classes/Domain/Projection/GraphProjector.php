@@ -469,7 +469,7 @@ class GraphProjector implements ProjectorInterface
     public function whenNodeSpecializationWasCreated(Event\NodeSpecializationWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
-            $sourceNode = $this->projectionContentGraph->getNode($event->getNodeAggregateIdentifier(), $event->getContentStreamIdentifier());
+            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getNodeAggregateIdentifier(), $event->getContentStreamIdentifier(), $event->getSourceDimensionSpacePoint());
 
             $specializedNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
             $specializedNode = new Node(

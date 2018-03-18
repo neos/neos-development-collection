@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Domain\Context\Node;
+namespace Neos\ContentRepository\Domain\Context\NodeAggregate;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,8 +14,8 @@ namespace Neos\ContentRepository\Domain\Context\Node;
 use Neos\Flow\Exception;
 
 /**
- * The exception to be thrown if a node aggregate's name is ambiguous
+ * The exception to be thrown if a dimension space point is not yet occupied by a node in a node aggregate but is supposed to be
  */
-class NodeAggregatesNameIsAmbiguous extends Exception
+class DimensionSpacePointIsNotYetOccupied extends Exception
 {
 }

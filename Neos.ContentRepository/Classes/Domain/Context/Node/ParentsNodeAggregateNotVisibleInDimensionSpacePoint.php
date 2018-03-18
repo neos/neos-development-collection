@@ -11,12 +11,8 @@ namespace Neos\ContentRepository\Domain\Context\Node;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 
-/**
- * The exception to be thrown if a dimension space point is already occupied by a node in an aggregate in a content stream
- */
-class DimensionSpacePointIsAlreadyOccupiedInNodeAggregate extends Exception
+class ParentsNodeAggregateNotVisibleInDimensionSpacePoint extends Exception
 {
 }

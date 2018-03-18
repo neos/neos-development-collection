@@ -11,10 +11,15 @@ namespace Neos\ContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeSpecialization;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeSpecializationWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\EventSourcing\EventStore\EventStore;
+use Neos\EventSourcing\EventStore\EventStream;
+use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
+use Neos\EventSourcing\EventStore\StreamNameFilter;
 
 /**
  * The node aggregate
@@ -57,22 +62,95 @@ final class NodeAggregate
     }
 
 
-    public function handleCreateNodeSpecialization(CreateNodeSpecialization $command)
+    /**
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @throws DimensionSpacePointIsNotYetOccupied
+     */
+    public function requireDimensionSpacePointToBeOccupied(DimensionSpacePoint $dimensionSpacePoint)
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
-            $this->requireDimensionSpacePointToBeOccupied($command->getSourceDimensionSpacePoint());
-            $this->requireDimensionSpacePointToBeUnoccupied($command->getTargetDimensionSpacePoint());
-        });
+        if (!$this->isDimensionSpacePointOccupied($dimensionSpacePoint)) {
+            throw new DimensionSpacePointIsNotYetOccupied('The source dimension space point "' . $dimensionSpacePoint . '" is not yet occupied', 1521312039);
+        }
     }
 
-
-    protected function requireDimensionSpacePointToBeOccupied(DimensionSpacePoint $dimensionSpacePoint)
+    /**
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @throws DimensionSpacePointIsAlreadyOccupied
+     */
+    public function requireDimensionSpacePointToBeUnoccupied(DimensionSpacePoint $dimensionSpacePoint)
     {
-
+        if ($this->isDimensionSpacePointOccupied($dimensionSpacePoint)) {
+            throw new DimensionSpacePointIsAlreadyOccupied('The target dimension space point "' . $dimensionSpacePoint . '" is already occupied', 1521314881);
+        }
     }
 
-    protected function requireDimensionSpacePointToBeUnoccupied(DimensionSpacePoint $dimensionSpacePoint)
+    public function getOccupiedDimensionSpacePoints(): DimensionSpacePointSet
     {
+        $occupiedDimensionSpacePoints = [];
 
+        $eventStream = $this->getEventStream();
+        if ($eventStream) {
+            foreach ($eventStream as $eventAndRawEvent) {
+                $event = $eventAndRawEvent->getEvent();
+                switch (get_class($event)) {
+                    case NodeAggregateWithNodeWasCreated::class:
+                        /** @var NodeAggregateWithNodeWasCreated $event */
+                        $occupiedDimensionSpacePoints[$event->getDimensionSpacePoint()->getHash()] = $event->getDimensionSpacePoint();
+                        break;
+                    case NodeSpecializationWasCreated::class:
+                        /** @var NodeSpecializationWasCreated $event */
+                        $occupiedDimensionSpacePoints[$event->getSpecializationLocation()->getHash()] = $event->getSpecializationLocation();
+                        break;
+                    default:
+                        continue;
+                }
+            }
+        }
+
+        return new DimensionSpacePointSet($occupiedDimensionSpacePoints);
+    }
+
+    public function isDimensionSpacePointOccupied(DimensionSpacePoint $dimensionSpacePoint): bool
+    {
+        $dimensionSpacePointOccupied = false;
+        $eventStream = $this->getEventStream();
+        if ($eventStream) {
+            foreach ($eventStream as $eventAndRawEvent) {
+                $event = $eventAndRawEvent->getEvent();
+                switch (get_class($event)) {
+                    case NodeAggregateWithNodeWasCreated::class:
+                        /** @var NodeAggregateWithNodeWasCreated $event */
+                        $dimensionSpacePointOccupied |= $event->getDimensionSpacePoint()->equals($dimensionSpacePoint);
+                        break;
+                    case NodeSpecializationWasCreated::class:
+                        /** @var NodeSpecializationWasCreated $event */
+                        $dimensionSpacePointOccupied |= $event->getSpecializationLocation()->equals($dimensionSpacePoint);
+                        break;
+                    default:
+                        continue;
+                }
+            }
+        }
+
+        return $dimensionSpacePointOccupied;
+    }
+
+    public function getIdentifier(): NodeAggregateIdentifier
+    {
+        return $this->identifier;
+    }
+
+    public function getStreamName(): string
+    {
+        return $this->streamName;
+    }
+
+    protected function getEventStream(): ?EventStream
+    {
+        try {
+            return $this->eventStore->get(new StreamNameFilter($this->streamName));
+        } catch (EventStreamNotFoundException $eventStreamNotFound) {
+            return null;
+        }
     }
 }
