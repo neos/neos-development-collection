@@ -38,6 +38,7 @@ class NodeIdentityConverterAspect
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof NodeInterface) {
+            throw new \Exception("!! Not supported currently");
             return $objectArgument->getContextPath();
         } else {
             return $joinPoint->getAdviceChain()->proceed($joinPoint);

@@ -92,6 +92,4 @@ interface NodeInterface extends CacheAwareInterface
      * @return string
      */
     public function getLabel(): string;
-
-    public function getContextPath(): string;
 }

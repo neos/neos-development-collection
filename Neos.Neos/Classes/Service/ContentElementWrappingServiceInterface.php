@@ -1,6 +1,5 @@
 <?php
 namespace Neos\Neos\Service;
-
 /*
  * This file is part of the Neos.Neos package.
  *

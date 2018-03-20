@@ -207,10 +207,4 @@ class Node implements NodeInterface
     {
         return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
     }
-
-    // TODO: do we need this method? many people and the UI!! rely on it currently!
-    public function getContextPath(): string
-    {
-        return (string)$this->getNodeIdentifier() . '@' . (string)$this->getContentStreamIdentifier() . '@' . $this->getDimensionSpacePoint()->serializeForUri();
-    }
 }
