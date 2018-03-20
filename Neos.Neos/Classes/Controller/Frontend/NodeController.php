@@ -167,7 +167,7 @@ class NodeController extends ActionController
         }
 
         if ($this->session->isStarted() && $inBackend) {
-            $this->session->putData('lastVisitedNode', $node->getContextPath());
+            $this->session->putData('lastVisitedNode', NodeAddress::fromNode($node)->serializeForUri());
         }
     }
 
