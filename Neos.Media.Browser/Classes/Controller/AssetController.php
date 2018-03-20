@@ -732,6 +732,14 @@ class AssetController extends ActionController
                 continue;
             }
 
+            $flowQuery = new FlowQuery([$node]);
+            $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
+            // this should actually never happen, too.
+            if (!$documentNode) {
+                $inaccessibleRelations[] = $inaccessibleRelation;
+                continue;
+            }
+
             $site = $node->getContext()->getCurrentSite();
             foreach ($existingSites as $existingSite) {
                 /** @var Site $existingSite **/
@@ -740,9 +748,6 @@ class AssetController extends ActionController
                     $site = $existingSite;
                 }
             }
-
-            $flowQuery = new FlowQuery([$node]);
-            $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
 
             $relatedNodes[$site->getNodeName()]['site'] = $site;
             $relatedNodes[$site->getNodeName()]['nodes'][] = [
