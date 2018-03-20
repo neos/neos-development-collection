@@ -584,3 +584,44 @@ contentCache.dynamicSegmentWithNestedCachedSegment = Neos.Fusion:Array {
 		mode = 'cached'
 	}
 }
+
+contentCache.cachedSegmentWithNestedDynamicSegment = Neos.Fusion:Value {
+	value = Neos.Fusion:Value {
+		value = ${someContextVariable}
+		@cache {
+			mode = 'dynamic'
+			entryDiscriminator = 'static'
+			context {
+				1 = 'someContextVariable'
+			}
+		}
+	}
+	@cache {
+		mode = 'cached'
+		entryTags {
+			1 = 'testing'
+		}
+	}
+}
+
+contentCache.dynamicWithChangingDiscriminator = Neos.Fusion:Value {
+	value = Neos.Fusion:Value {
+		value = ${request.arguments.testArgument}
+		@cache {
+			mode = 'dynamic'
+			entryDiscriminator = ${request.arguments.testArgument}
+			context {
+				1 = 'someContextVariable'
+			}
+			entryTags {
+				1 = 'dynamicTag'
+			}
+		}
+	}
+	@cache {
+		mode = 'cached'
+		entryTags {
+			1 = 'testing'
+		}
+	}
+}
