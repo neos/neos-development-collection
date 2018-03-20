@@ -22,9 +22,12 @@ use Neos\Flow\Annotations as Flow;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\Table(
  *    indexes={
- *        @ORM\Index(name="eventtype",columns={"eventtype"})
+ *        @ORM\Index(name="eventtype",columns={"eventtype"}),
+ *        @ORM\Index(name="documentnodeidentifier", columns={"documentnodeidentifier"})
  *    }
  * )
+ * The "documentnodeidentifier" index defined above targets the NodeEvent, and needs to be here so Doctrine migrations
+ * picks it up, otherwise Doctrine would never create this index. See https://github.com/doctrine/doctrine2/issues/6248
  */
 class Event
 {
