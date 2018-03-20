@@ -191,6 +191,7 @@ reorderChildNodes
 For all nodes (or only those which match the --node-type filter specified with this
 command) which have configured child nodes, those child nodes are reordered according to the
 position from the parents NodeType configuration.
+
 <u>Missing default properties</u>
 addMissingDefaultValues
 

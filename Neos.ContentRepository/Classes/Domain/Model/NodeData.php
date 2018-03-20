@@ -19,11 +19,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Utility\Algorithms;
-use Neos\ContentRepository\Domain\Model\AbstractNodeData;
-use Neos\ContentRepository\Domain\Model\ContentObjectProxy;
-use Neos\ContentRepository\Domain\Model\NodeTemplate;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
@@ -209,7 +204,7 @@ class NodeData extends AbstractNodeData
      * If a node data is moved a "shadow" node data is inserted that references the new node data
      *
      * @var NodeData
-     * @ORM\ManyToOne
+     * @ORM\OneToOne
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
     protected $movedTo;
@@ -288,7 +283,6 @@ class NodeData extends AbstractNodeData
         }
 
         if ($recursive === true) {
-            /** @var $childNodeData NodeData */
             foreach ($this->getChildNodeData() as $childNodeData) {
                 $childNodeData->setPath(NodePaths::addNodePathSegment($path, $childNodeData->getName()));
             }
@@ -540,13 +534,20 @@ class NodeData extends AbstractNodeData
     }
 
     /**
-     * Returns all direct child node data of this node data without reducing the result (multiple variants can be returned)
+     * Returns all direct child node data of this node data with reducing the result by dimensionHash only
      *
-     * @return array<\Neos\ContentRepository\Domain\Model\NodeData>
+     * Only used internally for setting the path of all child nodes.
+     *
+     * @return \Neos\ContentRepository\Domain\Model\NodeData[]
      */
     protected function getChildNodeData()
     {
-        return $this->nodeDataRepository->findByParentWithoutReduce($this->path, $this->workspace);
+        return array_filter(
+            $this->nodeDataRepository->findByParentWithoutReduce($this->path, $this->workspace),
+            function ($childNodeData) {
+                return $childNodeData->dimensionsHash === $this->dimensionsHash;
+            }
+        );
     }
 
     /**
