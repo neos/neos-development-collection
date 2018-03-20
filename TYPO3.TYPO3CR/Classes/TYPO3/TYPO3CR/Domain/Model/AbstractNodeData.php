@@ -17,7 +17,6 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
-use TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeException;
@@ -404,7 +403,7 @@ abstract class AbstractNodeData
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
     public function getLastPublicationDateTime()
     {
@@ -461,7 +460,7 @@ abstract class AbstractNodeData
     /**
      * Returns the date and time before which this node will be automatically hidden.
      *
-     * @return \DateTime Date before this node will be hidden or NULL if no such time was set
+     * @return \DateTimeInterface Date before this node will be hidden or NULL if no such time was set
      */
     public function getHiddenBeforeDateTime()
     {
@@ -485,7 +484,7 @@ abstract class AbstractNodeData
     /**
      * Returns the date and time after which this node will be automatically hidden.
      *
-     * @return \DateTime Date after which this node will be hidden
+     * @return \DateTimeInterface Date after which this node will be hidden
      */
     public function getHiddenAfterDateTime()
     {

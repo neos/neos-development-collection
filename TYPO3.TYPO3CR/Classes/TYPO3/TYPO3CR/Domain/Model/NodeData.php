@@ -19,11 +19,6 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Algorithms;
-use TYPO3\TYPO3CR\Domain\Model\AbstractNodeData;
-use TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy;
-use TYPO3\TYPO3CR\Domain\Model\NodeTemplate;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
@@ -288,7 +283,6 @@ class NodeData extends AbstractNodeData
         }
 
         if ($recursive === true) {
-            /** @var $childNodeData NodeData */
             foreach ($this->getChildNodeData() as $childNodeData) {
                 $childNodeData->setPath(NodePaths::addNodePathSegment($path, $childNodeData->getName()));
             }
@@ -540,13 +534,20 @@ class NodeData extends AbstractNodeData
     }
 
     /**
-     * Returns all direct child node data of this node data without reducing the result (multiple variants can be returned)
+     * Returns all direct child node data of this node data with reducing the result by dimensionHash only
      *
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
+     * Only used internally for setting the path of all child nodes.
+     *
+     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData[]
      */
     protected function getChildNodeData()
     {
-        return $this->nodeDataRepository->findByParentWithoutReduce($this->path, $this->workspace);
+        return array_filter(
+            $this->nodeDataRepository->findByParentWithoutReduce($this->path, $this->workspace),
+            function ($childNodeData) {
+                return $childNodeData->dimensionsHash === $this->dimensionsHash;
+            }
+        );
     }
 
     /**
