@@ -26,7 +26,7 @@ class DefaultPrototypeGenerator implements DefaultPrototypeGeneratorInterface
      *
      * @var string
      */
-    protected $basePrototypeName = 'Neos.Fusion:Template';
+    protected $basePrototypeName = null;
 
     /**
      * Generate a Fusion prototype definition for a given node type
@@ -44,7 +44,11 @@ class DefaultPrototypeGenerator implements DefaultPrototypeGeneratorInterface
             return '';
         }
 
-        $output = 'prototype(' . $nodeType->getName() . ') < prototype(' . $this->basePrototypeName . ') {' . chr(10);
+        $output = 'prototype(' . $nodeType->getName() . ')';
+        if ($this->basePrototypeName) {
+            $output .= ' < prototype(' . $this->basePrototypeName . ')';
+        }
+        $output .= ' {' . chr(10);
 
         list($packageKey, $relativeName) = explode(':', $nodeType->getName(), 2);
         $templatePath = 'resource://' . $packageKey . '/Private/Templates/NodeTypes/' . $relativeName . '.html';

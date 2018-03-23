@@ -27,5 +27,5 @@ class DefaultDocumentPrototypeGenerator extends DefaultPrototypeGenerator
      *
      * @var string
      */
-    protected $basePrototypeName = 'Neos.Neos:Document';
+    protected $basePrototypeName = null;
 }
