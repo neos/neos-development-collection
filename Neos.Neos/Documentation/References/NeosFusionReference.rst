@@ -517,6 +517,19 @@ Example::
 		}
 	}
 
+Neos.Fusion:CanRender
+---------------------
+
+Check whether a fusion prototype can be rendered. For beeing renderable a prototype must exist and have an
+implementation class. The implementation class can be defined indirectly via base prototypes.
+
+:type: (string) The prototype name that is checked
+
+Example::
+
+	canRender = Neos.Fusion:CanRender {
+		type = 'My.Package:Prototype'
+	}
 
 Neos.Neos Fusion Objects
 =============================
