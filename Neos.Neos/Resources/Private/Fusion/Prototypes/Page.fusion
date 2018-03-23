@@ -131,7 +131,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		tagName = 'div'
 		@position = 'after neosBackendDocumentNodeData'
 		attributes = Neos.Fusion:Attributes {
-			data-preview-uri = NodeUri {
+			data-preview-uri = Neos.Neos:NodeUri {
 				node = ${q(documentNode).context({'workspaceName': documentNode.context.workspace.baseWorkspace.name}).get(0)}
 			}
 		}
