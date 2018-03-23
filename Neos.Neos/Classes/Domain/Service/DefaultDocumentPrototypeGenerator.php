@@ -22,10 +22,4 @@ use Neos\Flow\Annotations as Flow;
  */
 class DefaultDocumentPrototypeGenerator extends DefaultPrototypeGenerator
 {
-    /**
-     * The Name of the prototype that is extended
-     *
-     * @var string
-     */
-    protected $basePrototypeName = null;
 }
