@@ -127,7 +127,7 @@ class MediaAssetSourceAspect
         $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($proxy->getIdentifier());
         try {
             if ($importedAsset instanceof ImportedAsset) {
-                    return $assetSource->getAssetProxyRepository()->getAssetProxy($importedAsset->getRemoteAssetIdentifier());
+                return $assetSource->getAssetProxyRepository()->getAssetProxy($importedAsset->getRemoteAssetIdentifier());
             } else {
                 return $assetSource->getAssetProxyRepository()->getAssetProxy($proxy->getIdentifier());
             }
