@@ -18,6 +18,11 @@ Neos:
         - 'resource://Neos.Neos/Public/Styles/Neos.css'
         - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
 
+      assetSources:
+        neos:
+          assetSource: 'Neos\Media\Browser\AssetSource\Neos\NeosAssetSource'
+          assetSourceOptions: []
+
   Flow:
     security:
       authentication:
