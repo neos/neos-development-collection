@@ -6,3 +6,7 @@
 #  childNodes:
 #    'sidebar':
 #      type: 'Neos.Neos:ContentCollection'
+
+'{packageKey}:DefaultPage':
+  superTypes:
+    'Neos.Neos:Document': true

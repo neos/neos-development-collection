@@ -173,13 +173,17 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * Generate a example NodeTypes.yaml
      *
      * @param string $packageKey
-     * @return void
+     * @throws \Neos\FluidAdaptor\Core\Exception
      */
     protected function generateNodeTypesConfiguration($packageKey)
     {
         $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Configuration/NodeTypes.yaml';
 
-        $fileContent = file_get_contents($templatePathAndFilename);
+        $contextVariables = [
+            'packageKey' => $packageKey
+        ];
+
+        $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
         $sitesNodeTypesPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.yaml';
         $this->generateFile($sitesNodeTypesPathAndFilename, $fileContent);
