@@ -7,6 +7,7 @@ prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\FusionObjects\\RendererI
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:Debug).@class = 'Neos\\Fusion\\FusionObjects\\DebugImplementation'
 prototype(Neos.Fusion:Component).@class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
+prototype(Neos.Fusion:CanRender).@class = 'Neos\\Fusion\\FusionObjects\\CanRenderImplementation'
 
 prototype(Neos.Fusion:Collection) {
 	@class = 'Neos\\Fusion\\FusionObjects\\CollectionImplementation'
