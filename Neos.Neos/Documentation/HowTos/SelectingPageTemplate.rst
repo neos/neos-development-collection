@@ -2,7 +2,11 @@
 Selecting a Page Layout
 =======================
 
-Neos has a flexible way of choosing a layout, which can be selected in the backend.
+Neos has a flexible way of choosing a layout which can be selected in the backend.
+
+.. node::
+
+    The layout mechanism is implemented in the package Neos.NodeTypes wich has to be installed.
 
 First of all, the necessary layouts have to be configured inside `VendorName.VendorSite/Configuration/NodeTypes.yaml`::
 
@@ -29,7 +33,7 @@ First of all, the necessary layouts have to be configured inside `VendorName.Ven
                   'landingPage':
                     label: 'Landing page'
 
-Here, the properties `layout` and `subpageLayout` are configured inside `Neos.Neos:Page`:
+Here, the properties `layout` and `subpageLayout` are configured inside `Neos.NodeTypes:Page`:
 
 * `layout`: Changes the layout of the current page
 * `subpageLayout`: Changes the layout of subpages if nothing else was chosen.
@@ -58,7 +62,7 @@ For example, if the `landingPage` was chosen, a different template can be used.
 
 The implementation internal of the layout rendering can be found in the file:
 
-Neos.Neos/Resources/Private/Fusion/DefaultFusion.fusion
+Neos.NodeTypes/Resources/Private/Fusion/DefaultFusion.fusion
 
 The element `root.layout` is the one responsible for handling the layout. So when trying to
 change the layout handling this is the Fusion object to manipulate.
@@ -103,12 +107,12 @@ is rendered on your website.
 Using a `DefaultPage` Prototype
 ===============================
 
-This is an alternative and more flexible approach to the `Select Template based on NodeType` method descriped above.
+This is an alternative and more flexible approach to the `Select Template based on NodeType` method described above.
 First we adjust the `default` `root` matcher not to render the `/page` path, but a prototype derived from the current document node type name instead::
 
     root {
         default {
-            type = ${q(node).property('_nodeType') + '.Document'}
+            type = ${q(node).property('_nodeType')}
             renderPath >
         }
     }
@@ -118,7 +122,7 @@ The content will basically remain the same, make sure only to define bare essent
 
 Your basic `DefaultPage` prototype could look something like this::
 
-    prototype(VendorName:DefaultPage) < prototype(Page) {
+    prototype(VendorName:DefaultPage) < prototype(Neos.Neos:Page) {
         head {
             stylesheets {
                 site = Neos.Fusion:Template {
@@ -148,10 +152,10 @@ Since we extend `VendorName:DefaultPage` here, we can only define custom needs f
 
 For example::
 
-    prototype(Neos.NodeTypes:Page.Document) < prototype(VendorName:DefaultPage) {
+    prototype(Neos.NodeTypes:Page) < prototype(VendorName:DefaultPage) {
         body {
             content {
-                main = PrimaryContent {
+                main = Neos.Neos:PrimaryContent {
                 nodePath = 'main'
                 }
             }
@@ -160,12 +164,7 @@ For example::
 
 All our custom document node types will be defined like this::
 
-    prototype(VendorName:Product.Document) < prototype(VendorName:DefaultPage) {
+    prototype(VendorName:Product) < prototype(VendorName:DefaultPage) {
         # custom properties for your node type
     }
 
-In case we have a `layout` property within our node type configuration, we can define a prototype for this case too::
-
-    customLayout = Neos.NodeTypes:Page.Document {
-       # custom properties for your node type
-    }

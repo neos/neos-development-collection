@@ -66,15 +66,16 @@ class ContentElementWrappingService
      * @param NodeInterface $node
      * @param string $content
      * @param string $fusionPath
+     * @param array $additionalAttributes additional attributes in the form ['<attribute-name>' => '<attibute-value>', ...] to be rendered in the element wrapping
      * @return string
      */
-    public function wrapContentObject(NodeInterface $node, $content, $fusionPath)
+    public function wrapContentObject(NodeInterface $node, $content, $fusionPath, array $additionalAttributes = [])
     {
         if ($this->needsMetadata($node, false) === false) {
             return $content;
         }
 
-        $attributes = [];
+        $attributes = $additionalAttributes;
         $attributes['data-node-__fusion-path'] = $fusionPath;
         $attributes['tabindex'] = 0;
         $attributes = $this->addGenericEditingMetadata($attributes, $node);
@@ -88,15 +89,16 @@ class ContentElementWrappingService
      * @param NodeInterface $node
      * @param string $content
      * @param string $fusionPath
+     * @param array $additionalAttributes additional attributes in the form ['<attribute-name>' => '<attibute-value>', ...] to be rendered in the element wrapping
      * @return string
      */
-    public function wrapCurrentDocumentMetadata(NodeInterface $node, $content, $fusionPath)
+    public function wrapCurrentDocumentMetadata(NodeInterface $node, $content, $fusionPath, array $additionalAttributes = [])
     {
         if ($this->needsMetadata($node, true) === false) {
             return $content;
         }
 
-        $attributes = [];
+        $attributes = $additionalAttributes;
         $attributes['data-node-__fusion-path'] = $fusionPath;
         $attributes = $this->addGenericEditingMetadata($attributes, $node);
         $attributes = $this->addNodePropertyAttributes($attributes, $node);
