@@ -344,7 +344,6 @@ class AssetController extends ActionController
         } catch (AssetSourceConnectionException $e) {
             $this->view->assign('connectionError', $e);
         }
-
     }
 
     /**

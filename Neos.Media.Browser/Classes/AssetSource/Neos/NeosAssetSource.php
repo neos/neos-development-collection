@@ -44,7 +44,7 @@ final class NeosAssetSource implements AssetSource
         foreach ($assetSourceOptions as $optionName => $optionValue) {
             switch ($optionName) {
                 default:
-                    throw new \InvalidArgumentException(sprintf('Unknown asset source option "%s" specified for Neos asset source "%s". Please check your settings.', $optionName,$assetSourceIdentifier), 1513327774584);
+                    throw new \InvalidArgumentException(sprintf('Unknown asset source option "%s" specified for Neos asset source "%s". Please check your settings.', $optionName, $assetSourceIdentifier), 1513327774584);
             }
         }
     }
