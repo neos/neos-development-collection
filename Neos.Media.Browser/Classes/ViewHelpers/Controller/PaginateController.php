@@ -105,7 +105,7 @@ class PaginateController extends AbstractWidgetController
             ));
             $this->view->assign('configuration', $this->configuration);
             $this->view->assign('pagination', $this->buildPagination());
-        } catch(AssetSourceConnectionException $exception) {
+        } catch (AssetSourceConnectionException $exception) {
             $this->view->assign('connectionError', $exception);
         }
     }

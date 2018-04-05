@@ -11,12 +11,11 @@ namespace Neos\Media\Browser\AssetSource;
  * source code.
  */
 
-use Neos\Media\Browser\AssetSource\AssetProxy\AssetProxy;
-use Neos\Media\Browser\AssetSource\AssetProxy\HasRemoteOriginal;
-use Neos\Media\Browser\Domain\Model\ImportedAsset;
-use Neos\Media\Browser\Domain\Repository\ImportedAssetRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
+use Neos\Media\Browser\AssetSource\AssetProxy\AssetProxy;
+use Neos\Media\Browser\Domain\Model\ImportedAsset;
+use Neos\Media\Browser\Domain\Repository\ImportedAssetRepository;
 use Neos\Media\Domain\Model\Asset;
 
 /**
@@ -126,7 +125,7 @@ class MediaAssetSourceAspect
         $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($proxy->getIdentifier());
         try {
             if ($importedAsset instanceof ImportedAsset) {
-                    return $assetSource->getAssetProxyRepository()->getAssetProxy($importedAsset->getRemoteAssetIdentifier());
+                return $assetSource->getAssetProxyRepository()->getAssetProxy($importedAsset->getRemoteAssetIdentifier());
             } else {
                 return $assetSource->getAssetProxyRepository()->getAssetProxy($proxy->getIdentifier());
             }
