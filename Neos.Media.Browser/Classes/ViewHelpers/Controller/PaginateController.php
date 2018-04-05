@@ -12,8 +12,8 @@ namespace Neos\Media\Browser\ViewHelpers\Controller;
 * source code.
 */
 
-use Neos\Media\Browser\AssetSource\AssetProxyQueryResult;
-use Neos\Media\Browser\AssetSource\AssetSourceConnectionException;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResult;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
 use Neos\Utility\Arrays;
 

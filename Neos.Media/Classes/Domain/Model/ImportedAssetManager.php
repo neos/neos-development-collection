@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Media\Browser\AssetSource;
+namespace Neos\Media\Domain\Model;
 
 /*
- * This file is part of the Neos.Media.Browser package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
   *
@@ -11,13 +11,11 @@ namespace Neos\Media\Browser\AssetSource;
  * source code.
  */
 
-use Neos\Media\Browser\Domain\Model\ImportedAsset;
-use Neos\Media\Browser\Domain\Repository\ImportedAssetRepository;
 use Neos\Flow\Annotations\Inject;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Model\AssetVariantInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
+use Neos\Media\Domain\Repository\ImportedAssetRepository;
 
 class ImportedAssetManager
 {
@@ -69,7 +67,7 @@ class ImportedAssetManager
         $originalAssetIdentifier = $this->persistenceManager->getIdentifierByObject($originalAsset);
 
         $originalImportedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($originalAssetIdentifier);
-        if ($originalImportedAsset instanceof ImportedAsset && $variantAsset instanceof MediaAssetSourceAware) {
+        if ($originalImportedAsset instanceof ImportedAsset && $variantAsset instanceof AssetSourceAwareInterface) {
             $variantAsset->setAssetSourceIdentifier($originalImportedAsset->getAssetSourceIdentifier());
 
             $variantImportedAsset = new ImportedAsset(

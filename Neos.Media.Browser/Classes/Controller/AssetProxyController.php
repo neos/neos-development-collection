@@ -12,15 +12,15 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
-use Neos\Media\Browser\AssetSource\AssetNotFoundException;
-use Neos\Media\Browser\AssetSource\AssetProxy\HasRemoteOriginal;
-use Neos\Media\Browser\AssetSource\AssetProxy\SupportsIptcMetadata;
-use Neos\Media\Browser\AssetSource\AssetSource;
-use Neos\Media\Browser\AssetSource\AssetSourceConnectionException;
-use Neos\Media\Browser\AssetSource\ImportedAssetManager;
-use Neos\Media\Browser\AssetSource\MediaAssetSourceAware;
-use Neos\Media\Browser\Domain\Model\ImportedAsset;
-use Neos\Media\Browser\Domain\Repository\ImportedAssetRepository;
+use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\HasRemoteOriginal;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\SupportsIptcMetadata;
+use Neos\Media\Domain\Model\AssetSource\AssetSource;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
+use Neos\Media\Domain\Model\ImportedAssetManager;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
+use Neos\Media\Domain\Model\AssetSource\ImportedAsset;
+use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ResourceManagement\Exception;
@@ -135,7 +135,7 @@ class AssetProxyController extends ActionController
             $assetModelClassName = $this->assetModelMappingStrategy->map($assetResource);
             $asset = new $assetModelClassName($assetResource);
 
-            if (!$asset instanceof MediaAssetSourceAware) {
+            if (!$asset instanceof AssetSourceAwareInterface) {
                 throw new \RuntimeException('The asset type ' . $assetModelClassName . ' does not implement the required MediaAssetsSourceAware interface.', 1516630096064);
             }
 

@@ -13,15 +13,15 @@ namespace Neos\Media\Browser\Controller;
 
 use Doctrine\Common\Persistence\Proxy as DoctrineProxy;
 use Doctrine\ORM\EntityNotFoundException;
-use Neos\Media\Browser\AssetSource\AssetNotFoundException;
-use Neos\Media\Browser\AssetSource\AssetProxyRepository;
-use Neos\Media\Browser\AssetSource\AssetSourceConnectionException;
-use Neos\Media\Browser\AssetSource\AssetSource;
-use Neos\Media\Browser\AssetSource\AssetTypeFilter;
-use Neos\Media\Browser\AssetSource\Neos\NeosAssetProxy;
-use Neos\Media\Browser\AssetSource\SupportsCollections;
-use Neos\Media\Browser\AssetSource\SupportsSorting;
-use Neos\Media\Browser\AssetSource\SupportsTagging;
+use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyRepository;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
+use Neos\Media\Domain\Model\AssetSource\AssetSource;
+use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
+use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetProxy;
+use Neos\Media\Domain\Model\AssetSource\SupportsCollections;
+use Neos\Media\Domain\Model\AssetSource\SupportsSorting;
+use Neos\Media\Domain\Model\AssetSource\SupportsTagging;
 use Neos\Media\Browser\Domain\Session\BrowserState;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
@@ -156,7 +156,7 @@ class AssetController extends ActionController
     protected $translator;
 
     /**
-     * @Flow\InjectConfiguration(path="assetSources")
+     * @Flow\InjectConfiguration(path="assetSources", package="Neos.Media")
      * @var array
      */
     protected $assetSourcesConfiguration;

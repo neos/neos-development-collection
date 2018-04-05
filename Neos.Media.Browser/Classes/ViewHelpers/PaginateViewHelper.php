@@ -12,7 +12,7 @@ namespace Neos\Media\Browser\ViewHelpers;
 * source code.
 */
 
-use Neos\Media\Browser\AssetSource\AssetProxyQueryResult;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResult;
 use Neos\Media\Browser\ViewHelpers\Controller\PaginateController;
 use Neos\Flow\Annotations\Inject;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
