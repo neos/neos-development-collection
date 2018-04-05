@@ -11,17 +11,15 @@ namespace Neos\Media\Domain\Model\AssetSource\Neos;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
-use Neos\Media\Domain\Model\AssetSource\AssetSource;
 use Neos\Flow\Annotations\Inject;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
+use Neos\Media\Domain\Model\AssetSource\AssetSource;
 use Neos\Media\Domain\Model\ImageInterface;
-use Neos\Media\Domain\Service\AssetService;
-use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\ThumbnailServiceException;
 use Psr\Http\Message\UriInterface;
@@ -37,18 +35,6 @@ final class NeosAssetProxy implements AssetProxy
      * @var Asset
      */
     private $asset;
-
-    /**
-     * @Inject()
-     * @var ThumbnailService
-     */
-    protected $thumbnailService;
-
-    /**
-     * @Inject()
-     * @var AssetService
-     */
-    protected $assetService;
 
     /**
      * @Inject()
@@ -171,9 +157,7 @@ final class NeosAssetProxy implements AssetProxy
      */
     public function getThumbnailUri(): ?UriInterface
     {
-        $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Thumbnail');
-        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($this->asset, $thumbnailConfiguration);
-        return isset($thumbnailData['src']) ? new Uri($thumbnailData['src']) : null;
+        return $this->assetSource->getThumbnailUriForAsset($this->asset);
     }
 
     /**
@@ -183,9 +167,7 @@ final class NeosAssetProxy implements AssetProxy
      */
     public function getPreviewUri(): ?UriInterface
     {
-        $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Preview');
-        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($this->asset, $thumbnailConfiguration);
-        return isset($thumbnailData['src']) ? new Uri($thumbnailData['src']) : null;
+        return $this->assetSource->getPreviewUriForAsset($this->asset);
     }
 
     /**
