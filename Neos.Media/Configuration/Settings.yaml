@@ -57,6 +57,12 @@ Neos:
     # Automatically create thumbnails for configured presets when assets are added
     autoCreateThumbnailPresets: true
 
+
+    assetSources:
+      'neos':
+        assetSource: 'Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetSource'
+        assetSourceOptions: []
+
     asset:
       modelMappingStrategy:
         default: Neos\Media\Domain\Model\Document

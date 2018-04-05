@@ -20,7 +20,12 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Utility\MediaTypes;
+use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
+use Neos\Media\Domain\Model\AssetSource\AssetSource;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
+use Neos\Media\Domain\Model\AssetSource\ImportedAsset;
+use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\ThumbnailService;
@@ -72,6 +77,12 @@ class Asset implements AssetInterface
     protected $assetRepository;
 
     /**
+     * @Flow\Inject()
+     * @var ImportedAssetRepository
+     */
+    protected $importedAssetRepository;
+
+    /**
      * @var \DateTime
      */
     protected $lastModified;
@@ -117,6 +128,23 @@ class Asset implements AssetInterface
     protected $assetCollections;
 
     /**
+     * @var string
+     */
+    public $assetSourceIdentifier = 'neos';
+
+    /**
+     * @Flow\InjectConfiguration(path="assetSources")
+     * @var array
+     */
+    protected $assetSourcesConfiguration;
+
+    /**
+     * @Flow\Transient()
+     * @var AssetSource[]
+     */
+    protected $assetSources = [];
+
+    /**
      * Constructs an asset. The resource is set internally and then initialize()
      * is called.
      *
@@ -143,6 +171,12 @@ class Asset implements AssetInterface
         }
         if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
             $this->emitAssetCreated($this);
+        }
+
+        foreach ($this->assetSourcesConfiguration as $assetSourceIdentifier => $assetSourceConfiguration) {
+            if (is_array($assetSourceConfiguration)) {
+                $this->assetSources[$assetSourceIdentifier] = new $assetSourceConfiguration['assetSource']($assetSourceIdentifier, $assetSourceConfiguration['assetSourceOptions']);
+            }
         }
     }
 
@@ -410,6 +444,56 @@ class Asset implements AssetInterface
             }
         }
         $this->assetCollections = $assetCollections;
+    }
+
+
+    /**
+     * @param string $assetSourceIdentifier
+     */
+    public function setAssetSourceIdentifier(string $assetSourceIdentifier): void
+    {
+        $this->assetSourceIdentifier = $assetSourceIdentifier;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAssetSourceIdentifier(): string
+    {
+        return $this->assetSourceIdentifier;
+    }
+
+    public function getAssetSource(): ?AssetSource
+    {
+        $assetSourceIdentifier = $this->getAssetSourceIdentifier();
+        if ($assetSourceIdentifier === null) {
+            return null;
+        }
+
+        return $this->assetSources[$assetSourceIdentifier] ?? null;
+    }
+
+    /**
+     * @return AssetProxy|null
+     */
+    public function getAssetProxy(): ?AssetProxy
+    {
+        $assetSource = $this->getAssetSource();
+        $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($this->getIdentifier());
+
+        try {
+            if ($importedAsset instanceof \Neos\Media\Domain\Model\AssetSource\ImportedAsset) {
+                return $assetSource->getAssetProxyRepository()->getAssetProxy($importedAsset->getRemoteAssetIdentifier());
+            } else {
+                return $assetSource->getAssetProxyRepository()->getAssetProxy($this->getIdentifier());
+            }
+        } catch (AssetNotFoundException $e) {
+            $this->systemLogger->log(sprintf('Asset %s not found in asset source %s (%s)', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel()), LOG_NOTICE);
+            return null;
+        } catch (AssetSourceConnectionException $e) {
+            $this->systemLogger->log(sprintf('Failed connecting to asset source %s (%s): %s', $assetSource->getIdentifier(), $assetSource->getLabel(), $e->getMessage()), LOG_ERR);
+            return null;
+        }
     }
 
     /**

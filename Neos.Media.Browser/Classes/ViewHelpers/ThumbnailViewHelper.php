@@ -12,7 +12,7 @@ namespace Neos\Media\Browser\ViewHelpers;
 * source code.
 */
 
-use Neos\Media\Browser\AssetSource\AssetProxy\AssetProxy;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**

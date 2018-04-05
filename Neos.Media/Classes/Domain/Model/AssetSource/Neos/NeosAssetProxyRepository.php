@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Media\Browser\AssetSource\Neos;
+namespace Neos\Media\Domain\Model\AssetSource\Neos;
 
 /*
- * This file is part of the Neos.Media.Browser package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
   *
@@ -11,14 +11,14 @@ namespace Neos\Media\Browser\AssetSource\Neos;
  * source code.
  */
 
-use Neos\Media\Browser\AssetSource\AssetNotFoundException;
-use Neos\Media\Browser\AssetSource\AssetProxy\AssetProxy;
-use Neos\Media\Browser\AssetSource\AssetProxyQueryResult;
-use Neos\Media\Browser\AssetSource\AssetProxyRepository;
-use Neos\Media\Browser\AssetSource\AssetTypeFilter;
-use Neos\Media\Browser\AssetSource\SupportsCollections;
-use Neos\Media\Browser\AssetSource\SupportsSorting;
-use Neos\Media\Browser\AssetSource\SupportsTagging;
+use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResult;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyRepository;
+use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
+use Neos\Media\Domain\Model\AssetSource\SupportsCollections;
+use Neos\Media\Domain\Model\AssetSource\SupportsSorting;
+use Neos\Media\Domain\Model\AssetSource\SupportsTagging;
 use Neos\Flow\Annotations\Inject;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\Exception\InvalidQueryException;

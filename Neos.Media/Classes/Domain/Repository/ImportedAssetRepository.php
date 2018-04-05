@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Media\Browser\Domain\Repository;
+namespace Neos\Media\Domain\Repository;
 
 /*
- * This file is part of the Neos.Media.Browser package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
   *

@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Media\Browser\AssetSource\AssetProxy;
+namespace Neos\Media\Domain\Model\AssetSource\AssetProxy;
 
 /*
- * This file is part of the Neos.Media.Browser package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
   *
@@ -11,7 +11,7 @@ namespace Neos\Media\Browser\AssetSource\AssetProxy;
  * source code.
  */
 
-use Neos\Media\Browser\AssetSource\AssetSource;
+use Neos\Media\Domain\Model\AssetSource\AssetSource;
 use Psr\Http\Message\UriInterface;
 
 /**

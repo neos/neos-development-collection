@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Media\Browser\AssetSource\Neos;
+namespace Neos\Media\Domain\Model\AssetSource\Neos;
 
 /*
- * This file is part of the Neos.Media.Browser package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
   *
@@ -11,9 +11,9 @@ namespace Neos\Media\Browser\AssetSource\Neos;
  * source code.
  */
 
-use Neos\Media\Browser\AssetSource\AssetProxy\AssetProxy;
-use Neos\Media\Browser\AssetSource\AssetProxyQuery;
-use Neos\Media\Browser\AssetSource\AssetProxyQueryResult;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQuery;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResult;
 use Neos\Flow\Annotations\Proxy;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Media\Domain\Model\AssetInterface;

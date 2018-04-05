@@ -12,13 +12,14 @@ namespace Neos\Media\Domain\Model;
  */
 
 use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
 
 /**
  * A user-managed Asset which is stored in the Asset Repository
  *
  * @api
  */
-interface AssetInterface extends ResourceBasedInterface, ThumbnailSupportInterface
+interface AssetInterface extends ResourceBasedInterface, ThumbnailSupportInterface, AssetSourceAwareInterface
 {
     /**
      * The title of this asset

@@ -11,9 +11,9 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
-use Neos\Media\Browser\AssetSource\MediaAssetSourceAware;
-use Neos\Media\Browser\Domain\Model\ImportedAsset;
-use Neos\Media\Browser\Domain\Repository\ImportedAssetRepository;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
+use Neos\Media\Domain\Model\AssetSource\ImportedAsset;
+use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\ImageRepository;
@@ -31,7 +31,7 @@ class ImageController extends AssetController
 
     /**
      * @Flow\Inject
-     * @var ImportedAssetRepository
+     * @var \Neos\Media\Domain\Repository\ImportedAssetRepository
      */
     protected $importedAssetRepository;
 
@@ -48,7 +48,7 @@ class ImageController extends AssetController
         if ($assetSourceIdentifier !== null && $assetProxyIdentifier !== null) {
             parent::editAction($assetSourceIdentifier, $assetProxyIdentifier);
             return;
-        } elseif ($asset instanceof MediaAssetSourceAware) {
+        } elseif ($asset instanceof AssetSourceAwareInterface) {
             /** @var ImportedAsset $importedAsset */
             $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($asset->getIdentifier());
             parent::editAction($asset->getAssetSourceIdentifier(), $importedAsset ? $importedAsset->getRemoteAssetIdentifier() : $asset->getIdentifier());

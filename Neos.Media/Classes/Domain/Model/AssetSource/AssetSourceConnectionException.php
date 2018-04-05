@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Media\Browser\AssetSource;
+namespace Neos\Media\Domain\Model\AssetSource;
 
 /*
- * This file is part of the Neos.Media.Browser package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
   *
@@ -13,13 +13,6 @@ namespace Neos\Media\Browser\AssetSource;
 
 use Neos\Flow\Exception;
 
-class AssetNotFoundException extends Exception
+class AssetSourceConnectionException extends Exception
 {
-    /**
-     * @return int
-     */
-    public function getStatusCode()
-    {
-        return 404;
-    }
 }
