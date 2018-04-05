@@ -14,10 +14,14 @@ namespace Neos\Media\Domain\Model\AssetSource;
 interface AssetSource
 {
     /**
+     * This factory method is used instead of a constructor in order to not dictate a __construct() signature in this
+     * interface (which might conflict with an asset source's implementation or generated Flow proxy class).
+     *
      * @param string $assetSourceIdentifier
      * @param array $assetSourceOptions
+     * @return AssetSource
      */
-    public function __construct(string $assetSourceIdentifier, array $assetSourceOptions);
+    public static function createFromConfiguration(string $assetSourceIdentifier, array $assetSourceOptions): AssetSource;
 
     /**
      * A unique string which identifies the concrete asset source.

@@ -24,7 +24,6 @@ use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
 use Neos\Media\Domain\Model\AssetSource\AssetSource;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
-use Neos\Media\Domain\Model\AssetSource\ImportedAsset;
 use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Service\AssetService;
@@ -175,7 +174,7 @@ class Asset implements AssetInterface
 
         foreach ($this->assetSourcesConfiguration as $assetSourceIdentifier => $assetSourceConfiguration) {
             if (is_array($assetSourceConfiguration)) {
-                $this->assetSources[$assetSourceIdentifier] = new $assetSourceConfiguration['assetSource']($assetSourceIdentifier, $assetSourceConfiguration['assetSourceOptions']);
+                $this->assetSources[$assetSourceIdentifier] = $assetSourceConfiguration['assetSource']::createFromConfiguration($assetSourceIdentifier, $assetSourceConfiguration['assetSourceOptions']);
             }
         }
     }
@@ -482,7 +481,7 @@ class Asset implements AssetInterface
         $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($this->getIdentifier());
 
         try {
-            if ($importedAsset instanceof \Neos\Media\Domain\Model\AssetSource\ImportedAsset) {
+            if ($importedAsset instanceof ImportedAsset) {
                 return $assetSource->getAssetProxyRepository()->getAssetProxy($importedAsset->getRemoteAssetIdentifier());
             } else {
                 return $assetSource->getAssetProxyRepository()->getAssetProxy($this->getIdentifier());
