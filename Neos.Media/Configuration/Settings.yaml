@@ -51,8 +51,7 @@ Neos:
 
   Media:
     # Enable asynchronous thumbnails
-    <<: &asyncThumbnailsSetting
-      asyncThumbnails: true
+    asyncThumbnails: false
     # Thumbnail presets
     thumbnailPresets: {  }
     # Automatically create thumbnails for configured presets when assets are added
@@ -62,8 +61,8 @@ Neos:
       'neos':
         assetSource: 'Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetSource'
         assetSourceOptions:
-          # Use whatever is set in Neos:Media:asyncThumbnails:
-          <<: *asyncThumbnailsSetting
+          # asyncThumbnails: defaults to the value of Neos:Media:asyncThumbnails
+          asyncThumbnails: ~
 
     asset:
       modelMappingStrategy:

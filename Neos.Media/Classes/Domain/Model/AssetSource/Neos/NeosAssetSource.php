@@ -78,10 +78,13 @@ final class NeosAssetSource implements AssetSource
         foreach ($assetSourceOptions as $optionName => $optionValue) {
             switch ($optionName) {
                 case 'asyncThumbnails':
-                    if (!is_bool($optionValue)) {
-                        throw new \InvalidArgumentException(sprintf('Asset source option "%s" specified for Neos asset source "%s" must be either true or false. Please check your settings.', $optionName, $assetSourceIdentifier), 1522927471208);
+                    // If the option value is empty, preserve the default value injected from the Neos:Media:asyncThumbnails setting:
+                    if (!empty($optionValue)) {
+                        if (!is_bool($optionValue)) {
+                            throw new \InvalidArgumentException(sprintf('Asset source option "%s" specified for Neos asset source "%s" must be either true or false. Please check your settings.', $optionName, $assetSourceIdentifier), 1522927471208);
+                        }
+                        $this->asyncThumbnails = (bool)$optionValue;
                     }
-                    $this->asyncThumbnails = (bool)$optionValue;
                 break;
                 default:
                     throw new \InvalidArgumentException(sprintf('Unknown asset source option "%s" specified for Neos asset source "%s". Please check your settings.', $optionName, $assetSourceIdentifier), 1513327774584);
