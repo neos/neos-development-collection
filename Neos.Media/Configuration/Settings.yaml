@@ -51,7 +51,7 @@ Neos:
 
   Media:
     # Enable asynchronous thumbnails
-    asyncThumbnails: false
+    asyncThumbnails: true
     # Thumbnail presets
     thumbnailPresets: {  }
     # Automatically create thumbnails for configured presets when assets are added
