@@ -7,7 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Introduce asset sources support
  */
-class Version20180405134300 extends AbstractMigration
+class Version20180406163142 extends AbstractMigration
 {
     /**
      * @return string
@@ -26,7 +26,8 @@ class Version20180405134300 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
-        $this->addSql('CREATE TABLE neos_media_domain_model_importedasset (persistence_object_identifier VARCHAR(40) NOT NULL, assetsourceidentifier VARCHAR(255) NOT NULL, remoteassetidentifier VARCHAR(255) NOT NULL, localassetidentifier VARCHAR(255) NOT NULL, localoriginalassetidentifier VARCHAR(255) DEFAULT NULL, importedat DATETIME NOT NULL, UNIQUE INDEX flow_identity_neos_media_domain_model_importedasset (assetsourceidentifier, remoteassetidentifier, localassetidentifier), PRIMARY KEY(persistence_object_identifier))');
+        $this->addSql('CREATE TABLE neos_media_domain_model_importedasset (persistence_object_identifier VARCHAR(40) NOT NULL, assetsourceidentifier VARCHAR(255) NOT NULL, remoteassetidentifier VARCHAR(255) NOT NULL, localassetidentifier VARCHAR(255) NOT NULL, localoriginalassetidentifier VARCHAR(255) DEFAULT NULL, importedat TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(persistence_object_identifier))');
+        $this->addSql('CREATE UNIQUE INDEX flow_identity_neos_media_domain_model_importedasset ON neos_media_domain_model_importedasset (assetsourceidentifier, remoteassetidentifier, localassetidentifier)');
         $this->addSql('ALTER TABLE neos_media_domain_model_asset ADD assetsourceidentifier VARCHAR(255) NOT NULL');
     }
 
