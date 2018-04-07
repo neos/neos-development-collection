@@ -17,9 +17,9 @@ use Neos\Media\Domain\Model\AssetSource\AssetProxy\HasRemoteOriginal;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\SupportsIptcMetadata;
 use Neos\Media\Domain\Model\AssetSource\AssetSource;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
+use Neos\Media\Domain\Model\ImportedAsset;
 use Neos\Media\Domain\Model\ImportedAssetManager;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
-use Neos\Media\Domain\Model\AssetSource\ImportedAsset;
 use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -35,7 +35,7 @@ use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
 class AssetProxyController extends ActionController
 {
     /**
-     * @Flow\InjectConfiguration(path="assetSources")
+     * @Flow\InjectConfiguration(path="assetSources", package="Neos.Media")
      * @var array
      */
     protected $assetSourcesConfiguration;
@@ -117,17 +117,18 @@ class AssetProxyController extends ActionController
 
         if (!$assetProxy instanceof HasRemoteOriginal) {
             $this->response->setStatus(400, 'Cannot import asset which does not have a remote original');
+            $this->systemLogger->log(sprintf('Failed importing an the asset %s from asset source %s because it does not have a remote original.', $assetProxy->getFilename(), $assetSourceIdentifier, $assetProxy->getImportStream()), LOG_ERR);
             return '';
         }
 
         $importedAsset = $this->importedAssetRepository->findOneByAssetSourceIdentifierAndRemoteAssetIdentifier($assetSourceIdentifier, $assetIdentifier);
         if (!$importedAsset instanceof ImportedAsset) {
             try {
-                $assetResource = $this->resourceManager->importResource($assetProxy->getOriginalUri());
+                $assetResource = $this->resourceManager->importResource($assetProxy->getImportStream());
                 $assetResource->setFilename($assetProxy->getFilename());
             } catch (Exception $e) {
                 $this->response->setStatus(500, 'Failed importing the asset from the original source.');
-                $this->systemLogger->log(sprintf('Failed importing an the asset %s from asset source %s. Original URI: %s. Error: %s', $assetProxy->getFilename(), $assetSourceIdentifier, $assetProxy->getOriginalUri(), $e->getMessage()), LOG_ERR, $e);
+                $this->systemLogger->log(sprintf('Failed importing an the asset %s from asset source %s. Original URI: %s. Error: %s', $assetProxy->getFilename(), $assetSourceIdentifier, $assetProxy->getImportStream(), $e->getMessage()), LOG_ERR, $e);
                 return '';
             }
 

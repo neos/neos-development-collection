@@ -19,29 +19,68 @@ use Psr\Http\Message\UriInterface;
  */
 interface AssetProxy
 {
+    /**
+     * @return AssetSource
+     */
     public function getAssetSource(): AssetSource;
 
+    /**
+     * @return string
+     */
     public function getIdentifier(): string;
 
+    /**
+     * @return string
+     */
     public function getLabel(): string;
 
+    /**
+     * @return string
+     */
     public function getFilename(): string;
 
+    /**
+     * @return \DateTimeInterface
+     */
     public function getLastModified(): \DateTimeInterface;
 
+    /**
+     * @return int
+     */
     public function getFileSize(): int;
 
+    /**
+     * @return string
+     */
     public function getMediaType(): string;
 
+    /**
+     * @return int|null
+     */
     public function getWidthInPixels(): ?int;
 
+    /**
+     * @return int|null
+     */
     public function getHeightInPixels(): ?int;
 
+    /**
+     * @return null|UriInterface
+     */
     public function getThumbnailUri(): ?UriInterface;
 
+    /**
+     * @return null|UriInterface
+     */
     public function getPreviewUri(): ?UriInterface;
 
-    public function getOriginalUri(): ?UriInterface;
+    /**
+     * @return resource
+     */
+    public function getImportStream();
 
+    /**
+     * @return null|string
+     */
     public function getLocalAssetIdentifier(): ?string;
 }

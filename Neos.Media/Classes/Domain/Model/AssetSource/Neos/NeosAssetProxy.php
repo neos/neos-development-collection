@@ -173,7 +173,7 @@ final class NeosAssetProxy implements AssetProxy
     /**
      * @return null|UriInterface
      */
-    public function getOriginalUri(): ?UriInterface
+    public function getImportStream(): ?UriInterface
     {
         $uriString = $this->resourceManager->getPublicPersistentResourceUri($this->asset->getResource());
         return $uriString !== false ? new Uri($uriString) : null;
