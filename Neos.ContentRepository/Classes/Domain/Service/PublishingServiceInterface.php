@@ -11,8 +11,8 @@ namespace Neos\ContentRepository\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\ContentRepository\Exception\WorkspaceException;
 

@@ -13,17 +13,15 @@ namespace Neos\ContentRepository\Domain\Service;
 
 use Neos\ContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Exception\WorkspaceException;
 use Neos\ContentRepository\Service\Utility\NodePublishingDependencySolver;
 
@@ -86,8 +84,8 @@ class PublishingService implements PublishingServiceInterface
     /**
      * Returns a list of nodes contained in the given workspace which are not yet published
      *
-     * @param Workspace $workspace
-     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>
+     * @param WorkspaceName $workspaceName
+     * @return NodeInterface[]
      * @api
      */
     public function getUnpublishedNodes(WorkspaceName $workspaceName)

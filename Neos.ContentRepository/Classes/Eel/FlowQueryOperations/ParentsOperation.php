@@ -11,10 +11,11 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
  * "parents" operation working on ContentRepository nodes. It iterates over all
@@ -38,6 +39,12 @@ class ParentsOperation extends AbstractOperation
     protected static $priority = 0;
 
     /**
+     * @Flow\Inject
+     * @var ContentGraphInterface
+     */
+    protected $contentGraph;
+
+    /**
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
@@ -45,7 +52,7 @@ class ParentsOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
     }
 
     /**
@@ -60,9 +67,10 @@ class ParentsOperation extends AbstractOperation
         $output = array();
         $outputNodeIdentifiers = array();
         foreach ($flowQuery->getContext() as $contextNode) {
-            /* @var $contextNode TraversableNodeInterface */
-            while ($contextNode->getParent() !== null) {
-                $contextNode = $contextNode->getParent();
+            /* @var $contextNode NodeInterface */
+            $subgraph = $this->contentGraph->getSubgraphByIdentifier($contextNode->getContentStreamIdentifier(), $contextNode->getDimensionSpacePoint());
+            while ($subgraph->findParentNode($contextNode->getNodeIdentifier()) !== null) {
+                $contextNode = $subgraph->findParentNode($contextNode->getNodeIdentifier());
                 if (!isset($outputNodeIdentifiers[(string)$contextNode->getNodeIdentifier()])) {
                     $output[] = $contextNode;
                     $outputNodeIdentifiers[(string)$contextNode->getNodeIdentifier()] = true;

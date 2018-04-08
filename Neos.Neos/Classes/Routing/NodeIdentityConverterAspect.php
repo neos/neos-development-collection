@@ -11,9 +11,10 @@ namespace Neos\Neos\Routing;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
 
 /**
  * Aspect to convert a node object to its context node path. This is used in URI
@@ -38,8 +39,7 @@ class NodeIdentityConverterAspect
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof NodeInterface) {
-            throw new \Exception("!! Not supported currently");
-            return $objectArgument->getContextPath();
+            return NodeAddress::fromNode($objectArgument)->serializeForUri();
         } else {
             return $joinPoint->getAdviceChain()->proceed($joinPoint);
         }

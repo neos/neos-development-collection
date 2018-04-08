@@ -14,9 +14,9 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 
 /**

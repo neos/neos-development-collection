@@ -331,7 +331,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         if (!$this->nodeAddressService->isInLiveWorkspace($nodeAddress)) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($nodeAddress->getContentStreamIdentifier());
-            $routePath .= WorkspaceNameAndDimensionSpacePointForUriSerialization::fromWorkspaceAndDimensionSpacePoint($workspace->getWorkspaceName(), $subgraph->getDimensionSpacePoint())->toBackendUriSuffix();
+            if ($workspace) {
+                $routePath .= WorkspaceNameAndDimensionSpacePointForUriSerialization::fromWorkspaceAndDimensionSpacePoint($workspace->getWorkspaceName(), $subgraph->getDimensionSpacePoint())->toBackendUriSuffix();
+            } else {
+                throw new \Exception("TODO: Workspace not found for CS " . $nodeAddress->getContentStreamIdentifier());
+            }
+
         }
         $uriConstraints = $this->contentSubgraphUriProcessor->resolveDimensionUriConstraints($nodeAddress, $isSiteNode);
 
