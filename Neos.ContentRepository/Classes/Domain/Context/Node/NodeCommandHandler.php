@@ -425,7 +425,7 @@ final class NodeCommandHandler
                 $dimensionSpacePointsSet,
                 $command->getNodeIdentifier(),
                 $command->getPropertyName(),
-                $command->getDestinationtNodeAggregateIdentifiers()
+                $command->getDestinationNodeAggregateIdentifiers()
             );
 
             $this->nodeEventPublisher->publishMany(

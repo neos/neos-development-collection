@@ -27,7 +27,7 @@ final class SetNodeReferences
     /**
      * @var NodeAggregateIdentifier[]
      */
-    private $destinationtNodeAggregateIdentifiers;
+    private $destinationNodeAggregateIdentifiers;
 
     /**
      * @var PropertyName
@@ -40,18 +40,18 @@ final class SetNodeReferences
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
      * @param PropertyName $propertyName
-     * @param array $destinationtNodeAggregateIdentifiers
+     * @param array $destinationNodeAggregateIdentifiers
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeIdentifier $nodeIdentifier,
         PropertyName $propertyName,
-        array $destinationtNodeAggregateIdentifiers
+        array $destinationNodeAggregateIdentifiers
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->propertyName = $propertyName;
-        $this->destinationtNodeAggregateIdentifiers = $destinationtNodeAggregateIdentifiers;
+        $this->destinationNodeAggregateIdentifiers = $destinationNodeAggregateIdentifiers;
     }
 
     /**
@@ -73,9 +73,9 @@ final class SetNodeReferences
     /**
      * @return NodeAggregateIdentifier[]
      */
-    public function getDestinationtNodeAggregateIdentifiers(): array
+    public function getDestinationNodeAggregateIdentifiers(): array
     {
-        return $this->destinationtNodeAggregateIdentifiers;
+        return $this->destinationNodeAggregateIdentifiers;
     }
 
     /**
