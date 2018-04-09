@@ -840,8 +840,39 @@ trait EventSourcedTrait
                 },
                 $destinationNodes
             );
-            Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers,
-                'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
+            Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers, 'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
+        }
+    }
+
+    /**
+     * @Then /^I expect the Node "([^"]*)" to be referenced by:$/
+     */
+    public function iExpectTheNodeToBeReferencedBy($nodeIdentifier, TableNode $expectedReferences)
+    {
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        $expectedReferences = $this->readPayloadTable($expectedReferences);
+
+        /** @var \Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface $subgraph */
+        $subgraph = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint);
+
+        foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
+            $destinationNodes = $subgraph->findReferencingNodes(new NodeIdentifier($nodeIdentifier), new PropertyName($propertyName));
+            $destinationNodeAggregateIdentifiers = array_map(
+                function ($item) {
+                    if ($item instanceof \Neos\ContentRepository\Domain\Projection\Content\NodeInterface) {
+                        return (string)$item->getNodeAggregateIdentifier();
+                    } else {
+                        return $item;
+                    }
+                },
+                $destinationNodes
+            );
+
+            // since the order on the target side is not defined we sort
+            // expectation and result before comparison
+            sort($expectedDestinationNodeAggregateIdentifiers);
+            sort($destinationNodeAggregateIdentifiers);
+            Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers, 'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
         }
     }
 

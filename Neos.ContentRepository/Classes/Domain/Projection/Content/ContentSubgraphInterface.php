@@ -52,6 +52,13 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findReferencedNodes(Domain\ValueObject\NodeIdentifier $nodeIdentifier, Domain\ValueObject\PropertyName $name = null): array;
 
     /**
+     * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier
+     * @param Domain\ValueObject\PropertyName $name
+     * @return NodeInterface[]
+     */
+    public function findReferencingNodes(Domain\ValueObject\NodeIdentifier $nodeIdentifier, Domain\ValueObject\PropertyName $name = null): array;
+
+    /**
      * @param \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeInterface|null
      */
