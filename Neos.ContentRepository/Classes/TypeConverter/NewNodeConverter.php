@@ -40,11 +40,11 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Exception\NodeException;
 
 /**
- * !!! Only needed for uncached Fusion segments
- *
- * TODO: correct package??
+ * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
+ * and deserialize the context.
  *
  * @Flow\Scope("singleton")
+ * @deprecated
  */
 class NewNodeConverter extends AbstractTypeConverter
 {

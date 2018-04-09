@@ -11,10 +11,11 @@ namespace Neos\Neos\Fusion\Helper;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Exception;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface as LegacyNodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
@@ -36,7 +37,9 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodes = [];
         }
 
-        if ($nodes instanceof NodeInterface) {
+        if ($nodes instanceof LegacyNodeInterface) {
+            $nodes = [$nodes];
+        } elseif ($nodes instanceof NodeInterface) {
             $nodes = [$nodes];
         }
 
@@ -46,10 +49,14 @@ class CachingHelper implements ProtectedContextAwareInterface
 
         $prefixedNodeIdentifiers = [];
         foreach ($nodes as $node) {
-            if (!$node instanceof NodeInterface) {
+            if ($node instanceof LegacyNodeInterface) {
+                $prefixedNodeIdentifiers[] = $prefix . '_' . $node->getIdentifier();
+            } elseif ($node instanceof NodeInterface) {
+                $prefixedNodeIdentifiers[] = $prefix . '_' . $node->getNodeAggregateIdentifier();
+            } else {
                 throw new Exception(sprintf('One of the elements in array passed to this helper was not a Node, but of type: "%s".', gettype($node)), 1437169991);
             }
-            $prefixedNodeIdentifiers[] = $prefix . '_' . $node->getIdentifier();
+
         }
         return $prefixedNodeIdentifiers;
     }
