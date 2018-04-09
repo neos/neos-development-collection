@@ -33,7 +33,7 @@ extended. The only method that needs to be implemented is ``evaluate()``. To acc
 		 * @return string
 		 */
 		public function evaluate() {
-			$emailAddress = $this->tsValue('emailAddress');
+			$emailAddress = $this->fusionValue('emailAddress');
 			$size = $this->fusionValue('size') ?: 80;
 			$gravatarImageSource = 'http://www.gravatar.com/avatar/' . md5(strtolower(trim($emailAddress))) . '?s=' . $size . '&d=mm&r=g';
 			return '<img src="' . $gravatarImageSource . '" alt="" />';
