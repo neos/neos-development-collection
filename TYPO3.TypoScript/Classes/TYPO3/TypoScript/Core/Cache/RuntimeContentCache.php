@@ -175,7 +175,23 @@ class RuntimeContentCache
                         $result = $self->evaluateUncached($path, $unserializedContext);
                         return $result;
                     } elseif (strpos($command, 'evalCached=') === 0) {
+                        /*
+                         * Why do we need the following line:
+                         * - in "enter" the cache context is decided upon which contains "currentPathIsEntryPoint".
+                         * - This can not happen in nested segments as the topmost entry point should be the only one active
+                         * - the result of a "currentPathIsEntryPoint" is that on postProcess cache segments are parsed from the content.
+                         * - To get "currentPathIsEntryPoint" only on topmost segments, the state "$self->inCacheEntryPoint" is used.
+                         *   This state can have two values "true" and "null", in case it's true a topmost segment existed and "currentPathIsEntryPoint" will not be set
+                         * - A dynamic cache segment that we resolve here is to be seen independently from the parent cached entry as it is a forking point for content
+                         *   It must create cache segment tokens in order to properly cache, but those also need to be removed from the result.
+                         *   Therefore a dynamic cache entry must always have "currentPathIsEntryPoint" to make sure the markers are parsed regardless of the caching status of the upper levels
+                         *   To make that happen the state "$self->inCacheEntryPoint" must be reset to null.
+                         *   Saving the current state is irrelevant at this point as any top level element will have passed this point already and have the appropriate "currentPathIsEntryPoint"
+                         *   in its cache context. As soon as we bubble out of the upper level segment that potentially has set "$self->inCacheEntryPoint" before the state would be reset anyway
+                         *   so any parallel elements wouldn't be affected.
+                         */
                         $self->inCacheEntryPoint = null;
+
                         $unserializedContext = $self->unserializeContext($additionalData['context']);
                         $this->runtime->pushContextArray($unserializedContext);
                         $result = $this->runtime->evaluate($additionalData['path']);
