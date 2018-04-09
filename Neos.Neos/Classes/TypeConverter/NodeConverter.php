@@ -21,6 +21,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
  * purposes) as a plugin for the Property Mapper.
  *
  * @Flow\Scope("singleton")
+ * @deprecated
  */
 class NodeConverter extends \Neos\ContentRepository\TypeConverter\NodeConverter
 {

@@ -42,6 +42,7 @@ use Neos\ContentRepository\Exception\NodeException;
  * purposes) as a plugin for the Property Mapper.
  *
  * @Flow\Scope("singleton")
+ * @deprecated
  */
 class NodeConverter extends AbstractTypeConverter
 {
