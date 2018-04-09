@@ -112,7 +112,7 @@ class ImageUriImplementation extends AbstractFusionObject
 
     public function getQuality()
     {
-        return $this->tsValue('quality');
+        return $this->fusionValue('quality');
     }
 
     /**
