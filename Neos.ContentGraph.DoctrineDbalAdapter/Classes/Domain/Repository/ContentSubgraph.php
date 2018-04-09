@@ -396,10 +396,16 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchy
     {
         $cache = $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
 
-        $possibleParentIdentifier = $cache->get($childNodeIdentifier);
-        if ($possibleParentIdentifier) {
-            // we here trigger findNodeByIdentifier, as this might retrieve the Parent Node from the in-memory cache.
-            return $this->findNodeByIdentifier($possibleParentIdentifier);
+
+        if ($cache->knowsAbout($childNodeIdentifier)) {
+            $possibleParentIdentifier = $cache->get($childNodeIdentifier);
+
+            if ($possibleParentIdentifier === null) {
+                return null;
+            } else {
+                // we here trigger findNodeByIdentifier, as this might retrieve the Parent Node from the in-memory cache if it has been loaded before
+                return $this->findNodeByIdentifier($possibleParentIdentifier);
+            }
         }
 
         $params = [
@@ -428,6 +434,8 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
 
             // we also add the parent node to the NodeIdentifier => Node cache; as this might improve cache hit rates as well.
             $this->inMemoryCache->getNodeByNodeIdentifierCache()->add($node->getNodeIdentifier(), $node);
+        } else {
+            $cache->rememberNonExistingParentNode($childNodeIdentifier);
         }
 
         return $node;

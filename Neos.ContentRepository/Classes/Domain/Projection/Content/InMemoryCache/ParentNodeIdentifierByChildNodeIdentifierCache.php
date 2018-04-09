@@ -23,6 +23,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 final class ParentNodeIdentifierByChildNodeIdentifierCache
 {
     protected $parentNodeIdentifiers = [];
+    protected $nodesWithoutParentNode = [];
 
     public function add(NodeIdentifier $childNodeIdentifier, NodeIdentifier $parentNodeIdentifier): void
     {
@@ -30,11 +31,18 @@ final class ParentNodeIdentifierByChildNodeIdentifierCache
         $this->parentNodeIdentifiers[$key] = $parentNodeIdentifier;
     }
 
-    public function contains(NodeIdentifier $childNodeIdentifier): bool
+    public function knowsAbout(NodeIdentifier $childNodeIdentifier): bool
     {
         $key = (string)$childNodeIdentifier;
-        return isset($this->parentNodeIdentifiers[$key]);
+        return isset($this->parentNodeIdentifiers[$key])  || isset($this->nodesWithoutParentNode[$key]);;
     }
+
+    public function rememberNonExistingParentNode(NodeIdentifier $nodeIdentifier): void
+    {
+        $key = (string)$nodeIdentifier;
+        $this->nodesWithoutParentNode[$key] = true;
+    }
+
 
     public function get(NodeIdentifier $childNodeIdentifier): ?NodeIdentifier
     {
