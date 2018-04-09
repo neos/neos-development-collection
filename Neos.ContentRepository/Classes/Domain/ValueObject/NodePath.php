@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Domain\ValueObject;
 
 /*
@@ -35,9 +36,19 @@ final class NodePath implements \JsonSerializable
     }
 
     /**
+     * IMMUTABLE function to create a new NodePath by appending a path segment. Returns a NEW NodePath object
+     * @param NodeName $nodeName
+     * @return NodePath
+     */
+    public function appendPathSegment(NodeName $nodeName): NodePath
+    {
+        return new NodePath($this->path . '/' . (string)$nodeName);
+    }
+
+    /**
      * @return NodeName[]
      */
-    public function getParts() : array
+    public function getParts(): array
     {
         $path = $this->path;
         if ($this->isAbsolute()) {
@@ -45,7 +56,7 @@ final class NodePath implements \JsonSerializable
         }
         $pathParts = explode('/', $path);
 
-        return array_map(function($pathPart) {
+        return array_map(function ($pathPart) {
             return new NodeName($pathPart);
         }, $pathParts);
     }

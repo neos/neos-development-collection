@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
 
 use Neos\ContentRepository\Domain\Projection\Content\InMemoryCache\AllChildNodesByNodeIdentifierCache;
 use Neos\ContentRepository\Domain\Projection\Content\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
+use Neos\ContentRepository\Domain\Projection\Content\InMemoryCache\NodeByNodeAggregateIdentifierCache;
 use Neos\ContentRepository\Domain\Projection\Content\InMemoryCache\NodeByNodeIdentifierCache;
 use Neos\ContentRepository\Domain\Projection\Content\InMemoryCache\NodePathCache;
 use Neos\ContentRepository\Domain\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
@@ -33,6 +34,11 @@ final class InMemoryCache
      * @var NodeByNodeIdentifierCache
      */
     private $nodeByNodeIdentifierCache;
+
+    /**
+     * @var NodeByNodeAggregateIdentifierCache
+     */
+    private $nodeByNodeAggregateIdentifierCache;
 
     /**
      * @var AllChildNodesByNodeIdentifierCache
@@ -70,6 +76,11 @@ final class InMemoryCache
         return $this->nodeByNodeIdentifierCache;
     }
 
+    public function getNodeByNodeAggregateIdentifierCache(): NodeByNodeAggregateIdentifierCache
+    {
+        return $this->nodeByNodeAggregateIdentifierCache;
+    }
+
     /**
      * @return AllChildNodesByNodeIdentifierCache
      */
@@ -99,6 +110,7 @@ final class InMemoryCache
     {
         $this->nodePathCache = new NodePathCache();
         $this->nodeByNodeIdentifierCache = new NodeByNodeIdentifierCache();
+        $this->nodeByNodeAggregateIdentifierCache = new NodeByNodeAggregateIdentifierCache();
         $this->allChildNodesByNodeIdentifierCache = new AllChildNodesByNodeIdentifierCache();
         $this->namedChildNodeByNodeIdentifierCache = new NamedChildNodeByNodeIdentifierCache();
         $this->parentNodeIdentifierByChildNodeIdentifierCache = new ParentNodeIdentifierByChildNodeIdentifierCache();

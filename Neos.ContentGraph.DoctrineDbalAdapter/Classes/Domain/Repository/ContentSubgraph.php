@@ -241,27 +241,37 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
 
     public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
     {
-        $query = '
+        $cache = $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache();
+
+        if ($cache->knowsAbout($nodeAggregateIdentifier)) {
+            return $cache->get($nodeAggregateIdentifier);
+        } else {
+            $query = '
 -- ContentSubgraph::findNodeByNodeAggregateIdentifier
 SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
  AND h.dimensionspacepointhash = :dimensionSpacePointHash';
-        $parameters = [
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-            'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-            'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
-        ];
-        $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            $query,
-            $parameters
-        )->fetch();
-        if ($nodeRow === false) {
-            return null;
-        }
+            $parameters = [
+                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
+            ];
+            $nodeRow = $this->getDatabaseConnection()->executeQuery(
+                $query,
+                $parameters
+            )->fetch();
+            if ($nodeRow === false) {
+                $cache->rememberNonExistingNodeAggregateIdentifier($nodeAggregateIdentifier);
+                return null;
+            }
 
-        return $this->nodeFactory->mapNodeRowToNode($nodeRow);
+            $node = $this->nodeFactory->mapNodeRowToNode($nodeRow);
+            $cache->add($nodeAggregateIdentifier, $node);
+
+            return $node;
+        }
     }
 
     public function countChildNodes(

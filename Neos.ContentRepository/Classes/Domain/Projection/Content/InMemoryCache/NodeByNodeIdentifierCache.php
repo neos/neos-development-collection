@@ -19,7 +19,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 /**
  * NodeIdentifier -> Node cache
  *
- * also contains a *blacklist* of unknown NodeIdentifiers. We *ONLY* cache Nodes if they have a Context.
+ * also contains a *blacklist* of unknown NodeIdentifiers.
  */
 final class NodeByNodeIdentifierCache
 {

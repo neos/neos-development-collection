@@ -21,13 +21,20 @@ use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineFinder;
  */
 final class WorkspaceFinder extends AbstractDoctrineFinder
 {
+
+    protected $cachedWorkspacesByName = [];
+    protected $cachedWorkspacesByContentStreamIdentifier = [];
+
     /**
      * @param WorkspaceName $name
      * @return Workspace|null
      */
     public function findOneByName(WorkspaceName $name): ?Workspace
     {
-        return $this->__call('findOneByWorkspaceName', [(string)$name]);
+        if (!isset($this->cachedWorkspacesByName[(string)$name])) {
+            $this->cachedWorkspacesByName[(string)$name] = $this->__call('findOneByWorkspaceName', [(string)$name]);
+        }
+        return $this->cachedWorkspacesByName[(string)$name];
     }
 
     /**
@@ -36,8 +43,10 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
      */
     public function findOneByCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ?Workspace
     {
-        // TODO: in-memory cache! called often in BE!
-        return $this->__call('findOneByCurrentContentStreamIdentifier', [(string)$contentStreamIdentifier]);
+        if (!isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
+            $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier] = $this->__call('findOneByCurrentContentStreamIdentifier', [(string)$contentStreamIdentifier]);
+        }
+        return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
     }
 
     /**

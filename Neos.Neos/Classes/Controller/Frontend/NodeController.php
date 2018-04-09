@@ -12,13 +12,16 @@ namespace Neos\Neos\Controller\Frontend;
  */
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
+use Neos\ContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\Service\NodeTypeConstraintService;
+use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
@@ -239,18 +242,46 @@ class NodeController extends ActionController
         $subtree = $subgraph->findSubtrees([$nodeAddress->getNodeAggregateIdentifier()], 10, $contextParameters, $this->nodeTypeConstraintService->unserializeFilters('!Neos.Neos:Document'));
         $subtree = $subtree->getChildren()[0];
 
-        $parentNodeIdentifierByChildNodeIdentifierCache = $subgraph->getInMemoryCache()->getParentNodeIdentifierByChildNodeIdentifierCache();
         $nodeByNodeIdentifierCache = $subgraph->getInMemoryCache()->getNodeByNodeIdentifierCache();
-        $namedChildNodeByNodeIdentifierCache = $subgraph->getInMemoryCache()->getNamedChildNodeByNodeIdentifierCache();
-        $allChildNodesByNodeIdentifierCache = $subgraph->getInMemoryCache()->getAllChildNodesByNodeIdentifierCache();
         $nodePathCache = $subgraph->getInMemoryCache()->getNodePathCache();
 
-
         $currentDocumentNode = $subtree->getNode();
+        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->getNodeIdentifier());
+
         $nodeByNodeIdentifierCache->add($currentDocumentNode->getNodeIdentifier(), $currentDocumentNode);
+        $nodePathCache->add($currentDocumentNode->getNodeIdentifier(), $nodePathOfDocumentNode);
 
         foreach ($subtree->getChildren() as $childSubtree) {
-            //$this->fillCache($childSubtree, $subgraph);
+            self::fillCacheInternal($childSubtree, $currentDocumentNode, $nodePathOfDocumentNode, $subgraph->getInMemoryCache());
         }
+
     }
+
+    private static function fillCacheInternal(SubtreeInterface $subtree, NodeInterface $parentNode, NodePath $parentNodePath, InMemoryCache $inMemoryCache)
+    {
+        $parentNodeIdentifierByChildNodeIdentifierCache = $inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
+        $nodeByNodeIdentifierCache = $inMemoryCache->getNodeByNodeIdentifierCache();
+        $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
+        $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdentifierCache();
+        $nodePathCache = $inMemoryCache->getNodePathCache();
+
+        $node = $subtree->getNode();
+        $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
+
+        $parentNodeIdentifierByChildNodeIdentifierCache->add($node->getNodeIdentifier(), $parentNode->getNodeIdentifier());
+        $nodeByNodeIdentifierCache->add($node->getNodeIdentifier(), $node);
+        $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeIdentifier(), $node->getNodeName(), $node);
+        $nodePathCache->add($node->getNodeIdentifier(), $nodePath);
+
+        $allChildNodes = [];
+        foreach ($subtree->getChildren() as $childSubtree) {
+            self::fillCacheInternal($childSubtree, $node, $nodePath, $inMemoryCache);
+            $allChildNodes[] = $childSubtree->getNode();
+        }
+
+        // TODO Explain why this is safe (Content can not contain other documents)
+        $allChildNodesByNodeIdentifierCache->add($node->getNodeIdentifier(), $allChildNodes);
+    }
+
+
 }

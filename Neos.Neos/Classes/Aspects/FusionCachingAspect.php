@@ -34,8 +34,9 @@ class FusionCachingAspect
      */
     public function cacheGetMergedFusionObjectTree(JoinPointInterface $joinPoint)
     {
+        /* @var \Neos\ContentRepository\Domain\Projection\Content\NodeInterface $currentSiteNode */
         $currentSiteNode = $joinPoint->getMethodArgument('startNode');
-        $cacheIdentifier = str_replace('.', '_', $currentSiteNode->getContext()->getCurrentSite()->getSiteResourcesPackageKey());
+        $cacheIdentifier = (string)$currentSiteNode->getNodeAggregateIdentifier();
 
         if ($this->fusionCache->has($cacheIdentifier)) {
             $fusionObjectTree = $this->fusionCache->get($cacheIdentifier);
