@@ -28,7 +28,7 @@ class CanRenderImplementation extends AbstractFusionObject
      */
     public function getType()
     {
-        return $this->tsValue('type');
+        return $this->fusionValue('type');
     }
 
     /**
