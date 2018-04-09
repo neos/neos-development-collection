@@ -745,7 +745,7 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
         if ($continueTraversal) {
             if ($direction->isUp()) {
                 $parentNode = $this->findParentNode($startNode->getNodeIdentifier());
-                if ($parentNode) {
+                if ($parentNode && ($nodeTypeConstraints === null || $nodeTypeConstraints->matches($parentNode->getNodeTypeName()))) {
                     $this->traverseHierarchy($parentNode, $direction, $nodeTypeConstraints, $callback);
                 }
             } elseif ($direction->isDown()) {

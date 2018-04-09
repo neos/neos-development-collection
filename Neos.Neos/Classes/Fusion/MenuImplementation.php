@@ -20,6 +20,7 @@ use Neos\ContentRepository\Domain\Projection\Content\HierarchyTraversalDirection
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeConstraintService;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Flow\Annotations as Flow;
 
@@ -244,12 +245,13 @@ class MenuImplementation extends AbstractMenuImplementation
                 });
         } else {
             $traversedHierarchy = [];
-            $this->getSubgraph()->traverseHierarchy($traversalStartingPoint, HierarchyTraversalDirection::up(), $this->getNodeTypeConstraints(),
+            $this->getSubgraph()->traverseHierarchy($traversalStartingPoint, HierarchyTraversalDirection::up(), $this->getNodeTypeConstraints()->withExplicitlyDisallowedNodeType(new NodeTypeName('Neos.Neos:Sites')),
                 function (NodeInterface $traversedNode) use (&$traversedHierarchy) {
                     $traversedHierarchy[] = $traversedNode;
                     return true;
                 });
             $traversedHierarchy = array_reverse($traversedHierarchy);
+
             $entryParentNode = $traversedHierarchy[$this->getEntryLevel() - 1] ?? null;
         }
 

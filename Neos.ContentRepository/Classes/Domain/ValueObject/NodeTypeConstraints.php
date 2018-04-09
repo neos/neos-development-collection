@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Domain\ValueObject;
 
 /*
@@ -73,19 +74,33 @@ final class NodeTypeConstraints
     {
         // if $nodeTypeName is explicitely blacklisted, it is DENIED.
         foreach ($this->explicitlyDisallowedNodeTypeNames as $disallowed) {
-            if ((string)$nodeTypeName === (string) $disallowed) {
+            if ((string)$nodeTypeName === (string)$disallowed) {
                 return false;
             }
         }
 
         // if $nodeTypeName is explicitely whitelisted, it is ALLOWED.
         foreach ($this->explicitlyAllowedNodeTypeNames as $allowed) {
-            if ((string)$nodeTypeName === (string) $allowed) {
+            if ((string)$nodeTypeName === (string)$allowed) {
                 return true;
             }
         }
 
         // otherwise, we return $wildcardAllowed.
         return $this->wildcardAllowed;
+    }
+
+
+    /**
+     * IMMUTABLE, returns a new instance
+     *
+     * @param NodeTypeName $nodeTypeName
+     * @return NodeTypeConstraints
+     */
+    public function withExplicitlyDisallowedNodeType(NodeTypeName $nodeTypeName): NodeTypeConstraints
+    {
+        $disallowedNodeTypeNames = $this->explicitlyDisallowedNodeTypeNames;
+        $disallowedNodeTypeNames[] = $nodeTypeName;
+        return new NodeTypeConstraints($this->wildcardAllowed, $this->explicitlyAllowedNodeTypeNames, $disallowedNodeTypeNames);
     }
 }

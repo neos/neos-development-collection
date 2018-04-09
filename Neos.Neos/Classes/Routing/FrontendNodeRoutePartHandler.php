@@ -381,6 +381,11 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
                     }
                     $requestPathSegments[] = $node->getProperty('uriPathSegment');
 
+                    if ($node->getNodeType()->isOfType('Neos.Neos:Site')) {
+                        // do not traverse further up than the Site node
+                        return false;
+                    }
+
                     return true;
                 });
         });
