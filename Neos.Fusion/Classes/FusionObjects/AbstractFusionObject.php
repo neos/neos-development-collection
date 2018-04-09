@@ -67,37 +67,11 @@ abstract class AbstractFusionObject implements \ArrayAccess
     /**
      * Get the Fusion runtime this object was created in.
      *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @return Runtime
-     */
-    public function getTsRuntime()
-    {
-        return $this->getRuntime();
-    }
-
-    /**
-     * Get the Fusion runtime this object was created in.
-     *
      * @return Runtime
      */
     public function getRuntime()
     {
         return $this->runtime;
-    }
-
-    /**
-     * Return the Fusion value relative to this Fusion object (with processors etc applied).
-     *
-     * Note that subsequent calls of tsValue() with the same Fusion path will return the same values since the
-     * first evaluated value will be cached in memory.
-     *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @param string $path
-     * @return mixed
-     */
-    protected function tsValue($path)
-    {
-        return $this->fusionValue($path);
     }
 
     /**

@@ -344,17 +344,6 @@ class Parser implements ParserInterface
     /**
      * Get the next, unparsed line of Fusion from this->currentSourceCodeLines and increase the pointer
      *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @return string next line of Fusion to parse
-     */
-    protected function getNextTypoScriptLine()
-    {
-        return $this->getNextFusionLine();
-    }
-
-    /**
-     * Get the next, unparsed line of Fusion from this->currentSourceCodeLines and increase the pointer
-     *
      * @return string next line of Fusion to parse
      */
     protected function getNextFusionLine()
@@ -363,19 +352,6 @@ class Parser implements ParserInterface
         next($this->currentSourceCodeLines);
         $this->currentLineNumber++;
         return $fusionLine;
-    }
-
-    /**
-     * Parses one line of Fusion
-     *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @param string $fusionLine One line of Fusion code
-     * @return void
-     * @throws Fusion\Exception
-     */
-    protected function parseTypoScriptLine($fusionLine)
-    {
-        $this->parseFusionLine($fusionLine);
     }
 
     /**
@@ -648,8 +624,7 @@ class Parser implements ParserInterface
         if (isset($iterator)) {
             foreach ($iterator as $fileInfo) {
                 $pathAndFilename = $fileInfo->getPathname();
-                // Only work on .fusion files and .ts2 files. The support for .ts2 is deprecated a fallback and will be dropped with 4.0
-                if ($fileInfo->getExtension() === 'fusion' || $fileInfo->getExtension() === 'ts2') {
+                if ($fileInfo->getExtension() === 'fusion') {
                     // Check if not trying to recursively include the current file via globbing
                     if (stat($pathAndFilename) !== stat($this->contextPathAndFilename)) {
                         if (!is_readable($pathAndFilename)) {
@@ -804,7 +779,7 @@ class Parser implements ParserInterface
                             break;
                         }
                     }
-                    $line = $this->getNextTypoScriptLine();
+                    $line = $this->getNextFusionLine();
                     if ($line === false) {
                         // if the last line we consumed is FALSE, we have consumed the end of the file.
                         throw new Fusion\Exception('Syntax error: A multi-line dsl expression starting with "' . $unparsedValue . '" was not closed.', 1490714685);
@@ -820,8 +795,10 @@ class Parser implements ParserInterface
 
     /**
      * @param string $identifier
-     * @param strung $$code
+     * @param $code
      * @return mixed
+     * @throws Exception
+     * @throws Fusion
      */
     protected function invokeAndParseDsl($identifier, $code)
     {

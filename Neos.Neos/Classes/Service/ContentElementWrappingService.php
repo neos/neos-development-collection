@@ -12,14 +12,7 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Property\PropertyMappingConfiguration;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Utility\TypeHandling;
-use Neos\Media\Domain\Model\Asset;
-use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Service\Mapping\NodePropertyConverterService;
 use Neos\ContentRepository\Domain\Model\Node;
