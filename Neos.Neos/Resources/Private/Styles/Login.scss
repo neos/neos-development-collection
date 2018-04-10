@@ -184,11 +184,12 @@ html,
 			display: block;
 		}
 
-		header {
+		h1 {
 			color: #fff;
 			font-size: 16px;
 			margin-bottom: $defaultMargin;
 			text-align: center;
+			font-weight: normal;
 		}
 
 		.neos-login-body {
