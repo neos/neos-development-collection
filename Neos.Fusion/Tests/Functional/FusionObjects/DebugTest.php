@@ -85,4 +85,46 @@ class DebugTest extends AbstractFusionObjectTest
         $this->assertEquals(' string "foo" (3) => string "foo" (3)', $lines[2]);
         $this->assertEquals(' string "bar" (3) => string "bar" (3)', $lines[3]);
     }
+
+    /**
+     * @test
+     */
+    public function consoleOutput()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('debug/consoleOutput');
+        $lines = explode(chr(10), $view->render());
+        $this->assertEquals(
+            '<script>let bla = {"helloWorld::string":"hello world"}; console.log(bla);</script>',
+            $lines[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function consoleOutputWithSeparator()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('debug/consoleOutputWithSeparator');
+        $lines = explode(chr(10), $view->render());
+        $this->assertEquals(
+            '<script>let bla = {"withSeparator:::string":"hello world"}; console.log(bla);</script>',
+            $lines[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function consoleOutputWithMaxDepth()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('debug/consoleOutputWithMaxDepth');
+        $lines = explode(chr(10), $view->render());
+        $this->assertEquals(
+            '<script>let bla = {"withMaxDepth::object":["RECURSION ... \n"]}; console.log(bla);</script>',
+            $lines[0]
+        );
+    }
 }
