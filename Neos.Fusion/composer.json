@@ -12,7 +12,7 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-unicode": "*",
 
-        "doctrine/orm": "~2.5.0"
+        "doctrine/orm": "~2.6.0"
     },
     "replace": {
         "typo3/typoscript": "self.version"
