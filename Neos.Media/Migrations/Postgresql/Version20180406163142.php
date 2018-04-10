@@ -28,7 +28,7 @@ class Version20180406163142 extends AbstractMigration
 
         $this->addSql('CREATE TABLE neos_media_domain_model_importedasset (persistence_object_identifier VARCHAR(40) NOT NULL, assetsourceidentifier VARCHAR(255) NOT NULL, remoteassetidentifier VARCHAR(255) NOT NULL, localassetidentifier VARCHAR(255) NOT NULL, localoriginalassetidentifier VARCHAR(255) DEFAULT NULL, importedat TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(persistence_object_identifier))');
         $this->addSql('CREATE UNIQUE INDEX flow_identity_neos_media_domain_model_importedasset ON neos_media_domain_model_importedasset (assetsourceidentifier, remoteassetidentifier, localassetidentifier)');
-        $this->addSql('ALTER TABLE neos_media_domain_model_asset ADD assetsourceidentifier VARCHAR(255) NOT NULL');
+        $this->addSql('ALTER TABLE neos_media_domain_model_asset ADD assetsourceidentifier VARCHAR(255) DEFAULT "neos"');
     }
 
     /**
