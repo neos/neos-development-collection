@@ -4,28 +4,48 @@ prototype(Neos.Fusion:Debug) {
 	plaintext = TRUE
 }
 
-debug.empty = Debug
+debug.empty = Neos.Fusion:Debug
 
-debug.null = Debug {
+debug.null = Neos.Fusion:Debug {
 	value = NULL
 }
 
-debug.nullWithTitle = Debug {
+debug.nullWithTitle = Neos.Fusion:Debug {
 	title = 'Title'
 	value = NULL
 }
 
-debug.eelExpression = Debug {
+debug.eelExpression = Neos.Fusion:Debug {
 	value = ${'hello' + ' ' + 'world'}
 }
 
-debug.fusionObjectExpression = Debug {
-	value = Value {
+debug.fusionObjectExpression = Neos.Fusion:Debug {
+	value = Neos.Fusion:Value {
 		value = 'hello world'
 	}
 }
 
-debug.multipleValues = Debug {
-  foo = 'foo'
-  bar = 'bar'
+debug.multipleValues = Neos.Fusion:Debug {
+	foo = 'foo'
+	bar = 'bar'
+}
+
+debug.consoleOutput = Neos.Fusion:Debug {
+	title = 'helloWorld'
+	value = ${'hello world'}
+	console = true
+}
+
+debug.consoleOutputWithSeparator = Neos.Fusion:Debug {
+	title = 'withSeparator'
+	value = ${'hello world'}
+	console = true
+	separator = ':::'
+}
+
+debug.consoleOutputWithMaxDepth = Neos.Fusion:Debug {
+	title = 'withMaxDepth'
+	value = ${Configuration}
+	console = true
+	maxDepth = 0
 }
