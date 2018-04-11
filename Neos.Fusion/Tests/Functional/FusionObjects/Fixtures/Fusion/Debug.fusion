@@ -26,6 +26,26 @@ debug.fusionObjectExpression = Debug {
 }
 
 debug.multipleValues = Debug {
-  foo = 'foo'
-  bar = 'bar'
+	foo = 'foo'
+	bar = 'bar'
+}
+
+debug.consoleOutput = Debug {
+	title = 'helloWorld'
+	value = ${'hello world'}
+	console = true
+}
+
+debug.consoleOutputWithSeparator = Debug {
+	title = 'withSeparator'
+	value = ${'hello world'}
+	console = true
+	separator = ':::'
+}
+
+debug.consoleOutputWithMaxDepth = Debug {
+	title = 'withMaxDepth'
+	value = ${Configuration}
+	console = true
+	maxDepth = 0
 }
