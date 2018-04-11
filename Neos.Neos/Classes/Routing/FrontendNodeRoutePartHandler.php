@@ -155,7 +155,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return false;
         }
         if ($this->onlyMatchSiteNodes() && !$matchingNode->getNodeType()->isOfType('Neos.Neos:Site')) {
-            throw new Exception\NoHomepageException('Homepage could not be loaded. Probably you haven\'t imported a site yet', 1346950755);
+            return false;
         }
 
 
@@ -178,10 +178,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     {
         $remainingUriPathSegments = explode('/', $requestPath);
         $remainingUriPathSegments = array_slice($remainingUriPathSegments, $this->getUriPathSegmentOffset());
-        $matchingNode = $site;
+        $matchingNode = null;
         $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', true, true);
         $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(false, array_keys($documentNodeTypes)),
-            function (NodeInterface $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
+            function (NodeInterface $node) use ($site, &$remainingUriPathSegments, &$matchingNode, &$tagArray) {
+                if ($node === $site) {
+                    return true;
+                }
                 $currentPathSegment = reset($remainingUriPathSegments);
                 $pivot = \mb_strpos($currentPathSegment, '.');
                 if ($pivot !== false) {
@@ -373,19 +376,19 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         // a request path, not in building one.
         $requestPathSegments = [];
         $this->securityContext->withoutAuthorizationChecks(function () use ($contentSubgraph, $node, &$requestPathSegments) {
-            $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(false, ['Neos.Neos:Document']),
+            $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(true),
                 function (NodeInterface $node) use (&$requestPathSegments) {
                     if (!$node->hasProperty('uriPathSegment')) {
                         throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
                             $node->getNodeIdentifier()), 1415020326);
                     }
-                    $requestPathSegments[] = $node->getProperty('uriPathSegment');
 
                     if ($node->getNodeType()->isOfType('Neos.Neos:Site')) {
                         // do not traverse further up than the Site node
                         return false;
                     }
 
+                    $requestPathSegments[] = $node->getProperty('uriPathSegment');
                     return true;
                 });
         });

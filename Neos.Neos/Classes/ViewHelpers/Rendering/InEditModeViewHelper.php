@@ -11,8 +11,9 @@ namespace Neos\Neos\ViewHelpers\Rendering;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Neos\Domain\Service\UserInterfaceModeService;
 
 /**
  * ViewHelper to find out if Neos is rendering an edit mode.
@@ -56,15 +57,20 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 class InEditModeViewHelper extends AbstractRenderingStateViewHelper
 {
     /**
+     * @Flow\Inject
+     * @var UserInterfaceModeService
+     */
+    protected $interfaceRenderModeService;
+
+    /**
      * @param NodeInterface $node Optional Node to use context from
      * @param string $mode Optional rendering mode name to check if this specific mode is active
      * @return boolean
      * @throws \Neos\Neos\Exception
      */
-    public function render(NodeInterface $node = null, $mode = null)
+    public function render($mode = null)
     {
-        $context = $this->getNodeContext($node);
-        $renderingMode = $context->getCurrentRenderingMode();
+        $renderingMode = $this->interfaceRenderModeService->findModeByCurrentUser();
         if ($mode !== null) {
             $result = ($renderingMode->getName() === $mode) && $renderingMode->isEdit();
         } else {
