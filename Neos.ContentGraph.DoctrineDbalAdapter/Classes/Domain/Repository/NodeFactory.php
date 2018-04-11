@@ -68,6 +68,8 @@ final class NodeFactory
                 return $propertyType !== 'reference' && $propertyType !== 'references';
             }, ARRAY_FILTER_USE_KEY);
 
+            $propertyCollection = new ContentProjection\PropertyCollection($properties);
+
             /* @var $node ContentProjection\NodeInterface */
             $node = new $className(
                 $contentStreamIdentifier,
@@ -78,7 +80,7 @@ final class NodeFactory
                 $nodeType,
                 new ContentRepository\ValueObject\NodeName($nodeRow['name']),
                 $nodeRow['hidden'],
-                $properties
+                $propertyCollection
             );
                 //new ContentProjection\PropertyCollection(, $referenceProperties, $referencesProperties, $nodeIdentifier, $contentSubgraph),
 
@@ -98,7 +100,7 @@ final class NodeFactory
                 $nodeType,
                 NodeName::root(),
                 false,
-                []
+                new ContentProjection\PropertyCollection([])
             );
             return $node;
         }

@@ -68,7 +68,7 @@ class Node implements NodeInterface
     protected $hidden;
 
     /**
-     * @var array
+     * @var PropertyCollection
      */
     protected $properties;
 
@@ -82,9 +82,9 @@ class Node implements NodeInterface
      * @param NodeType $nodeType
      * @param NodeName $nodeName
      * @param bool $hidden
-     * @param array $properties
+     * @param PropertyCollection $properties
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, bool $hidden, array $properties)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, bool $hidden, PropertyCollection $properties)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -162,10 +162,10 @@ class Node implements NodeInterface
     }
 
     /**
-     * @return array
+     * @return PropertyCollection
      *
      */
-    public function getProperties(): array
+    public function getProperties(): PropertyCollection
     {
         return $this->properties;
     }

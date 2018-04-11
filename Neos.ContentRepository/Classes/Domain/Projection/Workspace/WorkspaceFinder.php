@@ -15,14 +15,23 @@ namespace Neos\ContentRepository\Domain\Projection\Workspace;
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineFinder;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Workspace Finder
+ * @Flow\Scope("singleton")
  */
 final class WorkspaceFinder extends AbstractDoctrineFinder
 {
 
+    /**
+     * @var array
+     */
     protected $cachedWorkspacesByName = [];
+
+    /**
+     * @var array
+     */
     protected $cachedWorkspacesByContentStreamIdentifier = [];
 
     /**

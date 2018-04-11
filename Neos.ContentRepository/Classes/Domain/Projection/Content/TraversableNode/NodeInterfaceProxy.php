@@ -75,7 +75,7 @@ trait NodeInterfaceProxy
         return $this->node->getDimensionSpacePoint();
     }
 
-    public function getProperties(): array
+    public function getProperties(): Domain\Projection\Content\PropertyCollection
     {
         return $this->node->getProperties();
     }

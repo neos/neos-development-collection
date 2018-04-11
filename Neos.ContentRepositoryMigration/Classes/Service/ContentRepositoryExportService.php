@@ -121,12 +121,13 @@ class ContentRepositoryExportService
             
             TRUNCATE neos_eventsourcing_eventstore_events;
             
+            TRUNCATE neos_contentrepository_projection_workspace_v1;
             TRUNCATE neos_contentgraph_hierarchyrelation;
             TRUNCATE neos_contentgraph_referencerelation;
             TRUNCATE neos_contentgraph_node;
             TRUNCATE neos_neos_projection_site_v1;
             TRUNCATE neos_neos_projection_domain_v1;
-            TRUNCATE neos_contentrepository_projection_workspace_v1;
+            
             
             SET foreign_key_checks = 1;');
     }

@@ -52,7 +52,7 @@ interface NodeInterface extends CacheAwareInterface
      * @return array Property values, indexed by their name
      * @api
      */
-    public function getProperties(): array;
+    public function getProperties(): PropertyCollection;
 
     /**
      * Returns the specified property.

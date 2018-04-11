@@ -15,6 +15,7 @@ use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionValue;
 use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
+use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
@@ -61,6 +62,12 @@ class FusionView extends AbstractView
     protected $fusionService;
 
     /**
+     * @Flow\Inject
+     * @var ContentGraphInterface
+     */
+    protected $contentGraph;
+
+    /**
      * The Fusion path to use for rendering the node given in "value", defaults to "page".
      *
      * @var string
@@ -98,7 +105,6 @@ class FusionView extends AbstractView
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSite,
             'subgraph' => $this->getCurrentSubgraph(),
-            'contextParameters' => $this->getCurrentContextParameters(),
             'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
         ]);
         try {
@@ -200,7 +206,8 @@ class FusionView extends AbstractView
     protected function getClosestDocumentNode(NodeInterface $node)
     {
         while ($node !== null && !$node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $node = $node->getParent();
+            $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint());
+            $node = $subgraph->findParentNode($node->getNodeIdentifier());
         }
         return $node;
     }
@@ -242,19 +249,6 @@ class FusionView extends AbstractView
             throw new Exception('FusionView needs a variable \'site\' set with a NodeInterface object.', 1329736456);
         }
         return $currentSite;
-    }
-
-    /**
-     * @return ContextParameters
-     * @throws Exception
-     */
-    protected function getCurrentContextParameters(): ContextParameters
-    {
-        $currentContextParameters = $this->variables['contextParameters'] ?? null;
-        if (!$currentContextParameters instanceof ContextParameters) {
-            throw new Exception('FusionView needs a variable \'contextParameters\' set with a ContextParameters object.', 1519167300);
-        }
-        return $currentContextParameters;
     }
 
     /**
