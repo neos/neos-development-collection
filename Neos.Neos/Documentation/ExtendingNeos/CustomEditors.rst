@@ -3,7 +3,7 @@
 Custom Editors
 ==============
 
-.. note:: For documentation on how to create inspector editors for the legacy Ember version of the user interface refer to the older versions of the documentation.
+.. note:: For documentation on how to create inspector editors for the legacy Ember version of the user interface, refer to the older versions of the documentation.
 
 
 Every dataType has its default editor set, which can have options applied like::
@@ -20,7 +20,7 @@ Every dataType has its default editor set, which can have options applied like::
               editorOptions:
                 placeholder: 'This is a placeholder'
 
-On a property level this can be overridden like::
+On a property level this can be overridden like:
 
 .. code-block:: yaml
 
@@ -34,7 +34,7 @@ On a property level this can be overridden like::
               editorOptions:
                 placeholder: 'This is my custom placeholder'
 
-In order to implement a custom inspector editor one has to use the UI extensibility layer exposed through `@neos-project/neos-ui-extensibility` package.
+In order to implement a custom inspector editor one has to use the UI extensibility layer exposed through the `@neos-project/neos-ui-extensibility` package.
 See :ref:`ui-extensibility` for the detailed information on the topic.
 
 Let's create a simple colour picker editor.
