@@ -59,7 +59,7 @@ Use the following `package.json` file:
     }
   }
 
-To build the editor you would need to run the following commands (after the code is in place):
+To build the editor you need to run the following commands (after the code is in place):
 
 ```
 yarn
@@ -90,7 +90,7 @@ From `index.js` we just require manifest.js file:
   require('./manifest');
 
 
-In `manifest.js` we use the `manifest` API to get access to globalRegistry, then we get the `editors` registry out of it and register our custom editor into it:
+In `manifest.js` we use the `manifest` API to get access to the globalRegistry, then we get the `editors` registry out of it and register our custom editor into it:
 
 .. code-block:: javascript
 
@@ -124,9 +124,9 @@ And finally the editor component itself (`ColorPickerEditor.js`):
     }
   }
 
-Each editor component gets a few API props passed, including current value of the editor and the `commit` callback which the editor should use to commit the new value.
+Each editor component gets a few API props passed, including the current value of the editor and the `commit` callback which the editor should use to commit the new value.
 
-That is it! Now time to use our brand new editor!
+That is it! Now it is time to use our brand new editor!
 
 .. code-block:: javascript
   'Neos.NodeTypes:TextMixin':
