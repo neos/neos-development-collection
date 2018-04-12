@@ -23,7 +23,7 @@ are objects of the following form:
 
   {
     component: TextInput // the React editor component to use. Required
-    hasOwnLabel: true|false // does the component render the label internally, or not?
+    hasOwnLabel: true|false // whether the component renders the label internally or not
   }
 
 Component Wiring
@@ -34,12 +34,12 @@ Every component gets the following properties (see EditorEnvelope/index.js)
 - identifier: an identifier which can be used for HTML ID generation
 - label: the label
 - node: the current node
-- value: The value to display
-- propertyName: Name of the property to edit (of the node)
+- value: the value to display
+- propertyName: name of the node property to edit
 - options: additional editor options
 - commit: a callback function when the content changes.
     - 1st argument: the new value
-    - | 2nd argument (optional): an object whose keys are to-be-triggered *saveHooks*, and the values are hook-specific options.
+    - | 2nd argument (optional): an object whose keys are to be triggered *saveHooks*, and the values are hook-specific options.
       | Example: `{'Neos.UI:Hook.BeforeSave.CreateImageVariant': nextImage}`
 - renderSecondaryInspector(inspectorIdentifier, secondaryInspectorComponentFactory):
     - 1st argument: a string identifier of the inspector; used to implement toggling of the inspector when calling this method twice.
@@ -74,7 +74,7 @@ Way to retrieve: `globalRegistry.get('inspector').get('saveHooks')`
 Sometimes, it is needed to run code when the user presses "Apply" inside the Inspector.
 
 Example: When the user cropped a new image, on Apply, a new imageVariant must be created on the server,
-and then the identity of the new imageVariant must be stored inside the Value of the image.
+and then the identity of the new imageVariant must be stored inside the value of the image.
 
 The process is as follows:
 - When an editor wants its value to be post-processed, it calls `props.commit(newValue, {hookName: hookOptions})`
@@ -110,7 +110,7 @@ Frontend Configuration
 ======================
 
 Any settings under 'Neos.Neos.Ui.frontendConfiguration' would be available here.
-Might be used also for third parth packages to deliver own settings to the UI, but this is still experimental.
+Might be used also for third-party packages to deliver own settings to the UI, but this is still experimental.
 Settings from each package should be prefixed to avoid collisions (unprefixed settings are reserved for the core UI itself), e.g.:
 
 .. code-block:: yaml
@@ -147,10 +147,10 @@ must be defined or other initialization routines must be run in order for the in
 
 `bootstrap` will receive an API Object as its first parameter, with the following methods:
 
-  - setFormattingUnderCursor: Will dispatch the respective action in from '@neos-project/neos-ui-redux-store' package (actions.UI.ContentCanvas.setFormattingUnderCursor)
-  - setCurrentlyEditedPropertyName: Will dispatch the respective action in from '@neos-project/neos-ui-redux-store' package (actions.UI.ContentCanvas.setCurrentlyEditedPropertyName)
+  - setFormattingUnderCursor: Will dispatch the respective action from '@neos-project/neos-ui-redux-store' package (actions.UI.ContentCanvas.setFormattingUnderCursor)
+  - setCurrentlyEditedPropertyName: Will dispatch the respective action from '@neos-project/neos-ui-redux-store' package (actions.UI.ContentCanvas.setCurrentlyEditedPropertyName)
 
-`createInlineEditor` is called on every dom node in the guest frame that represents an editable property. It is supposed to handle the initialization and display of an inline editor.
+`createInlineEditor` is called on every DOM node in the guest frame that represents an editable property. It is supposed to handle the initialization and display of an inline editor.
 
 `createInlineEditor` will receive an object as its first parameter, with the following properties:
 
@@ -160,9 +160,9 @@ must be defined or other initialization routines must be run in order for the in
   - nodeType: The nodeType of the associated node
   - editorOptions: The configuration for this inline editor
   - globalRegistry: The global registry
-  - persistChange: Will dispatch the respective action in from '@neos-project/neos-ui-redux-store' package (actions.Changes.persistChanges)
+  - persistChange: Will dispatch the respective action from '@neos-project/neos-ui-redux-store' package (actions.Changes.persistChanges)
 
-CKeditor-specific registries
+CKEditor-specific registries
 ============================
 
 Formatting rules
@@ -170,7 +170,7 @@ Formatting rules
 
 Way to retrieve: `globalRegistry.get('ckEditor').get('formattingRules')`
 
-Contains the possible styles for CKeditor.
+Contains the possible styles for CKEditor.
 
 Enabled Styles
 ~~~~~~~~~~~~~~
@@ -184,11 +184,11 @@ For backwards compatibility reasons, the formatting-and-styling-registry *KEYS* 
 UI, if they existed beforehand.
 
 
-Configuration of CKeditor
+Configuration of CKEditor
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-With this config, CKeditor itself is controlled:
-- the Advanced Content Filter (ACF) is configured, thus which markup is allowed in the editors
+With this config, CKEditor itself is controlled:
+- the Advanced Content Filter (ACF) is configured, thus determining which markup is allowed in the editors
 - which effect a button action actually has.
 
 Currently, there exist three possible effects:
@@ -203,7 +203,7 @@ Configuration Format
 NOTE: one of "command" or "style" must be specified in all cases.
 
 - \`command\` (string, optional). If specified, this CKEditor command is triggered; so the command string
-    is known by CKeditor in the "commands" section:
+    is known by CKEditor in the "commands" section:
     http://docs.ckeditor.com/#!/api/CKEDITOR.editor-method-getCommand
 
 - \`style\` (object, optional). If specified, this CKEditor style is applied. Expects a style description
@@ -270,8 +270,8 @@ Contains custom plugins for CkEditor.
       initFn: pluginInitFunction
   });
 
-pluginInitFunction is passed CKEDITOR as the first argument.
-In that function you may register your plugin with CKeditor via its API (CKEDITOR.plugins.add).
+pluginInitFunction is passed from CKEDITOR as the first argument.
+In that function you may register your plugin with CKEditor via its API (CKEDITOR.plugins.add).
 Take custom plugins as examples.
 
 Data Loaders
@@ -309,7 +309,7 @@ Containers
 
 Way to retrieve: `globalRegistry.get('containers')`
 
-The whole user interface is built around container components. They are registered through the containers registry. Here is an example how to replace the PageTree container with your custom container:
+The whole user interface is built around container components. They are registered through the containers registry. Below you will find an example on how to replace the PageTree container with your custom container:
 
 .. code-block:: javascript
 
@@ -341,7 +341,7 @@ Reducers
 Way to retrieve: `globalRegistry.get('reducers')`
 
 Allows to register custom reducers for your plugin.
-Probably a bad idea to override any of the existing reducers.
+It is probably a bad idea to override any of the existing reducers.
 
 Sagas
 =====
@@ -349,7 +349,7 @@ Sagas
 Way to retrieve: `globalRegistry.get('sagas')`
 
 Allows to register custom sagas for your plugin.
-Probably a bad idea to override any of the existing reducers.
+It is probably a bad idea to override any of the existing reducers.
 
 Example:
 
