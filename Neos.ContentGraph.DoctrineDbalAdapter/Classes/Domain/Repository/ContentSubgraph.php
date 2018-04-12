@@ -892,7 +892,7 @@ union
    -- select relationanchorpoint from neos_contentgraph_node
 )
 select * from tree
-order by level, position desc;')
+order by level asc, position asc;')
             ->parameter('entryNodeAggregateIdentifiers', array_map(function (NodeAggregateIdentifier $nodeAggregateIdentifier) {
                 return (string)$nodeAggregateIdentifier;
             }, $entryNodeAggregateIdentifiers), Connection::PARAM_STR_ARRAY)
