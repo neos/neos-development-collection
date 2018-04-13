@@ -22,25 +22,25 @@
 
 						<div class="neos-dropdown neos-pull-right" id="neos-asset-actionmenu-{asset -> f:format.identifier()}">
 							<a class="dropdown-toggle neos-button" href="#" data-neos-toggle="dropdown" data-target="#neos-asset-actionmenu-{asset -> f:format.identifier()}">
-								<i class="icon-ellipsis-horizontal"></i>
+								<i class="fas fa-ellipsis-horizontal"></i>
 							</a>
 							<div class="neos-dropdown-menu-list neos-pull-right" role="menu">
 								<ul>
 									<li>
 										<f:link.action action="edit" arguments="{asset: asset}" title="{editAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
-											<i class="icon-edit icon-white"></i> {editLabel}
+											<i class="fas fa-edit icon-white"></i> {editLabel}
 										</f:link.action>
 									</li>
 									<f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
 										<li>
 											<f:link.action action="replaceAssetResource" arguments="{asset: asset}" title="{replaceAssetResourceLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
-												<i class="icon-random icon-white"></i> {replaceLabel}
+												<i class="fas fa-random icon-white"></i> {replaceLabel}
 											</f:link.action>
 										</li>
 									</f:security.ifAccess>
 									<li>
 										<a href="#" class="neos-media-delete" title="{deleteAssetLabel}" data-neos-toggle="tooltip" data-placement="left" data-modal="delete-asset-modal" data-label="{asset.label -> f:format.crop(maxCharacters: 50)}" data-object-identifier="{asset -> f:format.identifier()}">
-											<i class="icon-trash icon-white"></i> {deleteLabel}
+											<i class="fas fa-trash icon-white"></i> {deleteLabel}
 										</a>
 									</li>
 								</ul>

@@ -35,20 +35,20 @@
 					<td>
 						<f:switch expression="{true}">
 							<f:case value="{inaccessibleRelation.workspace.personalWorkspace}">
-								<i class="icon-user"
+								<i class="fas fa-user"
 								   title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'Neos.Neos')}"
 								   data-neos-toggle="tooltip"></i>
 								{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'Neos.Neos')}
 							</f:case>
 							<f:case value="{inaccessibleRelation.workspace.privateWorkspace}">
-								<i class="icon-shield"
+								<i class="fas fa-shield"
 								   title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package: 'Neos.Neos')}"
 								   data-neos-toggle="tooltip"></i>
 								{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package:
 								'Neos.Neos')}
 							</f:case>
 							<f:case value="{inaccessibleRelation.workspace.internalWorkspace}">
-								<i class="icon-group"
+								<i class="fas fa-group"
 								   title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package: 'Neos.Neos')}"
 								   data-neos-toggle="tooltip"></i>
 								{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package:
@@ -69,7 +69,7 @@
 	<f:for each="{relatedNodes}" as="site">
 		<div class="neos-folder">
 			<span title="{site.site.nodeName}" class="neos-label" data-neos-toggle="tooltip">{site.site.name}</span>
-			<i class="fold-toggle icon-chevron-up icon-white" data-toggle=".fold-{site.site.nodeName}"></i>
+			<i class="fold-toggle fas fa-chevron-up icon-white" data-toggle=".fold-{site.site.nodeName}"></i>
 		</div>
 
 		<table class="neos-table neos-no-hover fold-{site.site.nodeName}">
@@ -99,11 +99,11 @@
 														title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: nodeInformation.documentNode.workspace.title})}">
 											<span title="{f:render(partial: 'Module/Shared/DocumentBreadcrumb', arguments: {node: nodeInformation.documentNode})}"
 												  data-neos-toggle="tooltip">{nodeInformation.documentNode.label}</span>
-											<i class="icon-external-link"></i>
+											<i class="fas fa-external-link-alt"></i>
 										</neos:link.node>
 									</f:then>
 									<f:else>
-										<span><i class="icon-warning" data-neos-toggle="tooltip" data-placement="left"
+										<span><i class="fas fa-warning" data-neos-toggle="tooltip" data-placement="left"
 												 title="{neos:backend.translate(id: 'media.missingDocumentNode', source: 'Modules', package: 'Neos.Neos')}"></i></span>
 									</f:else>
 								</f:if>
@@ -124,19 +124,19 @@
 							<td>
 								<f:if condition="{userWorkspace} == {nodeInformation.node.workspace}">
 									<f:then>
-										<i class="icon-user"
+										<i class="fas fa-user"
 										   title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'Neos.Neos')}"
 										   data-neos-toggle="tooltip"></i>
 									</f:then>
 									<f:else>
 										<f:if condition="{nodeInformation.node.workspace.privateWorkspace}">
 											<f:then>
-												<i class="icon-shield"
+												<i class="fas fa-shield"
 												   title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package: 'Neos.Neos')}"
 												   data-neos-toggle="tooltip"></i>
 											</f:then>
 											<f:else>
-												<i class="icon-group"
+												<i class="fas fa-group"
 												   title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package: 'Neos.Neos')}"
 												   data-neos-toggle="tooltip"></i>
 											</f:else>
@@ -166,7 +166,7 @@
 	<script>
 		(function($) {
 			$('.fold-toggle').click(function() {
-				$(this).toggleClass('icon-chevron-down icon-chevron-up');
+				$(this).toggleClass('fas fa-chevron-down fas fa-chevron-up');
 				$($(this).data('toggle')).toggle();
 			});
 		})(jQuery);

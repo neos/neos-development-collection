@@ -11,7 +11,7 @@ function (
 	I18n
 ) {
 	return AbstractPositionSelectorButton.extend({
-		iconClass: 'icon-plus',
+		iconClass: 'fas fa-plus',
 		type: 'new',
 		init: function() {
 			this._super();
