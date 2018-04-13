@@ -71,22 +71,22 @@
 								<td class="neos-action aRight">
 									<div class="neos-pull-right">
 										<f:link.action action="editDomain" arguments="{domain: domain}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
-											<i class="icon-pencil icon-white"></i>
+											<i class="fas fa-pencil-alt icon-white"></i>
 										</f:link.action>
 										<f:if condition="{domain.active} === 1">
 											<f:then>
 												<button form="postHelper" formaction="{f:uri.action(action: 'deactivateDomain', arguments: {domain: domain})}" type="submit" class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'clickToDeactivate', value: 'Click to deactivate')}" data-neos-toggle="tooltip">
-													<i class="icon-minus-sign icon-white"></i>
+													<i class="fas fa-minus-circle icon-white"></i>
 												</button>
 											</f:then>
 											<f:else>
 												<button form="postHelper" formaction="{f:uri.action(action: 'activateDomain', arguments: {domain: domain})}" type="submit" class="neos-button neos-button-success" title="{neos:backend.translate(id: 'clickToActivate', value: 'Click to activate')}" data-neos-toggle="tooltip">
-													<i class="icon-plus-sign icon-white"></i>
+													<i class="fas fa-plus-circle icon-white"></i>
 												</button>
 											</f:else>
 										</f:if>
 										<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', value: 'Click to delete')}" data-toggle="modal" href="#{site.nodeName}-{number}" data-neos-toggle="tooltip">
-											<i class="icon-trash icon-white"></i>
+											<i class="fas fa-trash icon-white"></i>
 										</button>
 										<div class="neos-hide" id="{site.nodeName}-{number}">
 											<div class="neos-modal-centered">

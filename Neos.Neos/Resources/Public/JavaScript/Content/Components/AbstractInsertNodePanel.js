@@ -24,11 +24,11 @@ define([
 		_positionIconClass: function() {
 			switch (this.get('_position')) {
 				case 'into':
-					return 'icon-long-arrow-right';
+					return 'fas long-arrow-alt-right';
 				case 'before':
-					return 'icon-level-up';
+					return 'fas fa-level-up-alt';
 				case 'after':
-					return 'icon-level-down';
+					return 'fas fa-level-down-alt';
 			}
 			return '';
 		}.property('_position'),

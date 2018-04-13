@@ -15,7 +15,7 @@
 						<b>{neos:backend.translate(id: 'replaceAsset.note', package: 'Neos.Media.Browser')}: </b> {neos:backend.translate(id: 'replaceAsset.noteText', package: 'Neos.Media.Browser')}
 					</p>
 					<span class="neos-file-input">
-						<label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'replaceAsset.chooseNewFile', package: 'Neos.Media.Browser')} <i class="icon-file"></i></label>
+						<label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'replaceAsset.chooseNewFile', package: 'Neos.Media.Browser')} <i class="fas fa-file"></i></label>
 						<f:form.upload id="resource" name="resource" additionalAttributes="{required: 'required'}" />
 					</span>
 				</fieldset>
@@ -37,13 +37,13 @@
 					<legend>{neos:backend.translate(id: 'relatedNodes.referencesTo', package: 'Neos.Media.Browser', arguments: {asset: asset.label})}</legend>
 					<f:if condition="{asset.inUse}">
 						<f:then>
-							<p class="neos-buffer-below"><i class="icon-exclamation-sign"></i> {neos:backend.translate(id: 'replace.usageCount', arguments: {usageCount: asset.usageCount}, package: 'Neos.Media.Browser')}</p>
+							<p class="neos-buffer-below"><i class="fas fa-exclamation-sign"></i> {neos:backend.translate(id: 'replace.usageCount', arguments: {usageCount: asset.usageCount}, package: 'Neos.Media.Browser')}</p>
 							<f:link.action action="relatedNodes" arguments="{asset:asset}" class="neos-button">
 								{neos:backend.translate(id: 'replace.allUsages', package: 'Neos.Media.Browser')}
 							</f:link.action>
 						</f:then>
 						<f:else>
-							<p><i class="icon-ok-sign"></i> {neos:backend.translate(id: 'replace.notUsed', package: 'Neos.Media.Browser')}</p>
+							<p><i class="fas fa-ok-sign"></i> {neos:backend.translate(id: 'replace.notUsed', package: 'Neos.Media.Browser')}</p>
 						</f:else>
 					</f:if>
 				</fieldset>
