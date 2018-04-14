@@ -34,7 +34,7 @@
 		&.neos-notification-error {
 			background-color: $warning;
 
-			.icon-error {
+			.fa-error {
 				@extend .#{$fa-css-prefix}-ban;
 			}
 		}
@@ -42,7 +42,7 @@
 		&.neos-notification-success {
 			background-color: $green;
 
-			.icon-success {
+			.fa-success {
 				@extend .#{$fa-css-prefix}-check;
 			}
 		}
@@ -50,7 +50,7 @@
 		&.neos-notification-warning {
 			background-color: $orange;
 
-			.icon-warning {
+			.fa-warning {
 				@extend .#{$fa-css-prefix}-exclamation-triangle;
 			}
 		}
@@ -58,7 +58,7 @@
 		&.neos-notification-info {
 			background-color: $blue;
 
-			.icon-info-circle {
+			.fa-info-circle {
 				@extend .#{$fa-css-prefix}-info-circle;
 			}
 		}
