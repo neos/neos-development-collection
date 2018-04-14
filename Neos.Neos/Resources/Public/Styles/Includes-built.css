@@ -505,7 +505,7 @@ readers do not read off random characters that represent icons */
   content: "\f24e";
 }
 
-.fa-ban:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error .icon-error:before {
+.fa-ban:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error .fa-error:before {
   content: "\f05e";
 }
 
@@ -870,7 +870,7 @@ readers do not read off random characters that represent icons */
   content: "\f200";
 }
 
-.fa-check:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success .icon-success:before {
+.fa-check:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success .fa-success:before {
   content: "\f00c";
 }
 
@@ -1338,7 +1338,7 @@ readers do not read off random characters that represent icons */
   content: "\f06a";
 }
 
-.fa-exclamation-triangle:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning .icon-warning:before {
+.fa-exclamation-triangle:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning .fa-warning:before {
   content: "\f071";
 }
 
@@ -1954,7 +1954,7 @@ readers do not read off random characters that represent icons */
   content: "\f129";
 }
 
-.fa-info-circle:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info .icon-info-circle:before {
+.fa-info-circle:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info .fa-info-circle:before {
   content: "\f05a";
 }
 
@@ -3816,22 +3816,22 @@ readers do not read off random characters that represent icons */
   font-weight: 900;
 }
 
-.neos [class^="icon-"],
-.neos [class*=" icon-"] {
+.neos [class^="fa-"],
+.neos [class*=" fa-"] {
   vertical-align: baseline;
 }
-.neos [class^="icon-"].icon-review,
-.neos [class*=" icon-"].icon-review {
+.neos [class^="fa-"].fa-review,
+.neos [class*=" fa-"].fa-review {
   position: relative;
   padding-right: 4px;
 }
-.neos [class^="icon-"].icon-review:before,
-.neos [class*=" icon-"].icon-review:before {
+.neos [class^="fa-"].fa-review:before,
+.neos [class*=" fa-"].fa-review:before {
   content: "\f15c";
   font-weight: 400;
 }
-.neos [class^="icon-"].icon-review:after,
-.neos [class*=" icon-"].icon-review:after {
+.neos [class^="fa-"].fa-review:after,
+.neos [class*=" fa-"].fa-review:after {
   content: "\f058";
   text-decoration: inherit;
   display: inline-block;
@@ -7992,7 +7992,7 @@ readers do not read off random characters that represent icons */
 .neos .neos-image.neos-image-position-right {
   float: right;
 }
-.neos button.icon-trash:before {
+.neos button.fa-trash:before {
   padding-right: 3px;
 }
 .neos .neos-popover {
@@ -10446,7 +10446,7 @@ readers do not read off random characters that represent icons */
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=75);
   opacity: 0.75;
 }
-.neos #neos-publish-menu.neos-button-group .neos-publish-button .icon-lock {
+.neos #neos-publish-menu.neos-button-group .neos-publish-button .fa-lock {
   line-height: 19px;
 }
 .neos #neos-publish-menu.neos-button-group .neos-publish-button .neos-badge {
@@ -10504,7 +10504,7 @@ readers do not read off random characters that represent icons */
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .neos-publish-all-button.disabled:hover {
   background-color: #323232;
 }
-.neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .icon-review::after {
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .fa-review::after {
   bottom: -5px;
   right: 5px;
 }
@@ -11743,11 +11743,11 @@ readers do not read off random characters that represent icons */
   font-size: 14px;
   line-height: 40px;
 }
-.neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search span.icon-remove-sign {
+.neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search span.fa-remove-sign {
   cursor: pointer;
   font-size: 16px;
 }
-.neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search span.icon-remove-sign:hover {
+.neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-search span.fa-remove-sign:hover {
   color: #00b5ff;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar #neos-node-tree-sorting {
@@ -12491,7 +12491,7 @@ readers do not read off random characters that represent icons */
 .neos.neos-module.neos-module-user-usersettings .neos-content #electronicAddresses input[type="radio"], .neos.neos-module.neos-module-administration-users .neos-content #electronicAddresses input[type="radio"] {
   margin: 0;
 }
-.neos.neos-module.neos-module-user-usersettings .neos-content i.icon-user, .neos.neos-module.neos-module-administration-users .neos-content i.icon-user {
+.neos.neos-module.neos-module-user-usersettings .neos-content i.fa-user, .neos.neos-module.neos-module-administration-users .neos-content i.fa-user {
   margin-right: 11px;
 }
 .neos.neos-module .neos-breadcrumb {
@@ -13210,7 +13210,6 @@ readers do not read off random characters that represent icons */
 }
 .neos .widget .widget-header i {
   color: #fff;
-  font-size: 12px;
   width: 40px;
   height: 40px;
   border-right: 1px solid #222;
@@ -13221,6 +13220,7 @@ readers do not read off random characters that represent icons */
   height: inherit;
   text-align: center;
   line-height: 40px;
+  padding: 12px;
 }
 .neos .widget .widget-body {
   padding: 15px;

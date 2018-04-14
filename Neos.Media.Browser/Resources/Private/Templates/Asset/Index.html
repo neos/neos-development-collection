@@ -41,10 +41,10 @@
 				<a class="dropdown-toggle" href="#" data-neos-toggle="dropdown" data-target="#neos-sort-menu">
 					<f:if condition="{sortDirection} === 'ASC'">
 						<f:then>
-							<i class="fas fa-{f:if(condition: '{sortBy} === \'Modified\'', then: 'sort-by-order', else: 'sort-by-alphabet')}"></i>
+							<i class="fas fa-{f:if(condition: '{sortBy} === \'Modified\'', then: 'sort-numeric-down', else: 'sort-by-alphabet')}"></i>
 						</f:then>
 						<f:else>
-							<i class="fas fa-{f:if(condition: '{sortBy} === \'Modified\'', then: 'sort-by-order-alt', else: 'sort-by-alphabet-alt')}"></i>
+							<i class="fas fa-{f:if(condition: '{sortBy} === \'Modified\'', then: 'sort-numeric-up', else: 'sort-by-alphabet-alt')}"></i>
 						</f:else>
 					</f:if>
 				</a>

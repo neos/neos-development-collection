@@ -1,8 +1,8 @@
-.neos [class^="icon-"],
-.neos [class*=" icon-"] {
+.neos [class^="fa-"],
+.neos [class*=" fa-"] {
 	vertical-align: baseline;
 
-	&.icon-review {
+	&.fa-review {
 		position: relative;
 		padding-right: 4px;
 
