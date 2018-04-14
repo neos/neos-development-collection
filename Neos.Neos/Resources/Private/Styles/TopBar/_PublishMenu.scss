@@ -96,7 +96,7 @@
 
 		&::before {
 			@include fa-icon();
-			content: $fa-var-caret-down;
+			content: fa-content($fa-var-caret-down);
 			position: relative;
 			top: 0;
 			line-height: $unit;

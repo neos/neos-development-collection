@@ -3812,7 +3812,7 @@ readers do not read off random characters that represent icons */
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander {
-  font-family: 'FontAwesome';
+  font-family: 'FontAwesome' !important;
   font-weight: 900;
 }
 
@@ -3827,12 +3827,12 @@ readers do not read off random characters that represent icons */
 }
 .neos [class^="icon-"].icon-review:before,
 .neos [class*=" icon-"].icon-review:before {
-  content: \f15c;
+  content: "\f15c";
   font-weight: 400;
 }
 .neos [class^="icon-"].icon-review:after,
 .neos [class*=" icon-"].icon-review:after {
-  content: \f058;
+  content: "\f058";
   text-decoration: inherit;
   display: inline-block;
   speak: none;
@@ -6203,7 +6203,8 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
   -webkit-box-sizing: border-box;
@@ -6211,7 +6212,7 @@ readers do not read off random characters that represent icons */
   box-sizing: border-box;
 }
 .neos .neos-modal .neos-modal-header .neos-close:before, .neos .neos-modal-content .neos-modal-header .neos-close:before {
-  content: \f00d;
+  content: "\f00d";
 }
 .neos .neos-modal .neos-modal-header .neos-close:hover, .neos .neos-modal-content .neos-modal-header .neos-close:hover {
   background: #00b5ff;
@@ -7562,10 +7563,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f057;
+  content: "\f057";
   position: absolute;
   left: 12px;
   top: 0px;
@@ -7586,10 +7588,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f017;
+  content: "\f017";
   font-weight: 400;
   position: absolute;
   left: 12px;
@@ -8190,10 +8193,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f00d;
+  content: "\f00d";
   margin-left: -2px;
 }
 .neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove i {
@@ -8458,10 +8462,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f063;
+  content: "\f063";
   position: absolute;
   top: 50%;
   font-size: 40px;
@@ -8695,10 +8700,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f0d7;
+  content: "\f0d7";
   display: block;
   position: absolute;
   width: 40px;
@@ -9108,10 +9114,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f00c;
+  content: "\f00c";
   line-height: 20px;
   text-align: center;
 }
@@ -10044,7 +10051,8 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
   -moz-transition-property: top, right;
@@ -10057,7 +10065,7 @@ readers do not read off random characters that represent icons */
   transition-duration: 0.2s;
 }
 .neos .neos-secondary-inspector .neos-close:before {
-  content: \f00d;
+  content: "\f00d";
 }
 .neos .neos-secondary-inspector .neos-close:hover {
   background: #00b5ff;
@@ -10269,10 +10277,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f00c;
+  content: "\f00c";
   line-height: 20px;
   text-align: center;
 }
@@ -10478,10 +10487,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f0d7;
+  content: "\f0d7";
   position: relative;
   top: 0;
   line-height: 40px;
@@ -10829,10 +10839,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f0d7;
+  content: "\f0d7";
   display: block;
   position: absolute;
   width: 40px;
@@ -10859,10 +10870,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f057;
+  content: "\f057";
 }
 .neos #neos-context-bar .chosen-container .chosen-drop {
   border: none;
@@ -10885,7 +10897,8 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
   font-size: 0;
@@ -10920,7 +10933,7 @@ readers do not read off random characters that represent icons */
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: \f002;
+  content: "\f002";
   line-height: 100%;
   font-size: 12px;
 }
@@ -11034,10 +11047,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f0d7;
+  content: "\f0d7";
   font-size: 14px;
   position: absolute;
   right: 0;
@@ -11513,10 +11527,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f0d7;
+  content: "\f0d7";
   display: block;
   position: absolute;
   width: 40px;
@@ -11543,10 +11558,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f057;
+  content: "\f057";
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop {
   border: none;
@@ -11569,7 +11585,8 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
   font-size: 0;
@@ -11604,7 +11621,7 @@ readers do not read off random characters that represent icons */
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: \f002;
+  content: "\f002";
   line-height: 100%;
   font-size: 12px;
 }
@@ -12026,7 +12043,8 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
 }
@@ -12688,10 +12706,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f0d7;
+  content: "\f0d7";
   display: block;
   position: absolute;
   right: 0;
@@ -12833,10 +12852,11 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f00c;
+  content: "\f00c";
   line-height: 20px;
   text-align: center;
 }
@@ -13683,7 +13703,8 @@ readers do not read off random characters that represent icons */
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
   position: absolute;
@@ -13691,19 +13712,19 @@ readers do not read off random characters that represent icons */
   color: #00b5ff;
 }
 .neos .neos-position-selector.neos-position-selector-node-into::after {
-  content: \f30b;
+  content: "\f30b";
   font-weight: 900;
   left: 18px;
   bottom: 4px;
 }
 .neos .neos-position-selector.neos-position-selector-node-before::after {
-  content: \f3bf;
+  content: "\f3bf";
   font-weight: 900;
   left: 24px;
   bottom: 7px;
 }
 .neos .neos-position-selector.neos-position-selector-node-after::after {
-  content: \f3be;
+  content: "\f3be";
   font-weight: 900;
   left: 24px;
   bottom: 6px;
@@ -14367,7 +14388,8 @@ td.aloha-table-selectrow {
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
   font-size: 16px;
@@ -14381,7 +14403,7 @@ td.aloha-table-selectrow {
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: \f0b2;
+  content: "\f0b2";
   font-weight: 900;
 }
 
@@ -14469,7 +14491,8 @@ td.aloha-table-selectrow {
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
   -webkit-box-sizing: border-box;
@@ -14480,7 +14503,7 @@ td.aloha-table-selectrow {
   display: none;
 }
 .neos-backend .ui-dialog .ui-widget-header .ui-button:before {
-  content: \f00d;
+  content: "\f00d";
 }
 .neos-backend .ui-dialog .ui-widget-header .ui-button:hover {
   background: #00b5ff;
@@ -15380,10 +15403,11 @@ disabled look for disabled choices in the results dropdown
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
-  content: \f0d7;
+  content: "\f0d7";
   display: block;
   position: absolute;
   width: 40px;
@@ -15427,7 +15451,7 @@ disabled look for disabled choices in the results dropdown
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: \f002;
+  content: "\f002";
   line-height: 100%;
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
@@ -15435,7 +15459,8 @@ disabled look for disabled choices in the results dropdown
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
   cursor: pointer;
@@ -15508,7 +15533,7 @@ disabled look for disabled choices in the results dropdown
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: \f002;
+  content: "\f002";
   line-height: 100%;
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
@@ -15516,7 +15541,8 @@ disabled look for disabled choices in the results dropdown
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-weight: normal;
+  font-family: FontAwesome;
+  font-weight: 900;
   line-height: 1;
   vertical-align: -.125em;
   cursor: pointer;

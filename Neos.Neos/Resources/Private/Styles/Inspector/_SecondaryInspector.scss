@@ -57,7 +57,7 @@
 		@include transition-duration(.2s);
 
 		&:before {
-			content: $fa-var-times;
+			content: fa-content($fa-var-times);
 		}
 
 		&:hover {

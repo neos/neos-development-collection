@@ -7,12 +7,12 @@
 		padding-right: 4px;
 
 		&:before {
-			content: $fa-var-file-alt;
+			content: fa-content($fa-var-file-alt);
 			font-weight: 400;
 		}
 
 		&:after {
-			content: $fa-var-check-circle;
+			content: fa-content($fa-var-check-circle);
 			text-decoration: inherit;
 			display: inline-block;
 			speak: none;
