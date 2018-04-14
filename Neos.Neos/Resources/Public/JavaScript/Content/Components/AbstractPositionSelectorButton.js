@@ -108,7 +108,7 @@ function (
 			// Set position to either `into`, `before` or `after` when using
 			position: Ember.required(),
 
-			tagName: 'button',
+			tagName: 'span',
 
 			type: null, // "new" or "paste"
 
@@ -130,7 +130,7 @@ function (
 					case 'before':
 						return 'fas fa-level-up-alt';
 					case 'into':
-						return 'fas long-arrow-alt-right';
+						return 'fas fa-long-arrow-alt-right';
 					case 'after':
 						return 'fas fa-level-down-alt';
 				}

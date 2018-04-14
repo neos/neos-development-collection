@@ -45,7 +45,7 @@ ul.neos-dynatree-container {
 		&.neos-hidden {
 			span + span:after {
 				@include fa-icon();
-				content: $fa-var-times-circle;
+				content: fa-content($fa-var-times-circle);
 				position: absolute;
 				left: 12px;
 				top: 0px;
@@ -63,7 +63,7 @@ ul.neos-dynatree-container {
 		&.neos-timedVisibility {
 			span + span:after {
 				@include fa-icon();
-				content: $fa-var-clock;
+				content: fa-content($fa-var-clock);
 				font-weight: 400;
 				position: absolute;
 				left: 12px;
