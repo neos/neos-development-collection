@@ -18,9 +18,6 @@
 						{neos:backend.translate(id: 'package', value: 'Package')}:
 						<neos:link.module path="administration/packages" section="Sites" class="neos-label" title="{sitePackageAndSite.package.packageMetaData.description}" additionalAttributes="{data-neos-toggle: 'tooltip'}">{sitePackageAndSite.packageKey}</neos:link.module>
 						<f:if condition="{sitePackageAndSite.package}">
-							<f:then>
-								<f:if condition="{sitePackageAndSite.packageIsActive}"><f:else><span class="neos-badge neos-badge-{f:if(condition: sitePackageAndSite.sites, then: 'important', else: 'warning')}">{neos:backend.translate(id: 'deactivated', value: 'Deactivated')}</span></f:else></f:if>
-							</f:then>
 							<f:else><span class="neos-badge neos-badge-important">{neos:backend.translate(id: 'unavailable', value: 'Unavailable')}</span></f:else>
 						</f:if>
 					</td>

@@ -226,7 +226,6 @@ define(
 						if (PublishableNodes.get('workspaceWidePublishableEntitySubjects').findBy('documentNodeContextPath', node.data.key)) {
 							$(nodeSpan).addClass('neos-dynatree-dirty');
 						}
-						$('a[title]', nodeSpan).tooltip({container: '#neos-application', trigger: 'hover'});
 					}
 				}));
 
@@ -460,6 +459,10 @@ define(
 				}
 
 				ContentModule.loadPage(node.data.href);
+			},
+
+			afterPaste: function(node) {
+				this.afterPersistNode(node);
 			},
 
 			refresh: function() {

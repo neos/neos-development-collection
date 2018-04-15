@@ -1,0 +1,24 @@
+'Neos.NodeTypes.BaseMixins:ImageAlignmentMixin':
+  abstract: true
+  properties:
+    alignment:
+      type: string
+      defaultValue: ''
+      ui:
+        label: i18n
+        reloadIfChanged: true
+        inspector:
+          group: 'image'
+          position: 400
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            placeholder: i18n
+            values:
+              '':
+                label: ''
+              center:
+                label: i18n
+              left:
+                label: i18n
+              right:
+                label: i18n

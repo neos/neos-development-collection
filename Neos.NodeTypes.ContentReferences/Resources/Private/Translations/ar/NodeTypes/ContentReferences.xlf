@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes.ContentReferences" source-language="en" datatype="plaintext" target-language="ar">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve">
+				<source>Insert content references</source>
+			<target xml:lang="ar" state="translated">إدراج مراجع المحتوى</target></trans-unit>
+      <trans-unit id="groups.references" xml:space="preserve">
+				<source>References</source>
+			<target xml:lang="ar" state="translated">المراجع</target></trans-unit>
+      <trans-unit id="properties.references" xml:space="preserve">
+				<source>Select</source>
+			<target xml:lang="ar" state="translated">اختيار</target></trans-unit>
+      <trans-unit id="content.noReferencesSelected" xml:space="preserve">
+				<source>No references selected</source>
+			<target xml:lang="ar" state="translated">لا توجد مراجع مختارة</target></trans-unit>
+    </body>
+  </file>
+</xliff>

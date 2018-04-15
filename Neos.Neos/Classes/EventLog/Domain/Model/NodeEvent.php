@@ -26,8 +26,10 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
  * A specific event which is used for ContentRepository Nodes (i.e. content).
  *
  * @Flow\Entity
- * @ORM\InheritanceType("SINGLE_TABLE")
- * The following annotation is not correctly picked up so doctrine migrations would never create this index. It is still contained in the migration.
+ *
+ * The following annotation is not picked up by Doctrine migrations and thus included in the Event class as well.
+ * See https://github.com/doctrine/doctrine2/issues/6248
+ *
  * @ORM\Table(
  *    indexes={
  *      @ORM\Index(name="documentnodeidentifier", columns={"documentnodeidentifier"})
@@ -98,6 +100,9 @@ class NodeEvent extends Event
         return $this->workspaceName;
     }
 
+    /**
+     * @return bool
+     */
     public function isDocumentEvent()
     {
         return $this->documentNodeIdentifier === $this->nodeIdentifier;
@@ -234,7 +239,7 @@ class NodeEvent extends Event
     }
 
     /**
-     * Prevents invalid calls to the site respository in case the site data property is not available.
+     * Prevents invalid calls to the site repository in case the site data property is not available.
      *
      * @return null|object
      */
