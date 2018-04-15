@@ -37,6 +37,7 @@
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
+.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button,
 .far,
 .fal,
 .fab {
@@ -142,6 +143,7 @@
 .fa.fa-pull-left,
 .fas.fa-pull-left,
 .neos ul.neos-dynatree-container .neos-dynatree-node .fa-pull-left.neos-dynatree-expander,
+.neos #neos-notification-container.neos-notification-top > .neos-notification i.fa-pull-left.neos-close-button,
 .far.fa-pull-left,
 .fal.fa-pull-left,
 .fab.fa-pull-left {
@@ -150,6 +152,7 @@
 .fa.fa-pull-right,
 .fas.fa-pull-right,
 .neos ul.neos-dynatree-container .neos-dynatree-node .fa-pull-right.neos-dynatree-expander,
+.neos #neos-notification-container.neos-notification-top > .neos-notification i.fa-pull-right.neos-close-button,
 .far.fa-pull-right,
 .fal.fa-pull-right,
 .fab.fa-pull-right {
@@ -3775,7 +3778,7 @@ readers do not read off random characters that represent icons */
   src: url("../Library/fontawesome/webfonts/fa-brands-400.eot?#iefix") format("embedded-opentype"), url("../Library/fontawesome/webfonts/fa-brands-400.woff2") format("woff2"), url("../Library/fontawesome/webfonts/fa-brands-400.woff") format("woff"), url("../Library/fontawesome/webfonts/fa-brands-400.ttf") format("truetype"), url("../Library/fontawesome/webfonts/fa-brands-400.svg#fontawesome") format("svg");
 }
 .fab {
-  font-family: 'FontAwesome Brand';
+  font-family: 'FontAwesome Brand' !important;
 }
 
 /*!
@@ -3790,8 +3793,8 @@ readers do not read off random characters that represent icons */
   src: url("../Library/fontawesome/webfonts/fa-regular-400.eot?#iefix") format("embedded-opentype"), url("../Library/fontawesome/webfonts/fa-regular-400.woff2") format("woff2"), url("../Library/fontawesome/webfonts/fa-regular-400.woff") format("woff"), url("../Library/fontawesome/webfonts/fa-regular-400.ttf") format("truetype"), url("../Library/fontawesome/webfonts/fa-regular-400.svg#fontawesome") format("svg");
 }
 .far {
-  font-family: 'FontAwesome';
-  font-weight: 400;
+  font-family: 'FontAwesome' !important;
+  font-weight: 400 !important;
 }
 
 /*!
@@ -3811,9 +3814,10 @@ readers do not read off random characters that represent icons */
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander,
-.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander {
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
+.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button {
   font-family: 'FontAwesome' !important;
-  font-weight: 900;
+  font-weight: 900 !important;
 }
 
 .neos [class^="fa-"],
@@ -5498,8 +5502,8 @@ readers do not read off random characters that represent icons */
   background-color: #00b5ff;
   color: #fff;
 }
-.neos .neos-dropdown-menu > li > a [class^="icon-"],
-.neos .neos-dropdown-menu > li > a [class*=" icon-"] {
+.neos .neos-dropdown-menu > li > a [class^="fa-"],
+.neos .neos-dropdown-menu > li > a [class*=" fa-"] {
   margin: 0 8px;
   line-height: 40px;
   vertical-align: top;
@@ -5564,8 +5568,8 @@ readers do not read off random characters that represent icons */
   background-color: #00b5ff;
   color: #fff;
 }
-.neos .neos-dropdown-menu-list ul > li > a [class^="icon-"],
-.neos .neos-dropdown-menu-list ul > li > a [class*=" icon-"] {
+.neos .neos-dropdown-menu-list ul > li > a [class^="fa-"],
+.neos .neos-dropdown-menu-list ul > li > a [class*=" fa-"] {
   margin: 0 8px;
   line-height: 40px;
   vertical-align: top;
@@ -5868,9 +5872,9 @@ readers do not read off random characters that represent icons */
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=65);
   opacity: 0.65;
 }
-.neos button[class^="icon-"], .neos button[class*=" icon-"],
-.neos .neos-button[class^="icon-"],
-.neos .neos-button[class*=" icon-"] {
+.neos button[class^="fa-"], .neos button[class*=" fa-"],
+.neos .neos-button[class^="fa-"],
+.neos .neos-button[class*=" fa-"] {
   font-family: FontAwesome;
 }
 .neos button.neos-button-primary,
@@ -7849,7 +7853,7 @@ readers do not read off random characters that represent icons */
   color: #ff8700;
   text-decoration: underline;
 }
-.neos [class^="icon-"], .neos [class*=" icon-"] {
+.neos [class^="fa-"], .neos [class*=" fa-"] {
   font-family: FontAwesome;
   display: inline-block;
   width: 14px;
@@ -7867,7 +7871,7 @@ readers do not read off random characters that represent icons */
   font-smoothing: antialiased;
   text-align: center;
 }
-.neos [class^="icon-"]:before, .neos [class^="icon-"]:after, .neos [class*=" icon-"]:before, .neos [class*=" icon-"]:after {
+.neos [class^="fa-"]:before, .neos [class^="fa-"]:after, .neos [class*=" fa-"]:before, .neos [class*=" fa-"]:after {
   font-family: FontAwesome;
 }
 .neos .neos-clear {
@@ -9208,8 +9212,8 @@ readers do not read off random characters that represent icons */
   box-sizing: border-box;
   font-size: 14px;
 }
-.neos #neos-inspector .neos-inspector-form .neos-add-on [class^="icon-"],
-.neos #neos-inspector .neos-inspector-form .neos-add-on [class*=" icon-"] {
+.neos #neos-inspector .neos-inspector-form .neos-add-on [class^="fa-"],
+.neos #neos-inspector .neos-inspector-form .neos-add-on [class*=" fa-"] {
   vertical-align: top;
 }
 .neos #neos-inspector .neos-inspector-form .neos-add-on input {
@@ -12080,8 +12084,8 @@ readers do not read off random characters that represent icons */
   color: #00b5ff;
   background-color: inherit;
 }
-.neos .neos-handle-container [class^="icon-"],
-.neos .neos-handle-container [class*=" icon-"] {
+.neos .neos-handle-container [class^="fa-"],
+.neos .neos-handle-container [class*=" fa-"] {
   width: inherit;
   height: inherit;
   line-height: inherit;
@@ -13514,7 +13518,7 @@ readers do not read off random characters that represent icons */
   padding: 0;
   margin: 0;
   font-family: FontAwesome;
-  font-weight: normal;
+  font-weight: 900;
   font-style: normal;
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;

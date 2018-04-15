@@ -608,8 +608,8 @@
 			@include box-sizing(border-box);
 			font-size: 14px;
 
-			[class^="icon-"],
-			[class*=" icon-"] {
+			[class^="fa-"],
+			[class*=" fa-"] {
 				vertical-align: top;
 			}
 
