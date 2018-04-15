@@ -108,7 +108,7 @@ function (
 			// Set position to either `into`, `before` or `after` when using
 			position: Ember.required(),
 
-			tagName: 'span',
+			tagName: 'button',
 
 			type: null, // "new" or "paste"
 

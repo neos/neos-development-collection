@@ -96,22 +96,22 @@
 
 								<f:if condition="{userWorkspace} === {workspace}">
 									<f:then>
-										<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeletePersonalWorkspace', source: 'Modules', package: 'Neos.Neos')}" data-neos-toggle="tooltip"><i class="fas fa-trash icon-white"></i></button>
+										<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeletePersonalWorkspace', source: 'Modules', package: 'Neos.Neos')}" data-neos-toggle="tooltip"><i class="fas fa-trash-alt icon-white"></i></button>
 									</f:then>
 									<f:else>
 										<f:if condition="{changesCounts.total} != 0">
 											<f:then>
-												<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.workspaceContainsChanges', source: 'Modules', package: 'Neos.Neos')}" data-neos-toggle="tooltip"><i class="fas fa-trash icon-white"></i></button>
+												<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.workspaceContainsChanges', source: 'Modules', package: 'Neos.Neos')}" data-neos-toggle="tooltip"><i class="fas fa-trash-alt icon-white"></i></button>
 											</f:then>
 											<f:else>
 												<f:if condition="{dependentWorkspacesCount} != 0">
 													<f:then>
-														<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeleteWorkspaceHasDependencies', source: 'Modules', package: 'Neos.Neos')}" data-neos-toggle="tooltip"><i class="fas fa-trash icon-white"></i></button>
+														<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeleteWorkspaceHasDependencies', source: 'Modules', package: 'Neos.Neos')}" data-neos-toggle="tooltip"><i class="fas fa-trash-alt icon-white"></i></button>
 													</f:then>
 													<f:else>
 														<f:if condition="{canManage}">
 															<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'workspaces.deleteWorkspace', source: 'Modules', package: 'Neos.Neos')}" data-toggle="modal" href="#workspace-{workspacesIterator.index}" data-neos-toggle="tooltip">
-																<i class="fas fa-trash icon-white"></i>
+																<i class="fas fa-trash-alt icon-white"></i>
 															</button>
 															<div class="neos-hide" id="workspace-{workspacesIterator.index}">
 																<div class="neos-modal-centered">

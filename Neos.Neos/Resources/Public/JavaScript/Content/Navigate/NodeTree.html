@@ -4,7 +4,7 @@
 			<i class="fas fa-sync-alt"></i>
 		</button>
 		<button id="neos-node-tree-delete-node" class="neos-button" title="{{translate id='delete' fallback='Delete'}}" {{bindAttr disabled="view.currentFocusedNodeCantBeModified"}} {{action "showDeleteNodeDialog" target="view"}} data-neos-tooltip data-placement="top">
-			<i class="fas fa-trash"></i>
+			<i class="fas fa-trash-alt"></i>
 		</button>
 
 		{{view view.PastePositionSelectorButton}}
@@ -35,7 +35,7 @@
 		</div>
 		<div id="neos-node-tree-search">
 			{{view view.searchField valueBinding="view.searchTerm"}}
-			<span {{bindAttr class="view.searchTermIsEmpty:icon-search:icon-remove-sign"}} {{action "clearSearchTerm" target="view"}}></span>
+			<span {{bindAttr class="view.searchTermIsEmpty:icon-search:fas fa-times-circle"}} {{action "clearSearchTerm" target="view"}}></span>
 		</div>
 	</div>
 </div>

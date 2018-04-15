@@ -70,11 +70,11 @@
 										<td class="neos-action">
 											<f:if condition="{canPublishToBaseWorkspace}">
 												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-success neos-pull-right" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'Neos.Neos')}" data-neos-toggle="tooltip">
-													<i class="fas fa-ok icon-white"></i>
+													<i class="fas fa-check icon-white"></i>
 												</button>
 											</f:if>
 											<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger neos-pull-right" title="{neos:backend.translate(id: 'discard', source: 'Main', package: 'Neos.Neos')}" data-neos-toggle="tooltip" data-placement="bottom">
-												<i class="fas fa-trash icon-white"></i>
+												<i class="fas fa-trash-alt icon-white"></i>
 											</button>
 										</td>
 									</tr>
@@ -97,7 +97,7 @@
 						<div class="neos-modal-footer">
 							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Main', package: 'Neos.Neos')}</a>
 							<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger">
-								<i class="fas fa-trash icon-white"></i>
+								<i class="fas fa-trash-alt icon-white"></i>
 								{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}
 							</button>
 						</div>
@@ -172,10 +172,10 @@
 
 <f:section name="actions">
 	<div class="neos-footer">
-		<div class="pull-left">
+		<div class="neos-pull-left">
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', source: 'Main', package: 'Neos.Neos')}</f:link.action>
 		</div>
-		<div class="pull-right">
+		<div class="neos-pull-right">
 			<f:if condition="{canPublishToBaseWorkspace}">
 				<f:then>
 					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'Neos.Neos')}</button>

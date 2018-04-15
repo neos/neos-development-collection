@@ -76,7 +76,7 @@
 			padding: 0;
 			margin: 0;
 			font-family: FontAwesome;
-			font-weight: normal;
+			font-weight: 900;
 			font-style: normal;
 			text-decoration: inherit;
 			-webkit-font-smoothing: antialiased;
@@ -94,6 +94,7 @@
 				right: 0;
 				cursor: pointer;
 				font-size: 18px;
+				@extend .fas;
 				@extend .#{$fa-css-prefix}-times-circle;
 
 				&:hover {
