@@ -38,12 +38,6 @@ class EntityIntegrationService extends AbstractIntegrationService
     protected $entityManager;
 
     /**
-     * @Flow\Inject
-     * @var EventEmittingService
-     */
-    protected $eventEmittingService;
-
-    /**
      * @Flow\Inject(lazy=FALSE)
      * @var CompilingEvaluator
      */
@@ -98,7 +92,6 @@ class EntityIntegrationService extends AbstractIntegrationService
                 $entityMonitoringConfiguration = $this->monitorEntitiesSetting[$className];
 
                 if (isset($entityMonitoringConfiguration['events']['created'])) {
-                    $this->initializeAccountIdentifier();
                     $data = array();
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
                         $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, array('entity' => $entity));
@@ -116,7 +109,6 @@ class EntityIntegrationService extends AbstractIntegrationService
                 $entityMonitoringConfiguration = $this->monitorEntitiesSetting[$className];
 
                 if (isset($entityMonitoringConfiguration['events']['deleted'])) {
-                    $this->initializeAccountIdentifier();
                     $data = array();
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
                         $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, array('entity' => $entity));

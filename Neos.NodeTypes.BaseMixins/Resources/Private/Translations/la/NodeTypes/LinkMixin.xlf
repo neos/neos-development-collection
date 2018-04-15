@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes.BaseMixins" source-language="en" datatype="plaintext" target-language="la-LA">
+    <body>
+      <trans-unit id="properties.link" xml:space="preserve">
+				<source>Link</source>
+			<target xml:lang="la-LA">crwdns6285:0crwdne6285:0</target></trans-unit>
+    </body>
+  </file>
+</xliff>

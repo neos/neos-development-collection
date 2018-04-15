@@ -238,7 +238,8 @@ The following options are allowed:
 
       ``collapsed``
         If the group should be collapsed by default (true or false). If left empty, the group will be expanded.
-
+  ``creationDialog``
+    Creation dialog elements configuration. See :ref:`node-creation-dialog` for more details.
 ``properties``
   A list of named properties for this node type. For each property the following settings are available.
 

@@ -63,19 +63,9 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
             return;
         }
         $this->initialized = true;
-
+        $this->eelCompilingEvaluator = $this->objectManager->get(CompilingEvaluator::class);
         $this->nodeContext = new $this->nodeContextClassName();
-        $eelContext = new Context($this->nodeContext);
-
-        $this->eelCompilingEvaluator = new CompilingEvaluator();
-
-        $this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
-
-        $methodPrivilegeMatcher = $this->buildMethodPrivilegeMatcher();
-
-        $methodPrivilegeTarget = new PrivilegeTarget($this->privilegeTarget->getIdentifier() . '__methodPrivilege', MethodPrivilege::class, $methodPrivilegeMatcher);
-        $methodPrivilegeTarget->injectObjectManager($this->objectManager);
-        $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege($this->getPermission(), $this->getParameters());
+        $this->initializeMethodPrivilege();
     }
 
     /**
@@ -85,7 +75,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      */
     public function getCacheEntryIdentifier()
     {
-        $this->initialize();
+        $this->initializeMethodPrivilege();
         return $this->methodPrivilege->getCacheEntryIdentifier();
     }
 
@@ -100,12 +90,12 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
             throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', AbstractNodePrivilege::class, NodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417014368);
         }
 
-        $this->initialize();
-
         if ($subject instanceof MethodPrivilegeSubject) {
+            $this->initializeMethodPrivilege();
             return $this->methodPrivilege->matchesSubject($subject);
         }
 
+        $this->initialize();
         $nodeContext = new $this->nodeContextClassName($subject->getNode());
         $eelContext = new Context($nodeContext);
 
@@ -119,7 +109,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      */
     public function matchesMethod($className, $methodName)
     {
-        $this->initialize();
+        $this->initializeMethodPrivilege();
         return $this->methodPrivilege->matchesMethod($className, $methodName);
     }
 
@@ -128,8 +118,33 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      */
     public function getPointcutFilterComposite()
     {
-        $this->initialize();
+        $this->initializeMethodPrivilege();
         return $this->methodPrivilege->getPointcutFilterComposite();
+    }
+
+    /**
+     * @throws \Neos\Flow\Security\Exception
+     */
+    protected function initializeMethodPrivilege()
+    {
+        if ($this->methodPrivilege !== null) {
+            return;
+        }
+        $methodPrivilegeMatcher = $this->buildMethodPrivilegeMatcher();
+        $methodPrivilegeTarget = new PrivilegeTarget($this->privilegeTarget->getIdentifier() . '__methodPrivilege', MethodPrivilege::class, $methodPrivilegeMatcher);
+        $methodPrivilegeTarget->injectObjectManager($this->objectManager);
+        $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege($this->getPermission(), $this->getParameters());
+    }
+
+    /**
+     * Evaluates the matcher with this objects nodeContext and returns the result.
+     *
+     * @return mixed
+     */
+    protected function evaluateNodeContext()
+    {
+        $eelContext = new Context($this->nodeContext);
+        return $this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
     }
 
     /**

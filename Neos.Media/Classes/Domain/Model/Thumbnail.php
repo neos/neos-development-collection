@@ -31,6 +31,7 @@ use Neos\Media\Domain\Strategy\ThumbnailGeneratorStrategy;
 class Thumbnail implements ImageInterface
 {
     use DimensionsTrait;
+    use QualityTrait;
 
     /**
      * @var ThumbnailGeneratorStrategy
@@ -187,6 +188,15 @@ class Thumbnail implements ImageInterface
     public function setHeight($height)
     {
         $this->height = (integer)$height;
+    }
+
+    /**
+     * @param integer $quality
+     * @return void
+     */
+    public function setQuality($quality)
+    {
+        $this->quality = (integer)$quality;
     }
 
     /**

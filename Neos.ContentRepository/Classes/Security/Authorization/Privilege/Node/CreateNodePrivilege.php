@@ -43,6 +43,7 @@ class CreateNodePrivilege extends AbstractNodePrivilege
         }
 
         $this->initialize();
+        $this->evaluateNodeContext();
         if ($subject instanceof MethodPrivilegeSubject) {
             if ($this->methodPrivilege->matchesSubject($subject) === false) {
                 return false;

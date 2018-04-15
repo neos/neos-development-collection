@@ -11,6 +11,7 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -48,27 +49,11 @@ class FusionService
     protected $siteRootFusionPattern = 'resource://%s/Private/Fusion/Root.fusion';
 
     /**
-     * Legacy pattern used for determining the Fusion root file for a site
-     *
-     * @var string
-     * @deprecated since 3.0 will be removed in 4.0
-     */
-    protected $legacySiteRootTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.ts2';
-
-    /**
      * Pattern used for determining the Fusion root file for autoIncludes
      *
      * @var string
      */
     protected $autoIncludeFusionPattern = 'resource://%s/Private/Fusion/Root.fusion';
-
-    /**
-     * Legacy pattern used for determining the Fusion root file for autoIncludes
-     *
-     * @var string
-     * @deprecated since 3.0 will be removed in 4.0
-     */
-    protected $legacyAutoIncludeTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.ts2';
 
     /**
      * Array of Fusion files to include before the site Fusion
@@ -82,7 +67,7 @@ class FusionService
      *
      * @var array
      */
-    protected $prependFusionIncludes = array();
+    protected $prependFusionIncludes = [];
 
     /**
      * Array of Fusion files to include after the site Fusion
@@ -106,7 +91,7 @@ class FusionService
 
     /**
      * @Flow\Inject
-     * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -117,21 +102,13 @@ class FusionService
     protected $packageManager;
 
     /**
-     * Initializes the parser
-     *
-     * @return void
-     */
-    public function initializeObject()
-    {
-        $this->fusionParser->setObjectTypeNamespace('default', 'Neos.Neos');
-    }
-
-    /**
      * Create a runtime for the given site node
      *
-     * @param \Neos\ContentRepository\Domain\Model\NodeInterface $currentSiteNode
+     * @param NodeInterface $currentSiteNode
      * @param ControllerContext $controllerContext
      * @return Runtime
+     * @throws \Neos\Fusion\Exception
+     * @throws \Neos\Neos\Domain\Exception
      */
     public function createRuntime(NodeInterface $currentSiteNode, ControllerContext $controllerContext)
     {
@@ -143,9 +120,10 @@ class FusionService
     /**
      * Returns a merged Fusion object tree in the context of the given nodes
      *
-     * @param \Neos\ContentRepository\Domain\Model\NodeInterface $startNode Node marking the starting point
+     * @param NodeInterface $startNode Node marking the starting point
      * @return array The merged object tree as of the given node
      * @throws \Neos\Neos\Domain\Exception
+     * @throws \Neos\Fusion\Exception
      */
     public function getMergedFusionObjectTree(NodeInterface $startNode)
     {
@@ -154,11 +132,6 @@ class FusionService
 
         $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
         $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);
-
-        if ($siteRootFusionCode === '') {
-            $siteRootFusionPathAndFilename = sprintf($this->legacySiteRootTypoScriptPattern, $siteResourcesPackageKey);
-            $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);
-        }
 
         $mergedFusionCode = '';
         $mergedFusionCode .= $this->generateNodeTypeDefinitions();
@@ -188,6 +161,7 @@ class FusionService
      * Only fully qualified node types (e.g. MyVendor.MyPackage:NodeType) will be considered.
      *
      * @return string
+     * @throws \Neos\Neos\Domain\Exception
      */
     protected function generateNodeTypeDefinitions()
     {
@@ -249,21 +223,11 @@ class FusionService
     protected function prepareAutoIncludeFusion()
     {
         $autoIncludeFusion = array();
-        foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
+        foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
             if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
                 $autoIncludeFusionFile = sprintf($this->autoIncludeFusionPattern, $packageKey);
                 if (is_file($autoIncludeFusionFile)) {
                     $autoIncludeFusion[] = $autoIncludeFusionFile;
-                } else {
-                    // If there is no Root.fusion found in the default path pattern or the legacy path pattern
-                    // use the default path pattern so an exception will show the correct path pattern and not a
-                    // legacy path pattern
-                    $legacyAutoIncludeFusionFile = sprintf($this->legacyAutoIncludeTypoScriptPattern, $packageKey);
-                    if (is_file($legacyAutoIncludeFusionFile)) {
-                        $autoIncludeFusion[] = $legacyAutoIncludeFusionFile;
-                    } else {
-                        $autoIncludeFusion[] = $autoIncludeFusionFile;
-                    }
                 }
             }
         }
