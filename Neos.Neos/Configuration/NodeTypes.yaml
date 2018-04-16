@@ -4,7 +4,7 @@
   abstract: TRUE
   options:
     fusion:
-      prototypeGenerator: Neos\Neos\Domain\Service\DefaultPrototypeGenerator
+      prototypeGenerator: ~
   ui:
     inspector:
       tabs:
@@ -131,7 +131,7 @@
       'Neos.Neos:Document': TRUE
   options:
     fusion:
-      prototypeGenerator: Neos\Neos\Domain\Service\DefaultDocumentPrototypeGenerator
+      prototypeGenerator: ~
   ui:
     label: 'Document'
     search:
