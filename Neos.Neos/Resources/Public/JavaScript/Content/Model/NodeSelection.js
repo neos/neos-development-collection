@@ -96,13 +96,13 @@ define(
 						properties: nodeTypeProperties,
 						ui: {
 							label: 'Table',
-							icon: 'icon-table',
+							icon: 'fas fa-table',
 							inspector: {
 								groups: nodeTypeGroups,
 								tabs: {
 									'default': {
 										label: 'Table settings',
-										icon: 'icon-cog'
+										icon: 'fas fa-cog'
 									}
 								}
 							}
