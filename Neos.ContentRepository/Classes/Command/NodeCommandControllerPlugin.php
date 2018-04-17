@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Command;
  * source code.
  */
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\QueryBuilder;
@@ -81,7 +82,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * interface ...
      *
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
