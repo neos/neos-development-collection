@@ -3,23 +3,8 @@
 Custom Validators
 =================
 
-It is possible to register paths into RequireJS (the JavaScript file and module loader used by Neos, see
-http://requirejs.org) and by this custom validators into Neos. Validators should be named '<SomeType>Validator',
-and can be referenced by ``My.Package/Public/Scripts/Validators/FooValidator`` for example.
+.. note:: For documentation on how to create validators for the legacy Ember version of the user interface, refer to the older versions of the documentation.
 
-Namespaces can be registered like this in *Settings.yaml*::
+The custom validators are created similarly to custom :ref:`custom-editors`.
 
-	Neos:
-	  Neos:
-	    userInterface:
-	      requireJsPathMapping:
-	        'My.Package/Validation': 'resource://My.Package/Public/Scripts/Validators'
-
-Registering specific validators is also possible like this::
-
-	Neos:
-	  Neos:
-	    userInterface:
-	      validators:
-	        'My.Package/AlphanumericValidator':
-	          path: 'resource://My.Package/Public/Scripts/Validators/FooValidator'
+Refer to :ref:`ui-extensibility` for detailed information on the topic.

@@ -76,7 +76,7 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
      *
      * @return string
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier(): string
     {
         $this->initialize();
         return $this->methodPrivilege->getCacheEntryIdentifier();

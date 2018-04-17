@@ -58,10 +58,10 @@
 			<target xml:lang="el" state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="el" state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target xml:lang="el" state="translated">Φορά ταξινόμησης Αύξουσα</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="el" state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target xml:lang="el" state="translated">Φορά ταξινόμησης Φθίνουσα</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="el" state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
@@ -389,7 +389,7 @@
 			<target xml:lang="el" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target xml:lang="el" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target xml:lang="el" state="translated">Δεν είναι δυνατή η πρόσβαση στο χώρο εργασίας «{0}»</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
 			<target xml:lang="el" state="needs-translation">No document node found for this node</target></trans-unit>
