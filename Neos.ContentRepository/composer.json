@@ -12,7 +12,7 @@
         "neos/utility-files": "*",
         "neos/utility-arrays": "*",
 
-        "doctrine/orm": "~2.5.0",
+        "doctrine/orm": "~2.6.0",
         "gedmo/doctrine-extensions": "~2.4.0",
         "behat/transliterator": "~1.0"
     },
@@ -98,7 +98,8 @@
             "Neos.Neos-20161201222211",
             "Neos.Fusion-20161202215034",
             "Neos.ContentRepository-20161219093512",
-            "Neos.Fusion-20170120013047"
+            "Neos.Fusion-20170120013047",
+            "Neos.Flow-20180415105700"
         ]
     }
 }

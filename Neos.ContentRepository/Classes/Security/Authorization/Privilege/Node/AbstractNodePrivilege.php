@@ -73,7 +73,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      *
      * @return string
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier(): string
     {
         $this->initializeMethodPrivilege();
         return $this->methodPrivilege->getCacheEntryIdentifier();

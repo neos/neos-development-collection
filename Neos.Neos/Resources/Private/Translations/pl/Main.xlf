@@ -333,6 +333,21 @@
       <trans-unit id="description" xml:space="preserve" approved="yes">
 				<source>Description</source>
 			<target xml:lang="pl">Opis</target></trans-unit>
+      <trans-unit id="toggleContentTree" xml:space="preserve">
+				<source>Toggle content tree</source>
+			<target xml:lang="pl" state="needs-translation">Toggle content tree</target></trans-unit>
+      <trans-unit id="showPublishOptions" xml:space="preserve">
+				<source>Show publish options</source>
+			<target xml:lang="pl" state="needs-translation">Show publish options</target></trans-unit>
+      <trans-unit id="activateFullscreen" xml:space="preserve">
+				<source>Activate Fullscreen edit mode</source>
+			<target xml:lang="pl" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+      <trans-unit id="deactivateFullscreen" xml:space="preserve">
+				<source>Deactivate Fullscreen edit mode</source>
+			<target xml:lang="pl" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+      <trans-unit id="showPreview" xml:space="preserve">
+				<source>Show preview</source>
+			<target xml:lang="pl" state="needs-translation">Show preview</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -379,9 +394,6 @@
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
 			<target xml:lang="pl">Odrzuć wszystkie zmiany</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve" approved="yes">
-				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target xml:lang="pl">Czy jesteś pewien, że chcesz odrzucić {numberOfChanges} zmianę(y) w tym obszarze roboczym?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target xml:lang="pl">Czy na pewno chcesz odrzucić wszystkie zmiany w tym obszarze roboczym?</target></trans-unit>
@@ -715,6 +727,85 @@
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve" approved="yes">
 				<source>Node Properties</source>
 			<target xml:lang="pl">Właściwości węzła</target></trans-unit>
+      <!-- New UI labels -->
+      <trans-unit id="copy__from__to--title" xml:space="preserve" approved="yes">
+				<source>Copy {source} to {target}</source>
+			<target xml:lang="pl">Skopiuj {source} do {target}</target></trans-unit>
+      <trans-unit id="move__from__to--title" xml:space="preserve" approved="yes">
+				<source>Move {source} to {target}</source>
+			<target xml:lang="pl">Przenieś {source} do {target}</target></trans-unit>
+      <trans-unit id="copy__from__to--description" xml:space="preserve" approved="yes">
+				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
+			<target xml:lang="pl">Wybierz pozycję na jakiej chcesz wstawić {source} względem {target}.</target></trans-unit>
+      <trans-unit id="insert" xml:space="preserve" approved="yes">
+				<source>Insert</source>
+			<target xml:lang="pl">Wstaw</target></trans-unit>
+      <trans-unit id="insertMode" xml:space="preserve" approved="yes">
+				<source>Insert mode</source>
+			<target xml:lang="pl">Tryb wstawiania</target></trans-unit>
+      <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve" approved="yes">
+				<source>Choose an Aspect Ratio</source>
+			<target xml:lang="pl">Wybierz współczynnik proporcji</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve" approved="yes">
+				<source>Bold</source>
+			<target xml:lang="pl">Pogrubienie</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve" approved="yes">
+				<source>Italic</source>
+			<target xml:lang="pl">Kursywa</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve" approved="yes">
+				<source>Underline</source>
+			<target xml:lang="pl">Podkreślenie</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve" approved="yes">
+				<source>Subscript</source>
+			<target xml:lang="pl">Indeks dolny</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve" approved="yes">
+				<source>Superscript</source>
+			<target xml:lang="pl">Indeks górny</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve" approved="yes">
+				<source>Strikethrough</source>
+			<target xml:lang="pl">Przekreślenie</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__link" xml:space="preserve" approved="yes">
+				<source>Link</source>
+			<target xml:lang="pl">Odnośnik</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve" approved="yes">
+				<source>Ordered list</source>
+			<target xml:lang="pl">Lista uporządkowana</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve" approved="yes">
+				<source>Unordered list</source>
+			<target xml:lang="pl">Lista nieuporządkowana</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve" approved="yes">
+				<source>Align left</source>
+			<target xml:lang="pl">Wyrównaj do lewej</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve" approved="yes">
+				<source>Align right</source>
+			<target xml:lang="pl">Wyrównaj do prawej</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve" approved="yes">
+				<source>Align center</source>
+			<target xml:lang="pl">Wyrównaj do środka</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve" approved="yes">
+				<source>Align justify</source>
+			<target xml:lang="pl">Wyjustuj</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__table" xml:space="preserve" approved="yes">
+				<source>Table</source>
+			<target xml:lang="pl">Tabela</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve" approved="yes">
+				<source>Remove format</source>
+			<target xml:lang="pl">Usuń formatowanie</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve" approved="yes">
+				<source>Outdent</source>
+			<target xml:lang="pl">Zmniejsz wcięcie</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve" approved="yes">
+				<source>Indent</source>
+			<target xml:lang="pl">Wcięcie</target></trans-unit>
+      <trans-unit id="createNew" xml:space="preserve" approved="yes">
+				<source>Create new</source>
+			<target xml:lang="pl">Utwórz nowy</target></trans-unit>
+      <trans-unit id="noMatchesFound" xml:space="preserve" approved="yes">
+				<source>No matches found</source>
+			<target xml:lang="pl">Nie znaleziono dopasowań</target></trans-unit>
+      <trans-unit id="searchBoxLeftToType" xml:space="preserve" approved="yes">
+				<source>Please enter ###CHARACTERS### more character</source>
+			<target xml:lang="pl">Wprowadź ###CHARACTERS### znaków więcej</target></trans-unit>
     </body>
   </file>
 </xliff>

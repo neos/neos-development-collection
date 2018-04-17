@@ -333,6 +333,21 @@
       <trans-unit id="description" xml:space="preserve" approved="yes">
 				<source>Description</source>
 			<target xml:lang="ru">Описание</target></trans-unit>
+      <trans-unit id="toggleContentTree" xml:space="preserve">
+				<source>Toggle content tree</source>
+			<target xml:lang="ru" state="needs-translation">Toggle content tree</target></trans-unit>
+      <trans-unit id="showPublishOptions" xml:space="preserve">
+				<source>Show publish options</source>
+			<target xml:lang="ru" state="needs-translation">Show publish options</target></trans-unit>
+      <trans-unit id="activateFullscreen" xml:space="preserve">
+				<source>Activate Fullscreen edit mode</source>
+			<target xml:lang="ru" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+      <trans-unit id="deactivateFullscreen" xml:space="preserve">
+				<source>Deactivate Fullscreen edit mode</source>
+			<target xml:lang="ru" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+      <trans-unit id="showPreview" xml:space="preserve">
+				<source>Show preview</source>
+			<target xml:lang="ru" state="needs-translation">Show preview</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -379,9 +394,6 @@
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
 			<target xml:lang="ru">Отменить все изменения</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve" approved="yes">
-				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target xml:lang="ru">Вы уверены, что хотите отменить правки в количестве {numberOfChanges} шт. в этой рабочей области?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target xml:lang="ru">Вы уверены, что хотите отменить все изменения в этой рабочей области?</target><alt-trans><target xml:lang="ru">Подтвердите отмену всех сделанных изменений в этой рабочей области.</target></alt-trans></trans-unit>
@@ -445,12 +457,6 @@
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve" approved="yes">
 				<source>No date set</source>
 			<target xml:lang="ru">Дата не установлена</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve" approved="yes">
-				<source>Today</source>
-			<target xml:lang="ru">Сегодня</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve" approved="yes">
-				<source>Apply</source>
-			<target xml:lang="ru">Применить</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve" approved="yes">
 				<source>Edit code</source>
 			<target xml:lang="ru">Редактировать код</target></trans-unit>
