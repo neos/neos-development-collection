@@ -11,7 +11,7 @@ namespace Neos\Neos\EventLog\Integrations;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Neos\Eel\CompilingEvaluator;
 use Neos\Eel\Exception;
@@ -19,7 +19,6 @@ use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Neos\EventLog\Domain\Model\Event;
-use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 
 /**
  * Monitors entity changes
@@ -33,7 +32,7 @@ class EntityIntegrationService extends AbstractIntegrationService
      * interface ...
      *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
