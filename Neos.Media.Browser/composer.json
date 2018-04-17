@@ -15,7 +15,7 @@
         "neos/error-messages": "*",
 
         "doctrine/common": "~2.7.0",
-        "doctrine/orm": "~2.5.0"
+        "doctrine/orm": "~2.6.0"
     },
     "autoload": {
         "psr-4": {
