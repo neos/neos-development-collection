@@ -287,52 +287,67 @@
 			<target xml:lang="lv">Galvenais</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="lv" state="needs-translation">Package</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pakotne</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target xml:lang="lv" state="translated">Deaktivizēt</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="lv" state="needs-translation">Unavailable</target></trans-unit>
+			<target xml:lang="lv" state="translated">Nav pieejams</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="lv" state="needs-translation">Inactive</target></trans-unit>
+			<target xml:lang="lv" state="translated">Neaktīvs</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
 				<source>Click to edit</source>
 			<target xml:lang="lv">Uzklikšķiniet, lai rediģētu</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="lv" state="needs-translation">Click to deactivate</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noklikšķiniet lai deaktivizētu</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="lv" state="needs-translation">Click to activate</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noklikšķiniet lai aktivizētu</target><alt-trans><target xml:lang="lv">Noklikšķiniet, lai aktivizētu</target></alt-trans></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
 				<source>Click to delete</source>
 			<target xml:lang="lv">Uzklikšķiniet, lai izdzēstu</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="lv" state="needs-translation">Click to create new</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noklikšķiniet lai izveidotu jaunu</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="lv" state="needs-translation">Status</target></trans-unit>
+			<target xml:lang="lv" state="translated">Statuss</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="lv" state="needs-translation">Active</target></trans-unit>
+			<target xml:lang="lv" state="translated">Aktīvs</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="lv" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="lv" state="translated">Domēns</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="lv" state="needs-translation">Domain</target></trans-unit>
+			<target xml:lang="lv" state="translated">Domēns</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="lv" state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target xml:lang="lv" state="translated">Jā, izdzēst to!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve" approved="yes">
 				<source>Package Key</source>
 			<target xml:lang="lv">Pakotnes atslēga</target></trans-unit>
       <trans-unit id="description" xml:space="preserve" approved="yes">
 				<source>Description</source>
 			<target xml:lang="lv">Apraksts</target></trans-unit>
+      <trans-unit id="toggleContentTree" xml:space="preserve">
+				<source>Toggle content tree</source>
+			<target xml:lang="lv" state="needs-translation">Toggle content tree</target></trans-unit>
+      <trans-unit id="showPublishOptions" xml:space="preserve">
+				<source>Show publish options</source>
+			<target xml:lang="lv" state="needs-translation">Show publish options</target></trans-unit>
+      <trans-unit id="activateFullscreen" xml:space="preserve">
+				<source>Activate Fullscreen edit mode</source>
+			<target xml:lang="lv" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+      <trans-unit id="deactivateFullscreen" xml:space="preserve">
+				<source>Deactivate Fullscreen edit mode</source>
+			<target xml:lang="lv" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+      <trans-unit id="showPreview" xml:space="preserve">
+				<source>Show preview</source>
+			<target xml:lang="lv" state="needs-translation">Show preview</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -712,6 +727,85 @@
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
 			<target xml:lang="lv" state="translated">Mezgla iestatījumi</target></trans-unit>
+      <!-- New UI labels -->
+      <trans-unit id="copy__from__to--title" xml:space="preserve">
+				<source>Copy {source} to {target}</source>
+			<target xml:lang="lv" state="translated">Kopēt {source} uz {target}</target></trans-unit>
+      <trans-unit id="move__from__to--title" xml:space="preserve">
+				<source>Move {source} to {target}</source>
+			<target xml:lang="lv" state="translated">Pārvietot {source} uz {target}</target></trans-unit>
+      <trans-unit id="copy__from__to--description" xml:space="preserve">
+				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
+			<target xml:lang="lv" state="translated">Izvēlieties pozīciju, no kuras {source} ievietota attiecībā pret {target}.</target></trans-unit>
+      <trans-unit id="insert" xml:space="preserve">
+				<source>Insert</source>
+			<target xml:lang="lv" state="translated">Ievietot</target></trans-unit>
+      <trans-unit id="insertMode" xml:space="preserve">
+				<source>Insert mode</source>
+			<target xml:lang="lv" state="translated">Ievietot veidu</target></trans-unit>
+      <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
+				<source>Choose an Aspect Ratio</source>
+			<target xml:lang="lv" state="translated">Izvēlieties skata proporciju</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
+				<source>Bold</source>
+			<target xml:lang="lv" state="translated">Trekns</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
+				<source>Italic</source>
+			<target xml:lang="lv" state="translated">Slīps</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
+				<source>Underline</source>
+			<target xml:lang="lv" state="translated">Pasvītrots</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
+				<source>Subscript</source>
+			<target xml:lang="lv" state="translated">Apakšraksts</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
+				<source>Superscript</source>
+			<target xml:lang="lv" state="translated">Augšraksts</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
+				<source>Strikethrough</source>
+			<target xml:lang="lv" state="translated">Pārsvītrojums</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__link" xml:space="preserve" approved="yes">
+				<source>Link</source>
+			<target xml:lang="lv">Saite</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
+				<source>Ordered list</source>
+			<target xml:lang="lv" state="translated">Numurēts saraksts</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
+				<source>Unordered list</source>
+			<target xml:lang="lv" state="translated">Nenumurēts saraksts</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
+				<source>Align left</source>
+			<target xml:lang="lv" state="translated">Līdzināt pa kreisi</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
+				<source>Align right</source>
+			<target xml:lang="lv" state="translated">Līdzināt pa labi</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
+				<source>Align center</source>
+			<target xml:lang="lv" state="translated">Līdzināt uz centru</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
+				<source>Align justify</source>
+			<target xml:lang="lv" state="translated">Izlīdzināts</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
+				<source>Table</source>
+			<target xml:lang="lv" state="translated">Tabula</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
+				<source>Remove format</source>
+			<target xml:lang="lv" state="translated">Formatējuma atcelšana</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
+				<source>Outdent</source>
+			<target xml:lang="lv" state="translated">Negatīvā atkāpe</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
+				<source>Indent</source>
+			<target xml:lang="lv" state="translated">Atkāpe</target></trans-unit>
+      <trans-unit id="createNew" xml:space="preserve" approved="yes">
+				<source>Create new</source>
+			<target xml:lang="lv">Izveidot jaunu</target></trans-unit>
+      <trans-unit id="noMatchesFound" xml:space="preserve">
+				<source>No matches found</source>
+			<target xml:lang="lv" state="translated">Nav atrasta neviena atbilstība</target></trans-unit>
+      <trans-unit id="searchBoxLeftToType" xml:space="preserve">
+				<source>Please enter ###CHARACTERS### more character</source>
+			<target xml:lang="lv" state="translated">Lūdzu, ievadiet papildu rakstzīmes # # #CHARACTERS###</target></trans-unit>
     </body>
   </file>
 </xliff>
