@@ -15,8 +15,8 @@
         "imagine/imagine": "*",
 
         "doctrine/common": "~2.7.0",
-        "doctrine/orm": "~2.5.0",
-        "doctrine/dbal": "~2.5.0"
+        "doctrine/orm": "~2.6.0",
+        "doctrine/dbal": "~2.7.0"
     },
     "replace": {
         "typo3/media": "self.version"

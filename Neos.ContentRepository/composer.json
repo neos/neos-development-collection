@@ -12,7 +12,7 @@
         "neos/utility-files": "*",
         "neos/utility-arrays": "*",
 
-        "doctrine/orm": "~2.5.0",
+        "doctrine/orm": "~2.6.0",
         "gedmo/doctrine-extensions": "~2.4.0",
         "behat/transliterator": "~1.0"
     },
