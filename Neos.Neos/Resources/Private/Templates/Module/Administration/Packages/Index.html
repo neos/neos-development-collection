@@ -12,7 +12,6 @@
       <th>{neos:backend.translate(id: 'packages.key', source: 'Modules', package: 'Neos.Neos')}</th>
       <th>{neos:backend.translate(id: 'packages.type', source: 'Modules', package: 'Neos.Neos')}</th>
       <th class="neos-aCenter neos-span1">Frozen</th>
-      <th class="neos-aCenter neos-span1">Protected</th>
     </thead>
     <tbody>
       <f:for each="{packageGroups}" key="packageGroup" as="packages">
@@ -23,7 +22,6 @@
           <td class="neos-priority2">&nbsp;</td>
           <td class="neos-priority3">&nbsp;</td>
           <td class="neos-priority3">&nbsp;</td>
-          <td class="neos-priority1"> </td>
           <td class="neos-priority1"> </td>
           <td class="neos-priority1"> </td>
         </tr>
@@ -50,7 +48,6 @@
               </label>
             </td>
             <td class="neos-priority1 neos-aCenter"><i class="icon-{f:if(condition: package.isFrozen, then: 'check', else: 'times')}"></i></td>
-            <td class="neos-priority1 neos-aCenter"><i class="icon-{f:if(condition: package.isProtected, then: 'check', else: 'times')}"></i></td>
           </tr>
         </f:for>
       </f:for>
