@@ -11,9 +11,9 @@ namespace Neos\Media\Command;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -40,7 +40,7 @@ class MediaCommandController extends CommandController
 
     /**
      * @Flow\Inject(lazy=false)
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 

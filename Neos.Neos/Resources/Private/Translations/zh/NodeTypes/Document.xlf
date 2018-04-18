@@ -14,6 +14,9 @@
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
 			<target xml:lang="zh-CN" state="translated">在菜单中隐藏</target></trans-unit>
+      <trans-unit id="creationDialog.title" xml:space="preserve">
+				<source>Title</source>
+			<target xml:lang="zh-CN" state="translated">标题</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -372,6 +372,15 @@
       <trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
 			<target xml:lang="fr" state="translated">Générer des redirections d’url du fichier original vers la nouvelle url</target></trans-unit>
+      <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
+				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
+			<target xml:lang="fr" state="translated">« Ressources de type «{0}» ne peuvent être remplacées que par une ressource similaire. Obtenu le type "{1}«"</target></trans-unit>
+      <trans-unit id="noAccessToWorkspace" xml:space="preserve">
+				<source>No access to workspace "{0}"</source>
+			<target xml:lang="fr" state="translated">Pas d’accès à l’espace de travail "{0}"</target></trans-unit>
+      <trans-unit id="missingDocumentNode" xml:space="preserve">
+				<source>No document node found for this node</source>
+			<target xml:lang="fr" state="translated">Aucun nœud de document trouvé pour ce nœud</target></trans-unit>
     </body>
   </file>
 </xliff>

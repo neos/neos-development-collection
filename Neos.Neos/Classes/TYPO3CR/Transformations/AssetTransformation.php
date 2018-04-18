@@ -11,7 +11,7 @@ namespace Neos\Neos\TYPO3CR\Transformations;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
@@ -35,10 +35,10 @@ class AssetTransformation extends AbstractTransformation
     protected $persistenceManager;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related interface.
+     * Doctrine's Entity Manager.
      *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
