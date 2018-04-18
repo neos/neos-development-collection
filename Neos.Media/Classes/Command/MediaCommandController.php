@@ -175,11 +175,10 @@ class MediaCommandController extends CommandController
                     continue;
                 }
 
-                $assetSource = $asset->getAssetSource();
                 $fileSize = str_pad(Files::bytesToSizeString($asset->getResource()->getFileSize()), 9, ' ', STR_PAD_LEFT);
 
                 $unusedAssets[] = $asset;
-                $tableRowsByAssetSource[$assetSource->getIdentifier()][] = [
+                $tableRowsByAssetSource[$asset->getAssetSourceIdentifier()][] = [
                     $asset->getIdentifier(),
                     $asset->getResource()->getFilename(),
                     $fileSize

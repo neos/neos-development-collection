@@ -171,12 +171,6 @@ class Asset implements AssetInterface
         if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
             $this->emitAssetCreated($this);
         }
-
-        foreach ($this->assetSourcesConfiguration as $assetSourceIdentifier => $assetSourceConfiguration) {
-            if (is_array($assetSourceConfiguration)) {
-                $this->assetSources[$assetSourceIdentifier] = $assetSourceConfiguration['assetSource']::createFromConfiguration($assetSourceIdentifier, $assetSourceConfiguration['assetSourceOptions']);
-            }
-        }
     }
 
     /**
@@ -447,6 +441,11 @@ class Asset implements AssetInterface
 
 
     /**
+     * Set the asset source identifier for this asset
+     *
+     * This is an internal method which allows Neos / Flow to keep track of assets which were imported from
+     * external asset sources.
+     *
      * @param string $assetSourceIdentifier
      */
     public function setAssetSourceIdentifier(string $assetSourceIdentifier): void
@@ -460,16 +459,6 @@ class Asset implements AssetInterface
     public function getAssetSourceIdentifier(): string
     {
         return $this->assetSourceIdentifier;
-    }
-
-    public function getAssetSource(): ?AssetSource
-    {
-        $assetSourceIdentifier = $this->getAssetSourceIdentifier();
-        if ($assetSourceIdentifier === null) {
-            return null;
-        }
-
-        return $this->assetSources[$assetSourceIdentifier] ?? null;
     }
 
     /**
@@ -529,4 +518,26 @@ class Asset implements AssetInterface
     {
         return $this->assetService->getUsageCount($this);
     }
+
+    /**
+     * @return AssetSource|null
+     */
+    private function getAssetSource(): ?AssetSource
+    {
+        if ($this->assetSources === []) {
+            foreach ($this->assetSourcesConfiguration as $assetSourceIdentifier => $assetSourceConfiguration) {
+                if (is_array($assetSourceConfiguration)) {
+                    $this->assetSources[$assetSourceIdentifier] = $assetSourceConfiguration['assetSource']::createFromConfiguration($assetSourceIdentifier, $assetSourceConfiguration['assetSourceOptions']);
+                }
+            }
+        }
+
+        $assetSourceIdentifier = $this->getAssetSourceIdentifier();
+        if ($assetSourceIdentifier === null) {
+            return null;
+        }
+
+        return $this->assetSources[$assetSourceIdentifier] ?? null;
+    }
+
 }
