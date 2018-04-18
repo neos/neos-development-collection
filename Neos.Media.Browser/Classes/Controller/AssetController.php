@@ -5,7 +5,7 @@ namespace Neos\Media\Browser\Controller;
  * This file is part of the Neos.Media.Browser package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
-  *
+ *
  * This package is Open Source Software. For the full copyright and license
  * information, please view the LICENSE file which was distributed with this
  * source code.
@@ -335,9 +335,8 @@ class AssetController extends ActionController
             $assetProxy = $assetBrowser->getAssetProxy($assetProxyIdentifier);
 
             $this->view->assignMultiple([
-//            'tags' => $assetProxy->getAssetCollections()->count() > 0 ? $this->tagRepository->findByAssetCollections($assetProxy->getAssetCollections()->toArray()) : $this->tagRepository->findAll(),
                 'assetProxy' => $assetProxy,
-            'assetCollections' => $this->assetCollectionRepository->findAll()
+                'assetCollections' => $this->assetCollectionRepository->findAll()
             ]);
         } catch (AssetNotFoundException $e) {
             $this->throwStatus(404, 'Asset not found');
