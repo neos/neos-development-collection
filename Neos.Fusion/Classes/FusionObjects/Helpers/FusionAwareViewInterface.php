@@ -22,7 +22,7 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
  *
  * @api
  */
-interface FusionAwareViewInterface extends TypoScriptAwareViewInterface
+interface FusionAwareViewInterface
 {
     /**
      * @return AbstractFusionObject

@@ -11,7 +11,8 @@ namespace Neos\ContentRepository\Domain\Repository;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -68,11 +69,10 @@ class NodeDataRepository extends Repository
     protected $removedNodes;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
+     * Doctrine's Entity Manager.
      *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -1387,7 +1387,7 @@ class NodeDataRepository extends Repository
             ->where('n.workspace = :workspace')
             ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
             ->orderBy('n.path', 'ASC')
-            ->setParameter('workspace', $workspace)
+            ->setParameter('workspace', $workspace->getName())
             ->setParameter('removed', false, \PDO::PARAM_BOOL);
 
         return $queryBuilder->getQuery()->getResult();
@@ -1531,7 +1531,7 @@ class NodeDataRepository extends Repository
         $queryBuilder->select('n')
             ->from(NodeData::class, 'n')
             ->where('n.workspace IN (:workspaces)')
-            ->setParameter('workspaces', $workspaces);
+            ->setParameter('workspaces', $workspaces, Connection::PARAM_STR_ARRAY);
 
         return $queryBuilder;
     }

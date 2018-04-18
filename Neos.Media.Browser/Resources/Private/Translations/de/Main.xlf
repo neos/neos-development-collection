@@ -56,6 +56,12 @@
       <trans-unit id="sortDirection.desc" xml:space="preserve" approved="yes">
 				<source>Descending</source>
 			<target xml:lang="de">Absteigend</target><alt-trans><target xml:lang="de">Absteigende Reihenfolge</target></alt-trans></trans-unit>
+      <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
+				<source>Sort direction Ascending</source>
+			<target xml:lang="de" state="translated">Sortierrichtung Aufsteigend</target></trans-unit>
+      <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
+				<source>Sort direction Descending</source>
+			<target xml:lang="de" state="translated">Sortierrichtung Absteigend</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="de">Auf Tag oder Sammlung ziehen und loslassen</target></trans-unit>
@@ -98,6 +104,12 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="de">Abbrechen</target></trans-unit>
+      <trans-unit id="replace" xml:space="preserve" approved="yes">
+				<source>Replace</source>
+			<target xml:lang="de">Ersetzen</target></trans-unit>
+      <trans-unit id="replaceAssetResource" xml:space="preserve">
+				<source>Replace asset resource</source>
+			<target xml:lang="de" state="translated">Ressource ersetzen</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="de">Speichern</target></trans-unit>
@@ -407,7 +419,7 @@
 			<target xml:lang="de">Aufsteigend</target></trans-unit>
       <trans-unit id="sortdirection.desc" xml:space="preserve" approved="yes">
 				<source>Descending</source>
-			<target xml:lang="de">Absteigend</target><alt-trans><target xml:lang="de">Absteigende Reihenfolge</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">'Eine Ressource vom Typ "{0}" kann nur mit einer Ressource ähnlichen Typs ersetzt werden. Typ "{1}" erkannt'</target></trans-unit>
       <trans-unit id="tooltip.dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="de">Auf Tag oder Sammlung ziehen und loslassen</target></trans-unit>
@@ -422,10 +434,10 @@
 			<target xml:lang="de">Asset löschen</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve" approved="yes">
         <source>No access to workspace "{0}"</source>
-      <target xml:lang="de">Kein Zugriff auf Arbeitsbereich "{0}"</target></trans-unit>
+			<target xml:lang="de" state="translated">Kein Zugriff auf den Arbeitsbereich "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
-        <source>No document node found for this node</source>
-      <target xml:lang="de">Für diesen Knoten wurde kein Dokumentknoten gefunden</target></trans-unit>
+				<source>No document node found for this node</source>
+			<target xml:lang="de" state="translated">Kein Dokumentknoten für diesen Knoten gefunden</target></trans-unit>
     </body>
   </file>
 </xliff>
