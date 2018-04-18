@@ -11,18 +11,18 @@ namespace Neos\Media\Domain\Model\AssetSource\AssetProxy;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetSource;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
  * Interface for a stand-in object of remote or already imported assets from an asset source.
  */
-interface AssetProxy
+interface AssetProxyInterface
 {
     /**
-     * @return AssetSource
+     * @return AssetSourceInterface
      */
-    public function getAssetSource(): AssetSource;
+    public function getAssetSource(): AssetSourceInterface;
 
     /**
      * @return string

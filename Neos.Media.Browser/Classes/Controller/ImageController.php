@@ -11,11 +11,10 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
-use Neos\Media\Domain\Model\AssetSource\ImportedAsset;
-use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
+use Neos\Media\Domain\Model\ImportedAsset;
 use Neos\Media\Domain\Repository\ImageRepository;
 
 /**
@@ -54,7 +53,6 @@ class ImageController extends AssetController
             parent::editAction($asset->getAssetSourceIdentifier(), $importedAsset ? $importedAsset->getRemoteAssetIdentifier() : $asset->getIdentifier());
             return;
         }
-
         $this->response->setStatus(400, 'Invalid arguments');
     }
 }

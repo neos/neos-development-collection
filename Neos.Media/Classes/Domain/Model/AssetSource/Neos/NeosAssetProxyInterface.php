@@ -17,14 +17,14 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
-use Neos\Media\Domain\Model\AssetSource\AssetSource;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\ThumbnailServiceException;
 use Psr\Http\Message\UriInterface;
 
-final class NeosAssetProxy implements AssetProxy
+final class NeosAssetProxyInterface implements AssetProxyInterface
 {
     /**
      * @var NeosAssetSource
@@ -62,9 +62,9 @@ final class NeosAssetProxy implements AssetProxy
     }
 
     /**
-     * @return AssetSource
+     * @return AssetSourceInterface
      */
-    public function getAssetSource(): AssetSource
+    public function getAssetSource(): AssetSourceInterface
     {
         return $this->assetSource;
     }

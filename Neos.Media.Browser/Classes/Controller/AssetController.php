@@ -13,18 +13,13 @@ namespace Neos\Media\Browser\Controller;
 
 use Doctrine\Common\Persistence\Proxy as DoctrineProxy;
 use Doctrine\ORM\EntityNotFoundException;
-use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
-use Neos\Media\Domain\Model\AssetSource\AssetProxyRepository;
-use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
-use Neos\Media\Domain\Model\AssetSource\AssetSource;
-use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
-use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetProxy;
-use Neos\Media\Domain\Model\AssetSource\SupportsCollections;
-use Neos\Media\Domain\Model\AssetSource\SupportsSorting;
-use Neos\Media\Domain\Model\AssetSource\SupportsTagging;
-use Neos\Media\Browser\Domain\Session\BrowserState;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
@@ -39,9 +34,19 @@ use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\FluidAdaptor\View\TemplateView;
+use Neos\Media\Browser\Domain\Session\BrowserState;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
+use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
+use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetProxyInterface;
+use Neos\Media\Domain\Model\AssetSource\SupportsCollections;
+use Neos\Media\Domain\Model\AssetSource\SupportsSorting;
+use Neos\Media\Domain\Model\AssetSource\SupportsTagging;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -54,6 +59,7 @@ use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\Neos\Domain\Service\UserService as DomainUserService;
 use Neos\Neos\Service\UserService;
 use Neos\Utility\Files;
 use Neos\Utility\MediaTypes;
@@ -91,6 +97,12 @@ class AssetController extends ActionController
 
     /**
      * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
      * @var SiteRepository
      */
     protected $siteRepository;
@@ -102,10 +114,22 @@ class AssetController extends ActionController
     protected $domainRepository;
 
     /**
+     * @Flow\Inject()
+     * @var WorkspaceRepository
+     */
+    protected $workspaceRepository;
+
+    /**
      * @Flow\Inject
      * @var UserService
      */
     protected $userService;
+
+    /**
+     * @Flow\Inject
+     * @var DomainUserService
+     */
+    protected $domainUserService;
 
     /**
      * @Flow\Inject
@@ -162,7 +186,7 @@ class AssetController extends ActionController
     protected $assetSourcesConfiguration;
 
     /**
-     * @var AssetSource[]
+     * @var AssetSourceInterface[]
      */
     protected $assetSources = [];
 
@@ -277,8 +301,8 @@ class AssetController extends ActionController
             'tagMode' => $this->browserState->get('tagMode'),
             'assetCollections' => $assetCollections,
             'argumentNamespace' => $this->request->getArgumentNamespace(),
-            'maximumFileUploadSize' => $this->maximumFileUploadSize(),
-            'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($this->maximumFileUploadSize()),
+            'maximumFileUploadSize' => $this->getMaximumFileUploadSize(),
+            'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($this->getMaximumFileUploadSize()),
             'activeAssetSource' => $activeAssetSource,
             'activeAssetSourceSupportsSorting' => ($assetProxyRepository instanceof SupportsSorting)
         ]);
@@ -291,7 +315,7 @@ class AssetController extends ActionController
      */
     public function newAction()
     {
-        $maximumFileUploadSize = $this->maximumFileUploadSize();
+        $maximumFileUploadSize = $this->getMaximumFileUploadSize();
         $this->view->assignMultiple([
             'tags' => $this->tagRepository->findAll(),
             'assetCollections' => $this->assetCollectionRepository->findAll(),
@@ -306,7 +330,7 @@ class AssetController extends ActionController
      */
     public function replaceAssetResourceAction(Asset $asset)
     {
-        $maximumFileUploadSize = $this->maximumFileUploadSize();
+        $maximumFileUploadSize = $this->getMaximumFileUploadSize();
         $this->view->assignMultiple([
             'asset' => $asset,
             'maximumFileUploadSize' => $maximumFileUploadSize,
@@ -330,9 +354,9 @@ class AssetController extends ActionController
             throw new \RuntimeException('Given asset source is not configured.', 1509702178632);
         }
 
-        $assetBrowser = $this->assetSources[$assetSourceIdentifier]->getAssetProxyRepository();
+        $assetProxyRepository = $this->assetSources[$assetSourceIdentifier]->getAssetProxyRepository();
         try {
-            $assetProxy = $assetBrowser->getAssetProxy($assetProxyIdentifier);
+            $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
 
             $this->view->assignMultiple([
                 'assetProxy' => $assetProxy,
@@ -367,18 +391,16 @@ class AssetController extends ActionController
             $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
 
             $tags = [];
-            if ($assetProxyRepository instanceof SupportsTagging) {
-                if ($assetProxyRepository instanceof SupportsCollections) {
-                    // TODO: For generic implementation (allowing other asset sources to provide asset collections), the following needs to be refactored:
+            if ($assetProxyRepository instanceof SupportsTagging && $assetProxyRepository instanceof SupportsCollections) {
+                // TODO: For generic implementation (allowing other asset sources to provide asset collections), the following needs to be refactored:
 
-                    if ($assetProxy instanceof NeosAssetProxy) {
-                        /** @var Asset $asset */
-                        $asset = $assetProxy->getAsset();
-                        $assetCollections = $asset->getAssetCollections();
-                        $tags = $assetCollections->count() > 0 ? $this->tagRepository->findByAssetCollections($assetCollections->toArray()) : $this->tagRepository->findAll();
-                    } else {
-                        $tags = [];
-                    }
+                if ($assetProxy instanceof NeosAssetProxyInterface) {
+                    /** @var Asset $asset */
+                    $asset = $assetProxy->getAsset();
+                    $assetCollections = $asset->getAssetCollections();
+                    $tags = $assetCollections->count() > 0 ? $this->tagRepository->findByAssetCollections($assetCollections->toArray()) : $this->tagRepository->findAll();
+                } else {
+                    $tags = [];
                 }
             }
 
@@ -698,23 +720,77 @@ class AssetController extends ActionController
 
         $usageReferences = $this->assetService->getUsageReferences($asset);
         $relatedNodes = [];
+        $inaccessibleRelations = [];
 
-        /** @var AssetUsageInNodeProperties $usage */
+        $existingSites = $this->siteRepository->findAll();
+
         foreach ($usageReferences as $usage) {
-            $documentNodeIdentifier = $usage->getDocumentNode() instanceof NodeInterface ? $usage->getDocumentNode()->getIdentifier() : null;
+            $inaccessibleRelation = [
+                'type' => get_class($usage),
+                'usage' => $usage
+            ];
 
-            $relatedNodes[$usage->getSite()->getNodeName()]['site'] = $usage->getSite();
-            $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['node'] = $usage->getDocumentNode();
-            $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['nodes'][] = [
-                'node' => $usage->getNode(),
-                'nodeData' => $usage->getNode()->getNodeData(),
-                'contextDocumentNode' => $usage->getDocumentNode(),
-                'accessible' => $usage->isAccessible()
+            if (!$usage instanceof AssetUsageInNodeProperties) {
+                $inaccessibleRelations[] = $inaccessibleRelation;
+                continue;
+            }
+
+            try {
+                $nodeType = $this->nodeTypeManager->getNodeType($usage->getNodeTypeName());
+            } catch (NodeTypeNotFoundException $e) {
+                $nodeType = null;
+            }
+            /** @var Workspace $workspace */
+            $workspace = $this->workspaceRepository->findByIdentifier($usage->getWorkspaceName());
+            $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
+
+            $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeIdentifier();
+            $inaccessibleRelation['workspaceName'] = $usage->getWorkspaceName();
+            $inaccessibleRelation['workspace'] = $workspace;
+            $inaccessibleRelation['nodeType'] = $nodeType;
+            $inaccessibleRelation['accessible'] = $accessible;
+
+            if (!$accessible) {
+                $inaccessibleRelations[] = $inaccessibleRelation;
+                continue;
+            }
+
+            $node = $this->getNodeFrom($usage);
+            // this should actually never happen.
+            if (!$node) {
+                $inaccessibleRelations[] = $inaccessibleRelation;
+                continue;
+            }
+
+            $flowQuery = new FlowQuery([$node]);
+            $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
+            // this should actually never happen, too.
+            if (!$documentNode) {
+                $inaccessibleRelations[] = $inaccessibleRelation;
+                continue;
+            }
+
+            $site = $node->getContext()->getCurrentSite();
+            foreach ($existingSites as $existingSite) {
+                /** @var Site $existingSite **/
+                $siteNodePath = '/sites/' . $existingSite->getNodeName();
+                if ($siteNodePath === $node->getPAth() || strpos($node->getPath(), $siteNodePath . '/') === 0) {
+                    $site = $existingSite;
+                }
+            }
+
+            $relatedNodes[$site->getNodeName()]['site'] = $site;
+            $relatedNodes[$site->getNodeName()]['nodes'][] = [
+                'node' => $node,
+                'documentNode' => $documentNode
             ];
         }
 
         $this->view->assignMultiple([
+            'totalUsageCount' => count($usageReferences),
+            'nodeUsageClass' => AssetUsageInNodeProperties::class,
             'asset' => $asset,
+            'inaccessibleRelations' => $inaccessibleRelations,
             'relatedNodes' => $relatedNodes,
             'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets(),
             'userWorkspace' => $userWorkspace
@@ -800,9 +876,19 @@ class AssetController extends ActionController
      * @return integer
      * @throws \Neos\Utility\Exception\FilesException
      */
-    protected function maximumFileUploadSize()
+    private function getMaximumFileUploadSize()
     {
         return min(Files::sizeStringToBytes(ini_get('post_max_size')), Files::sizeStringToBytes(ini_get('upload_max_filesize')));
+    }
+
+    /**
+     * @param AssetUsageInNodeProperties $assetUsage
+     * @return NodeInterface
+     */
+    private function getNodeFrom(AssetUsageInNodeProperties $assetUsage)
+    {
+        $context = $this->_contextFactory->create(['workspaceName' => $assetUsage->getWorkspaceName(), 'dimensions' => $assetUsage->getDimensionValues(), 'invisibleContentShown' => true, 'removedContentShown' => true]);
+        return $context->getNodeByIdentifier($assetUsage->getNodeIdentifier());
     }
 
     /**
@@ -869,9 +955,9 @@ class AssetController extends ActionController
     }
 
     /**
-     * @return AssetSource
+     * @return AssetSourceInterface
      */
-    private function getAssetSourceFromBrowserState(): AssetSource
+    private function getAssetSourceFromBrowserState(): AssetSourceInterface
     {
         $assetSourceIdentifier = $this->browserState->getActiveAssetSourceIdentifier();
         if (!isset($this->assetSources[$assetSourceIdentifier])) {
@@ -918,9 +1004,9 @@ class AssetController extends ActionController
     }
 
     /**
-     * @param AssetProxyRepository $assetProxyRepository
+     * @param AssetProxyRepositoryInterface $assetProxyRepository
      */
-    private function applySortingFromBrowserState(AssetProxyRepository $assetProxyRepository): void
+    private function applySortingFromBrowserState(AssetProxyRepositoryInterface $assetProxyRepository): void
     {
         if ($assetProxyRepository instanceof SupportsSorting) {
             switch ($this->browserState->get('sortBy')) {
@@ -936,17 +1022,17 @@ class AssetController extends ActionController
     }
 
     /**
-     * @param AssetProxyRepository $assetProxyRepository
+     * @param AssetProxyRepositoryInterface $assetProxyRepository
      */
-    private function applyAssetTypeFilterFromBrowserState(AssetProxyRepository $assetProxyRepository): void
+    private function applyAssetTypeFilterFromBrowserState(AssetProxyRepositoryInterface $assetProxyRepository): void
     {
         $assetProxyRepository->filterByType(new AssetTypeFilter($this->browserState->get('filter')));
     }
 
     /**
-     * @param AssetProxyRepository $assetProxyRepository
+     * @param AssetProxyRepositoryInterface $assetProxyRepository
      */
-    private function applyAssetCollectionFilterFromBrowserState(AssetProxyRepository $assetProxyRepository): void
+    private function applyAssetCollectionFilterFromBrowserState(AssetProxyRepositoryInterface $assetProxyRepository): void
     {
         if ($assetProxyRepository instanceof SupportsCollections) {
             $assetProxyRepository->filterByCollection($this->getActiveAssetCollectionFromBrowserState());

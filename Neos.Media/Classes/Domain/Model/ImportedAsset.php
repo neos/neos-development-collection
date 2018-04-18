@@ -39,29 +39,29 @@ final class ImportedAsset
     protected $localAssetIdentifier;
 
     /**
+     * @var \DateTimeImmutable
+     */
+    protected $importedAt;
+
+    /**
      * @ORM\Column(nullable=true)
      * @var string
      */
     protected $localOriginalAssetIdentifier = null;
 
     /**
-     * @var \DateTimeImmutable
-     */
-    protected $importedAt;
-
-    /**
      * @param string $assetSourceIdentifier
      * @param string $remoteAssetIdentifier
      * @param string $localAssetIdentifier
-     * @param string $localOriginalAssetIdentifier
      * @param \DateTimeImmutable $importedAt
+     * @param string $localOriginalAssetIdentifier
      */
     public function __construct(
         string $assetSourceIdentifier,
         string $remoteAssetIdentifier,
         string $localAssetIdentifier,
-        string $localOriginalAssetIdentifier = null,
-        \DateTimeImmutable $importedAt
+        \DateTimeImmutable $importedAt,
+        string $localOriginalAssetIdentifier = null
     ) {
         $this->assetSourceIdentifier = $assetSourceIdentifier;
         $this->remoteAssetIdentifier = $remoteAssetIdentifier;
@@ -79,27 +79,11 @@ final class ImportedAsset
     }
 
     /**
-     * @param string $assetSourceIdentifier
-     */
-    public function setAssetSourceIdentifier(string $assetSourceIdentifier): void
-    {
-        $this->assetSourceIdentifier = $assetSourceIdentifier;
-    }
-
-    /**
      * @return string
      */
     public function getRemoteAssetIdentifier(): string
     {
         return $this->remoteAssetIdentifier;
-    }
-
-    /**
-     * @param string $remoteAssetIdentifier
-     */
-    public function setRemoteAssetIdentifier(string $remoteAssetIdentifier): void
-    {
-        $this->remoteAssetIdentifier = $remoteAssetIdentifier;
     }
 
     /**
@@ -111,14 +95,6 @@ final class ImportedAsset
     }
 
     /**
-     * @param string $localAssetIdentifier
-     */
-    public function setLocalAssetIdentifier(string $localAssetIdentifier): void
-    {
-        $this->localAssetIdentifier = $localAssetIdentifier;
-    }
-
-    /**
      * @return string
      */
     public function getLocalOriginalAssetIdentifier(): ?string
@@ -127,26 +103,10 @@ final class ImportedAsset
     }
 
     /**
-     * @param string $localOriginalAssetIdentifier
-     */
-    public function setLocalOriginalAssetIdentifier(string $localOriginalAssetIdentifier): void
-    {
-        $this->localOriginalAssetIdentifier = $localOriginalAssetIdentifier;
-    }
-
-    /**
      * @return \DateTimeImmutable
      */
     public function getImportedAt(): \DateTimeImmutable
     {
         return $this->importedAt;
-    }
-
-    /**
-     * @param \DateTimeImmutable $importedAt
-     */
-    public function setImportedAt(\DateTimeImmutable $importedAt): void
-    {
-        $this->importedAt = $importedAt;
     }
 }

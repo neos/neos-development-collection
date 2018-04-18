@@ -19,7 +19,7 @@ namespace Neos\Media\Domain\Model\AssetSource\AssetProxy;
  * Note that the property names are UpperCamelCase and as defined in the IPTC IIM specification.
  * Examples: "Title", "Keywords", "CopyrightNotice"
  */
-interface SupportsIptcMetadata
+interface SupportsIptcMetadataInterface
 {
     /**
      * Returns true, if the given IPTC metadata property is available, ie. is supported and is not empty.

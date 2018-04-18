@@ -11,18 +11,18 @@ namespace Neos\Media\Domain\Model\AssetSource;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\Media\Domain\Model\Tag;
 
-interface AssetProxyRepository
+interface AssetProxyRepositoryInterface
 {
     /**
      * @param string $identifier
-     * @return AssetProxy
+     * @return AssetProxyInterface
      * @throws AssetNotFoundException
      * @throws AssetSourceConnectionException
      */
-    public function getAssetProxy(string $identifier): AssetProxy;
+    public function getAssetProxy(string $identifier): AssetProxyInterface;
 
     /**
      * @param AssetTypeFilter $assetType
@@ -30,27 +30,27 @@ interface AssetProxyRepository
     public function filterByType(AssetTypeFilter $assetType = null): void;
 
     /**
-     * @return AssetProxyQueryResult
+     * @return AssetProxyQueryResultInterface
      * @throws AssetSourceConnectionException
      */
-    public function findAll(): AssetProxyQueryResult;
+    public function findAll(): AssetProxyQueryResultInterface;
 
     /**
      * @param string $searchTerm
-     * @return AssetProxyQueryResult
+     * @return AssetProxyQueryResultInterface
      */
-    public function findBySearchTerm(string $searchTerm): AssetProxyQueryResult;
+    public function findBySearchTerm(string $searchTerm): AssetProxyQueryResultInterface;
 
     /**
      * @param Tag $tag
-     * @return AssetProxyQueryResult
+     * @return AssetProxyQueryResultInterface
      */
-    public function findByTag(Tag $tag): AssetProxyQueryResult;
+    public function findByTag(Tag $tag): AssetProxyQueryResultInterface;
 
     /**
-     * @return AssetProxyQueryResult
+     * @return AssetProxyQueryResultInterface
      */
-    public function findUntagged(): AssetProxyQueryResult;
+    public function findUntagged(): AssetProxyQueryResultInterface;
 
     /**
      * Count all assets, regardless of tag or collection

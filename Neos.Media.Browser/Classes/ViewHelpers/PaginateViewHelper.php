@@ -12,7 +12,7 @@ namespace Neos\Media\Browser\ViewHelpers;
 * source code.
 */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResult;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 use Neos\Media\Browser\ViewHelpers\Controller\PaginateController;
 use Neos\Flow\Annotations\Inject;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
@@ -40,12 +40,12 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
     /**
      * Render this view helper
      *
-     * @param AssetProxyQueryResult $queryResult
+     * @param AssetProxyQueryResultInterface $queryResult
      * @param string $as
      * @param array $configuration
      * @return string
      */
-    public function render(AssetProxyQueryResult $queryResult, $as, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99))
+    public function render(AssetProxyQueryResultInterface $queryResult, $as, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99))
     {
         $response = $this->initiateSubRequest();
         return $response->getContent();

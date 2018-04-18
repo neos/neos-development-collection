@@ -12,11 +12,15 @@ namespace Neos\Media\Browser\ViewHelpers;
 * source code.
 */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**
- * Renders an <img> HTML tag from a given asset proxy instance
+ * Renders an <img> HTML tag from a given Asset Proxy instance
+ *
+ * This view helper is INTERNAL for now, and only used in the Media Browser.
+ * The functionality of this view helper might become part of the Neos.Media
+ * thumbnail view helper if there is a demand for it.
  *
  * = Examples =
  *
@@ -49,12 +53,12 @@ class ThumbnailViewHelper extends AbstractTagBasedViewHelper
     /**
      * Renders an HTML img tag with a thumbnail or preview image, created from a given asset proxy.
      *
-     * @param AssetProxy $assetProxy The asset to be rendered as a thumbnail
+     * @param AssetProxyInterface $assetProxy The asset to be rendered as a thumbnail
      * @param integer $width Desired width of the thumbnail
      * @param integer $height Desired height of the thumbnail
      * @return string an <img...> html tag
      */
-    public function render(AssetProxy $assetProxy = null, $width = null, $height = null)
+    public function render(AssetProxyInterface $assetProxy = null, $width = null, $height = null)
     {
         if ($width === null || $height === null) {
             $width = 250;
