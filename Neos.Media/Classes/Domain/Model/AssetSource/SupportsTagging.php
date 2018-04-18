@@ -20,14 +20,14 @@ interface SupportsTagging
      *       it can become a public API for other asset sources.
      *
      * @param Tag $tag
-     * @return AssetProxyQueryResult
+     * @return AssetProxyQueryResultInterface
      */
-    public function findByTag(Tag $tag): AssetProxyQueryResult;
+    public function findByTag(Tag $tag): AssetProxyQueryResultInterface;
 
     /**
-     * @return AssetProxyQueryResult
+     * @return AssetProxyQueryResultInterface
      */
-    public function findUntagged(): AssetProxyQueryResult;
+    public function findUntagged(): AssetProxyQueryResultInterface;
 
     /**
      * @return int

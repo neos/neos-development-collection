@@ -57,7 +57,7 @@ class ImportedAssetManager
      */
     public function registerCreatedAsset(AssetInterface $asset)
     {
-        if (!$asset instanceof AssetVariantInterface) {
+        if (!$asset instanceof AssetVariantInterface || !$asset instanceof AssetSourceAwareInterface) {
             return;
         }
 
@@ -67,15 +67,14 @@ class ImportedAssetManager
         $originalAssetIdentifier = $this->persistenceManager->getIdentifierByObject($originalAsset);
 
         $originalImportedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($originalAssetIdentifier);
-        if ($originalImportedAsset instanceof ImportedAsset && $variantAsset instanceof AssetSourceAwareInterface) {
+        if ($originalImportedAsset instanceof ImportedAsset) {
             $variantAsset->setAssetSourceIdentifier($originalImportedAsset->getAssetSourceIdentifier());
 
             $variantImportedAsset = new ImportedAsset(
                 $originalImportedAsset->getAssetSourceIdentifier(),
                 $originalImportedAsset->getRemoteAssetIdentifier(),
-                $variantAssetIdentifier,
-                $originalAssetIdentifier,
-                new \DateTimeImmutable()
+                $variantAssetIdentifier, new \DateTimeImmutable(),
+                $originalAssetIdentifier
             );
 
             $this->importedAssetRepository->add($variantImportedAsset);

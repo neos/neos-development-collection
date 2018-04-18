@@ -11,7 +11,7 @@ namespace Neos\Media\Domain\Model\AssetSource;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 
 interface AssetSourceAwareInterface
 {
@@ -26,7 +26,7 @@ interface AssetSourceAwareInterface
     public function getAssetSourceIdentifier(): ?string;
 
     /**
-     * @return AssetProxy|null
+     * @return AssetProxyInterface|null
      */
-    public function getAssetProxy(): ?AssetProxy;
+    public function getAssetProxy(): ?AssetProxyInterface;
 }

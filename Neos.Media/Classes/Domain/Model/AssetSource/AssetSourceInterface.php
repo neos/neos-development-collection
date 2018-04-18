@@ -11,7 +11,7 @@ namespace Neos\Media\Domain\Model\AssetSource;
  * source code.
  */
 
-interface AssetSource
+interface AssetSourceInterface
 {
     /**
      * This factory method is used instead of a constructor in order to not dictate a __construct() signature in this
@@ -19,9 +19,9 @@ interface AssetSource
      *
      * @param string $assetSourceIdentifier
      * @param array $assetSourceOptions
-     * @return AssetSource
+     * @return AssetSourceInterface
      */
-    public static function createFromConfiguration(string $assetSourceIdentifier, array $assetSourceOptions): AssetSource;
+    public static function createFromConfiguration(string $assetSourceIdentifier, array $assetSourceOptions): AssetSourceInterface;
 
     /**
      * A unique string which identifies the concrete asset source.
@@ -37,9 +37,9 @@ interface AssetSource
     public function getLabel(): string;
 
     /**
-     * @return AssetProxyRepository
+     * @return AssetProxyRepositoryInterface
      */
-    public function getAssetProxyRepository(): AssetProxyRepository;
+    public function getAssetProxyRepository(): AssetProxyRepositoryInterface;
 
     /**
      * @return bool

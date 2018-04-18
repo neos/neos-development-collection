@@ -11,7 +11,7 @@ namespace Neos\Media\Domain\Model\AssetSource;
  * source code.
  */
 
-interface AssetProxyQuery
+interface AssetProxyQueryInterface
 {
     /**
      * @param int $offset
@@ -44,9 +44,9 @@ interface AssetProxyQuery
     public function getSearchTerm();
 
     /**
-     * @return AssetProxyQueryResult
+     * @return AssetProxyQueryResultInterface
      */
-    public function execute(): AssetProxyQueryResult;
+    public function execute(): AssetProxyQueryResultInterface;
 
     /**
      * @return int

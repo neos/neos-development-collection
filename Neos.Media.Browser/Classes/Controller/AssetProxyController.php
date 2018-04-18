@@ -13,9 +13,9 @@ namespace Neos\Media\Browser\Controller;
  */
 
 use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\HasRemoteOriginal;
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\SupportsIptcMetadata;
-use Neos\Media\Domain\Model\AssetSource\AssetSource;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\HasRemoteOriginalInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\SupportsIptcMetadataInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
 use Neos\Media\Domain\Model\ImportedAsset;
 use Neos\Media\Domain\Model\ImportedAssetManager;
@@ -41,7 +41,7 @@ class AssetProxyController extends ActionController
     protected $assetSourcesConfiguration;
 
     /**
-     * @var AssetSource[]
+     * @var AssetSourceInterface[]
      */
     protected $assetSources = [];
 
@@ -115,7 +115,7 @@ class AssetProxyController extends ActionController
             return '';
         }
 
-        if (!$assetProxy instanceof HasRemoteOriginal) {
+        if (!$assetProxy instanceof HasRemoteOriginalInterface) {
             $this->response->setStatus(400, 'Cannot import asset which does not have a remote original');
             $this->systemLogger->log(sprintf('Failed importing an the asset %s from asset source %s because it does not have a remote original.', $assetProxy->getFilename(), $assetSourceIdentifier, $assetProxy->getImportStream()), LOG_ERR);
             return '';
@@ -141,7 +141,7 @@ class AssetProxyController extends ActionController
             }
 
             $asset->setAssetSourceIdentifier($assetSourceIdentifier);
-            if ($assetProxy instanceof SupportsIptcMetadata) {
+            if ($assetProxy instanceof SupportsIptcMetadataInterface) {
                 $asset->setTitle($assetProxy->getIptcProperty('Title'));
                 $asset->setCaption($assetProxy->getIptcProperty('CaptionAbstract'));
             }
@@ -154,8 +154,8 @@ class AssetProxyController extends ActionController
                 $assetSourceIdentifier,
                 $assetIdentifier,
                 $localAssetIdentifier,
-                null,
-                new \DateTimeImmutable()
+                new \DateTimeImmutable(),
+                null
             );
             $this->importedAssetManager->registerImportedAsset($importedAsset);
         }

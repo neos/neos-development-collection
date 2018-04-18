@@ -16,8 +16,8 @@ use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetProxyRepository;
-use Neos\Media\Domain\Model\AssetSource\AssetSource;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Flow\Annotations as Flow;
@@ -28,7 +28,7 @@ use Psr\Http\Message\UriInterface;
 /**
  * Asset source for Neos native assets
  */
-final class NeosAssetSource implements AssetSource
+final class NeosAssetSource implements AssetSourceInterface
 {
     /**
      * @var string
@@ -36,7 +36,7 @@ final class NeosAssetSource implements AssetSource
     private $assetSourceIdentifier;
 
     /**
-     * @var NeosAssetProxyRepository
+     * @var NeosAssetProxyRepositoryInterface
      */
     private $assetProxyRepository;
 
@@ -83,7 +83,7 @@ final class NeosAssetSource implements AssetSource
                         if (!is_bool($optionValue)) {
                             throw new \InvalidArgumentException(sprintf('Asset source option "%s" specified for Neos asset source "%s" must be either true or false. Please check your settings.', $optionName, $assetSourceIdentifier), 1522927471208);
                         }
-                        $this->asyncThumbnails = (bool)$optionValue;
+                        $this->asyncThumbnails = $optionValue;
                     }
                 break;
                 default:
@@ -95,9 +95,9 @@ final class NeosAssetSource implements AssetSource
     /**
      * @param string $assetSourceIdentifier
      * @param array $assetSourceOptions
-     * @return AssetSource
+     * @return AssetSourceInterface
      */
-    public static function createFromConfiguration(string $assetSourceIdentifier, array $assetSourceOptions): AssetSource
+    public static function createFromConfiguration(string $assetSourceIdentifier, array $assetSourceOptions): AssetSourceInterface
     {
         return new static($assetSourceIdentifier, $assetSourceOptions);
     }
@@ -119,12 +119,12 @@ final class NeosAssetSource implements AssetSource
     }
 
     /**
-     * @return AssetProxyRepository
+     * @return AssetProxyRepositoryInterface
      */
-    public function getAssetProxyRepository(): AssetProxyRepository
+    public function getAssetProxyRepository(): AssetProxyRepositoryInterface
     {
         if ($this->assetProxyRepository === null) {
-            $this->assetProxyRepository = new NeosAssetProxyRepository($this);
+            $this->assetProxyRepository = new NeosAssetProxyRepositoryInterface($this);
         }
 
         return $this->assetProxyRepository;

@@ -11,9 +11,9 @@ namespace Neos\Media\Domain\Model\AssetSource\Neos;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
-use Neos\Media\Domain\Model\AssetSource\AssetProxyQuery;
-use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResult;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 use Neos\Flow\Annotations\Proxy;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -21,7 +21,7 @@ use Neos\Media\Domain\Model\AssetInterface;
 /**
  * @Proxy(false)
  */
-final class NeosAssetProxyQueryResult implements AssetProxyQueryResult
+final class NeosAssetProxyQueryResultInterface implements AssetProxyQueryResultInterface
 {
     /**
      * @var NeosAssetSource
@@ -34,7 +34,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResult
     private $flowPersistenceQueryResult;
 
     /**
-     * @var NeosAssetProxyQuery
+     * @var NeosAssetProxyQueryInterface
      */
     private $query;
 
@@ -49,49 +49,49 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResult
     }
 
     /**
-     * @return AssetProxyQuery
+     * @return AssetProxyQueryInterface
      */
-    public function getQuery(): AssetProxyQuery
+    public function getQuery(): AssetProxyQueryInterface
     {
         if ($this->query === null) {
-            $this->query = new NeosAssetProxyQuery($this->flowPersistenceQueryResult->getQuery(), $this->assetSource);
+            $this->query = new NeosAssetProxyQueryInterface($this->flowPersistenceQueryResult->getQuery(), $this->assetSource);
         }
         return $this->query;
     }
 
     /**
-     * @return AssetProxy|null
+     * @return AssetProxyInterface|null
      */
-    public function getFirst(): ?AssetProxy
+    public function getFirst(): ?AssetProxyInterface
     {
         $asset = $this->flowPersistenceQueryResult->getFirst();
         if ($asset instanceof AssetInterface) {
-            return new NeosAssetProxy($asset, $this->assetSource);
+            return new NeosAssetProxyInterface($asset, $this->assetSource);
         } else {
             return null;
         }
     }
 
     /**
-     * @return NeosAssetProxy[]
+     * @return NeosAssetProxyInterface[]
      */
     public function toArray(): array
     {
         $assetProxies = [];
         foreach ($this->flowPersistenceQueryResult->toArray() as $asset) {
-            $assetProxies[] = new NeosAssetProxy($asset, $this->assetSource);
+            $assetProxies[] = new NeosAssetProxyInterface($asset, $this->assetSource);
         }
         return $assetProxies;
     }
 
     /**
-     * @return AssetProxy|null
+     * @return AssetProxyInterface|null
      */
-    public function current(): ?AssetProxy
+    public function current(): ?AssetProxyInterface
     {
         $asset = $this->flowPersistenceQueryResult->current();
         if ($asset instanceof AssetInterface) {
-            return new NeosAssetProxy($asset, $this->assetSource);
+            return new NeosAssetProxyInterface($asset, $this->assetSource);
         } else {
             return null;
         }
@@ -106,7 +106,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResult
     }
 
     /**
-     * @return AssetProxy|null
+     * @return AssetProxyInterface|null
      */
     public function key()
     {
@@ -140,11 +140,11 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResult
 
     /**
      * @param mixed $offset
-     * @return AssetProxy|mixed
+     * @return AssetProxyInterface|mixed
      */
-    public function offsetGet($offset): ?AssetProxy
+    public function offsetGet($offset): ?AssetProxyInterface
     {
-        return new NeosAssetProxy($this->flowPersistenceQueryResult->offsetGet($offset), $this->assetSource);
+        return new NeosAssetProxyInterface($this->flowPersistenceQueryResult->offsetGet($offset), $this->assetSource);
     }
 
     /**

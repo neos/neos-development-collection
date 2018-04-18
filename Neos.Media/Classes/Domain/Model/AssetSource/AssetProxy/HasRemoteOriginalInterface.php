@@ -14,7 +14,7 @@ namespace Neos\Media\Domain\Model\AssetSource\AssetProxy;
 /**
  * Interface for an Asset Proxy which depicts an asset whose original binary data is stored in a remote location
  */
-interface HasRemoteOriginal
+interface HasRemoteOriginalInterface
 {
     /**
      * Returns true if the binary data of the asset has already been imported into the Neos asset source.

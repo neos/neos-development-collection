@@ -21,8 +21,8 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
-use Neos\Media\Domain\Model\AssetSource\AssetSource;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
 use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -139,7 +139,7 @@ class Asset implements AssetInterface
 
     /**
      * @Flow\Transient()
-     * @var AssetSource[]
+     * @var AssetSourceInterface[]
      */
     protected $assetSources = [];
 
@@ -462,9 +462,9 @@ class Asset implements AssetInterface
     }
 
     /**
-     * @return AssetProxy|null
+     * @return AssetProxyInterface|null
      */
-    public function getAssetProxy(): ?AssetProxy
+    public function getAssetProxy(): ?AssetProxyInterface
     {
         $assetSource = $this->getAssetSource();
         $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($this->getIdentifier());
@@ -520,9 +520,9 @@ class Asset implements AssetInterface
     }
 
     /**
-     * @return AssetSource|null
+     * @return AssetSourceInterface|null
      */
-    private function getAssetSource(): ?AssetSource
+    private function getAssetSource(): ?AssetSourceInterface
     {
         if ($this->assetSources === []) {
             foreach ($this->assetSourcesConfiguration as $assetSourceIdentifier => $assetSourceConfiguration) {

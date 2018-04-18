@@ -11,28 +11,28 @@ namespace Neos\Media\Domain\Model\AssetSource;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxy;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 
-interface AssetProxyQueryResult extends \Countable, \Iterator, \ArrayAccess
+interface AssetProxyQueryResultInterface extends \Countable, \Iterator, \ArrayAccess
 {
     /**
      * Returns a clone of the query object
      *
-     * @return AssetProxyQuery
+     * @return AssetProxyQueryInterface
      */
-    public function getQuery(): AssetProxyQuery;
+    public function getQuery(): AssetProxyQueryInterface;
 
     /**
      * Returns the first asset proxy in the result set
      *
-     * @return AssetProxy|null
+     * @return AssetProxyInterface|null
      */
-    public function getFirst(): ?AssetProxy;
+    public function getFirst(): ?AssetProxyInterface;
 
     /**
      * Returns an array with the asset proxies in the result set
      *
-     * @return AssetProxy[]
+     * @return AssetProxyInterface[]
      */
     public function toArray(): array;
 }
