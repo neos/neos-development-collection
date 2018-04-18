@@ -52,6 +52,7 @@ class RemoveProperty extends AbstractTransformation
      *
      * @param NodeData $node
      * @return void
+     * @throws \Neos\ContentRepository\Exception\NodeException
      */
     public function execute(NodeData $node)
     {
