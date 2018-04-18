@@ -43,8 +43,7 @@ class PackagesController extends AbstractModuleController
                 'name' => $package->getComposerManifest('name'),
                 'type' => $package->getComposerManifest('type'),
                 'description' => $package->getComposerManifest('description'),
-                'isFrozen' => $this->packageManager->isPackageFrozen($package->getPackageKey()),
-                'isProtected' => $package->isProtected()
+                'isFrozen' => $this->packageManager->isPackageFrozen($package->getPackageKey())
             );
         }
         ksort($packageGroups);
