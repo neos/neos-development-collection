@@ -539,5 +539,4 @@ class Asset implements AssetInterface
 
         return $this->assetSources[$assetSourceIdentifier] ?? null;
     }
-
 }
