@@ -11,9 +11,13 @@ namespace Neos\ContentRepository\Migration\Service;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\Query\Expr;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\Flow\Persistence\Doctrine\Query;
 
 /**
  * Service that runs over all nodes and applies migrations to them as given by configuration.
@@ -45,6 +49,15 @@ class NodeMigration
     protected $persistenceManager;
 
     /**
+     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
+     * interface.
+     *
+     * @Flow\Inject
+     * @var ObjectManager
+     */
+    protected $entityManager;
+
+    /**
      * Migration configuration
      * @var array
      */
@@ -59,23 +72,46 @@ class NodeMigration
     }
 
     /**
-     * Execute the migration
+     * Execute all migrations
      *
-     * @return void
+     * @throws \Neos\ContentRepository\Migration\Exception\MigrationException
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function execute()
     {
-        $iterator = $this->nodeDataRepository->findAllIterator();
+        foreach ($this->configuration as $migrationDescription) {
+            /** array $migrationDescription */
+            $this->executeSingle($migrationDescription);
+        }
+    }
+
+    /**
+     * Execute a single migration
+     *
+     * @param array $migrationDescription
+     * @return void
+     * @throws \Neos\ContentRepository\Migration\Exception\MigrationException
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     */
+    protected function executeSingle(array $migrationDescription)
+    {
+        $filterExpressions = [];
+        $baseQuery = new Query(NodeData::class);
+        foreach ($this->nodeFilterService->getFilterExpressions($migrationDescription['filters'], $baseQuery) as $filterExpression) {
+            $filterExpressions[] = $filterExpression;
+        }
+
+        $query = new Query(NodeData::class);
+        $query->matching(call_user_func_array([new Expr(), 'andX'], $filterExpressions));
+        $iterator = $query->getQueryBuilder()->getQuery()->iterate();
+
         $processed = 0;
-
         foreach ($this->nodeDataRepository->iterate($iterator) as $node) {
-            foreach ($this->configuration as $migrationDescription) {
-                if ($this->nodeFilterService->matchFilters($node, $migrationDescription['filters'])) {
-                    $this->nodeTransformationService->execute($node, $migrationDescription['transformations']);
+            if ($this->nodeFilterService->matchFilters($node, $migrationDescription['filters'])) {
+                $this->nodeTransformationService->execute($node, $migrationDescription['transformations']);
 
-                    if (!$this->nodeDataRepository->isInRemovedNodes($node)) {
-                        $this->nodeDataRepository->update($node);
-                    }
+                if (!$this->nodeDataRepository->isInRemovedNodes($node)) {
+                    $this->nodeDataRepository->update($node);
                 }
             }
 
