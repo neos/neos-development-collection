@@ -46,9 +46,17 @@ root {
 	}
 
 	format {
-		@position = 'end 9998'
+		@position = 'end 9997'
 		condition = ${request.format != 'html'}
 		renderPath = ${'/' + String.replace(request.format, '.', '/')}
+	}
+
+	documentType {
+		@position = 'end 9998'
+		condition = Neos.Fusion:CanRender {
+			type = ${q(documentNode).property('_nodeType.name')}
+		}
+		type = ${q(documentNode).property('_nodeType.name')}
 	}
 
 	default {
