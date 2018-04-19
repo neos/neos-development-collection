@@ -26,9 +26,9 @@ Arguments
 
 * ``context`` (array, *optional*): Additional context variables to be set.
 
-* ``typoScriptPackageKey`` (string, *optional*): The key of the package to load Fusion from, if not from the current context.
+* ``fusionPackageKey`` (string, *optional*): The key of the package to load Fusion from, if not from the current context.
 
-* ``typoScriptFilePathPattern`` (string, *optional*): Resource pattern to load Fusion from. Defaults to: resource://@package/Private/Fusion/
+* ``fusionFilePathPattern`` (string, *optional*): Resource pattern to load Fusion from. Defaults to: resource://@package/Private/Fusion/
 
 
 

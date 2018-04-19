@@ -7,7 +7,7 @@
 Templating
 ==========
 
-.. sectionauthor:: Sebastian Kurfürst <sebastian@typo3.org>
+.. sectionauthor:: Sebastian Kurfürst <sebastian@neos.io>
 
 .. in this template, the default highlighter is XML:
 
@@ -466,8 +466,8 @@ Rendering the View Helper
 
 We refresh what we have learned so far: When a user writes something like
 ``<blog:displayNews />`` inside a template (and has imported the ``blog`` namespace
-to ``TYPO3\Blog\ViewHelpers``), Fluid will automatically instantiate the class
-``TYPO3\Blog\ViewHelpers\DisplayNewsViewHelper``, and invoke the render() method on it.
+to ``Neos\Blog\ViewHelpers``), Fluid will automatically instantiate the class
+``Neos\Blog\ViewHelpers\DisplayNewsViewHelper``, and invoke the render() method on it.
 
 This ``render()`` method should return the rendered content as string.
 
@@ -611,7 +611,7 @@ With the above methods, the ``Link\ActionViewHelper`` from above can be condense
 
 .. code-block:: php
 
-	class ActionViewHelper extends \TYPO3\Fluid\Core\AbstractViewHelper {
+	class ActionViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper {
 
 		public function initializeArguments() {
 			$this->registerUniversalTagAttributes();
@@ -822,7 +822,7 @@ A XSD schema file for your ViewHelpers can be created by executing
 
 .. code-block:: text
 
-	./flow documenation:generatexsd <Your>\\<Package>\\ViewHelpers
+	./flow documentation:generatexsd <Your>\\<Package>\\ViewHelpers
 		--target-file /some/directory/your.package.xsd
 
 Then import the XSD file in your favorite IDE and map it to the namespace

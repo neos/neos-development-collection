@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties.text.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter text here</p>]]></source>
-			<target xml:lang="la-LA"><![CDATA[<p>crwdns1551:0crwdne1551:0</p>]]></target></trans-unit>
+			<target xml:lang="la-LA"><![CDATA[crwdns6293:0crwdne6293:0]]></target></trans-unit>
     </body>
   </file>
 </xliff>

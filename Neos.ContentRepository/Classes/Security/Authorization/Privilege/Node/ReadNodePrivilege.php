@@ -57,8 +57,7 @@ class ReadNodePrivilege extends EntityPrivilege
         }
         $nodeContext = new NodePrivilegeContext($subject->getNode());
         $eelContext = new Context($nodeContext);
-        $eelCompilingEvaluator = new CompilingEvaluator();
-        $eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
+        $eelCompilingEvaluator = $this->objectManager->get(CompilingEvaluator::class);
         return $eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
     }
 }

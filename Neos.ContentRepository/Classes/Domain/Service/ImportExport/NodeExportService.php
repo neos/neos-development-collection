@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Domain\Service\ImportExport;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -63,11 +63,10 @@ class NodeExportService
     protected $propertyMapper;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
+     * Doctrine's Entity Manager.
      *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 

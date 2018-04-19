@@ -141,7 +141,7 @@ class SiteImportService
      */
     public function importFromPackage($packageKey)
     {
-        if (!$this->packageManager->isPackageActive($packageKey)) {
+        if (!$this->packageManager->isPackageAvailable($packageKey)) {
             throw new NeosException(sprintf('Error: Package "%s" is not active.', $packageKey), 1384192950);
         }
         $contentPathAndFilename = sprintf('resource://%s/Private/Content/Sites.xml', $packageKey);
@@ -187,7 +187,7 @@ class SiteImportService
             if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
                 throw new UnknownPackageException(sprintf('Package "%s" specified in the XML as site resources package does not exist.', $siteResourcesPackageKey), 1303891443);
             }
-            if (!$this->packageManager->isPackageActive($siteResourcesPackageKey)) {
+            if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
                 throw new InvalidPackageStateException(sprintf('Package "%s" specified in the XML as site resources package is not active.', $siteResourcesPackageKey), 1303898135);
             }
             $site->setSiteResourcesPackageKey($siteResourcesPackageKey);

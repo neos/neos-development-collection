@@ -2,18 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="kk">
     <body>
-      <trans-unit id="clickToEdit" xml:space="preserve">
-				<source>Click to edit</source>
-			<target xml:lang="kk" state="needs-translation">Click to edit</target></trans-unit>
-      <trans-unit id="clickToDelete" xml:space="preserve">
-				<source>Click to delete</source>
-			<target xml:lang="kk" state="needs-translation">Click to delete</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
-				<source>Cancel</source>
-			<target xml:lang="kk" state="needs-translation">Cancel</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="kk" state="needs-translation">Back</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="kk" state="translated">Бас тарту</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -184,6 +178,10 @@
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
+          <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
+          <target xml:lang="kk" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
+        </trans-unit>
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
           <target xml:lang="kk" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
         </trans-unit>
@@ -216,18 +214,6 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="kk" state="needs-translation">All changes from workspace "{0}" have been discarded.</target>
       </trans-unit>
-      <trans-unit id="media.dragHelp" xml:space="preserve">
-				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="kk" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
-      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
-				<source>Keep the filename "{0}"</source>
-			<target xml:lang="kk" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
-      <trans-unit id="media.label" xml:space="preserve">
-				<source>Media</source>
-			<target xml:lang="kk" state="needs-translation">Media</target></trans-unit>
-      <trans-unit id="media.description" xml:space="preserve">
-				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="kk" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
       <trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
 			<target xml:lang="kk" state="needs-translation">History</target></trans-unit>
@@ -241,29 +227,29 @@
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="kk" state="needs-translation">There have not been recorded any events yet which could be displayed in this history.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
-				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="kk" state="needs-translation">{0} created the {1} {2}.</target></trans-unit>
+				<source>{0} created the {1} "{2}".</source>
+			<target xml:lang="kk" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
-				<source>{0} removed the {1} {2}.</source>
-			<target xml:lang="kk" state="needs-translation">{0} removed the {1} {2}.</target></trans-unit>
+				<source>{0} removed the {1} "{2}".</source>
+			<target xml:lang="kk" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
-				<source>{0} created the variant {1} of {2} {3}.</source>
-			<target xml:lang="kk" state="needs-translation">{0} created the variant {1} of {2} {3}.</target></trans-unit>
+				<source>{0} created the variant {1} of the {2} "{3}".</source>
+			<target xml:lang="kk" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
-				<source>{0} changed {1} {2}.</source>
-			<target xml:lang="kk" state="needs-translation">{0} changed {1} {2}.</target></trans-unit>
+				<source>{0} modified the {1} "{2}".</source>
+			<target xml:lang="kk" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
-				<source>{0} moved {1} {2}.</source>
-			<target xml:lang="kk" state="needs-translation">{0} moved {1} {2}.</target></trans-unit>
+				<source>{0} moved the {1} "{2}".</source>
+			<target xml:lang="kk" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
-				<source>{0} copied {1} {2}.</source>
-			<target xml:lang="kk" state="needs-translation">{0} copied {1} {2}.</target></trans-unit>
+				<source>{0} copied the {1} "{2}".</source>
+			<target xml:lang="kk" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
-				<source>{0} renamed {1} "{2}" to "{3}".</source>
-			<target xml:lang="kk" state="needs-translation">{0} renamed {1} "{2}" to "{3}".</target></trans-unit>
+				<source>{0} renamed the {1} "{2}" to "{3}".</source>
+			<target xml:lang="kk" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
-				<source>{0} changed content on {1} {2}.</source>
-			<target xml:lang="kk" state="needs-translation">{0} changed content on {1} {2}.</target></trans-unit>
+				<source>{0} modified content on the {1} "{2}".</source>
+			<target xml:lang="kk" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="kk" state="needs-translation">{0} created a new user "{1}" for {2}.</target></trans-unit>
@@ -300,7 +286,7 @@
 			<target xml:lang="kk" state="needs-translation">New</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="kk" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="kk" state="translated">Түзету</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="kk" state="needs-translation">Edit account</target></trans-unit>
@@ -331,6 +317,12 @@
       <trans-unit id="users.new.userData.roles" xml:space="preserve">
 				<source>Role(s)</source>
 			<target xml:lang="kk" state="needs-translation">Role(s)</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve">
+				<source>Authentication Provider</source>
+			<target xml:lang="kk" state="needs-translation">Authentication Provider</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve">
+				<source>Use system default</source>
+			<target xml:lang="kk" state="needs-translation">Use system default</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="kk" state="needs-translation">Personal Data</target></trans-unit>
@@ -544,18 +536,121 @@
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="kk" state="needs-translation">The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</target></trans-unit>
+      <trans-unit id="sites.add" xml:space="preserve">
+				<source>Add new site</source>
+			<target xml:lang="kk" state="needs-translation">Add new site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="kk" state="needs-translation">Create site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
 			<target xml:lang="kk" state="needs-translation">Create a new site</target></trans-unit>
+      <trans-unit id="sites.rootNodeName" xml:space="preserve">
+				<source>Root node name</source>
+			<target xml:lang="kk" state="needs-translation">Root node name</target></trans-unit>
+      <trans-unit id="sites.domains" xml:space="preserve">
+				<source>Domains</source>
+			<target xml:lang="kk" state="needs-translation">Domains</target></trans-unit>
+      <trans-unit id="sites" xml:space="preserve">
+				<source>Site</source>
+			<target xml:lang="kk" state="needs-translation">Site</target></trans-unit>
+      <trans-unit id="site.name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="kk" state="needs-translation">Name</target></trans-unit>
+      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
+				<source>Default asset collection</source>
+			<target xml:lang="kk" state="needs-translation">Default asset collection</target></trans-unit>
+      <trans-unit id="sites.sitePackage" xml:space="preserve">
+				<source>Site package</source>
+			<target xml:lang="kk" state="needs-translation">Site package</target></trans-unit>
+      <trans-unit id="sites.delete" xml:space="preserve">
+				<source>Delete this site</source>
+			<target xml:lang="kk" state="needs-translation">Delete this site</target></trans-unit>
+      <trans-unit id="sites.deactivate" xml:space="preserve">
+				<source>Deactivate site</source>
+			<target xml:lang="kk" state="needs-translation">Deactivate site</target></trans-unit>
+      <trans-unit id="sites.activate" xml:space="preserve">
+				<source>Activate site</source>
+			<target xml:lang="kk" state="needs-translation">Activate site</target></trans-unit>
+      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="kk" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+      <trans-unit id="sites.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the site</source>
+			<target xml:lang="kk" state="needs-translation">Yes, delete the site</target></trans-unit>
+      <trans-unit id="sites.import" xml:space="preserve">
+				<source>Import a site</source>
+			<target xml:lang="kk" state="needs-translation">Import a site</target></trans-unit>
+      <trans-unit id="sites.select" xml:space="preserve">
+				<source>Select a site package</source>
+			<target xml:lang="kk" state="needs-translation">Select a site package</target></trans-unit>
+      <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+				<source>No site packages are available. Make sure you have an active site package.</source>
+			<target xml:lang="kk" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+      <trans-unit id="sites.createBlank" xml:space="preserve">
+				<source>Create a blank site</source>
+			<target xml:lang="kk" state="needs-translation">Create a blank site</target></trans-unit>
+      <trans-unit id="sites.documentType" xml:space="preserve">
+				<source>Select a document nodeType</source>
+			<target xml:lang="kk" state="needs-translation">Select a document nodeType</target></trans-unit>
+      <trans-unit id="sites.name" xml:space="preserve">
+				<source>Site name</source>
+			<target xml:lang="kk" state="needs-translation">Site name</target></trans-unit>
+      <trans-unit id="sites.createNode" xml:space="preserve">
+				<source>Create empty site</source>
+			<target xml:lang="kk" state="needs-translation">Create empty site</target></trans-unit>
+      <trans-unit id="sites.createPackage" xml:space="preserve">
+				<source>Create a new site package</source>
+			<target xml:lang="kk" state="needs-translation">Create a new site package</target></trans-unit>
+      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+				<source>VendorName.MyPackageKey</source>
+			<target xml:lang="kk" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+			<target xml:lang="kk" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="kk" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+      <trans-unit id="domain.new" xml:space="preserve">
+				<source>New domain</source>
+			<target xml:lang="kk" state="needs-translation">New domain</target></trans-unit>
+      <trans-unit id="domain.edit" xml:space="preserve">
+				<source>Edit domain</source>
+			<target xml:lang="kk" state="needs-translation">Edit domain</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="kk" state="needs-translation">Configuration</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target xml:lang="kk" state="needs-translation">The Configuration module provides you with an overview of all configuration types.</target></trans-unit>
+      <trans-unit id="dimensions.label" xml:space="preserve">
+				<source>Dimensions</source>
+			<target xml:lang="kk" state="needs-translation">Dimensions</target></trans-unit>
+      <trans-unit id="dimensions.description" xml:space="preserve">
+				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
+			<target xml:lang="kk" state="needs-translation">Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
+				<source>Inter dimensional fallback graph</source>
+			<target xml:lang="kk" state="needs-translation">Inter dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
+				<source>Inter dimensional</source>
+			<target xml:lang="kk" state="needs-translation">Inter dimensional</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
+				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
+			<target xml:lang="kk" state="needs-translation">The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
+				<source>Intra dimensional fallback graph</source>
+			<target xml:lang="kk" state="needs-translation">Intra dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
+				<source>Intra dimensional</source>
+			<target xml:lang="kk" state="needs-translation">Intra dimensional</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
+				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
+			<target xml:lang="kk" state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>
@@ -568,10 +663,10 @@
 			<target xml:lang="kk" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="kk" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="kk" state="translated">Түзету</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="kk" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="kk" state="translated">Түзету</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="kk" state="needs-translation">New electronic address</target></trans-unit>
@@ -629,325 +724,6 @@
       <trans-unit id="userSettings.editUser" xml:space="preserve">
 				<source>Edit User</source>
 			<target xml:lang="kk" state="needs-translation">Edit User</target></trans-unit>
-      <!-- Media -->
-      <trans-unit id="media.field.name" xml:space="preserve">
-				<source>Name</source>
-			<target xml:lang="kk" state="needs-translation">Name</target></trans-unit>
-      <trans-unit id="media.field.title" xml:space="preserve">
-				<source>Title</source>
-			<target xml:lang="kk" state="needs-translation">Title</target></trans-unit>
-      <trans-unit id="media.field.label" xml:space="preserve">
-				<source>Label</source>
-			<target xml:lang="kk" state="needs-translation">Label</target></trans-unit>
-      <trans-unit id="media.field.caption" xml:space="preserve">
-				<source>Caption</source>
-			<target xml:lang="kk" state="needs-translation">Caption</target></trans-unit>
-      <trans-unit id="media.field.lastModified" xml:space="preserve">
-				<source>Last modified</source>
-			<target xml:lang="kk" state="needs-translation">Last modified</target></trans-unit>
-      <trans-unit id="media.field.fileSize" xml:space="preserve">
-				<source>File size</source>
-			<target xml:lang="kk" state="needs-translation">File size</target></trans-unit>
-      <trans-unit id="media.field.type" xml:space="preserve">
-				<source>Type</source>
-			<target xml:lang="kk" state="needs-translation">Type</target></trans-unit>
-      <trans-unit id="media.field.tags" xml:space="preserve">
-				<source>Tags</source>
-			<target xml:lang="kk" state="needs-translation">Tags</target></trans-unit>
-      <trans-unit id="media.sortByName" xml:space="preserve">
-				<source>Sort by name</source>
-			<target xml:lang="kk" state="needs-translation">Sort by name</target></trans-unit>
-      <trans-unit id="media.sortByLastModified" xml:space="preserve">
-				<source>Sort by last modified</source>
-			<target xml:lang="kk" state="needs-translation">Sort by last modified</target></trans-unit>
-      <trans-unit id="media.sortby" xml:space="preserve">
-				<source>Sort by</source>
-			<target xml:lang="kk" state="needs-translation">Sort by</target></trans-unit>
-      <trans-unit id="media.sortdirection" xml:space="preserve">
-				<source>Sort direction</source>
-			<target xml:lang="kk" state="needs-translation">Sort direction</target></trans-unit>
-      <trans-unit id="media.sortdirection.asc" xml:space="preserve">
-				<source>Ascending</source>
-			<target xml:lang="kk" state="needs-translation">Ascending</target></trans-unit>
-      <trans-unit id="media.sortdirection.desc" xml:space="preserve">
-				<source>Descending</source>
-			<target xml:lang="kk" state="needs-translation">Descending</target></trans-unit>
-      <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
-				<source>Drag and drop on tag or collection</source>
-			<target xml:lang="kk" state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
-      <trans-unit id="media.tooltip.editAsset" xml:space="preserve">
-				<source>Edit asset</source>
-			<target xml:lang="kk" state="needs-translation">Edit asset</target></trans-unit>
-      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			<target xml:lang="kk" state="needs-translation">Replace</target></trans-unit>
-      <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
-				<source>Delete asset</source>
-			<target xml:lang="kk" state="needs-translation">Delete asset</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteAsset" xml:space="preserve">
-				<source>Do you really want to delete asset "{0}"?</source>
-			<target xml:lang="kk" state="needs-translation">Do you really want to delete asset "{0}"?</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve">
-				<source>Do you really want to delete collection "{0}"?</source>
-			<target xml:lang="kk" state="needs-translation">Do you really want to delete collection "{0}"?</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteTag" xml:space="preserve">
-				<source>Do you really want to delete tag "{0}"?</source>
-			<target xml:lang="kk" state="needs-translation">Do you really want to delete tag "{0}"?</target></trans-unit>
-      <trans-unit id="media.message.willBeDeleted" xml:space="preserve">
-				<source>This will delete the asset.</source>
-			<target xml:lang="kk" state="needs-translation">This will delete the asset.</target></trans-unit>
-      <trans-unit id="media.message.willDeleteCollection" xml:space="preserve">
-				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target xml:lang="kk" state="needs-translation">This will delete the collection, but not the assets that it contains.</target></trans-unit>
-      <trans-unit id="media.message.willDeleteTag" xml:space="preserve">
-				<source>This will delete the tag, but not the assets that has it.</source>
-			<target xml:lang="kk" state="needs-translation">This will delete the tag, but not the assets that has it.</target></trans-unit>
-      <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve">
-				<source>This operation cannot be undone.</source>
-			<target xml:lang="kk" state="needs-translation">This operation cannot be undone.</target></trans-unit>
-      <trans-unit id="media.cancel" xml:space="preserve">
-				<source>Cancel</source>
-			<target xml:lang="kk" state="needs-translation">Cancel</target></trans-unit>
-      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			<target xml:lang="kk" state="needs-translation">Replace</target></trans-unit>
-      <trans-unit id="media.saveEditing" xml:space="preserve">
-				<source>Save</source>
-			<target xml:lang="kk" state="needs-translation">Save</target></trans-unit>
-      <trans-unit id="media.message.confirmDelete" xml:space="preserve">
-				<source>Yes, delete the asset</source>
-			<target xml:lang="kk" state="needs-translation">Yes, delete the asset</target></trans-unit>
-      <trans-unit id="media.message.confirmDeleteCollection" xml:space="preserve">
-				<source>Yes, delete the collection</source>
-			<target xml:lang="kk" state="needs-translation">Yes, delete the collection</target></trans-unit>
-      <trans-unit id="media.message.confirmDeleteTag" xml:space="preserve">
-				<source>Yes, delete the tag</source>
-			<target xml:lang="kk" state="needs-translation">Yes, delete the tag</target></trans-unit>
-      <trans-unit id="media.thumbnail.editTitle" xml:space="preserve">
-				<source>Edit {0}</source>
-			<target xml:lang="kk" state="needs-translation">Edit {0}</target></trans-unit>
-      <trans-unit id="media.search.title" xml:space="preserve">
-				<source>Search in assets</source>
-			<target xml:lang="kk" state="needs-translation">Search in assets</target></trans-unit>
-      <trans-unit id="media.search.placeholder" xml:space="preserve">
-				<source>Search</source>
-			<target xml:lang="kk" state="needs-translation">Search</target></trans-unit>
-      <trans-unit id="media.search.itemCount" xml:space="preserve">
-				<source>{0} items</source>
-			<target xml:lang="kk" state="needs-translation">{0} items</target></trans-unit>
-      <trans-unit id="media.search.foundMatches" xml:space="preserve">
-				<source>found matching "{0}"</source>
-			<target xml:lang="kk" state="needs-translation">found matching "{0}"</target></trans-unit>
-      <trans-unit id="media.upload" xml:space="preserve">
-				<source>Upload</source>
-			<target xml:lang="kk" state="needs-translation">Upload</target></trans-unit>
-      <trans-unit id="media.filterOptions" xml:space="preserve">
-				<source>Filter options</source>
-			<target xml:lang="kk" state="needs-translation">Filter options</target></trans-unit>
-      <trans-unit id="media.filter.title.all" xml:space="preserve">
-				<source>Display all asset types</source>
-			<target xml:lang="kk" state="needs-translation">Display all asset types</target></trans-unit>
-      <trans-unit id="media.filter.title.images" xml:space="preserve">
-				<source>Only display image assets</source>
-			<target xml:lang="kk" state="needs-translation">Only display image assets</target></trans-unit>
-      <trans-unit id="media.filter.title.documents" xml:space="preserve">
-				<source>Only display document assets</source>
-			<target xml:lang="kk" state="needs-translation">Only display document assets</target></trans-unit>
-      <trans-unit id="media.filter.title.video" xml:space="preserve">
-				<source>Only display video assets</source>
-			<target xml:lang="kk" state="needs-translation">Only display video assets</target></trans-unit>
-      <trans-unit id="media.filter.title.audio" xml:space="preserve">
-				<source>Only display audio assets</source>
-			<target xml:lang="kk" state="needs-translation">Only display audio assets</target></trans-unit>
-      <trans-unit id="media.filter.all" xml:space="preserve">
-				<source>All</source>
-			<target xml:lang="kk" state="needs-translation">All</target></trans-unit>
-      <trans-unit id="media.filter.images" xml:space="preserve">
-				<source>Images</source>
-			<target xml:lang="kk" state="needs-translation">Images</target></trans-unit>
-      <trans-unit id="media.filter.documents" xml:space="preserve">
-				<source>Documents</source>
-			<target xml:lang="kk" state="needs-translation">Documents</target></trans-unit>
-      <trans-unit id="media.filter.video" xml:space="preserve">
-				<source>Video</source>
-			<target xml:lang="kk" state="needs-translation">Video</target></trans-unit>
-      <trans-unit id="media.filter.audio" xml:space="preserve">
-				<source>Audio</source>
-			<target xml:lang="kk" state="needs-translation">Audio</target></trans-unit>
-      <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
-				<source>Sort options</source>
-			<target xml:lang="kk" state="needs-translation">Sort options</target></trans-unit>
-      <trans-unit id="media.tooltip.listView" xml:space="preserve">
-				<source>List view</source>
-			<target xml:lang="kk" state="needs-translation">List view</target></trans-unit>
-      <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
-				<source>Thumbnail view</source>
-			<target xml:lang="kk" state="needs-translation">Thumbnail view</target></trans-unit>
-      <trans-unit id="media.collections" xml:space="preserve">
-				<source>Collections</source>
-			<target xml:lang="kk" state="needs-translation">Collections</target></trans-unit>
-      <trans-unit id="media.editCollections" xml:space="preserve">
-				<source>Edit collections</source>
-			<target xml:lang="kk" state="needs-translation">Edit collections</target></trans-unit>
-      <trans-unit id="media.editCollection" xml:space="preserve">
-				<source>Edit collection</source>
-			<target xml:lang="kk" state="needs-translation">Edit collection</target></trans-unit>
-      <trans-unit id="media.deleteCollection" xml:space="preserve">
-				<source>Delete collection</source>
-			<target xml:lang="kk" state="needs-translation">Delete collection</target></trans-unit>
-      <trans-unit id="media.createCollection" xml:space="preserve">
-				<source>Create collection</source>
-			<target xml:lang="kk" state="needs-translation">Create collection</target></trans-unit>
-      <trans-unit id="media.newCollection.placeholder" xml:space="preserve">
-				<source>Enter collection title</source>
-			<target xml:lang="kk" state="needs-translation">Enter collection title</target></trans-unit>
-      <trans-unit id="media.allCollections" xml:space="preserve">
-				<source>All collections</source>
-			<target xml:lang="kk" state="needs-translation">All collections</target></trans-unit>
-      <trans-unit id="media.tags" xml:space="preserve">
-				<source>Tags</source>
-			<target xml:lang="kk" state="needs-translation">Tags</target></trans-unit>
-      <trans-unit id="media.editTags" xml:space="preserve">
-				<source>Edit tags</source>
-			<target xml:lang="kk" state="needs-translation">Edit tags</target></trans-unit>
-      <trans-unit id="media.editTag" xml:space="preserve">
-				<source>Edit tag</source>
-			<target xml:lang="kk" state="needs-translation">Edit tag</target></trans-unit>
-      <trans-unit id="media.deleteTag" xml:space="preserve">
-				<source>Delete tag</source>
-			<target xml:lang="kk" state="needs-translation">Delete tag</target></trans-unit>
-      <trans-unit id="media.placeholder.createTag" xml:space="preserve">
-				<source>Enter tag label</source>
-			<target xml:lang="kk" state="needs-translation">Enter tag label</target></trans-unit>
-      <trans-unit id="media.createTag" xml:space="preserve">
-				<source>Create tag</source>
-			<target xml:lang="kk" state="needs-translation">Create tag</target></trans-unit>
-      <trans-unit id="media.tags.title.all" xml:space="preserve">
-				<source>All assets</source>
-			<target xml:lang="kk" state="needs-translation">All assets</target></trans-unit>
-      <trans-unit id="media.tags.all" xml:space="preserve">
-				<source>All</source>
-			<target xml:lang="kk" state="needs-translation">All</target></trans-unit>
-      <trans-unit id="media.untaggedAssets" xml:space="preserve">
-				<source>Untagged assets</source>
-			<target xml:lang="kk" state="needs-translation">Untagged assets</target></trans-unit>
-      <trans-unit id="media.untagged" xml:space="preserve">
-				<source>Untagged</source>
-			<target xml:lang="kk" state="needs-translation">Untagged</target></trans-unit>
-      <trans-unit id="media.maxUploadSize" xml:space="preserve">
-				<source>Max. upload size {0} per file</source>
-			<target xml:lang="kk" state="needs-translation">Max. upload size {0} per file</target></trans-unit>
-      <trans-unit id="media.dropFiles" xml:space="preserve">
-				<source>Drop files here</source>
-			<target xml:lang="kk" state="needs-translation">Drop files here</target></trans-unit>
-      <trans-unit id="media.clickToUpload" xml:space="preserve">
-				<source>or click to upload</source>
-			<target xml:lang="kk" state="needs-translation">or click to upload</target></trans-unit>
-      <trans-unit id="media.chooseFile" xml:space="preserve">
-				<source>Choose file</source>
-			<target xml:lang="kk" state="needs-translation">Choose file</target></trans-unit>
-      <trans-unit id="media.noAssetsFound" xml:space="preserve">
-				<source>No Assets found.</source>
-			<target xml:lang="kk" state="needs-translation">No Assets found.</target></trans-unit>
-      <trans-unit id="media.basics" xml:space="preserve">
-				<source>Basics</source>
-			<target xml:lang="kk" state="needs-translation">Basics</target></trans-unit>
-      <trans-unit id="media.delete" xml:space="preserve">
-				<source>Delete</source>
-			<target xml:lang="kk" state="needs-translation">Delete</target></trans-unit>
-      <trans-unit id="media.clickToDelete" xml:space="preserve">
-				<source>Click to delete</source>
-			<target xml:lang="kk" state="needs-translation">Click to delete</target></trans-unit>
-      <trans-unit id="media.save" xml:space="preserve">
-				<source>Save</source>
-			<target xml:lang="kk" state="needs-translation">Save</target></trans-unit>
-      <trans-unit id="media.metadata" xml:space="preserve">
-				<source>Metadata</source>
-			<target xml:lang="kk" state="needs-translation">Metadata</target></trans-unit>
-      <trans-unit id="media.metadata.filename" xml:space="preserve">
-				<source>Filename</source>
-			<target xml:lang="kk" state="needs-translation">Filename</target></trans-unit>
-      <trans-unit id="media.metadata.lastModified" xml:space="preserve">
-				<source>Last modified (resource)</source>
-			<target xml:lang="kk" state="needs-translation">Last modified (resource)</target></trans-unit>
-      <trans-unit id="media.metadata.fileSize" xml:space="preserve">
-				<source>File size</source>
-			<target xml:lang="kk" state="needs-translation">File size</target></trans-unit>
-      <trans-unit id="media.metadata.dimensions" xml:space="preserve">
-				<source>Dimensions</source>
-			<target xml:lang="kk" state="needs-translation">Dimensions</target></trans-unit>
-      <trans-unit id="media.metadata.type" xml:space="preserve">
-				<source>Type</source>
-			<target xml:lang="kk" state="needs-translation">Type</target></trans-unit>
-      <trans-unit id="media.metadata.identifier" xml:space="preserve">
-				<source>Identifier</source>
-			<target xml:lang="kk" state="needs-translation">Identifier</target></trans-unit>
-      <trans-unit id="media.preview" xml:space="preserve">
-				<source>Preview</source>
-			<target xml:lang="kk" state="needs-translation">Preview</target></trans-unit>
-      <trans-unit id="media.cannotUploadFile" xml:space="preserve">
-				<source>Cannot upload the file</source>
-			<target xml:lang="kk" state="needs-translation">Cannot upload the file</target></trans-unit>
-      <trans-unit id="media.noFileSelected" xml:space="preserve">
-				<source>No file selected</source>
-			<target xml:lang="kk" state="needs-translation">No file selected</target></trans-unit>
-      <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
-				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="kk" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
-      <trans-unit id="media.forTheFile" xml:space="preserve">
-				<source>for the file</source>
-			<target xml:lang="kk" state="needs-translation">for the file</target></trans-unit>
-      <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve">
-				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="kk" state="needs-translation">Only some of the files were successfully uploaded. Refresh the page to see the those.</target></trans-unit>
-      <trans-unit id="media.taggingAssetsFailed" xml:space="preserve">
-				<source>Tagging the asset failed.</source>
-			<target xml:lang="kk" state="needs-translation">Tagging the asset failed.</target></trans-unit>
-      <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve">
-				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="kk" state="needs-translation">Adding the asset to the collection failed.</target></trans-unit>
-      <trans-unit id="media.creating" xml:space="preserve">
-				<source>Creating</source>
-			<target xml:lang="kk" state="needs-translation">Creating</target></trans-unit>
-      <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
-				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="kk" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
-      <group id="media.relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedNodes[0]">
-          <source>{0} usages</source>
-          <target xml:lang="kk" state="needs-translation">{0} usages</target>
-        </trans-unit>
-      </group>
-      <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
-				<source>References to "{asset}"</source>
-			<target xml:lang="kk" state="needs-translation">References to "{asset}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
-				<source>Replace "{filename}"</source>
-			<target xml:lang="kk" state="needs-translation">Replace "{filename}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
-        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="kk" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
-        <source>Note</source>
-      <target xml:lang="kk" state="needs-translation">Note</target></trans-unit>
-      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
-        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-      <target xml:lang="kk" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
-        <source>Choose a new file</source>
-      <target xml:lang="kk" state="needs-translation">Choose a new file</target></trans-unit>
-      <trans-unit id="media.replace.usageCount" xml:space="preserve">
-        <source>Currently the asset is used {usageCount} times.</source>
-      <target xml:lang="kk" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
-      <trans-unit id="media.replace.allUsages" xml:space="preserve">
-        <source>Show all usages</source>
-      <target xml:lang="kk" state="needs-translation">Show all usages</target></trans-unit>
-      <trans-unit id="media.replace.notUsed" xml:space="preserve">
-        <source>Currently the asset is not in used anywhere on the website.</source>
-      <target xml:lang="kk" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
-      <trans-unit id="media.replace.previewFile" xml:space="preserve">
-        <source>Preview current file</source>
-      <target xml:lang="kk" state="needs-translation">Preview current file</target></trans-unit>
     </body>
   </file>
 </xliff>

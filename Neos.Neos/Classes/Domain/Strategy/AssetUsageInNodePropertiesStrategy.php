@@ -11,21 +11,17 @@ namespace Neos\Neos\Domain\Strategy;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Neos\Domain\Service\SiteService;
-use Neos\Utility\TypeHandling;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Strategy\AbstractAssetUsageStrategy;
-use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
-use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Service\UserService;
-use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Neos\Controller\CreateContentContextTrait;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\Neos\Domain\Service\UserService as DomainUserService;
+use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Utility\TypeHandling;
 
 /**
  * @Flow\Scope("singleton")
@@ -39,30 +35,6 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
-
-    /**
-     * @Flow\Inject
-     * @var UserService
-     */
-    protected $userService;
-
-    /**
-     * @Flow\Inject
-     * @var DomainUserService
-     */
-    protected $domainUserService;
 
     /**
      * @var array
@@ -89,27 +61,14 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             return $this->firstlevelCache[$assetIdentifier];
         }
 
-        $userWorkspace = $this->userService->getPersonalWorkspace();
-
-        $relatedNodes = [];
-        foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
-            if ($relatedNodeData->isInternal()) {
-                continue;
-            }
-            $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
-            if ($accessible) {
-                $context = $this->createContextMatchingNodeData($relatedNodeData);
-            } else {
-                $context = $this->createContentContext($userWorkspace->getName());
-            }
-            $site = $context->getCurrentSite();
-            $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
-            $flowQuery = new FlowQuery([$node]);
-            /** @var \Neos\ContentRepository\Domain\Model\NodeInterface $documentNode */
-            $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
-
-            $relatedNodes[] = new AssetUsageInNodeProperties($asset, $site, $documentNode, $node, $accessible);
-        }
+        $relatedNodes = array_map(function (NodeData $relatedNodeData) use ($asset) {
+            return new AssetUsageInNodeProperties($asset,
+                $relatedNodeData->getIdentifier(),
+                $relatedNodeData->getWorkspace()->getName(),
+                $relatedNodeData->getDimensionValues(),
+                $relatedNodeData->getNodeType()->getName()
+            );
+        }, $this->getRelatedNodes($asset));
 
         $this->firstlevelCache[$assetIdentifier] = $relatedNodes;
         return $this->firstlevelCache[$assetIdentifier];

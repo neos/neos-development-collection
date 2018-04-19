@@ -478,12 +478,12 @@ Expected result::
 
 **Bind to object property**::
 
-	<f:form.checkbox property="interests" value="TYPO3" />
+	<f:form.checkbox property="interests" value="Neos" />
 
 
 Expected result::
 
-	<input type="checkbox" name="user[interests][]" value="TYPO3" checked="checked" />
+	<input type="checkbox" name="user[interests][]" value="Neos" checked="checked" />
 	(depending on property "interests")
 
 
@@ -1234,9 +1234,9 @@ Expected result::
 
 
 
-.. _`FluidAdaptor ViewHelper Reference: f:form.validationResults`:
+.. _`FluidAdaptor ViewHelper Reference: f:validation.results`:
 
-f:form.validationResults
+f:validation.results
 ------------------------
 
 

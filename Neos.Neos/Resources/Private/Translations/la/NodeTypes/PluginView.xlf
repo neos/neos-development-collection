@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="la-LA">crwdns1472:0crwdne1472:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns6249:0crwdne6249:0</target></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
 				<source>Plugin Views</source>
-			<target xml:lang="la-LA">crwdns1473:0crwdne1473:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns6250:0crwdne6250:0</target></trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target xml:lang="la-LA">crwdns1474:0crwdne1474:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns6251:0crwdne6251:0</target></trans-unit>
       <trans-unit id="properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="la-LA">crwdns1475:0crwdne1475:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns6252:0crwdne6252:0</target></trans-unit>
     </body>
   </file>
 </xliff>
