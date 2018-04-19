@@ -459,7 +459,7 @@
 			<target xml:lang="de">Nur Buchstaben, Ziffern, Leerzeichen und bestimmte Satzzeichen sind erlaubt.</target></trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve" approved="yes">
 				<source>This property is required.</source>
-			<target xml:lang="de">Diese Eigenschaft ist erforderlich.</target></trans-unit>
+			<target xml:lang="de">Diese Eigenschaft ist erforderlich.</target><alt-trans><target xml:lang="de">Pflichtfeld.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve" approved="yes">
 				<source>A valid number is expected.</source>
 			<target xml:lang="de">Eine gültige Zahl wird erwartet.</target></trans-unit>
