@@ -3,7 +3,7 @@ prototype({packageKey}:Page.Document) < prototype({packageKey}:DefaultPage) {
         // These are your content areas, you can define as many as you want, just name them and the nodePath.
         content {
             // The default content section
-            main = TYPO3.Neos:PrimaryContent {
+            main = Neos.Neos:PrimaryContent {
                 nodePath = 'main'
             }
         }
