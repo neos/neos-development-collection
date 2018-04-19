@@ -137,7 +137,7 @@ class AssetProxyController extends ActionController
             $asset = new $assetModelClassName($assetResource);
 
             if (!$asset instanceof AssetSourceAwareInterface) {
-                throw new \RuntimeException('The asset type ' . $assetModelClassName . ' does not implement the required MediaAssetsSourceAware interface.', 1516630096064);
+                throw new \RuntimeException('The asset type ' . $assetModelClassName . ' does not implement the required MediaAssetsSourceAware interface.', 1516630096);
             }
 
             $asset->setAssetSourceIdentifier($assetSourceIdentifier);

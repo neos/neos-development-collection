@@ -55,8 +55,9 @@ final class NeosAssetProxy implements AssetProxyInterface
     public function __construct(AssetInterface $asset, NeosAssetSource $assetSource)
     {
         if (!$asset instanceof Asset) {
-            throw new \RuntimeException(sprintf('%s currently only support the concrete Asset implementation because several methods are not part of the AssetInterface yet.', __CLASS__), 1509635540408);
+            throw new \RuntimeException(sprintf('%s currently only support the concrete Asset implementation because several methods are not part of the AssetInterface yet.', __CLASS__), 1524128585);
         }
+
         $this->asset = $asset;
         $this->assetSource = $assetSource;
     }

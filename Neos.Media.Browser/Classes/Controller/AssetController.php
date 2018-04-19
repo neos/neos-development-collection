@@ -351,7 +351,7 @@ class AssetController extends ActionController
     public function showAction(string $assetSourceIdentifier, string $assetProxyIdentifier)
     {
         if (!isset($this->assetSources[$assetSourceIdentifier])) {
-            throw new \RuntimeException('Given asset source is not configured.', 1509702178632);
+            throw new \RuntimeException('Given asset source is not configured.', 1509702178);
         }
 
         $assetProxyRepository = $this->assetSources[$assetSourceIdentifier]->getAssetProxyRepository();
@@ -381,7 +381,7 @@ class AssetController extends ActionController
     public function editAction(string $assetSourceIdentifier, string $assetProxyIdentifier)
     {
         if (!isset($this->assetSources[$assetSourceIdentifier])) {
-            throw new \RuntimeException('Given asset source is not configured.', 1509632166496);
+            throw new \RuntimeException('Given asset source is not configured.', 1509632166);
         }
 
         $assetSource =  $this->assetSources[$assetSourceIdentifier];

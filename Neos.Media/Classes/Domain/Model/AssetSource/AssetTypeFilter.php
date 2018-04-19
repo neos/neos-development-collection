@@ -26,7 +26,7 @@ final class AssetTypeFilter implements \JsonSerializable
     public function __construct(string $assetType)
     {
         if (!in_array($assetType, ['All', 'Image', 'Document', 'Video', 'Audio'])) {
-            throw new \InvalidArgumentException('Invalid asset type.', 1511797661398);
+            throw new \InvalidArgumentException(sprintf('Invalid asset type "%s".', $assetType), 1524130064);
         }
         $this->assetType = $assetType;
     }

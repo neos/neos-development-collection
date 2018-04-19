@@ -71,7 +71,7 @@ final class NeosAssetSource implements AssetSourceInterface
     public function __construct(string $assetSourceIdentifier, array $assetSourceOptions)
     {
         if (preg_match('/^[a-z][a-z0-9-]{0,62}[a-z]$/', $assetSourceIdentifier) !== 1) {
-            throw new \InvalidArgumentException(sprintf('Invalid asset source identifier "%s". The identifier must match /^[a-z][a-z0-9-]{0,62}[a-z]$/', $assetSourceIdentifier), 1513329665386);
+            throw new \InvalidArgumentException(sprintf('Invalid asset source identifier "%s". The identifier must match /^[a-z][a-z0-9-]{0,62}[a-z]$/', $assetSourceIdentifier), 1513329665);
         }
         $this->assetSourceIdentifier = $assetSourceIdentifier;
 
@@ -81,13 +81,13 @@ final class NeosAssetSource implements AssetSourceInterface
                     // If the option value is empty, preserve the default value injected from the Neos:Media:asyncThumbnails setting:
                     if (!empty($optionValue)) {
                         if (!is_bool($optionValue)) {
-                            throw new \InvalidArgumentException(sprintf('Asset source option "%s" specified for Neos asset source "%s" must be either true or false. Please check your settings.', $optionName, $assetSourceIdentifier), 1522927471208);
+                            throw new \InvalidArgumentException(sprintf('Asset source option "%s" specified for Neos asset source "%s" must be either true or false. Please check your settings.', $optionName, $assetSourceIdentifier), 1522927471);
                         }
                         $this->asyncThumbnails = $optionValue;
                     }
                 break;
                 default:
-                    throw new \InvalidArgumentException(sprintf('Unknown asset source option "%s" specified for Neos asset source "%s". Please check your settings.', $optionName, $assetSourceIdentifier), 1513327774584);
+                    throw new \InvalidArgumentException(sprintf('Unknown asset source option "%s" specified for Neos asset source "%s". Please check your settings.', $optionName, $assetSourceIdentifier), 1513327774);
             }
         }
     }
