@@ -12,10 +12,10 @@ namespace Neos\Media\Browser\ViewHelpers;
 * source code.
 */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
-use Neos\Media\Browser\ViewHelpers\Controller\PaginateController;
-use Neos\Flow\Annotations\Inject;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
+use Neos\Media\Browser\ViewHelpers\Controller\PaginateController;
+use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 
 /**
  * This ViewHelper renders a pagination for asset proxy objects
@@ -32,7 +32,7 @@ use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 class PaginateViewHelper extends AbstractWidgetViewHelper
 {
     /**
-     * @Inject
+     * @Flow\Inject
      * @var PaginateController
      */
     protected $controller;
@@ -44,8 +44,12 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
      * @param string $as
      * @param array $configuration
      * @return string
+     * @throws \Neos\Flow\Mvc\Exception\InfiniteLoopException
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
+     * @throws \Neos\FluidAdaptor\Core\Widget\Exception\InvalidControllerException
+     * @throws \Neos\FluidAdaptor\Core\Widget\Exception\MissingControllerException
      */
-    public function render(AssetProxyQueryResultInterface $queryResult, $as, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99))
+    public function render(AssetProxyQueryResultInterface $queryResult, $as, array $configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99])
     {
         $response = $this->initiateSubRequest();
         return $response->getContent();

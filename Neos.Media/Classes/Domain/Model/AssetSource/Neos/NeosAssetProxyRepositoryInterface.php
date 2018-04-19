@@ -11,6 +11,12 @@ namespace Neos\Media\Domain\Model\AssetSource\Neos;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Persistence\Exception\InvalidQueryException;
+use Neos\Flow\Persistence\QueryInterface;
+use Neos\Media\Domain\Model\AssetCollection;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
@@ -19,12 +25,6 @@ use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
 use Neos\Media\Domain\Model\AssetSource\SupportsCollections;
 use Neos\Media\Domain\Model\AssetSource\SupportsSorting;
 use Neos\Media\Domain\Model\AssetSource\SupportsTagging;
-use Neos\Flow\Annotations\Inject;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Persistence\Exception\InvalidQueryException;
-use Neos\Flow\Persistence\QueryInterface;
-use Neos\Media\Domain\Model\AssetCollection;
-use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\AudioRepository;
@@ -35,7 +35,7 @@ use Neos\Media\Domain\Repository\VideoRepository;
 final class NeosAssetProxyRepositoryInterface implements AssetProxyRepositoryInterface, SupportsSorting, SupportsCollections, SupportsTagging
 {
     /**
-     * @Inject
+     * @Flow\Inject
      * @var ObjectManagerInterface
      */
     protected $objectManager;
@@ -43,7 +43,7 @@ final class NeosAssetProxyRepositoryInterface implements AssetProxyRepositoryInt
     /**
      * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related interface ...
      *
-     * @Inject
+     * @Flow\Inject
      * @var \Doctrine\Common\Persistence\ObjectManager
      */
     protected $entityManager;
