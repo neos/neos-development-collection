@@ -15,7 +15,7 @@ use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 use Neos\Flow\Persistence\QueryInterface;
 
-final class NeosAssetProxyQueryInterface implements AssetProxyQueryInterface
+final class NeosAssetProxyQuery implements AssetProxyQueryInterface
 {
     /**
      * @var QueryInterface
@@ -76,7 +76,7 @@ final class NeosAssetProxyQueryInterface implements AssetProxyQueryInterface
      */
     public function execute(): AssetProxyQueryResultInterface
     {
-        return new NeosAssetProxyQueryResultInterface($this->flowPersistenceQuery->execute(), $this->assetSource);
+        return new NeosAssetProxyQueryResult($this->flowPersistenceQuery->execute(), $this->assetSource);
     }
 
     /**

@@ -24,7 +24,7 @@ use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\ThumbnailServiceException;
 use Psr\Http\Message\UriInterface;
 
-final class NeosAssetProxyInterface implements AssetProxyInterface
+final class NeosAssetProxy implements AssetProxyInterface
 {
     /**
      * @var NeosAssetSource

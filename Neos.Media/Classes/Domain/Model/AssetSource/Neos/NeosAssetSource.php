@@ -36,7 +36,7 @@ final class NeosAssetSource implements AssetSourceInterface
     private $assetSourceIdentifier;
 
     /**
-     * @var NeosAssetProxyRepositoryInterface
+     * @var NeosAssetProxyRepository
      */
     private $assetProxyRepository;
 
@@ -124,7 +124,7 @@ final class NeosAssetSource implements AssetSourceInterface
     public function getAssetProxyRepository(): AssetProxyRepositoryInterface
     {
         if ($this->assetProxyRepository === null) {
-            $this->assetProxyRepository = new NeosAssetProxyRepositoryInterface($this);
+            $this->assetProxyRepository = new NeosAssetProxyRepository($this);
         }
 
         return $this->assetProxyRepository;

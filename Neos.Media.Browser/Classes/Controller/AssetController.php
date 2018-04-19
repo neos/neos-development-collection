@@ -43,7 +43,7 @@ use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
 use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
-use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetProxyInterface;
+use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetProxy;
 use Neos\Media\Domain\Model\AssetSource\SupportsCollections;
 use Neos\Media\Domain\Model\AssetSource\SupportsSorting;
 use Neos\Media\Domain\Model\AssetSource\SupportsTagging;
@@ -394,7 +394,7 @@ class AssetController extends ActionController
             if ($assetProxyRepository instanceof SupportsTagging && $assetProxyRepository instanceof SupportsCollections) {
                 // TODO: For generic implementation (allowing other asset sources to provide asset collections), the following needs to be refactored:
 
-                if ($assetProxy instanceof NeosAssetProxyInterface) {
+                if ($assetProxy instanceof NeosAssetProxy) {
                     /** @var Asset $asset */
                     $asset = $assetProxy->getAsset();
                     $assetCollections = $asset->getAssetCollections();
