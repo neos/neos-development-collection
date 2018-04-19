@@ -32,7 +32,7 @@ use Neos\Media\Domain\Repository\DocumentRepository;
 use Neos\Media\Domain\Repository\ImageRepository;
 use Neos\Media\Domain\Repository\VideoRepository;
 
-final class NeosAssetProxyRepositoryInterface implements AssetProxyRepositoryInterface, SupportsSorting, SupportsCollections, SupportsTagging
+final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, SupportsSorting, SupportsCollections, SupportsTagging
 {
     /**
      * @Flow\Inject
@@ -142,7 +142,7 @@ final class NeosAssetProxyRepositoryInterface implements AssetProxyRepositoryInt
         if ($asset === null || !$asset instanceof AssetInterface) {
             throw new AssetNotFoundException('The specified asset was not found.', 1509632861103);
         }
-        return new NeosAssetProxyInterface($asset, $this->assetSource);
+        return new NeosAssetProxy($asset, $this->assetSource);
     }
 
     /**
@@ -152,7 +152,7 @@ final class NeosAssetProxyRepositoryInterface implements AssetProxyRepositoryInt
     {
         $queryResult = $this->assetRepository->findAll($this->activeAssetCollection);
         $query = $this->filterOutImportedAssetsFromOtherAssetSources($queryResult->getQuery());
-        return new NeosAssetProxyQueryResultInterface($query->execute(), $this->assetSource);
+        return new NeosAssetProxyQueryResult($query->execute(), $this->assetSource);
     }
 
     /**
@@ -163,7 +163,7 @@ final class NeosAssetProxyRepositoryInterface implements AssetProxyRepositoryInt
     {
         $queryResult = $this->assetRepository->findBySearchTermOrTags($searchTerm, [], $this->activeAssetCollection);
         $query = $this->filterOutImportedAssetsFromOtherAssetSources($queryResult->getQuery());
-        return new NeosAssetProxyQueryResultInterface($query->execute(), $this->assetSource);
+        return new NeosAssetProxyQueryResult($query->execute(), $this->assetSource);
     }
 
     /**
@@ -174,7 +174,7 @@ final class NeosAssetProxyRepositoryInterface implements AssetProxyRepositoryInt
     {
         $queryResult = $this->assetRepository->findByTag($tag, $this->activeAssetCollection);
         $query = $this->filterOutImportedAssetsFromOtherAssetSources($queryResult->getQuery());
-        return new NeosAssetProxyQueryResultInterface($query->execute(), $this->assetSource);
+        return new NeosAssetProxyQueryResult($query->execute(), $this->assetSource);
     }
 
     /**
@@ -184,7 +184,7 @@ final class NeosAssetProxyRepositoryInterface implements AssetProxyRepositoryInt
     {
         $queryResult = $this->assetRepository->findUntagged($this->activeAssetCollection);
         $query = $this->filterOutImportedAssetsFromOtherAssetSources($queryResult->getQuery());
-        return new NeosAssetProxyQueryResultInterface($query->execute(), $this->assetSource);
+        return new NeosAssetProxyQueryResult($query->execute(), $this->assetSource);
     }
 
     /**

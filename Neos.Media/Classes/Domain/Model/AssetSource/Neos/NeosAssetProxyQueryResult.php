@@ -21,7 +21,7 @@ use Neos\Media\Domain\Model\AssetInterface;
 /**
  * @Proxy(false)
  */
-final class NeosAssetProxyQueryResultInterface implements AssetProxyQueryResultInterface
+final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
 {
     /**
      * @var NeosAssetSource
@@ -34,7 +34,7 @@ final class NeosAssetProxyQueryResultInterface implements AssetProxyQueryResultI
     private $flowPersistenceQueryResult;
 
     /**
-     * @var NeosAssetProxyQueryInterface
+     * @var NeosAssetProxyQuery
      */
     private $query;
 
@@ -54,7 +54,7 @@ final class NeosAssetProxyQueryResultInterface implements AssetProxyQueryResultI
     public function getQuery(): AssetProxyQueryInterface
     {
         if ($this->query === null) {
-            $this->query = new NeosAssetProxyQueryInterface($this->flowPersistenceQueryResult->getQuery(), $this->assetSource);
+            $this->query = new NeosAssetProxyQuery($this->flowPersistenceQueryResult->getQuery(), $this->assetSource);
         }
         return $this->query;
     }
@@ -66,20 +66,20 @@ final class NeosAssetProxyQueryResultInterface implements AssetProxyQueryResultI
     {
         $asset = $this->flowPersistenceQueryResult->getFirst();
         if ($asset instanceof AssetInterface) {
-            return new NeosAssetProxyInterface($asset, $this->assetSource);
+            return new NeosAssetProxy($asset, $this->assetSource);
         } else {
             return null;
         }
     }
 
     /**
-     * @return NeosAssetProxyInterface[]
+     * @return NeosAssetProxy[]
      */
     public function toArray(): array
     {
         $assetProxies = [];
         foreach ($this->flowPersistenceQueryResult->toArray() as $asset) {
-            $assetProxies[] = new NeosAssetProxyInterface($asset, $this->assetSource);
+            $assetProxies[] = new NeosAssetProxy($asset, $this->assetSource);
         }
         return $assetProxies;
     }
@@ -91,7 +91,7 @@ final class NeosAssetProxyQueryResultInterface implements AssetProxyQueryResultI
     {
         $asset = $this->flowPersistenceQueryResult->current();
         if ($asset instanceof AssetInterface) {
-            return new NeosAssetProxyInterface($asset, $this->assetSource);
+            return new NeosAssetProxy($asset, $this->assetSource);
         } else {
             return null;
         }
@@ -144,7 +144,7 @@ final class NeosAssetProxyQueryResultInterface implements AssetProxyQueryResultI
      */
     public function offsetGet($offset): ?AssetProxyInterface
     {
-        return new NeosAssetProxyInterface($this->flowPersistenceQueryResult->offsetGet($offset), $this->assetSource);
+        return new NeosAssetProxy($this->flowPersistenceQueryResult->offsetGet($offset), $this->assetSource);
     }
 
     /**
