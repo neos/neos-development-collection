@@ -110,7 +110,14 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         switch ($controllerCommandName) {
             case 'repair':
                 return <<<'HELPTEXT'
+<u>Create missing sites node</u>
+createMissingSitesNode
+
+If needed, creates a missing "/sites" node, which is essential for Neos to work
+properly.
+
 <u>Generate missing URI path segments</u>
+generateUriPathSegments
 
 Generates URI path segment properties for all document nodes which don't have a path
 segment set yet.
@@ -142,7 +149,8 @@ HELPTEXT;
         $this->output = $output;
         $commandMethods = [
             'generateUriPathSegments' => [ 'cleanup' => false ],
-            'removeContentDimensionsFromRootAndSitesNode' => [ 'cleanup' => true ]
+            'removeContentDimensionsFromRootAndSitesNode' => [ 'cleanup' => true ],
+            'createMissingSitesNode' => [ 'cleanup' => true ]
         ];
 
         $skipCommandNames = Arrays::trimExplode(',', ($skip === null ? '' : $skip));
@@ -163,6 +171,34 @@ HELPTEXT;
                     $this->$commandMethodName($workspaceName, $dryRun, $nodeType);
                 }
         }
+    }
+
+    /**
+     * Creates the /sites node if it is missing.
+     *
+     * @param string $workspaceName Name of the workspace to consider (unused)
+     * @param boolean $dryRun Simulate?
+     * @return void
+     */
+    protected function createMissingSitesNode($workspaceName, $dryRun)
+    {
+        $this->output->outputLine('Checking for "%s" node ...', array(SiteService::SITES_ROOT_PATH));
+        $rootNode = $this->contextFactory->create()->getRootNode();
+        // We fetch the workspace to be sure it's known to the persistence manager and persist all
+        // so the workspace and site node are persisted before we import any nodes to it.
+        $rootNode->getContext()->getWorkspace();
+        $this->persistenceManager->persistAll();
+        $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
+        if ($sitesNode === null) {
+            if ($dryRun === false) {
+                $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
+                $this->output->outputLine('Missing "%s" node was created', [SiteService::SITES_ROOT_PATH]);
+            } else {
+                $this->output->outputLine('"%s" node is missing!', [SiteService::SITES_ROOT_PATH]);
+            }
+        }
+
+        $this->persistenceManager->persistAll();
     }
 
     /**

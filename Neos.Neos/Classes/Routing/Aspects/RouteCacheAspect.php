@@ -82,7 +82,7 @@ class RouteCacheAspect
     /**
      * Add the current workspace name as a tag for the route cache entry
      *
-     * @Flow\Around("method(TYPO3\Flow\Mvc\Routing\RouterCachingService->generateRouteTags())")
+     * @Flow\Around("method(Neos\Flow\Mvc\Routing\RouterCachingService->generateRouteTags())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return array
      */
@@ -91,6 +91,7 @@ class RouteCacheAspect
         $tags = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
         $values = $joinPoint->getMethodArgument('routeValues');
+
         if (isset($values['node']) && strpos($values['node'], '@') !== false) {
             // Build context explicitly without authorization checks because the security context isn't available yet
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:

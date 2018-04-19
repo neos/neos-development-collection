@@ -270,24 +270,23 @@ class SiteCommandController extends CommandController
     }
 
     /**
-     * Remove all content and related data - for now. In the future we need some more sophisticated cleanup.
+     * Remove site with content and related data (with globbing)
      *
-     * @param string $siteNode Name of a site root node to clear only content of this site.
+     * In the future we need some more sophisticated cleanup.
+     *
+     * @param string $siteNode Name for site root nodes to clear only content of this sites (globbing is supported)
      * @return void
      */
-    public function pruneCommand($siteNode = null)
+    public function pruneCommand($siteNode)
     {
-        if ($siteNode !== null) {
-            $possibleSite = $this->siteRepository->findOneByNodeName($siteNode);
-            if ($possibleSite === null) {
-                $this->outputLine('The given site site node did not match an existing site.');
-                $this->quit(1);
-            }
-            $this->siteService->pruneSite($possibleSite);
-            $this->outputLine('Site with root "' . $siteNode . '" has been removed.');
-        } else {
-            $this->siteService->pruneAll();
-            $this->outputLine('All sites and content have been removed.');
+        $sites = $this->findSitesByNodeNamePattern($siteNode);
+        if (empty($sites)) {
+            $this->outputLine('<error>No Site found for pattern "%s".</error>', [$siteNode]);
+            $this->quit(1);
+        }
+        foreach ($sites as $site) {
+            $this->siteService->pruneSite($site);
+            $this->outputLine('Site with root "%s" matched pattern "%s" and has been removed.', [$site->getNodeName(), $siteNode]);
         }
     }
 
@@ -339,43 +338,62 @@ class SiteCommandController extends CommandController
     }
 
     /**
-     * Activate a site
+     * Activate a site (with globbing)
      *
      * This command activates the specified site.
      *
-     * @param string $siteNode The node name of the site to activate
+     * @param string $siteNode The node name of the sites to activate (globbing is supported)
      * @return void
      */
     public function activateCommand($siteNode)
     {
-        $site = $this->siteRepository->findOneByNodeName($siteNode);
-        if (!$site instanceof Site) {
-            $this->outputLine('<error>Site not found.</error>');
+        $sites = $this->findSitesByNodeNamePattern($siteNode);
+        if (empty($sites)) {
+            $this->outputLine('<error>No Site found for pattern "%s".</error>', [$siteNode]);
             $this->quit(1);
         }
-
-        $site->setState(Site::STATE_ONLINE);
-        $this->siteRepository->update($site);
-        $this->outputLine('Site activated.');
+        foreach ($sites as $site) {
+            $site->setState(Site::STATE_ONLINE);
+            $this->siteRepository->update($site);
+            $this->outputLine('Site "%s" was activated.', [$site->getNodeName()]);
+        }
     }
 
     /**
-     * Deactivate a site
+     * Deactivate a site (with globbing)
      *
      * This command deactivates the specified site.
      *
-     * @param string $siteNode The node name of the site to deactivate
+     * @param string $siteNode The node name of the sites to deactivate (globbing is supported)
      * @return void
      */
     public function deactivateCommand($siteNode)
     {
-        $site = $this->siteRepository->findOneByNodeName($siteNode);
-        if (!$site instanceof Site) {
-            $this->outputLine('<error>Site not found.</error>');
+        $sites = $this->findSitesByNodeNamePattern($siteNode);
+        if (empty($sites)) {
+            $this->outputLine('<error>No Site found for pattern "%s".</error>', [$siteNode]);
             $this->quit(1);
         }
-        $site->setState(Site::STATE_OFFLINE);
-        $this->siteRepository->update($site);
-        $this->outputLine('Site deactivated.');
+        foreach ($sites as $site) {
+            $site->setState(Site::STATE_OFFLINE);
+            $this->siteRepository->update($site);
+            $this->outputLine('Site "%s" was deactivated.', [$site->getNodeName()]);
+        }
+    }
+
+    /**
+     * Find all sites the match the given site-node-name-pattern with support for globbing
+     *
+     * @param string $siteNodePattern nodeName patterns for sites to find
+     * @return array<Site>
+     */
+    protected function findSitesByNodeNamePattern($siteNodePattern)
+    {
+        return array_filter(
+            $this->siteRepository->findAll()->toArray(),
+            function ($site) use ($siteNodePattern) {
+                return fnmatch($siteNodePattern, $site->getNodeName());
+            }
+        );
     }
 }

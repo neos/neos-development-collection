@@ -2,12 +2,12 @@
     "name": "neos/site-kickstarter",
     "type": "neos-package",
     "description": "A simple generator for Neos assets, like sites and plugins.",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "require": {
         "neos/flow": "*",
         "neos/utility-files": "*",
         "neos/fluid-adaptor": "*",
-        "neos/kickstarter": "~4.2.0",
+        "neos/kickstarter": "*",
 
         "neos/content-repository": "self.version"
     },

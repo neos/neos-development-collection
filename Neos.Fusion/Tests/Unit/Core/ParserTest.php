@@ -739,11 +739,8 @@ class ParserTest extends UnitTestCase
         // Check that values were overridden by fixture #17:
         $expectedParseTree['__prototypes']['Neos.Foo:Bar2']['baz'] = 'New Value';
 
-        // Set the default namespace to Neos.Neos - that's what Neos does as well in Domain\Service\FusionService:
-        $this->parser->setObjectTypeNamespace('default', 'Neos.Neos');
-
         $text = array(
-            '__objectType' => 'Neos.Neos:Text',
+            '__objectType' => 'Neos.Fusion:Text',
             '__value' => null,
             '__eelExpression' => null
         );
@@ -912,7 +909,19 @@ class ParserTest extends UnitTestCase
         );
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 21.');
+        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 23.');
+    }
+
+    /**
+     * Checks if really long strings are parsed correctly
+     *
+     * @test
+     */
+    public function parserCorrectlyLongStrings()
+    {
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixtureLongString');
+        $actualParseTree = $this->parser->parse($sourceCode);
+        $this->assertArrayHasKey('longString', $actualParseTree);
     }
 
     /**

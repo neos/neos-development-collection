@@ -110,6 +110,16 @@ class ImageUriImplementation extends AbstractFusionObject
     }
 
     /**
+     * Quality
+     *
+     * @return integer
+     */
+    public function getQuality()
+    {
+        return $this->fusionValue('quality');
+    }
+
+    /**
      * Async
      *
      * @return boolean
@@ -146,7 +156,7 @@ class ImageUriImplementation extends AbstractFusionObject
         if (!empty($preset)) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
         } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($this->getWidth(), $this->getMaximumWidth(), $this->getHeight(), $this->getMaximumHeight(), $this->getAllowCropping(), $this->getAllowUpScaling(), $this->getAsync());
+            $thumbnailConfiguration = new ThumbnailConfiguration($this->getWidth(), $this->getMaximumWidth(), $this->getHeight(), $this->getMaximumHeight(), $this->getAllowCropping(), $this->getAllowUpScaling(), $this->getAsync(), $this->getQuality());
         }
         $request = $this->getRuntime()->getControllerContext()->getRequest();
         $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $request);

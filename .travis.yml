@@ -2,33 +2,29 @@ language: php
 matrix:
   fast_finish: true
   include:
-    - php: 7.0
+    - php: 7.1
       env: DB=mysql
-    - php: 7.0
+    - php: 7.1
       env: DB=pgsql
       addons:
         postgresql: "9.4"
-    - php: 7.0
+    - php: 7.1
       env: DB=pgsql
-      sudo: true
-      dist: trusty
       addons:
         postgresql: "9.5"
-    - php: 7.0
+    - php: 7.1
       env: DB=mysql BEHAT=true
-    - php: 7.0
+    - php: 7.1
       env: DB=pgsql BEHAT=true
       addons:
         postgresql: "9.4"
-    - php: 7.0
+    - php: 7.1
       env: DB=pgsql BEHAT=true
-      sudo: true
-      dist: trusty
       addons:
         postgresql: "9.5"
-    - php: 7.1
+    - php: 7.2
       env: DB=mysql
-    - php: 7.1
+    - php: 7.2
       env: DB=mysql BEHAT=true
 cache:
   directories:
@@ -36,7 +32,7 @@ cache:
 before_install:
   - phpenv config-rm xdebug.ini
   - export NEOS_TARGET_REPOSITORY=neos/neos-development-collection
-  - export NEOS_TARGET_VERSION=3.2
+  - export NEOS_TARGET_VERSION=master
   - env
   - sudo add-apt-repository ppa:git-core/ppa -y
   - sudo apt-get update
@@ -46,7 +42,7 @@ before_install:
   - git clone https://github.com/neos/neos-development-distribution.git -b ${NEOS_TARGET_VERSION}
   - cd neos-development-distribution
 install:
-  - composer self-update -q
+  - composer self-update 1.6.3
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer update --no-progress --no-interaction
   - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .

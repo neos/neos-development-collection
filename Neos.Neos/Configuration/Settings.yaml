@@ -56,6 +56,15 @@ Neos:
           collapsed: true
 
     userInterface:
+      # Sets the route after login. There will be one argument "node" set with the lastVisited or site node (and correct context)
+      # The below configuration sets this to the "old" UI route.
+      routeAfterLogin:
+        values:
+          '@package': 'Neos.Neos'
+          '@controller': 'Frontend\Node'
+          '@action': 'show'
+          '@format': 'html'
+
       # should minified JavaScript be loaded? For developing the Neos
       # Content Module, this should be set to FALSE.
       loadMinifiedJavascript: true
@@ -158,6 +167,8 @@ Neos:
               maximumFileSize: null
               features:
                 crop: true
+                upload: true
+                mediaBrowser: true
                 resize: false
               crop:
                 aspectRatio:
@@ -189,11 +200,18 @@ Neos:
           Neos\Media\Domain\Model\Asset:
             typeConverter: Neos\Neos\TypeConverter\EntityToIdentityConverter
             editor: Neos.Neos/Inspector/Editors/AssetEditor
+            editorOptions:
+              features:
+                upload: true
+                mediaBrowser: true
           array<Neos\Media\Domain\Model\Asset>:
             typeConverter: Neos\Flow\Property\TypeConverter\TypedArrayConverter
             editor: Neos.Neos/Inspector/Editors/AssetEditor
             editorOptions:
               multiple: true
+              features:
+                upload: true
+                mediaBrowser: true
           DateTime:
             typeConverter: Neos\Neos\Service\Mapping\DateStringConverter
             editor: Neos.Neos/Inspector/Editors/DateTimeEditor

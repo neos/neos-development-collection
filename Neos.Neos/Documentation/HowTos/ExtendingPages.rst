@@ -32,7 +32,7 @@ in the below example:
 Fusion (Sites/Vendor.Site/Resources/Private/Fusion/Root.fusion) ::
 
 	prototype(Neos.Neos:Page) {
-		backgroundImage = ${q(node).property('backgroundImage')}
+		body.backgroundImage = ${q(node).property('backgroundImage')}
 	}
 
 With Neos.Media ViewHelper you can display the Image with the follwing HTML snippet:

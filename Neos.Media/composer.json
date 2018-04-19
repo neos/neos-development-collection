@@ -2,7 +2,7 @@
     "name": "neos/media",
     "type": "neos-package",
     "description": "The Media package",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "require": {
         "neos/imagine": "^3.0.2",
 
@@ -15,8 +15,8 @@
         "imagine/imagine": "*",
 
         "doctrine/common": "~2.7.0",
-        "doctrine/orm": "~2.5.0",
-        "doctrine/dbal": "~2.5.0"
+        "doctrine/orm": "~2.6.0",
+        "doctrine/dbal": "~2.7.0"
     },
     "replace": {
         "typo3/media": "self.version"
