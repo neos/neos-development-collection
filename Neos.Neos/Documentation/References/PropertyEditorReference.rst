@@ -139,6 +139,9 @@ Options Reference:
 	``text/plain``, ``text/xml``, ``text/html``, ``text/css``, ``text/javascript``. If other highlighting modes shall be
 	used, they must be loaded beforehand using custom JS code. Default ``text/html``.
 
+``disabled`` (boolean)
+	If ``TRUE``, disables the CodeEditor.
+
 .. _property-editor-reference-selectboxeditor:
 
 Property Type: string / array<string> ``SelectBoxEditor`` -- Dropdown Select Editor
@@ -315,6 +318,10 @@ Options Reference:
 ``dataSourceAdditionalData`` (array)
 	Key/value pairs that will be sent to the server-side data source with every request.
 
+``disabled`` (boolean)
+	If ``TRUE``, disables the SelectBoxEditor.
+
+
 Property Type: string ``LinkEditor`` -- Link Editor for internal, external and asset links
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -351,6 +358,11 @@ Furthermore, the placeholder text can be customized by setting the ``placeholder
             assets: FALSE
             nodeTypes: ['Neos.Neos:Shortcut']
             placeholder: 'Paste a link, or type to search for nodes'
+
+Options Reference:
+
+``disabled`` (boolean)
+	If ``TRUE``, disables the LinkEditor.
 
 Property Type: integer ``TextFieldEditor``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -429,6 +441,9 @@ Options Reference:
                   path: /sites/yoursite/tags
                   type: 'My.Website:Tag'
 
+``disabled`` (boolean)
+	If ``TRUE``, disables the Reference(s)Editor.
+
 
 
 
@@ -503,6 +518,10 @@ For the date format, these are the available placeholders:
 	* ``i``: minutes, 2 digits with leading zeros - 00 to 59
 * second
 	* ``s``: seconds, 2 digits with leading zeros - 00 through 59
+
+``disabled`` (boolean)
+	If ``TRUE``, disables the DateTimeEditor.
+
 
 
 Property Type: image (Neos\\Media\\Domain\\Model\\ImageInterface) ``ImageEditor`` -- Image Selection/Upload Editor
@@ -631,6 +650,9 @@ Options Reference:
 			``defaultOption`` (string)
 				default aspect ratio option to be chosen if no cropping has been applied already.
 
+``disabled`` (boolean)
+	If ``TRUE``, disables the ImageEditor.
+
 Property Type: asset (Neos\\Media\\Domain\\Model\\Asset / array<Neos\\Media\\Domain\\Model\\Asset>) ``AssetEditor`` -- File Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -662,6 +684,9 @@ Options Reference:
 
 	``mediaBrowser`` (boolean)
 		If ``TRUE``, enable Media Browser button. Default ``TRUE``.
+
+``disabled`` (boolean)
+	If ``TRUE``, disables the AssetEditor.
 
 Property Validation
 -------------------
