@@ -267,6 +267,22 @@ Privilege Matchers
 The privileges need to be applied to certain nodes to be useful. For this, matchers are used in the policy, written
 using Eel. Depending on the privilege, various methods to address nodes are available.
 
+.. note::
+    **Global objects in matcher expressions**
+
+    Since the matchers are written using Eel, anything in the Eel context during evaluation is usable for matching.
+    This is done by using the ``context`` keyword, followed by dotted path to the value needed. E.g. to access the
+    personal workspace name of the currently logged in user, this can be used::
+
+      privilegeTargets:
+        'Neos\ContentRepository\Security\Authorization\Privilege\Node\ReadNodePrivilege':
+          'Neos.ContentRepository:Workspace':
+            matcher: 'isInWorkspace("context.userInformation.personalWorkspaceName“))’
+
+    These global objects available under ``context`` (by default the current ``SsecurityContext`` imported as
+    ``securityContext`` and the ``UserService`` imported as ``userInformation``) are registered in the *Settings.yaml*
+    file in section ``aop.globalObjects``. That way you can add your own as well.
+
 Position in the Node Tree
 -------------------------
 

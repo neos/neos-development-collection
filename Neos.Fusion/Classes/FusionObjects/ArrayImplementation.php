@@ -55,24 +55,6 @@ class ArrayImplementation extends AbstractArrayFusionObject
      *
      * @see PositionalArraySorter
      *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @return array an ordered list of keys
-     * @throws Fusion\Exception if the positional string has an unsupported format
-     */
-    protected function sortNestedTypoScriptKeys()
-    {
-        return $this->sortNestedFusionKeys();
-    }
-
-    /**
-     * Sort the Fusion objects inside $this->properties depending on:
-     * - numerical ordering
-     * - position meta-property
-     *
-     * This will ignore all properties defined in "@ignoreProperties" in Fusion
-     *
-     * @see PositionalArraySorter
-     *
      * @return array an ordered list of keys
      * @throws Fusion\Exception if the positional string has an unsupported format
      */

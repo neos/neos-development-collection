@@ -486,27 +486,15 @@ class Runtime
      * Possibly prepares a new context for the current FusionObject and cache context and pushes it to the stack.
      * Returns if a new context was pushed to the stack or not.
      *
-     * @deprecated with 3.0 will be removed with 4.0
      * @param AbstractFusionObject $fusionObject
      * @param string $fusionPath
      * @param array $fusionConfiguration
      * @param array $cacheContext
      * @return boolean
-     */
-    protected function prepareContextForTypoScriptObject(AbstractFusionObject $fusionObject, $fusionPath, $fusionConfiguration, $cacheContext)
-    {
-        return $this->prepareContextForFusionObject($fusionObject, $fusionPath, $fusionConfiguration, $cacheContext);
-    }
-
-    /**
-     * Possibly prepares a new context for the current FusionObject and cache context and pushes it to the stack.
-     * Returns if a new context was pushed to the stack or not.
-     *
-     * @param AbstractFusionObject $fusionObject
-     * @param string $fusionPath
-     * @param array $fusionConfiguration
-     * @param array $cacheContext
-     * @return boolean
+     * @throws Exception
+     * @throws RuntimeException
+     * @throws SecurityException
+     * @throws StopActionException
      */
     protected function prepareContextForFusionObject(AbstractFusionObject $fusionObject, $fusionPath, $fusionConfiguration, $cacheContext)
     {
@@ -684,20 +672,6 @@ class Runtime
     /**
      * Instantiates a Fusion object specified by the given path and configuration
      *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @param string $fusionPath Path to the configuration for this object instance
-     * @param array $fusionConfiguration Configuration at the given path
-     * @return AbstractFusionObject
-     * @throws Exception
-     */
-    protected function instantiateTypoScriptObject($fusionPath, $fusionConfiguration)
-    {
-        return $this->instantiateFusionObject($fusionPath, $fusionConfiguration);
-    }
-
-    /**
-     * Instantiates a Fusion object specified by the given path and configuration
-     *
      * @param string $fusionPath Path to the configuration for this object instance
      * @param array $fusionConfiguration Configuration at the given path
      * @return AbstractFusionObject
@@ -736,18 +710,6 @@ class Runtime
     /**
      * Check if the given object is an array like object that should get all properties set to iterate or process internally.
      *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @param AbstractFusionObject $fusionObject
-     * @return boolean
-     */
-    protected function isArrayTypoScriptObject(AbstractFusionObject $fusionObject)
-    {
-        return $this->isArrayFusionObject($fusionObject);
-    }
-
-    /**
-     * Check if the given object is an array like object that should get all properties set to iterate or process internally.
-     *
      * @param AbstractFusionObject $fusionObject
      * @return boolean
      */
@@ -765,19 +727,6 @@ class Runtime
     protected function hasExpressionOrValue(array $fusionConfiguration)
     {
         return isset($fusionConfiguration['__eelExpression']) || isset($fusionConfiguration['__value']);
-    }
-
-    /**
-     * Set options on the given (AbstractArray)Fusion object
-     *
-     * @deprecated with 3.0 will be removed with 4.0
-     * @param AbstractArrayFusionObject $fusionObject
-     * @param array $fusionConfiguration
-     * @return void
-     */
-    protected function setPropertiesOnTypoScriptObject(AbstractArrayFusionObject $fusionObject, array $fusionConfiguration)
-    {
-        $this->setPropertiesOnFusionObject($fusionObject, $fusionConfiguration);
     }
 
     /**
@@ -806,6 +755,7 @@ class Runtime
      * @param array $valueConfiguration Fusion configuration for the value
      * @param \Neos\Fusion\FusionObjects\AbstractFusionObject $contextObject An optional object for the "this" value inside the context
      * @return mixed The result of the evaluation
+     * @throws Exception
      */
     protected function evaluateEelExpressionOrSimpleValueWithProcessor($fusionPath, array $valueConfiguration, AbstractFusionObject $contextObject = null)
     {

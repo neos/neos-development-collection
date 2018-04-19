@@ -4930,11 +4930,12 @@ html,
   margin: 0 auto;
   display: block;
 }
-.neos .neos-login-box header {
+.neos .neos-login-box .neos-login-heading {
   color: #fff;
   font-size: 16px;
   margin-bottom: 16px;
   text-align: center;
+  font-weight: normal;
 }
 .neos .neos-login-box .neos-login-body {
   padding: 0;

@@ -11,7 +11,7 @@ namespace Neos\Neos\EventLog\Integrations;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Neos\Eel\CompilingEvaluator;
 use Neos\Eel\Exception;
@@ -19,7 +19,6 @@ use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Neos\EventLog\Domain\Model\Event;
-use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 
 /**
  * Monitors entity changes
@@ -33,15 +32,9 @@ class EntityIntegrationService extends AbstractIntegrationService
      * interface ...
      *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
-
-    /**
-     * @Flow\Inject
-     * @var EventEmittingService
-     */
-    protected $eventEmittingService;
 
     /**
      * @Flow\Inject(lazy=FALSE)
@@ -98,7 +91,6 @@ class EntityIntegrationService extends AbstractIntegrationService
                 $entityMonitoringConfiguration = $this->monitorEntitiesSetting[$className];
 
                 if (isset($entityMonitoringConfiguration['events']['created'])) {
-                    $this->initializeAccountIdentifier();
                     $data = array();
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
                         $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, array('entity' => $entity));
@@ -116,7 +108,6 @@ class EntityIntegrationService extends AbstractIntegrationService
                 $entityMonitoringConfiguration = $this->monitorEntitiesSetting[$className];
 
                 if (isset($entityMonitoringConfiguration['events']['deleted'])) {
-                    $this->initializeAccountIdentifier();
                     $data = array();
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
                         $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, array('entity' => $entity));

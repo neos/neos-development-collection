@@ -88,4 +88,4 @@ Backend API
 The Neos backend exposes certain functions in a JavaScript API. These can be helpful to
 customize the editing experience for special elements.
 
-* **Typo3Neos.Content.reloadPage()** Reload the current page in the content module.
+* **ContentModule.reloadPage()** Reload the current page in the content module.

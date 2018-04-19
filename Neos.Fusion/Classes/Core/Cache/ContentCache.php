@@ -246,7 +246,8 @@ class ContentCache
      */
     public function getCachedSegment($uncachedCommandCallback, $fusionPath, $cacheIdentifierValues, $addCacheSegmentMarkersToPlaceholders = false, $cacheDiscriminator = null)
     {
-        if ($cacheDiscriminator === false) {
+        // If $addCacheSegmentMarkersToPlaceholders was set, the outer segment was a cache miss and we need to re-evaluate dynamic cached segments.
+        if ($cacheDiscriminator === false || ($addCacheSegmentMarkersToPlaceholders && $cacheDiscriminator !== null)) {
             return false;
         }
         $cacheIdentifier = $this->renderContentCacheEntryIdentifier($fusionPath, $cacheIdentifierValues);
@@ -265,13 +266,12 @@ class ContentCache
             if ($replaced === false) {
                 return false;
             }
+            $replaced += $this->replaceUncachedPlaceholders($uncachedCommandCallback, $content);
             if ($i > self::MAXIMUM_NESTING_LEVEL) {
                 throw new Exception('Maximum cache segment level reached', 1391873620);
             }
             $i++;
         } while ($replaced > 0);
-
-        $this->replaceUncachedPlaceholders($uncachedCommandCallback, $content);
 
         if ($addCacheSegmentMarkersToPlaceholders) {
             return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . $cacheIdentifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . '*' . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
@@ -316,7 +316,7 @@ class ContentCache
      *
      * @param \Closure $uncachedCommandCallback
      * @param string $content The content potentially containing not cacheable segments marked by the respective tokens
-     * @return string The original content, but with uncached segments replaced by the actual content
+     * @return integer Number of replaced placeholders
      */
     protected function replaceUncachedPlaceholders(\Closure $uncachedCommandCallback, &$content)
     {
@@ -326,7 +326,8 @@ class ContentCache
             $additionalData = json_decode($match['data'], true);
 
             return $uncachedCommandCallback($command, $additionalData, $cache);
-        }, $content);
+        }, $content, -1, $count);
+        return $count;
     }
 
     /**

@@ -359,8 +359,8 @@ Fully qualified identifiers can be used everywhere an identifier is used::
 
 	prototype(Neos.Neos:ContentCollection) < prototype(Neos.Neos:Collection)
 
-In Neos Fusion a ``default`` namespace of ``Neos.Neos`` is set. So whenever ``Page`` is used in
-Fusion within Neos, it is a shortcut for ``Neos.Neos:Page``.
+In Fusion a ``default`` namespace of ``Neos.Fusion`` is set. So whenever ``Value`` is used in
+Fusion, it is a shortcut for ``Neos.Fusion:Value``.
 
 Custom namespace aliases can be defined using the following syntax::
 
@@ -370,7 +370,7 @@ Custom namespace aliases can be defined using the following syntax::
 	video = Acme.Demo:YouTube
 	video = Foo:YouTube
 
-.. warning:: These declarations are not scoped to the file they are in, but apply globally (at least currently, we plan to change that in the future). So you should be careful there!
+.. warning:: These declarations are scoped to the file they are in and have to be declared in every fusion file where they shall be used.
 
 Setting Properties On a Fusion Object
 =========================================
@@ -467,6 +467,12 @@ of ``foo``.
 This functionality is especially helpful if there are strong conventions regarding the Fusion
 context variables. This is often the case in standalone Fusion applications, but for Neos, this
 functionality is hardly ever used.
+
+.. warning:: In order to prevent unwanted side effects, it is not possible to access context variables from within ``@context`` on the same level. This means that the following will never return the string ``Hello World!``
+
+	@context.contextOne = 'World!'
+	@context.contextTwo = ${'Hello ' + contextOne}
+	output = ${contextTwo}
 
 Processors
 ==========

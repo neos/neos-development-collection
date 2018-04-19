@@ -559,3 +559,69 @@ contentCache.dynamicSegmentWithDisabledDiscriminator = Neos.Fusion:Array {
 		entryDiscriminator = ${discriminatorObject.value == 'disable' ? false : discriminatorObject.value}
 	}
 }
+
+contentCache.dynamicSegmentWithNestedCachedSegment = Neos.Fusion:Array {
+	5 = 'Cached segment|'
+	10 = ${'counter=' + renderObject.counter + '|'}
+	15 = Neos.Fusion:Array {
+		5 = 'Nested dynamic segment|'
+		10 = ${'counter=' + renderObject.counter + '|'}
+		15 = Neos.Fusion:Array {
+			5 = 'Nested cached segment|'
+			10 = ${'counter=' + renderObject.counter}
+			@cache {
+				mode = 'cached'
+			}
+		}
+		@cache {
+			mode = 'dynamic'
+			context {
+				1 = 'renderObject'
+			}
+		}
+	}
+	@cache {
+		mode = 'cached'
+	}
+}
+
+contentCache.cachedSegmentWithNestedDynamicSegment = Neos.Fusion:Value {
+	value = Neos.Fusion:Value {
+		value = ${someContextVariable}
+		@cache {
+			mode = 'dynamic'
+			entryDiscriminator = 'static'
+			context {
+				1 = 'someContextVariable'
+			}
+		}
+	}
+	@cache {
+		mode = 'cached'
+		entryTags {
+			1 = 'testing'
+		}
+	}
+}
+
+contentCache.dynamicWithChangingDiscriminator = Neos.Fusion:Value {
+	value = Neos.Fusion:Value {
+		value = ${request.arguments.testArgument}
+		@cache {
+			mode = 'dynamic'
+			entryDiscriminator = ${request.arguments.testArgument}
+			context {
+				1 = 'someContextVariable'
+			}
+			entryTags {
+				1 = 'dynamicTag'
+			}
+		}
+	}
+	@cache {
+		mode = 'cached'
+		entryTags {
+			1 = 'testing'
+		}
+	}
+}
