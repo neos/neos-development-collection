@@ -335,19 +335,19 @@
 			<target xml:lang="de">Beschreibung</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target xml:lang="de" state="needs-translation">Toggle content tree</target></trans-unit>
+			<target xml:lang="de" state="translated">Inhaltsbaum umschalten</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target xml:lang="de" state="needs-translation">Show publish options</target></trans-unit>
+			<target xml:lang="de" state="translated">Veröffentlichungsoptionen anzeigen</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target xml:lang="de" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="de" state="translated">Vollbild-Bearbeitungsmodus aktivieren</target></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target xml:lang="de" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="de" state="translated">Vollbild-Bearbeitungsmodus deaktivieren</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target xml:lang="de" state="needs-translation">Show preview</target></trans-unit>
+			<target xml:lang="de" state="translated">Vorschau anzeigen</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -522,7 +522,7 @@
 			<target xml:lang="de">Nur Buchstaben, Ziffern, Leerzeichen und bestimmte Satzzeichen sind erlaubt.</target></trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve" approved="yes">
 				<source>This property is required.</source>
-			<target xml:lang="de">Diese Eigenschaft ist erforderlich.</target></trans-unit>
+			<target xml:lang="de">Diese Eigenschaft ist erforderlich.</target><alt-trans><target xml:lang="de">Pflichtfeld.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve" approved="yes">
 				<source>A valid number is expected.</source>
 			<target xml:lang="de">Eine gültige Zahl wird erwartet.</target></trans-unit>
