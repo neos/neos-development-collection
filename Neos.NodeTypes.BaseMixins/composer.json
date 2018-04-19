@@ -2,9 +2,10 @@
     "name": "neos/nodetypes-basemixins",
     "type": "neos-package",
     "description": "Base mixins which are useful across projects.",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "require": {
-        "neos/neos": "*"
+        "neos/neos": "*",
+        "neos/nodetypes-basemixins": "*"
     },
     "autoload": {
         "psr-4": {

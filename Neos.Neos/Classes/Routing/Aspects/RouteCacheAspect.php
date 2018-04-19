@@ -91,6 +91,7 @@ class RouteCacheAspect
         $tags = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
         $values = $joinPoint->getMethodArgument('routeValues');
+
         if (isset($values['node']) && strpos($values['node'], '@') !== false) {
             // Build context explicitly without authorization checks because the security context isn't available yet
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:

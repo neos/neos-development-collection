@@ -7,7 +7,7 @@
 			<target xml:lang="pl">Włącz etykietę</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve" approved="yes">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="pl"><![CDATA[<p>Wpisz tutaj etykietę</p>]]></target></trans-unit>
+			<target xml:lang="pl"><![CDATA[<p>Wprowadź tutaj etykietę</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

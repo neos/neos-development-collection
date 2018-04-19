@@ -27,7 +27,7 @@ use Neos\Fusion\FusionObjects\ArrayImplementation;
 class ComponentImplementation extends ArrayImplementation
 {
     /**
-     * Properties that are ignored and added to the props
+     * Properties that are ignored and not included into the ``props`` context
      *
      * @var array
      */

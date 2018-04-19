@@ -124,7 +124,7 @@
 	<label>{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}</label>
 	<div class="neos-preview-image">
 		<a href="{f:uri.resource(resource: asset.resource)}" target="_blank">
-			<m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Preview" alt="{asset.label}" async="{settings.asyncThumbnails}" class="img-polaroid" />
+			<m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Preview" alt="{asset.label}" async="{asyncThumbnails}" class="img-polaroid" />
 		</a>
 	</div>
 </f:section>

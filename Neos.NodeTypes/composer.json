@@ -2,7 +2,7 @@
     "name": "neos/nodetypes",
     "type": "neos-package",
     "description": "Node type configuration for Neos",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "require": {
         "neos/form": "*",
 
@@ -11,11 +11,13 @@
         "neos/neos": "self.version",
         "neos/fusion": "self.version",
 
+        "neos/nodetypes-basemixins": "self.version",
         "neos/nodetypes-assetlist": "self.version",
         "neos/nodetypes-columnlayouts": "self.version",
         "neos/nodetypes-contentreferences": "self.version",
         "neos/nodetypes-html": "self.version",
-        "neos/nodetypes-navigation": "self.version"
+        "neos/nodetypes-navigation": "self.version",
+        "neos/nodetypes-form": "self.version"
     },
     "replace": {
         "typo3/neos-nodetypes": "self.version"
