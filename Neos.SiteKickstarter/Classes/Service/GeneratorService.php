@@ -177,7 +177,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      */
     protected function generateNodeTypesConfiguration($packageKey)
     {
-        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Configuration/NodeTypes.yaml';
+        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Configuration/NodeTypes.Document.Page.yaml';
 
         $contextVariables = [
             'packageKey' => $packageKey
@@ -185,7 +185,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
-        $sitesNodeTypesPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.yaml';
+        $sitesNodeTypesPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.Document.Page.yaml';
         $this->generateFile($sitesNodeTypesPathAndFilename, $fileContent);
     }
 

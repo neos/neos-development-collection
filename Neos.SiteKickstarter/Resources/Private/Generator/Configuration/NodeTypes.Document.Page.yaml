@@ -2,11 +2,16 @@
 # to your pages. You can add as many areas as you like, still only those that are rendered in your Fusion-code and
 # Template are visible on your page.
 ---
-#'Neos.NodeTypes:Page':
+#'{packageKey}:Page':
 #  childNodes:
 #    'sidebar':
 #      type: 'Neos.Neos:ContentCollection'
 
-'{packageKey}:DefaultPage':
+'{packageKey}:Page':
   superTypes:
     'Neos.Neos:Document': true
+  ui:
+    icon: 'icon-file'
+  childNodes:
+    main:
+      type: 'Neos.Neos:ContentCollection'
