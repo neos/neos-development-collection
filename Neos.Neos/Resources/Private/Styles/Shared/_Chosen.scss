@@ -92,8 +92,6 @@
 		.chosen-search {
 			padding: 0;
 			color: $black;
-			@include fa-icon();
-			font-size: 0;
 
 			input {
 				min-width: 0px;
@@ -113,6 +111,7 @@
 			}
 
 			&:after {
+        @include fa-icon();
 				position: absolute;
 				top: 14px;
 				right: 12px;

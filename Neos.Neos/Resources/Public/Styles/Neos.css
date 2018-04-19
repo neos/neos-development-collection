@@ -10406,13 +10406,6 @@
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-search {
   padding: 0;
   color: #000;
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-size: 0;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-search input {
   min-width: 0px;
@@ -10436,6 +10429,12 @@
   background-color: #fff;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-search:after {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   position: absolute;
   top: 14px;
   right: 12px;
@@ -11082,13 +11081,6 @@
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search {
   padding: 0;
   color: #000;
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-size: 0;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search input {
   min-width: 0px;
@@ -11112,6 +11104,12 @@
   background-color: #fff;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search:after {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   position: absolute;
   top: 14px;
   right: 12px;
