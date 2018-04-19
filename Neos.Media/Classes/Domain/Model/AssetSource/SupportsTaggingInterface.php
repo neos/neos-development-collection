@@ -13,7 +13,7 @@ namespace Neos\Media\Domain\Model\AssetSource;
 
 use Neos\Media\Domain\Model\Tag;
 
-interface SupportsTagging
+interface SupportsTaggingInterface
 {
     /**
      * NOTE: This needs to be refactored to use a tag identifier instead of Media's domain model before

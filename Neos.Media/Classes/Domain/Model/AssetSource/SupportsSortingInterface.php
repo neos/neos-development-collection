@@ -11,7 +11,7 @@ namespace Neos\Media\Domain\Model\AssetSource;
  * source code.
  */
 
-interface SupportsSorting
+interface SupportsSortingInterface
 {
     /**
      * Constants representing the direction when ordering result sets.
