@@ -135,6 +135,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
      */
     protected function replaceLinkTargets($processedContent)
     {
+        $noOpenerString = $this->fusionValue('setNoOpener') ? ' rel="noopener"' : '';
         $externalLinkTarget = trim($this->fusionValue('externalLinkTarget'));
         $resourceLinkTarget = trim($this->fusionValue('resourceLinkTarget'));
         if ($externalLinkTarget === '' && $resourceLinkTarget === '') {
@@ -144,7 +145,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
         $processedContent = preg_replace_callback(
             '~<a.*?href="(.*?)".*?>~i',
-            function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host) {
+            function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $noOpenerString) {
                 list($linkText, $linkHref) = $matches;
                 $uriHost = parse_url($linkHref, PHP_URL_HOST);
                 $target = null;
@@ -158,9 +159,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     return $linkText;
                 }
                 if (preg_match_all('~target="(.*?)~i', $linkText, $targetMatches)) {
-                    return preg_replace('/target=".*?"/', sprintf('target="%s"%s', $target, $target === '_blank' ? ' rel="noopener"' : ''), $linkText);
+                    return preg_replace('/target=".*?"/', sprintf('target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
                 }
-                return str_replace('<a', sprintf('<a target="%s"%s', $target, $target === '_blank' ? ' rel="noopener"' : ''), $linkText);
+                return str_replace('<a', sprintf('<a target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
             },
             $processedContent
         );
