@@ -108,7 +108,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->convertUrisImplementation->_set('runtime', $this->mockRuntime);
     }
 
-    protected function addValueExpectation($value, $node = null, $forceConversion = false, $externalLinkTarget = null, $resourceLinkTarget = null, $absolute = false)
+    protected function addValueExpectation($value, $node = null, $forceConversion = false, $externalLinkTarget = null, $resourceLinkTarget = null, $absolute = false, $setNoOpener = true)
     {
         $this->convertUrisImplementation
             ->expects($this->atLeastOnce())
@@ -119,7 +119,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
                 array('forceConversion', $forceConversion),
                 array('externalLinkTarget', $externalLinkTarget),
                 array('resourceLinkTarget', $resourceLinkTarget),
-                array('absolute', $absolute)
+                array('absolute', $absolute),
+                array('setNoOpener', $setNoOpener)
             )));
     }
 
@@ -302,6 +303,18 @@ class ConvertUrisImplementationTest extends UnitTestCase
         }));
 
         $expectedResult = 'This string contains two asset links and an external link: one with a target set <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example</a> and one without a target <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example2</a> and an external link <a href="http://www.example.org">example3</a>';
+        $actualResult = $this->convertUrisImplementation->evaluate();
+        $this->assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function disablingSetNoOpenerWorks()
+    {
+        $value = 'This string contains an external link: <a href="http://www.example.org">example3</a>';
+        $this->addValueExpectation($value, null, false, '_blank', null, false, false);
+        $expectedResult = 'This string contains an external link: <a href="http://www.example.org">example3</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         $this->assertSame($expectedResult, $actualResult);
     }
