@@ -77,7 +77,7 @@ class FileTypeIconViewHelper extends AbstractTagBasedViewHelper
     {
         $asset = $file;
         if ($asset === null && $filename === null) {
-            throw new \InvalidArgumentException('You must either specify "asset" or "filename" for the ' . __CLASS__ . '.', 1524039575547);
+            throw new \InvalidArgumentException('You must either specify "asset" or "filename" for the ' . __CLASS__ . '.', 1524039575);
         }
 
         if ($asset instanceof AssetInterface) {

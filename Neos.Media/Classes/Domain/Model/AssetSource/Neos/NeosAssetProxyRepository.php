@@ -140,7 +140,7 @@ final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, S
     {
         $asset = $this->assetRepository->findByIdentifier($identifier);
         if ($asset === null || !$asset instanceof AssetInterface) {
-            throw new AssetNotFoundException('The specified asset was not found.', 1509632861103);
+            throw new AssetNotFoundException('The specified asset was not found.', 1509632861);
         }
         return new NeosAssetProxy($asset, $this->assetSource);
     }

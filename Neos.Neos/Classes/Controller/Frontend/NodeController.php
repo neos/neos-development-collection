@@ -151,7 +151,7 @@ class NodeController extends ActionController
         } elseif (is_string($resolvedNode)) {
             $this->redirectToUri($resolvedNode);
         } elseif ($resolvedNode instanceof NodeInterface && $resolvedNode === $node) {
-            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1502793585229);
+            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1502793585);
         } elseif ($resolvedNode instanceof NodeInterface) {
             $this->redirect('show', null, null, ['node' => $resolvedNode]);
         } else {

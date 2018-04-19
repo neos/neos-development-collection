@@ -153,7 +153,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
      */
     public function offsetSet($offset, $value)
     {
-        throw new \RuntimeException('Unsupported operation: ' . __METHOD__, 1510060444556);
+        throw new \RuntimeException('Unsupported operation: ' . __METHOD__, 1510060444);
     }
 
     /**
@@ -161,7 +161,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
      */
     public function offsetUnset($offset)
     {
-        throw new \RuntimeException('Unsupported operation: ' . __METHOD__, 1510060467733);
+        throw new \RuntimeException('Unsupported operation: ' . __METHOD__, 1510060467);
     }
 
     /**
