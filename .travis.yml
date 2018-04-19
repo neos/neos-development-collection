@@ -4,6 +4,8 @@ matrix:
   include:
     - php: 7.1
       env: DB=mysql
+      addons:
+        mariadb: '10.2'
     - php: 7.1
       env: DB=pgsql
       addons:
@@ -14,6 +16,8 @@ matrix:
         postgresql: "9.5"
     - php: 7.1
       env: DB=mysql BEHAT=true
+      addons:
+        mariadb: '10.2'
     - php: 7.1
       env: DB=pgsql BEHAT=true
       addons:
@@ -24,8 +28,12 @@ matrix:
         postgresql: "9.5"
     - php: 7.2
       env: DB=mysql
+      addons:
+        mariadb: '10.2'
     - php: 7.2
       env: DB=mysql BEHAT=true
+      addons:
+        mariadb: '10.2'
 cache:
   directories:
     - $HOME/.composer/cache
