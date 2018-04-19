@@ -44,9 +44,9 @@ use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
 use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
 use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetProxy;
-use Neos\Media\Domain\Model\AssetSource\SupportsCollections;
-use Neos\Media\Domain\Model\AssetSource\SupportsSorting;
-use Neos\Media\Domain\Model\AssetSource\SupportsTagging;
+use Neos\Media\Domain\Model\AssetSource\SupportsCollectionsInterface;
+use Neos\Media\Domain\Model\AssetSource\SupportsSortingInterface;
+use Neos\Media\Domain\Model\AssetSource\SupportsTaggingInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -297,14 +297,14 @@ class AssetController extends ActionController
             'allCollectionsCount' => $allCollectionsCount,
             'allCount' => ($activeAssetCollection ? $this->assetRepository->countByAssetCollection($activeAssetCollection) : $allCollectionsCount),
             'searchResultCount' => isset($assetProxies) ? $assetProxies->count() : 0,
-            'untaggedCount' => ($assetProxyRepository instanceof SupportsTagging ? $assetProxyRepository->countUntagged() : 0),
+            'untaggedCount' => ($assetProxyRepository instanceof SupportsTaggingInterface ? $assetProxyRepository->countUntagged() : 0),
             'tagMode' => $this->browserState->get('tagMode'),
             'assetCollections' => $assetCollections,
             'argumentNamespace' => $this->request->getArgumentNamespace(),
             'maximumFileUploadSize' => $this->getMaximumFileUploadSize(),
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($this->getMaximumFileUploadSize()),
             'activeAssetSource' => $activeAssetSource,
-            'activeAssetSourceSupportsSorting' => ($assetProxyRepository instanceof SupportsSorting)
+            'activeAssetSourceSupportsSorting' => ($assetProxyRepository instanceof SupportsSortingInterface)
         ]);
     }
 
@@ -391,7 +391,7 @@ class AssetController extends ActionController
             $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
 
             $tags = [];
-            if ($assetProxyRepository instanceof SupportsTagging && $assetProxyRepository instanceof SupportsCollections) {
+            if ($assetProxyRepository instanceof SupportsTaggingInterface && $assetProxyRepository instanceof SupportsCollectionsInterface) {
                 // TODO: For generic implementation (allowing other asset sources to provide asset collections), the following needs to be refactored:
 
                 if ($assetProxy instanceof NeosAssetProxy) {
@@ -1008,7 +1008,7 @@ class AssetController extends ActionController
      */
     private function applySortingFromBrowserState(AssetProxyRepositoryInterface $assetProxyRepository): void
     {
-        if ($assetProxyRepository instanceof SupportsSorting) {
+        if ($assetProxyRepository instanceof SupportsSortingInterface) {
             switch ($this->browserState->get('sortBy')) {
                 case 'Name':
                     $assetProxyRepository->orderBy(['filename' => $this->browserState->get('sortDirection')]);
@@ -1034,7 +1034,7 @@ class AssetController extends ActionController
      */
     private function applyAssetCollectionFilterFromBrowserState(AssetProxyRepositoryInterface $assetProxyRepository): void
     {
-        if ($assetProxyRepository instanceof SupportsCollections) {
+        if ($assetProxyRepository instanceof SupportsCollectionsInterface) {
             $assetProxyRepository->filterByCollection($this->getActiveAssetCollectionFromBrowserState());
         }
     }

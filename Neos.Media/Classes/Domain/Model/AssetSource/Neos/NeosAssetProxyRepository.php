@@ -22,9 +22,9 @@ use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
-use Neos\Media\Domain\Model\AssetSource\SupportsCollections;
-use Neos\Media\Domain\Model\AssetSource\SupportsSorting;
-use Neos\Media\Domain\Model\AssetSource\SupportsTagging;
+use Neos\Media\Domain\Model\AssetSource\SupportsCollectionsInterface;
+use Neos\Media\Domain\Model\AssetSource\SupportsSortingInterface;
+use Neos\Media\Domain\Model\AssetSource\SupportsTaggingInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\AudioRepository;
@@ -32,7 +32,7 @@ use Neos\Media\Domain\Repository\DocumentRepository;
 use Neos\Media\Domain\Repository\ImageRepository;
 use Neos\Media\Domain\Repository\VideoRepository;
 
-final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, SupportsSorting, SupportsCollections, SupportsTagging
+final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, SupportsSortingInterface, SupportsCollectionsInterface, SupportsTaggingInterface
 {
     /**
      * @Flow\Inject
@@ -152,6 +152,7 @@ final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, S
     {
         $queryResult = $this->assetRepository->findAll($this->activeAssetCollection);
         $query = $this->filterOutImportedAssetsFromOtherAssetSources($queryResult->getQuery());
+        $query = $this->filterOutImageVariants($query);
         return new NeosAssetProxyQueryResult($query->execute(), $this->assetSource);
     }
 
@@ -163,6 +164,7 @@ final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, S
     {
         $queryResult = $this->assetRepository->findBySearchTermOrTags($searchTerm, [], $this->activeAssetCollection);
         $query = $this->filterOutImportedAssetsFromOtherAssetSources($queryResult->getQuery());
+        $query = $this->filterOutImageVariants($query);
         return new NeosAssetProxyQueryResult($query->execute(), $this->assetSource);
     }
 
@@ -174,6 +176,7 @@ final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, S
     {
         $queryResult = $this->assetRepository->findByTag($tag, $this->activeAssetCollection);
         $query = $this->filterOutImportedAssetsFromOtherAssetSources($queryResult->getQuery());
+        $query = $this->filterOutImageVariants($query);
         return new NeosAssetProxyQueryResult($query->execute(), $this->assetSource);
     }
 
@@ -184,6 +187,7 @@ final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, S
     {
         $queryResult = $this->assetRepository->findUntagged($this->activeAssetCollection);
         $query = $this->filterOutImportedAssetsFromOtherAssetSources($queryResult->getQuery());
+        $query = $this->filterOutImageVariants($query);
         return new NeosAssetProxyQueryResult($query->execute(), $this->assetSource);
     }
 
@@ -194,6 +198,7 @@ final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, S
     {
         $query = $this->filterOutImportedAssetsFromOtherAssetSources($this->assetRepository->createQuery());
         $query = $this->filterOutAssetsFromOtherAssetCollections($query);
+        $query = $this->filterOutImageVariants($query);
         return $query->count();
     }
 

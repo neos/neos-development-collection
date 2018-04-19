@@ -16,7 +16,7 @@ use Neos\Media\Domain\Model\AssetCollection;
 /**
  * Interface for an Asset Repository which supports collections
  */
-interface SupportsCollections
+interface SupportsCollectionsInterface
 {
     /**
      * NOTE: This needs to be refactored to use an asset collection identifier instead of Media's domain model before
