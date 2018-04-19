@@ -11,7 +11,7 @@ namespace Neos\Media\Domain\Model\AssetSource\Neos;
  * source code.
  */
 
-use Neos\Flow\Annotations\Inject;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -37,13 +37,13 @@ final class NeosAssetProxyInterface implements AssetProxyInterface
     private $asset;
 
     /**
-     * @Inject()
+     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
-     * @Inject()
+     * @Flow\Inject
      * @var ResourceManager
      */
     protected $resourceManager;

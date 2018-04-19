@@ -13,8 +13,8 @@ namespace Neos\Media\Browser\ViewHelpers\Controller;
 */
 
 use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
 use Neos\Utility\Arrays;
 
 /**
@@ -30,40 +30,40 @@ class PaginateController extends AbstractWidgetController
     /**
      * @var array
      */
-    protected $configuration = array('itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99);
+    protected $configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99];
 
     /**
-     * @var integer
+     * @var int
      */
     protected $currentPage = 1;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $pagesBefore = 0;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $pagesAfter = 0;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $maximumNumberOfLinks = 99;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $numberOfPages = 1;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $displayRangeStart;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $displayRangeEnd;
 
@@ -74,17 +74,17 @@ class PaginateController extends AbstractWidgetController
     {
         $this->assetProxyQueryResult = $this->widgetConfiguration['queryResult'];
         $this->configuration = Arrays::arrayMergeRecursiveOverrule($this->configuration, $this->widgetConfiguration['configuration'], true);
-        $this->numberOfPages = (integer)ceil(count($this->assetProxyQueryResult) / (integer)$this->configuration['itemsPerPage']);
-        $this->maximumNumberOfLinks = (integer)$this->configuration['maximumNumberOfLinks'];
+        $this->numberOfPages = (int)ceil(count($this->assetProxyQueryResult) / (int)$this->configuration['itemsPerPage']);
+        $this->maximumNumberOfLinks = (int)$this->configuration['maximumNumberOfLinks'];
     }
 
     /**
-     * @param integer $currentPage
+     * @param int $currentPage
      * @return void
      */
     public function indexAction($currentPage = 1)
     {
-        $this->currentPage = (integer)$currentPage;
+        $this->currentPage = (int)$currentPage;
         if ($this->currentPage < 1) {
             $this->currentPage = 1;
         } elseif ($this->currentPage > $this->numberOfPages) {
@@ -92,17 +92,15 @@ class PaginateController extends AbstractWidgetController
         }
 
         try {
-            $itemsPerPage = (integer)$this->configuration['itemsPerPage'];
+            $itemsPerPage = (int)$this->configuration['itemsPerPage'];
             $query = $this->assetProxyQueryResult->getQuery();
             $query->setLimit($itemsPerPage);
             if ($this->currentPage > 1) {
-                $query->setOffset((integer)($itemsPerPage * ($this->currentPage - 1)));
+                $query->setOffset((int)($itemsPerPage * ($this->currentPage - 1)));
             }
             $modifiedObjects = $query->execute();
 
-            $this->view->assign('contentArguments', array(
-                $this->widgetConfiguration['as'] => $modifiedObjects
-            ));
+            $this->view->assign('contentArguments', [$this->widgetConfiguration['as'] => $modifiedObjects]);
             $this->view->assign('configuration', $this->configuration);
             $this->view->assign('pagination', $this->buildPagination());
         } catch (AssetSourceConnectionException $exception) {
@@ -131,8 +129,8 @@ class PaginateController extends AbstractWidgetController
         if ($this->displayRangeEnd > $this->numberOfPages) {
             $this->displayRangeStart -= ($this->displayRangeEnd - $this->numberOfPages);
         }
-        $this->displayRangeStart = (integer)max($this->displayRangeStart, 1);
-        $this->displayRangeEnd = (integer)min($this->displayRangeEnd, $this->numberOfPages);
+        $this->displayRangeStart = (int)max($this->displayRangeStart, 1);
+        $this->displayRangeEnd = (int)min($this->displayRangeEnd, $this->numberOfPages);
     }
 
     /**
@@ -143,11 +141,11 @@ class PaginateController extends AbstractWidgetController
     protected function buildPagination()
     {
         $this->calculateDisplayRange();
-        $pages = array();
+        $pages = [];
         for ($i = $this->displayRangeStart; $i <= $this->displayRangeEnd; $i++) {
-            $pages[] = array('number' => $i, 'isCurrent' => ($i === $this->currentPage));
+            $pages[] = ['number' => $i, 'isCurrent' => ($i === $this->currentPage)];
         }
-        $pagination = array(
+        $pagination = [
             'pages' => $pages,
             'current' => $this->currentPage,
             'numberOfPages' => $this->numberOfPages,
@@ -155,7 +153,7 @@ class PaginateController extends AbstractWidgetController
             'displayRangeEnd' => $this->displayRangeEnd,
             'hasLessPages' => $this->displayRangeStart > 2,
             'hasMorePages' => $this->displayRangeEnd + 1 < $this->numberOfPages
-        );
+        ];
         if ($this->currentPage < $this->numberOfPages) {
             $pagination['nextPage'] = $this->currentPage + 1;
         }

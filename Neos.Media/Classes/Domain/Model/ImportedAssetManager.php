@@ -11,7 +11,7 @@ namespace Neos\Media\Domain\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations\Inject;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
@@ -20,19 +20,19 @@ use Neos\Media\Domain\Repository\ImportedAssetRepository;
 class ImportedAssetManager
 {
     /**
-     * @Inject()
+     * @Flow\Inject
      * @var  PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
-     * @Inject()
+     * @Flow\Inject
      * @var ImportedAssetRepository
      */
     protected $importedAssetRepository;
 
     /**
-     * @Inject()
+     * @Flow\Inject
      * @var SystemLoggerInterface
      */
     protected $logger;
