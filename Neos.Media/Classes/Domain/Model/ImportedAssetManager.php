@@ -61,14 +61,13 @@ class ImportedAssetManager
             return;
         }
 
-        $variantAsset = $asset;
         $variantAssetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
         $originalAsset = $asset->getOriginalAsset();
         $originalAssetIdentifier = $this->persistenceManager->getIdentifierByObject($originalAsset);
 
         $originalImportedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($originalAssetIdentifier);
         if ($originalImportedAsset instanceof ImportedAsset) {
-            $variantAsset->setAssetSourceIdentifier($originalImportedAsset->getAssetSourceIdentifier());
+            $asset->setAssetSourceIdentifier($originalImportedAsset->getAssetSourceIdentifier());
 
             $variantImportedAsset = new ImportedAsset(
                 $originalImportedAsset->getAssetSourceIdentifier(),
