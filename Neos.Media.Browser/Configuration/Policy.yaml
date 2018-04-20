@@ -1,7 +1,13 @@
 privilegeTargets:
   'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+    'Neos.Media.Browser:Widgets':
+      matcher: 'method(Neos\Media\Browser\ViewHelpers\Controller\(Paginate)Controller->(index)Action())'
+
     'Neos.Media.Browser:ManageAssets':
-      matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(index|new|edit|update|initializeCreate|create|replaceAssetResource|updateAssetResource|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection|relatedNodes)Action())'
+      matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(index|new|show|edit|update|initializeCreate|create|replaceAssetResource|updateAssetResource|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection|relatedNodes)Action())'
+
+    'Neos.Media.Browser:AssetProxyService':
+      matcher: 'method(Neos\Media\Browser\Controller\AssetProxyController->(index|import)Action())'
 
     'Neos.Media.Browser:ManageAssetCollections':
       matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action())'
@@ -15,6 +21,9 @@ roles:
       -
         privilegeTarget: 'Neos.Media.Browser:ManageAssets'
         permission: GRANT
+      -
+        privilegeTarget: 'Neos.Media.Browser:AssetProxyService'
+        permission: GRANT
 
   'Neos.Neos:LivePublisher':
     privileges:
@@ -26,4 +35,10 @@ roles:
     privileges:
       -
         privilegeTarget: 'Neos.Media.Browser:ManageAssetCollections'
+        permission: GRANT
+
+  'Neos.Flow:Everybody':
+    privileges:
+      -
+        privilegeTarget: 'Neos.Media.Browser:Widgets'
         permission: GRANT

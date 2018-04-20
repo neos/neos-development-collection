@@ -561,7 +561,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         if (!$this->contentDimensionPresetSource->isPresetCombinationAllowedByConstraints($chosenDimensionPresets)) {
-            throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', implode(', ', array_keys($chosenDimensionPresets))), 1462175794805);
+            throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', implode(', ', array_keys($chosenDimensionPresets))), 1462175794);
         }
 
         return $dimensionsAndDimensionValues;

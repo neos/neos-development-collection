@@ -346,6 +346,11 @@ class NodeDataRepository extends Repository
         }
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
+        if ($removedNodes === false) {
+            $queryBuilder->andWhere('n.movedTo IS NULL OR n.removed = FALSE');
+        } else {
+            $queryBuilder->andWhere('n.movedTo IS NULL');
+        }
         if ($dimensions !== null) {
             $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         } else {
