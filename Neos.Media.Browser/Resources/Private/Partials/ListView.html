@@ -4,75 +4,75 @@
 <mediaBrowser:paginate queryResult="{assetProxies}" as="paginatedAssetProxies" configuration="{itemsPerPage: 30, maximumNumberOfLinks: 7}">
     <table class="neos-table asset-list">
         <thead>
-            <tr>
-                <th></th>
-                <f:if condition="{activeAssetSourceSupportsSorting}">
-                    <f:then>
-                        <th>
-                            <f:if condition="{sortBy} === 'Name'">
-                                <f:then>
-                                    <f:if condition="{sortDirection} === 'ASC'">
-                                        <f:then>
-                                            <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.desc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE">
-                                                {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
-                                            </f:link.action>
-                                            <i class="icon-caret-up"></i>
-                                        </f:then>
-                                        <f:else>
-                                            <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.asc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE">
-                                                {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
-                                            </f:link.action>
-                                            <i class="icon-caret-down"></i>
-                                        </f:else>
-                                    </f:if>
-                                </f:then>
-                                <f:else>
-                                    <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Name'}" addQueryString="TRUE">
-                                        {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
-                                    </f:link.action>
-                                </f:else>
-                            </f:if>
-                        </th>
-                        <th>
-                            <f:if condition="{sortBy} === 'Modified'">
-                                <f:then>
-                                    <f:if condition="{sortDirection} === 'ASC'">
-                                        <f:then>
-                                            <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.desc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE">
-                                                {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
-                                            </f:link.action>
-                                            <i class="icon-caret-up"></i>
-                                        </f:then>
-                                        <f:else>
-                                            <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.asc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE">
-                                                {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
-                                            </f:link.action>
-                                            <i class="icon-caret-down"></i>
-                                        </f:else>
-                                    </f:if>
-                                </f:then>
-                                <f:else>
-                                    <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Modified'}" addQueryString="TRUE">
-                                        {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
-                                    </f:link.action>
-                                </f:else>
-                            </f:if>
-                        </th>
-                    </f:then>
-                    <f:else>
-                        <th>
-                            {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
-                        </th>
-                        <th>
-                            {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
-                        </th>
-                    </f:else>
-                </f:if>
-                <th>{neos:backend.translate(id: 'field.fileSize', package: 'Neos.Media.Browser')}</th>
-                <th>{neos:backend.translate(id: 'field.type', package: 'Neos.Media.Browser')}</th>
-                <th>{neos:backend.translate(id: 'field.tags', package: 'Neos.Media.Browser')}</th>
-                <th class="neos-action"></th>
-            </tr>
+        <tr>
+            <th></th>
+            <f:if condition="{activeAssetSourceSupportsSorting}">
+                <f:then>
+                    <th>
+                        <f:if condition="{sortBy} === 'Name'">
+                            <f:then>
+                                <f:if condition="{sortDirection} === 'ASC'">
+                                    <f:then>
+                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.desc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE">
+                                            {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
+                                        </f:link.action>
+                                        <i class="icon-caret-up"></i>
+                                    </f:then>
+                                    <f:else>
+                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.asc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE">
+                                            {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
+                                        </f:link.action>
+                                        <i class="icon-caret-down"></i>
+                                    </f:else>
+                                </f:if>
+                            </f:then>
+                            <f:else>
+                                <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Name'}" addQueryString="TRUE">
+                                    {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
+                                </f:link.action>
+                            </f:else>
+                        </f:if>
+                    </th>
+                    <th>
+                        <f:if condition="{sortBy} === 'Modified'">
+                            <f:then>
+                                <f:if condition="{sortDirection} === 'ASC'">
+                                    <f:then>
+                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.desc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE">
+                                            {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
+                                        </f:link.action>
+                                        <i class="icon-caret-up"></i>
+                                    </f:then>
+                                    <f:else>
+                                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.asc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE">
+                                            {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
+                                        </f:link.action>
+                                        <i class="icon-caret-down"></i>
+                                    </f:else>
+                                </f:if>
+                            </f:then>
+                            <f:else>
+                                <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Modified'}" addQueryString="TRUE">
+                                    {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
+                                </f:link.action>
+                            </f:else>
+                        </f:if>
+                    </th>
+                </f:then>
+                <f:else>
+                    <th>
+                        {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
+                    </th>
+                    <th>
+                        {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
+                    </th>
+                </f:else>
+            </f:if>
+            <th>{neos:backend.translate(id: 'field.fileSize', package: 'Neos.Media.Browser')}</th>
+            <th>{neos:backend.translate(id: 'field.type', package: 'Neos.Media.Browser')}</th>
+            <th>{neos:backend.translate(id: 'field.tags', package: 'Neos.Media.Browser')}</th>
+            <th class="neos-action"></th>
+        </tr>
         </thead>
         <tbody>
         <f:alias map="{
@@ -85,7 +85,11 @@
             'deleteAssetLabel': '{neos:backend.translate(id: \'deleteAsset\', package: \'Neos.Media.Browser\')}'
         }">
             <f:for each="{assetProxies}" as="assetProxy" iteration="iterator">
-                <tr class="asset draggable-asset{f:if(condition: '{assetProxy.tags -> f:count()} === 0', then: ' neos-media-untagged')}" data-asset-identifier="{assetProxy.localAssetIdentifier}">
+                <tr class="asset draggable-asset{f:if(condition: '{assetProxy.tags -> f:count()} === 0', then: ' neos-media-untagged')}"
+                    data-asset-identifier="{assetProxy.identifier}"
+                    data-local-asset-identifier="{assetProxy.localAssetIdentifier}"
+                    data-asset-source-identifier="{assetProxy.assetSource.identifier}"
+                >
                     <td>
                         <div class="neos-list-thumbnail"
                              data-neos-toggle="popover"
@@ -96,8 +100,8 @@
                              data-content="{mediaBrowser:thumbnail(assetProxy: assetProxy, alt: '') -> f:format.htmlentities()}"
                              alt=""
                              width="250"
-                             height="250"/>
-                        <img src="{assetProxy.thumbnailUri}" alt="{assetProxy.label}" width="250" height="250" />
+                             height="250">
+                            <img src="{assetProxy.thumbnailUri}" alt="{assetProxy.label}" width="250" height="250"/>
                         </div>
                     </td>
                     <td class="asset-label"><span data-neos-toggle="tooltip" title="{assetProxy.label}"><f:format.crop maxCharacters="50">{assetProxy.label}</f:format.crop></span></td>
