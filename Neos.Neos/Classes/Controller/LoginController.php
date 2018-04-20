@@ -202,6 +202,8 @@ class LoginController extends AbstractAuthenticationController
      * The possible redirection URI is queried from the redirection service
      * at first, before the actual logout takes place, and the session gets destroyed.
      *
+     * @Flow\SkipCsrfProtection
+     *
      * @return void
      */
     public function logoutAction()
