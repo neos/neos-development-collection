@@ -11,8 +11,6 @@ namespace Neos\Media\Domain\Model\AssetSource;
  * source code.
  */
 
-use Neos\Flow\Exception;
-
-class AssetSourceConnectionException extends Exception
+interface AssetNotFoundExceptionInterface
 {
 }

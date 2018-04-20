@@ -20,10 +20,10 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
+use Neos\Media\Domain\Model\AssetSource\AssetNotFoundExceptionInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionExceptionInterface;
 use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Service\AssetService;
@@ -475,10 +475,10 @@ class Asset implements AssetInterface
             } else {
                 return $assetSource->getAssetProxyRepository()->getAssetProxy($this->getIdentifier());
             }
-        } catch (AssetNotFoundException $e) {
+        } catch (AssetNotFoundExceptionInterface $e) {
             $this->systemLogger->log(sprintf('Asset %s not found in asset source %s (%s)', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel()), LOG_NOTICE);
             return null;
-        } catch (AssetSourceConnectionException $e) {
+        } catch (AssetSourceConnectionExceptionInterface $e) {
             $this->systemLogger->log(sprintf('Failed connecting to asset source %s (%s): %s', $assetSource->getIdentifier(), $assetSource->getLabel(), $e->getMessage()), LOG_ERR);
             return null;
         }

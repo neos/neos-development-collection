@@ -12,11 +12,11 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
+use Neos\Media\Domain\Model\AssetSource\AssetNotFoundExceptionInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\HasRemoteOriginalInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\SupportsIptcMetadataInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionExceptionInterface;
 use Neos\Media\Domain\Model\ImportedAsset;
 use Neos\Media\Domain\Model\ImportedAssetManager;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
@@ -107,10 +107,10 @@ class AssetProxyController extends ActionController
         $assetProxyRepository = $this->assetSources[$assetSourceIdentifier]->getAssetProxyRepository();
         try {
             $assetProxy = $assetProxyRepository->getAssetProxy($assetIdentifier);
-        } catch (AssetNotFoundException $e) {
+        } catch (AssetNotFoundExceptionInterface $e) {
             $this->response->setStatus(404);
             return '';
-        } catch (AssetSourceConnectionException $e) {
+        } catch (AssetSourceConnectionExceptionInterface $e) {
             $this->response->setStatus(500, 'Connection to asset source failed');
             return '';
         }

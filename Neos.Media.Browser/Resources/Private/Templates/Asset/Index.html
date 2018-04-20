@@ -262,49 +262,49 @@
             <div id="filelist"></div>
         </div>
     </f:if>
-    <f:if condition="{assetProxies}">
+    <f:if condition="{connectionError}">
         <f:then>
-            <f:if condition="!{activeAssetSource.readOnly}">
-                <div class="neos-media-content-help">
-                    <i class="icon-info-circle"></i> {neos:backend.translate(id: 'dragHelp', package: 'Neos.Media.Browser')}
-                </div>
-            </f:if>
-            <f:render partial="{view}View" arguments="{assetProxies: assetProxies, activeAssetSource: activeAssetSource, activeAssetSourceSupportsSorting: activeAssetSourceSupportsSorting, sortBy: sortBy, sortDirection: sortDirection}" />
+            <h2>{neos:backend.translate(id: 'connectionError', package: 'Neos.Media.Browser')}</h2>
+            <p>{connectionError.message}</p>
+        </f:then>
+        <f:else>
+            <f:if condition="{assetProxies -> f:count()}">
+                <f:then>
+                    <f:if condition="!{activeAssetSource.readOnly}">
+                        <div class="neos-media-content-help">
+                            <i class="icon-info-circle"></i> {neos:backend.translate(id: 'dragHelp', package: 'Neos.Media.Browser')}
+                        </div>
+                    </f:if>
+                    <f:render partial="{view}View" arguments="{assetProxies: assetProxies, activeAssetSource: activeAssetSource, activeAssetSourceSupportsSorting: activeAssetSourceSupportsSorting, sortBy: sortBy, sortDirection: sortDirection}" />
 
-            <div class="neos-hide" id="delete-asset-modal">
-                <div class="neos-modal-centered">
-                    <div class="neos-modal-content">
-                        <div class="neos-modal-header">
-                            <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-                            <div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteAsset', package: 'Neos.Media.Browser')}</div>
-                            <div>
-                                <div class="neos-subheader">
-                                    <p>
-                                        {neos:backend.translate(id: 'message.willBeDeleted', package: 'Neos.Media.Browser')}<br />
-                                        {neos:backend.translate(id: 'message.operationCannotBeUndone', package: 'Neos.Media.Browser')}
-                                    </p>
+                    <div class="neos-hide" id="delete-asset-modal">
+                        <div class="neos-modal-centered">
+                            <div class="neos-modal-content">
+                                <div class="neos-modal-header">
+                                    <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+                                    <div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteAsset', package: 'Neos.Media.Browser')}</div>
+                                    <div>
+                                        <div class="neos-subheader">
+                                            <p>
+                                                {neos:backend.translate(id: 'message.willBeDeleted', package: 'Neos.Media.Browser')}<br />
+                                                {neos:backend.translate(id: 'message.operationCannotBeUndone', package: 'Neos.Media.Browser')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="neos-modal-footer">
+                                    <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
+                                    <f:form action="delete" method="post" class="neos-inline">
+                                        <f:form.hidden name="asset" id="modal-form-object" />
+                                        <button type="submit" class="neos-button neos-button-mini neos-button-danger">
+                                            {neos:backend.translate(id: 'message.confirmDelete', package: 'Neos.Media.Browser')}
+                                        </button>
+                                    </f:form>
                                 </div>
                             </div>
                         </div>
-                        <div class="neos-modal-footer">
-                            <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
-                            <f:form action="delete" method="post" class="neos-inline">
-                                <f:form.hidden name="asset" id="modal-form-object" />
-                                <button type="submit" class="neos-button neos-button-mini neos-button-danger">
-                                    {neos:backend.translate(id: 'message.confirmDelete', package: 'Neos.Media.Browser')}
-                                </button>
-                            </f:form>
-                        </div>
+                        <div class="neos-modal-backdrop neos-in"></div>
                     </div>
-                </div>
-                <div class="neos-modal-backdrop neos-in"></div>
-            </div>
-        </f:then>
-        <f:else>
-            <f:if condition="{connectionError}">
-                <f:then>
-                    <h2>{neos:backend.translate(id: 'connectionError', package: 'Neos.Media.Browser')}</h2>
-                    <p>{connectionError.message}</p>
                 </f:then>
                 <f:else>
                     <p>{neos:backend.translate(id: 'noAssetsFound', package: 'Neos.Media.Browser')}</p>

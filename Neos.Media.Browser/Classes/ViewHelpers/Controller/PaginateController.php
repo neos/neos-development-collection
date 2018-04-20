@@ -14,7 +14,7 @@ namespace Neos\Media\Browser\ViewHelpers\Controller;
 
 use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
-use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionExceptionInterface;
 use Neos\Utility\Arrays;
 
 /**
@@ -103,7 +103,7 @@ class PaginateController extends AbstractWidgetController
             $this->view->assign('contentArguments', [$this->widgetConfiguration['as'] => $modifiedObjects]);
             $this->view->assign('configuration', $this->configuration);
             $this->view->assign('pagination', $this->buildPagination());
-        } catch (AssetSourceConnectionException $exception) {
+        } catch (AssetSourceConnectionExceptionInterface $exception) {
             $this->view->assign('connectionError', $exception);
         }
     }
