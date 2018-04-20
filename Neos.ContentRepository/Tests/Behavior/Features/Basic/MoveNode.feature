@@ -31,18 +31,18 @@ Feature: Move node
   @fixtures
   Scenario: Move an unpublished node (into) in user workspace and get by identifier
     Given I have the following nodes:
-      | Identifier                           | Path                     | Node Type                  | Properties             | Workspace  |
-      | c0fe0360-399b-11e8-b7ef-b7f4bc6ded24 | /sites/typo3cr/service-1 | TYPO3.TYPO3CR.Testing:Page | {"title": "Service 1"} | user-admin |
-    When I get a node by path "/sites/typo3cr/service-1" with the following context:
+      | Identifier                           | Path                                | Node Type                           | Properties             | Workspace  |
+      | c0fe0360-399b-11e8-b7ef-b7f4bc6ded24 | /sites/content-repository/service-1 | Neos.ContentRepository.Testing:Page | {"title": "Service 1"} | user-admin |
+    When I get a node by path "/sites/content-repository/service-1" with the following context:
       | Workspace  |
       | user-admin |
-    And I move the node into the node with path "/sites/typo3cr/service"
+    And I move the node into the node with path "/sites/content-repository/service"
     And I get a node by identifier "c0fe0360-399b-11e8-b7ef-b7f4bc6ded24" with the following context:
       | Workspace  |
       | user-admin |
     Then I should have the following nodes:
-      | Path                             |
-      | /sites/typo3cr/service/service-1 |
+      | Path                                        |
+      | /sites/content-repository/service/service-1 |
 
   @fixtures
   Scenario: Move a node (into) in user workspace and get nodes on path
