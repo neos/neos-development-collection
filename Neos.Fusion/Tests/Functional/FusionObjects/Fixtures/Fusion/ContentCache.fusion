@@ -575,6 +575,7 @@ contentCache.dynamicSegmentWithNestedCachedSegment = Neos.Fusion:Array {
 		}
 		@cache {
 			mode = 'dynamic'
+			entryDiscriminator = 'static'
 			context {
 				1 = 'renderObject'
 			}
