@@ -59,7 +59,7 @@ class XliffServiceTest extends FunctionalTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $mockPackageManager->expects($this->any())
-            ->method('getAvailablePackages')
+            ->method('getFlowPackages')
             ->will($this->returnValue($this->packages));
         $mockPackageManager->expects($this->any())
             ->method('getPackage')
@@ -121,7 +121,7 @@ class XliffServiceTest extends FunctionalTestCase
         $packageKey = $vendorName . '.' . $packageName;
         mkdir($packagePath, 0700, true);
         mkdir($packagePath . 'Resources/Private/Translations/de/', 0700, true);
-        file_put_contents($packagePath . 'composer.json', '{"name": "' . $composerName . '", "type": "flow-test"}');
+        file_put_contents($packagePath . 'composer.json', '{"name": "' . $composerName . '", "type": "neos-test"}');
 
         $fixtureBasePath = __DIR__ . '/Fixtures/';
         foreach ($filePaths as $fixturePath => $targetPath) {
