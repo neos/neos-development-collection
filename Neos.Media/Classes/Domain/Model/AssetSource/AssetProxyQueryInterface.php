@@ -45,7 +45,7 @@ interface AssetProxyQueryInterface
 
     /**
      * @return AssetProxyQueryResultInterface
-     * @throws AssetSourceConnectionException
+     * @throws AssetSourceConnectionExceptionInterface
      */
     public function execute(): AssetProxyQueryResultInterface;
 

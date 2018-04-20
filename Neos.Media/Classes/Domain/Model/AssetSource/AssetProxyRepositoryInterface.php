@@ -19,8 +19,8 @@ interface AssetProxyRepositoryInterface
     /**
      * @param string $identifier
      * @return AssetProxyInterface
-     * @throws AssetNotFoundException
-     * @throws AssetSourceConnectionException
+     * @throws AssetNotFoundExceptionInterface
+     * @throws AssetSourceConnectionExceptionInterface
      */
     public function getAssetProxy(string $identifier): AssetProxyInterface;
 
@@ -31,7 +31,7 @@ interface AssetProxyRepositoryInterface
 
     /**
      * @return AssetProxyQueryResultInterface
-     * @throws AssetSourceConnectionException
+     * @throws AssetSourceConnectionExceptionInterface
      */
     public function findAll(): AssetProxyQueryResultInterface;
 

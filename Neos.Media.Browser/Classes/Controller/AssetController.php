@@ -38,10 +38,10 @@ use Neos\Media\Browser\Domain\Session\BrowserState;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
+use Neos\Media\Domain\Model\AssetSource\AssetNotFoundExceptionInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionException;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionExceptionInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
 use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetProxy;
 use Neos\Media\Domain\Model\AssetSource\SupportsCollectionsInterface;
@@ -265,16 +265,23 @@ class AssetController extends ActionController
         $this->applyAssetCollectionFilterFromBrowserState($assetProxyRepository);
 
         $assetCollections = [];
-        foreach ($this->assetCollectionRepository->findAll() as $assetCollection) {
-            $assetCollections[] = ['object' => $assetCollection, 'count' => $this->assetRepository->countByAssetCollection($assetCollection)];
-        }
-
         $tags = [];
-        foreach ($activeAssetCollection !== null ? $activeAssetCollection->getTags() : $this->tagRepository->findAll() as $tag) {
-            $tags[] = ['object' => $tag, 'count' => $this->assetRepository->countByTag($tag, $activeAssetCollection)];
-        }
+        $assetProxies = [];
+
+        $allCollectionsCount = 0;
+        $allCount = 0;
+        $searchResultCount = 0;
+        $untaggedCount = 0;
 
         try {
+            foreach ($this->assetCollectionRepository->findAll() as $assetCollection) {
+                $assetCollections[] = ['object' => $assetCollection, 'count' => $this->assetRepository->countByAssetCollection($assetCollection)];
+            }
+
+            foreach ($activeAssetCollection !== null ? $activeAssetCollection->getTags() : $this->tagRepository->findAll() as $tag) {
+                $tags[] = ['object' => $tag, 'count' => $this->assetRepository->countByTag($tag, $activeAssetCollection)];
+            }
+
             if ($searchTerm !== null) {
                 $assetProxies = $assetProxyRepository->findBySearchTerm($searchTerm);
                 $this->view->assign('searchTerm', $searchTerm);
@@ -286,19 +293,22 @@ class AssetController extends ActionController
                 $assetProxies = $activeAssetCollection === null ? $assetProxyRepository->findAll() : $assetProxyRepository->findAll();
             }
 
-            $this->view->assign('assetProxies', $assetProxies);
-        } catch (AssetSourceConnectionException $e) {
+            $allCollectionsCount = $assetProxyRepository->countAll();
+            $allCount = ($activeAssetCollection ? $this->assetRepository->countByAssetCollection($activeAssetCollection) : $allCollectionsCount);
+            $searchResultCount = isset($assetProxies) ? $assetProxies->count() : 0;
+            $untaggedCount = ($assetProxyRepository instanceof SupportsTaggingInterface ? $assetProxyRepository->countUntagged() : 0);
+        } catch (AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
         }
 
-        $allCollectionsCount = $assetProxyRepository->countAll();
         $this->view->assignMultiple([
             'tags' => $tags,
             'allCollectionsCount' => $allCollectionsCount,
-            'allCount' => ($activeAssetCollection ? $this->assetRepository->countByAssetCollection($activeAssetCollection) : $allCollectionsCount),
-            'searchResultCount' => isset($assetProxies) ? $assetProxies->count() : 0,
-            'untaggedCount' => ($assetProxyRepository instanceof SupportsTaggingInterface ? $assetProxyRepository->countUntagged() : 0),
+            'allCount' => $allCount,
+            'searchResultCount' => $searchResultCount,
+            'untaggedCount' => $untaggedCount,
             'tagMode' => $this->browserState->get('tagMode'),
+            'assetProxies' => $assetProxies,
             'assetCollections' => $assetCollections,
             'argumentNamespace' => $this->request->getArgumentNamespace(),
             'maximumFileUploadSize' => $this->getMaximumFileUploadSize(),
@@ -362,9 +372,9 @@ class AssetController extends ActionController
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll()
             ]);
-        } catch (AssetNotFoundException $e) {
+        } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Asset not found');
-        } catch (AssetSourceConnectionException $e) {
+        } catch (AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
         }
     }
@@ -410,9 +420,9 @@ class AssetController extends ActionController
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
                 'assetSource' => $assetSource
             ]);
-        } catch (AssetNotFoundException $e) {
+        } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Asset not found');
-        } catch (AssetSourceConnectionException $e) {
+        } catch (AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
         }
     }

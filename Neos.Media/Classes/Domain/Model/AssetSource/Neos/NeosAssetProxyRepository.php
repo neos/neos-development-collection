@@ -17,7 +17,7 @@ use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetNotFoundException;
+use Neos\Media\Domain\Model\AssetSource\AssetNotFoundExceptionInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
@@ -134,13 +134,13 @@ final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, S
     /**
      * @param string $identifier
      * @return AssetProxyInterface
-     * @throws AssetNotFoundException
+     * @throws AssetNotFoundExceptionInterface
      */
     public function getAssetProxy(string $identifier): AssetProxyInterface
     {
         $asset = $this->assetRepository->findByIdentifier($identifier);
         if ($asset === null || !$asset instanceof AssetInterface) {
-            throw new AssetNotFoundException('The specified asset was not found.', 1509632861);
+            throw new NeosAssetNotFoundException('The specified asset was not found.', 1509632861);
         }
         return new NeosAssetProxy($asset, $this->assetSource);
     }

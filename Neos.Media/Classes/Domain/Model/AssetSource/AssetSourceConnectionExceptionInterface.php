@@ -11,15 +11,10 @@ namespace Neos\Media\Domain\Model\AssetSource;
  * source code.
  */
 
-use Neos\Flow\Exception;
-
-class AssetNotFoundException extends Exception
+/**
+ * Exceptions of asset sources which are thrown on connection problems should
+ * implement this interface so that they can be handled specifically.
+ */
+interface AssetSourceConnectionExceptionInterface
 {
-    /**
-     * @return int
-     */
-    public function getStatusCode()
-    {
-        return 404;
-    }
 }
