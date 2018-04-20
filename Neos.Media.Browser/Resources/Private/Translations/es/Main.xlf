@@ -68,6 +68,9 @@
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target xml:lang="es-ES" state="translated">Editar activos</target></trans-unit>
+      <trans-unit id="replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="es-ES" state="translated">Reemplazar</target></trans-unit>
       <trans-unit id="deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
 			<target xml:lang="es-ES" state="translated">Eliminar activos</target></trans-unit>
@@ -317,7 +320,7 @@
 			<target xml:lang="es-ES" state="needs-translation">References to "{asset}"</target></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="es-ES" state="translated">Reemplazar "{filename}"</target></trans-unit>
+			<target xml:lang="es-ES" state="needs-translation">Replace "{filename}"</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
 			<target xml:lang="es-ES" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
@@ -325,11 +328,11 @@
 				<source>Note</source>
 			<target xml:lang="es-ES">Nota</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
-				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-			<target xml:lang="es-ES" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      <target xml:lang="es-ES" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
       <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
-				<source>Choose a new file</source>
-			<target xml:lang="es-ES" state="translated">Seleccione un nuevo archivo</target></trans-unit>
+        <source>Choose a new file</source>
+      <target xml:lang="es-ES" state="needs-translation">Choose a new file</target></trans-unit>
       <trans-unit id="replace.usageCount" xml:space="preserve">
 				<source>Currently the asset is used {usageCount} times.</source>
 			<target xml:lang="es-ES" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
