@@ -30,7 +30,6 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Media\Exception\AssetServiceException;
-use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use Neos\Utility\Arrays;
 
 /**
@@ -87,7 +86,7 @@ class AssetService
      * @var ImageService
      */
     protected $imageService;
-    
+
     /**
      * Returns the repository for an asset
      *
