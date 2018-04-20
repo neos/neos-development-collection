@@ -4,13 +4,13 @@
     "description": "Fusion is a hierarchical, prototype based processing language",
     "license": ["GPL-3.0-or-later"],
     "require": {
-        "neos/flow": "*",
-        "neos/fluid-adaptor": "*",
-        "neos/cache": "*",
-        "neos/eel": "*",
-        "neos/utility-arrays": "*",
-        "neos/utility-objecthandling": "*",
-        "neos/utility-unicode": "*",
+        "neos/flow": "~5.0.0",
+        "neos/fluid-adaptor": "~5.0.0",
+        "neos/cache": "~5.0.0",
+        "neos/eel": "~5.0.0",
+        "neos/utility-arrays": "~5.0.0",
+        "neos/utility-objecthandling": "~5.0.0",
+        "neos/utility-unicode": "~5.0.0",
 
         "doctrine/orm": "~2.6.0"
     },
