@@ -13,6 +13,7 @@ namespace Neos\Media;
 
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\Package as BasePackage;
+use Neos\Media\Domain\Model\ImportedAssetManager;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\ThumbnailGenerator;
 
@@ -29,5 +30,7 @@ class Package extends BasePackage
     {
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
         $dispatcher->connect(AssetService::class, 'assetCreated', ThumbnailGenerator::class, 'createThumbnails');
+        $dispatcher->connect(AssetService::class, 'assetCreated', ImportedAssetManager::class, 'registerCreatedAsset');
+        $dispatcher->connect(AssetService::class, 'assetRemoved', ImportedAssetManager::class, 'registerRemovedAsset');
     }
 }

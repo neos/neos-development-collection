@@ -68,7 +68,7 @@ class YamlConfiguration extends Configuration
             $filename = $fileInfo->getFilename();
             if ($fileInfo->isFile() && $filename[0] !== '.' && (substr($filename, -5) === '.yaml')) {
                 if (preg_match('/^Version[0-9]{14}.yaml$/', $filename) !== 1) {
-                    throw new MigrationException('The migration file ' . $filename . ' is named wrong, expected format is "VersionYYYYMMDDHHmmss.yaml".', 1515752616793);
+                    throw new MigrationException('The migration file ' . $filename . ' is named wrong, expected format is "VersionYYYYMMDDHHmmss.yaml".', 1515752616);
                 }
                 $versionNumber = substr(substr($filename, 7), 0, -5);
                 if (array_key_exists($versionNumber, $this->availableVersions)) {
