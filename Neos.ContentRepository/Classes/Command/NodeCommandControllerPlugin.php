@@ -326,6 +326,7 @@ HELPTEXT;
     {
         $createdNodesCount = 0;
         $updatedNodesCount = 0;
+        $incorrectNodeTypeCount = 0;
         $nodeCreationExceptions = 0;
 
         $nodeIdentifiersWhichNeedUpdate = [];
@@ -364,6 +365,11 @@ HELPTEXT;
                             $createdNodesCount++;
                         } elseif ($childNode->getIdentifier() !== $childNodeIdentifier) {
                             $nodeIdentifiersWhichNeedUpdate[$childNode->getIdentifier()] = $childNodeIdentifier;
+                        } elseif ($childNode->getNodeType() !== $childNodeType) {
+                            $incorrectNodeTypeCount++;
+                            if ($dryRun === false) {
+                                $childNode->setNodeType($childNodeType);
+                            }
                         }
                     } catch (\Exception $exception) {
                         $this->output->outputLine('Could not create node named "%s" in "%s" (%s)', array($childNodeName, $node->getPath(), $exception->getMessage()));
@@ -393,13 +399,16 @@ HELPTEXT;
             }
         }
 
-        if ($createdNodesCount !== 0 || $nodeCreationExceptions !== 0 || $updatedNodesCount !== 0) {
+        if ($createdNodesCount !== 0 || $nodeCreationExceptions !== 0 || $updatedNodesCount !== 0 || $incorrectNodeTypeCount !== 0) {
             if ($dryRun === false) {
                 if ($createdNodesCount > 0) {
                     $this->output->outputLine('Created %s new child nodes', array($createdNodesCount));
                 }
                 if ($updatedNodesCount > 0) {
                     $this->output->outputLine('Updated identifier of %s child nodes', array($updatedNodesCount));
+                }
+                if ($incorrectNodeTypeCount > 0) {
+                    $this->output->outputLine('Changed node type of %s child nodes', array($incorrectNodeTypeCount));
                 }
                 if ($nodeCreationExceptions > 0) {
                     $this->output->outputLine('%s Errors occurred during child node creation', array($nodeCreationExceptions));
@@ -411,6 +420,9 @@ HELPTEXT;
                 }
                 if ($updatedNodesCount > 0) {
                     $this->output->outputLine('%s identifiers of child nodes need to be updated', array($updatedNodesCount));
+                }
+                if ($incorrectNodeTypeCount > 0) {
+                    $this->output->outputLine('%s child nodes have incorrect node type', array($incorrectNodeTypeCount));
                 }
             }
         }
