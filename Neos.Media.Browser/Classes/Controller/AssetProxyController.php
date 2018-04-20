@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Media\Browser\Controller;
 
 /*
