@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Core\Migrations;
+namespace Neos\Neos\Service;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -11,10 +11,12 @@ namespace Neos\Flow\Core\Migrations;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
- * Migrate fontawesome icon names in yaml configurations
+ * @Flow\Scope("singleton")
  */
-class Version20180410171200 extends AbstractMigration
+class IconNameMappingService
 {
     protected $backwardsCompatibilityMapping = [
         'icon-calendar-empty' => 'icon-calendar-o',
@@ -504,33 +506,30 @@ class Version20180410171200 extends AbstractMigration
     ];
 
     /**
+     * @param string $iconName
      * @return string
      */
-    public function getIdentifier()
+    public function convert(string $iconName): string
     {
-        return 'Neos.Neos-20180410171200';
-    }
 
-    /**
-     * @return void
-     */
-    public function up()
-    {
-        foreach ($this->backwardsCompatibilityMapping as $search => $replace) {
-            $this->searchAndReplace($search, $replace, ['yaml']);
+        if (strpos($iconName, 'icon-') === false) {
+            return $iconName;
         }
 
-        krsort($this->iconMapping);
-        foreach ($this->iconMapping as $search => $replace) {
-            $this->searchAndReplace('icon-'.$search, $replace, ['yaml']);
+        if (isset($this->backwardsCompatibilityMapping[$iconName])) {
+            $iconName = $this->backwardsCompatibilityMapping[$iconName];
         }
 
-        arsort($this->brandIcons);
-        foreach ($this->brandIcons as $brandIcon) {
-            $this->searchAndReplace('icon-'.$brandIcon, 'fab fa-'.$brandIcon, ['yaml']);
+        $iconWithoutPrefix = substr($iconName, 5);
+
+        if (isset($this->iconMapping[$iconWithoutPrefix])) {
+            return $this->iconMapping[$iconWithoutPrefix];
         }
 
-        $this->searchAndReplace('icon-', "fas fa-", ['yaml']);
+        if (isset($this->brandIcons[$iconWithoutPrefix])) {
+            return 'fab fa-' . $this->brandIcons[$iconWithoutPrefix];
+        }
 
+        return 'fas fa-' . $iconWithoutPrefix;
     }
 }
