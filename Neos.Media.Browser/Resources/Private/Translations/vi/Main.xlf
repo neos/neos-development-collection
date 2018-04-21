@@ -2,7 +2,7 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Media.Browser" source-language="en" datatype="plaintext" target-language="vi">
     <body>
-		<trans-unit id="dragHelp" xml:space="preserve">
+      <trans-unit id="dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
 			<target xml:lang="vi" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve">
@@ -56,15 +56,24 @@
       <trans-unit id="sortDirection.desc" xml:space="preserve">
 				<source>Descending</source>
 			<target xml:lang="vi" state="needs-translation">Descending</target></trans-unit>
+      <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
+				<source>Sort direction Ascending</source>
+			<target xml:lang="vi" state="needs-translation">Sort direction Ascending</target></trans-unit>
+      <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
+				<source>Sort direction Descending</source>
+			<target xml:lang="vi" state="needs-translation">Sort direction Descending</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="vi" state="translated">Kéo và thả vào từ khóa hoặc bộ sưu tập</target></trans-unit>
+      <trans-unit id="view" xml:space="preserve">
+				<source>View</source>
+			<target xml:lang="vi" state="needs-translation">View</target></trans-unit>
+      <trans-unit id="viewAsset" xml:space="preserve">
+				<source>View asset</source>
+			<target xml:lang="vi" state="needs-translation">View asset</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target xml:lang="vi" state="translated">Chỉnh sửa tài sản</target></trans-unit>
-      <trans-unit id="replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			<target xml:lang="vi" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
 			<target xml:lang="vi" state="translated">Xóa tài sản</target></trans-unit>
@@ -92,6 +101,12 @@
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="vi" state="translated">Hủy bỏ</target></trans-unit>
+      <trans-unit id="replace" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="vi" state="needs-translation">Replace</target></trans-unit>
+      <trans-unit id="replaceAssetResource" xml:space="preserve">
+				<source>Replace asset resource</source>
+			<target xml:lang="vi" state="needs-translation">Replace asset resource</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="vi" state="translated">Lưu</target></trans-unit>
@@ -164,6 +179,15 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
 			<target xml:lang="vi" state="translated">Xem hình thu nhỏ</target></trans-unit>
+      <trans-unit id="connectionError" xml:space="preserve">
+				<source>Connection error</source>
+			<target xml:lang="vi" state="needs-translation">Connection error</target></trans-unit>
+      <trans-unit id="mediaSource" xml:space="preserve">
+				<source>Media source</source>
+			<target xml:lang="vi" state="needs-translation">Media source</target></trans-unit>
+      <trans-unit id="mediaSources" xml:space="preserve">
+				<source>Media sources</source>
+			<target xml:lang="vi" state="needs-translation">Media sources</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
 			<target xml:lang="vi" state="translated">Các bộ sưu tập</target></trans-unit>
@@ -263,12 +287,24 @@
       <trans-unit id="metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="vi" state="translated">Định danh</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve">
+				<source>Title</source>
+			<target xml:lang="vi" state="translated">Tiêu đề</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve">
+				<source>Caption</source>
+			<target xml:lang="vi" state="needs-translation">Caption</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target xml:lang="vi" state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			<target xml:lang="vi" state="translated">Xem trước</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="vi" state="translated">Không thể tải lên tập tin</target></trans-unit>
+      <trans-unit id="noFileSelected" xml:space="preserve">
+				<source>No file selected</source>
+			<target xml:lang="vi" state="needs-translation">No file selected</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="vi" state="translated">Kích thước tập tin của {0} vượt quá giới hạn cho phép của {1}</target></trans-unit>
@@ -290,42 +326,42 @@
       <trans-unit id="deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target xml:lang="vi" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
-		<group id="relatedNodes" restype="x-gettext-plurals">
-			<trans-unit id="relatedNodes[0]">
-				<source>{0} usages</source>
-				<target xml:lang="vi" state="needs-translation">{0} usages</target>
-			</trans-unit>
-		</group>
-		<trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
+      <group id="relatedNodes" restype="x-gettext-plurals">
+        <trans-unit id="relatedNodes[0]">
+          <source>{0} usages</source>
+          <target xml:lang="vi" state="needs-translation">{0} usages</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
 			<target xml:lang="vi" state="needs-translation">References to "{asset}"</target></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
 			<target xml:lang="vi" state="needs-translation">Replace "{filename}"</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
-        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="vi" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+			<target xml:lang="vi" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
       <trans-unit id="replaceAsset.note" xml:space="preserve">
-        <source>Note</source>
-      <target xml:lang="vi" state="needs-translation">Note</target></trans-unit>
+				<source>Note</source>
+			<target xml:lang="vi" state="needs-translation">Note</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
-        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-      <target xml:lang="vi" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+			<target xml:lang="vi" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
       <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
-        <source>Choose a new file</source>
-      <target xml:lang="vi" state="needs-translation">Choose a new file</target></trans-unit>
+				<source>Choose a new file</source>
+			<target xml:lang="vi" state="needs-translation">Choose a new file</target></trans-unit>
       <trans-unit id="replace.usageCount" xml:space="preserve">
-        <source>Currently the asset is used {usageCount} times.</source>
-      <target xml:lang="vi" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+				<source>Currently the asset is used {usageCount} times.</source>
+			<target xml:lang="vi" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
       <trans-unit id="replace.allUsages" xml:space="preserve">
-        <source>Show all usages</source>
-      <target xml:lang="vi" state="needs-translation">Show all usages</target></trans-unit>
+				<source>Show all usages</source>
+			<target xml:lang="vi" state="needs-translation">Show all usages</target></trans-unit>
       <trans-unit id="replace.notUsed" xml:space="preserve">
-        <source>Currently the asset is not in used anywhere on the website.</source>
-      <target xml:lang="vi" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+				<source>Currently the asset is not in used anywhere on the website.</source>
+			<target xml:lang="vi" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
       <trans-unit id="replace.previewFile" xml:space="preserve">
-        <source>Preview current file</source>
-      <target xml:lang="vi" state="needs-translation">Preview current file</target></trans-unit>
+				<source>Preview current file</source>
+			<target xml:lang="vi" state="needs-translation">Preview current file</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
 			<target xml:lang="vi" state="needs-translation">Could not replace asset</target></trans-unit>
@@ -368,6 +404,15 @@
       <trans-unit id="replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
 			<target xml:lang="vi" state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
+      <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
+				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
+			<target xml:lang="vi" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+      <trans-unit id="noAccessToWorkspace" xml:space="preserve">
+				<source>No access to workspace "{0}"</source>
+			<target xml:lang="vi" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+      <trans-unit id="missingDocumentNode" xml:space="preserve">
+				<source>No document node found for this node</source>
+			<target xml:lang="vi" state="needs-translation">No document node found for this node</target></trans-unit>
     </body>
   </file>
 </xliff>
