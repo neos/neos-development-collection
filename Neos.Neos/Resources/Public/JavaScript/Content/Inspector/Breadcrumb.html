@@ -1,6 +1,6 @@
 <div>
 	<span>
-		<i {{bindAttr class="view.currentNode.nodeTypeSchema.ui.icon::icon-sign-blank view.currentNode.nodeTypeSchema.ui.icon"}}></i>
+		<i {{bindAttr class="view.currentNode.nodeTypeSchema.ui.icon::fas fa-stop view.currentNode.nodeTypeSchema.ui.icon"}}></i>
 		{{view.currentNode.nodeLabel}}
 		{{#if view.currentNode.status}}({{view.currentNode.status}}){{/if}}
 	</span>
@@ -10,7 +10,7 @@
 		{{#if _view.contentIndex}}
 			<li>
 				<a href="#" {{action "selectNode" node bubbles=false target="view.nodeSelection"}}>
-				<i {{bindAttr class="node.nodeTypeSchema.ui.icon::icon-sign-blank node.nodeTypeSchema.ui.icon"}}></i>
+				<i {{bindAttr class="node.nodeTypeSchema.ui.icon::fas fa-stop node.nodeTypeSchema.ui.icon"}}></i>
 				{{node.nodeLabel}}
 				{{#if status}}<span class="neos-breadcrumbitem-status">({{status}})</span>{{/if}}
 				</a>
