@@ -511,7 +511,6 @@ class IconNameMappingService
      */
     public function convert(string $iconName): string
     {
-
         if (strpos($iconName, 'icon-') === false) {
             return $iconName;
         }
