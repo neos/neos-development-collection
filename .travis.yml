@@ -68,7 +68,7 @@ before_script:
   - if [ "$BEHAT" = "true" ]; then composer install -d Build/Behat; fi
 script:
   - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml; fi
-  - if [ "$BEHAT" != "true" ]; then df -h ; bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"; df -h ; fi
+  - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"; fi
   - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser; fi
   - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist; fi
 notifications:
