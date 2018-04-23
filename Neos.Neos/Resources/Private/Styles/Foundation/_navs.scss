@@ -75,8 +75,8 @@
   text-shadow: 0 -1px 0 rgba(0,0,0,.2);
   background-color: $linkColor;
 }
-.neos-nav-list [class^="icon-"],
-.neos-nav-list [class*=" icon-"] {
+.neos-nav-list [class^="fa-"],
+.neos-nav-list [class*=" fa-"] {
   margin-right: 2px;
 }
 // Dividers (basically an hr) within the dropdown

@@ -194,7 +194,7 @@
 
 					&:after {
 						@include fa-icon();
-						content: $fa-var-caret-down;
+						content: fa-content($fa-var-caret-down);
 						display: block;
 						position: absolute;
 						width: $unit;
@@ -608,8 +608,8 @@
 			@include box-sizing(border-box);
 			font-size: 14px;
 
-			[class^="icon-"],
-			[class*=" icon-"] {
+			[class^="fa-"],
+			[class*=" fa-"] {
 				vertical-align: top;
 			}
 
