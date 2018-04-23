@@ -91,10 +91,11 @@ class NodeTypeConfigurationEnrichmentAspect
     /**
      * Map all icon- prefixed icon names to the corresponding
      * names in the used icon implementation
-     * 
+     *
      * @param array $configuration
      */
-    protected function mapIconNames(array &$configuration) {
+    protected function mapIconNames(array &$configuration)
+    {
         if (isset($configuration['ui']['icon'])) {
             $configuration['ui']['icon'] = $this->iconNameMappingService->convert($configuration['ui']['icon']);
         }
@@ -103,7 +104,7 @@ class NodeTypeConfigurationEnrichmentAspect
         if (is_array($inspectorConfiguration)) {
             foreach ($inspectorConfiguration as $elementTypeName => $elementTypeItems) {
                 foreach ($elementTypeItems as $elementName => $elementConfiguration) {
-                    if(isset($inspectorConfiguration[$elementTypeName][$elementName]['icon'])) {
+                    if (isset($inspectorConfiguration[$elementTypeName][$elementName]['icon'])) {
                         $configuration['ui']['inspector'][$elementTypeName][$elementName]['icon'] = $this->iconNameMappingService->convert($inspectorConfiguration[$elementTypeName][$elementName]['icon']);
                     }
                 }
