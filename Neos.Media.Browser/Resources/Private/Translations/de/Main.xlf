@@ -67,10 +67,10 @@
 			<target xml:lang="de">Auf Tag oder Sammlung ziehen und loslassen</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target xml:lang="de" state="needs-translation">View</target></trans-unit>
+			<target xml:lang="de" state="translated">Ansicht</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target xml:lang="de" state="needs-translation">View asset</target></trans-unit>
+			<target xml:lang="de" state="translated">Asset anzeigen</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="de">Asset bearbeiten</target></trans-unit>
@@ -181,13 +181,13 @@
 			<target xml:lang="de">Miniaturansicht</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target xml:lang="de" state="needs-translation">Connection error</target></trans-unit>
+			<target xml:lang="de" state="translated">Verbindungsfehler</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target xml:lang="de" state="needs-translation">Media source</target></trans-unit>
+			<target xml:lang="de" state="translated">Medienquelle</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target xml:lang="de" state="needs-translation">Media sources</target></trans-unit>
+			<target xml:lang="de" state="translated">Medienquellen</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target xml:lang="de">Sammlungen</target></trans-unit>
@@ -295,7 +295,7 @@
 			<target xml:lang="de">Beschriftung</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target xml:lang="de" state="needs-translation">Copyright Notice</target></trans-unit>
+			<target xml:lang="de" state="translated">Urheberrechtshinweis</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="de">Vorschau</target></trans-unit>
