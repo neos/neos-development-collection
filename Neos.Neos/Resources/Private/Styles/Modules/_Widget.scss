@@ -29,7 +29,6 @@
 		// Icon styles
 		i {
 			color: #fff;
-			font-size: 12px;
 			width: $unit;
 			height: $unit;
 			border-right: 1px solid $grayDark;
@@ -40,6 +39,7 @@
 				height: inherit;
 				text-align: center;
 				line-height: $unit;
+				padding: 12px;
 			}
 		}
 	}

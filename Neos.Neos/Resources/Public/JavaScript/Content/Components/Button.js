@@ -26,7 +26,7 @@ define(
 			icon: '',
 			iconClass: function() {
 				var icon = this.get('icon');
-				return icon !== '' ? 'icon-' + icon : '';
+				return icon !== '' ? 'fas fa-' + icon : '';
 			}.property('icon'),
 
 			/**

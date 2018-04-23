@@ -81,7 +81,7 @@
 				}
 			}
 
-			i.icon-user {
+			i.fa-user {
 				margin-right: 11px;
 			}
 		}
@@ -256,7 +256,7 @@
 
 		&:after {
 			@include fa-icon();
-			content: $fa-var-caret-down;
+			content: fa-content($fa-var-caret-down);
 			display: block;
 			position: absolute;
 			right: 0;

@@ -4,17 +4,17 @@
     "license": ["GPL-3.0-or-later"],
     "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
     "require": {
-        "neos/diff": "~3.3.0",
-        "neos/flow": "~4.3.0",
-        "neos/media-browser": "~3.3.0",
+        "neos/diff": "~4.0.0",
+        "neos/flow": "~5.0.0",
+        "neos/media-browser": "~4.0.0",
         "neos/party": "*",
         "neos/setup": "*",
         "neos/twitter-bootstrap": "*",
-        "neos/content-repository": "~3.3.0",
-        "neos/fusion": "~3.3.0",
-        "neos/fluid-adaptor": "~4.3.0",
+        "neos/content-repository": "~4.0.0",
+        "neos/fusion": "~4.0.0",
+        "neos/fluid-adaptor": "~5.0.0",
         "behat/transliterator": "~1.0",
-        "neos/media": "~3.3.0"
+        "neos/media": "~4.0.0"
     },
     "suggest": {
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",

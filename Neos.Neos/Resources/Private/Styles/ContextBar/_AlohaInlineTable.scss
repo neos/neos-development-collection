@@ -155,7 +155,8 @@ td.aloha-table-selectrow {
 		text-decoration: inherit;
 		display: inline-block;
 		speak: none;
-		content: $fa-var-arrows;
+		content: fa-content($fa-var-arrows-alt);
+		font-weight: 900;
 	}
 }
 
@@ -248,7 +249,7 @@ td.aloha-table-selectrow {
 				}
 
 				&:before {
-					content: $fa-var-times;
+					content: fa-content($fa-var-times);
 				}
 
 				&:hover {

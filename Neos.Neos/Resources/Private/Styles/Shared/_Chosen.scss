@@ -48,7 +48,7 @@
 
 			&:after {
 				@include fa-icon();
-				content: $fa-var-caret-down;
+				content: fa-content($fa-var-caret-down);
 				display: block;
 				position: absolute;
 				width: $unit;
@@ -75,7 +75,7 @@
 
 			&::after {
 				@include fa-icon();
-				content: $fa-var-times-circle;
+				content: fa-content($fa-var-times-circle);
 			}
 		}
 	}
@@ -121,7 +121,7 @@
 				text-decoration: inherit;
 				display: inline-block;
 				speak: none;
-				content: $fa-var-search;
+				content: fa-content($fa-var-search);
 				line-height: 100%;
 				font-size: 12px;
 			}

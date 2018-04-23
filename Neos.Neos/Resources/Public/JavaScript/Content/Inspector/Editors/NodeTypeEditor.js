@@ -55,7 +55,7 @@ define(
 						'group': group,
 						'value': nodeTypeName,
 						'label': nodeType.ui.label,
-						'icon': 'icon' in nodeType.ui ? nodeType.ui.icon : 'icon-file',
+						'icon': 'icon' in nodeType.ui ? nodeType.ui.icon : 'fas fa-file',
 						'position': nodeType.ui.position
 					});
 
