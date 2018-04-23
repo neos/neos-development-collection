@@ -6,30 +6,30 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "dev-master",
-        "neos/flow": "*",
-        "neos/cache": "*",
-        "neos/eel": "*",
-        "neos/fluid-adaptor": "*",
-        "neos/utility-objecthandling": "*",
-        "neos/utility-files": "*",
-        "neos/utility-arrays": "*",
+        "neos/flow-development-collection": "~5.0.0 || 5.0.x-dev",
+        "neos/flow": "~5.0.0 || 5.0.x-dev",
+        "neos/cache": "~5.0.0 || 5.0.x-dev",
+        "neos/eel": "~5.0.0 || 5.0.x-dev",
+        "neos/fluid-adaptor": "~5.0.0 || 5.0.x-dev",
+        "neos/utility-objecthandling": "~5.0.0 || 5.0.x-dev",
+        "neos/utility-files": "~5.0.0 || 5.0.x-dev",
+        "neos/utility-arrays": "~5.0.0 || 5.0.x-dev",
         "doctrine/orm": "~2.6.0",
         "gedmo/doctrine-extensions": "~2.4.0",
         "behat/transliterator": "~1.0",
-        "php": "~7.1",
-        "neos/utility-unicode": "*",
-        "neos/utility-mediatypes": "*",
-        "neos/error-messages": "*",
+        "php": ">=5.5.0",
+        "neos/utility-unicode": "~5.0.0 || 5.0.x-dev",
+        "neos/utility-mediatypes": "~5.0.0 || 5.0.x-dev",
+        "neos/error-messages": "~5.0.0 || 5.0.x-dev",
         "doctrine/common": "~2.7.0",
         "neos/imagine": "^3.0.2",
         "imagine/imagine": "*",
         "doctrine/dbal": "~2.7.0",
-        "neos/party": "*",
-        "neos/setup": "*",
-        "neos/twitter-bootstrap": "*",
-        "neos/form": "*",
-        "neos/kickstarter": "*"
+        "neos/party": "@dev",
+        "neos/setup": "@dev",
+        "neos/twitter-bootstrap": "@dev",
+        "neos/form": "@dev",
+        "neos/kickstarter": "~5.0.0 || 5.0.x-dev"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
@@ -116,7 +116,7 @@
                 "Neos.Neos/Resources/Private/Installer/"
             ]
         },
-        "typo3/flow": {
+        "neos/flow": {
             "manage-resources": true
         }
     },

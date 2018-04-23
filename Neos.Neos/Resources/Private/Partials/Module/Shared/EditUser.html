@@ -68,12 +68,12 @@
 				<tbody>
 				<f:for each="{user.accounts}" as="account">
 					<tr>
-						<td><i class="icon-user icon-white"></i>{account.accountIdentifier}</td>
+						<td><i class="fas fa-user icon-white"></i>{account.accountIdentifier}</td>
 						<td><f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" /></td>
 						<td><span title="{account.authenticationProviderName}"><neos:backend.authenticationProviderLabel identifier="{account.authenticationProviderName}"/></span></td>
 						<td class="neos-action">
 							<div class="neos-pull-right">
-								<f:link.action action="editAccount" arguments="{account: account}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="icon-pencil icon-white"></i></f:link.action>
+								<f:link.action action="editAccount" arguments="{account: account}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="fas fa-pencil-alt icon-white"></i></f:link.action>
 							</div>
 						</td>
 					</tr>
@@ -122,7 +122,7 @@
 						<td class="neos-action">
 							<div class="neos-pull-right">
 								<button type="button" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', source: 'Modules', package: 'Neos.Neos')}" data-toggle="modal" href="#electronicAddress-{index}">
-									<i class="icon-trash icon-white"></i>
+									<i class="fas fa-trash-alt icon-white"></i>
 								</button>
 								<div class="neos-hide" id="electronicAddress-{index}">
 									<div class="neos-modal-centered">

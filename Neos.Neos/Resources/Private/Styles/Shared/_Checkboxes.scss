@@ -43,7 +43,7 @@
 				color: $textSubtle;
 				cursor: pointer;
 				@include fa-icon();
-				content: $fa-var-check;
+				content: fa-content($fa-var-check);
 				line-height: $unit / 2;
 				text-align: center;
 			}
