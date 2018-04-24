@@ -1,3 +1,4 @@
+---
 '{packageKey}:Page':
   superTypes:
     'Neos.Neos:Document': true
