@@ -33,12 +33,11 @@ This section also explains how to implement custom rendering for your own docume
 The ``root`` path
 =================
 
-You may already have seen the default ``Root.fusion`` file that is generated with every new site package, and
-noticed that it contains a path ``page`` which is filled with an object of type ``Neos.Neos:Page`` (the default
-namespace ``Neos.Neos`` can be omitted). Here, the ``Page`` Fusion object is assigned to the path ``page``, telling the
-system that the Fusion object ``Page`` is responsible for further rendering::
+You may already have seen a ``Root.fusion`` that contain a path ``page`` which is filled with an object of type ``Neos.Neos:Page``.
+Here, the ``Neos.Neos:Page`` Fusion object is assigned to the path ``page``, telling the system that the Fusion object 
+``Page`` is responsible for further rendering:
 
-  page = Page {
+  page = Neos.Neos:Page {
     head {
       [...]
     }
@@ -47,7 +46,7 @@ system that the Fusion object ``Page`` is responsible for further rendering::
     }
   }
 
-This ``page`` path is rendered by default for new site packages. Let's investigate how this rendering process happens.
+Let's investigate how this rendering process happens.
 Fusion always starts rendering at the fusion path ``root``. You can verify this by simply replacing the code in your
 ``Root.fusion`` file with this snippet::
 
@@ -55,12 +54,12 @@ Fusion always starts rendering at the fusion path ``root``. You can verify this 
 
 All page rendering will disappear and only the words "Hello World" will be rendered by Neos.
 
+Using the  ``page`` path is not the recommended way to render your document node types anymore. We encourge you define a prototype named after your document ``NodeType`` extending ``Neos.Neos:Page``. Read further below for more details. 
+
 The root ``Neos.Fusion:Case`` object
 ====================================
 
-The ``root`` path contains,
-by default, a ``Neos.Fusion:Case`` object. Here is a section from this object - to see the full implementation,
-check out the file ``DefaultFusion.fusion`` in the package ``Neos.Neos``, path ``Resources\Private\Fusion``. ::
+The ``root`` path contains, by default, a ``Neos.Fusion:Case`` object. Here is a section from this object - to see the full implementation, check out the file ``DefaultFusion.fusion`` in the package ``Neos.Neos``, path ``Resources\Private\Fusion``. ::
 
   root = Neos.Fusion:Case {
 
@@ -187,7 +186,7 @@ will directly be edited in the content module of Neos.
 The ``Neos.Neos:Page`` object in more detail
 --------------------------------------------
 
-To understand what the ``Page`` object actually does, it makes sense to look at its definition. We can find the
+To understand what the ``Neos.Neos:Page`` object actually does, it makes sense to look at its definition. We can find the
 ``Page`` prototype in the file ``Page.fusion`` in the path ``Resources\Private\Fusion`` inside the ``Neos.Neos``
 package. Here is a snippet taken from this object's definition::
 
@@ -219,7 +218,7 @@ package. Here is a snippet taken from this object's definition::
 
 By looking at this definition, we understand a bit more about how page rendering actually works. ``Neos.Neos:Page``
 inherits from ``Neos.Fusion:Http.Message``, which in turn inherits from ``Neos.Fusion:Array``. ``Array`` fusion objects
-just render their keys one after another, so the Page object just outputs whatever is in it. The ``Page`` object
+just render their keys one after another, so the Page object just outputs whatever is in it. The ``Neos.Neos:Page`` object
 renders the HTML framework, such as doctype, head and body tags, and also defines the default integration points for
 site integrators - ``head`` and ``body`` as well as their inner objects. It is not by coincidence that these exact paths
 are pre-filled with sensible defaults in site package's generated default ``Root.fusion`` files.
@@ -230,7 +229,7 @@ to a Fluid template which will be rendered as the body.
 Rendering custom document types
 ===============================
 
-There are two basic approaches to render different document types differently. We currently recommend to create a Fusion
+There are two basic approaches to render different document types. We currently recommend to create a Fusion
 prototype per custom page type, which is since Neos 4.0 automatically picked up by Neos (see below). The "old" way
 involves adding one root matcher per document type, explicitly checking for the node type in the condition, and
 redirecting Fusion to another render path. It is documented here for completeness' sake, but we do not recommend to use
