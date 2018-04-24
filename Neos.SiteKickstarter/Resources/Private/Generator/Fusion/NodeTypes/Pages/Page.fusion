@@ -1,0 +1,11 @@
+prototype({packageKey}:Page) < prototype({packageKey}:DefaultPage) {
+    body {
+        // These are your content areas, you can define as many as you want, just name them and the nodePath.
+        content {
+            // The default content section
+            main = Neos.Neos:PrimaryContent {
+                nodePath = 'main'
+            }
+        }
+    }
+}
