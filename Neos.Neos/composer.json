@@ -1,7 +1,9 @@
 {
     "name": "neos/neos",
     "type": "neos-package",
-    "license": ["GPL-3.0-or-later"],
+    "license": [
+        "GPL-3.0-or-later"
+    ],
     "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
     "require": {
         "neos/diff": "~4.0.0",
@@ -115,7 +117,12 @@
             "Neos.Neos-20161220163741",
             "Neos.Fusion-20170120013047",
             "Neos.Flow-20170125103800",
-            "Neos.Flow-20180415105700"
+            "Neos.Flow-20180415105700",
+            "Neos.Neos-20170115114620",
+            "Neos.Seo-20170127154600",
+            "Neos.Flow-20170127183102",
+            "Neos.Fusion-20180211175500",
+            "Neos.Fusion-20180211184832"
         ]
     }
 }
