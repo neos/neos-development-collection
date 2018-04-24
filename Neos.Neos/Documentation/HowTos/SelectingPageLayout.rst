@@ -4,7 +4,7 @@ Selecting a Page Layout
 
 Neos has a flexible way of choosing a layout which can be selected in the backend.
 
-.. node::
+.. note::
 
     The layout mechanism is implemented in the package Neos.NodeTypes wich has to be installed.
 
