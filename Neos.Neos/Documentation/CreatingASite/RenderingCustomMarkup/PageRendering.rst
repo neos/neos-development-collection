@@ -54,7 +54,7 @@ Fusion always starts rendering at the fusion path ``root``. You can verify this 
 
 All page rendering will disappear and only the words "Hello World" will be rendered by Neos.
 
-Using the  ``page`` path is not the recommended way to render your document node types anymore. We encourge you define a prototype named after your document ``NodeType`` extending ``Neos.Neos:Page``. Read further below for more details. 
+Using the  ``page`` path is not the recommended way to render your document node types anymore. We encourage you to define a prototype named after your document node type extending ``Neos.Neos:Page``. Read :ref:`rendering-custom-page-types` for further details and how to achieve this.
 
 The root ``Neos.Fusion:Case`` object
 ====================================
