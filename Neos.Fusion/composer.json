@@ -95,7 +95,8 @@
             "Neos.Flow-20180415105700",
             "Neos.Neos-20161201222211",
             "Neos.Fusion-20161202215034",
-            "Neos.Fusion-20161219092345"
+            "Neos.Fusion-20161219092345",
+            "Neos.ContentRepository-20161219093512"
         ]
     }
 }
