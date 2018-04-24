@@ -2,7 +2,9 @@
     "name": "neos/nodetypes-columnlayouts",
     "type": "neos-package",
     "description": "Various simple column layouts node type.",
-    "license": ["GPL-3.0-or-later"],
+    "license": [
+        "GPL-3.0-or-later"
+    ],
     "require": {
         "neos/neos": "*",
         "neos/nodetypes-basemixins": "*"
@@ -84,7 +86,8 @@
             "Neos.Neos-20161219122512",
             "Neos.Fusion-20161219130100",
             "Neos.Neos-20161220163741",
-            "Neos.Fusion-20170120013047"
+            "Neos.Fusion-20170120013047",
+            "Neos.Neos-20170115114620"
         ]
     }
 }
