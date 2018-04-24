@@ -2,7 +2,9 @@
     "name": "neos/content-repository",
     "type": "neos-package",
     "description": "Content repository based on Flow, specifically made for Neos.",
-    "license": ["GPL-3.0-or-later"],
+    "license": [
+        "GPL-3.0-or-later"
+    ],
     "require": {
         "neos/flow": "~5.0.0",
         "neos/cache": "~5.0.0",
@@ -11,7 +13,6 @@
         "neos/utility-objecthandling": "~5.0.0",
         "neos/utility-files": "~5.0.0",
         "neos/utility-arrays": "~5.0.0",
-
         "doctrine/orm": "~2.6.0",
         "gedmo/doctrine-extensions": "~2.4.0",
         "behat/transliterator": "~1.0"
@@ -99,7 +100,8 @@
             "Neos.Fusion-20161202215034",
             "Neos.ContentRepository-20161219093512",
             "Neos.Fusion-20170120013047",
-            "Neos.Flow-20180415105700"
+            "Neos.Flow-20180415105700",
+            "Neos.Fusion-20161219092345"
         ]
     }
 }
