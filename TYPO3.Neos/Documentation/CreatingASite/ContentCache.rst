@@ -320,6 +320,13 @@ You can use a ``TYPO3.TypoScript:RawArray`` to explicitly specify the values tha
 		}
 	}
 
+Security Context
+----------------
+In addition to entry identifiers configured in Fusion, the Security Context Hash
+is added to the identifier of all cached segments. This hash is build from the roles of
+all authenticated accounts and cache identifiers from custom global objects (exposed through Neos.Flow.aop.globalObjects)
+implementing CacheAwareInterface. [#]_
+
 Tuning your cache
 =================
 
@@ -334,3 +341,7 @@ the example below will use the Redis backend for the content cache::
 
 .. note::
 	The best practice is to change the cache configuration in your distribution.
+
+-----
+
+.. [#] Custom Global Objects are explained in detail in the Flow documentation: http://flowframework.readthedocs.io/en/stable/TheDefinitiveGuide/PartIII/Security.html#content-security-entityprivilege.
