@@ -390,7 +390,7 @@ Neos:
     Ui:
       frontendConfiguration:
         legacy:
-          enableLegacyUiSwitch: true
+          enableUiSwitch: true
 
   Flow:
     aop:
