@@ -8,10 +8,12 @@ matrix:
         mariadb: '10.2'
     - php: 7.1
       env: DB=pgsql
+      sudo: required
       addons:
         postgresql: "9.4"
     - php: 7.1
       env: DB=pgsql
+      sudo: required
       addons:
         postgresql: "9.5"
     - php: 7.1
@@ -20,10 +22,12 @@ matrix:
         mariadb: '10.2'
     - php: 7.1
       env: DB=pgsql BEHAT=true
+      sudo: required
       addons:
         postgresql: "9.4"
     - php: 7.1
       env: DB=pgsql BEHAT=true
+      sudo: required
       addons:
         postgresql: "9.5"
     - php: 7.2
@@ -38,6 +42,7 @@ cache:
   directories:
     - $HOME/.composer/cache
 before_install:
+  - if [ "$DB" = "pgsql" ]; then sudo mount -o remount,size=25% /var/ramfs ; fi
   - phpenv config-rm xdebug.ini
   - export NEOS_TARGET_REPOSITORY=neos/neos-development-collection
   - export NEOS_TARGET_VERSION=master

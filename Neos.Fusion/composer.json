@@ -2,7 +2,9 @@
     "name": "neos/fusion",
     "type": "neos-package",
     "description": "Fusion is a hierarchical, prototype based processing language",
-    "license": ["GPL-3.0-or-later"],
+    "license": [
+        "GPL-3.0-or-later"
+    ],
     "require": {
         "neos/flow": "*",
         "neos/fluid-adaptor": "*",
@@ -11,7 +13,6 @@
         "neos/utility-arrays": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-unicode": "*",
-
         "doctrine/orm": "~2.6.0"
     },
     "replace": {
@@ -91,7 +92,22 @@
             "TYPO3.FluidAdaptor-20161130112935",
             "Neos.Fusion-20161201202543",
             "Neos.Fusion-20170120013047",
-            "Neos.Flow-20180415105700"
+            "Neos.Flow-20180415105700",
+            "Neos.Neos-20161201222211",
+            "Neos.Fusion-20161202215034",
+            "Neos.Fusion-20161219092345",
+            "Neos.ContentRepository-20161219093512",
+            "Neos.Media-20161219094126",
+            "Neos.Neos-20161219094403",
+            "Neos.Neos-20161219122512",
+            "Neos.Fusion-20161219130100",
+            "Neos.Neos-20161220163741",
+            "Neos.Neos-20170115114620",
+            "Neos.Flow-20170125103800",
+            "Neos.Seo-20170127154600",
+            "Neos.Flow-20170127183102",
+            "Neos.Fusion-20180211175500",
+            "Neos.Fusion-20180211184832"
         ]
     }
 }
