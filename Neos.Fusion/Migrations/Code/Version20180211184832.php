@@ -12,6 +12,7 @@ namespace Neos\Flow\Core\Migrations;
  */
 
 use Neos\Utility\Arrays;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 
 /**
@@ -29,6 +30,7 @@ class Version20180211184832 extends AbstractMigration
 
     /**
      * @return void
+     * @throws FilesException
      */
     public function up()
     {
@@ -48,11 +50,18 @@ class Version20180211184832 extends AbstractMigration
      * Find all declared fusion namespaces for the currently migrated package
      *
      * @return array an array with namespace alias as key and packageKey as value
-     * @throws \Neos\Utility\Exception\FilesException
+     * @throws FilesException
      */
-    protected function findDeclaredFusionNamespaces() {
+    protected function findDeclaredFusionNamespaces()
+    {
         $namespaces = [];
-        foreach (Files::getRecursiveDirectoryGenerator($this->targetPackageData['path'].'/Resources/Private', null, true) as $pathAndFilename) {
+
+        $targetDirectory = $this->targetPackageData['path'] . '/Resources/Private';
+        if(!is_dir($targetDirectory)) {
+            return $namespaces;
+        }
+
+        foreach (Files::getRecursiveDirectoryGenerator($targetDirectory, null, true) as $pathAndFilename) {
             $pathInfo = pathinfo($pathAndFilename);
             if (!isset($pathInfo['filename'])) {
                 continue;
@@ -70,7 +79,7 @@ class Version20180211184832 extends AbstractMigration
                     PREG_SET_ORDER
                 );
                 if ($count > 0) {
-                    foreach($namespaceDeclarationMatches as $match) {
+                    foreach ($namespaceDeclarationMatches as $match) {
                         if (!array_key_exists($match['alias'], $namespaces)) {
                             $namespaces[$match['alias']] = $match['packageKey'];
                         } else {
