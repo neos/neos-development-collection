@@ -4,9 +4,9 @@
     "description": "A simple generator for Neos assets, like sites and plugins.",
     "license": ["GPL-3.0-or-later"],
     "require": {
-        "neos/flow": "~5.0.0",
-        "neos/utility-files": "~5.0.0",
-        "neos/fluid-adaptor": "~5.0.0",
+        "neos/flow": "*",
+        "neos/utility-files": "*",
+        "neos/fluid-adaptor": "*",
         "neos/kickstarter": "~5.0.0",
 
         "neos/content-repository": "self.version"
