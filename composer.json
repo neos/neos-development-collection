@@ -116,7 +116,7 @@
                 "Neos.Neos/Resources/Private/Installer/"
             ]
         },
-        "typo3/flow": {
+        "neos/flow": {
             "manage-resources": true
         }
     },
