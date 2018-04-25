@@ -55,6 +55,20 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
     protected $initialized = false;
 
     /**
+     * Constructor
+     *
+     * @param PrivilegeTarget $privilegeTarget
+     * @param string $matcher
+     * @param string $permission
+     * @param $parameters
+     */
+    public function __construct(PrivilegeTarget $privilegeTarget, string $matcher, string $permission, $parameters)
+    {
+        parent::__construct($privilegeTarget, $matcher, $permission, $parameters);
+        $this->cacheEntryIdentifier = null;
+    }
+
+    /**
      * @return void
      */
     public function initialize()
@@ -69,14 +83,25 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
     }
 
     /**
+     * @return void
+     */
+    protected function buildCacheEntryIdentifier()
+    {
+        $this->cacheEntryIdentifier = md5($this->privilegeTarget->getIdentifier() . '__methodPrivilege' . '|' . $this->buildMethodPrivilegeMatcher());
+    }
+
+    /**
      * Unique identifier of this privilege
      *
      * @return string
      */
     public function getCacheEntryIdentifier(): string
     {
-        $this->initializeMethodPrivilege();
-        return $this->methodPrivilege->getCacheEntryIdentifier();
+        if ($this->cacheEntryIdentifier === null) {
+            $this->buildCacheEntryIdentifier();
+        }
+
+        return $this->cacheEntryIdentifier;
     }
 
     /**
