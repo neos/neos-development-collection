@@ -387,6 +387,11 @@ Neos:
         ö: oe
         ü: ue
 
+    Ui:
+      frontendConfiguration:
+        legacy:
+          enableUiSwitch: true
+
   Flow:
     aop:
       globalObjects:
