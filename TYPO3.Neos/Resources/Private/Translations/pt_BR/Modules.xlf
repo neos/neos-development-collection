@@ -185,11 +185,11 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="pt-BR" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
+          <target xml:lang="pt-BR" state="translated">Espaço de trabalho "{0}" não foi apagado porque atualmente contém {1} nó.</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="pt-BR" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+          <target xml:lang="pt-BR" state="translated">Espaço de trabalho "{0}" não foi apagado porque atualmente contém {1} nós.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
@@ -225,7 +225,7 @@
       </trans-unit>
       <trans-unit id="media.dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="pt-BR" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Arraste e solte um ativo em uma coleção / tag para adicioná-los a ela.</target></trans-unit>
       <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
 			<target xml:lang="pt-BR" state="translated">Manter o nome do arquivo "{0}"</target></trans-unit>
@@ -249,28 +249,28 @@
 			<target xml:lang="pt-BR" state="translated">Não foram registrados quaisquer eventos que poderiam ser exibido neste histórico ainda.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target xml:lang="pt-BR" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">{0} criou o {1} "{2}".</target><alt-trans><target xml:lang="pt-BR">{0} criou o/a {1} "{2}".</target></alt-trans></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target xml:lang="pt-BR" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">{0} removeu o {1} "{2}".</target><alt-trans><target xml:lang="pt-BR">{0} removeu o/a {1} "{2}".</target></alt-trans></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target xml:lang="pt-BR" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">{0} criou a variante {1} do {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target xml:lang="pt-BR" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">{0} modificou o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target xml:lang="pt-BR" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">{0} moveu o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
-			<target xml:lang="pt-BR" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">{0} copiou o {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target xml:lang="pt-BR" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">{0} renomeou o {1} "{2}" para "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target xml:lang="pt-BR" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">{0} modificou o conteúdo no {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="pt-BR" state="translated">{0} criou um novo usuário "{1}" para {2}.</target></trans-unit>
@@ -937,34 +937,34 @@
 			<target xml:lang="pt-BR" state="translated">Substituir "{filename}"</target></trans-unit>
       <trans-unit id="media.replaceAsset.description" xml:space="preserve">
         <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="pt-BR" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <target xml:lang="pt-BR" state="translated">Você pode substituir esse ativo fazendo o upload de um arquivo novo. Uma vez substituído, o novo ativo será usado em todos os lugares onde o ativo é usado em seu site.</target></trans-unit>
       <trans-unit id="media.replaceAsset.note" xml:space="preserve">
         <source>Note</source>
       <target xml:lang="pt-BR" state="translated">Nota</target></trans-unit>
       <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
         <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-      <target xml:lang="pt-BR" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <target xml:lang="pt-BR" state="translated">Esta operação irá substituir o ativo em todos os espaços de trabalho publicados ou não publicados, incluindo o site ao vivo.</target></trans-unit>
       <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
         <source>Choose a new file</source>
       <target xml:lang="pt-BR" state="translated">Escolha um novo arquivo</target></trans-unit>
       <trans-unit id="media.replace.usageCount" xml:space="preserve">
         <source>Currently the asset is used {usageCount} times.</source>
-      <target xml:lang="pt-BR" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <target xml:lang="pt-BR" state="translated">Atualmente, o ativo é usado {usageCount} vezes.</target></trans-unit>
       <trans-unit id="media.replace.allUsages" xml:space="preserve">
         <source>Show all usages</source>
       <target xml:lang="pt-BR" state="translated">Exibir todos os usos</target></trans-unit>
       <trans-unit id="media.replace.notUsed" xml:space="preserve">
         <source>Currently the asset is not in used anywhere on the website.</source>
-      <target xml:lang="pt-BR" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <target xml:lang="pt-BR" state="translated">Atualmente o ativo não é usado nenhum lugar no site.</target></trans-unit>
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
-      <target xml:lang="pt-BR" state="needs-translation">Preview current file</target></trans-unit>
+      <target xml:lang="pt-BR" state="translated">Pré-visualizar o arquivo atual</target></trans-unit>
       <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
         <source>No access to workspace "{0}"</source>
-      <target xml:lang="pt-BR" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+      <target xml:lang="pt-BR" state="translated">Sem acesso ao espaço de trabalho "{0}"</target></trans-unit>
       <trans-unit id="media.missingDocumentNode" xml:space="preserve">
         <source>No document node found for this node</source>
-      <target xml:lang="pt-BR" state="needs-translation">No document node found for this node</target></trans-unit>
+      <target xml:lang="pt-BR" state="translated">Nenhum nó de documento encontrado para este nó</target></trans-unit>
     </body>
   </file>
 </xliff>
