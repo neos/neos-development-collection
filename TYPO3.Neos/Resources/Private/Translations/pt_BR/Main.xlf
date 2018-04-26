@@ -89,7 +89,7 @@
 			<target xml:lang="pt-BR" state="translated">Exibir</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="pt-BR" state="needs-translation">into</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">dentro</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
 			<target xml:lang="pt-BR" state="translated">antes</target></trans-unit>
