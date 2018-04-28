@@ -59,10 +59,10 @@
 			<target xml:lang="km">ចុះ</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="km" state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target xml:lang="km" state="translated">តម្រៀបទិសដៅឡើង</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="km" state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target xml:lang="km" state="translated">តម្រៀបទិសដៅចុះ</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="km">អូសនិងទម្លាក់លើស្លាករឺការប្រមូល</target></trans-unit>
@@ -107,7 +107,7 @@
 			<target xml:lang="km">ជំនួស</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="km" state="needs-translation">Replace asset resource</target></trans-unit>
+			<target xml:lang="km" state="translated">ផ្លាស់ប្ដូរ asset resource</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="km">សន្សំ រឺ រក្សាទុក</target></trans-unit>
