@@ -16,7 +16,9 @@
         "neos/fusion": "~4.0.0",
         "neos/fluid-adaptor": "~5.0.0",
         "behat/transliterator": "~1.0",
-        "neos/media": "~4.0.0"
+        "neos/media": "~4.0.0",
+        "neos/neos-ui": "~1.0.0",
+        "neos/neos-ui-compiled": "~1.0.0"
     },
     "suggest": {
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
