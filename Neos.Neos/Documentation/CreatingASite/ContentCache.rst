@@ -337,7 +337,7 @@ By default, all cache entries are stored on the local filesystem. You can change
 the example below will use the Redis backend for the content cache::
 
 	Neos_Fusion_Content:
-	  backend: Neos\Flow\Cache\Backend\RedisBackend
+	  backend: Neos\Cache\Backend\RedisBackend
 
 .. note::
 	The best practice is to change the cache configuration in your distribution.
