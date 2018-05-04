@@ -47,6 +47,19 @@ in that package. The NodeTypes package itself is also not recommended as
 best practice. Instead create your own set of NodeTypes, maybe based on the
 Neos.NodeTypes.BaseMixins package.
 
+Font Awesome 5 usage
+====================
+
+We switched to the free version of the latest Font Awesome, that means
+more icons for you to use but also that you need to adapt to Font Awesome 5
+icons and notation. You need to adapt custom backend modules by simply using
+the new icon classes as seen on  https://fontawesome.com/ .
+The `icon-` prefix way of defining NodeType icons still works fine, but you
+can also switch to FA5 notation to get more specific about the icon you want.
+This change was made for the legacy and React UI as well as the Neos
+backend modules.
+
+
 ~~~~~~~~~~~~~~~~~~~~
 Upgrade instructions
 ~~~~~~~~~~~~~~~~~~~~
