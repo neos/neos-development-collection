@@ -64,6 +64,31 @@ interface NodeInterface
 		){0,1}$/ix';
 
     /**
+     * Regex pattern which matches a "context identifier", ie. a node identifier possibly containing context information such as the
+     * workspace name. This pattern is used at least in the route part handler.
+     */
+    const MATCH_PATTERN_CONTEXTIDENTIFIER = '/^   # A Context Identifier consists of...
+		(?>(?P<NodeIdentifier>              # 1) a NODE Identifier
+			(?>[a-z0-9\-]+)                    # Which either starts with a node identifier
+		))
+		(?:                                 # 2) a CONTEXT
+			@                               #    which is delimited from the node path by the "@" sign
+			(?>(?P<WorkspaceName>              #    followed by the workspace name (NON-EMPTY)
+				[a-z0-9\-]+
+			))
+			(?:                             #    OPTIONALLY followed by dimension values
+				;                           #    ... which always start with ";"
+				(?P<Dimensions>
+					(?>                     #        A Dimension Value is a key=value structure
+						[a-zA-Z_]+
+						=
+						[^=&]+
+					)
+					(?>&(?-1))?             #        ... delimited by &
+				)){0,1}
+		){0,1}$/ix';
+
+    /**
      * Regex pattern which matches a Node Name (ie. segment of a node path)
      */
     const MATCH_PATTERN_NAME = '/^[a-z0-9\-]+$/';

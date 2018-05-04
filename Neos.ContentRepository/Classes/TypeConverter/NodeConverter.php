@@ -30,6 +30,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Domain\Utility\NodeIdentifiers;
 use Neos\ContentRepository\Exception\NodeException;
 
 /**
@@ -126,7 +127,7 @@ class NodeConverter extends AbstractTypeConverter
      *
      * All other elements, not being prefixed with underscore, are properties of the node.
      *
-     * @param string|array $source Either a string or array containing the absolute context node path which identifies the node. For example "/sites/mysitecom/homepage/about@user-admin"
+     * @param string|array $source Either a string or array containing the absolute context node path or identifier which identifies the node. For example "/sites/mysitecom/homepage/about@user-admin"
      * @param string $targetType not used
      * @param array $subProperties not used
      * @param PropertyMappingConfigurationInterface $configuration
@@ -136,20 +137,37 @@ class NodeConverter extends AbstractTypeConverter
     public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
         if (is_string($source)) {
-            $source = array('__contextNodePath' => $source);
+            if ($source[0] == '/') {
+                $source = array('__contextNodePath' => $source);
+            } else {
+                $source = array('__contextNodeIdentifier' => $source);
+            }
         }
 
-        if (!is_array($source) || !isset($source['__contextNodePath'])) {
-            return new Error('Could not convert ' . gettype($source) . ' to Node object, a valid absolute context node path as a string or array is expected.', 1302879936);
+        if (!is_array($source) || (!isset($source['__contextNodePath']) && !isset($source['__contextNodeIdentifier']))) {
+            return new Error('Could not convert ' . gettype($source) . ' to Node object, a valid absolute context node path or identifier as a string or array is expected.', 1302879936);
         }
 
-        try {
-            $nodePathAndContext = NodePaths::explodeContextPath($source['__contextNodePath']);
-            $nodePath = $nodePathAndContext['nodePath'];
-            $workspaceName = $nodePathAndContext['workspaceName'];
-            $dimensions = $nodePathAndContext['dimensions'];
-        } catch (\InvalidArgumentException $exception) {
-            return new Error('Could not convert array to Node object because the node path was invalid.', 1285162903);
+        if (isset($source['__contextNodePath'])) {
+            try {
+                $nodePathAndContext = NodePaths::explodeContextPath($source['__contextNodePath']);
+                $nodePath = $nodePathAndContext['nodePath'];
+                $workspaceName = $nodePathAndContext['workspaceName'];
+                $dimensions = $nodePathAndContext['dimensions'];
+            } catch (\InvalidArgumentException $exception) {
+                return new Error('Could not convert array to Node object because the node path was invalid.', 1285162903);
+            }
+        }
+
+        if (isset($source['__contextNodeIdentifier'])) {
+            try {
+                $nodePathAndContext = NodeIdentifiers::explodeContextIdentifier($source['__contextNodeIdentifier']);
+                $nodeIdentifier = $nodePathAndContext['nodeIdentifier'];
+                $workspaceName = $nodePathAndContext['workspaceName'];
+                $dimensions = $nodePathAndContext['dimensions'];
+            } catch (\InvalidArgumentException $exception) {
+                return new Error('Could not convert array to Node object because the node identifier was invalid.', 1497508497);
+            }
         }
 
         $context = $this->contextFactory->create($this->prepareContextProperties($workspaceName, $configuration, $dimensions));
@@ -158,7 +176,12 @@ class NodeConverter extends AbstractTypeConverter
             return new Error(sprintf('Could not convert the given source to Node object because the workspace "%s" as specified in the context node path does not exist.', $workspaceName), 1383577859);
         }
 
-        $node = $context->getNode($nodePath);
+        if (isset($nodePath)) {
+            $node = $context->getNode($nodePath);
+        } elseif (isset($nodeIdentifier)) {
+            $node = $context->getNodeByIdentifier($nodeIdentifier);
+        }
+
         if (!$node) {
             return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1370502328);
         }

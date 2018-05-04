@@ -135,7 +135,7 @@ class NodeConverterTest extends FunctionalTestCase
     protected function setupNodeWithShadowNodeInPersonalWorkspace()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $headlineNode = $this->rootNodeInLiveWorkspace->createNode('headline', $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Headline'));
+        $headlineNode = $this->rootNodeInLiveWorkspace->createNode('headline', $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Headline'), 'bb640c20-51b0-11e7-b114-b2f933d5fe66');
         $headlineNode->setProperty('title', 'Hello World');
         $headlineNodeInPersonalWorkspace = $this->rootNodeInPersonalWorkspace->getNode('headline');
         $headlineNodeInPersonalWorkspace->setProperty('subtitle', 'Brave new world');
@@ -161,11 +161,36 @@ class NodeConverterTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function nodeFromLiveWorkspaceCanBeRetrievedAgainUsingNodeConverterWithContextIdentifier()
+    {
+        $this->setupNodeWithShadowNodeInPersonalWorkspace();
+
+        $headlineNode = $this->convert('bb640c20-51b0-11e7-b114-b2f933d5fe66');
+        $this->assertSame('Hello World', $headlineNode->getProperty('title'));
+    }
+
+
+    /**
+     * @test
+     */
     public function nodeFromPersonalWorkspaceCanBeRetrievedAgainUsingNodeConverter()
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
 
         $headlineNode = $this->convert('/headline@' . $this->currentTestWorkspaceName);
+        $this->assertSame('Hello World', $headlineNode->getProperty('title'));
+
+        $this->assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
+    }
+
+    /**
+     * @test
+     */
+    public function nodeFromPersonalWorkspaceCanBeRetrievedAgainUsingNodeConverterWithContextIdentifier()
+    {
+        $this->setupNodeWithShadowNodeInPersonalWorkspace();
+
+        $headlineNode = $this->convert('bb640c20-51b0-11e7-b114-b2f933d5fe66@' . $this->currentTestWorkspaceName);
         $this->assertSame('Hello World', $headlineNode->getProperty('title'));
 
         $this->assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
@@ -185,11 +210,38 @@ class NodeConverterTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function nodeFromGermanDimensionIsFetchedCorrectlyWithContextIdentifier()
+    {
+        $this->setupNodeWithShadowNodeInPersonalWorkspace();
+
+        $headlineNode = $this->convert('bb640c20-51b0-11e7-b114-b2f933d5fe66@' . $this->currentTestWorkspaceName . ';language=de_DE');
+        $this->assertSame('Hallo Welt', $headlineNode->getProperty('title'));
+    }
+
+    /**
+     * @test
+     */
     public function nodePropertiesAreSetWhenConverterIsCalledWithInputArray()
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
         $input = array(
             '__contextNodePath' => '/headline@' . $this->currentTestWorkspaceName,
+            'title' => 'New title'
+        );
+
+        $headlineNode = $this->convert($input);
+        $this->assertSame('New title', $headlineNode->getProperty('title'));
+        $this->assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
+    }
+
+    /**
+     * @test
+     */
+    public function nodePropertiesAreSetWhenConverterIsCalledWithInputArrayWithContextIdentifier()
+    {
+        $this->setupNodeWithShadowNodeInPersonalWorkspace();
+        $input = array(
+            '__contextNodeIdentifier' => 'bb640c20-51b0-11e7-b114-b2f933d5fe66@' . $this->currentTestWorkspaceName,
             'title' => 'New title'
         );
 
@@ -215,12 +267,46 @@ class NodeConverterTest extends FunctionalTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
+     */
+    public function settingUnknownNodePropertiesThrowsExceptionWithContextIdentifier()
+    {
+        $this->setupNodeWithShadowNodeInPersonalWorkspace();
+        $input = array(
+            '__contextNodeIdentifier' => 'bb640c20-51b0-11e7-b114-b2f933d5fe66@' . $this->currentTestWorkspaceName,
+            'title' => 'New title',
+            'non-existing-input' => 'test'
+        );
+        $this->convert($input);
+    }
+
+    /**
+     * @test
      */
     public function unknownNodePropertiesAreSkippedIfTypeConverterIsConfiguredLikeThis()
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
         $input = array(
             '__contextNodePath' => '/headline@' . $this->currentTestWorkspaceName,
+            'title' => 'New title',
+            'non-existing-input' => 'test'
+        );
+        $propertyMappingConfiguration = new PropertyMappingConfiguration();
+        $propertyMappingConfiguration->skipUnknownProperties();
+        $headlineNode = $this->convert($input, $propertyMappingConfiguration);
+        $this->assertSame('New title', $headlineNode->getProperty('title'));
+        $this->assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
+        $this->assertFalse($headlineNode->hasProperty('non-existing-input'));
+    }
+
+    /**
+     * @test
+     */
+    public function unknownNodePropertiesAreSkippedIfTypeConverterIsConfiguredLikeThisWithContextIdentifier()
+    {
+        $this->setupNodeWithShadowNodeInPersonalWorkspace();
+        $input = array(
+            '__contextNodeIdentifier' => 'bb640c20-51b0-11e7-b114-b2f933d5fe66@' . $this->currentTestWorkspaceName,
             'title' => 'New title',
             'non-existing-input' => 'test'
         );

@@ -50,11 +50,7 @@ abstract class NodePaths
         $contextPath .= '@' . $workspaceName;
 
         if ($dimensionValues !== array()) {
-            $contextPath .= ';';
-            foreach ($dimensionValues as $dimensionName => $innerDimensionValues) {
-                $contextPath .= $dimensionName . '=' . implode(',', $innerDimensionValues) . '&';
-            }
-            $contextPath = substr($contextPath, 0, -1);
+            $contextPath .= ';' . NodeContexts::parseDimensionValuesToString($dimensionValues);
         }
 
         return $contextPath;
@@ -77,7 +73,7 @@ abstract class NodePaths
 
         $nodePath = $matches['NodePath'];
         $workspaceName = (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '' ? $matches['WorkspaceName'] : 'live');
-        $dimensions = isset($matches['Dimensions']) ? static::parseDimensionValueStringToArray($matches['Dimensions']) : array();
+        $dimensions = isset($matches['Dimensions']) ? NodeContexts::parseDimensionValueStringToArray($matches['Dimensions']) : array();
 
         return array(
             'nodePath' => $nodePath,
@@ -89,15 +85,11 @@ abstract class NodePaths
     /**
      * @param string $dimensionValueString
      * @return array
+     * @deprecated Will be removed with Neos 4.0
      */
     public static function parseDimensionValueStringToArray($dimensionValueString)
     {
-        parse_str($dimensionValueString, $dimensions);
-        $dimensions = array_map(function ($commaSeparatedValues) {
-            return explode(',', $commaSeparatedValues);
-        }, $dimensions);
-
-        return $dimensions;
+        return NodeContexts::parseDimensionValueStringToArray($dimensionValueString);
     }
 
     /**
@@ -105,6 +97,7 @@ abstract class NodePaths
      *
      * @param string $contextPath
      * @return boolean
+     * @deprecated Will be removed with Neos 4.0
      */
     public static function isContextPath($contextPath)
     {
