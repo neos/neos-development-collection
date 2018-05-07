@@ -658,9 +658,10 @@ HELPTEXT;
      *
      * @param string $workspaceName
      * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    protected function removeOrphanNodes($workspaceName, $dryRun)
+    protected function removeOrphanNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         $this->output->outputLine('Checking for orphan nodes ...');
 
@@ -675,7 +676,7 @@ HELPTEXT;
             $workspace = $workspace->getBaseWorkspace();
         }
 
-        $nodes = $queryBuilder
+        $query = $queryBuilder
             ->select('n')
             ->from(NodeData::class, 'n')
             ->leftJoin(
@@ -686,8 +687,16 @@ HELPTEXT;
             )
             ->where('n2.path IS NULL')
             ->andWhere($queryBuilder->expr()->not('n.path = :slash'))
-            ->andWhere('n.workspace = :workspace')
-            ->setParameters(array('workspaceList' => $workspaceList, 'slash' => '/', 'workspace' => $workspaceName))
+            ->andWhere('n.workspace = :workspace');
+        $parameters = array('workspaceList' => $workspaceList, 'slash' => '/', 'workspace' => $workspaceName);
+
+        if ($nodeType !== null) {
+            $query->andWhere('n.nodeType = :nodetype');
+            $parameters['nodetype'] = $nodeType;
+        }
+
+        $nodes = $query
+            ->setParameters($parameters)
             ->getQuery()->getArrayResult();
 
         $nodesToBeRemoved = count($nodes);
