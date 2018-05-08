@@ -45,7 +45,7 @@ before_install:
   - if [ "$DB" = "pgsql" ]; then sudo mount -o remount,size=25% /var/ramfs ; fi
   - phpenv config-rm xdebug.ini
   - export NEOS_TARGET_REPOSITORY=neos/neos-development-collection
-  - export NEOS_TARGET_VERSION=4.0
+  - export NEOS_TARGET_VERSION=master
   - env
   - sudo add-apt-repository ppa:git-core/ppa -y
   - sudo apt-get update
