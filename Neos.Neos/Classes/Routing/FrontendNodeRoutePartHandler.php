@@ -362,8 +362,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $nodeContextPath = $node->getContextPath();
         $nodeContextPathSuffix = ($workspaceName !== 'live') ? substr($nodeContextPath, strpos($nodeContextPath, '@')) : '';
 
-        $currentNodeIsSiteNode = ($node->getParentPath() === SiteService::SITES_ROOT_PATH);
-        $dimensionsUriSegment = $this->getUriSegmentForDimensions($node->getContext()->getDimensions(), $currentNodeIsSiteNode);
+        $dimensionsUriSegment = $this->getUriSegmentForDimensions($node->getContext()->getDimensions());
         $requestPath = $this->getRequestPathByNode($node);
 
         return trim($dimensionsUriSegment . $requestPath, '/') . $nodeContextPathSuffix;
@@ -594,11 +593,10 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * can be found.
      *
      * @param array $dimensionsValues An array of dimensions and their values, indexed by dimension name
-     * @param boolean $currentNodeIsSiteNode If the current node is actually the site node
      * @return string
      * @throws \Exception
      */
-    protected function getUriSegmentForDimensions(array $dimensionsValues, $currentNodeIsSiteNode)
+    protected function getUriSegmentForDimensions(array $dimensionsValues)
     {
         $uriSegment = '';
         $allDimensionPresetsAreDefault = true;
@@ -621,7 +619,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $uriSegment .= $preset['uriSegment'] . '_';
         }
 
-        if ($this->supportEmptySegmentForDimensions && $allDimensionPresetsAreDefault && $currentNodeIsSiteNode) {
+        if ($this->supportEmptySegmentForDimensions && $allDimensionPresetsAreDefault) {
             return '/';
         } else {
             return ltrim(trim($uriSegment, '_') . '/', '/');
