@@ -100,9 +100,11 @@ class NodeMigration
         foreach ($this->nodeFilterService->getFilterExpressions($migrationDescription['filters'], $baseQuery) as $filterExpression) {
             $filterExpressions[] = $filterExpression;
         }
-
+        
         $query = new Query(NodeData::class);
-        $query->matching(call_user_func_array([new Expr(), 'andX'], $filterExpressions));
+        if ($filterExpressions !== []) {
+            $query->matching(call_user_func_array([new Expr(), 'andX'], $filterExpressions));
+        }
         $iterator = $query->getQueryBuilder()->getQuery()->iterate();
 
         $processed = 0;
