@@ -34,8 +34,8 @@ The ``root`` path
 =================
 
 You may already have seen a ``Root.fusion`` that contain a path ``page`` which is filled with an object of type ``Neos.Neos:Page``.
-Here, the ``Neos.Neos:Page`` Fusion object is assigned to the path ``page``, telling the system that the Fusion object 
-``Page`` is responsible for further rendering:
+Here, the ``Neos.Neos:Page`` Fusion object is assigned to the path ``page``, telling the system that the Fusion object
+``Page`` is responsible for further rendering::
 
   page = Neos.Neos:Page {
     head {
