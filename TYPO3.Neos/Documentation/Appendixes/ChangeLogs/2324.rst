@@ -1,0 +1,54 @@
+`2.3.24 (2018-05-16) <https://github.com/neos/neos-development-collection/releases/tag/2.3.24>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Document usage of Security Context in Content Cache <https://github.com/neos/neos-development-collection/pull/2033>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+- [ x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Neos``
+
+`BUGFIX: Exclude shadow nodes in findOneByIdentifier <https://github.com/neos/neos-development-collection/pull/1987>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Added a filtering for `movedTo` like we already do in `filterNodeDataByBestMatchInContext`.
+
+See description of the discovered behavior in https://github.com/neos/neos-ui/issues/1523#issuecomment-379247165.
+
+Closes #1986
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Dynamic cache entries should be evaluated via runtime <https://github.com/neos/neos-development-collection/pull/1964>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Dynamic cache entries are complex and need a lot of information
+to be evaluated correctly, therefore the runtime should always take
+care of this. This is potentially a bit slower than the original
+code but definitely more correct in outcome. Before tags were
+definitely wrong as they were based on the parent elements
+configuration.
+
+* Packages: ``Neos`` ``TypoScript``
+
+`BUGFIX: Skip CSRF protection in logout action <https://github.com/neos/neos-development-collection/pull/1981>`_
+----------------------------------------------------------------------------------------------------------------
+
+Since we overwrite the `logoutAction` from Flow, we need to annotate it with `@Flow\\SkipCsrfProtection` here too.
+
+see neos/flow-development-collection#1014
+
+* Packages: ``Neos``
+
+`TASK: Fix incorrect child node types in \`\`node:repair\`\` command <https://github.com/neos/neos-development-collection/pull/1956>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+When checking for missing child nodes it doesn't check if the existing child nodes are the correct node type. This can happen when a node has been changed to the fallback node type or if the child node type is changed in the configuration.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.23...2.3.24>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
