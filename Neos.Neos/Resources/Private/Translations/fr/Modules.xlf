@@ -538,7 +538,7 @@
 			<target xml:lang="fr">Le module "Gestion des sites" vous donne un aperçu de tous vos sites. Vous pouvez éditer, ajouter et supprimer des informations sur vos site, tel que l'ajout d'un nouveau domaine.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
-			<target xml:lang="fr" state="needs-translation">Add new site</target></trans-unit>
+			<target xml:lang="fr" state="translated">Ajouter un site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
 			<target xml:lang="fr">Créer un site</target></trans-unit>
@@ -547,7 +547,7 @@
 			<target xml:lang="fr">Créer un nouveau site</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve">
 				<source>Root node name</source>
-			<target xml:lang="fr" state="needs-translation">Root node name</target></trans-unit>
+			<target xml:lang="fr" state="translated">Nom du dossier racine</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
 			<target xml:lang="fr" state="translated">Domaines</target></trans-unit>
@@ -559,19 +559,19 @@
 			<target xml:lang="fr">Nom</target></trans-unit>
       <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
 				<source>Default asset collection</source>
-			<target xml:lang="fr" state="needs-translation">Default asset collection</target></trans-unit>
+			<target xml:lang="fr" state="translated">Collection de contenu par défaut</target></trans-unit>
       <trans-unit id="sites.sitePackage" xml:space="preserve">
 				<source>Site package</source>
-			<target xml:lang="fr" state="needs-translation">Site package</target></trans-unit>
+			<target xml:lang="fr" state="translated">Pack de site</target></trans-unit>
       <trans-unit id="sites.delete" xml:space="preserve">
 				<source>Delete this site</source>
-			<target xml:lang="fr" state="needs-translation">Delete this site</target></trans-unit>
+			<target xml:lang="fr" state="translated">Supprimer ce site</target></trans-unit>
       <trans-unit id="sites.deactivate" xml:space="preserve">
 				<source>Deactivate site</source>
-			<target xml:lang="fr" state="needs-translation">Deactivate site</target></trans-unit>
+			<target xml:lang="fr" state="translated">Désactivé ce site</target></trans-unit>
       <trans-unit id="sites.activate" xml:space="preserve">
 				<source>Activate site</source>
-			<target xml:lang="fr" state="needs-translation">Activate site</target></trans-unit>
+			<target xml:lang="fr" state="translated">Activé ce site</target></trans-unit>
       <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target xml:lang="fr" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
