@@ -1,0 +1,72 @@
+`4.0.4 (2018-05-16) <https://github.com/neos/neos-development-collection/releases/tag/4.0.4>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`DOCS: document forceCrop feature <https://github.com/neos/neos-development-collection/pull/2049>`_
+---------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`DOCS: document new events API of the new UI <https://github.com/neos/neos-development-collection/pull/2050>`_
+--------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix pagination for ListView in Media Browser <https://github.com/neos/neos-development-collection/pull/2062>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Use `paginatedAssetProxies` instead of `assetProxies` in Neos.Media.Browser ListView to make pagination work again.
+
+`DOCS: Document custom background color for editPreviewMode <https://github.com/neos/neos-development-collection/pull/2052>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This PR adds documentation for the newlty introduced `backgroundColor` option for custom `editPreviewModes`
+
+related: https://github.com/neos/neos-ui/pull/1864
+
+`Tiny documentation typo bugfix <https://github.com/neos/neos-development-collection/pull/2063>`_
+-------------------------------------------------------------------------------------------------
+
+Added a colon to make syntax highlighting work.
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix Node migration without filter <https://github.com/neos/neos-development-collection/pull/2058>`_
+------------------------------------------------------------------------------------------------------------
+
+This change test if the migration contains a filter before creating the
+contrains. Without this change the migration fails with an empty WHERE
+clause.
+
+This bug impact the migration `20150716212459`. This migration is used to
+define default dimensions on all nodes.
+
+`BUGFIX: Fix icons in modules after FA5 change <https://github.com/neos/neos-development-collection/pull/2057>`_
+----------------------------------------------------------------------------------------------------------------
+
+Resolves: #2054
+
+* Packages: ``Browser`` ``Neos``
+
+`TASK: Adjust test to change in Neos.Neos.Ui <https://github.com/neos/neos-development-collection/pull/2056>`_
+--------------------------------------------------------------------------------------------------------------
+
+The UI package comes with a new image serializer that needs to be
+configured so the test sees it's expected result.
+
+This change depends on [`1b4562c8b71a595b48fec03fac9cd52b9f8c7a5e <https://github.com/neos/neos-development-collection/commit/1b4562c8b71a595b48fec03fac9cd52b9f8c7a5e>`_](https://github.com/neos/neos-ui/pull/1866/commits/`1b4562c8b71a595b48fec03fac9cd52b9f8c7a5e <https://github.com/neos/neos-development-collection/commit/1b4562c8b71a595b48fec03fac9cd52b9f8c7a5e>`_) in the
+UI package.
+
+* Packages: ``Neos``
+
+`BUGFIX: Use correct cache namespace for redis in documentation <https://github.com/neos/neos-development-collection/pull/2048>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+The old namespace was deprecated and is now gone with 4.0
+
+* Packages: ``Browser`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.0.3...4.0.4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
