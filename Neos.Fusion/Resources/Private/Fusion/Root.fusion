@@ -10,6 +10,7 @@ prototype(Neos.Fusion:CanRender).@class = 'Neos\\Fusion\\FusionObjects\\CanRende
 prototype(Neos.Fusion:DebugDump) {
   @class = 'Neos\\Fusion\\FusionObjects\\DebugDumpImplementation'
   value = ${value}
+  enabled = true
 }
 prototype(Neos.Fusion:Debug) {
   @class = 'Neos\\Fusion\\FusionObjects\\DebugImplementation'

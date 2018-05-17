@@ -30,6 +30,12 @@ class DebugDumpImplementation extends AbstractFusionObject
      */
     protected $stack;
 
+    public function isEnabled() : bool
+    {
+        return $this->fusionValue('enabled') ?: false;
+    }
+
+
     /**
      * Return the values in a human readable form
      *
@@ -37,7 +43,7 @@ class DebugDumpImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        if ($this->stack->hasMessage()) {
+        if ($this->stack->hasMessage() && $this->isEnabled()) {
             $this->getRuntime()->setEnableContentCache(false);
             $this->stack->dump();
         }
