@@ -5,10 +5,16 @@ prototype(Neos.Fusion:Case).@class = 'Neos\\Fusion\\FusionObjects\\CaseImplement
 prototype(Neos.Fusion:Matcher).@class = 'Neos\\Fusion\\FusionObjects\\MatcherImplementation'
 prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\FusionObjects\\RendererImplementation'
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
-prototype(Neos.Fusion:Debug).@class = 'Neos\\Fusion\\FusionObjects\\DebugImplementation'
 prototype(Neos.Fusion:Component).@class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
 prototype(Neos.Fusion:CanRender).@class = 'Neos\\Fusion\\FusionObjects\\CanRenderImplementation'
-
+prototype(Neos.Fusion:DebugDump) {
+  @class = 'Neos\\Fusion\\FusionObjects\\DebugDumpImplementation'
+  value = ${value}
+}
+prototype(Neos.Fusion:Debug) {
+  @class = 'Neos\\Fusion\\FusionObjects\\DebugImplementation'
+  value = ${value}
+}
 prototype(Neos.Fusion:Collection) {
 	@class = 'Neos\\Fusion\\FusionObjects\\CollectionImplementation'
 	itemName = 'item'
