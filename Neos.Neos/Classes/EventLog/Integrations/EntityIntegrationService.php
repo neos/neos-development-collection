@@ -28,8 +28,7 @@ use Neos\Neos\EventLog\Domain\Model\Event;
 class EntityIntegrationService extends AbstractIntegrationService
 {
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
+     * Doctrine's Entity Manager.
      *
      * @Flow\Inject
      * @var EntityManagerInterface
