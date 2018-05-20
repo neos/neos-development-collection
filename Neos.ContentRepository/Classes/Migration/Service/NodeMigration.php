@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Migration\Service;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
@@ -49,11 +49,8 @@ class NodeMigration
     protected $persistenceManager;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface.
-     *
      * @Flow\Inject
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -100,7 +97,7 @@ class NodeMigration
         foreach ($this->nodeFilterService->getFilterExpressions($migrationDescription['filters'], $baseQuery) as $filterExpression) {
             $filterExpressions[] = $filterExpression;
         }
-        
+
         $query = new Query(NodeData::class);
         if ($filterExpressions !== []) {
             $query->matching(call_user_func_array([new Expr(), 'andX'], $filterExpressions));
