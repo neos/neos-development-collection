@@ -227,7 +227,7 @@ Example::
         documentPath = ${documentNode.path}
   }
 
-  # the initial value is not changed, so you can plug the Debug prototype anywhere in your Fusion code
+  # the initial value is not changed, so you can define the Debug prototype anywhere in your Fusion code
 
 
 .. _Neos_Fusion__Component:
