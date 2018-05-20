@@ -29,7 +29,7 @@ class DebugStack
         $this->data[] = $data;
     }
 
-    public function hasMessage()
+    public function hasMessage(): bool
     {
         return count($this->data) > 0;
     }
@@ -37,9 +37,14 @@ class DebugStack
     public function dump()
     {
         $data = $this->data;
-        $this->data = [];
+        $this->flush();
         foreach ($data as $debugMessage) {
             \Neos\Flow\var_dump($debugMessage->getData(), $debugMessage->getTitle(), false, $debugMessage->isPlaintext());
         }
+    }
+
+    public function flush()
+    {
+        $this->data = [];
     }
 }
