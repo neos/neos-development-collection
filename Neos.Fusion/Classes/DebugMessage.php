@@ -12,7 +12,7 @@ namespace Neos\Fusion;
  */
 
 /**
- * A DTO to transport internal debugging messages
+ * A DTO for transporting internal debugging messages
  */
 class DebugMessage
 {

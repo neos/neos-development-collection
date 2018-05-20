@@ -12,13 +12,12 @@ namespace Neos\Fusion\FusionObjects;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Fusion\DebugMessage;
 use Neos\Fusion\Service\DebugStack;
 
 /**
  * A Fusion object for dumping debugging fusion-values
  *
- * This need to be use as processor.
+ * This needs to be used as a processor
  *
  * @api
  */
