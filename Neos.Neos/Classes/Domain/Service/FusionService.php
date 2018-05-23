@@ -186,17 +186,39 @@ class FusionService
     protected function generateFusionForNodeType(NodeType $nodeType)
     {
         if ($nodeType->hasConfiguration('options.fusion.prototypeGenerator') && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null) {
-            $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
-            if (!class_exists($generatorClassName)) {
-                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
+            $configuration = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
+            if (is_string($configuration)) {
+                return $this->executePrototypeGenerator($configuration, $nodeType);
+            } elseif (is_array($configuration)) {
+                $code = '';
+                $generatorClassNameList = array_keys(array_filter($configuration));
+                foreach ($generatorClassNameList as $generatorClassName) {
+                    $code .= $this->executePrototypeGenerator($generatorClassName, $nodeType);
+                }
+                return $code;
             }
-            $generator = $this->objectManager->get($generatorClassName);
-            if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
-                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
-            }
-            return $generator->generate($nodeType);
         }
         return '';
+    }
+
+    /**
+     * Execute a single prototype generator
+     *
+     * @param string $generatorClassName
+     * @param NodeType $nodeType
+     * @return string
+     * @throws \Neos\Neos\Domain\Exception
+     */
+    protected function executePrototypeGenerator(string $generatorClassName, NodeType $nodeType)
+    {
+        if (!class_exists($generatorClassName)) {
+            throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
+        }
+        $generator = $this->objectManager->get($generatorClassName);
+        if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
+            throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
+        }
+        return $generator->generate($nodeType);
     }
 
     /**
