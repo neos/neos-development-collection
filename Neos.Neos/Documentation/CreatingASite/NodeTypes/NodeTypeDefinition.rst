@@ -289,64 +289,68 @@ The following options are allowed:
       i.e. for properties which have a ``group`` set.
 
     ``inlineEditable``
-      If `true`, this property is inline editable, i.e. edited directly on the page through Aloha.
+      If `true`, this property is inline editable, i.e. edited directly on the page through CKeditor.
 
     ``aloha``
+      Legacy configuration of rich text editor, works for the sake of backwards compatibility, but it
+      is advised to use `inline.editorOptions` instead.
+
+    ``inline``
       This section controls the text formatting options the user has available for this property.
       Example::
 
-        aloha:
-          'format': # Enable specific formatting options.
-            'strong': true
-            'b': false
-            'em': true
-            'i': false
-            'u': true
-            'sub': true
-            'sup': true
-            'p': true
-            'h1': true
-            'h2': true
-            'h3': true
-            'h4': false
-            'h5': false
-            'h6': false
-            'code': false
-            'removeFormat': true
-          'table':
-            'table': true
-          'link':
-            'a': true
-          'list':
-            'ul': true
-            'ol': true
-          'alignment':
-            'left': true
-            'center': true
-            'right': true
-            'justify': true
-          'formatlesspaste':
-            # Show toggle button for formatless pasting.
-            'button': true
-            # Whether the formatless pasting should be enable by default.
-            'formatlessPasteOption': false
-            # If not set the default setting is used: 'a', 'abbr', 'b', 'bdi', 'bdo', 'cite', 'code', 'del', 'dfn',
-            # 'em', 'i', 'ins', 'kbd', 'mark', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'strong', 'sub', 'sup',
-            # 'time', 'u', 'var'
-            'strippedElements': ['a']
-          'autoparagraph': true # Automatically wrap non-wrapped text blocks in paragraph blocks.
+        inline:
+          editorOptions:
+            'format': # Enable specific formatting options.
+              'strong': true
+              'em': true
+              'u': true
+              'sub': true
+              'sup': true
+              'p': true
+              'h1': true
+              'h2': true
+              'h3': true
+              'h4': false
+              'h5': false
+              'h6': false
+              'code': false
+              'removeFormat': true
+            'table':
+              'table': true
+            'link':
+              'a': true
+            'list':
+              'ul': true
+              'ol': true
+            'alignment':
+              'left': true
+              'center': true
+              'right': true
+              'justify': true
+            'formatlesspaste':
+              # Show toggle button for formatless pasting.
+              'button': true
+              # Whether the formatless pasting should be enable by default.
+              'formatlessPasteOption': false
+              # If not set the default setting is used: 'a', 'abbr', 'strong', 'bdi', 'bdo', 'cite', 'code', 'del', 'dfn',
+              # 'em', 'ins', 'kbd', 'mark', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'strong', 'sub', 'sup',
+              # 'time', 'u', 'var'
+              'strippedElements': ['a']
+            'autoparagraph': true # Automatically wrap non-wrapped text blocks in paragraph blocks.
 
       Example of disabling all formatting options::
 
-        aloha:
-          'format': []
-          'table': []
-          'link': []
-          'list': []
-          'alignment': []
-          'formatlesspaste':
-            'button': false
-            'formatlessPasteOption': true
+        inline:
+          editorOptions:
+            'format': []
+            'table': []
+            'link': []
+            'list': []
+            'alignment': []
+            'formatlesspaste':
+              'button': false
+              'formatlessPasteOption': true
 
     ``inspector``
       These settings configure the inspector in the Neos UI for the property.
