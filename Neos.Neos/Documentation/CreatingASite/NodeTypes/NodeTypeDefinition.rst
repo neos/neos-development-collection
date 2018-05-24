@@ -289,7 +289,7 @@ The following options are allowed:
       i.e. for properties which have a ``group`` set.
 
     ``inlineEditable``
-      If `true`, this property is inline editable, i.e. edited directly on the page through CKeditor.
+      If `true`, this property is inline editable, i.e. edited directly on the page.
 
     ``aloha``
       Legacy configuration of rich text editor, works for the sake of backwards compatibility, but it
