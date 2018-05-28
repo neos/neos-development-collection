@@ -38,7 +38,7 @@ define(
 			label: function() {
 				var output = (this.get('title') != '' ? this.get('title') : this.get('name'));
 				if (this.get('readOnly')) {
-					output = '<span class="icon icon-lock"></span> ' + output;
+					output = '<span class="icon fas fa-lock"></span> ' + output;
 				}
 				return output;
 			}.property('name', 'title', 'readOnly')

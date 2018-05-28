@@ -169,8 +169,17 @@ The following options are allowed:
   ``icon``
     This setting defines the icon that the Neos UI will use to display the node type.
 
-    Currently it is only possible to use a predefined selection of icons, which
-    are available in Font Awesome http://fortawesome.github.io/Font-Awesome/3.2.1/icons/.
+    Legacy:
+    In Neos versions before 4.0 it was required to use icons from the Fontawesome 3 or 4 versions,
+    prefixed with "icon-"
+
+    Current:
+    In Neos 4.0, Fontawesome 5 was introduced, enabling the usage of all free Fontawesome icons:
+    https://fontawesome.com/icons?d=gallery&m=free
+    Those can still be referenced via "icon-[name]", as the UI includes a fallback to the "fas"
+    prefix-classes. To be sure which icon will be used, they can also be referenced by their
+    icon-classes, e.g. "fas fa-check".
+
 
   ``help``
     Configuration of contextual help. Displays a message that is rendered as popover

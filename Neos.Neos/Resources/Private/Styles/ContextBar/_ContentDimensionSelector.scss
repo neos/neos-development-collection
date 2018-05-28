@@ -36,7 +36,7 @@
 
 		&::before {
 			@include fa-icon();
-			content: $fa-var-caret-down;
+			content: fa-content($fa-var-caret-down);
 			font-size: 14px;
 			position: absolute;
 			right: 0;

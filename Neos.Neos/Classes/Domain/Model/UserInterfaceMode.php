@@ -119,25 +119,6 @@ class UserInterfaceMode
 
     /**
      * @return string
-     * @deprecated since 3.0
-     */
-    public function getTypoScriptPath()
-    {
-        return $this->getFusionPath();
-    }
-
-    /**
-     * @param string $typoScriptPath
-     * @return void
-     * @deprecated since 3.0
-     */
-    public function setTypoScriptPath($typoScriptPath)
-    {
-        $this->setFusionPath($typoScriptPath);
-    }
-
-    /**
-     * @return string
      */
     public function getTitle()
     {
@@ -196,8 +177,6 @@ class UserInterfaceMode
 
         if (isset($configuration['fusionRenderingPath'])) {
             $mode->setFusionPath($configuration['fusionRenderingPath']);
-        } elseif (isset($configuration['typoScriptRenderingPath'])) {
-            $mode->setFusionPath($configuration['typoScriptRenderingPath']);
         } else {
             $mode->setFusionPath('');
         }

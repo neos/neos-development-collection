@@ -26,7 +26,7 @@ define(
 
 		getResultIcon: function($result, NodeTypeService) {
 			var iconClass = NodeTypeService.getNodeTypeDefinition($('.node-type', $result).text()).ui.icon;
-			return '<i class="' + (iconClass ? iconClass : 'icon-file') + '"></i>';
+			return '<i class="' + (iconClass ? iconClass : 'fas fa-file') + '"></i>';
 		},
 
 		getQueryRequestData: function(searchTerm) {

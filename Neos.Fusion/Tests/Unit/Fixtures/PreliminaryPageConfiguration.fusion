@@ -4,7 +4,7 @@
  * Repository.
  */
  
-rhabarber = Page
+rhabarber = Neos.Neos:Page
 rhabarber.view = "default"
 rhabarber.bodyTag = "<body style=\"background-color:rgb(255,135,0); color:white; font-family:Helvetica, Arial, sans-serif';\">"
 

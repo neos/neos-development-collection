@@ -58,13 +58,19 @@
 			<target xml:lang="sv-SE" state="translated">Fallande</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="sv-SE" state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Sortera i stigande ordning</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="sv-SE" state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Sortera i fallande ordning</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="sv-SE" state="translated">Dra och släpp på etikett eller samling</target></trans-unit>
+      <trans-unit id="view" xml:space="preserve">
+				<source>View</source>
+			<target xml:lang="sv-SE" state="needs-translation">View</target></trans-unit>
+      <trans-unit id="viewAsset" xml:space="preserve">
+				<source>View asset</source>
+			<target xml:lang="sv-SE" state="needs-translation">View asset</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target xml:lang="sv-SE" state="translated">Redigera resurs</target></trans-unit>
@@ -100,7 +106,7 @@
 			<target xml:lang="sv-SE" state="translated">Ersätt</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="sv-SE" state="needs-translation">Replace asset resource</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ersätt tillgångsresurs</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="sv-SE" state="translated">Spara</target></trans-unit>
@@ -173,6 +179,15 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
 			<target xml:lang="sv-SE" state="translated">Miniatyrvy</target></trans-unit>
+      <trans-unit id="connectionError" xml:space="preserve">
+				<source>Connection error</source>
+			<target xml:lang="sv-SE" state="needs-translation">Connection error</target></trans-unit>
+      <trans-unit id="mediaSource" xml:space="preserve">
+				<source>Media source</source>
+			<target xml:lang="sv-SE" state="needs-translation">Media source</target></trans-unit>
+      <trans-unit id="mediaSources" xml:space="preserve">
+				<source>Media sources</source>
+			<target xml:lang="sv-SE" state="needs-translation">Media sources</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
 			<target xml:lang="sv-SE" state="translated">Samlingar</target></trans-unit>
@@ -272,6 +287,15 @@
       <trans-unit id="metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="sv-SE" state="translated">Identifierare</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve">
+				<source>Title</source>
+			<target xml:lang="sv-SE" state="translated">Titel</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve">
+				<source>Caption</source>
+			<target xml:lang="sv-SE" state="translated">Bildtext</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target xml:lang="sv-SE" state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			<target xml:lang="sv-SE" state="translated">Förhandsgranska</target></trans-unit>
@@ -386,13 +410,13 @@
 			<target xml:lang="sv-SE" state="translated">Skapa omdirigeringar från ursprunglig fil-URL till ny URL</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target xml:lang="sv-SE" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">'Resurser av typ "{0}" kan endast ersättas av liknande resurser. Fick typ "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target xml:lang="sv-SE" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ingen tillgång till arbetsyta "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target xml:lang="sv-SE" state="needs-translation">No document node found for this node</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ingen dokumentnod hittades för denna nod</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -292,7 +292,7 @@ class LinkingService
             ->uriFor('show', array('node' => NodeAddress::fromNode($resolvedNode)), 'Frontend\Node', 'Neos.Neos');
 
         $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
-        if (NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {
+        if ($siteNode instanceof NodeInterface && NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {
             /** @var Site $site */
             $site = $resolvedNode->getContext()->getCurrentSite();
         } else {

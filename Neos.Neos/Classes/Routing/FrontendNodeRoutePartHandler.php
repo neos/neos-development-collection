@@ -298,7 +298,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      *
      * @param $node
      * @return boolean|ResolveResult if value could be resolved successfully, otherwise false.
-     * @throws \Neos\Neos\Http\Exception\InvalidContentDimensionValueUriProcessorException
      * @throws \Exception
      */
     protected function resolveValue($node)

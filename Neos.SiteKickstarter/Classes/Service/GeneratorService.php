@@ -56,7 +56,8 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
         ]);
 
         $this->generateSitesXml($packageKey, $siteName);
-        $this->generateSitesFusion($packageKey, $siteName);
+        $this->generateSitesRootFusion($packageKey, $siteName);
+        $this->generateSitesPageFusion($packageKey, $siteName);
         $this->generateDefaultTemplate($packageKey, $siteName);
         $this->generateNodeTypesConfiguration($packageKey);
         $this->generateAdditionalFolders($packageKey);
@@ -90,14 +91,14 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
     }
 
     /**
-     * Generate basic Fusion files.
+     * Generate basic root Fusion file.
      *
      * @param string $packageKey
      * @param string $siteName
      * @return void
      * @throws \Neos\Utility\Exception\FilesException
      */
-    protected function generateSitesFusion($packageKey, $siteName)
+    protected function generateSitesRootFusion($packageKey, $siteName)
     {
         $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Fusion/Root.fusion';
 
@@ -109,8 +110,31 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
-        $sitesFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/Root.fusion';
-        $this->generateFile($sitesFusionPathAndFilename, $fileContent);
+        $sitesRootFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/Root.fusion';
+        $this->generateFile($sitesRootFusionPathAndFilename, $fileContent);
+    }
+
+    /**
+     * Generate basic Fusion documentNode file.
+     *
+     * @param string $packageKey
+     * @param string $siteName
+     * @return void
+     */
+    protected function generateSitesPageFusion($packageKey, $siteName)
+    {
+        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Fusion/NodeTypes/Pages/Page.fusion';
+
+        $contextVariables = array();
+        $contextVariables['packageKey'] = $packageKey;
+        $contextVariables['siteName'] = $siteName;
+        $packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
+        $contextVariables['siteNodeName'] = $packageKeyDomainPart;
+
+        $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+        $sitesPageFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/NodeTypes/Page.fusion';
+        $this->generateFile($sitesPageFusionPathAndFilename, $fileContent);
     }
 
     /**
@@ -154,15 +178,19 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      *
      * @param string $packageKey
      * @return void
-     * @throws \Neos\Utility\Exception\FilesException
+     * @throws \Neos\FluidAdaptor\Core\Exception
      */
     protected function generateNodeTypesConfiguration($packageKey)
     {
-        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Configuration/NodeTypes.yaml';
+        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Configuration/NodeTypes.Document.Page.yaml';
 
-        $fileContent = file_get_contents($templatePathAndFilename);
+        $contextVariables = [
+            'packageKey' => $packageKey
+        ];
 
-        $sitesNodeTypesPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.yaml';
+        $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+        $sitesNodeTypesPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.Document.Page.yaml';
         $this->generateFile($sitesNodeTypesPathAndFilename, $fileContent);
     }
 

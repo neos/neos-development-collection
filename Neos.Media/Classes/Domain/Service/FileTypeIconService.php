@@ -14,27 +14,28 @@ namespace Neos\Media\Domain\Service;
 use Neos\Media\Domain\Model\AssetInterface;
 
 /**
- * Service that retrieves an icon for the filetype of a given asset
+ * Service that retrieves an icon for the file type of a given filename
  */
 class FileTypeIconService
 {
     /**
-     * Returns an icon for a filetype within given dimensions
+     * Returns an icon for a file type within given dimensions
      *
-     * @param AssetInterface $asset
+     * @param string $filename
      * @param integer $maximumWidth
      * @param integer $maximumHeight
      * @return array
      */
-    public static function getIcon(AssetInterface $asset, $maximumWidth, $maximumHeight)
+    public static function getIcon($filename, $maximumWidth, $maximumHeight)
     {
-        // TODO: Could be configurable at some point
         $iconPackage = 'Neos.Media';
-
         $iconSize = self::getDocumentIconSize($maximumWidth, $maximumHeight);
 
-        if (is_file('resource://' . $iconPackage . '/Public/Icons/16px/' . $asset->getResource()->getFileExtension() . '.png')) {
-            $icon = sprintf('Icons/%spx/' . $asset->getResource()->getFileExtension() . '.png', $iconSize);
+        $pathInfo = pathinfo($filename);
+        $fileExtension = isset($pathInfo['extension']) ? $pathInfo['extension'] : '';
+
+        if (is_file('resource://' . $iconPackage . '/Public/Icons/16px/' . $fileExtension . '.png')) {
+            $icon = sprintf('Icons/%spx/' . $fileExtension . '.png', $iconSize);
         } else {
             $icon = sprintf('Icons/%spx/_blank.png', $iconSize);
         }
@@ -43,7 +44,7 @@ class FileTypeIconService
             'width' => $iconSize,
             'height' => $iconSize,
             'src' => 'resource://' . $iconPackage . '/Public/' . $icon,
-            'alt' => $asset->getResource()->getFileExtension()
+            'alt' => $fileExtension
         ];
     }
 

@@ -59,7 +59,7 @@
 
 				&::after {
 					@include fa-icon();
-					content: $fa-var-times;
+					content: fa-content($fa-var-times);
 					margin-left: -2px;
 				}
 

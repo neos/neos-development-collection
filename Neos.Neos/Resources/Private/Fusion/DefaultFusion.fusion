@@ -45,17 +45,18 @@ root {
 		renderPath = ${'/' + this.possibleEditPreviewModePath}
 	}
 
-	layout {
-		@position = 'end 9997'
-		layout = ${q(node).property('layout') != null && q(node).property('layout') != '' ? q(node).property('layout') : q(node).parents('[subpageLayout][subpageLayout != ""]').first().property('subpageLayout')}
-		condition = ${this.layout != null && this.layout != ''}
-		renderPath = ${'/' + this.layout}
-	}
-
 	format {
-		@position = 'end 9998'
+		@position = 'end 9997'
 		condition = ${request.format != 'html'}
 		renderPath = ${'/' + String.replace(request.format, '.', '/')}
+	}
+
+	documentType {
+		@position = 'end 9998'
+		condition = Neos.Fusion:CanRender {
+			type = ${q(documentNode).property('_nodeType.name')}
+		}
+		type = ${q(documentNode).property('_nodeType.name')}
 	}
 
 	default {

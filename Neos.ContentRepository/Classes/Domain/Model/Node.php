@@ -1366,7 +1366,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @return string
      * @throws Exception
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier(): string
     {
         return $this->getContextPath();
     }
