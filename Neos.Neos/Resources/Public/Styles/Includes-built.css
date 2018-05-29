@@ -12520,6 +12520,7 @@ readers do not read off random characters that represent icons */
 }
 .neos.neos-module .neos-breadcrumb a i {
   line-height: 20px;
+  padding-right: 5px;
 }
 .neos.neos-module .neos-content {
   padding: 0;
