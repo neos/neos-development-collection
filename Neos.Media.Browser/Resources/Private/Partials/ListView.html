@@ -84,7 +84,7 @@
 			'deleteLabel': '{neos:backend.translate(id: \'delete\', package: \'Neos.Neos\')}',
 			'deleteAssetLabel': '{neos:backend.translate(id: \'deleteAsset\', package: \'Neos.Media.Browser\')}'
 		}">
-            <f:for each="{assetProxies}" as="assetProxy" iteration="iterator">
+            <f:for each="{paginatedAssetProxies}" as="assetProxy" iteration="iterator">
                 <tr class="asset draggable-asset{f:if(condition: '{assetProxy.tags -> f:count()} === 0', then: ' neos-media-untagged')}"
                     data-asset-identifier="{assetProxy.identifier}"
                     data-local-asset-identifier="{assetProxy.localAssetIdentifier}"

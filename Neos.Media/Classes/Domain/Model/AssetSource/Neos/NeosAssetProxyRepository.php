@@ -11,6 +11,7 @@ namespace Neos\Media\Domain\Model\AssetSource\Neos;
  * source code.
  */
 
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\Exception\InvalidQueryException;
@@ -41,10 +42,8 @@ final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, S
     protected $objectManager;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related interface ...
-     *
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
