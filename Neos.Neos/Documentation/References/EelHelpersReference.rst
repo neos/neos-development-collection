@@ -317,6 +317,17 @@ See formatting options as in PHP date()
 
 **Return** (string)
 
+Date.formatCldr(date, cldrFormat, locale)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Format a date to a string with a given cldr format
+
+* ``date`` (integer|string|\DateTime)
+* ``cldrFormat`` (string) Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
+* ``locale`` (string , *optional*) String locale - example (de|en|ru_RU)
+
+**Return** (string)
+
 Date.hour(dateTime)
 ^^^^^^^^^^^^^^^^^^^
 
