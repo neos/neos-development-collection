@@ -186,16 +186,15 @@ class RuntimeContentCache
                          *   It must create cache segment tokens in order to properly cache, but those also need to be removed from the result.
                          *   Therefore a dynamic cache entry must always have "currentPathIsEntryPoint" to make sure the markers are parsed regardless of the caching status of the upper levels
                          *   To make that happen the state "$self->inCacheEntryPoint" must be reset to null.
-                         *   Saving the current state is irrelevant at this point as any top level element will have passed this point already and have the appropriate "currentPathIsEntryPoint"
-                         *   in its cache context. As soon as we bubble out of the upper level segment that potentially has set "$self->inCacheEntryPoint" before the state would be reset anyway
-                         *   so any parallel elements wouldn't be affected.
                          */
+                        $previouslyInCacheEntryPoint = $self->inCacheEntryPoint;
                         $self->inCacheEntryPoint = null;
 
                         $unserializedContext = $self->unserializeContext($additionalData['context']);
                         $this->runtime->pushContextArray($unserializedContext);
                         $result = $this->runtime->evaluate($additionalData['path']);
                         $this->runtime->popContext();
+                        $self->inCacheEntryPoint = $previouslyInCacheEntryPoint;
                         return $result;
                     } else {
                         throw new Exception(sprintf('Unknown uncached command "%s"', $command), 1392837596);
