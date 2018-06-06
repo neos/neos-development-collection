@@ -1,0 +1,62 @@
+`4.0.5 (2018-06-06) <https://github.com/neos/neos-development-collection/releases/tag/4.0.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: "inCacheEntryPoint" needs to be saved <https://github.com/neos/neos-development-collection/pull/2077>`_
+----------------------------------------------------------------------------------------------------------------
+
+It is necessary to save and restore the `incacheEntryPoint` state in the following situation:
+
+* the dynamic cache segment is evaluated in the **preEvaluate** step of a fusion path which will set `inCacheEntryPoint` to `null`
+* the **preEvaluate** returns a "cache miss" because not all segments could be replaced
+* Fusion then evaluates the path as usual 
+* the runtime content cache then sets `currentPathIsEntryPoint` to `true` in *enter*  bc `inCacheEntryPoint` is still `null`
+* the *postProcess* step then processes the cache entry and removes all CONTENT_CACHE markers bc `currentPathIsEntryPoint` is `true`
+
+
+BTW: In this situation, *uncached* and *dynamic* segments are evaluated twice. But this is outside the scope of this bugfix. 
+
+`BUGFIX: Column NodeType should be abstract <https://github.com/neos/neos-development-collection/pull/2075>`_
+-------------------------------------------------------------------------------------------------------------
+
+The `Neos.NodeTypes:Column` NodeType was always abstract, the 
+abtract property isn't inherited down so it must be set again
+on any inheriting NodeType. So to have Column abstract it must
+declare so (again).
+
+Fixes: #2071
+
+* Packages: ``NodeTypes``
+
+`BUGFIX: Do not insist on assetSourceOptions to be set <https://github.com/neos/neos-development-collection/pull/2065>`_
+------------------------------------------------------------------------------------------------------------------------
+
+assetSourceOptions are used to configure an asset source, but
+they are not necessarily needed.
+
+* Packages: ``Browser``
+
+`DOCS: replace outdated Aloha configuration samples <https://github.com/neos/neos-development-collection/pull/2069>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Resolves: https://github.com/neos/neos-ui/issues/1619
+
+The new UI has this format as the default: https://github.com/neos/neos-ui/blob/`9219a78b7bb0e96e1caf7d570c18faef9061423f <https://github.com/neos/neos-development-collection/commit/9219a78b7bb0e96e1caf7d570c18faef9061423f>`_/packages/neos-ui-contentrepository/src/registry/NodeTypesRegistry.js#L192
+
+I think it's time to start officially using it.
+
+* Packages: ``Neos``
+
+`BUGFIX: Switch to using EntityManagerInterface <https://github.com/neos/neos-development-collection/pull/2067>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This avoids (potential) error caused by two Doctrine UoW instances
+being in use, one in the EntityManager (of Flow) and one in the
+ObjectManager injected here.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Media`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.0.4...4.0.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
