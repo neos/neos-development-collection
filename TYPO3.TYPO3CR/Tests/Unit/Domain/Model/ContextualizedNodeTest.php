@@ -166,7 +166,7 @@ class ContextualizedNodeTest extends UnitTestCase
     public function setPropertyOnNodeWithNonMatchingContextMaterializesNodeData()
     {
         $node = $this->setUpNodeWithNonMatchingContext();
-        $node->expects($this->once())->method('shallowMaterializeNodeData');
+        $node->expects($this->once())->method('materializeNodeDataAsNeeded');
 
         $node->getNodeData()->expects($this->once())->method('setProperty')->with('propertyName', 'value');
 
@@ -205,7 +205,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $contentObject = new \stdClass();
 
         $node = $this->setUpNodeWithNonMatchingContext();
-        $node->expects($this->once())->method('shallowMaterializeNodeData');
+        $node->expects($this->once())->method('materializeNodeDataAsNeeded');
 
         $node->getNodeData()->expects($this->once())->method('setContentObject')->with($contentObject);
 
@@ -226,7 +226,7 @@ class ContextualizedNodeTest extends UnitTestCase
     public function unsetContentObjectOnNodeWithNonMatchingContextMaterializesNodeData()
     {
         $node = $this->setUpNodeWithNonMatchingContext();
-        $node->expects($this->once())->method('shallowMaterializeNodeData');
+        $node->expects($this->once())->method('materializeNodeDataAsNeeded');
 
         $node->getNodeData()->expects($this->once())->method('unsetContentObject');
 
@@ -361,7 +361,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $context->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array()));
         $context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
-        $node = $this->getMockBuilder(Node::class)->setMethods(array_merge(array('materializeNodeData', 'shallowMaterializeNodeData'), $configurableMethods))->setConstructorArgs(array($nodeData, $context))->getMock();
+        $node = $this->getMockBuilder(Node::class)->setMethods(array_merge(array('materializeNodeData', 'materializeNodeDataAsNeeded'), $configurableMethods))->setConstructorArgs(array($nodeData, $context))->getMock();
         return $node;
     }
 
