@@ -1,4 +1,6 @@
----
+# This is a custom document nodetype which has been auto-generated for your site package
+# by Neos. It works exactly the same as the generic Neos.NodeTypes:Page. You can customize this
+# to your needs or remove it if you do not need a custom page type.
 '{packageKey}:Page':
   superTypes:
     'Neos.Neos:Document': true
