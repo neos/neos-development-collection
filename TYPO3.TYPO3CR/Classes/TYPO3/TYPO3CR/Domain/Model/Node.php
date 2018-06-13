@@ -845,9 +845,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setProperty($propertyName, $value)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->shallowMaterializeNodeData();
-        }
+        $this->materializeNodeDataAsNeeded();
         // Arrays could potentially contain entities and objects could be entities. In that case even if the object is the same it needs to be persisted in NodeData.
         if (!is_object($value) && !is_array($value) && $this->getProperty($propertyName) === $value) {
             return;
@@ -938,9 +936,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function removeProperty($propertyName)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->shallowMaterializeNodeData();
-        }
+        $this->materializeNodeDataAsNeeded();
         if (!$this->hasProperty($propertyName)) {
             return;
         }
@@ -990,9 +986,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setContentObject($contentObject)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->shallowMaterializeNodeData();
-        }
+        $this->materializeNodeDataAsNeeded();
         if ($this->getContentObject() === $contentObject) {
             return;
         }
@@ -1021,9 +1015,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function unsetContentObject()
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->shallowMaterializeNodeData();
-        }
+        $this->materializeNodeDataAsNeeded();
         $this->nodeData->unsetContentObject();
 
         $this->context->getFirstLevelNodeCache()->flush();
@@ -1308,9 +1300,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHidden($hidden)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->shallowMaterializeNodeData();
-        }
+        $this->materializeNodeDataAsNeeded();
         if ($this->isHidden() === $hidden) {
             return;
         }
@@ -1340,9 +1330,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHiddenBeforeDateTime(\DateTime $dateTime = null)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->shallowMaterializeNodeData();
-        }
+        $this->materializeNodeDataAsNeeded();
         if ($this->getHiddenBeforeDateTime() instanceof \DateTime && $dateTime instanceof \DateTime && $this->getHiddenBeforeDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
             return;
         }
@@ -1372,9 +1360,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHiddenAfterDateTime(\DateTime $dateTime = null)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->shallowMaterializeNodeData();
-        }
+        $this->materializeNodeDataAsNeeded();
         if ($this->getHiddenAfterDateTime() instanceof \DateTimeInterface && $dateTime instanceof \DateTimeInterface && $this->getHiddenAfterDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
             return;
         }
@@ -1404,9 +1390,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHiddenInIndex($hidden)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->shallowMaterializeNodeData();
-        }
+        $this->materializeNodeDataAsNeeded();
         if ($this->isHiddenInIndex() === $hidden) {
             return;
         }
@@ -1519,6 +1503,31 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
+     * Materialize the node data either shallow or with child nodes depending
+     * on how we materialize (workspace or dimensions).
+     * A workspace materialize doesn't necessarily need the child nodes materialized as well
+     * unless we do structural changes in which case "materializeNodeData" should be used directly.
+     * For dimensional materialization we always want child nodes though.
+     *
+     * @return void
+     */
+    protected function materializeNodeDataAsNeeded()
+    {
+        $dimensionsMatching = $this->dimensionsAreMatchingTargetDimensionValues();
+        $workspaceMatching = $this->workspaceIsMatchingContext();
+
+        // If we need to materialize across dimensions we should always take child nodes into consideration
+        if (!$dimensionsMatching) {
+            $this->materializeNodeData();
+            return;
+        }
+
+        if (!$workspaceMatching) {
+            $this->shallowMaterializeNodeData();
+        }
+    }
+
+    /**
      * Materializes the original node data (of a different workspace) into the current
      * workspace. And unlike the shallow counterpart does that for all auto-created
      * child nodes as well.
@@ -1617,11 +1626,19 @@ class Node implements NodeInterface, CacheAwareInterface
     protected function isNodeDataMatchingContext()
     {
         if ($this->nodeDataIsMatchingContext === null) {
-            $workspacesMatch = $this->nodeData->getWorkspace() !== null && $this->context->getWorkspace() !== null && $this->nodeData->getWorkspace()->getName() === $this->context->getWorkspace()->getName();
+            $workspacesMatch = $this->workspaceIsMatchingContext();
             $this->nodeDataIsMatchingContext = $workspacesMatch && $this->dimensionsAreMatchingTargetDimensionValues();
         }
 
         return $this->nodeDataIsMatchingContext;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function workspaceIsMatchingContext()
+    {
+        return ($this->nodeData->getWorkspace() !== null && $this->context->getWorkspace() !== null && $this->nodeData->getWorkspace()->getName() === $this->context->getWorkspace()->getName());
     }
 
     /**
