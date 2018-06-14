@@ -1,12 +1,12 @@
-# This Fusion prototype corresponds to the auto-generated document nodetype in
+# This Fusion prototype corresponds to the auto-generated document node type in
 # the "Configuration/NodeTypes.Document.Page.yaml" file of your site package.
 # It takes care of rendering pages of that type.
-# If you removed that nodetype, you can also remove this Fusion prototype.
+# If you removed that node type, you can also remove this Fusion prototype.
 # If you want to understand how this page rendering works, have a look at
 # http://neos.readthedocs.io/en/stable/CreatingASite/RenderingCustomMarkup/PageRendering.html
 prototype({packageKey}:Page) < prototype({packageKey}:DefaultPage) {
     body {
-        // These are your content areas, you can define as many as you want, just name them and the nodePath.
+        // These are your content areas, you can define as many as you want, just name them and define the nodePath.
         content {
             // The default content collection
             main = Neos.Neos:PrimaryContent {
