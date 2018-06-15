@@ -13,6 +13,7 @@ namespace TYPO3\Neos\TypoScript\Cache;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
@@ -56,10 +57,16 @@ class ContentCacheFlusher
     protected $assetService;
 
     /**
-     * @Flow\Inject()
+     * @Flow\Inject
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * Register a node change for a later cache flush. This method is triggered by a signal sent via TYPO3CR's Node
@@ -145,6 +152,10 @@ class ContentCacheFlusher
 
             $this->registerChangeOnNodeIdentifier($reference->getNodeIdentifier());
             $this->registerChangeOnNodeType($reference->getNodeTypeName(), $reference->getNodeIdentifier());
+
+            $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
+            $tagName = 'AssetDynamicTag_' . $assetIdentifier;
+            $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because asset "%s" has changed.', $tagName, $assetIdentifier);
         }
     }
 
