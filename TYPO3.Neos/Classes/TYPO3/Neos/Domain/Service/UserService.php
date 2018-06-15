@@ -817,8 +817,8 @@ class UserService
     }
 
     /**
-     * @param $username
-     * @param $authenticationProviderName
+     * @param string $username
+     * @param string $authenticationProviderName
      * @return \TYPO3\Party\Domain\Model\AbstractParty|null
      * @throws Exception
      */
