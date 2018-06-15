@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\AccountFactory;
 use TYPO3\Flow\Security\AccountRepository;
@@ -126,6 +127,12 @@ class UserService
     protected $hashService;
 
     /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * @Flow\Inject(lazy = FALSE)
      * @var Now
      */
@@ -158,27 +165,21 @@ class UserService
      */
     public function getUser($username, $authenticationProviderName = null)
     {
-        if ($authenticationProviderName !== null && isset($this->runtimeUserCache['a_' . $authenticationProviderName][$username])) {
-            return $this->runtimeUserCache['a_' . $authenticationProviderName][$username];
-        } elseif (isset($this->runtimeUserCache['u_' . $username])) {
-            return $this->runtimeUserCache['u_' . $username];
+        $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
+        $cacheIdentifier = $authenticationProviderName . '~' . $username;
+
+        if (!array_key_exists($cacheIdentifier, $this->runtimeUserCache)) {
+            $user = $this->findUserForAccount($username, $authenticationProviderName);
+            $this->runtimeUserCache[$cacheIdentifier] = $user === null ? null : $this->persistenceManager->getIdentifierByObject($user);
+            return $user;
         }
-        $account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProviderName ?: $this->defaultAuthenticationProviderName);
-        if (!$account instanceof Account) {
+
+        $userIdentifier = $this->runtimeUserCache[$cacheIdentifier];
+        if ($userIdentifier === null) {
             return null;
         }
-        $user = $this->partyService->getAssignedPartyOfAccount($account);
-        if (!$user instanceof User) {
-            throw new Exception(sprintf('Unexpected user type "%s". An account with the identifier "%s" exists, but the corresponding party is not a Neos User.', get_class($user), $username), 1422270948);
-        }
-        if ($authenticationProviderName !== null) {
-            if (!isset($this->runtimeUserCache['a_' . $authenticationProviderName])) {
-                $this->runtimeUserCache['a_' . $authenticationProviderName] = [];
-            }
-            $this->runtimeUserCache['a_' . $authenticationProviderName][$username] = $user;
-        } else {
-            $this->runtimeUserCache['u_' . $username] = $user;
-        }
+
+        $user = $this->partyRepository->findByIdentifier($userIdentifier);
         return $user;
     }
 
@@ -813,5 +814,26 @@ class UserService
             $workspace->setOwner(null);
             $this->workspaceRepository->update($workspace);
         }
+    }
+
+    /**
+     * @param string $username
+     * @param string $authenticationProviderName
+     * @return \TYPO3\Party\Domain\Model\AbstractParty|null
+     * @throws Exception
+     */
+    protected function findUserForAccount($username, $authenticationProviderName)
+    {
+        $account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProviderName ?: $this->defaultAuthenticationProviderName);
+        if ($account === null) {
+            return null;
+        }
+
+        $user = $this->partyService->getAssignedPartyOfAccount($account);
+        if (!$user instanceof User) {
+            throw new Exception(sprintf('Unexpected user type "%s". An account with the identifier "%s" exists, but the corresponding party is not a Neos User.', get_class($user), $username), 1422270948);
+        }
+
+        return $user;
     }
 }
