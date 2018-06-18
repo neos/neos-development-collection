@@ -16,7 +16,6 @@ use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
@@ -448,11 +447,11 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setWorkspace(Workspace $workspace)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
         if ($this->getWorkspace()->getName() === $workspace->getName()) {
             return;
+        }
+        if (!$this->isNodeDataMatchingContext()) {
+            $this->materializeNodeData();
         }
         $this->nodeData->setWorkspace($workspace);
         $this->context->getFirstLevelNodeCache()->flush();
@@ -491,11 +490,11 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setIndex($index)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
         if ($this->getIndex() === $index) {
             return;
+        }
+        if (!$this->isNodeDataMatchingContext()) {
+            $this->materializeNodeData();
         }
         $this->nodeData->setIndex($index);
         $this->context->getFirstLevelNodeCache()->flush();
@@ -936,10 +935,10 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function removeProperty($propertyName)
     {
-        $this->materializeNodeDataAsNeeded();
         if (!$this->hasProperty($propertyName)) {
             return;
         }
+        $this->materializeNodeDataAsNeeded();
         $this->nodeData->removeProperty($propertyName);
 
         $this->context->getFirstLevelNodeCache()->flush();
@@ -986,10 +985,10 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setContentObject($contentObject)
     {
-        $this->materializeNodeDataAsNeeded();
         if ($this->getContentObject() === $contentObject) {
             return;
         }
+        $this->materializeNodeDataAsNeeded();
         $this->nodeData->setContentObject($contentObject);
 
         $this->context->getFirstLevelNodeCache()->flush();
@@ -1031,11 +1030,11 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setNodeType(NodeType $nodeType)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
         if ($this->getNodeType() === $nodeType) {
             return;
+        }
+        if (!$this->isNodeDataMatchingContext()) {
+            $this->materializeNodeData();
         }
         $this->nodeData->setNodeType($nodeType);
 
@@ -1300,10 +1299,10 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHidden($hidden)
     {
-        $this->materializeNodeDataAsNeeded();
         if ($this->isHidden() === $hidden) {
             return;
         }
+        $this->materializeNodeDataAsNeeded();
         $this->nodeData->setHidden($hidden);
 
         $this->context->getFirstLevelNodeCache()->flush();
@@ -1330,10 +1329,10 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHiddenBeforeDateTime(\DateTime $dateTime = null)
     {
-        $this->materializeNodeDataAsNeeded();
         if ($this->getHiddenBeforeDateTime() instanceof \DateTime && $dateTime instanceof \DateTime && $this->getHiddenBeforeDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
             return;
         }
+        $this->materializeNodeDataAsNeeded();
         $this->nodeData->setHiddenBeforeDateTime($dateTime);
 
         $this->context->getFirstLevelNodeCache()->flush();
@@ -1360,10 +1359,10 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHiddenAfterDateTime(\DateTime $dateTime = null)
     {
-        $this->materializeNodeDataAsNeeded();
         if ($this->getHiddenAfterDateTime() instanceof \DateTimeInterface && $dateTime instanceof \DateTimeInterface && $this->getHiddenAfterDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
             return;
         }
+        $this->materializeNodeDataAsNeeded();
         $this->nodeData->setHiddenAfterDateTime($dateTime);
 
         $this->context->getFirstLevelNodeCache()->flush();
@@ -1390,10 +1389,10 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHiddenInIndex($hidden)
     {
-        $this->materializeNodeDataAsNeeded();
         if ($this->isHiddenInIndex() === $hidden) {
             return;
         }
+        $this->materializeNodeDataAsNeeded();
         $this->nodeData->setHiddenInIndex($hidden);
 
         $this->context->getFirstLevelNodeCache()->flush();
@@ -1420,11 +1419,11 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setAccessRoles(array $accessRoles)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
         if ($this->getAccessRoles() === $accessRoles) {
             return;
+        }
+        if (!$this->isNodeDataMatchingContext()) {
+            $this->materializeNodeData();
         }
         $this->nodeData->setAccessRoles($accessRoles);
 
