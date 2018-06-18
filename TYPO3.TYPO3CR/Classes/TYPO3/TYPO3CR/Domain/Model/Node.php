@@ -1014,6 +1014,9 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function unsetContentObject()
     {
+        if ($this->getContentObject() === null) {
+            return;
+        }
         $this->materializeNodeDataAsNeeded();
         $this->nodeData->unsetContentObject();
 

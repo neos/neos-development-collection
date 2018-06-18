@@ -228,6 +228,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $node = $this->setUpNodeWithNonMatchingContext();
         $node->expects($this->once())->method('materializeNodeDataAsNeeded');
 
+        $node->getNodeData()->expects($this->once())->method('getContentObject')->will($this->returnValue(new \stdClass()));
         $node->getNodeData()->expects($this->once())->method('unsetContentObject');
 
         $node->unsetContentObject();
