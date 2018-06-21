@@ -16,9 +16,10 @@ Neos has at least the same system requirements as Flow. You can find them in the
 The most important requirements are:
 
 * A Webserver (Apache and Nginx are preferred but others work as well)
-* A Database (MySQL and MariaDB are preferred but any `Database supported by Doctrine DBAL
-  <http://www.doctrine-project.org/projects/dbal.html>`_ should work).
-* PHP >= 7.0.0 (make sure the PHP CLI has the same version)
+* A Database (MySQL > 5.7.7, MariaDB > 10.2.2 and PostgreSQL > 9.4 are preferred
+  but any `Database supported by Doctrine DBAL <http://www.doctrine-project.org/projects/dbal.html>`_
+  should work as well).
+* PHP >= 7.1.0 (make sure the PHP CLI has the same version)
 
   * PHP modules mbstring, tokenizer and pdo_mysql
   * PHP functions exec(), shell_exec(), escapeshellcmd() and escapeshellarg()
@@ -74,7 +75,7 @@ Fundamental Installation
            #SetEnv FLOW_CONTEXT Production
            ServerName neos.demo
          </VirtualHost>
-      
+
          <Directory /your/htdocs/Neos/Web>
            AllowOverride All
          </Directory>
@@ -83,12 +84,12 @@ Fundamental Installation
      Make sure that the ``mod_rewrite`` module is loaded and restart apache. For further information on how to set up a
      virtual host with apache please refer to the `Apache Virtual Host documentation
      <https://httpd.apache.org/docs/2.2/en/vhosts/>`_.
-     
+
    * nginx configuration
-   
-     For further information on how to set up a virtual domain with nginx please refer to the `nginx  documentation 
+
+     For further information on how to set up a virtual domain with nginx please refer to the `nginx  documentation
      <https://www.linode.com/docs/websites/nginx/how-to-configure-nginx>`_.
-   
+
 
 
 #. Add an entry to */etc/hosts* to make your virtual host reachable:
@@ -131,7 +132,7 @@ The Neos Setup Tool
    .. figure:: Images/Setup-Step-0.png
       :alt: Neos login page
       :class: screenshot-fullsize
-      
+
 #. The `NEOS requirements check` checks, if you have installed an image manipulation software.
 
    .. figure:: Images/Setup-Step-1.png

@@ -65,6 +65,12 @@
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="fr">Glisser et déposer sur l'étiquette ou la collection</target></trans-unit>
+      <trans-unit id="view" xml:space="preserve">
+				<source>View</source>
+			<target xml:lang="fr" state="needs-translation">View</target></trans-unit>
+      <trans-unit id="viewAsset" xml:space="preserve">
+				<source>View asset</source>
+			<target xml:lang="fr" state="needs-translation">View asset</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="fr">Editer la ressource numérique</target><alt-trans><target xml:lang="fr">Éditer la ressource numérique</target></alt-trans><alt-trans><target xml:lang="fr">Editer la ressource multimédia</target></alt-trans></trans-unit>
@@ -173,6 +179,15 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
 			<target xml:lang="fr">Vue miniature</target></trans-unit>
+      <trans-unit id="connectionError" xml:space="preserve">
+				<source>Connection error</source>
+			<target xml:lang="fr" state="needs-translation">Connection error</target></trans-unit>
+      <trans-unit id="mediaSource" xml:space="preserve">
+				<source>Media source</source>
+			<target xml:lang="fr" state="needs-translation">Media source</target></trans-unit>
+      <trans-unit id="mediaSources" xml:space="preserve">
+				<source>Media sources</source>
+			<target xml:lang="fr" state="needs-translation">Media sources</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target xml:lang="fr">Collections</target></trans-unit>
@@ -272,6 +287,15 @@
       <trans-unit id="metadata.identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
 			<target xml:lang="fr">Identifiant</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve" approved="yes">
+				<source>Title</source>
+			<target xml:lang="fr">Titre</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve" approved="yes">
+				<source>Caption</source>
+			<target xml:lang="fr">Légende</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target xml:lang="fr" state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="fr">Prévisualisation</target><alt-trans><target xml:lang="fr">Aperçu</target></alt-trans></trans-unit>
@@ -386,13 +410,13 @@
 			<target xml:lang="fr" state="translated">Générer des redirections d’url du fichier original vers la nouvelle url</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target xml:lang="fr" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target xml:lang="fr" state="translated">« Ressources de type «{0}» ne peuvent être remplacées que par une ressource similaire. Obtenu le type "{1}«"</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
 			<target xml:lang="fr" state="translated">Pas d’accès à l’espace de travail "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target xml:lang="fr" state="needs-translation">No document node found for this node</target></trans-unit>
+			<target xml:lang="fr" state="translated">Aucun nœud de document trouvé pour ce nœud</target></trans-unit>
     </body>
   </file>
 </xliff>

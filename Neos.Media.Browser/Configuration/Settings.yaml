@@ -41,7 +41,7 @@ Neos:
             controller: \Neos\Media\Browser\Controller\AssetController
             label: 'Neos.Media.Browser:Main:module.label'
             description: 'Neos.Media.Browser:Main:module.description'
-            icon: 'icon-camera'
+            icon: 'fas fa-camera'
             privilegeTarget: 'Neos.Media.Browser:ManageAssets'
             additionalResources:
               styleSheets:

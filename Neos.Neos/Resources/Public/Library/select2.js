@@ -1808,7 +1808,7 @@ the specific language governing permissions and limitations under the Apache Lic
                 "class": "neos-select2-container"
             }).html([
                 "<a href='javascript:void(0)' onclick='return false;' class='neos-select2-choice' tabindex='-1'>",
-                "   <span class='neos-select2-chosen'>&nbsp;</span><abbr class='neos-select2-search-choice-close'><i class='icon-remove'></i></abbr>",
+                "   <span class='neos-select2-chosen'>&nbsp;</span><abbr class='neos-select2-search-choice-close'><i class='fas fa-times'></i></abbr>",
                 "   <span class='neos-select2-arrow'><b></b></span>",
                 "</a>",
                 "<input class='neos-select2-focusser neos-select2-offscreen' type='text'/>",
@@ -2807,7 +2807,7 @@ the specific language governing permissions and limitations under the Apache Lic
                 enabledItem = $(
                     "<li class='neos-select2-search-choice'>" +
                     "    <div></div>" +
-                    "    <a href='#' onclick='return false;' class='neos-select2-search-choice-close'><i class='icon-remove'></i></a>" +
+                    "    <a href='#' onclick='return false;' class='neos-select2-search-choice-close'><i class='fas fa-times'></i></a>" +
                     "</li>"),
                 disabledItem = $(
                     "<li class='neos-select2-search-choice neos-select2-locked'>" +

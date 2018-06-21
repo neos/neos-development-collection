@@ -605,7 +605,7 @@
 					width: $unit;
 					padding: 0;
 
-					.icon-ellipsis-horizontal {
+					.fa-ellipsis-h {
 						line-height: $unit;
 					}
 				}
@@ -895,7 +895,7 @@
 				}
 			}
 
-			.icon-move {
+			.fa-move {
 				cursor: move;
 			}
 		}
@@ -993,11 +993,11 @@
 		cursor: pointer;
 	}
 
-	.icon-ok-sign {
+	.fa-ok-sign {
 		color: $green;
 	}
 
-	.icon-exclamation-sign {
+	.fa-exclamation-sign {
 		color: $orange;
 	}
 

@@ -12,7 +12,6 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Service\FileTypeIconService;
@@ -51,7 +50,7 @@ class IconThumbnailGenerator extends AbstractThumbnailGenerator
 
             /** @var AssetInterface $asset */
             $asset = $thumbnail->getOriginalAsset();
-            $icon = FileTypeIconService::getIcon($asset, $width, $height);
+            $icon = FileTypeIconService::getIcon($asset->getResource()->getFilename(), $width, $height);
             $thumbnail->setStaticResource($icon['src']);
             $thumbnail->setWidth($icon['width']);
             $thumbnail->setHeight($icon['height']);

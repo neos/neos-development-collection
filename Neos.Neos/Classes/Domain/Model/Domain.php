@@ -194,7 +194,7 @@ class Domain implements CacheAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier(): string
     {
         return $this->hostname;
     }
