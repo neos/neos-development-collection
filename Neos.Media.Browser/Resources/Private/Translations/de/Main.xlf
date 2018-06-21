@@ -58,13 +58,19 @@
 			<target xml:lang="de">Absteigend</target><alt-trans><target xml:lang="de">Absteigende Reihenfolge</target></alt-trans></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="de" state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target xml:lang="de" state="translated">Sortierrichtung Aufsteigend</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="de" state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target xml:lang="de" state="translated">Sortierrichtung Absteigend</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="de">Auf Tag oder Sammlung ziehen und loslassen</target></trans-unit>
+      <trans-unit id="view" xml:space="preserve">
+				<source>View</source>
+			<target xml:lang="de" state="translated">Ansicht</target></trans-unit>
+      <trans-unit id="viewAsset" xml:space="preserve">
+				<source>View asset</source>
+			<target xml:lang="de" state="translated">Asset anzeigen</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="de">Asset bearbeiten</target></trans-unit>
@@ -100,7 +106,7 @@
 			<target xml:lang="de">Ersetzen</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="de" state="needs-translation">Replace asset resource</target></trans-unit>
+			<target xml:lang="de" state="translated">Ressource ersetzen</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="de">Speichern</target></trans-unit>
@@ -173,6 +179,15 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
 			<target xml:lang="de">Miniaturansicht</target></trans-unit>
+      <trans-unit id="connectionError" xml:space="preserve">
+				<source>Connection error</source>
+			<target xml:lang="de" state="translated">Verbindungsfehler</target></trans-unit>
+      <trans-unit id="mediaSource" xml:space="preserve">
+				<source>Media source</source>
+			<target xml:lang="de" state="translated">Medienquelle</target></trans-unit>
+      <trans-unit id="mediaSources" xml:space="preserve">
+				<source>Media sources</source>
+			<target xml:lang="de" state="translated">Medienquellen</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target xml:lang="de">Sammlungen</target></trans-unit>
@@ -272,6 +287,15 @@
       <trans-unit id="metadata.identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
 			<target xml:lang="de">Bezeichner</target><alt-trans><target xml:lang="de">Bezeichnung</target></alt-trans></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve" approved="yes">
+				<source>Title</source>
+			<target xml:lang="de">Titel</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve" approved="yes">
+				<source>Caption</source>
+			<target xml:lang="de">Beschriftung</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target xml:lang="de" state="translated">Urheberrechtshinweis</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="de">Vorschau</target></trans-unit>
@@ -386,13 +410,13 @@
 			<target xml:lang="de">Erstelle Weiterleitungen vom ursprünglichen Dateipfad auf die neue URL</target><alt-trans><target xml:lang="de">Erstelle Redirects von der Original-URL auf die Neue</target></alt-trans></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target xml:lang="de" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target xml:lang="de" state="translated">'Eine Ressource vom Typ "{0}" kann nur mit einer Ressource ähnlichen Typs ersetzt werden. Typ "{1}" erkannt'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target xml:lang="de" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target xml:lang="de" state="translated">Kein Zugriff auf den Arbeitsbereich "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target xml:lang="de" state="needs-translation">No document node found for this node</target></trans-unit>
+			<target xml:lang="de" state="translated">Kein Dokumentknoten für diesen Knoten gefunden</target></trans-unit>
     </body>
   </file>
 </xliff>

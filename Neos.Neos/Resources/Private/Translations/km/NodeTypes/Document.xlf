@@ -14,6 +14,9 @@
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve" approved="yes">
 				<source>Hide in menus</source>
 			<target xml:lang="km">មិនបង្ហាុញក្នុងមីនុយ</target></trans-unit>
+      <trans-unit id="creationDialog.title" xml:space="preserve" approved="yes">
+				<source>Title</source>
+			<target xml:lang="km">ចំណងជើង</target></trans-unit>
     </body>
   </file>
 </xliff>

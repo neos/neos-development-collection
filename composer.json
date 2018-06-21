@@ -14,17 +14,17 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-files": "*",
         "neos/utility-arrays": "*",
-        "doctrine/orm": "~2.5.0",
+        "doctrine/orm": "~2.6.0",
         "gedmo/doctrine-extensions": "~2.4.0",
         "behat/transliterator": "~1.0",
-        "php": "~7.1",
+        "php": ">=5.5.0",
         "neos/utility-unicode": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
         "doctrine/common": "~2.7.0",
         "neos/imagine": "^3.0.2",
         "imagine/imagine": "*",
-        "doctrine/dbal": "~2.6.0",
+        "doctrine/dbal": "~2.7.0",
         "neos/party": "*",
         "neos/setup": "*",
         "neos/twitter-bootstrap": "*",
@@ -116,7 +116,7 @@
                 "Neos.Neos/Resources/Private/Installer/"
             ]
         },
-        "typo3/flow": {
+        "neos/flow": {
             "manage-resources": true
         }
     },

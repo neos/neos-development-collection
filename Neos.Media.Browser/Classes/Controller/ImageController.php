@@ -13,7 +13,8 @@ namespace Neos\Media\Browser\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\Asset;
-use Neos\Media\Domain\Model\ImageVariant;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
+use Neos\Media\Domain\Model\ImportedAsset;
 use Neos\Media\Domain\Repository\ImageRepository;
 
 /**
@@ -28,14 +29,30 @@ class ImageController extends AssetController
     protected $assetRepository;
 
     /**
+     * @Flow\Inject
+     * @var \Neos\Media\Domain\Repository\ImportedAssetRepository
+     */
+    protected $importedAssetRepository;
+
+    /**
+     * @param string $assetSourceIdentifier
+     * @param string $assetProxyIdentifier
      * @param Asset $asset
      * @return void
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
+     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
-    public function editAction(Asset $asset)
+    public function editAction(string $assetSourceIdentifier = null, string $assetProxyIdentifier = null, Asset $asset = null)
     {
-        if ($asset instanceof ImageVariant) {
-            $asset = $asset->getOriginalAsset();
+        if ($assetSourceIdentifier !== null && $assetProxyIdentifier !== null) {
+            parent::editAction($assetSourceIdentifier, $assetProxyIdentifier);
+            return;
+        } elseif ($asset instanceof AssetSourceAwareInterface) {
+            /** @var ImportedAsset $importedAsset */
+            $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($asset->getIdentifier());
+            parent::editAction($asset->getAssetSourceIdentifier(), $importedAsset ? $importedAsset->getRemoteAssetIdentifier() : $asset->getIdentifier());
+            return;
         }
-        parent::editAction($asset);
+        $this->response->setStatus(400, 'Invalid arguments');
     }
 }

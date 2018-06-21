@@ -1,17 +1,18 @@
-.neos [class^="icon-"],
-.neos [class*=" icon-"] {
+.neos [class^="fa-"],
+.neos [class*=" fa-"] {
 	vertical-align: baseline;
 
-	&.icon-review {
+	&.fa-review {
 		position: relative;
 		padding-right: 4px;
 
 		&:before {
-			content: $fa-var-file-text-o;
+			content: fa-content($fa-var-file-alt);
+			font-weight: 400;
 		}
 
 		&:after {
-			content: $fa-var-check-circle;
+			content: fa-content($fa-var-check-circle);
 			text-decoration: inherit;
 			display: inline-block;
 			speak: none;

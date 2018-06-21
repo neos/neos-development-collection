@@ -16,6 +16,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
+use Neos\Neos\Service\IconNameMappingService;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -43,6 +44,12 @@ class MenuHelper
      * @var array
      */
     protected $settings;
+
+    /**
+     * @Flow\Inject
+     * @var IconNameMappingService
+     */
+    protected $iconMapper;
 
     /**
      * @param array $settings
@@ -181,13 +188,15 @@ class MenuHelper
             ->reset()
             ->setCreateAbsoluteUri(true)
             ->uriFor('index', array('module' => $modulePath), 'Backend\Module', 'Neos.Neos');
+
+        $icon = isset($moduleConfiguration['icon']) ? $this->iconMapper->convert($moduleConfiguration['icon']) : '';
         return array(
             'module' => $module,
             'modulePath' => $modulePath,
             'uri' => $moduleUri,
             'label' => isset($moduleConfiguration['label']) ? $moduleConfiguration['label'] : '',
             'description' => isset($moduleConfiguration['description']) ? $moduleConfiguration['description'] : '',
-            'icon' => isset($moduleConfiguration['icon']) ? $moduleConfiguration['icon'] : '',
+            'icon' => $icon,
             'hideInMenu' => isset($moduleConfiguration['hideInMenu']) ? (boolean)$moduleConfiguration['hideInMenu'] : false
         );
     }

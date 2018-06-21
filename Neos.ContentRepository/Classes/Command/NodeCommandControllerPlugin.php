@@ -11,8 +11,12 @@ namespace Neos\ContentRepository\Command;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
@@ -77,11 +81,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     protected $nodeDataRepository;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
-     *
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -326,6 +327,7 @@ HELPTEXT;
     {
         $createdNodesCount = 0;
         $updatedNodesCount = 0;
+        $incorrectNodeTypeCount = 0;
         $nodeCreationExceptions = 0;
 
         $nodeIdentifiersWhichNeedUpdate = [];
@@ -364,6 +366,11 @@ HELPTEXT;
                             $createdNodesCount++;
                         } elseif ($childNode->getIdentifier() !== $childNodeIdentifier) {
                             $nodeIdentifiersWhichNeedUpdate[$childNode->getIdentifier()] = $childNodeIdentifier;
+                        } elseif ($childNode->getNodeType() !== $childNodeType) {
+                            $incorrectNodeTypeCount++;
+                            if ($dryRun === false) {
+                                $childNode->setNodeType($childNodeType);
+                            }
                         }
                     } catch (\Exception $exception) {
                         $this->output->outputLine('Could not create node named "%s" in "%s" (%s)', array($childNodeName, $node->getPath(), $exception->getMessage()));
@@ -379,9 +386,9 @@ HELPTEXT;
                     $queryBuilder = $this->entityManager->createQueryBuilder();
                     $queryBuilder->update(NodeData::class, 'n')
                         ->set('n.identifier', $queryBuilder->expr()->literal($newNodeIdentifier))
-                        ->where('n.identifier = ?1')
-                        ->setParameter(1, $oldNodeIdentifier);
-                    $result = $queryBuilder->getQuery()->getResult();
+                        ->where('n.identifier = :oldNodeIdentifier')
+                        ->setParameter('oldNodeIdentifier', $oldNodeIdentifier);
+                    $queryBuilder->getQuery()->getResult();
                     $updatedNodesCount++;
                     $this->output->outputLine('Updated node identifier from %s to %s because it was not a "stable" identifier', [ $oldNodeIdentifier, $newNodeIdentifier ]);
                 }
@@ -393,13 +400,16 @@ HELPTEXT;
             }
         }
 
-        if ($createdNodesCount !== 0 || $nodeCreationExceptions !== 0 || $updatedNodesCount !== 0) {
+        if ($createdNodesCount !== 0 || $nodeCreationExceptions !== 0 || $updatedNodesCount !== 0 || $incorrectNodeTypeCount !== 0) {
             if ($dryRun === false) {
                 if ($createdNodesCount > 0) {
                     $this->output->outputLine('Created %s new child nodes', array($createdNodesCount));
                 }
                 if ($updatedNodesCount > 0) {
                     $this->output->outputLine('Updated identifier of %s child nodes', array($updatedNodesCount));
+                }
+                if ($incorrectNodeTypeCount > 0) {
+                    $this->output->outputLine('Changed node type of %s child nodes', array($incorrectNodeTypeCount));
                 }
                 if ($nodeCreationExceptions > 0) {
                     $this->output->outputLine('%s Errors occurred during child node creation', array($nodeCreationExceptions));
@@ -411,6 +421,9 @@ HELPTEXT;
                 }
                 if ($updatedNodesCount > 0) {
                     $this->output->outputLine('%s identifiers of child nodes need to be updated', array($updatedNodesCount));
+                }
+                if ($incorrectNodeTypeCount > 0) {
+                    $this->output->outputLine('%s child nodes have incorrect node type', array($incorrectNodeTypeCount));
                 }
             }
         }
@@ -675,7 +688,11 @@ HELPTEXT;
             ->where('n2.path IS NULL')
             ->andWhere($queryBuilder->expr()->not('n.path = :slash'))
             ->andWhere('n.workspace = :workspace')
-            ->setParameters(array('workspaceList' => $workspaceList, 'slash' => '/', 'workspace' => $workspaceName))
+            ->setParameters(new ArrayCollection(array(
+                  new Parameter('workspaceList', $workspaceList, Connection::PARAM_STR_ARRAY),
+                  new Parameter('slash', '/'),
+                  new Parameter('workspace', $workspaceName)
+                    )))
             ->getQuery()->getArrayResult();
 
         $nodesToBeRemoved = count($nodes);
