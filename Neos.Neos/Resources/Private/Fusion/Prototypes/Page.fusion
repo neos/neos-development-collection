@@ -207,5 +207,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		}
 	}
 
+  @process.debugDump = Neos.Fusion:DebugDump
+
 	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\PageHandler'
 }
