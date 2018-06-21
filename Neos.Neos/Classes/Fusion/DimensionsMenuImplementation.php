@@ -114,22 +114,10 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                 ];
             }, $allDimensionPresets);
 
-            if ($nodeInDimensions === null && $pinnedDimensionName === null) {
-                $itemLabel = '';
-                foreach ($targetDimensions as $item) {
-                    $itemLabel .= $item['label'] . ' - ';
-                }
-                $itemLabel = trim($itemLabel, ' -');
-            } elseif ($nodeInDimensions instanceof NodeInterface && $pinnedDimensionName === null) {
-                $itemLabel = $nodeInDimensions->getLabel();
-            } else {
-                $itemLabel = $targetDimensions[$pinnedDimensionName]['label'];
-            }
-
             $menuItems[] = [
                 'node' => $nodeInDimensions,
                 'state' => $this->calculateItemState($nodeInDimensions),
-                'label' => $itemLabel,
+                'label' => $this->itemLabel($pinnedDimensionName, $nodeInDimensions, $targetDimensions),
                 'dimensions' => $allowedCombination,
                 'targetDimensions' => $targetDimensions
             ];
@@ -150,6 +138,30 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
         }
 
         return $menuItems;
+    }
+
+    /**
+     * Render and return a label for the $nodeInDimensions in the built menu item.
+     *
+     * @param string $pinnedDimensionName
+     * @param NodeInterface $nodeInDimensions
+     * @param array $targetDimensions
+     * @return string
+     */
+    protected function itemLabel(string $pinnedDimensionName, NodeInterface $nodeInDimensions, array $targetDimensions): string
+    {
+        if ($nodeInDimensions === null && $pinnedDimensionName === null) {
+            $itemLabel = '';
+            foreach ($targetDimensions as $item) {
+                $itemLabel .= $item['label'] . ' - ';
+            }
+
+            return trim($itemLabel, ' -');
+        } elseif ($nodeInDimensions instanceof NodeInterface && $pinnedDimensionName === null) {
+            return $nodeInDimensions->getLabel();
+        }
+
+        return $targetDimensions[$pinnedDimensionName]['label'];
     }
 
     /**
