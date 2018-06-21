@@ -681,10 +681,7 @@
   }
 
   .neos-image-inputs {
-    margin-right: $unit;
-    @media screen and (max-width: 767px) {
-      margin-right: 0;
-    }
+    margin-right: 0;
   }
 
 	//Styles for upload/edit image
