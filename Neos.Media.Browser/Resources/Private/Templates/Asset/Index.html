@@ -57,7 +57,7 @@
                 <span class="neos-dropdown-menu-list-title">{neos:backend.translate(id: 'sortby', package: 'Neos.Media.Browser')}</span>
                 <ul>
                     <li>
-                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortBy: 'Modified'}" addQueryString="TRUE" class="{f:if(condition: '{sortBy} === \'Modified\'', then: 'neos-active')}"><i class="fas {f:if(condition: '{sortDirection} === \'ASC\'', then: 'fa-sort-numeric-up', else: 'fa-sort-numeric-down')}"></i> {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}</f:link.action>
+                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortBy: 'Modified'}" addQueryString="TRUE" class="{f:if(condition: '{sortBy} === \'Modified\'', then: 'neos-active')}"><i class="fas {f:if(condition: '{sortDirection} === \'ASC\'', then: 'fa-sort-amount-up', else: 'fa-sort-amount-down')}"></i> {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}</f:link.action>
                     </li>
                     <li>
                         <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortBy: 'Name'}" addQueryString="TRUE" class="{f:if(condition: '{sortBy} === \'Name\'', then: 'neos-active')}"><i class="fas {f:if(condition: '{sortDirection} === \'ASC\'', then: 'fa-sort-alpha-up', else: 'fa-sort-alpha-down')}"></i> {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}</f:link.action>
@@ -66,10 +66,10 @@
                 <span class="neos-dropdown-menu-list-title">{neos:backend.translate(id: 'sortDirection', package: 'Neos.Media.Browser')}</span>
                 <ul>
                     <li>
-                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortDirection.asc.tooltip', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE" class="{f:if(condition: '{sortDirection} === \'ASC\'', then: 'neos-active')}"><i class="fas fa-sort-up"></i> {neos:backend.translate(id: 'sortDirection.asc', package: 'Neos.Media.Browser')}</f:link.action>
+                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortDirection.asc.tooltip', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE" class="{f:if(condition: '{sortDirection} === \'ASC\'', then: 'neos-active')}"><i class="fas fa-{f:if(condition: '{sortBy} === \'Name\'', then: 'sort-alpha-up', else: 'sort-amount-up')}"></i> {neos:backend.translate(id: 'sortDirection.asc', package: 'Neos.Media.Browser')}</f:link.action>
                     </li>
                     <li>
-                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortDirection.desc.tooltip', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE" class="{f:if(condition: '{sortDirection} === \'DESC\'', then: 'neos-active')}"><i class="fas fa-sort-down"></i> {neos:backend.translate(id: 'sortDirection.desc', package: 'Neos.Media.Browser')}</f:link.action>
+                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortDirection.desc.tooltip', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE" class="{f:if(condition: '{sortDirection} === \'DESC\'', then: 'neos-active')}"><i class="fas fa-{f:if(condition: '{sortBy} === \'Name\'', then: 'sort-alpha-down', else: 'sort-amount-down')}"></i> {neos:backend.translate(id: 'sortDirection.desc', package: 'Neos.Media.Browser')}</f:link.action>
                     </li>
                 </ul>
             </div>
