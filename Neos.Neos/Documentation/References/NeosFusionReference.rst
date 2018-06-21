@@ -218,19 +218,16 @@ Shows the result of Fusion Expressions directly.
 
 Example::
 
-  debugObject = Debug {
+  valueToDebug = "hello neos world"
+  valueToDebug.@process.debug = Neos.Fusion:Debug {
         title = 'Debug of hello world'
-
-        # If only the "value"-key is given it is debugged directly,
-        # otherwise all keys except "title" and "plaintext" are debugged.
-        value = "hello neos world"
 
         # Additional values for debugging
         documentTitle = ${q(documentNode).property('title')}
         documentPath = ${documentNode.path}
   }
 
-  # the value of this object is the formatted debug output of all keys given to the object
+  # the initial value is not changed, so you can define the Debug prototype anywhere in your Fusion code
 
 
 .. _Neos_Fusion__Component:
