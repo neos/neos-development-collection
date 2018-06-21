@@ -12,6 +12,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
  */
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Fusion\Core\ObjectNamespace;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\FusionObjects\ArrayImplementation;
 
@@ -31,6 +32,11 @@ class ParserTest extends UnitTestCase
     protected $mockObjectManager;
 
     /**
+     * @var ObjectNamespace
+     */
+    protected $mockObjectNamespace;
+
+    /**
      * Sets up this test case
      *
      */
@@ -39,8 +45,11 @@ class ParserTest extends UnitTestCase
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnCallback(array($this, 'objectManagerIsRegisteredCallback')));
 
-        $this->parser = $this->getAccessibleMock(Parser::class, array('dummy'));
+        $this->mockObjectNamespace = $this->getAccessibleMock(ObjectNamespace::class, ['register', 'resolveFullyQualifiedObjectType', 'resolveDefaultNamespace']);
+
+        $this->parser = $this->getAccessibleMock(Parser::class, ['dummy']);
         $this->parser->_set('objectManager', $this->mockObjectManager);
+        $this->parser->_set('objectNamespace', $this->mockObjectNamespace);
     }
 
     /**
