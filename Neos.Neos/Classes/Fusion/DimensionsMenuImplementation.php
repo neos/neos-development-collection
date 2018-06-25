@@ -148,7 +148,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
      * @param array $targetDimensions
      * @return string
      */
-    protected function itemLabel(string $pinnedDimensionName, NodeInterface $nodeInDimensions, array $targetDimensions): string
+    protected function itemLabel(string $pinnedDimensionName, NodeInterface $nodeInDimensions = null, array $targetDimensions = null): string
     {
         if ($nodeInDimensions === null && $pinnedDimensionName === null) {
             $itemLabel = '';
