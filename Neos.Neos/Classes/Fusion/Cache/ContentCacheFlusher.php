@@ -13,6 +13,7 @@ namespace Neos\Neos\Fusion\Cache;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
@@ -56,10 +57,16 @@ class ContentCacheFlusher
     protected $assetService;
 
     /**
-     * @Flow\Inject()
+     * @Flow\Inject
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * Register a node change for a later cache flush. This method is triggered by a signal sent via ContentRepository's Node
@@ -145,6 +152,10 @@ class ContentCacheFlusher
 
             $this->registerChangeOnNodeIdentifier($reference->getNodeIdentifier());
             $this->registerChangeOnNodeType($reference->getNodeTypeName(), $reference->getNodeIdentifier());
+
+            $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
+            $tagName = 'AssetDynamicTag_' . $assetIdentifier;
+            $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because asset "%s" has changed.', $tagName, $assetIdentifier);
         }
     }
 
