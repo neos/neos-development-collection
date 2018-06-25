@@ -297,11 +297,17 @@ The following options are allowed:
 
     ``inline``
       This section controls the text formatting options the user has available for this property.
+
+      **Note**: When using `inline.editorOptions` anything defined under the legacy `aloha` key for a
+      property is ignored. Keep this in mind when using supertypes and mixins.
+
       Example::
 
         inline:
           editorOptions:
-            'format': # Enable specific formatting options.
+            placeholder: 'Insert text here'
+            autoparagraph: true
+            formatting:
               'strong': true
               'em': true
               'u': true
@@ -316,41 +322,14 @@ The following options are allowed:
               'h6': false
               'code': false
               'removeFormat': true
-            'table':
               'table': true
-            'link':
               'a': true
-            'list':
               'ul': true
               'ol': true
-            'alignment':
               'left': true
               'center': true
               'right': true
               'justify': true
-            'formatlesspaste':
-              # Show toggle button for formatless pasting.
-              'button': true
-              # Whether the formatless pasting should be enable by default.
-              'formatlessPasteOption': false
-              # If not set the default setting is used: 'a', 'abbr', 'strong', 'bdi', 'bdo', 'cite', 'code', 'del', 'dfn',
-              # 'em', 'ins', 'kbd', 'mark', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'strong', 'sub', 'sup',
-              # 'time', 'u', 'var'
-              'strippedElements': ['a']
-            'autoparagraph': true # Automatically wrap non-wrapped text blocks in paragraph blocks.
-
-      Example of disabling all formatting options::
-
-        inline:
-          editorOptions:
-            'format': []
-            'table': []
-            'link': []
-            'list': []
-            'alignment': []
-            'formatlesspaste':
-              'button': false
-              'formatlessPasteOption': true
 
     ``inspector``
       These settings configure the inspector in the Neos UI for the property.
