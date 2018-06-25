@@ -21,115 +21,134 @@ additionalProperties:
                 additionalProperties: FALSE
                 properties:
 
-                  'label': { type: string, description: "Human-readable label for this property." }
+                  'label': { type: ['null', 'string'], description: "Human-readable label for this property." }
 
                   'help':
-                    type: dictionary
-                    additionalProperties: FALSE
-                    properties:
-                      'message': { type: string, description: "Help text for this property. Supports markdown." }
+                    type:
+                      -
+                        type: 'null'
+                      -
+                        type: dictionary
+                        additionalProperties: FALSE
+                        properties:
+                          'message': { type: string, description: "Help text for this property. Supports markdown." }
 
-                  'reloadIfChanged': { type: boolean, description: "If this property changes, should a element refresh occur?" }
+                  'reloadIfChanged': { type: ['null', 'boolean'], description: "If this property changes, should a element refresh occur?" }
 
-                  'reloadPageIfChanged': { type: boolean, description: "If this property changes, should a page reload occur?" }
+                  'reloadPageIfChanged': { type: ['null', 'boolean'], description: "If this property changes, should a page reload occur?" }
 
-                  'inlineEditable': { type: boolean, description: "Is this property inline editable, i.e. edited directly on the page through Aloha/Hallo?" }
+                  'inlineEditable': { type: ['null', 'boolean'], description: "Is this property inline editable, i.e. edited directly on the page?" }
+
+                  'inline':
+                    type: ['null', 'dictionary']
 
                   'aloha':
-                    type: dictionary
-                    additionalProperties: FALSE
-                    properties:
-
-                      'format':
+                    type:
+                      -
+                        type: 'null'
+                      -
                         type: dictionary
                         additionalProperties: FALSE
                         properties:
-                          'strong': { type: boolean }
-                          'b': { type: boolean }
-                          'em': { type: boolean }
-                          'i': { type: boolean }
-                          'u': { type: boolean }
-                          'del': { type: boolean }
-                          'sub': { type: boolean }
-                          'sup': { type: boolean }
-                          'p': { type: boolean }
-                          'h1': { type: boolean }
-                          'h2': { type: boolean }
-                          'h3': { type: boolean }
-                          'h4': { type: boolean }
-                          'h5': { type: boolean }
-                          'h6': { type: boolean }
-                          'pre': { type: boolean }
-                          'code': { type: boolean }
-                          'removeFormat': { type: boolean }
 
-                      'table':
-                        type: dictionary
-                        additionalProperties: FALSE
-                        properties:
-                          'table': { type: boolean }
+                          'format':
+                            type: dictionary
+                            additionalProperties: FALSE
+                            properties:
+                              'strong': { type: boolean }
+                              'b': { type: boolean }
+                              'em': { type: boolean }
+                              'i': { type: boolean }
+                              'u': { type: boolean }
+                              'del': { type: boolean }
+                              'sub': { type: boolean }
+                              'sup': { type: boolean }
+                              'p': { type: boolean }
+                              'h1': { type: boolean }
+                              'h2': { type: boolean }
+                              'h3': { type: boolean }
+                              'h4': { type: boolean }
+                              'h5': { type: boolean }
+                              'h6': { type: boolean }
+                              'pre': { type: boolean }
+                              'code': { type: boolean }
+                              'removeFormat': { type: boolean }
 
-                      'link':
-                        type: dictionary
-                        additionalProperties: FALSE
-                        properties:
-                          'a': { type: boolean }
+                          'table':
+                            type: dictionary
+                            additionalProperties: FALSE
+                            properties:
+                              'table': { type: boolean }
 
-                      'list':
-                        type: dictionary
-                        additionalProperties: FALSE
-                        properties:
-                          'ol': { type: boolean }
-                          'ul': { type: boolean }
+                          'link':
+                            type: dictionary
+                            additionalProperties: FALSE
+                            properties:
+                              'a': { type: boolean }
 
-                      'alignment':
-                        type: dictionary
-                        additionalProperties: FALSE
-                        properties:
-                          'right': { type: boolean }
-                          'left': { type: boolean }
-                          'center': { type: boolean }
-                          'justify': { type: boolean }
-                          'top': { type: boolean }
-                          'middle': { type: boolean }
-                          'bottom': { type: boolean }
+                          'list':
+                            type: dictionary
+                            additionalProperties: FALSE
+                            properties:
+                              'ol': { type: boolean }
+                              'ul': { type: boolean }
 
-                      'formatlesspaste':
-                        type: dictionary
-                        additionalProperties: FALSE
-                        properties:
-                          'button': { type: boolean }
-                          'formatlessPasteOption': { type: boolean }
-                          'strippedElements':
-                            type: array
-                            items: { type: string, description: "List of HTML tags. If not set the default setting is used." }
+                          'alignment':
+                            type: dictionary
+                            additionalProperties: FALSE
+                            properties:
+                              'right': { type: boolean }
+                              'left': { type: boolean }
+                              'center': { type: boolean }
+                              'justify': { type: boolean }
+                              'top': { type: boolean }
+                              'middle': { type: boolean }
+                              'bottom': { type: boolean }
 
-                      'autoparagraph': { type: boolean, description: "Automatically wrap non-wrapped text blocks in paragraph blocks." }
+                          'formatlesspaste':
+                            type: dictionary
+                            additionalProperties: FALSE
+                            properties:
+                              'button': { type: boolean }
+                              'formatlessPasteOption': { type: boolean }
+                              'strippedElements':
+                                type: array
+                                items: { type: string, description: "List of HTML tags. If not set the default setting is used." }
 
-                      'placeholder': { type: string, description: "Optional text that will be rendered in the aloha editor when there is no content." }
+                          'autoparagraph': { type: boolean, description: "Automatically wrap non-wrapped text blocks in paragraph blocks." }
+
+                          'placeholder': { type: string, description: "Optional text that will be rendered in the aloha editor when there is no content." }
 
                   'inspector':
-                    type: dictionary
-                    additionalProperties: FALSE
-                    properties:
-
-                      'group': { type: ['string', 'null'], description: 'Identifier of the inspector group in which this property should be edited. If not set, will not appear in inspector at all.' }
-
-                      'position': { type: integer, description: 'Position inside the inspector group, small numbers are sorted on top' }
-
-                      'editor': { type: string, description: 'Name of the JavaScript Editor Class which is instanciated to edit this element in the inspector.' }
-
-                      'editorOptions': { type: dictionary, description: 'options for the given editor' }
-
-                      'editorListeners':
+                    type:
+                      -
+                        type: 'null'
+                      -
                         type: dictionary
-                        additionalProperties:
-                          type: dictionary
-                          additionalProperties: FALSE
-                          properties:
-                            'property': { type: ['string'], description: 'The name of an observed property in the same NodeType.' }
-                            'handler': { type: ['string'], description: 'The path to a handler JavaScript object, similar to custom editors and validators.' }
-                            'handlerOptions':  { type: dictionary, description: 'options for the given handler' }
+                        additionalProperties: FALSE
+                        properties:
+
+                          'group': { type: ['string', 'null'], description: 'Identifier of the inspector group in which this property should be edited. If not set, will not appear in inspector at all.' }
+
+                          'position': { type: ['integer', 'null'], description: 'Position inside the inspector group, small numbers are sorted on top' }
+
+                          'editor': { type: ['string', 'null'], description: 'Name of the JavaScript Editor Class which is instanciated to edit this element in the inspector.' }
+
+                          'editorOptions': { type: ['null', 'dictionary'], description: 'options for the given editor' }
+
+                          'editorListeners':
+                            type:
+                              -
+                                type: 'null'
+                              -
+                                type: dictionary
+                                additionalProperties:
+                                  type: dictionary
+                                  additionalProperties: FALSE
+                                  properties:
+                                    'property': { type: ['string'], description: 'The name of an observed property in the same NodeType.' }
+                                    'handler': { type: ['string'], description: 'The path to a handler JavaScript object, similar to custom editors and validators.' }
+                                    'handlerOptions':  { type: dictionary, description: 'options for the given handler' }
 
     'fusion':
       # here we specify only the neos specific options of the NodeType schema,
