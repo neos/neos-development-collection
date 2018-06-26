@@ -116,7 +116,7 @@ class AssetProxyController extends ActionController
 
         if (!$assetProxy instanceof HasRemoteOriginalInterface) {
             $this->response->setStatus(400, 'Cannot import asset which does not have a remote original');
-            $this->systemLogger->log(sprintf('Failed importing an the asset %s from asset source %s because it does not have a remote original.', $assetProxy->getFilename(), $assetSourceIdentifier, $assetProxy->getImportStream()), LOG_ERR);
+            $this->systemLogger->log(sprintf('Failed importing an the asset %s from asset source %s because it does not have a remote original.', $assetProxy->getFilename(), $assetSourceIdentifier), LOG_ERR);
             return '';
         }
 
