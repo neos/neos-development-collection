@@ -12,7 +12,7 @@ Neos:
 
   Neos:
     fusion:
-      # if set to TRUE, Fusion is cached on a per-site basis.
+      # if set to true, Fusion is cached on a per-site basis.
       # Depending on the size of your Fusion, will improve rendering times 20-100+ ms.
       # HOWEVER, the cache is NOT FLUSHED automatically (yet), so that's why we suggest that
       # you enable this setting only:
@@ -36,7 +36,7 @@ Neos:
     defaultSiteNodeName: null
 
     routing:
-      # Setting this to TRUE allows to use an empty uriSegment for default dimensions.
+      # Setting this to true allows to use an empty uriSegment for default dimensions.
       # The only limitation is that all segments must be unique across all dimenions.
       supportEmptySegmentForDimensions: true
 
@@ -66,7 +66,7 @@ Neos:
           '@format': 'html'
 
       # should minified JavaScript be loaded? For developing the Neos
-      # Content Module, this should be set to FALSE.
+      # Content Module, this should be set to false.
       loadMinifiedJavascript: true
 
       # The number of seconds to wait before giving up on loading a script.

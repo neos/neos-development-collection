@@ -6,4 +6,4 @@
   abstract: false
   constraints:
     nodeTypes:
-      '*': TRUE
+      '*': true
