@@ -30,11 +30,11 @@ class PasswordValidator extends AbstractValidator
     );
 
     /**
-     * Returns TRUE, if the given property ($value) is a valid array consistent of two equal passwords and their length
+     * Returns true, if the given property ($value) is a valid array consistent of two equal passwords and their length
      * is between 'minimum' (defaults to 0 if not specified) and 'maximum' (defaults to infinite if not specified)
      * to be specified in the validation options.
      *
-     * If at least one error occurred, the result is FALSE.
+     * If at least one error occurred, the result is false.
      *
      * @param mixed $value The value that should be validated
      * @return void

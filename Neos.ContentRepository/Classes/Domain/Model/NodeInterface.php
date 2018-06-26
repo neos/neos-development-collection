@@ -210,7 +210,7 @@ interface NodeInterface
     /**
      * Sets the "hidden" flag for this node.
      *
-     * @param boolean $hidden If TRUE, this Node will be hidden
+     * @param boolean $hidden If true, this Node will be hidden
      * @return void
      * @api
      */
@@ -261,7 +261,7 @@ interface NodeInterface
     /**
      * Sets if this node should be hidden in indexes, such as a site navigation.
      *
-     * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
+     * @param boolean $hidden true if it should be hidden, otherwise false
      * @return void
      * @api
      */
@@ -465,13 +465,13 @@ interface NodeInterface
      * Checks if this node has any child nodes.
      *
      * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
-     * @return boolean TRUE if this node has child nodes, otherwise FALSE
+     * @return boolean true if this node has child nodes, otherwise false
      * @api
      */
     public function hasChildNodes($nodeTypeFilter = null);
 
     /**
-     * Removes this node and all its child nodes. This is an alias for setRemoved(TRUE)
+     * Removes this node and all its child nodes. This is an alias for setRemoved(true)
      *
      * @return void
      * @api
@@ -481,7 +481,7 @@ interface NodeInterface
     /**
      * Removes this node and all its child nodes or sets ONLY this node to not being removed.
      *
-     * @param boolean $removed If TRUE, this node and it's child nodes will be removed or set to be not removed.
+     * @param boolean $removed If true, this node and it's child nodes will be removed or set to be not removed.
      * @return void
      * @api
      */
@@ -526,7 +526,7 @@ interface NodeInterface
      * Checks if the given $nodeType would be allowed as a child node of this node according to the configured constraints.
      *
      * @param NodeType $nodeType
-     * @return boolean TRUE if the passed $nodeType is allowed as child node
+     * @return boolean true if the passed $nodeType is allowed as child node
      */
     public function isNodeTypeAllowedAsChildNode(NodeType $nodeType);
 
@@ -625,7 +625,7 @@ interface NodeInterface
      * Determine if this node is configured as auto-created childNode of the parent node. If that is the case, it
      * should not be deleted.
      *
-     * @return boolean TRUE if this node is auto-created by the parent.
+     * @return boolean true if this node is auto-created by the parent.
      */
     public function isAutoCreated();
 

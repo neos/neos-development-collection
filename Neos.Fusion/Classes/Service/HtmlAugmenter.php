@@ -141,7 +141,7 @@ class HtmlAugmenter
      *
      * @param \DOMNode $element
      * @param array $attributes array of attribute names to check (lowercase)
-     * @return boolean TRUE if at least one of the $attributes is contained in the given $element, otherwise FALSE
+     * @return boolean true if at least one of the $attributes is contained in the given $element, otherwise false
      */
     protected function elementHasAttributes(\DOMNode $element, array $attributes = null)
     {

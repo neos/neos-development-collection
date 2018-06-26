@@ -207,7 +207,7 @@ class NodesController extends ActionController
             // If the node exists in another dimension, we want to know how many nodes in the rootline are also missing for the target
             // dimension. This is needed in the UI to tell the user if nodes will be materialized recursively upwards in the rootline.
             // To find the node path for the given identifier, we just use the first result. This is a safe assumption at least for
-            // "Document" nodes (aggregate=TRUE), because they are always moved in-sync.
+            // "Document" nodes (aggregate=true), because they are always moved in-sync.
             $node = reset($nodeVariants);
             /** @var NodeInterface $node */
             if ($node->getNodeType()->isAggregate()) {
@@ -231,7 +231,7 @@ class NodesController extends ActionController
      *
      * @param NodeInterface $node
      * @param ContentContext $contentContext
-     * @param boolean $copyContent TRUE if the content from the nodes that are translated should be copied
+     * @param boolean $copyContent true if the content from the nodes that are translated should be copied
      * @return void
      */
     protected function adoptNodeAndParents(NodeInterface $node, ContentContext $contentContext, $copyContent)

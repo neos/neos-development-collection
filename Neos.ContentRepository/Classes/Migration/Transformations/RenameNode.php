@@ -38,7 +38,7 @@ class RenameNode extends AbstractTransformation
     }
 
     /**
-     * Returns TRUE if the given node does not yet have the new name.
+     * Returns true if the given node does not yet have the new name.
      *
      * @param NodeData $node
      * @return boolean

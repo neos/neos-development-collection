@@ -68,7 +68,7 @@ class NodeTypeManager
     /**
      * Return all registered node types.
      *
-     * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
+     * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to true
      * @return array<NodeType> All node types registered in the system, indexed by node type name
      * @api
      */
@@ -93,7 +93,7 @@ class NodeTypeManager
      * the $superType itself.
      *
      * @param string $superTypeName
-     * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
+     * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to true
      * @return array<NodeType> Sub node types of the given super type, indexed by node type name
      * @api
      */
@@ -153,7 +153,7 @@ class NodeTypeManager
      * Checks if the specified node type exists
      *
      * @param string $nodeTypeName Name of the node type
-     * @return boolean TRUE if it exists, otherwise FALSE
+     * @return boolean true if it exists, otherwise false
      * @api
      */
     public function hasNodeType($nodeTypeName)

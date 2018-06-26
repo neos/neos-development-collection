@@ -174,7 +174,7 @@ class Parser implements ParserInterface
 				[^\\\\\'])*
 			)
 		)$/x';
-    const SPLIT_PATTERN_VALUEBOOLEAN = '/^\s*(TRUE|FALSE|true|false)\s*$/';
+    const SPLIT_PATTERN_VALUEBOOLEAN = '/^\s*(true|false|true|false)\s*$/';
     const SPLIT_PATTERN_VALUENULL = '/^\s*(NULL|null)\s*$/';
 
     const SCAN_PATTERN_VALUEOBJECTTYPE = '/
@@ -271,7 +271,7 @@ class Parser implements ParserInterface
      * @param string $sourceCode The Fusion source code to parse
      * @param string $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
      * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
-     * @param boolean $buildPrototypeHierarchy Merge prototype configurations or not. Will be FALSE for includes to only do that once at the end.
+     * @param boolean $buildPrototypeHierarchy Merge prototype configurations or not. Will be false for includes to only do that once at the end.
      * @return array A Fusion object tree, generated from the source code
      * @throws Fusion\Exception
      * @api
@@ -421,7 +421,7 @@ class Parser implements ParserInterface
      * Parses a line which opens or closes a confinement
      *
      * @param string $fusionLine One line of Fusion code
-     * @param boolean $isOpeningConfinement Set to TRUE, if an opening confinement is to be parsed and FALSE if it's a closing confinement.
+     * @param boolean $isOpeningConfinement Set to true, if an opening confinement is to be parsed and false if it's a closing confinement.
      * @return void
      * @throws Fusion\Exception
      */
@@ -762,7 +762,7 @@ class Parser implements ParserInterface
                 }
 
                 if ($line === false) {
-                    // if the last line we consumed is FALSE, we have consumed the end of the file.
+                    // if the last line we consumed is false, we have consumed the end of the file.
                     throw new Fusion\Exception('Syntax error: A multi-line Eel expression starting with "' . $unparsedValue . '" was not closed.', 1417616064);
                 }
             }
@@ -781,7 +781,7 @@ class Parser implements ParserInterface
                     }
                     $line = $this->getNextFusionLine();
                     if ($line === false) {
-                        // if the last line we consumed is FALSE, we have consumed the end of the file.
+                        // if the last line we consumed is false, we have consumed the end of the file.
                         throw new Fusion\Exception('Syntax error: A multi-line dsl expression starting with "' . $unparsedValue . '" was not closed.', 1490714685);
                     }
                     $dslExpressionSoFar .= chr(10) . $line;

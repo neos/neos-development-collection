@@ -114,7 +114,7 @@ class UriBuilderImplementation extends AbstractFusionObject
     }
 
     /**
-     * Arguments to be removed from the URI. Only active if addQueryString = TRUE
+     * Arguments to be removed from the URI. Only active if addQueryString = true
      *
      * @return array
      */
@@ -124,7 +124,7 @@ class UriBuilderImplementation extends AbstractFusionObject
     }
 
     /**
-     * If TRUE, the current query parameters will be kept in the URI
+     * If true, the current query parameters will be kept in the URI
      *
      * @return boolean
      */
@@ -134,7 +134,7 @@ class UriBuilderImplementation extends AbstractFusionObject
     }
 
     /**
-     * If TRUE, an absolute URI is rendered
+     * If true, an absolute URI is rendered
      *
      * @return boolean
      */

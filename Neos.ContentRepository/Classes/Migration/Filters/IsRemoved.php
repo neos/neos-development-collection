@@ -20,7 +20,7 @@ use Neos\ContentRepository\Domain\Model\NodeData;
 class IsRemoved implements FilterInterface
 {
     /**
-     * Returns TRUE if the given node is removed
+     * Returns true if the given node is removed
      *
      * @param NodeData $node
      * @return boolean

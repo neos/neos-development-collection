@@ -23,7 +23,7 @@ class RendererImplementation extends AbstractFusionObject
 {
 
     /**
-     * The type to render if condition is TRUE
+     * The type to render if condition is true
      *
      * @return string
      */

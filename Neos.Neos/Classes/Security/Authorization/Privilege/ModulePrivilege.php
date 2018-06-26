@@ -83,7 +83,7 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     }
 
     /**
-     * Returns TRUE, if this privilege covers the given subject
+     * Returns true, if this privilege covers the given subject
      *
      * @param PrivilegeSubjectInterface $subject
      * @return boolean

@@ -179,7 +179,7 @@ class NodeDataRepository extends Repository
      * @param string $path Absolute path of the node
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
-     * @param boolean|NULL $removedNodes Include removed nodes, NULL (all), FALSE (no removed nodes) or TRUE (only removed nodes)
+     * @param boolean|NULL $removedNodes Include removed nodes, NULL (all), false (no removed nodes) or true (only removed nodes)
      * @throws \InvalidArgumentException
      * @return NodeData The matching node if found, otherwise NULL
      */
@@ -275,7 +275,7 @@ class NodeDataRepository extends Repository
         }
         $this->addPathConstraintToQueryBuilder($queryBuilder, $path);
         if ($onlyShadowNodes) {
-            $queryBuilder->andWhere('n.movedTo IS NOT NULL AND n.removed = TRUE');
+            $queryBuilder->andWhere('n.movedTo IS NOT NULL AND n.removed = true');
         }
 
         $query = $queryBuilder->getQuery();
@@ -347,7 +347,7 @@ class NodeDataRepository extends Repository
 
         $queryBuilder = $this->createQueryBuilder($workspaces);
         if ($removedNodes === false) {
-            $queryBuilder->andWhere('n.movedTo IS NULL OR n.removed = FALSE');
+            $queryBuilder->andWhere('n.movedTo IS NULL OR n.removed = false');
         } else {
             $queryBuilder->andWhere('n.movedTo IS NULL');
         }
@@ -502,7 +502,7 @@ class NodeDataRepository extends Repository
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions to dimension values
-     * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
+     * @param boolean $removedNodes If true the result has ONLY removed nodes. If false removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to false)
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
      */
     public function findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes = false)
@@ -512,7 +512,7 @@ class NodeDataRepository extends Repository
 
     /**
      * Finds nodes by its parent and (optionally) by its node type.
-     * If the $recursive flag is set to TRUE, all matching nodes underneath $parentPath will be returned
+     * If the $recursive flag is set to true, all matching nodes underneath $parentPath will be returned
      *
      * Note: Filters out removed nodes.
      *
@@ -523,8 +523,8 @@ class NodeDataRepository extends Repository
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions to dimension values
-     * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
-     * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
+     * @param boolean $removedNodes If true the result has ONLY removed nodes. If false removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to false)
+     * @param boolean $recursive If true *all* matching nodes underneath the specified parent path are returned
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
      * @todo Improve implementation by using DQL
      */
@@ -686,7 +686,7 @@ class NodeDataRepository extends Repository
      * @param string $parentPath Absolute path of the parent node
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Context $context The containing workspace
-     * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
+     * @param boolean $recursive If true *all* matching nodes underneath the specified parent path are returned
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> The nodes found on the given path
      */
     public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, Context $context, $recursive = false)
@@ -712,7 +712,7 @@ class NodeDataRepository extends Repository
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions
-     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to false)
      * @return integer The number of nodes a similar call to findByParentAndNodeType() would return without any pending added nodes
      */
     public function countByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $includeRemovedNodes = false)
@@ -909,7 +909,7 @@ class NodeDataRepository extends Repository
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param array $dimensions
      * @param Workspace $workspace The containing workspace
-     * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
+     * @param boolean $removedNodes If true the result has ONLY removed nodes. If false removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to false)
      * @return NodeData The node found or NULL
      */
     public function findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions, $removedNodes = false)
@@ -953,7 +953,7 @@ class NodeDataRepository extends Repository
      * @param string $pathEndPoint Absolute path specifying the end point
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions Array of dimensions to array of dimension values
-     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to false)
      * @param string $nodeTypeFilter Optional filter for the node type of the nodes, supports complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @throws \InvalidArgumentException
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
@@ -1431,7 +1431,7 @@ class NodeDataRepository extends Repository
      *
      * @param string $path
      * @param Workspace $workspace
-     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to false)
      * @param boolean $recursive
      * @return array<NodeData> Node data reduced by workspace but with all existing content dimension variants, includes removed nodes
      */
@@ -1516,7 +1516,7 @@ class NodeDataRepository extends Repository
      * Test if a given NodeData is in the set of removed node data objects
      *
      * @param NodeData $nodeData
-     * @return boolean TRUE If the NodeData was marked for removal
+     * @return boolean true If the NodeData was marked for removal
      */
     public function isInRemovedNodes(NodeData $nodeData)
     {
@@ -1598,7 +1598,7 @@ class NodeDataRepository extends Repository
      * @param array $nodeDataObjects
      * @param Workspace $workspace
      * @param array $dimensions
-     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+     * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to false)
      * @return array
      */
     protected function filterNodeDataByBestMatchInContext(array $nodeDataObjects, Workspace $workspace, array $dimensions, $includeRemovedNodes = false)
@@ -1629,7 +1629,7 @@ class NodeDataRepository extends Repository
             $dimensions = [];
         }
         if ($includeRemovedNodes === false) {
-            $queryBuilder->andWhere('n.movedTo IS NULL OR n.removed = FALSE');
+            $queryBuilder->andWhere('n.movedTo IS NULL OR n.removed = false');
         } else {
             $queryBuilder->andWhere('n.movedTo IS NULL');
         }

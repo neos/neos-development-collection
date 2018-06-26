@@ -44,7 +44,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)
     {
@@ -84,7 +84,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      *
      * @param object $element
      * @param string $propertyNameFilter
-     * @return boolean TRUE if the property name filter matches
+     * @return boolean true if the property name filter matches
      */
     protected function matchesPropertyNameFilter($element, $propertyNameFilter)
     {

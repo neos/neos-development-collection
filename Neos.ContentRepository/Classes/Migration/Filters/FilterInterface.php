@@ -23,7 +23,7 @@ use Neos\ContentRepository\Domain\Model\NodeData;
 interface FilterInterface
 {
     /**
-     * If the given node satisfies the filter constraints, TRUE is returned.
+     * If the given node satisfies the filter constraints, true is returned.
      *
      * @param NodeData $node
      * @return boolean

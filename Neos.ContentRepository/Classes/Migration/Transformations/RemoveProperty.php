@@ -37,7 +37,7 @@ class RemoveProperty extends AbstractTransformation
 
     /**
      * If the given node has property this transformation should work on, this
-     * returns TRUE.
+     * returns true.
      *
      * @param NodeData $node
      * @return boolean
