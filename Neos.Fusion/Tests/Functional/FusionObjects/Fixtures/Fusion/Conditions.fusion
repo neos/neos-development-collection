@@ -46,20 +46,20 @@ conditions.rawArray = Neos.Fusion:RawArray {
 	key = 'foo'
 	nullValue = ${null}
 	keyNotSet = 'bar'
-	keyNotSet.@if.cond = FALSE
+	keyNotSet.@if.cond = false
 }
 
 conditions.attributes = Neos.Fusion:Attributes {
 	key = 'foo'
 	keyNotSet = 'bar'
-	keyNotSet.@if.cond = FALSE
+	keyNotSet.@if.cond = false
 }
 
 conditions.supportForConditionInProcess = Neos.Fusion:Value {
 	value = 'originalValue'
 	@process.wrap {
 		expression = 'wrappedValue'
-		@if.doIfTrue = TRUE
+		@if.doIfTrue = true
 	}
 }
 
@@ -67,17 +67,17 @@ conditions.supportForConditionInProcessFalse = Neos.Fusion:Value {
 	value = 'originalValue'
 	@process.wrap {
 		expression = 'wrappedValue'
-		@if.skipIfFalse = FALSE
+		@if.skipIfFalse = false
 	}
 	@process.wrap2 = ${'wrappedValue2'}
-	@process.wrap2.@if.skipIfFalse = FALSE
+	@process.wrap2.@if.skipIfFalse = false
 }
 
 conditions.supportForConditionInProcessWithAdvancedProcess = Neos.Fusion:Value {
 	value = 'originalValue'
 	@process.wrap = Neos.Fusion:Value {
 		value = 'wrappedValue'
-		@if.doIfTrue = TRUE
+		@if.doIfTrue = true
 	}
 }
 
@@ -85,7 +85,7 @@ conditions.supportForConditionInProcessWithAdvancedProcessFalse = Neos.Fusion:Va
 	value = 'originalValue'
 	@process.wrap = Neos.Fusion:Value {
 		value = 'wrappedValue'
-		@if.skipIfFalse = FALSE
+		@if.skipIfFalse = false
 	}
 }
 
@@ -96,7 +96,7 @@ conditions.supportForFusionObjectWithSubEvaluationUsedInProcessor = Value {
 		something = ' appended'
 		another = Value {
 			value = ' more'
-			@if.thisIsNotAppended = ${FALSE}
+			@if.thisIsNotAppended = ${false}
 		}
 	}
 
@@ -104,18 +104,18 @@ conditions.supportForFusionObjectWithSubEvaluationUsedInProcessor = Value {
 }
 
 conditions.processorOnSimpleValueWithCondition = 'originalValue' {
-	@if.cond1 = FALSE
+	@if.cond1 = false
 	@process.wrap = ${'<wrap>' + value + '</wrap>'}
 }
 
 conditions.processorOnExpressionWithCondition = ${'expressionValue'} {
-	@if.cond1 = FALSE
+	@if.cond1 = false
 	@process.wrap = ${'<wrap>' + value + '</wrap>'}
 }
 
 conditions.processorOnObjectWithCondition = Neos.Fusion:Value {
 	value = 'originalValue'
-	@if.cond1 = FALSE
+	@if.cond1 = false
 
 	@process.wrap = ${'<wrap>' + value + '</wrap>'}
 }
