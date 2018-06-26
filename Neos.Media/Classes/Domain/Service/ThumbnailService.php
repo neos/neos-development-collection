@@ -117,7 +117,7 @@ class ThumbnailService
         $async = $configuration->isAsync();
         if ($thumbnail === null) {
             try {
-                $thumbnail = new Thumbnail($asset, $configuration, $async);
+                $thumbnail = new Thumbnail($asset, $configuration);
                 $this->emitThumbnailCreated($thumbnail);
 
                 // If the thumbnail strategy failed to generate a valid thumbnail
