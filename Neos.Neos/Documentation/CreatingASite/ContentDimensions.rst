@@ -206,8 +206,9 @@ dimension preset for all configured dimensions. This means URIs will not contain
 no content dimension is configured. Multiple dimensions are joined with a ``_`` character, so the ``uriSegment`` value
 must not include an underscore.
 
-The default preset can have an empty `uriSegment` value. The following example will lead to URLs that do not contain
-`en` if the `en_US` preset is active, but will show the `uriSegment` for other languages that are defined as well:
+The following example will lead to URLs that do not contain `en` if the `en_US` preset is active, but will show the `uriSegment`
+for other languages that are defined as well. You need to ensure that the `supportEmptySegmentForDimensions`
+configuration is set to true. This should be the default value:
 
 .. code-block:: yaml
 
@@ -224,7 +225,7 @@ The default preset can have an empty `uriSegment` value. The following example w
             'en':
               label: 'English (US)'
               values: ['en_US']
-              uriSegment: ''
+              uriSegment: 'en'
 
 The only limitation is that all segments must be unique across all dimensions. If you need non-unique segments, you can
 switch support for non-empty dimensions off:
