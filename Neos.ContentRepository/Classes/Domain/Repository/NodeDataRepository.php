@@ -1379,7 +1379,7 @@ class NodeDataRepository extends Repository
                 ->from(NodeData::class, 'n')
                 ->where('n.pathHash = :pathHash')
                 ->setParameter('pathHash', md5($nodePath));
-            $result = (count($queryBuilder->getQuery()->getResult()) > 0 ? true : false);
+            $result = count($queryBuilder->getQuery()->getResult()) > 0;
         });
 
         return $result;
