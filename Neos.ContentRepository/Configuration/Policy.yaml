@@ -5,4 +5,4 @@
 roles:
 
   'Neos.ContentRepository:Administrator':
-    abstract: TRUE
+    abstract: true
