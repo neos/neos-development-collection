@@ -553,6 +553,7 @@ image format must be ``16:9``::
         inspector:
           group: 'document'
           editorOptions:
+            accept: 'image/png'
             features:
               crop: true
             crop:
@@ -574,6 +575,7 @@ to choose a custom aspect ratio, set ``crop.aspectRatio.allowCustom`` to ``true`
         inspector:
           group: 'document'
           editorOptions:
+            accept: 'image/png'
             features:
               crop: true
             crop:
@@ -597,6 +599,9 @@ Options Reference:
 	Set the maximum allowed file size to be uploaded.
 	Accepts numeric or formatted string values, e.g. "204800" or "204800b" or "2kb".
 	Defaults to the maximum allowed upload size configured in php.ini
+
+``accept`` (string)
+  Set the accepted mime type for this editor. If non is given it falls back to ``image/*``.
 
 ``features``
 
@@ -680,6 +685,9 @@ Conversely, if multiple assets shall be uploaded, use ``array<Neos\Media\Domain\
           group: 'document'
 
 Options Reference:
+
+``accept``
+  Set the accepted mime type for this editor. If non is given all files are allowed.
 
 ``features``
 
