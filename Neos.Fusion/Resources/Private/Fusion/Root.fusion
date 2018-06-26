@@ -75,8 +75,8 @@ prototype(Neos.Fusion:Attributes) {
 prototype(Neos.Fusion:Tag) {
 	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
 	attributes = Neos.Fusion:Attributes
-	omitClosingTag = FALSE
-	selfClosingTag = FALSE
+	omitClosingTag = false
+	selfClosingTag = false
 }
 
 # Renders an URI pointing to a controller/action
@@ -132,7 +132,7 @@ prototype(Neos.Fusion:Augmenter) < prototype(Neos.Fusion:Component) {
 #
 prototype(Neos.Fusion:ResourceUri) {
 	@class = 'Neos\\Fusion\\FusionObjects\\ResourceUriImplementation'
-	localize = TRUE
+	localize = true
 
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
