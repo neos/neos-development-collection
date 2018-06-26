@@ -49,7 +49,7 @@ class CachingHelper implements ProtectedContextAwareInterface
             if (!$node instanceof NodeInterface) {
                 throw new Exception(sprintf('One of the elements in array passed to this helper was not a Node, but of type: "%s".', gettype($node)), 1437169991);
             }
-            $prefixedNodeIdentifiers[] = $prefix . '_' . $node->getIdentifier();
+            $prefixedNodeIdentifiers[] = $prefix . '_' . $this->renderWorkspaceTagForContextNode($node) . '_' . $node->getIdentifier();
         }
         return $prefixedNodeIdentifiers;
     }
@@ -74,17 +74,18 @@ class CachingHelper implements ProtectedContextAwareInterface
      * (including inheritance) is updated.
      *
      * @param string|NodeType|string[]|NodeType[] $nodeType
+     * @param NodeInterface $contextNode|null
      * @return string|string[]
      */
-    public function nodeTypeTag($nodeType)
+    public function nodeTypeTag($nodeType, $contextNode = null)
     {
         if (!is_array($nodeType) && !($nodeType instanceof \Traversable)) {
-            return $this->getNodeTypeTagFor($nodeType);
+            return $this->getNodeTypeTagFor($nodeType, $contextNode);
         }
 
         $result = [];
         foreach ($nodeType as $singleNodeType) {
-            $result[] = $this->getNodeTypeTagFor($singleNodeType);
+            $result[] = $this->getNodeTypeTagFor($singleNodeType, $contextNode);
         }
 
         return array_filter($result);
@@ -92,23 +93,30 @@ class CachingHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string|NodeType $nodeType
+     * @param NodeInterface $contextNode|null
      * @return string
      */
-    protected function getNodeTypeTagFor($nodeType)
+    protected function getNodeTypeTagFor($nodeType, $contextNode = null)
     {
         $nodeTypeName = '';
+        $workspaceTag = '';
+
+        if ($contextNode instanceof NodeInterface) {
+            $workspaceTag = $this->renderWorkspaceTagForContextNode($contextNode) .'_';
+        }
+
         if (is_string($nodeType)) {
-            $nodeTypeName = $nodeType;
+            $nodeTypeName .= $nodeType;
         }
         if ($nodeType instanceof NodeType) {
-            $nodeTypeName = $nodeType->getName();
+            $nodeTypeName .= $nodeType->getName();
         }
 
         if ($nodeTypeName === '') {
             return '';
         }
 
-        return 'NodeType_' . $nodeTypeName;
+        return 'NodeType_' . $workspaceTag . $nodeTypeName;
     }
 
     /**
@@ -123,6 +131,15 @@ class CachingHelper implements ProtectedContextAwareInterface
     public function descendantOfTag($nodes)
     {
         return $this->convertArrayOfNodesToArrayOfNodeIdentifiersWithPrefix($nodes, 'DescendantOf');
+    }
+
+    /**
+     * @param NodeInterface $contextNode
+     * @return string
+     */
+    public function renderWorkspaceTagForContextNode(NodeInterface $contextNode)
+    {
+        return '%' . md5($contextNode->getWorkspace()->getName()) . '%';
     }
 
     /**
