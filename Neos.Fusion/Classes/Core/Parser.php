@@ -174,7 +174,7 @@ class Parser implements ParserInterface
 				[^\\\\\'])*
 			)
 		)$/x';
-    const SPLIT_PATTERN_VALUEBOOLEAN = '/^\s*(true|false|true|false)\s*$/';
+    const SPLIT_PATTERN_VALUEBOOLEAN = '/^\s*(TRUE|FALSE|true|false)\s*$/';
     const SPLIT_PATTERN_VALUENULL = '/^\s*(NULL|null)\s*$/';
 
     const SCAN_PATTERN_VALUEOBJECTTYPE = '/
