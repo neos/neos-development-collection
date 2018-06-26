@@ -205,7 +205,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     }
 
     /**
-     * If a node matches the given request path but the context contains now Workspace, match() must return FALSE
+     * If a node matches the given request path but the context contains now Workspace, match() must return false
      *
      * @test
      */
@@ -218,7 +218,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
-        // match() should only return FALSE because we remove the workspace, without the following line it returns TRUE:
+        // match() should only return false because we remove the workspace, without the following line it returns true:
         $mockContext->mockWorkspace = null;
 
         $routePath = 'home';
@@ -226,7 +226,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     }
 
     /**
-     * If a node matches the given request path, the node's context path is stored in $this->value and TRUE is returned.
+     * If a node matches the given request path, the node's context path is stored in $this->value and true is returned.
      *
      * @test
      */
@@ -247,7 +247,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
     /**
      * If the route part handler has been configured to only match on a site node (via the "onlyMatchSiteNodes" option),
-     * it returns FALSE if no node matched or if the matched node is not a site node.
+     * it returns false if no node matched or if the matched node is not a site node.
      *
      * This case is needed in order allow routes matching "/" without a suffix for a website's homepage even if "defaultUriSuffix"
      * is empty.
@@ -548,7 +548,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
             return ($nodePath === '/sites/examplecom') ? $mockSiteNode : null;
         }));
 
-        // resolve() should only return FALSE because we remove the workspace, without the following line it returns TRUE:
+        // resolve() should only return false because we remove the workspace, without the following line it returns true:
         $mockContext->mockWorkspace = null;
 
         $routeValues = array('node' => '/sites/examplecom@user-johndoe');

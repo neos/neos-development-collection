@@ -38,7 +38,7 @@ class StripTagsOnProperty extends AbstractTransformation
     }
 
     /**
-     * Returns TRUE if the given node has the property to work on.
+     * Returns true if the given node has the property to work on.
      *
      * @param NodeData $node
      * @return boolean

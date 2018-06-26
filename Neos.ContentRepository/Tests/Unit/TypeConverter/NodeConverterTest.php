@@ -104,7 +104,7 @@ class NodeConverterTest extends UnitTestCase
 
         $contextProperties = $mockNode->getContext()->getProperties();
         $this->assertArrayHasKey('removedContentShown', $contextProperties, 'removedContentShown context property should be set');
-        $this->assertTrue($contextProperties['removedContentShown'], 'removedContentShown context property should be TRUE');
+        $this->assertTrue($contextProperties['removedContentShown'], 'removedContentShown context property should be true');
     }
 
     /**

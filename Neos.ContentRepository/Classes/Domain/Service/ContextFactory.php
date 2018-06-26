@@ -49,7 +49,7 @@ class ContextFactory implements ContextFactoryInterface
     protected $contentDimensionRepository;
 
     /**
-     * @Flow\Inject(lazy=FALSE)
+     * @Flow\Inject(lazy=false)
      * @var Now
      */
     protected $now;
@@ -72,9 +72,9 @@ class ContextFactory implements ContextFactoryInterface
      *        'currentDateTime' => new \Neos\Flow\Utility\Now(),
      *        'dimensions' => array(...),
      *        'targetDimensions' => array('language' => 'de', 'persona' => 'Lisa'),
-     *        'invisibleContentShown' => FALSE,
-     *        'removedContentShown' => FALSE,
-     *        'inaccessibleContentShown' => FALSE
+     *        'invisibleContentShown' => false,
+     *        'removedContentShown' => false,
+     *        'inaccessibleContentShown' => false
      * )
      *
      * This array also shows the defaults that get used if you don't provide a certain property.

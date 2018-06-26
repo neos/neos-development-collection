@@ -38,7 +38,7 @@ class NodeName implements FilterInterface
     }
 
     /**
-     * Returns TRUE if the given node is of the node type this filter expects.
+     * Returns true if the given node is of the node type this filter expects.
      *
      * @param NodeData $node
      * @return boolean

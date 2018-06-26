@@ -42,40 +42,40 @@ trait NodeAuthorizationTrait
 
     /**
      * @param string $expectedResult
-     * @Given /^I should get (TRUE|FALSE) when asking the node authorization service if editing this node is granted$/
+     * @Given /^I should get (true|false) when asking the node authorization service if editing this node is granted$/
      */
     public function iShouldGetTrueWhenAskingTheNodeAuthorizationServiceIfEditingThisNodeIsGranted($expectedResult)
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg(trim($expectedResult))));
         } else {
-            if ($expectedResult === 'TRUE') {
+            if ($expectedResult === 'true') {
                 if ($this->nodeAuthorizationService->isGrantedToEditNode($this->currentNodes[0]) !== true) {
-                    Assert::fail('The node authorization service did not return TRUE!');
+                    Assert::fail('The node authorization service did not return true!');
                 }
             } else {
                 if ($this->nodeAuthorizationService->isGrantedToEditNode($this->currentNodes[0]) !== false) {
-                    Assert::fail('The node authorization service did not return FALSE!');
+                    Assert::fail('The node authorization service did not return false!');
                 }
             }
         }
     }
 
     /**
-     * @Given /^I should get (TRUE|FALSE) when asking the node authorization service if editing the "([^"]*)" property is granted$/
+     * @Given /^I should get (true|false) when asking the node authorization service if editing the "([^"]*)" property is granted$/
      */
     public function iShouldGetTrueWhenAskingTheNodeAuthorizationServiceIfEditingThePropertyIsGranted($expectedResult, $propertyName)
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($propertyName)));
         } else {
-            if ($expectedResult === 'TRUE') {
+            if ($expectedResult === 'true') {
                 if ($this->nodeAuthorizationService->isGrantedToEditNode($this->currentNodes[0], $propertyName) !== true) {
-                    Assert::fail('The node authorization service did not return TRUE!');
+                    Assert::fail('The node authorization service did not return true!');
                 }
             } else {
                 if ($this->nodeAuthorizationService->isGrantedToEditNode($this->currentNodes[0], $propertyName) !== false) {
-                    Assert::fail('The node authorization service did not return FALSE!');
+                    Assert::fail('The node authorization service did not return false!');
                 }
             }
         }
@@ -261,7 +261,7 @@ trait NodeAuthorizationTrait
      * @param string $nodeName
      * @param string $nodeTypeName
      * @throws NodeTypeNotFoundException
-     * @Given /^I should get (TRUE|FALSE) when asking the node authorization service if creating a new "([^"]*)" child node of type "([^"]*)" is granted$/
+     * @Given /^I should get (true|false) when asking the node authorization service if creating a new "([^"]*)" child node of type "([^"]*)" is granted$/
      */
     public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfCreatingAChildNodeOfTypeIsGranted($expectedResult, $nodeName, $nodeTypeName)
     {
@@ -272,13 +272,13 @@ trait NodeAuthorizationTrait
             $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
             $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
 
-            if ($expectedResult === 'TRUE') {
+            if ($expectedResult === 'true') {
                 if ($this->nodeAuthorizationService->isGrantedToCreateNode($this->currentNodes[0], $nodeType) !== true) {
-                    Assert::fail('The node authorization service did not return TRUE!');
+                    Assert::fail('The node authorization service did not return true!');
                 }
             } else {
                 if ($this->nodeAuthorizationService->isGrantedToCreateNode($this->currentNodes[0], $nodeType) !== false) {
-                    Assert::fail('The node authorization service did not return FALSE!');
+                    Assert::fail('The node authorization service did not return false!');
                 }
             }
         }
@@ -355,20 +355,20 @@ trait NodeAuthorizationTrait
 
     /**
      * @param string $expectedResult
-     * @Given /^I should get (TRUE|FALSE) when asking the node authorization service if removal of the node is granted$/
+     * @Given /^I should get (true|false) when asking the node authorization service if removal of the node is granted$/
      */
     public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfRemovalOfTheNodeIsGranted($expectedResult)
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg(trim($expectedResult))));
         } else {
-            if ($expectedResult === 'TRUE') {
+            if ($expectedResult === 'true') {
                 if ($this->nodeAuthorizationService->isGrantedToRemoveNode($this->currentNodes[0]) !== true) {
-                    Assert::fail('The node authorization service did not return TRUE!');
+                    Assert::fail('The node authorization service did not return true!');
                 }
             } else {
                 if ($this->nodeAuthorizationService->isGrantedToRemoveNode($this->currentNodes[0]) !== false) {
-                    Assert::fail('The node authorization service did not return FALSE!');
+                    Assert::fail('The node authorization service did not return false!');
                 }
             }
         }
@@ -420,20 +420,20 @@ trait NodeAuthorizationTrait
     }
 
     /**
-     * @Given /^I should get (TRUE|FALSE) when asking the node authorization service if getting the "([^"]*)" property is granted$/
+     * @Given /^I should get (true|false) when asking the node authorization service if getting the "([^"]*)" property is granted$/
      */
     public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfGettingThePropertyIsGranted($expectedResult, $propertyName)
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($propertyName)));
         } else {
-            if ($expectedResult === 'TRUE') {
+            if ($expectedResult === 'true') {
                 if ($this->nodeAuthorizationService->isGrantedToReadNodeProperty($this->currentNodes[0], $propertyName) !== true) {
-                    Assert::fail('The node authorization service did not return TRUE!');
+                    Assert::fail('The node authorization service did not return true!');
                 }
             } else {
                 if ($this->nodeAuthorizationService->isGrantedToReadNodeProperty($this->currentNodes[0], $propertyName) !== false) {
-                    Assert::fail('The node authorization service did not return FALSE!');
+                    Assert::fail('The node authorization service did not return false!');
                 }
             }
         }
@@ -485,20 +485,20 @@ trait NodeAuthorizationTrait
     }
 
     /**
-     * @Given /^I should get (TRUE|FALSE) when asking the node authorization service if setting the "([^"]*)" property is granted$/
+     * @Given /^I should get (true|false) when asking the node authorization service if setting the "([^"]*)" property is granted$/
      */
     public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfSettingThePropertyIsGranted($expectedResult, $propertyName)
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($propertyName)));
         } else {
-            if ($expectedResult === 'TRUE') {
+            if ($expectedResult === 'true') {
                 if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== true) {
-                    Assert::fail('The node authorization service did not return TRUE!');
+                    Assert::fail('The node authorization service did not return true!');
                 }
             } else {
                 if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== false) {
-                    Assert::fail('The node authorization service did not return FALSE!');
+                    Assert::fail('The node authorization service did not return false!');
                 }
             }
         }

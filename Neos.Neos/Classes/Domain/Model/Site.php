@@ -244,7 +244,7 @@ class Site
     }
 
     /**
-     * @return boolean TRUE if the site has at least one active domain assigned
+     * @return boolean true if the site has at least one active domain assigned
      * @api
      */
     public function hasActiveDomains()

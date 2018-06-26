@@ -80,7 +80,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     }
 
     /**
-     * TRUE if a given subpath exists, FALSE otherwise.
+     * true if a given subpath exists, false otherwise.
      *
      * @param string $offset
      * @return boolean
