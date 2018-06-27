@@ -27,7 +27,6 @@ use Neos\Utility\ObjectAccess;
  */
 class ContentCacheFlusherTest extends FunctionalTestCase
 {
-
     protected static $testablePersistenceEnabled = true;
 
     /**
