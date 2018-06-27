@@ -11,6 +11,7 @@ namespace Neos\Neos\Fusion\Helper;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Exception;
@@ -49,7 +50,7 @@ class CachingHelper implements ProtectedContextAwareInterface
             if (!$node instanceof NodeInterface) {
                 throw new Exception(sprintf('One of the elements in array passed to this helper was not a Node, but of type: "%s".', gettype($node)), 1437169991);
             }
-            $prefixedNodeIdentifiers[] = $prefix . '_' . $this->renderWorkspaceTagForContextNode($node) . '_' . $node->getIdentifier();
+            $prefixedNodeIdentifiers[] = $prefix . '_' . $this->renderWorkspaceTagForContextNode($node->getContext()->getWorkspace()->getName()) . '_' . $node->getIdentifier();
         }
         return $prefixedNodeIdentifiers;
     }
@@ -61,6 +62,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      *
      * @param mixed $nodes (A single Node or array or \Traversable of Nodes)
      * @return array
+     * @throws Exception
      */
     public function nodeTag($nodes)
     {
@@ -102,7 +104,7 @@ class CachingHelper implements ProtectedContextAwareInterface
         $workspaceTag = '';
 
         if ($contextNode instanceof NodeInterface) {
-            $workspaceTag = $this->renderWorkspaceTagForContextNode($contextNode) .'_';
+            $workspaceTag = $this->renderWorkspaceTagForContextNode($contextNode->getContext()->getWorkspace()->getName()) .'_';
         }
 
         if (is_string($nodeType)) {
@@ -127,6 +129,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      *
      * @param mixed $nodes (A single Node or array or \Traversable of Nodes)
      * @return array
+     * @throws Exception
      */
     public function descendantOfTag($nodes)
     {
@@ -134,12 +137,12 @@ class CachingHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param NodeInterface $contextNode
+     * @param string $contextNode
      * @return string
      */
-    public function renderWorkspaceTagForContextNode(NodeInterface $contextNode)
+    public function renderWorkspaceTagForContextNode(string $workspaceName)
     {
-        return '%' . md5($contextNode->getWorkspace()->getName()) . '%';
+        return '%' . md5($workspaceName) . '%';
     }
 
     /**

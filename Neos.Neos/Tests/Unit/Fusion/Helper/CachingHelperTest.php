@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping\Cache;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\Helper\CachingHelper;
 
@@ -98,10 +99,13 @@ class CachingHelperTest extends UnitTestCase
         $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
         $workspaceMock->expects($this->any())->method('getName')->willReturn($workspaceName);
 
-        $contextNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $contextNode->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+        $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+        $contextMock->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
 
-        $hashedWorkspaceName = $cacheHelper->renderWorkspaceTagForContextNode($contextNode);
+        $contextNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
+        $contextNode->expects($this->any())->method('getContext')->willReturn($contextMock);
+
+        $hashedWorkspaceName = $cacheHelper->renderWorkspaceTagForContextNode($workspaceName);
 
         $nodeTypeName1 = 'Neos.Neos:Foo';
         $nodeTypeName2 = 'Neos.Neos:Bar';
@@ -170,18 +174,20 @@ class CachingHelperTest extends UnitTestCase
         $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
         $workspaceMock->expects($this->any())->method('getName')->willReturn($workspaceName);
 
+        $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+        $contextMock->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+
         $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
         $node = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $node->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+        $node->expects($this->any())->method('getContext')->willReturn($contextMock);
         $node->expects($this->any())->method('getIdentifier')->willReturn($nodeIdentifier);
 
         $anotherNodeIdentifier = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
         $anotherNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $anotherNode->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+        $anotherNode->expects($this->any())->method('getContext')->willReturn($contextMock);
         $anotherNode->expects($this->any())->method('getIdentifier')->willReturn($anotherNodeIdentifier);
 
-        // As we use the same workspace mock for all nodes it is ok to use this mocked node to generate the workspace hash
-        $hashedWorkspaceName = $cachingHelper->renderWorkspaceTagForContextNode($node);
+        $hashedWorkspaceName = $cachingHelper->renderWorkspaceTagForContextNode($workspaceName);
 
         return [
             [$node, ['Node_' . $hashedWorkspaceName.'_'.$nodeIdentifier]],
@@ -217,18 +223,20 @@ class CachingHelperTest extends UnitTestCase
         $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
         $workspaceMock->expects($this->any())->method('getName')->willReturn($workspaceName);
 
+        $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+        $contextMock->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+
         $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
         $node = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $node->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+        $node->expects($this->any())->method('getContext')->willReturn($contextMock);
         $node->expects($this->any())->method('getIdentifier')->willReturn($nodeIdentifier);
 
         $anotherNodeIdentifier = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
         $anotherNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $anotherNode->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+        $anotherNode->expects($this->any())->method('getContext')->willReturn($contextMock);
         $anotherNode->expects($this->any())->method('getIdentifier')->willReturn($anotherNodeIdentifier);
 
-        // As we use the same workspace mock for all nodes it is ok to use this mocked node to generate the workspace hash
-        $hashedWorkspaceName = $cachingHelper->renderWorkspaceTagForContextNode($node);
+        $hashedWorkspaceName = $cachingHelper->renderWorkspaceTagForContextNode($workspaceName);
 
         return [
             [$node, ['DescendantOf_' . $hashedWorkspaceName.'_'.$nodeIdentifier]],
