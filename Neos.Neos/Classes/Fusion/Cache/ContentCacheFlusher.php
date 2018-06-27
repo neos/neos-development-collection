@@ -98,7 +98,10 @@ class ContentCacheFlusher
     public function registerNodeChange(NodeInterface $node)
     {
         $this->tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
-        $this->resolveWorkspaceChain($node->getWorkspace());
+
+        if (empty($this->workspacesToFlush[$node->getWorkspace()->getName()])) {
+            $this->resolveWorkspaceChain($node->getWorkspace());
+        }
 
         if (!array_key_exists($node->getWorkspace()->getName(), $this->workspacesToFlush)) {
             return;
@@ -248,7 +251,6 @@ class ContentCacheFlusher
     {
         if ($this->tagsToFlush !== []) {
             foreach ($this->tagsToFlush as $tag => $logMessage) {
-                $this->systemLogger->log('flushing tag ' . $tag);
                 $affectedEntries = $this->contentCache->flushByTag($tag);
                 if ($affectedEntries > 0) {
                     $this->systemLogger->log(sprintf('Content cache: Removed %s entries %s', $affectedEntries, $logMessage), LOG_DEBUG);
