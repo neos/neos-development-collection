@@ -25,13 +25,11 @@ use Neos\Neos\Fusion\Helper\CachingHelper;
  */
 class ContentCacheFlusherTest extends UnitTestCase
 {
-
     /**
      * @test
      */
     public function theWorkspaceChainWillOnlyEvaluatedIfNeeded()
     {
-
         $contentCacheFlusher = $this->getMockBuilder(ContentCacheFlusher::class)->setMethods(['resolveWorkspaceChain', 'registerChangeOnNodeIdentifier', 'registerChangeOnNodeType'])->disableOriginalConstructor()->getMock();
         $contentCacheFlusher->expects($this->never())->method('resolveWorkspaceChain');
         $contentCacheFlusher->expects($this->once())->method('registerChangeOnNodeIdentifier');
