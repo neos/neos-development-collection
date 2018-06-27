@@ -574,7 +574,7 @@ HELPTEXT;
         $this->output->outputLine();
         if (!$dryRun) {
             $self = $this;
-            $this->askBeforeExecutingTask('Abstract or undefined node types found, do you want to remove them?', function () use ($self, $nodes, $workspaceName, $removableNodesCount) {
+            $this->askBeforeExecutingTask('Abstract or undefined node types found, do you want to remove them?', function () use ($self, $nodes, $removableNodesCount) {
                 foreach ($nodes as $node) {
                     $self->removeNode($node['identifier'], $node['dimensionsHash']);
                 }
@@ -606,7 +606,7 @@ HELPTEXT;
 
         $nodes = array();
         $nodeExceptionCount = 0;
-        $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount, $queryBuilder) {
+        $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount) {
             try {
                 foreach ($node->getChildNodes() as $childNode) {
                     /** @var $childNode NodeInterface */
@@ -767,7 +767,7 @@ HELPTEXT;
             $this->output->outputLine();
             if (!$dryRun) {
                 $self = $this;
-                $this->askBeforeExecutingTask('Do you want to remove undefined node properties?', function () use ($self, $nodesWithUndefinedPropertiesNodes, $undefinedPropertiesCount, $workspaceName, $dryRun) {
+                $this->askBeforeExecutingTask('Do you want to remove undefined node properties?', function () use ($self, $nodesWithUndefinedPropertiesNodes, $undefinedPropertiesCount) {
                     foreach ($nodesWithUndefinedPropertiesNodes as $nodesWithUndefinedPropertiesNode) {
                         /** @var NodeInterface $node */
                         $node = $nodesWithUndefinedPropertiesNode['node'];
@@ -856,7 +856,7 @@ HELPTEXT;
             $this->output->outputLine();
             if (!$dryRun) {
                 $self = $this;
-                $this->askBeforeExecutingTask('Do you want to remove the broken entity references?', function () use ($self, $nodesWithBrokenEntityReferences, $brokenReferencesCount, $workspaceName, $dryRun) {
+                $this->askBeforeExecutingTask('Do you want to remove the broken entity references?', function () use ($self, $nodesWithBrokenEntityReferences, $brokenReferencesCount) {
                     foreach ($nodesWithBrokenEntityReferences as $nodeIdentifier => $properties) {
                         foreach ($properties as $propertyName => $nodeData) {
                             /** @var NodeData $nodeData */
@@ -984,7 +984,7 @@ HELPTEXT;
             $self = $this;
             $this->output->outputLine();
             $this->output->outputLine('Nodes with invalid dimension values found.' . PHP_EOL . 'You might solve this by migrating them to your current dimension configuration or by removing them.');
-            $this->askBeforeExecutingTask(sprintf('Do you want to remove %s node%s with invalid dimensions now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray, $workspaceName) {
+            $this->askBeforeExecutingTask(sprintf('Do you want to remove %s node%s with invalid dimensions now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray) {
                 foreach ($nodesArray as $nodeArray) {
                     $self->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
                 }
