@@ -14,7 +14,6 @@ namespace Neos\Neos\Fusion\Cache;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
@@ -24,6 +23,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Neos\Fusion\Helper\CachingHelper;
+use Psr\Log\LoggerInterface;
 
 /**
  * This service flushes Fusion content caches triggered by node changes.
@@ -44,7 +44,7 @@ class ContentCacheFlusher
 
     /**
      * @Flow\Inject
-     * @var PsrSystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 
@@ -253,7 +253,7 @@ class ContentCacheFlusher
             foreach ($this->tagsToFlush as $tag => $logMessage) {
                 $affectedEntries = $this->contentCache->flushByTag($tag);
                 if ($affectedEntries > 0) {
-                    $this->systemLogger->log(sprintf('Content cache: Removed %s entries %s', $affectedEntries, $logMessage), LOG_DEBUG);
+                    $this->systemLogger->debug(sprintf('Content cache: Removed %s entries %s', $affectedEntries, $logMessage));
                 }
             }
         }
