@@ -45,11 +45,6 @@ class AssetCollection
     protected $tags;
 
     /**
-     * @var \DateTime
-     */
-    protected $lastModified;
-
-    /**
      * @param string $title
      */
     public function __construct($title)
@@ -150,7 +145,6 @@ class AssetCollection
     public function addTag(Tag $tag)
     {
         if (!$this->tags->contains($tag)) {
-            $this->lastModified = new \DateTime();
             $this->tags->add($tag);
             return true;
         }
@@ -165,7 +159,6 @@ class AssetCollection
      */
     public function setTags(Collection $tags)
     {
-        $this->lastModified = new \DateTime();
         $this->tags = $tags;
     }
 
@@ -178,7 +171,6 @@ class AssetCollection
     public function removeTag(Tag $tag)
     {
         if ($this->tags->contains($tag)) {
-            $this->lastModified = new \DateTime();
             $this->tags->removeElement($tag);
             return true;
         }
