@@ -45,6 +45,11 @@ class AssetCollection
     protected $tags;
 
     /**
+     * @var \DateTime
+     */
+    protected $lastModified;
+
+    /**
      * @param string $title
      */
     public function __construct($title)

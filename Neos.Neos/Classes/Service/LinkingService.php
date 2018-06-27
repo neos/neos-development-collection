@@ -233,7 +233,7 @@ class LinkingService
         if (is_string($node)) {
             $nodeString = $node;
             if ($nodeString === '') {
-                throw new NeosException(sprintf('Empty strings can not be resolved to nodes.', $nodeString), 1415709942);
+                throw new NeosException(sprintf('Empty strings can not be resolved to nodes.'), 1415709942);
             }
             preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $nodeString, $matches);
             if (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '') {
