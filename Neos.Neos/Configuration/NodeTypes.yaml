@@ -132,8 +132,12 @@
   options:
     fusion:
       prototypeGenerator: ~
+    nodeCreationHandlers:
+      documentTitle:
+        nodeCreationHandler: 'Neos\Neos\Ui\NodeCreationHandler\DocumentTitleNodeCreationHandler'
   ui:
     label: 'Document'
+    group: 'general'
     search:
       searchCategory: 'Documents'
     inspector:
@@ -142,6 +146,15 @@
           label: i18n
           position: 10
           icon: 'icon-file'
+    creationDialog:
+      elements:
+        title:
+          type: string
+          ui:
+            label: i18n
+            editor: 'Neos.Neos/Inspector/Editors/TextFieldEditor'
+          validation:
+            'Neos.Neos/Validation/NotEmptyValidator': []
   properties:
     _nodeType:
       ui:
@@ -328,6 +341,7 @@
   ui:
     label: i18n
     icon: 'icon-folder-open-alt'
+    inlineEditable: true
   constraints:
     nodeTypes:
       'Neos.Neos:Document': FALSE
