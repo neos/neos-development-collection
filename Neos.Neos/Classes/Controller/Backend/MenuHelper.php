@@ -189,7 +189,7 @@ class MenuHelper
             ->setCreateAbsoluteUri(true)
             ->uriFor('index', array('module' => $modulePath), 'Backend\Module', 'Neos.Neos');
 
-        $icon = isset($moduleConfiguration['icon']) ? $this->iconMapper->convert($moduleConfiguration['icon']) : '';
+        $icon = isset($moduleConfiguration['icon']) ? $moduleConfiguration['icon'] : '';
         return array(
             'module' => $module,
             'modulePath' => $modulePath,
