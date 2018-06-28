@@ -89,7 +89,7 @@
 			<target xml:lang="pt-BR" state="translated">Exibir</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="pt-BR" state="needs-translation">into</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">dentro</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
 			<target xml:lang="pt-BR" state="translated">antes</target></trans-unit>
@@ -287,46 +287,46 @@
 			<target xml:lang="pt-BR" state="translated">Primário</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="pt-BR" state="needs-translation">Package</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Pacote</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target xml:lang="pt-BR" state="translated">Desativado</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="pt-BR" state="needs-translation">Unavailable</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Indisponível</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="pt-BR" state="needs-translation">Inactive</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Inativo</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
 			<target xml:lang="pt-BR" state="translated">Clique para editar</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="pt-BR" state="needs-translation">Click to deactivate</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Clique para desativar</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="pt-BR" state="needs-translation">Click to activate</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Clique para ativar</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="pt-BR" state="translated">Clique para apagar</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="pt-BR" state="needs-translation">Click to create new</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Clique para criar um novo</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="pt-BR" state="needs-translation">Status</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Status</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="pt-BR" state="needs-translation">Active</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Ativo</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="pt-BR" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Domínios</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="pt-BR" state="needs-translation">Domain</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Domínio</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="pt-BR" state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Sim, excluí-lo!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target xml:lang="pt-BR" state="translated">Chave de pacote</target></trans-unit>
@@ -381,7 +381,7 @@
 			<target xml:lang="pt-BR" state="translated">Descartar todas as alterações</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target xml:lang="pt-BR" state="needs-translation">Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Você tem certeza de que você deseja descartar {numberOfChanges} mudança(s) neste espaço de trabalho?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target xml:lang="pt-BR" state="translated">Tem certeza que deseja descartar todas as alterações neste espaço de trabalho?</target></trans-unit>
@@ -447,7 +447,7 @@
 			<target xml:lang="pt-BR" state="translated">Sem data definida</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
 				<source>Today</source>
-			<target xml:lang="pt-BR" state="needs-translation">Today</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Hoje</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="pt-BR" state="translated">Aplicar</target></trans-unit>
@@ -724,82 +724,82 @@
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
 				<source>Copy {source} to {target}</source>
-			<target xml:lang="pt-BR" state="needs-translation">Copy {source} to {target}</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Copiar {source} para {target}</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
-			<target xml:lang="pt-BR" state="needs-translation">Move {source} to {target}</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Mover {source} para {target}</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target xml:lang="pt-BR" state="needs-translation">Please select the position at which you want {source} inserted relative to {target}.</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Por favor selecione a posição na qual você quer {source} inserido relativo a {target}.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
-			<target xml:lang="pt-BR" state="needs-translation">Insert</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Inserir</target></trans-unit>
       <trans-unit id="insertMode" xml:space="preserve">
 				<source>Insert mode</source>
-			<target xml:lang="pt-BR" state="needs-translation">Insert mode</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Modo de inserção</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target xml:lang="pt-BR" state="needs-translation">Choose an Aspect Ratio</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Escolha uma proporção</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
-			<target xml:lang="pt-BR" state="needs-translation">Bold</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Negrito</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
 				<source>Italic</source>
-			<target xml:lang="pt-BR" state="needs-translation">Italic</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Itálico</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
 				<source>Underline</source>
-			<target xml:lang="pt-BR" state="needs-translation">Underline</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Sublinhado</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
-			<target xml:lang="pt-BR" state="needs-translation">Subscript</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Subscrito</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
-			<target xml:lang="pt-BR" state="needs-translation">Superscript</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Sobrescrito</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
-			<target xml:lang="pt-BR" state="needs-translation">Strikethrough</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Tachado</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
 			<target xml:lang="pt-BR" state="translated">Link</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
-			<target xml:lang="pt-BR" state="needs-translation">Ordered list</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Lista ordenada</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
 				<source>Unordered list</source>
-			<target xml:lang="pt-BR" state="needs-translation">Unordered list</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Lista desordenada</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
 				<source>Align left</source>
-			<target xml:lang="pt-BR" state="needs-translation">Align left</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Alinhar à esquerda</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
 				<source>Align right</source>
-			<target xml:lang="pt-BR" state="needs-translation">Align right</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Alinhar à direita</target><alt-trans><target xml:lang="pt-BR">Alinhar a direita</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
 				<source>Align center</source>
-			<target xml:lang="pt-BR" state="needs-translation">Align center</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Alinhar ao centro</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
 				<source>Align justify</source>
-			<target xml:lang="pt-BR" state="needs-translation">Align justify</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Alinhar justificado</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
 				<source>Table</source>
-			<target xml:lang="pt-BR" state="needs-translation">Table</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Tabela</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
 				<source>Remove format</source>
-			<target xml:lang="pt-BR" state="needs-translation">Remove format</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Remover formatação</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target xml:lang="pt-BR" state="needs-translation">Outdent</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Desindentar</target><alt-trans><target xml:lang="pt-BR">Desidentar</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target xml:lang="pt-BR" state="needs-translation">Indent</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Indentar</target><alt-trans><target xml:lang="pt-BR">Identar</target></alt-trans></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target xml:lang="pt-BR" state="translated">Criar novo</target></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
-			<target xml:lang="pt-BR" state="needs-translation">No matches found</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Nenhuma correspondência encontrada</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target xml:lang="pt-BR" state="needs-translation">Please enter ###CHARACTERS### more character</target></trans-unit>
+			<target xml:lang="pt-BR" state="translated">Por favor, insira ###CHARACTERS### caracteres a mais</target></trans-unit>
     </body>
   </file>
 </xliff>
