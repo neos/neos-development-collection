@@ -107,8 +107,8 @@ class ContentCacheFlusher
             return;
         }
 
+        $nodeIdentifier = $node->getIdentifier();
         foreach ($this->workspacesToFlush[$node->getWorkspace()->getName()] as $workspaceName => $workspaceHash) {
-            $nodeIdentifier = $node->getIdentifier();
 
             $this->registerChangeOnNodeIdentifier($workspaceHash .'_'. $nodeIdentifier);
             $this->registerChangeOnNodeType($node->getNodeType()->getName(), $nodeIdentifier, $workspaceHash);
