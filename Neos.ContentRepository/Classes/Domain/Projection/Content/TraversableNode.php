@@ -24,11 +24,12 @@ use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Cache\CacheAwareInterface;
+use Neos\Eel\ProtectedContextAwareInterface;
 
 /**
  * See {@see TraversableNodeInterface} for explanation.
  */
-final class TraversableNode implements TraversableNodeInterface
+final class TraversableNode implements TraversableNodeInterface, ProtectedContextAwareInterface
 {
 
     use NodeInterfaceProxy;
@@ -90,5 +91,27 @@ final class TraversableNode implements TraversableNodeInterface
     public function getNodePath(): NodePath
     {
         return $this->subgraph->findNodePath($this->node->getNodeIdentifier());
+    }
+
+    /**
+     * @return TraversableNode[]
+     */
+    public function findReferencingNodes(): array {
+        $nodes = $this->subgraph->findReferencingNodes($this->node->getNodeIdentifier());
+
+        $traversableNodes = [];
+        foreach ($nodes as $node) {
+            $traversableNodes[] = new TraversableNode($node, $this->subgraph, $this->contextParameters);
+        }
+        return $traversableNodes;
+    }
+
+    /**
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return true;
     }
 }
