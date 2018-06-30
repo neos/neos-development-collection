@@ -2,7 +2,7 @@ type: dictionary
 additionalProperties:
   # every property here is a Node Type
   type: dictionary
-  additionalProperties: FALSE
+  additionalProperties: false
   properties:
     'class': { type: string, format: class-name }
     'abstract': { type: boolean, description: "Abstract node type for default/mixin usage" }
@@ -23,7 +23,7 @@ additionalProperties:
 
     'constraints': &constraints
       type: dictionary
-      additionalProperties: FALSE
+      additionalProperties: false
       properties:
 
         'nodeTypes':
@@ -40,7 +40,7 @@ additionalProperties:
             type: 'null'
           -
             type: dictionary
-            additionalProperties: FALSE
+            additionalProperties: false
             properties:
               'type': { type: string, description: "Node Type of this child node." }
               'position':
@@ -58,7 +58,7 @@ additionalProperties:
             type: 'null'
           -
             type: dictionary
-            additionalProperties: FALSE
+            additionalProperties: false
             properties:
 
               'type': { type: string, description: "PHP type of this property. Either simple type or fully qualified PHP class name." }
@@ -103,8 +103,8 @@ additionalProperties:
       type: dictionary
       additionalProperties:
         type: dictionary
-        additionalProperties: FALSE
+        additionalProperties: false
         properties:
-          'postprocessor': { type: string, format: class-name, required: TRUE }
+          'postprocessor': { type: string, format: class-name, required: true }
           'postprocessorOptions':
             type: dictionary

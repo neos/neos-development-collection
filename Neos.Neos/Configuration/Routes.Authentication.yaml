@@ -8,7 +8,7 @@
   defaults:
     '@format': 'html'
   httpMethods: ['GET']
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
 
 -
   name: 'Token login'
