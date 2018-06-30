@@ -33,37 +33,37 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $width;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $height;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $maximumWidth;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $maximumHeight;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $minimumWidth;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $minimumHeight;
 
@@ -71,13 +71,13 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * One of the ImagineImageInterface::RATIOMODE_* constants
      *
      * @var string
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $ratioMode;
 
     /**
      * @var boolean
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $allowUpScaling;
 

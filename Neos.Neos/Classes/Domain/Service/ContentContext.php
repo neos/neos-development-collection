@@ -139,7 +139,7 @@ class ContentContext extends Context
     }
 
     /**
-     * Returns TRUE if current context is live workspace, FALSE otherwise
+     * Returns true if current context is live workspace, false otherwise
      *
      * @return boolean
      */
@@ -149,7 +149,7 @@ class ContentContext extends Context
     }
 
     /**
-     * Returns TRUE while rendering backend (not live workspace and access to backend granted), FALSE otherwise
+     * Returns true while rendering backend (not live workspace and access to backend granted), false otherwise
      *
      * @return boolean
      */

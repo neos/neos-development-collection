@@ -66,7 +66,7 @@ abstract class AbstractModuleController extends ActionController
     /**
      * Display no flash message at all on errors.
      *
-     * @return \Neos\Error\Messages\Message returns FALSE
+     * @return \Neos\Error\Messages\Message returns false
      */
     protected function getErrorFlashMessage()
     {

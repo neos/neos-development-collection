@@ -48,7 +48,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
 
     /**
      * @var ArrayCollection<\Neos\Media\Domain\Model\Adjustment\AbstractImageAdjustment>
-     * @ORM\OneToMany(mappedBy="imageVariant", cascade={"all"}, orphanRemoval=TRUE)
+     * @ORM\OneToMany(mappedBy="imageVariant", cascade={"all"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      */
     protected $adjustments;

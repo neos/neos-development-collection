@@ -138,7 +138,7 @@ class FusionView extends AbstractView
     /**
      * Is it possible to render $node with $his->fusionPath?
      *
-     * @return boolean TRUE if $node can be rendered at fusionPath
+     * @return boolean true if $node can be rendered at fusionPath
      *
      * @throws Exception
      */
