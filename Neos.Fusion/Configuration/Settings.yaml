@@ -17,8 +17,8 @@ Neos:
       # meta-property in Fusion, and it is especially useful for e.g. the "Neos.Fusion:ResourceUri"
       # Fusion Object, which should just return NULL silently if an exception occurs.
       innerExceptionHandler: 'Neos\Fusion\Core\ExceptionHandlers\BubblingHandler'
-    debugMode: FALSE
-    enableContentCache: TRUE
+    debugMode: false
+    enableContentCache: true
 
     # Default context objects that are available in Eel expressions
     #

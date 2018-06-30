@@ -25,4 +25,4 @@ down:
         -
           type: 'TYPO3\Neos\TYPO3CR\Transformations\PluginViewTransformation'
           settings:
-            reverse: TRUE
+            reverse: true
