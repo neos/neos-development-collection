@@ -38,7 +38,7 @@ prototype(Neos.Neos:History.NodeEventRenderer) < prototype(Array) {
 
 		itemRenderer = Case {
 			default {
-				condition = TRUE
+				condition = true
 				type = ${'Neos.Neos:History.PublishedNode.' + eventsOfMatchedType[0].eventType}
 			}
 		}

@@ -1,7 +1,7 @@
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:Debug) {
 	@class = 'Neos\\Fusion\\FusionObjects\\DebugImplementation'
-	plaintext = TRUE
+	plaintext = true
 }
 
 debug.empty = Debug
