@@ -44,7 +44,7 @@ class TagImplementation extends AbstractFusionObject
     }
 
     /**
-     * Whether to leave out the closing tag (defaults to FALSE)
+     * Whether to leave out the closing tag (defaults to false)
      *
      * @return boolean
      */

@@ -36,11 +36,11 @@ class NodeTypeSchemaBuilder
      *   whitelists and blacklists:
      *   - [node type]
      *     - nodeTypes:
-     *       [child node type name]: TRUE
+     *       [child node type name]: true
      *     - childNodes:
      *       - [child node name]
      *         - nodeTypes:
-     *          [child node type name]: TRUE
+     *          [child node type name]: true
      *
      * @return array the node type schema ready to be used by the JavaScript code
      */
@@ -76,7 +76,7 @@ class NodeTypeSchemaBuilder
 
     /**
      * In order to allow unsetting options via the YAML settings merging, the
-     * formatting options can be set via 'option': TRUE, however, the frontend
+     * formatting options can be set via 'option': true, however, the frontend
      * schema expects a flattened plain numeric array. This methods adjust the setting
      * accordingly.
      *

@@ -845,7 +845,7 @@ class AssetController extends ActionController
     /**
      * Individual error FlashMessage that hides which action fails in production.
      *
-     * @return Message|bool The flash message or FALSE if no flash message should be set
+     * @return Message|bool The flash message or false if no flash message should be set
      */
     protected function getErrorFlashMessage()
     {

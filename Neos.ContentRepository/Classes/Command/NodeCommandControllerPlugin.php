@@ -221,8 +221,8 @@ HELPTEXT;
      * @param ConsoleOutput $output An instance of ConsoleOutput which can be used for output or dialogues
      * @param NodeType $nodeType Only handle this node type (if specified)
      * @param string $workspaceName Only handle this workspace (if specified)
-     * @param boolean $dryRun If TRUE, don't do any changes, just simulate what you would do
-     * @param boolean $cleanup If FALSE, cleanup tasks are skipped
+     * @param boolean $dryRun If true, don't do any changes, just simulate what you would do
+     * @param boolean $cleanup If false, cleanup tasks are skipped
      * @param string $skip Skip the given check or checks (comma separated)
      * @param string $only Only execute the given check or checks (comma separated)
      * @return void

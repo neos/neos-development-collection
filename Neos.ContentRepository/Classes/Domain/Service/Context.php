@@ -74,21 +74,21 @@ class Context
     protected $currentDateTime;
 
     /**
-     * If TRUE, invisible content elements will be shown.
+     * If true, invisible content elements will be shown.
      *
      * @var boolean
      */
     protected $invisibleContentShown = false;
 
     /**
-     * If TRUE, removed content elements will be shown, even though they are removed.
+     * If true, removed content elements will be shown, even though they are removed.
      *
      * @var boolean
      */
     protected $removedContentShown = false;
 
     /**
-     * If TRUE, even content elements will be shown which are not accessible by the currently logged in account.
+     * If true, even content elements will be shown which are not accessible by the currently logged in account.
      *
      * @var boolean
      */
@@ -339,7 +339,7 @@ class Context
      * new, more specific node is created and returned.
      *
      * @param NodeInterface $node The node with a different context. If the context of the given node is the same as this context the operation will have no effect.
-     * @param boolean $recursive If TRUE also adopt all descendant nodes which are non-aggregate
+     * @param boolean $recursive If true also adopt all descendant nodes which are non-aggregate
      * @return NodeInterface A new or existing node that matches this context
      */
     public function adoptNode(NodeInterface $node, $recursive = false)

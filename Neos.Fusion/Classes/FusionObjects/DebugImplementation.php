@@ -20,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * //tsPath value The variable to display a dump of.
  * //tsPath title $title optional custom title for the debug output
- * //tsPath plaintext If TRUE, the dump is in plain text, if FALSE the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
+ * //tsPath plaintext If true, the dump is in plain text, if false the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
  * @api
  */
 class DebugImplementation extends ArrayImplementation

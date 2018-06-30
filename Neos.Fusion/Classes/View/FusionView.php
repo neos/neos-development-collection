@@ -73,7 +73,7 @@ class FusionView extends AbstractView
     protected $fusionPath = null;
 
     /**
-     * if FALSE, the fallback view will never be used.
+     * if false, the fallback view will never be used.
      *
      * @var boolean
      */

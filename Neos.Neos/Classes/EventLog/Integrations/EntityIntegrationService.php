@@ -36,7 +36,7 @@ class EntityIntegrationService extends AbstractIntegrationService
     protected $entityManager;
 
     /**
-     * @Flow\Inject(lazy=FALSE)
+     * @Flow\Inject(lazy=false)
      * @var CompilingEvaluator
      */
     protected $eelEvaluator;

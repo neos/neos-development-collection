@@ -133,7 +133,7 @@ class UserService
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @var Now
      */
     protected $now;

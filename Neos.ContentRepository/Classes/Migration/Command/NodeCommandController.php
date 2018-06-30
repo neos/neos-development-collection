@@ -83,7 +83,7 @@ class NodeCommandController extends CommandController
             $this->outputCommentsAndWarnings($migrationConfiguration);
             if ($migrationConfiguration->hasWarnings() && $confirmation === false) {
                 $this->outputLine();
-                $this->outputLine('Migration has warnings. You need to confirm execution by adding the "--confirmation TRUE" option to the command.');
+                $this->outputLine('Migration has warnings. You need to confirm execution by adding the "--confirmation true" option to the command.');
                 $this->quit(1);
             }
 

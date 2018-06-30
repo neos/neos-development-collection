@@ -75,7 +75,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      * @param string $nodeType Node type name, if empty update all declared node types
      * @param string $workspace Workspace name, default is 'live'
      * @param boolean $dryRun Don't do anything, but report actions
-     * @param boolean $cleanup If FALSE, cleanup tasks are skipped
+     * @param boolean $cleanup If false, cleanup tasks are skipped
      * @param string $skip Skip the given check or checks (comma separated)
      * @param string $only Only execute the given check or checks (comma separated)
      * @return void

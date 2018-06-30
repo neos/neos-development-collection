@@ -221,7 +221,7 @@ class ContentCache
             foreach ($segments as $segment) {
                 $metadata = explode(';', $segment['metadata']);
                 $tagsValue = $metadata[0] === '' ? [] : ($metadata[0] === '*' ? false : explode(',', $metadata[0]));
-                // FALSE means we do not need to store the cache entry again (because it was previously fetched)
+                // false means we do not need to store the cache entry again (because it was previously fetched)
                 if ($tagsValue !== false) {
                     $lifetime = isset($metadata[1]) ? (integer)$metadata[1] : null;
                     $this->cache->set($segment['identifier'], $segment['content'], $this->sanitizeTags($tagsValue), $lifetime);
@@ -240,8 +240,8 @@ class ContentCache
      * @param string $fusionPath Fusion path identifying the Fusion object to retrieve from the content cache
      * @param array $cacheIdentifierValues Further values which play into the cache identifier hash, must be the same as the ones specified while the cache entry was written
      * @param boolean $addCacheSegmentMarkersToPlaceholders If cache segment markers should be added – this makes sense if the cached segment is about to be included in a not-yet-cached segment
-     * @param string|bool $cacheDiscriminator The evaluated cache discriminator value, if any and FALSE if the cache discriminator is disabled for the current context
-     * @return string|boolean The segment with replaced cache placeholders, or FALSE if a segment was missing in the cache
+     * @param string|bool $cacheDiscriminator The evaluated cache discriminator value, if any and false if the cache discriminator is disabled for the current context
+     * @return string|boolean The segment with replaced cache placeholders, or false if a segment was missing in the cache
      * @throws Exception
      */
     public function getCachedSegment($uncachedCommandCallback, $fusionPath, $cacheIdentifierValues, $addCacheSegmentMarkersToPlaceholders = false, $cacheDiscriminator = null)
@@ -285,7 +285,7 @@ class ContentCache
      *
      * @param string $content
      * @param boolean $addCacheSegmentMarkersToPlaceholders
-     * @return integer|boolean Number of replaced placeholders or FALSE if a placeholder couldn't be found
+     * @return integer|boolean Number of replaced placeholders or false if a placeholder couldn't be found
      */
     protected function replaceCachePlaceholders(&$content, $addCacheSegmentMarkersToPlaceholders)
     {
