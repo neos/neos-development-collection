@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Neos\Tests\Functional\Fusion\Cache;
 
 /*
@@ -54,9 +53,6 @@ class ContentCacheFlusherTest extends FunctionalTestCase
      */
     protected $nodeDataRepository;
 
-    /**
-     *
-     */
     public function setUp()/* The :void return type declaration that should be here would cause a BC issue */
     {
         parent::setUp();
@@ -79,9 +75,6 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
     }
 
-    /**
-     *
-     */
     public function flushingANodeWillResolveAllWorkspacesToFlush()
     {
         // Add more workspaces
