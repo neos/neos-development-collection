@@ -456,7 +456,7 @@ class AssetController extends ActionController
         $assetMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
         $assetMappingConfiguration->allowProperties('title', 'resource');
         $assetMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
-        $assetMappingConfiguration->setTypeConverterOption(AssetInterfacseConverter::class, AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE, true);
+        $assetMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE, true);
     }
 
     /**
@@ -531,21 +531,7 @@ class AssetController extends ActionController
      */
     public function createTagAction($label)
     {
-        $existingTag = $this->tagRepository->findOneByLabel($label);
-        if ($existingTag !== null) {
-            if (($assetCollection = $this->browserState->get('activeAssetCollection')) !== null && $assetCollection->addTag($existingTag)) {
-                $this->assetCollectionRepository->update($assetCollection);
-                $this->addFlashMessage('tagAlreadyExistsAndAddedToCollection', '', Message::SEVERITY_OK, [htmlspecialchars($label)]);
-            }
-        } else {
-            $tag = new Tag($label);
-            $this->tagRepository->add($tag);
-            if (($assetCollection = $this->browserState->get('activeAssetCollection')) !== null && $assetCollection->addTag($tag)) {
-                $this->assetCollectionRepository->update($assetCollection);
-            }
-            $this->addFlashMessage('tagHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars($label)]);
-        }
-        $this->redirect('index');
+        $this->forward('create', 'Tag', 'Neos.Media.Browser', ['label' => $label]);
     }
 
     /**
@@ -554,10 +540,7 @@ class AssetController extends ActionController
      */
     public function editTagAction(Tag $tag)
     {
-        $this->view->assignMultiple([
-            'tag' => $tag,
-            'assetCollections' => $this->assetCollectionRepository->findAll()
-        ]);
+        $this->forward('edit', 'Tag', 'Neos.Media.Browser', ['tag' => $tag]);
     }
 
     /**
@@ -566,9 +549,7 @@ class AssetController extends ActionController
      */
     public function updateTagAction(Tag $tag)
     {
-        $this->tagRepository->update($tag);
-        $this->addFlashMessage('tagHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
-        $this->redirect('index');
+        $this->forward('update', 'Tag', 'Neos.Media.Browser', ['tag' => $tag]);
     }
 
     /**
@@ -577,14 +558,7 @@ class AssetController extends ActionController
      */
     public function deleteTagAction(Tag $tag)
     {
-        $taggedAssets = $this->assetRepository->findByTag($tag);
-        foreach ($taggedAssets as $asset) {
-            $asset->removeTag($tag);
-            $this->assetRepository->update($asset);
-        }
-        $this->tagRepository->remove($tag);
-        $this->addFlashMessage('tagHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
-        $this->redirect('index');
+        $this->forward('delete', 'Tag', 'Neos.Media.Browser', ['tag' => $tag]);
     }
 
     /**
@@ -595,9 +569,7 @@ class AssetController extends ActionController
      */
     public function createAssetCollectionAction($title)
     {
-        $this->assetCollectionRepository->add(new AssetCollection($title));
-        $this->addFlashMessage('collectionHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars($title)]);
-        $this->redirect('index');
+        $this->forward('create', 'AssetCollection', 'Neos.Media.Browser', ['title' => $title]);
     }
 
     /**
@@ -606,10 +578,7 @@ class AssetController extends ActionController
      */
     public function editAssetCollectionAction(AssetCollection $assetCollection)
     {
-        $this->view->assignMultiple([
-            'assetCollection' => $assetCollection,
-            'tags' => $this->tagRepository->findAll()
-        ]);
+        $this->forward('edit', 'AssetCollection', 'Neos.Media.Browser', ['assetCollection' => $assetCollection]);
     }
 
     /**
@@ -618,9 +587,16 @@ class AssetController extends ActionController
      */
     public function updateAssetCollectionAction(AssetCollection $assetCollection)
     {
-        $this->assetCollectionRepository->update($assetCollection);
-        $this->addFlashMessage('collectionHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())]);
-        $this->redirect('index');
+        $this->forward('update', 'AssetCollection', 'Neos.Media.Browser', ['assetCollection' => $assetCollection]);
+    }
+
+    /**
+     * @param AssetCollection $assetCollection
+     * @return void
+     */
+    public function deleteAssetCollectionAction(AssetCollection $assetCollection)
+    {
+        $this->forward('delete', 'AssetCollection', 'Neos.Media.Browser', ['assetCollection' => $assetCollection]);
     }
 
     /**
@@ -678,25 +654,6 @@ class AssetController extends ActionController
         }
 
         $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($originalFilename)]);
-        $this->redirect('index');
-    }
-
-    /**
-     * @param AssetCollection $assetCollection
-     * @return void
-     */
-    public function deleteAssetCollectionAction(AssetCollection $assetCollection)
-    {
-        foreach ($this->siteRepository->findByAssetCollection($assetCollection) as $site) {
-            $site->setAssetCollection(null);
-            $this->siteRepository->update($site);
-        }
-
-        if ($this->browserState->get('activeAssetCollection') === $assetCollection) {
-            $this->browserState->set('activeAssetCollection', null);
-        }
-        $this->assetCollectionRepository->remove($assetCollection);
-        $this->addFlashMessage('collectionHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())]);
         $this->redirect('index');
     }
 
