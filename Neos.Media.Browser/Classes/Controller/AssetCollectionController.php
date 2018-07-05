@@ -12,27 +12,14 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Media\Browser\Domain\Session\BrowserState;
 use Neos\Media\Domain\Model\AssetCollection;
-use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\TagRepository;
-use Neos\Media\Domain\Service\AssetService;
-use Neos\Neos\Controller\CreateContentContextTrait;
-use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
-use Neos\Neos\Service\UserService;
-use Neos\Neos\Domain\Service\UserService as DomainUserService;
 
 /**
  * Controller for tag handling
