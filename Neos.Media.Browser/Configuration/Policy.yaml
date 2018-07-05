@@ -9,11 +9,14 @@ privilegeTargets:
     'Neos.Media.Browser:AssetUsage':
       matcher: 'method(Neos\Media\Browser\Controller\UsageController->relatedNodesAction())'
 
+    'Neos.Media.Browser:ManageTags':
+      matcher: 'method(Neos\Media\Browser\Controller\TagController->(create|edit|update|delete)Action())'
+
     'Neos.Media.Browser:AssetProxyService':
       matcher: 'method(Neos\Media\Browser\Controller\AssetProxyController->(index|import)Action())'
 
     'Neos.Media.Browser:ManageAssetCollections':
-      matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action())'
+      matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action()) || method(Neos\Media\Browser\Controller\AssetCollectionController->(create|edit|update|delete)Action())'
 
     'Neos.Media.Browser:ReplaceAssetResource':
       matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(replaceAssetResource|updateAssetResource)Action())'
@@ -26,6 +29,9 @@ roles:
         permission: GRANT
       -
         privilegeTarget: 'Neos.Media.Browser:AssetUsage'
+        permission: GRANT
+      -
+        privilegeTarget: 'Neos.Media.Browser:ManageTags'
         permission: GRANT
       -
         privilegeTarget: 'Neos.Media.Browser:AssetProxyService'
