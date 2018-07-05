@@ -40,7 +40,7 @@
                     <f:if condition="{asset.inUse}">
                         <f:then>
                             <p class="neos-buffer-below"><i class="fas fa-exclamation-sign"></i> {neos:backend.translate(id: 'replace.usageCount', arguments: {usageCount: asset.usageCount}, package: 'Neos.Media.Browser')}</p>
-                            <f:link.action action="relatedNodes" arguments="{asset:asset}" class="neos-button">
+                            <f:link.action controller="Usage" action="relatedNodes" arguments="{asset:asset}" class="neos-button">
                                 {neos:backend.translate(id: 'replace.allUsages', package: 'Neos.Media.Browser')}
                             </f:link.action>
                         </f:then>
