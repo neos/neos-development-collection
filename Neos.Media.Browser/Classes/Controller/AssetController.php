@@ -524,6 +524,75 @@ class AssetController extends ActionController
     }
 
     /**
+     * Delete an asset
+     *
+     * @param Asset $asset
+     * @return void
+     */
+    public function deleteAction(Asset $asset)
+    {
+        $usageReferences = $this->assetService->getUsageReferences($asset);
+        if (count($usageReferences) > 0) {
+            $this->addFlashMessage('deleteRelatedNodes', '', Message::SEVERITY_WARNING, [], 1412422767);
+            $this->redirect('index');
+        }
+
+        $this->assetRepository->remove($asset);
+        $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [$asset->getLabel()], 1412375050);
+        $this->redirect('index');
+    }
+
+    /**
+     * Update the resource on an asset.
+     *
+     * @param AssetInterface $asset
+     * @param PersistentResource $resource
+     * @param array $options
+     * @throws InvalidArgumentValueException
+     * @return void
+     */
+    public function updateAssetResourceAction(AssetInterface $asset, PersistentResource $resource, array $options = [])
+    {
+        $sourceMediaType = MediaTypes::parseMediaType($asset->getMediaType());
+        $replacementMediaType = MediaTypes::parseMediaType($resource->getMediaType());
+
+        // Prevent replacement of image, audio and video by a different mimetype because of possible rendering issues.
+        if (in_array($sourceMediaType['type'], ['image', 'audio', 'video']) && $sourceMediaType['type'] !== $replacementMediaType['type']) {
+            $this->addFlashMessage(
+                'resourceCanOnlyBeReplacedBySimilarResource',
+                '',
+                Message::SEVERITY_WARNING,
+                [$sourceMediaType['type'], $resource->getMediaType()],
+                1462308179
+            );
+            $this->redirect('index');
+        }
+
+        try {
+            $originalFilename = $asset->getLabel();
+            $this->assetService->replaceAssetResource($asset, $resource, $options);
+        } catch (\Exception $exception) {
+            $this->addFlashMessage('couldNotReplaceAsset', '', Message::SEVERITY_OK, [], 1463472606);
+            $this->forwardToReferringRequest();
+            return;
+        }
+
+        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($originalFilename)]);
+        $this->redirect('index');
+    }
+
+    /**
+     * Get Related Nodes for an asset (proxy action)
+     *
+     * @param AssetInterface $asset
+     * @return void
+     */
+    public function relatedNodesAction(AssetInterface $asset)
+    {
+        $this->forward('relatedNodes', 'Usage', 'Neos.Media.Browser', ['asset' => $asset]);
+    }
+
+    /**
      * @param string $label
      * @return void
      * @Flow\Validate(argumentName="label", type="NotEmpty")
@@ -597,75 +666,6 @@ class AssetController extends ActionController
     public function deleteAssetCollectionAction(AssetCollection $assetCollection)
     {
         $this->forward('delete', 'AssetCollection', 'Neos.Media.Browser', ['assetCollection' => $assetCollection]);
-    }
-
-    /**
-     * Delete an asset
-     *
-     * @param Asset $asset
-     * @return void
-     */
-    public function deleteAction(Asset $asset)
-    {
-        $usageReferences = $this->assetService->getUsageReferences($asset);
-        if (count($usageReferences) > 0) {
-            $this->addFlashMessage('deleteRelatedNodes', '', Message::SEVERITY_WARNING, [], 1412422767);
-            $this->redirect('index');
-        }
-
-        $this->assetRepository->remove($asset);
-        $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [$asset->getLabel()], 1412375050);
-        $this->redirect('index');
-    }
-
-    /**
-     * Update the resource on an asset.
-     *
-     * @param AssetInterface $asset
-     * @param PersistentResource $resource
-     * @param array $options
-     * @throws InvalidArgumentValueException
-     * @return void
-     */
-    public function updateAssetResourceAction(AssetInterface $asset, PersistentResource $resource, array $options = [])
-    {
-        $sourceMediaType = MediaTypes::parseMediaType($asset->getMediaType());
-        $replacementMediaType = MediaTypes::parseMediaType($resource->getMediaType());
-
-        // Prevent replacement of image, audio and video by a different mimetype because of possible rendering issues.
-        if (in_array($sourceMediaType['type'], ['image', 'audio', 'video']) && $sourceMediaType['type'] !== $replacementMediaType['type']) {
-            $this->addFlashMessage(
-                'resourceCanOnlyBeReplacedBySimilarResource',
-                '',
-                Message::SEVERITY_WARNING,
-                [$sourceMediaType['type'], $resource->getMediaType()],
-                1462308179
-            );
-            $this->redirect('index');
-        }
-
-        try {
-            $originalFilename = $asset->getLabel();
-            $this->assetService->replaceAssetResource($asset, $resource, $options);
-        } catch (\Exception $exception) {
-            $this->addFlashMessage('couldNotReplaceAsset', '', Message::SEVERITY_OK, [], 1463472606);
-            $this->forwardToReferringRequest();
-            return;
-        }
-
-        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($originalFilename)]);
-        $this->redirect('index');
-    }
-
-    /**
-     * Get Related Nodes for an asset (proxy action)
-     *
-     * @param AssetInterface $asset
-     * @return void
-     */
-    public function relatedNodesAction(AssetInterface $asset)
-    {
-        $this->forward('relatedNodes', 'Usage', 'Neos.Media.Browser', ['asset' => $asset]);
     }
 
     /**
