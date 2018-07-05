@@ -363,7 +363,7 @@
 			<target xml:lang="cs" state="translated">Křestní Jméno</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="cs" state="translated">Druhé křestní jméno</target></trans-unit>
+			<target xml:lang="cs" state="translated">Prostřední jméno</target><alt-trans><target xml:lang="cs">Druhé křestní jméno</target></alt-trans></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
 			<target xml:lang="cs" state="translated">Příjmení</target></trans-unit>
@@ -546,7 +546,7 @@
 			<target xml:lang="cs" state="needs-translation">The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
-			<target xml:lang="cs" state="needs-translation">Add new site</target></trans-unit>
+			<target xml:lang="cs" state="translated">Přidat novou stránku</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="cs" state="needs-translation">Create site</target></trans-unit>
@@ -558,7 +558,7 @@
 			<target xml:lang="cs" state="needs-translation">Root node name</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="cs" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="cs" state="translated">Domény</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve">
 				<source>Site</source>
 			<target xml:lang="cs" state="needs-translation">Site</target></trans-unit>
@@ -573,22 +573,22 @@
 			<target xml:lang="cs" state="needs-translation">Site package</target></trans-unit>
       <trans-unit id="sites.delete" xml:space="preserve">
 				<source>Delete this site</source>
-			<target xml:lang="cs" state="needs-translation">Delete this site</target></trans-unit>
+			<target xml:lang="cs" state="translated">Odstranit tuto stránku</target></trans-unit>
       <trans-unit id="sites.deactivate" xml:space="preserve">
 				<source>Deactivate site</source>
-			<target xml:lang="cs" state="needs-translation">Deactivate site</target></trans-unit>
+			<target xml:lang="cs" state="translated">Deaktivovat stránku</target></trans-unit>
       <trans-unit id="sites.activate" xml:space="preserve">
 				<source>Activate site</source>
-			<target xml:lang="cs" state="needs-translation">Activate site</target></trans-unit>
+			<target xml:lang="cs" state="translated">Aktivovat stránku</target></trans-unit>
       <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="cs" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target xml:lang="cs" state="translated">Opravdu chcete odtranit "{0}"? Tuto akci nelze vrátit zpět.</target></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the site</source>
-			<target xml:lang="cs" state="needs-translation">Yes, delete the site</target></trans-unit>
+			<target xml:lang="cs" state="translated">Ano, odstranit stránku</target></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve">
 				<source>Import a site</source>
-			<target xml:lang="cs" state="needs-translation">Import a site</target></trans-unit>
+			<target xml:lang="cs" state="translated">Importovat stránku</target></trans-unit>
       <trans-unit id="sites.select" xml:space="preserve">
 				<source>Select a site package</source>
 			<target xml:lang="cs" state="needs-translation">Select a site package</target></trans-unit>
@@ -597,16 +597,16 @@
 			<target xml:lang="cs" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
       <trans-unit id="sites.createBlank" xml:space="preserve">
 				<source>Create a blank site</source>
-			<target xml:lang="cs" state="needs-translation">Create a blank site</target></trans-unit>
+			<target xml:lang="cs" state="translated">Vytvořit prázdnou stránku</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
 			<target xml:lang="cs" state="needs-translation">Select a document nodeType</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
-			<target xml:lang="cs" state="needs-translation">Site name</target></trans-unit>
+			<target xml:lang="cs" state="translated">Název stránky</target></trans-unit>
       <trans-unit id="sites.createNode" xml:space="preserve">
 				<source>Create empty site</source>
-			<target xml:lang="cs" state="needs-translation">Create empty site</target></trans-unit>
+			<target xml:lang="cs" state="translated">Vytvořit prázdnou stránku</target></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve">
 				<source>Create a new site package</source>
 			<target xml:lang="cs" state="needs-translation">Create a new site package</target></trans-unit>
@@ -618,13 +618,13 @@
 			<target xml:lang="cs" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="cs" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target xml:lang="cs" state="translated">Opravdu chcete odtranit "{0}"? Tuto akci nelze vrátit zpět.</target></trans-unit>
       <trans-unit id="domain.new" xml:space="preserve">
 				<source>New domain</source>
-			<target xml:lang="cs" state="needs-translation">New domain</target></trans-unit>
+			<target xml:lang="cs" state="translated">Nová doména</target></trans-unit>
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
-			<target xml:lang="cs" state="needs-translation">Edit domain</target></trans-unit>
+			<target xml:lang="cs" state="translated">Upravit doménu</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="cs" state="needs-translation">Configuration</target></trans-unit>

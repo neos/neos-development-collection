@@ -153,6 +153,7 @@
 
 &.media-browser {
 	background-color: transparent;
+  padding-bottom: 30px;
 
 	&:not(.media-module) {
 
@@ -661,11 +662,30 @@
 		}
 	}
 
-	//Styles for upload/edit image
-	.neos-row-fluid .neos-image-inputs {
-		float: left;
-		margin-left: 0;
+  .neos-media-content {
+    display: flex;
+    flex-direction: row;
 
+    @media screen and (max-width: 767px) {
+      flex-direction: column;
+    }
+  }
+
+  .neos-image-inputs,
+  .neos-image-example {
+    flex: 1;
+  }
+
+  .neos-image-example {
+    margin-bottom: 80px;
+  }
+
+  .neos-image-inputs {
+    margin-right: 0;
+  }
+
+	//Styles for upload/edit image
+	.neos-image-inputs {
 		legend {
 			display: none;
 		}
@@ -704,7 +724,7 @@
 	}
 
 	//Styles for image preview in edit mode
-	.neos-row-fluid [class*="neos-span"].neos-image-example {
+	.neos-image-example {
 		label {
 			text-align: right;
 
@@ -714,9 +734,12 @@
 		}
 
 		.neos-preview-image {
+			position: relative;
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
 			height: 0;
 			padding-bottom: 100%;
-			position: relative;
 			background-color: $grayDarker;
 			background-image: url('../../Neos.Neos/Images/ajax-preloader-222222.gif');
 			background-position: center center;
@@ -973,5 +996,19 @@
 
 	.fa-exclamation-sign {
 		color: $orange;
+	}
+
+	.neos-preview-page-cursor {
+		span {
+			height: 40px;
+			line-height: 40px;
+		}
+	}
+
+	.neos-preview-actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		padding-top: 16px;
 	}
 }

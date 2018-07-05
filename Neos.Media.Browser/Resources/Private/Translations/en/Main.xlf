@@ -299,6 +299,15 @@
 			<trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			</trans-unit>
+			<trans-unit id="download" xml:space="preserve">
+				<source>Download</source>
+			</trans-unit>
+			<trans-unit id="next" xml:space="preserve">
+				<source>Next</source>
+			</trans-unit>
+			<trans-unit id="previous" xml:space="preserve">
+				<source>Previous</source>
+			</trans-unit>
 			<trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			</trans-unit>

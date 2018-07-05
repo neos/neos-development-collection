@@ -299,6 +299,15 @@
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			<target xml:lang="it" state="translated">Anteprima</target></trans-unit>
+      <trans-unit id="download" xml:space="preserve">
+				<source>Download</source>
+			<target xml:lang="it" state="needs-translation">Download</target></trans-unit>
+      <trans-unit id="next" xml:space="preserve">
+				<source>Next</source>
+			<target xml:lang="it" state="needs-translation">Next</target></trans-unit>
+      <trans-unit id="previous" xml:space="preserve">
+				<source>Previous</source>
+			<target xml:lang="it" state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="it" state="needs-translation">Cannot upload the file</target></trans-unit>
@@ -368,7 +377,7 @@
 			<target xml:lang="it" state="needs-translation">Preview current file</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target xml:lang="it" state="needs-translation">Could not replace asset</target></trans-unit>
+			<target xml:lang="it" state="translated">Non ho potuto sostituire l'asset</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
 			<target xml:lang="it" state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>

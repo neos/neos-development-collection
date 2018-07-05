@@ -414,10 +414,19 @@ class AssetController extends ActionController
                 }
             }
 
+            switch ($asset->getFileExtension()) {
+                case 'pdf':
+                    $contentPreview = 'ContentPdf';
+                    break;
+                default:
+                    $contentPreview = 'ContentDefault';
+            }
+
             $this->view->assignMultiple([
                 'tags' => $tags,
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
+                'contentPreview' => $contentPreview,
                 'assetSource' => $assetSource
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {

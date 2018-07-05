@@ -92,7 +92,7 @@
                 </fieldset>
             </div>
             <div class="neos-span6 neos-image-example">
-                <f:render section="ContentImage" arguments="{_all}" />
+                <f:render partial="{contentPreview}Preview" arguments="{_all}" />
             </div>
         </div>
         <div class="neos-footer">
@@ -143,15 +143,6 @@
         </div>
     </f:form>
     <f:form action="index" id="postHelper" method="post"></f:form>
-</f:section>
-
-<f:section name="ContentImage">
-    <label>{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}</label>
-    <div class="neos-preview-image">
-        <a href="{assetProxy.originalUri}" target="_blank">
-            <img src="{assetProxy.previewUri}" class="img-polaroid" alt="{assetProxy.label}"/>
-        </a>
-    </div>
 </f:section>
 
 <f:section name="Scripts">
