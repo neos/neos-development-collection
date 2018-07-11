@@ -102,12 +102,18 @@ class WorkspaceCommandController extends CommandController
             $this->quit(1);
         }
 
-        $this->outputLine('The workspace %s contains %u unpublished nodes.', [$workspaceName, count($nodes)]);
+        $amount = count($nodes);
+        $this->outputLine('The workspace %s contains %u unpublished nodes.', [$workspaceName, $amount]);
 
-        foreach ($nodes as $node) {
+        foreach ($nodes as $index => $node) {
             /** @var NodeInterface $node */
             if ($verbose) {
-                $this->outputLine('    ' . $node->getPath());
+                $this->outputLine("[%s][%s/%u] %s", [
+                    date('H:i:s'),
+                    str_pad($index + 1, strlen($amount . ''), ' ', STR_PAD_LEFT),
+                    $amount,
+                    $node->getContextPath()
+                ]);
             }
             if (!$dryRun) {
                 $this->publishingService->publishNode($node, $targetWorkspace);
