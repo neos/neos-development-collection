@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Browser\Controller;
 
 /*
@@ -13,13 +14,6 @@ namespace Neos\Media\Browser\Controller;
 
 use Doctrine\Common\Persistence\Proxy as DoctrineProxy;
 use Doctrine\ORM\EntityNotFoundException;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
@@ -40,8 +34,8 @@ use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetNotFoundExceptionInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
-use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionExceptionInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
 use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetProxy;
 use Neos\Media\Domain\Model\AssetSource\SupportsCollectionsInterface;
@@ -55,12 +49,8 @@ use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Controller\CreateContentContextTrait;
-use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
-use Neos\Neos\Domain\Service\UserService as DomainUserService;
-use Neos\Neos\Service\UserService;
 use Neos\Utility\Files;
 use Neos\Utility\MediaTypes;
 
@@ -91,18 +81,6 @@ class AssetController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
      * @var SiteRepository
      */
     protected $siteRepository;
@@ -112,30 +90,6 @@ class AssetController extends ActionController
      * @var DomainRepository
      */
     protected $domainRepository;
-
-    /**
-     * @Flow\Inject()
-     * @var WorkspaceRepository
-     */
-    protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
-     * @var UserService
-     */
-    protected $userService;
-
-    /**
-     * @Flow\Inject
-     * @var DomainUserService
-     */
-    protected $domainUserService;
-
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionPresetSourceInterface
-     */
-    protected $contentDimensionPresetSource;
 
     /**
      * @Flow\Inject
@@ -394,7 +348,7 @@ class AssetController extends ActionController
             throw new \RuntimeException('Given asset source is not configured.', 1509632166);
         }
 
-        $assetSource =  $this->assetSources[$assetSourceIdentifier];
+        $assetSource = $this->assetSources[$assetSourceIdentifier];
         $assetProxyRepository = $assetSource->getAssetProxyRepository();
 
         try {
@@ -570,106 +524,6 @@ class AssetController extends ActionController
     }
 
     /**
-     * @param string $label
-     * @return void
-     * @Flow\Validate(argumentName="label", type="NotEmpty")
-     * @Flow\Validate(argumentName="label", type="Label")
-     */
-    public function createTagAction($label)
-    {
-        $existingTag = $this->tagRepository->findOneByLabel($label);
-        if ($existingTag !== null) {
-            if (($assetCollection = $this->browserState->get('activeAssetCollection')) !== null && $assetCollection->addTag($existingTag)) {
-                $this->assetCollectionRepository->update($assetCollection);
-                $this->addFlashMessage('tagAlreadyExistsAndAddedToCollection', '', Message::SEVERITY_OK, [htmlspecialchars($label)]);
-            }
-        } else {
-            $tag = new Tag($label);
-            $this->tagRepository->add($tag);
-            if (($assetCollection = $this->browserState->get('activeAssetCollection')) !== null && $assetCollection->addTag($tag)) {
-                $this->assetCollectionRepository->update($assetCollection);
-            }
-            $this->addFlashMessage('tagHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars($label)]);
-        }
-        $this->redirect('index');
-    }
-
-    /**
-     * @param Tag $tag
-     * @return void
-     */
-    public function editTagAction(Tag $tag)
-    {
-        $this->view->assignMultiple([
-            'tag' => $tag,
-            'assetCollections' => $this->assetCollectionRepository->findAll()
-        ]);
-    }
-
-    /**
-     * @param Tag $tag
-     * @return void
-     */
-    public function updateTagAction(Tag $tag)
-    {
-        $this->tagRepository->update($tag);
-        $this->addFlashMessage('tagHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
-        $this->redirect('index');
-    }
-
-    /**
-     * @param Tag $tag
-     * @return void
-     */
-    public function deleteTagAction(Tag $tag)
-    {
-        $taggedAssets = $this->assetRepository->findByTag($tag);
-        foreach ($taggedAssets as $asset) {
-            $asset->removeTag($tag);
-            $this->assetRepository->update($asset);
-        }
-        $this->tagRepository->remove($tag);
-        $this->addFlashMessage('tagHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
-        $this->redirect('index');
-    }
-
-    /**
-     * @param string $title
-     * @return void
-     * @Flow\Validate(argumentName="title", type="NotEmpty")
-     * @Flow\Validate(argumentName="title", type="Label")
-     */
-    public function createAssetCollectionAction($title)
-    {
-        $this->assetCollectionRepository->add(new AssetCollection($title));
-        $this->addFlashMessage('collectionHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars($title)]);
-        $this->redirect('index');
-    }
-
-    /**
-     * @param AssetCollection $assetCollection
-     * @return void
-     */
-    public function editAssetCollectionAction(AssetCollection $assetCollection)
-    {
-        $this->view->assignMultiple([
-            'assetCollection' => $assetCollection,
-            'tags' => $this->tagRepository->findAll()
-        ]);
-    }
-
-    /**
-     * @param AssetCollection $assetCollection
-     * @return void
-     */
-    public function updateAssetCollectionAction(AssetCollection $assetCollection)
-    {
-        $this->assetCollectionRepository->update($assetCollection);
-        $this->addFlashMessage('collectionHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())]);
-        $this->redirect('index');
-    }
-
-    /**
      * Delete an asset
      *
      * @param Asset $asset
@@ -728,92 +582,81 @@ class AssetController extends ActionController
     }
 
     /**
-     * Get Related Nodes for an asset
+     * Get Related Nodes for an asset (proxy action)
      *
      * @param AssetInterface $asset
      * @return void
      */
     public function relatedNodesAction(AssetInterface $asset)
     {
-        $userWorkspace = $this->userService->getPersonalWorkspace();
+        $this->forward('relatedNodes', 'Usage', 'Neos.Media.Browser', ['asset' => $asset]);
+    }
 
-        $usageReferences = $this->assetService->getUsageReferences($asset);
-        $relatedNodes = [];
-        $inaccessibleRelations = [];
+    /**
+     * @param string $label
+     * @return void
+     * @Flow\Validate(argumentName="label", type="NotEmpty")
+     * @Flow\Validate(argumentName="label", type="Label")
+     */
+    public function createTagAction($label)
+    {
+        $this->forward('create', 'Tag', 'Neos.Media.Browser', ['label' => $label]);
+    }
 
-        $existingSites = $this->siteRepository->findAll();
+    /**
+     * @param Tag $tag
+     * @return void
+     */
+    public function editTagAction(Tag $tag)
+    {
+        $this->forward('edit', 'Tag', 'Neos.Media.Browser', ['tag' => $tag]);
+    }
 
-        foreach ($usageReferences as $usage) {
-            $inaccessibleRelation = [
-                'type' => get_class($usage),
-                'usage' => $usage
-            ];
+    /**
+     * @param Tag $tag
+     * @return void
+     */
+    public function updateTagAction(Tag $tag)
+    {
+        $this->forward('update', 'Tag', 'Neos.Media.Browser', ['tag' => $tag]);
+    }
 
-            if (!$usage instanceof AssetUsageInNodeProperties) {
-                $inaccessibleRelations[] = $inaccessibleRelation;
-                continue;
-            }
+    /**
+     * @param Tag $tag
+     * @return void
+     */
+    public function deleteTagAction(Tag $tag)
+    {
+        $this->forward('delete', 'Tag', 'Neos.Media.Browser', ['tag' => $tag]);
+    }
 
-            try {
-                $nodeType = $this->nodeTypeManager->getNodeType($usage->getNodeTypeName());
-            } catch (NodeTypeNotFoundException $e) {
-                $nodeType = null;
-            }
-            /** @var Workspace $workspace */
-            $workspace = $this->workspaceRepository->findByIdentifier($usage->getWorkspaceName());
-            $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
+    /**
+     * @param string $title
+     * @return void
+     * @Flow\Validate(argumentName="title", type="NotEmpty")
+     * @Flow\Validate(argumentName="title", type="Label")
+     */
+    public function createAssetCollectionAction($title)
+    {
+        $this->forward('create', 'AssetCollection', 'Neos.Media.Browser', ['title' => $title]);
+    }
 
-            $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeIdentifier();
-            $inaccessibleRelation['workspaceName'] = $usage->getWorkspaceName();
-            $inaccessibleRelation['workspace'] = $workspace;
-            $inaccessibleRelation['nodeType'] = $nodeType;
-            $inaccessibleRelation['accessible'] = $accessible;
+    /**
+     * @param AssetCollection $assetCollection
+     * @return void
+     */
+    public function editAssetCollectionAction(AssetCollection $assetCollection)
+    {
+        $this->forward('edit', 'AssetCollection', 'Neos.Media.Browser', ['assetCollection' => $assetCollection]);
+    }
 
-            if (!$accessible) {
-                $inaccessibleRelations[] = $inaccessibleRelation;
-                continue;
-            }
-
-            $node = $this->getNodeFrom($usage);
-            // this should actually never happen.
-            if (!$node) {
-                $inaccessibleRelations[] = $inaccessibleRelation;
-                continue;
-            }
-
-            $flowQuery = new FlowQuery([$node]);
-            $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
-            // this should actually never happen, too.
-            if (!$documentNode) {
-                $inaccessibleRelations[] = $inaccessibleRelation;
-                continue;
-            }
-
-            $site = $node->getContext()->getCurrentSite();
-            foreach ($existingSites as $existingSite) {
-                /** @var Site $existingSite **/
-                $siteNodePath = '/sites/' . $existingSite->getNodeName();
-                if ($siteNodePath === $node->getPAth() || strpos($node->getPath(), $siteNodePath . '/') === 0) {
-                    $site = $existingSite;
-                }
-            }
-
-            $relatedNodes[$site->getNodeName()]['site'] = $site;
-            $relatedNodes[$site->getNodeName()]['nodes'][] = [
-                'node' => $node,
-                'documentNode' => $documentNode
-            ];
-        }
-
-        $this->view->assignMultiple([
-            'totalUsageCount' => count($usageReferences),
-            'nodeUsageClass' => AssetUsageInNodeProperties::class,
-            'asset' => $asset,
-            'inaccessibleRelations' => $inaccessibleRelations,
-            'relatedNodes' => $relatedNodes,
-            'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets(),
-            'userWorkspace' => $userWorkspace
-        ]);
+    /**
+     * @param AssetCollection $assetCollection
+     * @return void
+     */
+    public function updateAssetCollectionAction(AssetCollection $assetCollection)
+    {
+        $this->forward('update', 'AssetCollection', 'Neos.Media.Browser', ['assetCollection' => $assetCollection]);
     }
 
     /**
@@ -822,17 +665,7 @@ class AssetController extends ActionController
      */
     public function deleteAssetCollectionAction(AssetCollection $assetCollection)
     {
-        foreach ($this->siteRepository->findByAssetCollection($assetCollection) as $site) {
-            $site->setAssetCollection(null);
-            $this->siteRepository->update($site);
-        }
-
-        if ($this->browserState->get('activeAssetCollection') === $assetCollection) {
-            $this->browserState->set('activeAssetCollection', null);
-        }
-        $this->assetCollectionRepository->remove($assetCollection);
-        $this->addFlashMessage('collectionHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())]);
-        $this->redirect('index');
+        $this->forward('delete', 'AssetCollection', 'Neos.Media.Browser', ['assetCollection' => $assetCollection]);
     }
 
     /**
@@ -898,16 +731,6 @@ class AssetController extends ActionController
     private function getMaximumFileUploadSize()
     {
         return min(Files::sizeStringToBytes(ini_get('post_max_size')), Files::sizeStringToBytes(ini_get('upload_max_filesize')));
-    }
-
-    /**
-     * @param AssetUsageInNodeProperties $assetUsage
-     * @return NodeInterface
-     */
-    private function getNodeFrom(AssetUsageInNodeProperties $assetUsage)
-    {
-        $context = $this->_contextFactory->create(['workspaceName' => $assetUsage->getWorkspaceName(), 'dimensions' => $assetUsage->getDimensionValues(), 'invisibleContentShown' => true, 'removedContentShown' => true]);
-        return $context->getNodeByIdentifier($assetUsage->getNodeIdentifier());
     }
 
     /**
@@ -1031,11 +854,11 @@ class AssetController extends ActionController
             switch ($this->browserState->get('sortBy')) {
                 case 'Name':
                     $assetProxyRepository->orderBy(['resource.filename' => $this->browserState->get('sortDirection')]);
-                break;
+                    break;
                 case 'Modified':
                 default:
                     $assetProxyRepository->orderBy(['lastModified' => $this->browserState->get('sortDirection')]);
-                break;
+                    break;
             }
         }
     }
