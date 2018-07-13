@@ -35,7 +35,7 @@ trait NodeInterfaceProxy
     protected $node;
 
 
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier():string
     {
         return $this->node->getCacheEntryIdentifier();
     }

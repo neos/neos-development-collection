@@ -197,7 +197,7 @@ class Node implements NodeInterface
      *
      * @return string
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier():string
     {
         return (string)$this->getNodeIdentifier() . '@' . (string)$this->getContentStreamIdentifier() . '@' . $this->getDimensionSpacePoint()->serializeForUri();
     }
