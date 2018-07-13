@@ -39,6 +39,6 @@ final class ContextParametersFactory
      */
     public function createDefaultParameters(): ContextParameters
     {
-        return new ContextParameters($this->now, $this->securityContext->getRoles(), false, false, false);
+        return new ContextParameters($this->now, $this->securityContext->getRoles(), false, false);
     }
 }
