@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
 
 /*

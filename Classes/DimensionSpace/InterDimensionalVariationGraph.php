@@ -17,7 +17,7 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
  * The inter dimensional variation graph domain model
  * Represents the specialization and generalization mechanism between dimension space points
  */
-final class InterDimensionalVariationGraph
+class InterDimensionalVariationGraph
 {
     /**
      * @var Dimension\ContentDimensionZookeeper

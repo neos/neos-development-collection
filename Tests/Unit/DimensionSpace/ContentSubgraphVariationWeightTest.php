@@ -67,7 +67,7 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Domain\Context\DimensionSpace\Exception\IncomparableContentSubgraphVariationWeightsException
+     * @expectedException \Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable
      * @throws DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable
      */
     public function decreaseByThrowsExceptionForIncomparableWeights()
@@ -86,7 +86,7 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Domain\Context\Dimension\Exception\InvalidContentDimensionValueSpecializationDepthException
+     * @expectedException \Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid
      * @throws DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable
      */
     public function decreaseByThrowsExceptionForComponentsGreaterThanTheOriginal()

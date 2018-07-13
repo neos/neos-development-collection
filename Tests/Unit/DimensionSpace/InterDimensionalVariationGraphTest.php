@@ -532,7 +532,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\DimensionSpacePointNotFound
+     * @expectedException \Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound
      */
     public function getSpecializationSetThrowsExceptionForDimensionSpacePointOutsideTheAllowedSubspace()
     {
@@ -652,9 +652,14 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
         $secondDepth = new Dimension\ContentDimensionValueSpecializationDepth(random_int(0, 100));
         ObjectAccess::setProperty($secondDimension, 'maximumDepth', $secondDepth, true);
 
-        /** @var DimensionSpace\InterDimensionalVariationGraph $graph */
-        $graph = $this->getAccessibleMock(DimensionSpace\InterDimensionalVariationGraph::class, ['dummy']);
-        $this->inject($graph, 'contentDimensionSource', $this->createDimensionSourceMock(['first' => $firstDimension, 'second' => $secondDimension]));
+        $dimensionSource = $this->createDimensionSourceMock(['first' => $firstDimension, 'second' => $secondDimension]);
+        $dimensionZookeeper = new Dimension\ContentDimensionZookeeper($dimensionSource);
+        $allowedSubspace = new DimensionSpace\AllowedDimensionSubspace($dimensionZookeeper);
+        $graph = $this->getAccessibleMock(DimensionSpace\InterDimensionalVariationGraph::class, ['dummy'], [
+            $dimensionSource,
+            $dimensionZookeeper,
+            $allowedSubspace
+        ]);
 
         $this->assertSame(max($firstDepth->getDepth(), $secondDepth->getDepth()) + 1, $graph->_call('determineWeightNormalizationBase'));
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
 
 /*
@@ -10,7 +11,6 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Flow\Tests\UnitTestCase;
 

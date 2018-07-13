@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
 
 /*
@@ -10,7 +11,7 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Domain\Context\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -45,7 +46,7 @@ class ContentDimensionTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \Neos\ContentRepository\Domain\Context\Dimension\Exception\MissingContentDimensionValuesException
+     * @expectedException \Neos\ContentRepository\DimensionSpace\Dimension\Exception\ContentDimensionValuesAreMissing
      * @test
      */
     public function initializationThrowsExceptionWithoutAnyDimensionValuesGiven()
@@ -145,7 +146,7 @@ class ContentDimensionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Domain\Context\Dimension\Exception\GeneralizationIsInvalid
+     * @expectedException \Neos\ContentRepository\DimensionSpace\Dimension\Exception\GeneralizationIsInvalid
      * @throws Dimension\Exception\GeneralizationIsInvalid
      */
     public function calculateSpecializationDepthThrowsExceptionForDisconnectedValues()
