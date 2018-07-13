@@ -222,7 +222,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
         self::addNodeTypeConstraintsToQuery($nodeTypeConstraints, $query);
-        $query->addToQuery('ORDER BY h.position DESC');
+        $query->addToQuery('ORDER BY h.position ASC');
 
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
@@ -491,7 +491,7 @@ SELECT c.* FROM neos_contentgraph_node p
  WHERE p.nodeidentifier = :parentNodeIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
  AND h.dimensionspacepointhash = :dimensionSpacePointHash
- ORDER BY h.position LIMIT 1',
+ ORDER BY h.position asc LIMIT 1',
             [
                 'parentNodeIdentifier' => $parentNodeIdentifier,
                 'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
