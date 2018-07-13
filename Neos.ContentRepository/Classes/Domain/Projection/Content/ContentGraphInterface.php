@@ -99,4 +99,6 @@ interface ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): Domain\ValueObject\DimensionSpacePointSet;
+
+    public function resetCache();
 }

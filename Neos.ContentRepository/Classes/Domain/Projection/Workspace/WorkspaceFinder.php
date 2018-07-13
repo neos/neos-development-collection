@@ -76,4 +76,10 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
 
         return $result;
     }
+
+    public function resetCache()
+    {
+        $this->cachedWorkspacesByName = [];
+        $this->cachedWorkspacesByContentStreamIdentifier = [];
+    }
 }

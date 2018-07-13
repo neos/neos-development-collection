@@ -89,6 +89,17 @@ trait EventSourcedTrait
     protected $currentNode;
 
     /**
+     * @BeforeScenario @fixtures
+     * @return void
+     * @throws \Exception
+     */
+    public function beforeEventSourcedScenarioDispatcher()
+    {
+        $this->contentGraphInterface->resetCache();
+        $this->workspaceFinder->resetCache();
+    }
+
+    /**
      * @Given /^the Event RootNodeWasCreated was published with payload:$/
      * @throws Exception
      */
