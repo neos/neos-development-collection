@@ -30,7 +30,7 @@ use Neos\Flow\Utility\Now;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
-use Neos\Neos\Domain\Context\Content\NodeAddressService;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\View\FusionView;
@@ -112,7 +112,7 @@ class NodeController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var NodeAddressService
+     * @var NodeAddressFactory
      */
     protected $nodeAddressService;
 
@@ -170,7 +170,7 @@ class NodeController extends ActionController
         }
 
         if ($this->session->isStarted() && $inBackend) {
-            $this->session->putData('lastVisitedNode', NodeAddress::fromNode($node)->serializeForUri());
+            $this->session->putData('lastVisitedNode', $nodeAddress);
         }
     }
 

@@ -16,7 +16,7 @@ use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
-use Neos\Neos\Domain\Context\Content\NodeAddressService;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
@@ -62,9 +62,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
     /**
      * @Flow\Inject
-     * @var NodeAddressService
+     * @var NodeAddressFactory
      */
-    protected $nodeAddressService;
+    protected $nodeAddressFactory;
 
     /**
      * Convert URIs matching a supported scheme with generated URIs
@@ -94,10 +94,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
             throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
         }
 
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
 
-        $nodeAddress = NodeAddress::fromNode($node);
-
-        if (!$this->nodeAddressService->isInLiveWorkspace($nodeAddress) && !($this->fusionValue('forceConversion'))) {
+        if (!$this->nodeAddressFactory->isInLiveWorkspace($nodeAddress) && !($this->fusionValue('forceConversion'))) {
             return $text;
         }
 

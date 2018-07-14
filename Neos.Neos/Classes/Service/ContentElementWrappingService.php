@@ -15,7 +15,7 @@ use Neos\ContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
-use Neos\Neos\Domain\Context\Content\NodeAddressService;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Service\Mapping\NodePropertyConverterService;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
@@ -64,7 +64,7 @@ class ContentElementWrappingService implements ContentElementWrappingServiceInte
 
     /**
      * @Flow\Inject
-     * @var NodeAddressService
+     * @var NodeAddressFactory
      */
     protected $nodeAddressService;
 

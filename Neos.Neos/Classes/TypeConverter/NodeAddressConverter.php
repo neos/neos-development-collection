@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 
 /**
  * An Object Converter for content queries which can be used for routing (but also for other
@@ -40,6 +41,12 @@ class NodeAddressConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
@@ -48,6 +55,6 @@ class NodeAddressConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): NodeAddress
     {
-        return NodeAddress::fromUriString($source);
+        return $this->nodeAddressFactory->createFromUriString($source);
     }
 }

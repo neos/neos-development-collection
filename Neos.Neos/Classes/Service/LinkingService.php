@@ -24,6 +24,7 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
@@ -115,6 +116,12 @@ class LinkingService
      * @var SiteRepository
      */
     protected $siteRepository;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
 
     /**
      * @param string|Uri $uri
@@ -282,6 +289,7 @@ class LinkingService
 
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($resolvedNode);
         $uri = $uriBuilder
             ->reset()
             ->setSection($section)
@@ -289,7 +297,7 @@ class LinkingService
             ->setAddQueryString($addQueryString)
             ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
             ->setFormat($format ?: $request->getFormat())
-            ->uriFor('show', array('node' => NodeAddress::fromNode($resolvedNode)), 'Frontend\Node', 'Neos.Neos');
+            ->uriFor('show', array('node' => $nodeAddress), 'Frontend\Node', 'Neos.Neos');
 
         $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
         if ($siteNode instanceof NodeInterface && NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {

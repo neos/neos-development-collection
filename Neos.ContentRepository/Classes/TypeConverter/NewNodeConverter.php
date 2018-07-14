@@ -25,6 +25,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Exception\InvalidTypeException;
@@ -70,11 +71,19 @@ class NewNodeConverter extends AbstractTypeConverter
     protected $contentGraph;
 
     /**
+     * TODO: Dependency to Neos; get rid of this!
+     *
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
      *
      */
     public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
-        $nodeAddress = NodeAddress::fromUriString($source);
+        $nodeAddress = $this->nodeAddressFactory->createFromUriString($source);
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint());
         return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());

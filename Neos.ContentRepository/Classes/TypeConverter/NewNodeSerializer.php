@@ -25,6 +25,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Exception\InvalidTypeException;
@@ -63,13 +64,20 @@ class NewNodeSerializer extends AbstractTypeConverter
      */
     protected $priority = 1;
 
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
     /**
      *
      */
     public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
         // TODO: Move Node Address to CR
-        return NodeAddress::fromNode($source)->serializeForUri();
+        return $this->nodeAddressFactory->createFromNode($source)->serializeForUri();
     }
 
 }

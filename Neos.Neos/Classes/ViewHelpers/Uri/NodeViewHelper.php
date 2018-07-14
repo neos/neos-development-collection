@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
-use Neos\Neos\Domain\Context\Content\NodeAddressService;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
@@ -103,9 +103,9 @@ class NodeViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeAddressService
+     * @var NodeAddressFactory
      */
-    protected $nodeAddressService;
+    protected $nodeAddressFactory;
 
     /**
      * Renders the URI.
@@ -144,20 +144,20 @@ class NodeViewHelper extends AbstractViewHelper
             //$resolvedNode = $resolveShortcuts ? $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node) : $node;
             $resolvedNode = $node;
             if ($resolvedNode instanceof NodeInterface) {
-                $nodeAddress = NodeAddress::fromNode($node);
+                $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
             } else {
                 $uri = $resolvedNode;
             }
         } elseif ($node === '~') {
             /* @var $documentNode \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
             $documentNode = $this->getContextVariable('documentNode');
-            $nodeAddress = NodeAddress::fromNode($documentNode);
-            $siteNode = $this->nodeAddressService->findSiteNodeForNodeAddress($nodeAddress);
+            $nodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
+            $siteNode = $this->nodeAddressFactory->findSiteNodeForNodeAddress($nodeAddress);
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($siteNode->getNodeAggregateIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
             /* @var $documentNode \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
             $documentNode = $this->getContextVariable('documentNode');
-            $nodeAddress = NodeAddress::fromNode($documentNode);
+            $nodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
         } else {
             // @todo add path support

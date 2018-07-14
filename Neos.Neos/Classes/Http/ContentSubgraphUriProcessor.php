@@ -15,7 +15,7 @@ use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
-use Neos\Neos\Domain\Context\Content\NodeAddressService;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 use Neos\Neos\Http\ContentDimensionLinking\ContentDimensionValueUriProcessorResolver;
 
 /**
@@ -37,7 +37,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
 
     /**
      * @Flow\Inject
-     * @var NodeAddressService
+     * @var NodeAddressFactory
      */
     protected $nodeAddressService;
 

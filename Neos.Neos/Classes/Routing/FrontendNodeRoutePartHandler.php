@@ -31,7 +31,7 @@ use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
 use Neos\Flow\Security\Context;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
-use Neos\Neos\Domain\Context\Content\NodeAddressService;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Http\ContentSubgraphUriProcessor;
 
@@ -72,9 +72,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
     /**
      * @Flow\Inject
-     * @var NodeAddressService
+     * @var NodeAddressFactory
      */
-    protected $nodeAddressService;
+    protected $nodeAddressFactory;
 
     /**
      * @Flow\Inject
@@ -159,8 +159,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
 
-
-        return new MatchResult(NodeAddress::fromNode($matchingNode)->serializeForUri(), RouteTags::createFromArray($tagArray));
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($matchingNode);
+        return new MatchResult($nodeAddress->serializeForUri(), RouteTags::createFromArray($tagArray));
     }
 
     /**
@@ -309,7 +309,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         if (is_string($nodeAddress)) {
             try {
-                $nodeAddress = NodeAddress::fromUriString($nodeAddress);
+                $nodeAddress = $this->nodeAddressFactory->createFromUriString($nodeAddress);
             } catch (\Throwable $exception) {
                 $this->exceptionLogger->logThrowable($exception);
 
@@ -331,7 +331,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         $routePath = $isSiteNode ? '' : $this->getRequestPathByNode($subgraph, $node);
 
-        if (!$this->nodeAddressService->isInLiveWorkspace($nodeAddress)) {
+        if (!$this->nodeAddressFactory->isInLiveWorkspace($nodeAddress)) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($nodeAddress->getContentStreamIdentifier());
             if ($workspace) {
                 $routePath .= WorkspaceNameAndDimensionSpacePointForUriSerialization::fromWorkspaceAndDimensionSpacePoint($workspace->getWorkspaceName(), $subgraph->getDimensionSpacePoint())->toBackendUriSuffix();

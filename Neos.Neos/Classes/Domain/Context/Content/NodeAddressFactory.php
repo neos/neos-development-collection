@@ -20,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Scope("singleton")
  */
-class NodeAddressService
+class NodeAddressFactory
 {
 
     /**
@@ -57,5 +57,15 @@ class NodeAddressService
     {
         $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($nodeAddress->getContentStreamIdentifier());
         return $workspace != null && $workspace->getWorkspaceName()->isLive();
+    }
+
+    public function createFromNode(NodeInterface $node): NodeAddress
+    {
+        return NodeAddress::fromNode($node);
+    }
+
+    public function createFromUriString(string $nodeAddressSerialized): NodeAddress
+    {
+        return NodeAddress::fromUriString($nodeAddressSerialized);
     }
 }

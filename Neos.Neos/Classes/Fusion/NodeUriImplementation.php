@@ -18,7 +18,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
-use Neos\Neos\Domain\Context\Content\NodeAddressService;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 
 /**
  * Create a link to a node
@@ -27,9 +27,9 @@ class NodeUriImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject
-     * @var NodeAddressService
+     * @var NodeAddressFactory
      */
-    protected $nodeAddressService;
+    protected $nodeAddressFactory;
 
     /**
      * A node object or a string node path or NULL to resolve the current document node
@@ -128,11 +128,11 @@ class NodeUriImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $node = $this->getNode();
-        $nodeAddress = NodeAddress::fromNode($node);
+        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
         if ($node instanceof NodeInterface) {
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
         } elseif ($node === '~') {
-            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($this->nodeAddressService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier());
+            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($this->nodeAddressFactory->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
             $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
         } else {

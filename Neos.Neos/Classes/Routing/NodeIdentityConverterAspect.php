@@ -15,6 +15,7 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
+use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 
 /**
  * Aspect to convert a node object to its context node path. This is used in URI
@@ -29,6 +30,12 @@ use Neos\Neos\Domain\Context\Content\NodeAddress;
 class NodeIdentityConverterAspect
 {
     /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
      * Convert the object to its context path, if we deal with ContentRepository nodes.
      *
      * @Flow\Around("method(Neos\Flow\Persistence\AbstractPersistenceManager->convertObjectToIdentityArray())")
@@ -39,7 +46,8 @@ class NodeIdentityConverterAspect
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof NodeInterface) {
-            return NodeAddress::fromNode($objectArgument)->serializeForUri();
+            $nodeAddress = $this->nodeAddressFactory->createFromNode($objectArgument);
+            return $nodeAddress->serializeForUri();
         } else {
             return $joinPoint->getAdviceChain()->proceed($joinPoint);
         }
