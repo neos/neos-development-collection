@@ -31,6 +31,7 @@ use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
 use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
+use Neos\Neos\Domain\Context\Content\NodeSiteResolvingService;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\View\FusionView;
@@ -117,6 +118,12 @@ class NodeController extends ActionController
     protected $nodeAddressService;
 
     /**
+     * @Flow\Inject
+     * @var NodeSiteResolvingService
+     */
+    protected $nodeSiteResolvingService;
+
+    /**
      * Initializes the view with the necessary parameters encoded in the given NodeAddress
      *
      * @param NodeAddress $node Legacy name for backwards compatibility of route components
@@ -135,10 +142,10 @@ class NodeController extends ActionController
             $nodeAddress->getDimensionSpacePoint()
         );
 
-        $inBackend = !$this->nodeAddressService->isInLiveWorkspace($nodeAddress);
+        $inBackend = !$nodeAddress->isInLiveWorkspace();
 
         $contextParameters = $this->createContextParameters($inBackend);
-        $site = $this->nodeAddressService->findSiteNodeForNodeAddress($nodeAddress);
+        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
 
         $this->fillCacheWithContentNodes($subgraph, $nodeAddress, $contextParameters);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());

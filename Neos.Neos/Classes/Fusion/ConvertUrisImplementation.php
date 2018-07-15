@@ -96,7 +96,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
         $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
 
-        if (!$this->nodeAddressFactory->isInLiveWorkspace($nodeAddress) && !($this->fusionValue('forceConversion'))) {
+        if (!$nodeAddress->isInLiveWorkspace() && !($this->fusionValue('forceConversion'))) {
             return $text;
         }
 
@@ -106,7 +106,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use (&$unresolvedUris, $absolute, $nodeAddress) {
             switch ($matches[1]) {
                 case 'node':
-                    $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(new NodeAggregateIdentifier($matches[2]));
+                    $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, new NodeAggregateIdentifier($matches[2]));
                     $uriBuilder = new UriBuilder();
                     $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
                     $uriBuilder->setCreateAbsoluteUri($absolute);

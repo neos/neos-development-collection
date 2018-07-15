@@ -57,7 +57,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
     {
         $uriConstraints = UriConstraints::create();
 
-        if ($this->nodeAddressService->isInLiveWorkspace($nodeAddress)) {
+        if ($nodeAddress->isInLiveWorkspace()) {
             $dimensions = $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
             $this->sortDimensionsByOffset($dimensions);
             $uriPathSegmentOffset = 0;

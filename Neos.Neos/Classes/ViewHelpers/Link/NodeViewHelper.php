@@ -19,6 +19,7 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
 use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
+use Neos\Neos\Domain\Context\Content\NodeSiteResolvingService;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 
@@ -129,6 +130,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     protected $nodeAddressFactory;
 
     /**
+     * @Flow\Inject
+     * @var NodeSiteResolvingService
+     */
+    protected $nodeSiteResolvingService;
+
+    /**
      * Initialize arguments
      *
      * @return void
@@ -179,13 +186,13 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             /* @var $documentNode \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
             $documentNode = $this->getContextVariable('documentNode');
             $nodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
-            $siteNode = $this->nodeAddressFactory->findSiteNodeForNodeAddress($nodeAddress);
-            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($siteNode->getNodeAggregateIdentifier());
+            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
+            $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, $siteNode->getNodeAggregateIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
             /* @var $documentNode \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
             $documentNode = $this->getContextVariable('documentNode');
             $nodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
-            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
+            $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, new NodeAggregateIdentifier(\mb_substr($node, 7)));
         } else {
             // @todo add path support
             return '';
@@ -193,7 +200,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
         if (!$uri) {
             if ($subgraph) {
-                $nodeAddress = $nodeAddress->withDimensionSpacePoint($subgraph->getDimensionSpacePoint());
+                $nodeAddress = $this->nodeAddressFactory->adjustWithDimensionSpacePoint($nodeAddress, $subgraph->getDimensionSpacePoint());
             }
 
             $uriBuilder = new UriBuilder();

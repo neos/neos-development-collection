@@ -331,7 +331,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         $routePath = $isSiteNode ? '' : $this->getRequestPathByNode($subgraph, $node);
 
-        if (!$this->nodeAddressFactory->isInLiveWorkspace($nodeAddress)) {
+        if (!$nodeAddress->isInLiveWorkspace()) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($nodeAddress->getContentStreamIdentifier());
             if ($workspace) {
                 $routePath .= WorkspaceNameAndDimensionSpacePointForUriSerialization::fromWorkspaceAndDimensionSpacePoint($workspace->getWorkspaceName(), $subgraph->getDimensionSpacePoint())->toBackendUriSuffix();

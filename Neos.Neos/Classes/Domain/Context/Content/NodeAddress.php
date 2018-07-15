@@ -16,8 +16,8 @@ use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Context\Workspace\WorkspaceName;
 
 /**
  * A persistent, external "address" of a node; used to link to it.
@@ -48,21 +48,23 @@ final class NodeAddress
     protected $nodeAggregateIdentifier;
 
     /**
+     * @var WorkspaceName
+     */
+    protected $workspaceName;
+
+    /**
      * NodeAddress constructor.
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param WorkspaceName $workspaceName
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, WorkspaceName $workspaceName)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-    }
-
-    public static function fromNode(ContentRepository\Projection\Content\NodeInterface $node)
-    {
-        return new NodeAddress($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier());
+        $this->workspaceName = $workspaceName;
     }
 
     /**
@@ -89,29 +91,36 @@ final class NodeAddress
         return $this->nodeAggregateIdentifier;
     }
 
+    /**
+     * @return WorkspaceName
+     */
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return $this->workspaceName;
+    }
+
     public function serializeForUri(): string
     {
-        return $this->contentStreamIdentifier->jsonSerialize() . '__' . $this->dimensionSpacePoint->serializeForUri() . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
+        // the reverse method is {@link NodeAddressFactory::createFromUriString} - ensure to adjust it
+        // when changing the serialization here
+        if ($this->workspaceName === null) {
+            throw new Exception\NodeAddressCannotBeSerializedException('The node Address ' . $this->__toString() . ' cannot be serialized because no workspace name was resolved.', 1531637028);
+        }
+        return $this->workspaceName->jsonSerialize() . '__' . $this->dimensionSpacePoint->serializeForUri() . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
     }
 
-    public static function fromUriString(string $uriString): NodeAddress
+    public function isInLiveWorkspace(): bool {
+        return $this->workspaceName != null && $this->workspaceName->isLive();
+    }
+
+    public function __toString()
     {
-        list($contentStreamIdentifierSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdentifierSerialized) = explode('__', $uriString);
-        $contentStreamIdentifier = new ContentStreamIdentifier($contentStreamIdentifierSerialized);
-        $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
-        $nodeAggregateIdentifier = new NodeAggregateIdentifier($nodeAggregateIdentifierSerialized);
-
-        return new NodeAddress($contentStreamIdentifier, $dimensionSpacePoint, $nodeAggregateIdentifier);
+        return sprintf(
+            'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateIdentifier=%s, workspaceName=%s]',
+            $this->contentStreamIdentifier,
+            $this->dimensionSpacePoint,
+            $this->nodeAggregateIdentifier,
+            $this->workspaceName
+        );
     }
-
-    public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAddress
-    {
-        return new NodeAddress($this->contentStreamIdentifier, $this->dimensionSpacePoint, $nodeAggregateIdentifier);
-    }
-
-    public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): NodeAddress
-    {
-        return new NodeAddress($this->contentStreamIdentifier, $dimensionSpacePoint, $this->nodeAggregateIdentifier);
-    }
-
 }

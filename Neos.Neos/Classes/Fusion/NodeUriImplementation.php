@@ -19,6 +19,7 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
 use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
+use Neos\Neos\Domain\Context\Content\NodeSiteResolvingService;
 
 /**
  * Create a link to a node
@@ -30,6 +31,12 @@ class NodeUriImplementation extends AbstractFusionObject
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeSiteResolvingService
+     */
+    protected $nodeSiteResolvingService;
 
     /**
      * A node object or a string node path or NULL to resolve the current document node
@@ -130,16 +137,16 @@ class NodeUriImplementation extends AbstractFusionObject
         $node = $this->getNode();
         $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
         if ($node instanceof NodeInterface) {
-            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
+            $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, $node->getNodeAggregateIdentifier());
         } elseif ($node === '~') {
-            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier($this->nodeAddressFactory->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier());
+            $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
-            $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
+            $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, new NodeAggregateIdentifier(\mb_substr($node, 7)));
         } else {
             return '';
         }
         if ($this->getSubgraph()) {
-            $nodeAddress = $nodeAddress->withDimensionSpacePoint($this->getSubgraph()->getDimensionSpacePoint());
+            $nodeAddress = $this->nodeAddressFactory->adjustWithDimensionSpacePoint($nodeAddress, $this->getSubgraph()->getDimensionSpacePoint());
         }
 
         $uriBuilder = new UriBuilder();

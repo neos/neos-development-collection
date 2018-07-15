@@ -17,6 +17,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Context\Content\NodeAddress;
 use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Neos\Domain\Context\Content\NodeSiteResolvingService;
 use Neos\Neos\Service\Mapping\NodePropertyConverterService;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
@@ -68,6 +69,11 @@ class ContentElementWrappingService implements ContentElementWrappingServiceInte
      */
     protected $nodeAddressService;
 
+    /**
+     * @Flow\Inject
+     * @var NodeSiteResolvingService
+     */
+    protected $nodeSiteResolvingService;
 
     /**
      * Wrap the $content identified by $node with the needed markup for the backend.
@@ -208,7 +214,7 @@ class ContentElementWrappingService implements ContentElementWrappingServiceInte
     protected function addDocumentMetadata(array $attributes, NodeInterface $node, ContentSubgraphInterface $subgraph, Workspace $workspace)
     {
         $nodeAddress = new NodeAddress($subgraph->getContentStreamIdentifier(), $subgraph->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier());
-        $siteNode = $this->nodeAddressService->findSiteNodeForNodeAddress($nodeAddress);
+        $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
         $attributes['data-neos-site-name'] = $siteNode->getNodeName();
         $attributes['data-neos-site-node-context-path'] = $siteNode->getContextPath();
         // Add the workspace of the content repository context to the attributes

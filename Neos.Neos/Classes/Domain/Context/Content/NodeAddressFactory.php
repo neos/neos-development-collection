@@ -12,9 +12,11 @@ namespace Neos\Neos\Domain\Context\Content;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -29,43 +31,54 @@ class NodeAddressFactory
      */
     protected $workspaceFinder;
 
-    /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
-
-    public function findSiteNodeForNodeAddress(NodeAddress $nodeAddress): ?NodeInterface
-    {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $nodeAddress->getContentStreamIdentifier(),
-            $nodeAddress->getDimensionSpacePoint()
-        );
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
-
-        do {
-            if ($node->getNodeType()->isOfType('Neos.Neos:Site')) {
-                return $node;
-            }
-        } while ($node = $subgraph->findParentNode($node->getNodeIdentifier()));
-
-        // no Site node found at rootline
-        return null;
-    }
-
-    public function isInLiveWorkspace(NodeAddress $nodeAddress): bool
-    {
-        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($nodeAddress->getContentStreamIdentifier());
-        return $workspace != null && $workspace->getWorkspaceName()->isLive();
-    }
-
     public function createFromNode(NodeInterface $node): NodeAddress
     {
-        return NodeAddress::fromNode($node);
+        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($node->getContentStreamIdentifier());
+        return new NodeAddress($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier(), $workspace->getWorkspaceName());
     }
 
     public function createFromUriString(string $nodeAddressSerialized): NodeAddress
     {
-        return NodeAddress::fromUriString($nodeAddressSerialized);
+        // the reverse method is {@link NodeAddress::serializeForUri} - ensure to adjust it
+        // when changing the serialization here
+
+        list($workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdentifierSerialized) = explode('__', $nodeAddressSerialized);
+        $workspaceName = new WorkspaceName($workspaceNameSerialized);
+        $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
+        $nodeAggregateIdentifier = new NodeAggregateIdentifier($nodeAggregateIdentifierSerialized);
+
+        $contentStreamIdentifier = $this->workspaceFinder->findOneByName($workspaceName)->getCurrentContentStreamIdentifier();
+
+        return new NodeAddress($contentStreamIdentifier, $dimensionSpacePoint, $nodeAggregateIdentifier, $workspaceName);
+    }
+
+    public function adjustWithDimensionSpacePoint(NodeAddress $baseNodeAddress, DimensionSpacePoint $dimensionSpacePoint): NodeAddress
+    {
+        if ($dimensionSpacePoint->getHash() === $baseNodeAddress->getDimensionSpacePoint()->getHash()) {
+            // optimization if dimension space point does not need adjusting
+            return $baseNodeAddress;
+        }
+
+        return new NodeAddress(
+            $baseNodeAddress->getContentStreamIdentifier(),
+            $dimensionSpacePoint,
+            $baseNodeAddress->getNodeAggregateIdentifier(),
+            $baseNodeAddress->getWorkspaceName()
+        );
+    }
+
+    public function adjustWithNodeAggregateIdentifier(NodeAddress $baseNodeAddress, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAddress
+    {
+        if ($nodeAggregateIdentifier->jsonSerialize() === $baseNodeAddress->getNodeAggregateIdentifier()->jsonSerialize()) {
+            // optimization if NodeAggregateIdentifier does not need adjusting
+            return $baseNodeAddress;
+        }
+
+        return new NodeAddress(
+            $baseNodeAddress->getContentStreamIdentifier(),
+            $baseNodeAddress->getDimensionSpacePoint(),
+            $nodeAggregateIdentifier,
+            $baseNodeAddress->getWorkspaceName()
+        );
     }
 }
