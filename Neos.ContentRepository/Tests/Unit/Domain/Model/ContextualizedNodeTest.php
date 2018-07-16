@@ -153,6 +153,7 @@ class ContextualizedNodeTest extends UnitTestCase
     public function setIndexOnNodeWithNonMatchingContextMaterializesNodeData()
     {
         $node = $this->setUpNodeWithNonMatchingContext();
+        $node->expects($this->once())->method('materializeNodeData');
 
         $node->getNodeData()->expects($this->once())->method('setIndex')->with(5);
 
@@ -165,6 +166,7 @@ class ContextualizedNodeTest extends UnitTestCase
     public function setPropertyOnNodeWithNonMatchingContextMaterializesNodeData()
     {
         $node = $this->setUpNodeWithNonMatchingContext();
+        $node->expects($this->once())->method('materializeNodeDataAsNeeded');
 
         $node->getNodeData()->expects($this->once())->method('setProperty')->with('propertyName', 'value');
 
@@ -203,6 +205,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $contentObject = new \stdClass();
 
         $node = $this->setUpNodeWithNonMatchingContext();
+        $node->expects($this->once())->method('materializeNodeDataAsNeeded');
 
         $node->getNodeData()->expects($this->once())->method('setContentObject')->with($contentObject);
 
@@ -223,7 +226,9 @@ class ContextualizedNodeTest extends UnitTestCase
     public function unsetContentObjectOnNodeWithNonMatchingContextMaterializesNodeData()
     {
         $node = $this->setUpNodeWithNonMatchingContext();
+        $node->expects($this->once())->method('materializeNodeDataAsNeeded');
 
+        $node->getNodeData()->expects($this->once())->method('getContentObject')->will($this->returnValue(new \stdClass()));
         $node->getNodeData()->expects($this->once())->method('unsetContentObject');
 
         $node->unsetContentObject();
@@ -237,6 +242,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
 
         $node = $this->setUpNodeWithNonMatchingContext();
+        $node->expects($this->once())->method('materializeNodeData');
 
         $node->getNodeData()->expects($this->once())->method('setNodeType')->with($nodeType);
 
@@ -356,8 +362,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $context->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array()));
         $context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
-        $node = $this->getMockBuilder(Node::class)->setMethods(array_merge(array('materializeNodeData'), $configurableMethods))->setConstructorArgs(array($nodeData, $context))->getMock();
-        $node->expects($this->once())->method('materializeNodeData');
+        $node = $this->getMockBuilder(Node::class)->setMethods(array_merge(array('materializeNodeData', 'materializeNodeDataAsNeeded'), $configurableMethods))->setConstructorArgs(array($nodeData, $context))->getMock();
         return $node;
     }
 

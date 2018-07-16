@@ -335,19 +335,19 @@
 			<target xml:lang="lv">Apraksts</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target xml:lang="lv" state="needs-translation">Toggle content tree</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pārslēgt saturu</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target xml:lang="lv" state="needs-translation">Show publish options</target></trans-unit>
+			<target xml:lang="lv" state="translated">Rādīt publicēšanas iespējas</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target xml:lang="lv" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="lv" state="translated">Ieslēgt pilnekrāna rediģēšanas režīmu</target><alt-trans><target xml:lang="lv">Aktivizēt pilnekrāna rediģēšanas režīmu</target></alt-trans></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target xml:lang="lv" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izslēgt pilnekrāna rediģēšanas režīmu</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target xml:lang="lv" state="needs-translation">Show preview</target></trans-unit>
+			<target xml:lang="lv" state="translated">Priekšskats</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>

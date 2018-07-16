@@ -48,6 +48,7 @@
 
 # Neos.NodeTypes.ColumnLayouts
 'Neos.NodeTypes:Column':
+  abstract: true
   superTypes:
     'Neos.NodeTypes.ColumnLayouts:Column': true
 

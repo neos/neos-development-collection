@@ -81,9 +81,6 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     protected $nodeDataRepository;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
-     *
      * @Flow\Inject
      * @var EntityManagerInterface
      */

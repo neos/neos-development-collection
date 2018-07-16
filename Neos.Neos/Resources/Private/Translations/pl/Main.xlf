@@ -335,10 +335,10 @@
 			<target xml:lang="pl">Opis</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target xml:lang="pl" state="needs-translation">Toggle content tree</target></trans-unit>
+			<target xml:lang="pl" state="translated">Przełącz strukturę treści</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target xml:lang="pl" state="needs-translation">Show publish options</target></trans-unit>
+			<target xml:lang="pl" state="translated">Pokaż opcje publikowania</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
 			<target xml:lang="pl" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
@@ -347,7 +347,7 @@
 			<target xml:lang="pl" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target xml:lang="pl" state="needs-translation">Show preview</target></trans-unit>
+			<target xml:lang="pl" state="translated">Pokaż podgląd</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>

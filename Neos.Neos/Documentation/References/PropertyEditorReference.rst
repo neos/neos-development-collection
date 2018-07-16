@@ -543,7 +543,7 @@ example::
               resize: true
 
 If cropping is enabled, you might want to enforce a certain aspect ratio, which can be done by setting
-``crop.aspectRatio.locked.width`` and ``crop.aspectRatio.locked.height``. In the following example, the
+``crop.aspectRatio.locked.width`` and ``crop.aspectRatio.locked.height``. To show the crop dialog automatically on image upload, configure the ``crop.aspectRatio.forceCrop`` option. In the following example, the
 image format must be ``16:9``::
 
     'teaserImage'
@@ -553,10 +553,12 @@ image format must be ``16:9``::
         inspector:
           group: 'document'
           editorOptions:
+            accept: 'image/png'
             features:
               crop: true
             crop:
               aspectRatio:
+                forceCrop: true
                 locked:
                   width: 16
                   height: 9
@@ -573,6 +575,7 @@ to choose a custom aspect ratio, set ``crop.aspectRatio.allowCustom`` to ``true`
         inspector:
           group: 'document'
           editorOptions:
+            accept: 'image/png'
             features:
               crop: true
             crop:
@@ -597,6 +600,9 @@ Options Reference:
 	Accepts numeric or formatted string values, e.g. "204800" or "204800b" or "2kb".
 	Defaults to the maximum allowed upload size configured in php.ini
 
+``accept`` (string)
+  Set the accepted mime type for this editor. If non is given it falls back to ``image/*``.
+
 ``features``
 
 	``crop`` (boolean)
@@ -615,6 +621,9 @@ Options Reference:
 	crop-related options. Only relevant if ``features.crop`` is enabled.
 
 		``aspectRatio``
+
+      ``forceCrop``
+        Show the crop dialog on image upload
 
 			``locked``
 				Locks the aspect ratio to a specific width/height ratio
@@ -676,6 +685,9 @@ Conversely, if multiple assets shall be uploaded, use ``array<Neos\Media\Domain\
           group: 'document'
 
 Options Reference:
+
+``accept``
+  Set the accepted mime type for this editor. If non is given all files are allowed.
 
 ``features``
 
