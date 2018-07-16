@@ -30,7 +30,7 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
 			documentNode = ${documentNode}
 		}
 		entryTags {
-			1 = 'NodeType_Neos.Neos:Document'
+			1 = ${Neos.Caching.nodeTypeTag('Neos.Neos:Document', documentNode)}
 		}
 	}
 }

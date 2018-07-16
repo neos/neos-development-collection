@@ -11,14 +11,18 @@ namespace Neos\ContentRepository\Domain\Repository;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 
 /**
  * The repository for workspaces
  *
  * @Flow\Scope("singleton")
+ * @method QueryResultInterface findByBaseWorkspace($baseWorkspace)
+ * @method Workspace findByIdentifier($baseWorkspace)
  */
 class WorkspaceRepository extends Repository
 {

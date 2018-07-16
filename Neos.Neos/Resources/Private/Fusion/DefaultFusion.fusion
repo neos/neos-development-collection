@@ -73,7 +73,7 @@ root {
 		}
 		entryTags {
 			# Whenever the node changes the matched condition could change
-			1 = ${'Node_' + documentNode.identifier}
+			1 = ${Neos.Caching.nodeTag(documentNode)}
 			# Whenever one of the parent nodes changes the layout could change
 			2 = ${Neos.Caching.nodeTag(q(documentNode).parents())}
 		}
