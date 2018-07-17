@@ -304,7 +304,7 @@
 			<target xml:lang="uk" state="needs-translation">Cannot upload the file</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target xml:lang="uk" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="uk" state="translated">Файл не вибраний</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="uk" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
