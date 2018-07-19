@@ -607,6 +607,74 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
+     * @param Event\NodeWasRemoved $event
+     * @throws \Exception
+     */
+    public function whenNodeWasRemoved(Event\NodeWasRemoved $event)
+    {
+        // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
+        // lateron find tricks to improve performance
+        $this->transactional(function () use ($event) {
+            // TODO: does this always return a SINGLE anchor point??
+            $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+            if ($anchorPointForNode === null) {
+                // TODO Log error
+                throw new \Exception(sprintf('anchor point for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1519681260000);
+            }
+
+            $this->removeNodeRecursivelyIdentifiedByAnchorPoint($anchorPointForNode, $event->getContentStreamIdentifier());
+        });
+    }
+
+    protected function removeNodeRecursivelyIdentifiedByAnchorPoint(NodeRelationAnchorPoint $anchorPoint, ContentStreamIdentifier $contentStreamIdentifier)
+    {
+        // COW, non-COW case!!
+
+        // 1) for all outgoing edges, find the next level of anchor points and remove them recursively
+        $anchorPointRows = $this->getDatabaseConnection()->executeQuery('
+                SELECT DISTINCT h.childnodeanchor AS childNodeAnchor FROM neos_contentgraph_hierarchyrelation h
+                WHERE h.parentnodeanchor = :anchorPointForNode
+                AND h.contentstreamidentifier = :contentStreamIdentifier
+            ',
+            [
+                'anchorPointForNode' => (string)$anchorPoint,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            ])->fetchAll();
+
+        foreach ($anchorPointRows as $anchorPointRow) {
+            $childAnchorPoint = new NodeRelationAnchorPoint($anchorPointRow['childNodeAnchor']);
+            $this->removeNodeRecursivelyIdentifiedByAnchorPoint($childAnchorPoint, $contentStreamIdentifier);
+        }
+
+        // 2) remove incoming edges to the node
+        $this->getDatabaseConnection()->executeUpdate('
+            DELETE FROM neos_contentgraph_hierarchyrelation
+                WHERE
+                    childnodeanchor = :anchorPointForNode
+                    AND contentstreamidentifier = :contentStreamIdentifier
+                ',
+            [
+                'anchorPointForNode' => (string)$anchorPoint,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            ]
+        );
+
+        // 3) remove node itself if it does not have any incoming edges anymore
+        $this->getDatabaseConnection()->executeUpdate('
+            DELETE n FROM neos_contentgraph_node n
+                LEFT JOIN
+                    neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                WHERE
+                    n.relationanchorpoint = :anchorPointForNode
+                    AND h.contentstreamidentifier IS NULL
+                ',
+            [
+                'anchorPointForNode' => (string)$anchorPoint,
+            ]
+        );
+    }
+
+    /**
      * @param HierarchyRelation $hierarchyRelation
      * @param NodeIdentifier $newParentNodeIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -661,7 +729,7 @@ class GraphProjector implements ProjectorInterface
             // 1) fetch node, adjust properties, assign new Relation Anchor Point
             $copiedNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPointForNode);
             $copiedNode->relationAnchorPoint = new NodeRelationAnchorPoint();
-            $operations($copiedNode);
+            $result = $operations($copiedNode);
             $copiedNode->addToDatabase($this->getDatabaseConnection());
 
             // 2) reconnect all edges belonging to this content stream to the new "copied node". IMPORTANT: We need to reconnect
@@ -692,9 +760,10 @@ class GraphProjector implements ProjectorInterface
                 throw new \Exception("TODO NODE NOT FOUND");
             }
 
-            $operations($node);
+            $result = $operations($node);
             $node->updateToDatabase($this->getDatabaseConnection());
         }
+        return $result;
     }
 
     /**

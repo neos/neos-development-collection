@@ -11,6 +11,8 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\RemoveNode;
+use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Context\Node\RelationDistributionStrategy;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
@@ -240,7 +242,7 @@ trait EventSourcedTrait
                         $eventPayload[$line['Key']] = null;
                         break;
                     default:
-                        throw new \Exception("TODO" . json_encode($line));
+                        throw new \Exception("I do not understand type " . $line['Type'] . " in line: " . json_encode($line));
                 }
             } else {
                 $eventPayload[$line['Key']] = $line['Value'];
@@ -293,6 +295,40 @@ trait EventSourcedTrait
             $this->lastCommandException = $exception;
         }
     }
+
+    /**
+     * @Given /^the command RemoveNode was published with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandRemoveNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandRemoveNodeIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
+     * @Given /^the command RemoveNode was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
+    public function theCommandRemoveNodeIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
+        $command = $this->propertyMapper->convert($commandArguments, RemoveNode::class, $configuration);
+        /** @var NodeCommandHandler $commandHandler */
+        $commandHandler = $this->objectManager->get(NodeCommandHandler::class);
+
+        $commandHandler->handleRemoveNode($command);
+    }
+
 
     /**
      * @Given /^the command CreateNodeGeneralization was published with payload:$/
@@ -508,13 +544,13 @@ trait EventSourcedTrait
             case 'CreateRootNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode::class,
-                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    NodeCommandHandler::class,
                     'handleCreateRootNode'
                 ];
             case 'CreateNodeAggregateWithNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode::class,
-                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    NodeCommandHandler::class,
                     'handleCreateNodeAggregateWithNode'
                 ];
             case 'ForkContentStream':
@@ -526,43 +562,43 @@ trait EventSourcedTrait
             case 'ChangeNodeName':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\ChangeNodeName::class,
-                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    NodeCommandHandler::class,
                     'handleChangeNodeName'
                 ];
             case 'SetNodeProperty':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty::class,
-                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    NodeCommandHandler::class,
                     'handleSetNodeProperty'
                 ];
             case 'HideNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\HideNode::class,
-                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    NodeCommandHandler::class,
                     'handleHideNode'
                 ];
             case 'ShowNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\ShowNode::class,
-                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    NodeCommandHandler::class,
                     'handleShowNode'
                 ];
             case 'MoveNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\MoveNode::class,
-                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    NodeCommandHandler::class,
                     'handleMoveNode'
                 ];
             case 'TranslateNodeInAggregate':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate::class,
-                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    NodeCommandHandler::class,
                     'handleTranslateNodeInAggregate'
                 ];
             case 'SetNodeReferences':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\SetNodeReferences::class,
-                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    NodeCommandHandler::class,
                     'handleSetNodeReferences'
                 ];
 

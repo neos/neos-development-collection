@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\Context\DimensionSpace\AllowedDimensionSubspac
 use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\RemoveNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
@@ -34,6 +35,7 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodesWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasRemoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Model\Node;
@@ -588,6 +590,29 @@ final class NodeCommandHandler
                 $contentStreamIdentifier,
                 $command->getNodeIdentifier(),
                 $command->getNewNodeName()
+            );
+
+            $this->nodeEventPublisher->publish(
+                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier),
+                $event
+            );
+        });
+    }
+
+    /**
+     * @param RemoveNode $command
+     */
+    public function handleRemoveNode(RemoveNode $command): void
+    {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
+
+            // Check if node exists
+            $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+
+            $event = new NodeWasRemoved(
+                $contentStreamIdentifier,
+                $command->getNodeIdentifier()
             );
 
             $this->nodeEventPublisher->publish(
