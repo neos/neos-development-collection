@@ -57,6 +57,20 @@ Feature: Remove Node
       | nodeName                      | child-document                                                                    |                         |
       | propertyDefaultValuesAndTypes | {}                                                                                | json                    |
 
+    # We also want to add a grandchild node to make sure it is correctly removed when the parent is removed
+    # Node /document/child-document/grandchild-document
+    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                                                             | Type                    |
+      | contentStreamIdentifier       | live-cs-identifier                                                                | Uuid                    |
+      | nodeAggregateIdentifier       | gcdoc-agg-identifier                                                              | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document                                                   |                         |
+      | dimensionSpacePoint           | {"language":"de"}                                                                 | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language":"de"}},{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
+      | nodeIdentifier                | gcdoc-identifier-de                                                               | Uuid                    |
+      | parentNodeIdentifier          | cdoc-identifier-de                                                                | Uuid                    |
+      | nodeName                      | grandchild-document                                                               |                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                | json                    |
+
   Scenario: Trying to remove a non existing node should fail with an exception
     When the command RemoveNode was published with payload and exceptions are caught:
       | Key                     | Value                        | Type |
@@ -171,9 +185,11 @@ Feature: Remove Node
     Then I expect a node "[doc-identifier-gsw]" to exist in the graph projection
     And I expect the path "document" to lead to the node "[doc-identifier-gsw]"
 
-    # TODO: why do these two lines fail??
-    #And I expect a node "[cdoc-identifier-de]" to exist in the graph projection
-    #And I expect the path "document/child-document" to lead to the node "[cdoc-identifier-gsw]"
+    And I expect a node "[cdoc-identifier-de]" to exist in the graph projection
+    And I expect the path "document/child-document" to lead to the node "[cdoc-identifier-de]"
+
+    And I expect a node "[gcdoc-identifier-de]" to exist in the graph projection
+    And I expect the path "document/child-document/grandchild-document" to lead to the node "[gcdoc-identifier-de]"
 
   Scenario: (1.B.c) In LIVE workspace, removing a node WITH children does not lead to removal of the generalized node
     When the command CreateNodeSpecialization was published with payload:
@@ -191,16 +207,20 @@ Feature: Remove Node
 
     When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"de"}
     Then I expect a node "[doc-identifier-de]" to exist in the graph projection
-    # TODO: figure out why the two lines here fail!
-    #Then I expect a node "[cdoc-identifier-de]" to exist in the graph projection
+    Then I expect a node "[cdoc-identifier-de]" to exist in the graph projection
     And I expect the path "document" to lead to the node "[doc-identifier-de]"
-    #And I expect the path "document/child-document" to lead to the node "[cdoc-identifier-de]"
+    And I expect the path "document/child-document" to lead to the node "[cdoc-identifier-de]"
+    And I expect a node "[gcdoc-identifier-de]" to exist in the graph projection
+    And I expect the path "document/child-document/grandchild-document" to lead to the node "[gcdoc-identifier-de]"
+
 
     When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"gsw"}
     And I expect a node "[doc-identifier-de]" not to exist in the graph projection
     And I expect a node "[cdoc-identifier-de]" not to exist in the graph projection
     And I expect a node "[doc-identifier-gsw]" not to exist in the graph projection
     And I expect a node "[cdoc-identifier-gsw]" not to exist in the graph projection
+    And I expect a node "[gcdoc-identifier-de]" not to exist in the graph projection
+
 
 
     # TODO: create scenario where we specialize the /document/child-document; and then remove /document. -> WHAT TO EXPECT?

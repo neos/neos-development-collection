@@ -139,6 +139,17 @@ class Node
     }
 
     /**
+     * @param Connection $databaseConnection
+     */
+    public function removeFromDatabase(Connection $databaseConnection): void
+    {
+        $databaseConnection->delete('neos_contentgraph_node', [
+            'relationanchorpoint' => $this->relationAnchorPoint
+        ]);
+    }
+
+
+    /**
      * @param array $databaseRow
      * @return static
      */

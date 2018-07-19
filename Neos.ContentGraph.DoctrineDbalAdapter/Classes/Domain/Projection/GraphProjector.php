@@ -607,6 +607,15 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
+     * to remove a node, we do the following:
+     * - remove all OUTGOING edges from this node
+     * - for each edge to be removed, recursively remove further edges in the same "color" (i.e. ContentStreamIdentifier and DimensionSpacePoint)
+     * - then, remove all nested nodes which are not referenced by edges anymore
+     * - then, remove the INBOUND relations of the given node
+     * - finally, remove the node itself (which is safe, because all outgoing edges have been removed beforehand)
+     *
+     * TODO: I am not sure this is the expected behavior; it somehow mirrors what is done in the old CR, but I am unsure about the user's intention when he says "REMOVE A NODE, PLEASE!"
+     *
      * @param Event\NodeWasRemoved $event
      * @throws \Exception
      */
@@ -615,51 +624,32 @@ class GraphProjector implements ProjectorInterface
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
-            // TODO: does this always return a SINGLE anchor point??
-            $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
-            if ($anchorPointForNode === null) {
-                // TODO Log error
-                throw new \Exception(sprintf('anchor point for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1519681260000);
+            $node = $this->projectionContentGraph->getNode($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+
+            if ($node === null) {
+                throw new \Exception(sprintf('Node for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1519681260000);
+            }
+            foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNode($node->relationAnchorPoint, $event->getContentStreamIdentifier()) as $outboundRelation) {
+                $this->removeNodeOnChildSideOfHierarchyRelationIfNotReferencedFurther($outboundRelation);
             }
 
-            $this->removeNodeRecursivelyIdentifiedByAnchorPoint($anchorPointForNode, $event->getContentStreamIdentifier());
+            foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNode($node->relationAnchorPoint, $event->getContentStreamIdentifier()) as $inboundRelation) {
+                $inboundRelation->removeFromDatabase($this->getDatabaseConnection());
+            }
+
+
+            $node->removeFromDatabase($this->getDatabaseConnection());
         });
     }
 
-    protected function removeNodeRecursivelyIdentifiedByAnchorPoint(NodeRelationAnchorPoint $anchorPoint, ContentStreamIdentifier $contentStreamIdentifier)
+    protected function removeNodeOnChildSideOfHierarchyRelationIfNotReferencedFurther(HierarchyRelation $relation)
     {
-        // COW, non-COW case!!
-
-        // 1) for all outgoing edges, find the next level of anchor points and remove them recursively
-        $anchorPointRows = $this->getDatabaseConnection()->executeQuery('
-                SELECT DISTINCT h.childnodeanchor AS childNodeAnchor FROM neos_contentgraph_hierarchyrelation h
-                WHERE h.parentnodeanchor = :anchorPointForNode
-                AND h.contentstreamidentifier = :contentStreamIdentifier
-            ',
-            [
-                'anchorPointForNode' => (string)$anchorPoint,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            ])->fetchAll();
-
-        foreach ($anchorPointRows as $anchorPointRow) {
-            $childAnchorPoint = new NodeRelationAnchorPoint($anchorPointRow['childNodeAnchor']);
-            $this->removeNodeRecursivelyIdentifiedByAnchorPoint($childAnchorPoint, $contentStreamIdentifier);
+        $relation->removeFromDatabase($this->getDatabaseConnection());
+        foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNode($relation->childNodeAnchor, $relation->contentStreamIdentifier, new DimensionSpacePointSet([$relation->dimensionSpacePoint])) as $outboundRelation) {
+            $this->removeNodeOnChildSideOfHierarchyRelationIfNotReferencedFurther($outboundRelation);
         }
 
-        // 2) remove incoming edges to the node
-        $this->getDatabaseConnection()->executeUpdate('
-            DELETE FROM neos_contentgraph_hierarchyrelation
-                WHERE
-                    childnodeanchor = :anchorPointForNode
-                    AND contentstreamidentifier = :contentStreamIdentifier
-                ',
-            [
-                'anchorPointForNode' => (string)$anchorPoint,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            ]
-        );
-
-        // 3) remove node itself if it does not have any incoming edges anymore
+        // remove node itself if it does not have any incoming edges anymore
         $this->getDatabaseConnection()->executeUpdate('
             DELETE n FROM neos_contentgraph_node n
                 LEFT JOIN
@@ -669,7 +659,7 @@ class GraphProjector implements ProjectorInterface
                     AND h.contentstreamidentifier IS NULL
                 ',
             [
-                'anchorPointForNode' => (string)$anchorPoint,
+                'anchorPointForNode' => (string)$relation->childNodeAnchor,
             ]
         );
     }
