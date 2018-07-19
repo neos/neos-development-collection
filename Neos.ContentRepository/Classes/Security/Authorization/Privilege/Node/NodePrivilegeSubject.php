@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
 
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
 
 /**
  * A node privilege subject
@@ -21,9 +21,9 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 class NodePrivilegeSubject implements PrivilegeSubjectInterface
 {
     /**
-     * @var NodeInterface
+     * @var NodeAddress
      */
-    protected $node;
+    protected $nodeAddress;
 
     /**
      * @var JoinPointInterface
@@ -31,21 +31,21 @@ class NodePrivilegeSubject implements PrivilegeSubjectInterface
     protected $joinPoint;
 
     /**
-     * @param NodeInterface $node The node we will check privileges for
+     * @param NodeAddress $nodeAddress The node we will check privileges for
      * @param JoinPointInterface $joinPoint If we intercept node operations, this joinpoint represents the method called on the node and holds a reference to the node we will check privileges for
      */
-    public function __construct(NodeInterface $node, JoinPointInterface $joinPoint = null)
+    public function __construct(NodeAddress $nodeAddress, JoinPointInterface $joinPoint = null)
     {
-        $this->node = $node;
+        $this->nodeAddress = $nodeAddress;
         $this->joinPoint = $joinPoint;
     }
 
     /**
-     * @return NodeInterface
+     * @return NodeAddress
      */
-    public function getNode()
+    public function getNodeAddress(): NodeAddress
     {
-        return $this->node;
+        return $this->nodeAddress;
     }
 
     /**

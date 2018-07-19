@@ -12,8 +12,8 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  */
 
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\Neos\Domain\Context\Content\NodeAddress;
 
 /**
  * A create node privilege subject
@@ -26,14 +26,14 @@ class CreateNodePrivilegeSubject extends NodePrivilegeSubject
     protected $creationNodeType;
 
     /**
-     * @param NodeInterface $node The parent node under which a new child shall be created
+     * @param NodeAddress $nodeAddress The parent node under which a new child shall be created
      * @param NodeType $creationNodeType The node type of the new child node, to check if this is type is allowed as new child node under the given parent node
      * @param JoinPointInterface $joinPoint Set, if created by a method interception. Usually the interception of the createNode() method, where the creation of new child nodes takes place
      */
-    public function __construct(NodeInterface $node, NodeType $creationNodeType = null, JoinPointInterface $joinPoint = null)
+    public function __construct(NodeAddress $nodeAddress, NodeType $creationNodeType = null, JoinPointInterface $joinPoint = null)
     {
         $this->creationNodeType = $creationNodeType;
-        parent::__construct($node, $joinPoint);
+        parent::__construct($nodeAddress, $joinPoint);
     }
 
     /**
