@@ -11,7 +11,8 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Domain\Context\Node\Command\RemoveNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Context\Node\RelationDistributionStrategy;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -297,36 +298,70 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^the command RemoveNode was published with payload and exceptions are caught:$/
+     * @Given /^the command RemoveNodeAggregate was published with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */
-    public function theCommandRemoveNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    public function theCommandRemoveNodeAggregateIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
     {
         try {
-            $this->theCommandRemoveNodeIsExecutedWithPayload($payloadTable);
+            $this->theCommandRemoveNodeAggregateIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
     }
 
     /**
-     * @Given /^the command RemoveNode was published with payload:$/
+     * @Given /^the command RemoveNodeAggregate was published with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function theCommandRemoveNodeIsExecutedWithPayload(TableNode $payloadTable)
+    public function theCommandRemoveNodeAggregateIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, RemoveNode::class, $configuration);
+        $command = $this->propertyMapper->convert($commandArguments, RemoveNodeAggregate::class, $configuration);
         /** @var NodeCommandHandler $commandHandler */
         $commandHandler = $this->objectManager->get(NodeCommandHandler::class);
 
-        $commandHandler->handleRemoveNode($command);
+        $commandHandler->handleRemoveNodeAggregate($command);
+    }
+
+
+    /**
+     * @Given /^the command RemoveNodesFromAggregate was published with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandRemoveNodesFromAggregateIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandRemoveNodesFromAggregateIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
+     * @Given /^the command RemoveNodesFromAggregate was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
+    public function theCommandRemoveNodesFromAggregateIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
+        $command = $this->propertyMapper->convert($commandArguments, RemoveNodesFromAggregate::class, $configuration);
+        /** @var NodeCommandHandler $commandHandler */
+        $commandHandler = $this->objectManager->get(NodeCommandHandler::class);
+
+        $commandHandler->handleRemoveNodesFromAggregate($command);
     }
 
 
@@ -452,6 +487,7 @@ trait EventSourcedTrait
     public function theLastCommandShouldHaveThrown($shortExceptionName)
     {
         Assert::assertNotNull($this->lastCommandException, 'Command did not throw exception');
+        var_dump($this->lastCommandException->getMessage());
 
         switch ($shortExceptionName) {
             case 'Exception':
@@ -766,7 +802,8 @@ trait EventSourcedTrait
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)
             ->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
-        Assert::assertNull($node, 'Node "' . $nodeIdentifier . '" was found in the current Content Stream / Dimension Space Point.');
+        // we're not using assertNull here: If $node is not null, the
+        Assert::assertTrue($node === null, 'Node "' . $nodeIdentifier . '" was found in the current Content Stream / Dimension Space Point.');
     }
 
     /**

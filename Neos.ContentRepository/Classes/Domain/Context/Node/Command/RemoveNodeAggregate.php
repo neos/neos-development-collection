@@ -12,9 +12,9 @@ namespace Neos\ContentRepository\Domain\Context\Node\Command;
  */
 
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 
-final class RemoveNode
+final class RemoveNodeAggregate
 {
 
     /**
@@ -23,19 +23,19 @@ final class RemoveNode
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
-    private $nodeIdentifier;
+    private $nodeAggregateIdentifier;
 
     /**
-     * RemoveNode constructor.
+     * RemoveNodeAggregate constructor.
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
     }
 
     /**
@@ -47,10 +47,10 @@ final class RemoveNode
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
     }
 }

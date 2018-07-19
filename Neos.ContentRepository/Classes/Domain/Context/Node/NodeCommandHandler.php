@@ -17,7 +17,10 @@ use Neos\ContentRepository\Domain\Context\DimensionSpace\AllowedDimensionSubspac
 use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Domain\Context\Node\Command\RemoveNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
@@ -32,6 +35,7 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesWereMoved;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
@@ -600,19 +604,49 @@ final class NodeCommandHandler
     }
 
     /**
-     * @param RemoveNode $command
+     * @param RemoveNodeAggregate $command
      */
-    public function handleRemoveNode(RemoveNode $command): void
+    public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): void
     {
         $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
-            // Check if node exists
-            $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+            // Check if node aggregate exists
+            $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $command->getNodeAggregateIdentifier());
+            if ($nodeAggregate === null) {
+                throw new NodeAggregateNotFound('Node aggregate ' . $command->getNodeAggregateIdentifier() . ' not found', 1532026858);
+            }
 
-            $event = new NodeWasRemoved(
+            $event = new NodeAggregateWasRemoved(
                 $contentStreamIdentifier,
-                $command->getNodeIdentifier()
+                $command->getNodeAggregateIdentifier()
+            );
+
+            $this->nodeEventPublisher->publish(
+                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier),
+                $event
+            );
+        });
+    }
+
+    /**
+     * @param RemoveNodesFromAggregate $command
+     */
+    public function handleRemoveNodesFromAggregate(RemoveNodesFromAggregate $command): void
+    {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
+
+            // Check if node aggregate exists
+            $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $command->getNodeAggregateIdentifier());
+            if ($nodeAggregate === null) {
+                throw new NodeAggregateNotFound('Node aggregate ' . $command->getNodeAggregateIdentifier() . ' not found', 1532026858);
+            }
+
+            $event = new NodesWereRemovedFromAggregate(
+                $contentStreamIdentifier,
+                $command->getNodeAggregateIdentifier(),
+                $command->getDimensionSpacePointSet()
             );
 
             $this->nodeEventPublisher->publish(

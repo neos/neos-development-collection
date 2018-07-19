@@ -12,14 +12,10 @@ namespace Neos\ContentRepository\Domain\Context\Node\Event;
  */
 
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\ReferencePosition;
+use Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
-/**
- * Node was removed event
- */
-final class NodeWasRemoved implements EventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateWasRemoved implements EventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -28,19 +24,19 @@ final class NodeWasRemoved implements EventInterface, CopyableAcrossContentStrea
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
-    private $nodeIdentifier;
+    private $nodeAggregateIdentifier;
 
     /**
-     * NodeWasRemoved constructor.
+     * RemoveNodeAggregate constructor.
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
     }
 
     /**
@@ -52,22 +48,18 @@ final class NodeWasRemoved implements EventInterface, CopyableAcrossContentStrea
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @param ContentStreamIdentifier $targetContentStream
-     * @return NodeWasRemoved
-     */
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodeWasRemoved(
+        return new NodeAggregateWasRemoved(
             $targetContentStream,
-            $this->nodeIdentifier
+            $this->nodeAggregateIdentifier
         );
     }
 }

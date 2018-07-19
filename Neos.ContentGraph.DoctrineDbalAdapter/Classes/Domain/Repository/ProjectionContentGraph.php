@@ -234,7 +234,8 @@ class ProjectionContentGraph
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int {
+    ): int
+    {
         if (!$parentAnchorPoint && !$childAnchorPoint) {
             throw new \InvalidArgumentException('You must specify either parent or child node anchor to determine a hierarchy relation position', 1519847447);
         }
@@ -306,7 +307,8 @@ class ProjectionContentGraph
         NodeRelationAnchorPoint $parentAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): array {
+    ): array
+    {
         $relations = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
@@ -336,7 +338,8 @@ class ProjectionContentGraph
         NodeRelationAnchorPoint $childAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): array {
+    ): array
+    {
         $relations = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
@@ -456,7 +459,8 @@ class ProjectionContentGraph
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet
-    ): array {
+    ): array
+    {
         $relations = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
@@ -482,31 +486,36 @@ class ProjectionContentGraph
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
+     * @param DimensionSpacePointSet|null $dimensionSpacePointSet
      * @return array|HierarchyRelation[]
      * @throws \Doctrine\DBAL\DBALException
      */
     public function findInboundHierarchyRelationsForNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePointSet $dimensionSpacePointSet
-    ): array {
+        DimensionSpacePointSet $dimensionSpacePointSet = null
+    ): array
+    {
         $relations = [];
-        foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
- INNER JOIN neos_contentgraph_node n ON h.childnodeanchor = n.relationanchorpoint
- WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)',
-            [
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'dimensionSpacePointHashes' => $dimensionSpacePointSet->getPointHashes()
-            ],
-            [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-            ]
-        )->fetchAll() as $relationData) {
+
+        $query = 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+            INNER JOIN neos_contentgraph_node n ON h.childnodeanchor = n.relationanchorpoint
+            WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+            AND h.contentstreamidentifier = :contentStreamIdentifier';
+        $parameters = [
+            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+        ];
+        $types = [];
+
+        if ($dimensionSpacePointSet !== null) {
+            $query .= '
+                AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
+            $parameters['dimensionSpacePointHashes'] = $dimensionSpacePointSet->getPointHashes();
+            $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
+        }
+
+        foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAll() as $relationData) {
             $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 

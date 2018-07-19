@@ -607,46 +607,43 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
-     * to remove a node, we do the following:
-     * - remove all OUTGOING edges from this node
-     * - for each edge to be removed, recursively remove further edges in the same "color" (i.e. ContentStreamIdentifier and DimensionSpacePoint)
-     * - then, remove all nested nodes which are not referenced by edges anymore
-     * - then, remove the INBOUND relations of the given node
-     * - finally, remove the node itself (which is safe, because all outgoing edges have been removed beforehand)
-     *
-     * TODO: I am not sure this is the expected behavior; it somehow mirrors what is done in the old CR, but I am unsure about the user's intention when he says "REMOVE A NODE, PLEASE!"
-     *
-     * @param Event\NodeWasRemoved $event
+     * @param Event\NodesWereRemovedFromAggregate $event
      * @throws \Exception
      */
-    public function whenNodeWasRemoved(Event\NodeWasRemoved $event)
+    public function whenNodesWereRemovedFromAggregate(Event\NodesWereRemovedFromAggregate $event)
     {
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
-            $node = $this->projectionContentGraph->getNode($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
-
-            if ($node === null) {
-                throw new \Exception(sprintf('Node for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1519681260000);
+            $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
+            foreach ($inboundRelations as $inboundRelation) {
+                $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($inboundRelation);
             }
-            foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNode($node->relationAnchorPoint, $event->getContentStreamIdentifier()) as $outboundRelation) {
-                $this->removeNodeOnChildSideOfHierarchyRelationIfNotReferencedFurther($outboundRelation);
-            }
-
-            foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNode($node->relationAnchorPoint, $event->getContentStreamIdentifier()) as $inboundRelation) {
-                $inboundRelation->removeFromDatabase($this->getDatabaseConnection());
-            }
-
-
-            $node->removeFromDatabase($this->getDatabaseConnection());
         });
     }
 
-    protected function removeNodeOnChildSideOfHierarchyRelationIfNotReferencedFurther(HierarchyRelation $relation)
+    /**
+     * @param Event\NodeAggregateWasRemoved $event
+     * @throws \Exception
+     */
+    public function whenNodeAggregateWasRemoved(Event\NodeAggregateWasRemoved $event)
     {
-        $relation->removeFromDatabase($this->getDatabaseConnection());
-        foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNode($relation->childNodeAnchor, $relation->contentStreamIdentifier, new DimensionSpacePointSet([$relation->dimensionSpacePoint])) as $outboundRelation) {
-            $this->removeNodeOnChildSideOfHierarchyRelationIfNotReferencedFurther($outboundRelation);
+        // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
+        // lateron find tricks to improve performance
+        $this->transactional(function () use ($event) {
+            $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
+            foreach ($inboundRelations as $inboundRelation) {
+                $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($inboundRelation);
+            }
+        });
+    }
+
+    protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(HierarchyRelation $inboundRelation)
+    {
+        $inboundRelation->removeFromDatabase($this->getDatabaseConnection());
+
+        foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNode($inboundRelation->childNodeAnchor, $inboundRelation->contentStreamIdentifier, new DimensionSpacePointSet([$inboundRelation->dimensionSpacePoint])) as $outboundRelation) {
+            $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($outboundRelation);
         }
 
         // remove node itself if it does not have any incoming edges anymore
@@ -659,7 +656,7 @@ class GraphProjector implements ProjectorInterface
                     AND h.contentstreamidentifier IS NULL
                 ',
             [
-                'anchorPointForNode' => (string)$relation->childNodeAnchor,
+                'anchorPointForNode' => (string)$inboundRelation->childNodeAnchor,
             ]
         );
     }
