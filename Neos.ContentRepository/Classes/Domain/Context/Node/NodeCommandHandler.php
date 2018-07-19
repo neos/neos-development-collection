@@ -15,10 +15,6 @@ use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHand
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\ContentRepository\Domain\Context\DimensionSpace\AllowedDimensionSubspace;
 use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSession;
-use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSession;
-use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasFinalized;
-use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasStarted;
 use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
@@ -26,8 +22,6 @@ use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
-use Neos\ContentRepository\Domain\Context\Importing\Command\ImportNode;
-use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\ChangeNodeName;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
@@ -301,56 +295,6 @@ final class NodeCommandHandler
         }
 
         return $events;
-    }
-
-    /**
-     * @param StartImportingSession $command
-     */
-    public function handleStartImportingSession(StartImportingSession $command): void
-    {
-        // TODO: wrap with $this->nodeEventPublisher->withCommand($command, function() use ($command) {
-        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
-        $this->nodeEventPublisher->publish(
-            $streamName,
-            new ImportingSessionWasStarted($command->getImportingSessionIdentifier()),
-            ExpectedVersion::NO_STREAM
-        );
-    }
-
-    /**
-     * @param ImportNode $command
-     */
-    public function handleImportNode(ImportNode $command): void
-    {
-        // TODO: wrap with $this->nodeEventPublisher->withCommand($command, function() use ($command) {
-        $this->validateNodeTypeName($command->getNodeTypeName());
-
-        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
-        $this->nodeEventPublisher->publish(
-            $streamName,
-            new NodeWasImported(
-                $command->getImportingSessionIdentifier(),
-                $command->getParentNodeIdentifier(),
-                $command->getNodeIdentifier(),
-                $command->getNodeName(),
-                $command->getNodeTypeName(),
-                $command->getDimensionSpacePoint(),
-                $command->getPropertyValues()
-            )
-        );
-    }
-
-    /**
-     * @param FinalizeImportingSession $command
-     */
-    public function handleFinalizeImportingSession(FinalizeImportingSession $command): void
-    {
-        // TODO: wrap with $this->nodeEventPublisher->withCommand($command, function() use ($command) {
-        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
-        $this->nodeEventPublisher->publish(
-            $streamName,
-            new ImportingSessionWasFinalized($command->getImportingSessionIdentifier())
-        );
     }
 
     /**

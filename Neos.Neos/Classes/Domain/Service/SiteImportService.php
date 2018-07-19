@@ -27,8 +27,6 @@ use Neos\Neos\Exception as NeosException;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * The Site Import Service
@@ -55,12 +53,6 @@ class SiteImportService
      * @var ContextFactoryInterface
      */
     protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var NodeImportService
-     */
-    protected $nodeImportService;
 
     /**
      * @Flow\Inject
@@ -202,7 +194,7 @@ class SiteImportService
 //                $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
 //            }
 
-            $this->nodeImportService->import($xmlReader, '/sites/todo', dirname($pathAndFilename) . '/Resources');
+            //$this->nodeImportService->import($xmlReader, '/sites/todo', dirname($pathAndFilename) . '/Resources');
         }
 
         if ($site === null) {
