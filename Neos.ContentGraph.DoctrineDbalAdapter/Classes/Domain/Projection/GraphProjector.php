@@ -169,7 +169,8 @@ class GraphProjector implements ProjectorInterface
         DimensionSpacePointSet $visibleDimensionSpacePoints,
         array $propertyDefaultValuesAndTypes,
         NodeName $nodeName
-    ) {
+    )
+    {
         $nodeRelationAnchorPoint = new NodeRelationAnchorPoint();
         $node = new Node(
             $nodeRelationAnchorPoint,
@@ -250,7 +251,8 @@ class GraphProjector implements ProjectorInterface
         NodeName $relationName = null,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet
-    ): void {
+    ): void
+    {
         foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
             $position = $this->getRelationPosition(
                 $parentNodeAnchorPoint,
@@ -289,7 +291,8 @@ class GraphProjector implements ProjectorInterface
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int {
+    ): int
+    {
         $position = $this->projectionContentGraph->determineHierarchyRelationPosition($parentAnchorPoint, $childAnchorPoint, $succeedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
 
         if ($position % 2 !== 0) {
@@ -314,7 +317,8 @@ class GraphProjector implements ProjectorInterface
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int {
+    ): int
+    {
         if (!$childAnchorPoint && !$parentAnchorPoint) {
             throw new \InvalidArgumentException('You must either specify a parent or child node anchor to get relation positions after recalculation.', 1519847858);
         }
@@ -334,35 +338,6 @@ class GraphProjector implements ProjectorInterface
         }
 
         return $position;
-    }
-
-    /**
-     * @param string $fallbackNodesIdentifierInGraph
-     * @param string $newVariantNodesIdentifierInGraph
-     * @param array $subgraphIdentifiers
-     */
-    protected function reconnectHierarchy(
-        string $fallbackNodesIdentifierInGraph,
-        string $newVariantNodesIdentifierInGraph,
-        array $subgraphIdentifiers
-    ): void {
-        /*
-        // TODO needs to be fixed
-        $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAndSubgraphs(
-            $fallbackNodesIdentifierInGraph,
-            $subgraphIdentifiers
-        );
-        $outboundRelations = $this->projectionContentGraph->findOutboundHierarchyRelationsForNodeAndSubgraphs(
-            $fallbackNodesIdentifierInGraph,
-            $subgraphIdentifiers
-        );
-
-        foreach ($inboundRelations as $inboundRelation) {
-            $this->assignNewChildNodeToHierarchyRelation($inboundRelation, $newVariantNodesIdentifierInGraph);
-        }
-        foreach ($outboundRelations as $outboundRelation) {
-            $this->assignNewParentNodeToHierarchyRelation($outboundRelation, $newVariantNodesIdentifierInGraph);
-        }*/
     }
 
     /**
@@ -415,7 +390,8 @@ class GraphProjector implements ProjectorInterface
     public function whenNodeReferencesWereSet(NodeReferencesWereSet $event)
     {
         $this->transactional(function () use ($event) {
-            $this->updateNodeWithCopyOnWrite($event, function (Node $node) use ($event) {});
+            $this->updateNodeWithCopyOnWrite($event, function (Node $node) use ($event) {
+            });
             $nodeAnchorPoint = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
 
             // remove old
@@ -509,10 +485,10 @@ class GraphProjector implements ProjectorInterface
         $this->transactional(function () use ($event) {
             $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getNodeAggregateIdentifier(), $event->getContentStreamIdentifier(), $event->getSourceDimensionSpacePoint());
             $sourceHierarchyRelation = $this->projectionContentGraph->findInboundHierarchyRelationsForNode(
-                $sourceNode->relationAnchorPoint,
-                $event->getContentStreamIdentifier(),
-                new DimensionSpacePointSet([$event->getSourceDimensionSpacePoint()])
-            )[$event->getSourceDimensionSpacePoint()->getHash()] ?? null;
+                    $sourceNode->relationAnchorPoint,
+                    $event->getContentStreamIdentifier(),
+                    new DimensionSpacePointSet([$event->getSourceDimensionSpacePoint()])
+                )[$event->getSourceDimensionSpacePoint()->getHash()] ?? null;
             if (is_null($sourceHierarchyRelation)) {
                 throw new \Exception('Seems someone tried to generalize a root node and I don\'t have a proper name yet', 1519995795);
             }
