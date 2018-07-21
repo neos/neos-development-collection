@@ -634,6 +634,15 @@ final class NodeCommandHandler
      */
     public function handleRemoveNodesFromAggregate(RemoveNodesFromAggregate $command): void
     {
+        foreach ($command->getDimensionSpacePointSet()->getPoints() as $point) {
+            $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($point, false);
+            foreach ($specializations->getPoints() as $specialization) {
+                if (!$command->getDimensionSpacePointSet()->contains($specialization)) {
+                    throw new SpecializedDimensionsMustBePartOfDimensionSpacePointSet('The parent dimension ' . json_encode($point->getCoordinates()) . ' is in the given DimensionSpacePointSet, but its specialization ' .  json_encode($specialization->getCoordinates()) . ' is not. This is currently not supported; and we might need to think through the implications of this case more before allowing it. There is no "technical hard reason" to prevent it; but to me (SK) it feels that it will lead to inconsistent behavior otherwise.', 1532154238);
+                }
+            }
+        }
+
         $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 

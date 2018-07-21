@@ -12,7 +12,7 @@ Feature: Remove Node
     - (B) WITH children
   - Dimensions:
     - (a) with dimension shine-through - when both DimensionSpacePoints are scheduled to be deleted, the node is acutually removed fully.
-    - (b) with explicit variant in another dimension (deleting the "parent dimension" node; node still needs to exist in "specialized dimension")
+    - (b) with explicit variant in another dimension (deleting the "child dimension" node; node still needs to exist in "parent dimension")
 
 
   Background:
@@ -74,13 +74,26 @@ Feature: Remove Node
       | nodeName                      | grandchild-document                                                               |                         |
       | propertyDefaultValuesAndTypes | {}                                                                                | json                    |
 
-  Scenario: Trying to remove a non existing node should fail with an exception
+
+  ########################
+  # Section: EXTRA testcases
+  ########################
+  Scenario: (Exception) Trying to remove a non existing node should fail with an exception
     When the command RemoveNodesFromAggregate was published with payload and exceptions are caught:
       | Key                     | Value                                                                             | Type                    |
       | contentStreamIdentifier | live-cs-identifier                                                                | Uuid                    |
       | nodeAggregateIdentifier | non-existing-agg-identifier                                                       | NodeAggregateIdentifier |
       | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}},{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
     Then the last command should have thrown an exception of type "NodeAggregateNotFound"
+
+  Scenario: (Exception) Trying to remove a node in a parent dimension without specializing the corresponding specialization dimension throw an exception
+    When the command RemoveNodesFromAggregate was published with payload and exceptions are caught:
+      | Key                     | Value                                          | Type                    |
+      | contentStreamIdentifier | live-cs-identifier                             | Uuid                    |
+      | nodeAggregateIdentifier | doc-agg-identifier                             | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}}]} | DimensionSpacePointSet  |
+    Then the last command should have thrown an exception of type "SpecializedDimensionsMustBePartOfDimensionSpacePointSet"
+
 
   ########################
   # Section: 1.A.*
@@ -110,20 +123,21 @@ Feature: Remove Node
       | targetDimensionSpacePoint | {"language":"gsw"}  | DimensionSpacePoint     |
       | specializationIdentifier  | cdoc-identifier-gsw | Uuid                    |
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                          | Type                    |
-      | contentStreamIdentifier | live-cs-identifier                             | Uuid                    |
-      | nodeAggregateIdentifier | cdoc-agg-identifier                            | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                                           | Type                    |
+      | contentStreamIdentifier | live-cs-identifier                              | Uuid                    |
+      | nodeAggregateIdentifier | cdoc-agg-identifier                             | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"de"}
-    Then I expect a node "[cdoc-identifier-de]" not to exist in the graph projection
+    Then I expect a node "[cdoc-identifier-de]" to exist in the graph projection
+    And I expect a node "[cdoc-identifier-gsw]" not to exist in the graph projection
+    And I expect the path "document" to lead to the node "[doc-identifier-de]"
+    And I expect the path "document/child-document" to lead to the node "[cdoc-identifier-de]"
 
     When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"gsw"}
-    And I expect a node "[cdoc-identifier-de]" not to exist in the graph projection
-    Then I expect a node "[cdoc-identifier-gsw]" to exist in the graph projection
-    And I expect the path "document" to lead to the node "[doc-identifier-de]"
-    And I expect the path "document/child-document" to lead to the node "[cdoc-identifier-gsw]"
+    Then I expect a node "[cdoc-identifier-gsw]" not to exist in the graph projection
+
 
   ########################
   # Section: 1.B.*
@@ -155,26 +169,23 @@ Feature: Remove Node
       | targetDimensionSpacePoint | {"language":"gsw"} | DimensionSpacePoint     |
       | specializationIdentifier  | doc-identifier-gsw | Uuid                    |
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                          | Type                    |
-      | contentStreamIdentifier | live-cs-identifier                             | Uuid                    |
-      | nodeAggregateIdentifier | doc-agg-identifier                             | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                                           | Type                    |
+      | contentStreamIdentifier | live-cs-identifier                              | Uuid                    |
+      | nodeAggregateIdentifier | doc-agg-identifier                              | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"de"}
-    Then I expect a node "[doc-identifier-de]" not to exist in the graph projection
-    Then I expect a node "[cdoc-identifier-de]" not to exist in the graph projection
-
-    When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"gsw"}
-    And I expect a node "[doc-identifier-de]" not to exist in the graph projection
-    Then I expect a node "[doc-identifier-gsw]" to exist in the graph projection
-    And I expect the path "document" to lead to the node "[doc-identifier-gsw]"
-
-    And I expect a node "[cdoc-identifier-de]" to exist in the graph projection
-    And I expect the path "document/child-document" to lead to the node "[cdoc-identifier-de]"
-
+    Then I expect a node "[doc-identifier-de]" to exist in the graph projection
+    Then I expect a node "[cdoc-identifier-de]" to exist in the graph projection
+    And I expect the path "document" to lead to the node "[doc-identifier-de]"
     And I expect a node "[gcdoc-identifier-de]" to exist in the graph projection
     And I expect the path "document/child-document/grandchild-document" to lead to the node "[gcdoc-identifier-de]"
+
+    When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"gsw"}
+    And I expect a node "[doc-identifier-gsw]" not to exist in the graph projection
+    And I expect a node "[cdoc-identifier-de]" not to exist in the graph projection
+    And I expect a node "[gcdoc-identifier-de]" not to exist in the graph projection
 
 
   ########################
@@ -226,20 +237,23 @@ Feature: Remove Node
       | sourceContentStreamIdentifier | live-cs-identifier | Uuid |
 
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                          | Type                    |
-      | contentStreamIdentifier | user-cs-identifier                             | Uuid                    |
-      | nodeAggregateIdentifier | cdoc-agg-identifier                            | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                                           | Type                    |
+      | contentStreamIdentifier | user-cs-identifier                              | Uuid                    |
+      | nodeAggregateIdentifier | cdoc-agg-identifier                             | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[user-cs-identifier]" and Dimension Space Point {"language":"de"}
-    Then I expect a node "[cdoc-identifier-de]" not to exist in the graph projection
+    Then I expect a node "[doc-identifier-de]" to exist in the graph projection
+    Then I expect a node "[cdoc-identifier-de]" to exist in the graph projection
+    And I expect the path "document" to lead to the node "[doc-identifier-de]"
+    And I expect a node "[gcdoc-identifier-de]" to exist in the graph projection
+    And I expect the path "document/child-document/grandchild-document" to lead to the node "[gcdoc-identifier-de]"
 
     When I am in content stream "[user-cs-identifier]" and Dimension Space Point {"language":"gsw"}
+    And I expect a node "[doc-identifier-gsw]" not to exist in the graph projection
     And I expect a node "[cdoc-identifier-de]" not to exist in the graph projection
-    Then I expect a node "[cdoc-identifier-gsw]" to exist in the graph projection
-    And I expect the path "document" to lead to the node "[doc-identifier-de]"
-    And I expect the path "document/child-document" to lead to the node "[cdoc-identifier-gsw]"
+    And I expect a node "[gcdoc-identifier-de]" not to exist in the graph projection
 
     # ensure LIVE ContentStream is untouched
     When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"de"}
@@ -305,27 +319,23 @@ Feature: Remove Node
       | sourceContentStreamIdentifier | live-cs-identifier | Uuid |
 
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                          | Type                    |
-      | contentStreamIdentifier | user-cs-identifier                             | Uuid                    |
-      | nodeAggregateIdentifier | doc-agg-identifier                             | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                                           | Type                    |
+      | contentStreamIdentifier | user-cs-identifier                              | Uuid                    |
+      | nodeAggregateIdentifier | doc-agg-identifier                              | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[user-cs-identifier]" and Dimension Space Point {"language":"de"}
-    Then I expect a node "[doc-identifier-de]" not to exist in the graph projection
-    Then I expect a node "[cdoc-identifier-de]" not to exist in the graph projection
-
-    When I am in content stream "[user-cs-identifier]" and Dimension Space Point {"language":"gsw"}
-    And I expect a node "[doc-identifier-de]" not to exist in the graph projection
-    Then I expect a node "[doc-identifier-gsw]" to exist in the graph projection
-    And I expect the path "document" to lead to the node "[doc-identifier-gsw]"
-
-    And I expect a node "[cdoc-identifier-de]" to exist in the graph projection
-    And I expect the path "document/child-document" to lead to the node "[cdoc-identifier-de]"
-
+    Then I expect a node "[doc-identifier-de]" to exist in the graph projection
+    Then I expect a node "[cdoc-identifier-de]" to exist in the graph projection
+    And I expect the path "document" to lead to the node "[doc-identifier-de]"
     And I expect a node "[gcdoc-identifier-de]" to exist in the graph projection
     And I expect the path "document/child-document/grandchild-document" to lead to the node "[gcdoc-identifier-de]"
 
+    When I am in content stream "[user-cs-identifier]" and Dimension Space Point {"language":"gsw"}
+    And I expect a node "[doc-identifier-gsw]" not to exist in the graph projection
+    And I expect a node "[cdoc-identifier-de]" not to exist in the graph projection
+    And I expect a node "[gcdoc-identifier-de]" not to exist in the graph projection
 
     # ensure LIVE ContentStream is untouched
     When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"de"}

@@ -487,7 +487,6 @@ trait EventSourcedTrait
     public function theLastCommandShouldHaveThrown($shortExceptionName)
     {
         Assert::assertNotNull($this->lastCommandException, 'Command did not throw exception');
-        var_dump($this->lastCommandException->getMessage());
 
         switch ($shortExceptionName) {
             case 'Exception':
@@ -538,6 +537,10 @@ trait EventSourcedTrait
                 return;
             case 'ParentsNodeAggregateNotVisibleInDimensionSpacePoint':
                 Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint::class, $this->lastCommandException);
+
+                return;
+            case 'SpecializedDimensionsMustBePartOfDimensionSpacePointSet':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet::class, $this->lastCommandException);
 
                 return;
             default:
