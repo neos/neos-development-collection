@@ -11,6 +11,7 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -34,7 +35,6 @@ use Neos\Neos\Service\PublishingService;
 use Neos\Party\Domain\Model\PersonName;
 use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\Party\Domain\Service\PartyService;
-use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Neos\Utility\User as UserUtility;
 
@@ -585,7 +585,7 @@ class UserService
      */
     public function currentUserCanPublishToWorkspace(Workspace $workspace)
     {
-        if ($workspace->getName() === 'live') {
+        if ($workspace->getWorkspaceName()->isLive()) {
             return $this->securityContext->hasRole('Neos.Neos:LivePublisher');
         }
 
@@ -637,13 +637,14 @@ class UserService
             return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
         }
 
-        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->getCurrentUser()) {
+        // TODO
+        /*if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->getCurrentUser()) {
             return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces');
         }
 
         if ($workspace->isPrivateWorkspace() && $workspace->getOwner() !== $this->getCurrentUser()) {
             return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces');
-        }
+        }*/
 
         return false;
     }

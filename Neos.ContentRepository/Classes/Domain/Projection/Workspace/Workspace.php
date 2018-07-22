@@ -114,4 +114,15 @@ final class Workspace
     {
         return new WorkspaceName($this->workspaceName);
     }
+
+    /**
+     * Checks if this workspace is a user's personal workspace
+     *
+     * @return boolean
+     * @api
+     */
+    public function isPersonalWorkspace()
+    {
+        return $this->workspaceOwner !== null;
+    }
 }

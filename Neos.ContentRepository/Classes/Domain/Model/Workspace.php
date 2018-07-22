@@ -31,6 +31,7 @@ use Neos\ContentRepository\Exception\WorkspaceException;
  *
  * @Flow\Entity
  * @api
+ * @deprecated
  */
 class Workspace
 {
