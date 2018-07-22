@@ -1,5 +1,5 @@
 @fixtures
-Feature: Remove Node
+Feature: Remove Nodes from Aggregate
 
   As a user of the CR I want to be able to remove a node.
 
@@ -114,7 +114,7 @@ Feature: Remove Node
     Then I expect a node "[cdoc-identifier-de]" not to exist in the graph projection
 
 
-  Scenario: (1.A.b) In LIVE workspace, removing a node WITHOUT children does not lead to removal of the specialized node
+  Scenario: (1.A.b) In LIVE workspace, removing a node WITHOUT children does not lead to removal of the node in the parent dimension
     When the command CreateNodeSpecialization was published with payload:
       | Key                       | Value               | Type                    |
       | contentStreamIdentifier   | live-cs-identifier  | Uuid                    |
@@ -160,7 +160,7 @@ Feature: Remove Node
     Then I expect a node "[cdoc-identifier-de]" not to exist in the graph projection
 
 
-  Scenario: (1.B.b) In LIVE workspace, removing a node WITH children does not lead to removal of the specialized node
+  Scenario: (1.B.b) In LIVE workspace, removing a node WITH children does not lead to removal of the node in the parent dimension
     When the command CreateNodeSpecialization was published with payload:
       | Key                       | Value              | Type                    |
       | contentStreamIdentifier   | live-cs-identifier | Uuid                    |
@@ -222,7 +222,7 @@ Feature: Remove Node
     And I expect the path "document/child-document" to lead to the node "[cdoc-identifier-de]"
 
 
-  Scenario: (2.A.b) In USER workspace, removing a node WITHOUT children does not lead to removal of the specialized node
+  Scenario: (2.A.b) In USER workspace, removing a node WITHOUT children does not lead to removal of the node in the parent dimension
     When the command CreateNodeSpecialization was published with payload:
       | Key                       | Value               | Type                    |
       | contentStreamIdentifier   | live-cs-identifier  | Uuid                    |
@@ -304,7 +304,7 @@ Feature: Remove Node
     And I expect the path "document/child-document" to lead to the node "[cdoc-identifier-de]"
 
 
-  Scenario: (2.B.b) In USER workspace, removing a node WITH children does not lead to removal of the specialized node
+  Scenario: (2.B.b) In USER workspace, removing a node WITH children does not lead to removal of the node in the parent dimension
     When the command CreateNodeSpecialization was published with payload:
       | Key                       | Value              | Type                    |
       | contentStreamIdentifier   | live-cs-identifier | Uuid                    |

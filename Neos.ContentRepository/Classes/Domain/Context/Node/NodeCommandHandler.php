@@ -11,14 +11,11 @@ namespace Neos\ContentRepository\Domain\Context\Node;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\ContentRepository\Domain\Context\DimensionSpace\AllowedDimensionSubspace;
 use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
-use Neos\ContentRepository\Domain\Context\Node\Command\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Domain\Context\Node\Command\RemoveNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
@@ -29,6 +26,7 @@ use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\ChangeNodeName;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeMoveMapping;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
@@ -39,7 +37,6 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggrega
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
-use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasRemoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Model\Node;
