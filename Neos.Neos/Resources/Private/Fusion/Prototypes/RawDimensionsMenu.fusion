@@ -1,0 +1,17 @@
+# Neos.Neos:RawDimensionsMenu provides dimension (e.g. language) menu rendering
+#
+prototype(Neos.Neos:RawDimensionsMenu) < prototype(Neos.Neos:RawMenu) {
+	@class = 'Neos\\Neos\\Fusion\\RawDimensionsMenuImplementation'
+
+	# if documents which are hidden in index should be rendered or not
+	renderHiddenInIndex = true
+
+	# name of the dimension to use (optional)
+	# dimension = 'language'
+
+	# list of presets, if the default order should be overridden, only used with "dimension" set
+	# presets = ${['en_US']}
+
+	# if true, items for all presets will be included, ignoring dimension constraints
+	includeAllPresets = false
+}

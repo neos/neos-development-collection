@@ -1,0 +1,5 @@
+# Neos.Neos:RawBreadcrumbMenu provides a breadcrumb navigation based on menu items.
+#
+prototype(Neos.Neos:RawBreadcrumbMenu) < prototype(Neos.Neos:RawMenu) {
+	itemCollection = ${q(node).add(q(node).parents('[instanceof Neos.Neos:Document]')).get()}
+}
