@@ -354,9 +354,13 @@ HELPTEXT;
                     try {
                         $childNode = $node->getNode($childNodeName);
                         $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $node->getIdentifier());
-                        if ($childNode === null) {
+                        if ($childNode === null || $childNode->isRemoved() === true) {
                             if ($dryRun === false) {
-                                $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
+                                if ($childNode === null) {
+                                    $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
+                                } else {
+                                    $node->setRemoved(false);
+                                }
                                 $this->output->outputLine('Auto created node named "%s" in "%s"', array($childNodeName, $node->getPath()));
                             } else {
                                 $this->output->outputLine('Missing node named "%s" in "%s"', array($childNodeName, $node->getPath()));
