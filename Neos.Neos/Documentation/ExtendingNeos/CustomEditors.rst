@@ -6,7 +6,7 @@ Custom Editors
 .. note:: For documentation on how to create inspector editors for the legacy Ember version of the user interface, refer to the older versions of the documentation.
 
 
-Every dataType has its default editor set, which can have options applied like::
+Every dataType has its default editor set, which can have options applied like:
 
 .. code-block:: yaml
 
