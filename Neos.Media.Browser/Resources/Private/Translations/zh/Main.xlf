@@ -58,10 +58,10 @@
 			<target xml:lang="zh-CN" state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="zh-CN" state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">升幂排序方向</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="zh-CN" state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">降幂排序方向</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="zh-CN" state="translated">拖放式操作标记或集合</target></trans-unit>
@@ -106,7 +106,7 @@
 			<target xml:lang="zh-CN" state="translated">替换</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="zh-CN" state="needs-translation">Replace asset resource</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">替换预设资源</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="zh-CN" state="translated">保存​​</target></trans-unit>
@@ -406,13 +406,13 @@
 			<target xml:lang="zh-CN" state="translated">生成从原文件url到新的url的重定向</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target xml:lang="zh-CN" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">"{0}" 类型的资源只能由类似的资源替换，取得类型 "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target xml:lang="zh-CN" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">无法连线至工作区"{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target xml:lang="zh-CN" state="needs-translation">No document node found for this node</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">找不到文件节点于此节点</target></trans-unit>
     </body>
   </file>
 </xliff>
