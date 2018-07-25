@@ -301,7 +301,7 @@ The following options are allowed:
         A way to override default inline editor loaded for this property.
         Two editors are available out of the box: `ckeditor` (loads CKeditor4) and `ckeditor5` (loads CKeditor5).
         The default editor is configurable in Settings.yaml under the key `Neos.Neos.Ui.frontendConfiguration.defaultInlineEditor`.
-        It is strongly recommended to start using CKeditor5 today, as the CKeditor4 integration will be decrecated and removed in the future versions.
+        It is strongly recommended to start using CKeditor5 today, as the CKeditor4 integration will be deprecated and removed in the future versions.
         Additional custom inline editors are registered via the `inlineEditors` registry.
         See :ref:`ui-extensibility` for the detailed information on the topic.
 
@@ -319,10 +319,10 @@ The following options are allowed:
           key would create soft line breaks instead (equivalent to configuring an editable on a span tag).
 
         ``linking``
-          A way to configure additional options available for a link, e.g. targe or rel attributes.
+          A way to configure additional options available for a link, e.g. target or rel attributes.
 
         ``formatting``
-          Various foramtting options (see example below for all availabe options).
+          Various formatting options (see example below for all available options).
 
       Example::
 
