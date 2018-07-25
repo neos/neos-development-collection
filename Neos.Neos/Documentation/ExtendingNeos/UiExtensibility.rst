@@ -196,7 +196,7 @@ Buttons in the Rich Text Editing Toolbar are just plain React components.
 The only way for these components to communicate with CKE is via its commands mechanism
 (@see https://docs.ckeditor.com/ckeditor5/latest/framework/guides/architecture/core-editor-architecture.html#commands)
 Some commands may take arguments. Commands also contain state that is serialized into `formattingUnderCursor` redux state.
-Commands are provided and handled by CKE plugins, which may be registred via the configuration registry explained above.
+Commands are provided and handled by CKE plugins, which may be registered via the configuration registry explained above.
 
 The values are objects of the following form:
 
