@@ -630,7 +630,8 @@ slice
 Slice the current context
 
 If no arguments are given, the full context is returned. Otherwise the
-value contained in the context are sliced with offset and length.
+values contained in the context are sliced from begin given as the first
+argument to an optional end in the second argument.
 
 :Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\SliceOperation
 :Priority: 1
