@@ -22,7 +22,7 @@
 			<target xml:lang="pt-PT" state="needs-translation">Title</target></trans-unit>
       <trans-unit id="field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="pt-PT" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Etiqueta</target></trans-unit>
       <trans-unit id="field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="pt-PT" state="needs-translation">Caption</target></trans-unit>
@@ -58,10 +58,10 @@
 			<target xml:lang="pt-PT" state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="pt-PT" state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Ordenar por ordem crescente</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="pt-PT" state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Ordenar por ordem decrescente</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="pt-PT" state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
@@ -106,7 +106,7 @@
 			<target xml:lang="pt-PT" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="pt-PT" state="needs-translation">Replace asset resource</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Subtituir o recurso do activo</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="pt-PT" state="needs-translation">Save</target></trans-unit>
@@ -127,7 +127,7 @@
 			<target xml:lang="pt-PT" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="pt-PT" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Procurar</target></trans-unit>
       <trans-unit id="search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="pt-PT" state="needs-translation">{0} items</target></trans-unit>
@@ -313,7 +313,7 @@
 			<target xml:lang="pt-PT" state="needs-translation">Cannot upload the file</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target xml:lang="pt-PT" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Nenhum ficheiro selecionado</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="pt-PT" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
@@ -419,13 +419,13 @@
 			<target xml:lang="pt-PT" state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target xml:lang="pt-PT" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">' Recursos do tipo "{0}" apenas podem ser substituídos por um recurso semelhante. Obter tipo "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target xml:lang="pt-PT" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Sem acesso ao espaço de trabalho "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target xml:lang="pt-PT" state="needs-translation">No document node found for this node</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Não foi encontrado nenhum documento node para este node</target></trans-unit>
     </body>
   </file>
 </xliff>
