@@ -228,28 +228,28 @@
 			<target xml:lang="pt-PT" state="translated">Não foram registrados quaisquer eventos que poderiam ser exibido neste histórico ainda.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} criou o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} removeu o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} criou a variante {1} of the {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} modificou o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} moveu o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} copiou o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} renomeou o {1} "{2}" to "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} modificou o conteúdo no {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="pt-PT" state="translated">{0} criou um novo usuário "{1}" para {2}.</target></trans-unit>
@@ -532,7 +532,7 @@
 			<target xml:lang="pt-PT" state="translated">O módulo de gerenciamento de Sites fornece uma visão geral de todos os sites. Você pode editar, adicionar e excluir informações sobre seus sites, como a adição de um novo domínio.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
-			<target xml:lang="pt-PT" state="needs-translation">Add new site</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Adicionar novo site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="pt-PT" state="needs-translation">Create site</target></trans-unit>
@@ -541,10 +541,10 @@
 			<target xml:lang="pt-PT" state="needs-translation">Create a new site</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve">
 				<source>Root node name</source>
-			<target xml:lang="pt-PT" state="needs-translation">Root node name</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Nome da raíz do node</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="pt-PT" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Domínios</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve">
 				<source>Site</source>
 			<target xml:lang="pt-PT" state="needs-translation">Site</target></trans-unit>
@@ -553,64 +553,64 @@
 			<target xml:lang="pt-PT" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
 				<source>Default asset collection</source>
-			<target xml:lang="pt-PT" state="needs-translation">Default asset collection</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Coleção dos ativos padrão</target></trans-unit>
       <trans-unit id="sites.sitePackage" xml:space="preserve">
 				<source>Site package</source>
-			<target xml:lang="pt-PT" state="needs-translation">Site package</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Pacote de site</target></trans-unit>
       <trans-unit id="sites.delete" xml:space="preserve">
 				<source>Delete this site</source>
-			<target xml:lang="pt-PT" state="needs-translation">Delete this site</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Eliminar este site</target></trans-unit>
       <trans-unit id="sites.deactivate" xml:space="preserve">
 				<source>Deactivate site</source>
-			<target xml:lang="pt-PT" state="needs-translation">Deactivate site</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Desativar o site</target></trans-unit>
       <trans-unit id="sites.activate" xml:space="preserve">
 				<source>Activate site</source>
-			<target xml:lang="pt-PT" state="needs-translation">Activate site</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Ativar o site</target></trans-unit>
       <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="pt-PT" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Deseja mesmo excluir "{0}"? Esta ação não pode ser desfeita.</target></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the site</source>
-			<target xml:lang="pt-PT" state="needs-translation">Yes, delete the site</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Sim, eliminar o site</target></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve">
 				<source>Import a site</source>
-			<target xml:lang="pt-PT" state="needs-translation">Import a site</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Importar um site</target></trans-unit>
       <trans-unit id="sites.select" xml:space="preserve">
 				<source>Select a site package</source>
-			<target xml:lang="pt-PT" state="needs-translation">Select a site package</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Selecione um pacote de site</target></trans-unit>
       <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
 				<source>No site packages are available. Make sure you have an active site package.</source>
-			<target xml:lang="pt-PT" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Não existem pacotes de site disponíveis. Verifique se já possui tem um pacote de site ativo.</target></trans-unit>
       <trans-unit id="sites.createBlank" xml:space="preserve">
 				<source>Create a blank site</source>
-			<target xml:lang="pt-PT" state="needs-translation">Create a blank site</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Criar um site em branco</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
-			<target xml:lang="pt-PT" state="needs-translation">Select a document nodeType</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Selecione um documento nodeType</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
-			<target xml:lang="pt-PT" state="needs-translation">Site name</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Nome do site</target></trans-unit>
       <trans-unit id="sites.createNode" xml:space="preserve">
 				<source>Create empty site</source>
-			<target xml:lang="pt-PT" state="needs-translation">Create empty site</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Criar um site vazio</target></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve">
 				<source>Create a new site package</source>
-			<target xml:lang="pt-PT" state="needs-translation">Create a new site package</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Criar um novo pacote de site</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
-			<target xml:lang="pt-PT" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Nomedofornecedor.MyPackageKey</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target xml:lang="pt-PT" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">O pacote &lt;em&gt;Neos Kickstarter&lt;/em&gt; não está instalado, instale-o para iniciar novos sites.</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="pt-PT" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Deseja mesmo excluir "{0}"? Esta ação não pode ser desfeita.</target></trans-unit>
       <trans-unit id="domain.new" xml:space="preserve">
 				<source>New domain</source>
-			<target xml:lang="pt-PT" state="needs-translation">New domain</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Domínio novo</target></trans-unit>
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
-			<target xml:lang="pt-PT" state="needs-translation">Edit domain</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Editar domínio</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="pt-PT" state="needs-translation">Configuration</target></trans-unit>
