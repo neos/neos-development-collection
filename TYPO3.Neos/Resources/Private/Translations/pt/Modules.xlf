@@ -246,28 +246,28 @@
 			<target xml:lang="pt-PT" state="translated">Não foram registrados quaisquer eventos que poderiam ser exibido neste histórico ainda.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} criou o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} removeu o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} criou a variante {1} of the {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} modificou o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} moveu o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} copiou o {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} renomeou o {1} "{2}" to "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target xml:lang="pt-PT" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">{0} modificou o conteúdo no {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="pt-PT" state="translated">{0} criou um novo usuário "{1}" para {2}.</target></trans-unit>
@@ -642,7 +642,7 @@
 			<target xml:lang="pt-PT" state="needs-translation">Title</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="pt-PT" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Etiqueta</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="pt-PT" state="needs-translation">Caption</target></trans-unit>
@@ -735,7 +735,7 @@
 			<target xml:lang="pt-PT" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="pt-PT" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Procurar</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="pt-PT" state="needs-translation">{0} items</target></trans-unit>
@@ -894,7 +894,7 @@
 			<target xml:lang="pt-PT" state="needs-translation">Cannot upload the file</target></trans-unit>
       <trans-unit id="media.noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target xml:lang="pt-PT" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Nenhum ficheiro selecionado</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="pt-PT" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
@@ -958,10 +958,10 @@
       <target xml:lang="pt-PT" state="needs-translation">Preview current file</target></trans-unit>
       <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
         <source>No access to workspace "{0}"</source>
-      <target xml:lang="pt-PT" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+      <target xml:lang="pt-PT" state="translated">Sem acesso ao espaço de trabalho "{0}"</target></trans-unit>
       <trans-unit id="media.missingDocumentNode" xml:space="preserve">
         <source>No document node found for this node</source>
-      <target xml:lang="pt-PT" state="needs-translation">No document node found for this node</target></trans-unit>
+      <target xml:lang="pt-PT" state="translated">Não foi encontrado nenhum documento node para este node</target></trans-unit>
     </body>
   </file>
 </xliff>
