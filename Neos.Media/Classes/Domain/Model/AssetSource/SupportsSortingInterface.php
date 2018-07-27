@@ -11,6 +11,9 @@ namespace Neos\Media\Domain\Model\AssetSource;
  * source code.
  */
 
+/**
+ * An interface for Asset Proxy Repositories which support sorting.
+ */
 interface SupportsSortingInterface
 {
     /**
