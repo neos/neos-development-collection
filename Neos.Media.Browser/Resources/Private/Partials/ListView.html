@@ -84,70 +84,70 @@
 			'deleteLabel': '{neos:backend.translate(id: \'delete\', package: \'Neos.Neos\')}',
 			'deleteAssetLabel': '{neos:backend.translate(id: \'deleteAsset\', package: \'Neos.Media.Browser\')}'
 		}">
-            <f:for each="{paginatedAssetProxies}" as="assetProxy" iteration="iterator">
-                <tr class="asset draggable-asset{f:if(condition: '{assetProxy.tags -> f:count()} === 0', then: ' neos-media-untagged')}"
-                    data-asset-identifier="{assetProxy.identifier}"
-                    data-local-asset-identifier="{assetProxy.localAssetIdentifier}"
-                    data-asset-source-identifier="{assetProxy.assetSource.identifier}"
-                >
+			<f:for each="{paginatedAssetProxies}" as="assetProxy" iteration="iterator">
+				<tr class="asset draggable-asset{f:if(condition: '{assetProxy.tags -> f:count()} === 0', then: ' neos-media-untagged')}"
+					data-asset-identifier="{assetProxy.identifier}"
+					data-local-asset-identifier="{assetProxy.localAssetIdentifier}"
+					data-asset-source-identifier="{assetProxy.assetSource.identifier}"
+				>
 					<td>
-                        <div class="neos-list-thumbnail"
-                             data-neos-toggle="popover"
-                             data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}"
-                             data-trigger="hover"
-                             data-title="{f:if(condition: assetProxy.widthInPixels, then: '{assetProxy.widthInPixels} x {assetProxy.heightInPixels}')}"
-                             data-html="true"
-                             data-content="{mediaBrowser:thumbnail(assetProxy: assetProxy, alt: '') -> f:format.htmlentities()}"
-                             alt=""
-                             width="250"
-                             height="250">
-                            <img src="{assetProxy.thumbnailUri}" alt="{assetProxy.label}" width="250" height="250"/>
+						<div class="neos-list-thumbnail"
+							 data-neos-toggle="popover"
+							 data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}"
+							 data-trigger="hover"
+							 data-title="{f:if(condition: assetProxy.widthInPixels, then: '{assetProxy.widthInPixels} x {assetProxy.heightInPixels}')}"
+							 data-html="true"
+							 data-content="{mediaBrowser:thumbnail(assetProxy: assetProxy, alt: '') -> f:format.htmlentities()}"
+							 alt=""
+							 width="250"
+							 height="250">
+							<img src="{assetProxy.thumbnailUri}" alt="{assetProxy.label}" width="250" height="250"/>
 						</div>
 					</td>
-                    <td class="asset-label"><span data-neos-toggle="tooltip" title="{assetProxy.label}"><f:format.crop maxCharacters="50">{assetProxy.label}</f:format.crop></span></td>
-                    <td><span title="{assetProxy.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{assetProxy.lastModified -> m:format.relativeDate()}</span></td>
-                    <td>{assetProxy.fileSize -> f:format.bytes()}</td>
-                    <td><span class="neos-label">{assetProxy.mediaType}</span></td>
+					<td class="asset-label"><span data-neos-toggle="tooltip" title="{assetProxy.label}"><f:format.crop maxCharacters="50">{assetProxy.label}</f:format.crop></span></td>
+					<td><span title="{assetProxy.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{assetProxy.lastModified -> m:format.relativeDate()}</span></td>
+					<td>{assetProxy.fileSize -> f:format.bytes()}</td>
+					<td><span class="neos-label">{assetProxy.mediaType}</span></td>
 					<td class="tags">
-                        <f:for each="{assetProxy.tags}" as="tag">
+						<f:for each="{assetProxy.tags}" as="tag">
 							<span class="neos-label">{tag.label}</span>
 						</f:for>
 					</td>
 					<td class="neos-action">
-						<div class="neos-dropdown" id="neos-asset-actionmenu-{assetProxy.localAssetIdentifier}">
-							<a class="dropdown-toggle neos-button neos-button-mini" href="#" data-neos-toggle="dropdown" data-target="#neos-asset-actionmenu-{assetProxy.localAssetIdentifier}">
+						<div class="neos-dropdown" id="neos-asset-actionmenu-{assetProxy.identifier}">
+							<a class="dropdown-toggle neos-button neos-button-mini" href="#" data-neos-toggle="dropdown" data-target="#neos-asset-actionmenu-{assetProxy.identifier}">
 								<i class="fas fa-ellipsis-h"></i>
 							</a>
 							<div class="neos-dropdown-menu-list neos-pull-right" role="menu">
 								<ul>
-                                    <f:if condition="!{activeAssetSource.readOnly}">
-                                        <f:then>
-									<li>
-										<f:link.action action="edit" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" title="{editAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
-											<i class="fas fa-edit icon-white"></i> {editLabel}
-										</f:link.action>
-									</li>
-									<f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
-										<li>
-											<f:link.action action="replaceAssetResource" arguments="{assetSourceIdentifier: activeAssetSource.identifier, asset: assetProxy.asset}" data="{asset-identifier: '{assetProxy.identifier}'}" title="{replaceAssetResourceLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
-												<i class="fas fa-random icon-white"></i> {replaceAssetResourceLabel}
-											</f:link.action>
-										</li>
-									</f:security.ifAccess>
-									<li>
-                                        <a href="#" class="neos-media-delete" title="{deleteAssetLabel}" data-neos-toggle="tooltip" data-placement="left" data-modal="delete-asset-modal" data-label="{assetProxy.label -> f:format.crop(maxCharacters: 50)}" data-object-identifier="{assetProxy.identifier}">
-											<i class="fas fa-trash icon-white"></i> {deleteLabel}
-										</a>
-                                        </f:then>
-									</li>
-                                        <f:else>
-                                            <li>
-                                                <f:link.action action="show" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" title="{viewAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
-                                                    <i class="icon-eye icon-white"></i> {viewLabel}
-                                                </f:link.action>
-                                            </li>
-                                        </f:else>
-                                    </f:if>
+									<f:if condition="!{activeAssetSource.readOnly}">
+										<f:then>
+											<li>
+												<f:link.action action="edit" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" title="{editAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+													<i class="fas fa-edit icon-white"></i> {editLabel}
+												</f:link.action>
+											</li>
+											<f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
+												<li>
+													<f:link.action action="replaceAssetResource" arguments="{assetSourceIdentifier: activeAssetSource.identifier, asset: assetProxy.asset}" data="{asset-identifier: '{assetProxy.identifier}'}" title="{replaceAssetResourceLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+														<i class="fas fa-random icon-white"></i> {replaceAssetResourceLabel}
+													</f:link.action>
+												</li>
+											</f:security.ifAccess>
+											<li>
+												<a href="#" class="neos-media-delete" title="{deleteAssetLabel}" data-neos-toggle="tooltip" data-placement="left" data-modal="delete-asset-modal" data-label="{assetProxy.label -> f:format.crop(maxCharacters: 50)}" data-object-identifier="{assetProxy.identifier}">
+													<i class="fas fa-trash icon-white"></i> {deleteLabel}
+												</a>
+											</li>
+										</f:then>
+										<f:else>
+											<li>
+												<f:link.action action="show" arguments="{assetSourceIdentifier: activeAssetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" title="{viewAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+													<i class="fas fa-eye icon-white"></i> {viewLabel}
+												</f:link.action>
+											</li>
+										</f:else>
+									</f:if>
 								</ul>
 							</div>
 						</div>
