@@ -8,10 +8,10 @@
 			<target xml:lang="pt-PT" state="translated">Auto-Publicar</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="pt-PT" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Publicar automaticamente para {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target xml:lang="pt-PT" state="needs-translation">Review changes</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Rever alterações</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="pt-PT" state="translated">Aplicar</target></trans-unit>
@@ -26,19 +26,19 @@
 			<target xml:lang="pt-PT" state="needs-translation">Back</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="pt-PT" state="needs-translation">Choose</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Escolha</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="pt-PT" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Digite para pesquisar</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="pt-PT" state="translated">Conteúdo</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target xml:lang="pt-PT" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Node</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target xml:lang="pt-PT" state="needs-translation">Content View</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Visualização de Conteúdo</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target xml:lang="pt-PT" state="translated">Criar depois</target></trans-unit>
@@ -86,19 +86,19 @@
 			<target xml:lang="pt-PT" state="needs-translation">Hide</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="pt-PT" state="needs-translation">Unhide</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Tornar visível</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="pt-PT" state="needs-translation">into</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">em</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="pt-PT" state="needs-translation">before</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">antes</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="pt-PT" state="needs-translation">after</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">após</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="pt-PT" state="needs-translation">Loading</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">A carregar</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
 			<target xml:lang="pt-PT" state="translated">Novo Depois</target></trans-unit>
@@ -113,10 +113,10 @@
 			<target xml:lang="pt-PT" state="translated">Navegar</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="pt-PT" state="needs-translation">OK</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="pt-PT" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Página</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
 			<target xml:lang="pt-PT" state="translated">Colar</target></trans-unit>
@@ -140,22 +140,22 @@
 			<target xml:lang="pt-PT" state="translated">Publicar</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="pt-PT" state="needs-translation">Publish to {0}</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Publicar para {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="pt-PT" state="needs-translation">Publish all changes for current page</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Publicar todas as alterações para a página atual</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="pt-PT" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Não é possível publicar porque a área de trabalho alvo é somente para leitura</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
 			<target xml:lang="pt-PT" state="needs-translation">Select target workspace</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="pt-PT" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">A publicar</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target xml:lang="pt-PT" state="needs-translation">Published</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Publicado</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
 			<target xml:lang="pt-PT" state="needs-translation">Toggle publish menu</target></trans-unit>
@@ -182,7 +182,7 @@
 			<target xml:lang="pt-PT" state="translated">Salvo</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="pt-PT" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Procurar</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
 			<target xml:lang="pt-PT" state="translated">Ativar/Desativar inspetor</target></trans-unit>
@@ -194,22 +194,22 @@
 			<target xml:lang="pt-PT" state="translated">Você</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="pt-PT" state="needs-translation">[no title]</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">[sem título]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="pt-PT" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Etiqueta</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Content Type</source>
-			<target xml:lang="pt-PT" state="needs-translation">Content Type</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Tipo de Conteúdo</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="pt-PT" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Caminho</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative Path</source>
 			<target xml:lang="pt-PT" state="needs-translation">Relative Path</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target xml:lang="pt-PT" state="needs-translation">Version</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Versão</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="pt-PT" state="needs-translation">This operation cannot be undone.</target></trans-unit>
@@ -218,13 +218,13 @@
 			<target xml:lang="pt-PT" state="needs-translation">Asset</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target xml:lang="pt-PT" state="needs-translation">Created</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Criado</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target xml:lang="pt-PT" state="needs-translation">Last modification</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Última Modificação</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target xml:lang="pt-PT" state="needs-translation">Last publication</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Última publicação</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="pt-PT" state="needs-translation">Identifier</target></trans-unit>
@@ -236,7 +236,7 @@
 			<target xml:lang="pt-PT" state="needs-translation">Workspace</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve">
 				<source>Structure</source>
-			<target xml:lang="pt-PT" state="needs-translation">Structure</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Estrutura</target></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
 			<target xml:lang="pt-PT" state="needs-translation">Toggle context structure</target></trans-unit>
@@ -245,7 +245,7 @@
 			<target xml:lang="pt-PT" state="needs-translation">Filter</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
-			<target xml:lang="pt-PT" state="needs-translation">Toggle menu</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Alternar o menu</target></trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
 			<target xml:lang="pt-PT" state="needs-translation">Load error!</target></trans-unit>
@@ -272,16 +272,16 @@
 			<target xml:lang="pt-PT" state="needs-translation">Document</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target xml:lang="pt-PT" state="needs-translation">Reference</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Referência</target></trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
-			<target xml:lang="pt-PT" state="needs-translation">Host</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Servidor</target></trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
-			<target xml:lang="pt-PT" state="needs-translation">Scheme</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Esquema</target></trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
-			<target xml:lang="pt-PT" state="needs-translation">Port</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Porta</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
 			<target xml:lang="pt-PT" state="needs-translation">Primary</target></trans-unit>
@@ -291,10 +291,10 @@
 			<target xml:lang="pt-PT" state="needs-translation">General</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
-			<target xml:lang="pt-PT" state="needs-translation">Structure</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Estrutura</target></trans-unit>
       <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
 				<source>Plugins</source>
-			<target xml:lang="pt-PT" state="needs-translation">Plugins</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Extensões</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
