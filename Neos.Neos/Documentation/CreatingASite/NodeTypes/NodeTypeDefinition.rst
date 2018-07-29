@@ -5,7 +5,8 @@ Node Type Definition
 
 Each Neos ContentRepository Node (we'll just call it Node in the remaining text) has a specific
 *node type*. Node Types can be defined in any package by declaring them in
-``Configuration/NodeTypes.yaml``.
+``Configuration/NodeTypes.yaml``. If you have a rather large list of Node Types, you can also split your
+NodeType definitions into multiple ``Configuration/NodeTypes.*.yaml`` files for organizing them.
 
 Each node type can have *one or multiple parent types*. If these are specified,
 all properties and settings of the parent types are inherited.
