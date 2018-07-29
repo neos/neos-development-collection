@@ -356,9 +356,13 @@ HELPTEXT;
                     try {
                         $childNode = $node->getNode($childNodeName);
                         $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $node->getIdentifier());
-                        if ($childNode === null) {
+                        if ($childNode === null || $childNode->isRemoved() === true) {
                             if ($dryRun === false) {
-                                $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
+                                if ($childNode === null) {
+                                    $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
+                                } else {
+                                    $node->setRemoved(false);
+                                }
                                 $this->output->outputLine('Auto created node named "%s" in "%s"', array($childNodeName, $node->getPath()));
                             } else {
                                 $this->output->outputLine('Missing node named "%s" in "%s"', array($childNodeName, $node->getPath()));
@@ -659,9 +663,10 @@ HELPTEXT;
      *
      * @param string $workspaceName
      * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    protected function removeOrphanNodes($workspaceName, $dryRun)
+    protected function removeOrphanNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         $this->output->outputLine('Checking for orphan nodes ...');
 
@@ -676,7 +681,7 @@ HELPTEXT;
             $workspace = $workspace->getBaseWorkspace();
         }
 
-        $nodes = $queryBuilder
+        $query = $queryBuilder
             ->select('n')
             ->from(NodeData::class, 'n')
             ->leftJoin(
@@ -687,12 +692,16 @@ HELPTEXT;
             )
             ->where('n2.path IS NULL')
             ->andWhere($queryBuilder->expr()->not('n.path = :slash'))
-            ->andWhere('n.workspace = :workspace')
-            ->setParameters(new ArrayCollection(array(
-                  new Parameter('workspaceList', $workspaceList, Connection::PARAM_STR_ARRAY),
-                  new Parameter('slash', '/'),
-                  new Parameter('workspace', $workspaceName)
-                    )))
+            ->andWhere('n.workspace = :workspace');
+        $parameters = ['workspaceList' => $workspaceList, 'slash' => '/', 'workspace' => $workspaceName];
+
+        if ($nodeType !== null) {
+            $query->andWhere('n.nodeType = :nodetype');
+            $parameters['nodetype'] = $nodeType;
+        }
+
+        $nodes = $query
+            ->setParameters($parameters)
             ->getQuery()->getArrayResult();
 
         $nodesToBeRemoved = count($nodes);
