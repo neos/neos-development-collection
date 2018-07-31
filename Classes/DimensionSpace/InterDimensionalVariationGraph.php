@@ -20,14 +20,9 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
 class InterDimensionalVariationGraph
 {
     /**
-     * @var Dimension\ContentDimensionZookeeper
+     * @var ContentDimensionZookeeper
      */
     protected $contentDimensionZookeeper;
-
-    /**
-     * @var AllowedDimensionSubspace
-     */
-    protected $allowedDimensionSubspace;
 
     /**
      * @var Dimension\ContentDimensionSourceInterface
@@ -65,23 +60,27 @@ class InterDimensionalVariationGraph
     protected $primaryGeneralizations;
 
     /**
+     * @var array|DimensionSpacePoint[]
+     */
+    protected $rootGeneralizations;
+
+    /**
      * @var int
      */
     protected $weightNormalizationBase;
 
-    public function __construct(Dimension\ContentDimensionSourceInterface $contentDimensionSource, Dimension\ContentDimensionZookeeper $contentDimensionZookeeper, AllowedDimensionSubspace $allowedDimensionSubspace)
+    public function __construct(Dimension\ContentDimensionSourceInterface $contentDimensionSource, ContentDimensionZookeeper $contentDimensionZookeeper)
     {
         $this->contentDimensionSource = $contentDimensionSource;
         $this->contentDimensionZookeeper = $contentDimensionZookeeper;
-        $this->allowedDimensionSubspace = $allowedDimensionSubspace;
     }
 
     protected function initializeWeightedDimensionSpacePoints(): void
     {
         $this->weightedDimensionSpacePoints = [];
         foreach ($this->contentDimensionZookeeper->getAllowedCombinations() as $dimensionValues) {
-            $subgraph = new WeightedDimensionSpacePoint($dimensionValues);
-            $this->weightedDimensionSpacePoints[$subgraph->getIdentityHash()] = $subgraph;
+            $weightedDimensionSpacePoint = new WeightedDimensionSpacePoint($dimensionValues);
+            $this->weightedDimensionSpacePoints[$weightedDimensionSpacePoint->getIdentityHash()] = $weightedDimensionSpacePoint;
         }
     }
 
@@ -121,6 +120,21 @@ class InterDimensionalVariationGraph
     }
 
     /**
+     * @return array|DimensionSpacePoint[]
+     */
+    public function getRootGeneralizations(): array
+    {
+        $rootGeneralizations = [];
+        foreach ($this->getWeightedDimensionSpacePoints() as $dimensionSpacePointHash => $weightedDimensionSpacePoint) {
+            if (empty($this->getIndexedGeneralizations($weightedDimensionSpacePoint->getDimensionSpacePoint()))) {
+                $rootGeneralizations[$dimensionSpacePointHash] = $weightedDimensionSpacePoint->getDimensionSpacePoint();
+            }
+        }
+
+        return $rootGeneralizations;
+    }
+
+    /**
      * @return int
      */
     protected function determineWeightNormalizationBase(): int
@@ -155,7 +169,7 @@ class InterDimensionalVariationGraph
                 $dimension = $this->contentDimensionSource->getDimension($dimensionIdentifier);
                 foreach ($dimension->getSpecializations($contentDimensionValue) as $specializedValue) {
                     $specializedDimensionSpacePoint = $generalization->getDimensionSpacePoint()->vary($dimensionIdentifier, (string) $specializedValue);
-                    if (!$this->allowedDimensionSubspace->contains($specializedDimensionSpacePoint)) {
+                    if (!$this->contentDimensionZookeeper->getAllowedDimensionSubspace()->contains($specializedDimensionSpacePoint)) {
                         continue;
                     }
                     $specialization = $this->getWeightedDimensionSpacePointByDimensionSpacePoint($specializedDimensionSpacePoint);
@@ -170,6 +184,10 @@ class InterDimensionalVariationGraph
                     }
                 }
             }
+        }
+
+        foreach ($this->weightedGeneralizations as $specializationHash => &$generalizationsByWeight) {
+            ksort($generalizationsByWeight);
         }
     }
 
@@ -270,7 +288,7 @@ class InterDimensionalVariationGraph
         bool $includeOrigin = true,
         DimensionSpacePointSet $excludedSet = null
     ): DimensionSpacePointSet {
-        if (!$this->allowedDimensionSubspace->contains($origin)) {
+        if (!$this->contentDimensionZookeeper->getAllowedDimensionSubspace()->contains($origin)) {
             throw new Exception\DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace', $origin), 1505929456);
         } else {
             $specializations = [];

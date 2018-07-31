@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension\Fixtures;
+namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace\Fixtures;
 
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.

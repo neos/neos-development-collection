@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
  *
  * E.g.: {[language => es, country => ar], [language => es, country => es]}
  */
-final class DimensionSpacePointSet implements \JsonSerializable
+final class DimensionSpacePointSet implements \JsonSerializable, \Iterator
 {
     /**
      * @var array|DimensionSpacePoint[]
@@ -59,6 +59,31 @@ final class DimensionSpacePointSet implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->points;
+    }
+
+    public function current(): ?DimensionSpacePoint
+    {
+        return current($this->points);
+    }
+
+    public function key(): string
+    {
+        return key($this->points);
+    }
+
+    public function next(): void
+    {
+        next($this->points);
+    }
+
+    public function rewind(): ?DimensionSpacePoint
+    {
+        return reset($this->points);
+    }
+
+    public function valid(): bool
+    {
+        return key($this->points) !== null;
     }
 
     public function __toString(): string

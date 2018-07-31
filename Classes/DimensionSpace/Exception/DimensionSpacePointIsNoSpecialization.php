@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
+namespace Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.

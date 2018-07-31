@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
+namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\DimensionSpace;
 
 /*
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\DimensionSpace\Tests\Unit\Dimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -20,7 +21,7 @@ use Neos\Flow\Tests\UnitTestCase;
 class ContentDimensionZookeeperTest extends UnitTestCase
 {
     /**
-     * @var Dimension\ContentDimensionZookeeper
+     * @var DimensionSpace\ContentDimensionZookeeper
      */
     protected $subject;
 
@@ -34,7 +35,7 @@ class ContentDimensionZookeeperTest extends UnitTestCase
         parent::setUp();
 
         $this->dimensionSource = new Fixtures\ExampleDimensionSource();
-        $this->subject = new Dimension\ContentDimensionZookeeper($this->dimensionSource);
+        $this->subject = new DimensionSpace\ContentDimensionZookeeper($this->dimensionSource);
     }
 
     /**

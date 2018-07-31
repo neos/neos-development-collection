@@ -615,24 +615,20 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
     protected function setUpVariationExample()
     {
         $dimensionSource = new Fixtures\VariationExampleDimensionSource();
-        $dimensionZookeeper = new Dimension\ContentDimensionZookeeper($dimensionSource);
-        $allowedSubspace = new DimensionSpace\AllowedDimensionSubspace($dimensionZookeeper);
+        $dimensionZookeeper = new DimensionSpace\ContentDimensionZookeeper($dimensionSource);
         $this->subject = $this->getAccessibleMock(DimensionSpace\InterDimensionalVariationGraph::class, ['dummy'], [
             $dimensionSource,
-            $dimensionZookeeper,
-            $allowedSubspace
+            $dimensionZookeeper
         ]);
     }
 
     protected function setUpNullExample()
     {
         $dimensionSource = new Fixtures\NullExampleDimensionSource();
-        $dimensionZookeeper = new Dimension\ContentDimensionZookeeper($dimensionSource);
-        $allowedSubspace = new DimensionSpace\AllowedDimensionSubspace($dimensionZookeeper);
+        $dimensionZookeeper = new DimensionSpace\ContentDimensionZookeeper($dimensionSource);
         $this->subject = $this->getAccessibleMock(DimensionSpace\InterDimensionalVariationGraph::class, ['dummy'], [
             $dimensionSource,
-            $dimensionZookeeper,
-            $allowedSubspace
+            $dimensionZookeeper
         ]);
     }
 
@@ -653,12 +649,10 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
         ObjectAccess::setProperty($secondDimension, 'maximumDepth', $secondDepth, true);
 
         $dimensionSource = $this->createDimensionSourceMock(['first' => $firstDimension, 'second' => $secondDimension]);
-        $dimensionZookeeper = new Dimension\ContentDimensionZookeeper($dimensionSource);
-        $allowedSubspace = new DimensionSpace\AllowedDimensionSubspace($dimensionZookeeper);
+        $dimensionZookeeper = new DimensionSpace\ContentDimensionZookeeper($dimensionSource);
         $graph = $this->getAccessibleMock(DimensionSpace\InterDimensionalVariationGraph::class, ['dummy'], [
             $dimensionSource,
-            $dimensionZookeeper,
-            $allowedSubspace
+            $dimensionZookeeper
         ]);
 
         $this->assertSame(max($firstDepth->getDepth(), $secondDepth->getDepth()) + 1, $graph->_call('determineWeightNormalizationBase'));
