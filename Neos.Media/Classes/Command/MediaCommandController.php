@@ -167,25 +167,30 @@ class MediaCommandController extends CommandController
         !$quiet && $this->output->progressStart($assetCount);
 
         foreach ($this->assetRepository->iterate($iterator) as $asset) {
-            if ($asset instanceof Asset && $asset->getUsageCount() === 0) {
-                if (!$asset instanceof AssetSourceAwareInterface) {
-                    continue;
-                }
-                if ($filterByAssetSourceIdentifier !== '' && $asset->getAssetSourceIdentifier() !== $filterByAssetSourceIdentifier) {
-                    continue;
-                }
-
-                $fileSize = str_pad(Files::bytesToSizeString($asset->getResource()->getFileSize()), 9, ' ', STR_PAD_LEFT);
-
-                $unusedAssets[] = $asset;
-                $tableRowsByAssetSource[$asset->getAssetSourceIdentifier()][] = [
-                    $asset->getIdentifier(),
-                    $asset->getResource()->getFilename(),
-                    $fileSize
-                ];
-                $unusedAssetCount++;
-                $unusedAssetsTotalSize += $asset->getResource()->getFileSize();
+            if (!($asset instanceof Asset)) {
+                continue;
             }
+            if (!$asset instanceof AssetSourceAwareInterface) {
+                continue;
+            }
+            if ($filterByAssetSourceIdentifier !== '' && $asset->getAssetSourceIdentifier() !== $filterByAssetSourceIdentifier) {
+                continue;
+            }
+            if ($asset->getUsageCount() !== 0) {
+                continue;
+            }
+
+            $fileSize = str_pad(Files::bytesToSizeString($asset->getResource()->getFileSize()), 9, ' ', STR_PAD_LEFT);
+
+            $unusedAssets[] = $asset;
+            $tableRowsByAssetSource[$asset->getAssetSourceIdentifier()][] = [
+                $asset->getIdentifier(),
+                $asset->getResource()->getFilename(),
+                $fileSize
+            ];
+            $unusedAssetCount++;
+            $unusedAssetsTotalSize += $asset->getResource()->getFileSize();
+
             !$quiet && $this->output->progressAdvance(1);
         }
 
