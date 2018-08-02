@@ -1,0 +1,96 @@
+`4.0.7 (2018-08-02) <https://github.com/neos/neos-development-collection/releases/tag/4.0.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+` BUGFIX: Add missing support for inline.editorOptions.placeholder i18n <https://github.com/neos/neos-development-collection/pull/2125>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+This adds the possibility to use i18n translation text at inline properties generated with the new inline.editorOptions property.
+
+This is a follow on of #2120
+
+`BUGFIX: Fix readonly asset source action buttons <https://github.com/neos/neos-development-collection/pull/2119>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This fixes an issue with the action buttons shown in the list view
+of the media browser. The buttons were not referenced correctly to
+the respective line if the asset source was a read-only source, which
+resulted in only one "view" button being shown for the whole list of
+assets.
+
+* Packages: ``BaseMixins`` ``Browser`` ``Neos`` ``NodeTypes``
+
+`TASK: Corrected description of the slice operation <https://github.com/neos/neos-development-collection/pull/2117>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Resolves issue #1322
+
+Corresponds to PR #2113, but for Neos 2.3
+
+`TASK: Un-remove removed auto created child nodes in node repair <https://github.com/neos/neos-development-collection/pull/1995>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+When running the `createMissingChildNodes` in the `node:repair` command, check if a child node exists but has been removed, and if so un-remove it.
+
+`TASK: Support --node-type for orphanRemoval in node:repair <https://github.com/neos/neos-development-collection/pull/2053>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The oprhanRemoval in `node:repair` ignored the `--node-type` flag, leading
+to confusion. This adds the needed code to use a given node type flag.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Neos``
+
+`TASK: Change all uppercase TRUE and FALSE to lowercase in YAML <https://github.com/neos/neos-development-collection/pull/2098>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+This was a thing at some time I remember and I've found many leftover uppercase true and false.
+
+* Packages: ``ContentRepository`` ``Fusion`` ``Neos``
+
+`TASK: Change all uppercase TRUE and FALSE to lowercase in PHP <https://github.com/neos/neos-development-collection/pull/2099>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This was a thing at some time I remember and I've found many leftover uppercase true and false.
+
+related to #2098 
+
+* Packages: ``ContentRepository``
+
+`TASK: Change all uppercase TRUE and FALSE to lowercase in fusion <https://github.com/neos/neos-development-collection/pull/2100>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+This was a thing at some time I remember and I've found many leftover uppercase true and false.
+
+related to #2098
+
+* Packages: ``Fusion`` ``Neos``
+
+`TASK: Adapt adjusted NodeTypes from UI-package <https://github.com/neos/neos-development-collection/pull/2105>`_
+-----------------------------------------------------------------------------------------------------------------
+
+As the UI package adjusted some NodeTypes and the old UI
+is deprecated since 4.0 we can put this into the original
+NodeType configuration
+
+related: https://github.com/neos/neos-ui/pull/1925
+
+* Packages: ``Neos``
+
+`TASK: Remove lastModified as it is not used anywhere <https://github.com/neos/neos-development-collection/pull/2106>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+As @kitsunet figured out this property should be removed completely as it is not used in any way.
+
+* Packages: ``Media``
+
+`TASK: Enhance Code quality <https://github.com/neos/neos-development-collection/pull/2102>`_
+---------------------------------------------------------------------------------------------
+
+I enhanced code quality with stuff I noticed and grouped them by commit, should be pretty clear (:
+
+* Packages: ``Media`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.0.6...4.0.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
