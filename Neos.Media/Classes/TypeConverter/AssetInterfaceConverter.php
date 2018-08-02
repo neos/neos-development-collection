@@ -177,7 +177,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
                 throw new \InvalidArgumentException('A property mapping configuration must be given, not NULL.', 1421443628);
             }
             if ($configuration->getConfigurationValue(ObjectConverter::class, self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== true) {
-                throw new InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1421443641);
+                throw new InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to true.', 1421443641);
             }
 
             if ($targetType !== $originalTargetType && is_a($targetType, $originalTargetType, true) === false) {

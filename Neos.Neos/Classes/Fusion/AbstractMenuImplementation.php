@@ -19,7 +19,7 @@ use Neos\Fusion\FusionObjects\TemplateImplementation;
  * Base class for Menu and DimensionsMenu
  *
  * Main Options:
- *  - renderHiddenInIndex: if TRUE, hidden-in-index nodes will be shown in the menu. FALSE by default.
+ *  - renderHiddenInIndex: if true, hidden-in-index nodes will be shown in the menu. false by default.
  */
 abstract class AbstractMenuImplementation extends TemplateImplementation
 {
@@ -129,7 +129,7 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
     }
 
     /**
-     * Return TRUE/FALSE if the node is currently hidden or not in the menu; taking the "renderHiddenInIndex" configuration
+     * Return true/false if the node is currently hidden or not in the menu; taking the "renderHiddenInIndex" configuration
      * of the Menu Fusion object into account.
      *
      * This method needs to be called inside buildItems() in the subclasses.

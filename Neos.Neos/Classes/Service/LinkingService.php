@@ -217,8 +217,8 @@ class LinkingService
      * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
      * @param string $section
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-     * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
+     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
+     * @param boolean $resolveShortcuts INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
      * @return string The rendered URI
      * @throws \InvalidArgumentException if the given node/baseNode is not valid
      * @throws NeosException if no URI could be resolved for the given node
@@ -233,7 +233,7 @@ class LinkingService
         if (is_string($node)) {
             $nodeString = $node;
             if ($nodeString === '') {
-                throw new NeosException(sprintf('Empty strings can not be resolved to nodes.', $nodeString), 1415709942);
+                throw new NeosException(sprintf('Empty strings can not be resolved to nodes.'), 1415709942);
             }
             preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $nodeString, $matches);
             if (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '') {

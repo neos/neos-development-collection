@@ -29,9 +29,9 @@ interface ContextFactoryInterface
      *        'workspaceName' => 'live',
      *        'currentDateTime' => new \Neos\Flow\Utility\Now(),
      *        'dimensions' => array(),
-     *        'invisibleContentShown' => FALSE,
-     *        'removedContentShown' => FALSE,
-     *        'inaccessibleContentShown' => FALSE
+     *        'invisibleContentShown' => false,
+     *        'removedContentShown' => false,
+     *        'inaccessibleContentShown' => false
      * )
      *
      * @param array $contextConfiguration

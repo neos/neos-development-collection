@@ -313,7 +313,7 @@ class Asset implements AssetInterface
      * Add a single tag to this asset
      *
      * @param Tag $tag The tag to add
-     * @return boolean TRUE if the tag added was new, FALSE if it already existed
+     * @return boolean true if the tag added was new, false if it already existed
      */
     public function addTag(Tag $tag)
     {

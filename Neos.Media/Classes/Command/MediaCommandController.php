@@ -192,7 +192,7 @@ class MediaCommandController extends CommandController
         !$quiet && $this->output->progressFinish();
 
         if ($unusedAssetCount === 0) {
-            !$quiet && $this->output->outputLine(PHP_EOL . sprintf('No unused assets found.', $unusedAssetCount));
+            !$quiet && $this->output->outputLine(PHP_EOL . sprintf('No unused assets found.'));
             exit;
         }
 

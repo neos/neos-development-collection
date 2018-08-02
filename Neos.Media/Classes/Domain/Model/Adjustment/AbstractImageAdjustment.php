@@ -27,7 +27,7 @@ abstract class AbstractImageAdjustment extends AbstractAdjustment implements Ima
      * Order in which the adjustment is applied to the ImageVariant
      *
      * @var integer
-     * @ORM\Column(nullable = FALSE)
+     * @ORM\Column(nullable = false)
      */
     protected $position;
 

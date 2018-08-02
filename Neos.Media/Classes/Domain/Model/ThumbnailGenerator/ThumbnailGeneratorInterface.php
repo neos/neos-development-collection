@@ -30,7 +30,7 @@ interface ThumbnailGeneratorInterface
 
     /**
      * @param Thumbnail $thumbnail
-     * @return boolean TRUE if this ThumbnailGenerator can convert the given thumbnail, FALSE otherwise.
+     * @return boolean true if this ThumbnailGenerator can convert the given thumbnail, false otherwise.
      * @api
      */
     public function canRefresh(Thumbnail $thumbnail);

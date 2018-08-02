@@ -8,7 +8,7 @@ prototype(Neos.Neos:PrimaryContent) < prototype(Neos.Fusion:Case) {
 	@ignoreProperties = ${['nodePath']}
 
 	default {
-		condition = TRUE
+		condition = true
 		renderer = Neos.Neos:ContentCollection {
 			nodePath = ${nodePath}
 		}

@@ -9,6 +9,6 @@ prototype(Neos.Neos:ContentElementWrapping) {
 	value = ${value}
 	# Additional attributes in the form '<attribute-name>': '<attribute-value>' that will be rendered in the ContentElementWrapping
 	additionalAttributes = Neos.Fusion:RawArray
-	# This should only be set to TRUE to render the metadata for the currently rendered document node as that is treated differently.
-	renderCurrentDocumentMetadata = FALSE
+	# This should only be set to true to render the metadata for the currently rendered document node as that is treated differently.
+	renderCurrentDocumentMetadata = false
 }

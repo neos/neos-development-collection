@@ -74,7 +74,7 @@ class ResourceUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * Whether resource localization should be attempted or not, defaults to TRUE
+     * Whether resource localization should be attempted or not, defaults to true
      *
      * @return boolean
      */

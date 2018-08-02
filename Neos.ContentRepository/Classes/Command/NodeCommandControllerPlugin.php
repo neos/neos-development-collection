@@ -221,8 +221,8 @@ HELPTEXT;
      * @param ConsoleOutput $output An instance of ConsoleOutput which can be used for output or dialogues
      * @param NodeType $nodeType Only handle this node type (if specified)
      * @param string $workspaceName Only handle this workspace (if specified)
-     * @param boolean $dryRun If TRUE, don't do any changes, just simulate what you would do
-     * @param boolean $cleanup If FALSE, cleanup tasks are skipped
+     * @param boolean $dryRun If true, don't do any changes, just simulate what you would do
+     * @param boolean $cleanup If false, cleanup tasks are skipped
      * @param string $skip Skip the given check or checks (comma separated)
      * @param string $only Only execute the given check or checks (comma separated)
      * @return void
@@ -356,9 +356,13 @@ HELPTEXT;
                     try {
                         $childNode = $node->getNode($childNodeName);
                         $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $node->getIdentifier());
-                        if ($childNode === null) {
+                        if ($childNode === null || $childNode->isRemoved() === true) {
                             if ($dryRun === false) {
-                                $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
+                                if ($childNode === null) {
+                                    $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
+                                } else {
+                                    $node->setRemoved(false);
+                                }
                                 $this->output->outputLine('Auto created node named "%s" in "%s"', array($childNodeName, $node->getPath()));
                             } else {
                                 $this->output->outputLine('Missing node named "%s" in "%s"', array($childNodeName, $node->getPath()));
@@ -574,7 +578,7 @@ HELPTEXT;
         $this->output->outputLine();
         if (!$dryRun) {
             $self = $this;
-            $this->askBeforeExecutingTask('Abstract or undefined node types found, do you want to remove them?', function () use ($self, $nodes, $workspaceName, $removableNodesCount) {
+            $this->askBeforeExecutingTask('Abstract or undefined node types found, do you want to remove them?', function () use ($self, $nodes, $removableNodesCount) {
                 foreach ($nodes as $node) {
                     $self->removeNode($node['identifier'], $node['dimensionsHash']);
                 }
@@ -606,7 +610,7 @@ HELPTEXT;
 
         $nodes = array();
         $nodeExceptionCount = 0;
-        $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount, $queryBuilder) {
+        $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount) {
             try {
                 foreach ($node->getChildNodes() as $childNode) {
                     /** @var $childNode NodeInterface */
@@ -659,9 +663,10 @@ HELPTEXT;
      *
      * @param string $workspaceName
      * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    protected function removeOrphanNodes($workspaceName, $dryRun)
+    protected function removeOrphanNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         $this->output->outputLine('Checking for orphan nodes ...');
 
@@ -676,7 +681,7 @@ HELPTEXT;
             $workspace = $workspace->getBaseWorkspace();
         }
 
-        $nodes = $queryBuilder
+        $query = $queryBuilder
             ->select('n')
             ->from(NodeData::class, 'n')
             ->leftJoin(
@@ -687,12 +692,16 @@ HELPTEXT;
             )
             ->where('n2.path IS NULL')
             ->andWhere($queryBuilder->expr()->not('n.path = :slash'))
-            ->andWhere('n.workspace = :workspace')
-            ->setParameters(new ArrayCollection(array(
-                  new Parameter('workspaceList', $workspaceList, Connection::PARAM_STR_ARRAY),
-                  new Parameter('slash', '/'),
-                  new Parameter('workspace', $workspaceName)
-                    )))
+            ->andWhere('n.workspace = :workspace');
+        $parameters = ['workspaceList' => $workspaceList, 'slash' => '/', 'workspace' => $workspaceName];
+
+        if ($nodeType !== null) {
+            $query->andWhere('n.nodeType = :nodetype');
+            $parameters['nodetype'] = $nodeType;
+        }
+
+        $nodes = $query
+            ->setParameters($parameters)
             ->getQuery()->getArrayResult();
 
         $nodesToBeRemoved = count($nodes);
@@ -767,7 +776,7 @@ HELPTEXT;
             $this->output->outputLine();
             if (!$dryRun) {
                 $self = $this;
-                $this->askBeforeExecutingTask('Do you want to remove undefined node properties?', function () use ($self, $nodesWithUndefinedPropertiesNodes, $undefinedPropertiesCount, $workspaceName, $dryRun) {
+                $this->askBeforeExecutingTask('Do you want to remove undefined node properties?', function () use ($self, $nodesWithUndefinedPropertiesNodes, $undefinedPropertiesCount) {
                     foreach ($nodesWithUndefinedPropertiesNodes as $nodesWithUndefinedPropertiesNode) {
                         /** @var NodeInterface $node */
                         $node = $nodesWithUndefinedPropertiesNode['node'];
@@ -856,7 +865,7 @@ HELPTEXT;
             $this->output->outputLine();
             if (!$dryRun) {
                 $self = $this;
-                $this->askBeforeExecutingTask('Do you want to remove the broken entity references?', function () use ($self, $nodesWithBrokenEntityReferences, $brokenReferencesCount, $workspaceName, $dryRun) {
+                $this->askBeforeExecutingTask('Do you want to remove the broken entity references?', function () use ($self, $nodesWithBrokenEntityReferences, $brokenReferencesCount) {
                     foreach ($nodesWithBrokenEntityReferences as $nodeIdentifier => $properties) {
                         foreach ($properties as $propertyName => $nodeData) {
                             /** @var NodeData $nodeData */
@@ -984,7 +993,7 @@ HELPTEXT;
             $self = $this;
             $this->output->outputLine();
             $this->output->outputLine('Nodes with invalid dimension values found.' . PHP_EOL . 'You might solve this by migrating them to your current dimension configuration or by removing them.');
-            $this->askBeforeExecutingTask(sprintf('Do you want to remove %s node%s with invalid dimensions now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray, $workspaceName) {
+            $this->askBeforeExecutingTask(sprintf('Do you want to remove %s node%s with invalid dimensions now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray) {
                 foreach ($nodesArray as $nodeArray) {
                     $self->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
                 }

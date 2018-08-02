@@ -61,7 +61,7 @@ root {
 
 	default {
 		@position = 'end 9999'
-		condition = TRUE
+		condition = true
 		renderPath = '/page'
 	}
 

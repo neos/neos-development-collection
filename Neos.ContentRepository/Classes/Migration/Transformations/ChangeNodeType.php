@@ -44,7 +44,7 @@ class ChangeNodeType extends AbstractTransformation
 
     /**
      * If the given node has the property this transformation should work on, this
-     * returns TRUE if the given NodeType is registered with the NodeTypeManager and is not abstract.
+     * returns true if the given NodeType is registered with the NodeTypeManager and is not abstract.
      *
      * @param NodeData $node
      * @return boolean

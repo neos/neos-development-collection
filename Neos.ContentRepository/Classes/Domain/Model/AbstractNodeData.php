@@ -422,7 +422,7 @@ abstract class AbstractNodeData
     /**
      * Sets the "hidden" flag for this node.
      *
-     * @param boolean $hidden If TRUE, this Node will be hidden
+     * @param boolean $hidden If true, this Node will be hidden
      * @return void
      */
     public function setHidden($hidden)
@@ -494,7 +494,7 @@ abstract class AbstractNodeData
     /**
      * Sets if this node should be hidden in indexes, such as a site navigation.
      *
-     * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
+     * @param boolean $hidden true if it should be hidden, otherwise false
      * @return void
      */
     public function setHiddenInIndex($hidden)

@@ -159,7 +159,7 @@ class MenuHelper
      * Checks whether a module is enabled or disabled in the configuration
      *
      * @param string $modulePath name of the module including parent modules ("mainModule/subModule/subSubModule")
-     * @return boolean TRUE if module is enabled (default), FALSE otherwise
+     * @return boolean true if module is enabled (default), false otherwise
      */
     public function isModuleEnabled($modulePath)
     {

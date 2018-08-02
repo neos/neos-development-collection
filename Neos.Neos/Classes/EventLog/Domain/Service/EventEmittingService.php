@@ -67,7 +67,7 @@ class EventEmittingService
     protected $enabled;
 
     /**
-     * @return boolean TRUE if the event log is enabled and events should be captured
+     * @return boolean true if the event log is enabled and events should be captured
      */
     public function isEnabled()
     {

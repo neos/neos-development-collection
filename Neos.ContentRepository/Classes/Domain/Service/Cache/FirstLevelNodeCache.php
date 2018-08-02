@@ -42,7 +42,7 @@ class FirstLevelNodeCache
     /**
      * If the cache contains a node for the given path, it is returned.
      *
-     * Otherwise FALSE is returned.
+     * Otherwise false is returned.
      *
      * @param string $path
      * @return NodeInterface
@@ -75,7 +75,7 @@ class FirstLevelNodeCache
     /**
      * If the cache contains a node with the given identifier, it is returned.
      *
-     * Otherwise FALSE is returned.
+     * Otherwise false is returned.
      *
      * @param string $identifier
      * @return NodeInterface|boolean
