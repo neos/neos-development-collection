@@ -33,7 +33,7 @@ class BackendAssetsUtility
     }
 
     /**
-     * Returns TRUE if the minified Neos JavaScript sources should be loaded, FALSE otherwise.
+     * Returns true if the minified Neos JavaScript sources should be loaded, false otherwise.
      *
      * @return boolean
      */

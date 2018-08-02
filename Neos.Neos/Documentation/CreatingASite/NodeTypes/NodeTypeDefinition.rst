@@ -297,40 +297,71 @@ The following options are allowed:
       is advised to use `inline.editorOptions` instead.
 
     ``inline``
-      This section controls the text formatting options the user has available for this property.
 
-      **Note**: When using `inline.editorOptions` anything defined under the legacy `aloha` key for a
-      property is ignored. Keep this in mind when using supertypes and mixins.
+      ``editor``
+        A way to override default inline editor loaded for this property.
+        Two editors are available out of the box: `ckeditor` (loads CKeditor4) and `ckeditor5` (loads CKeditor5).
+        The default editor is configurable in Settings.yaml under the key `Neos.Neos.Ui.frontendConfiguration.defaultInlineEditor`.
+        It is strongly recommended to start using CKeditor5 today, as the CKeditor4 integration will be deprecated and removed in the future versions.
+        Additional custom inline editors are registered via the `inlineEditors` registry.
+        See :ref:`ui-extensibility` for the detailed information on the topic.
+
+      ``editorOptions``
+        This section controls the text formatting options the user has available for this property.
+
+        **Note**: When using `inline.editorOptions` anything defined under the legacy `aloha` key for a
+        property is ignored. Keep this in mind when using supertypes and mixins.
+
+        ``placeholder``
+          A text that is shown when the field is empty. Supports i18n.
+        
+        ``autoparagraph``
+          When configured to false, automatic creation of paragraphs is disabled for this property and <enter>
+          key would create soft line breaks instead (equivalent to configuring an editable on a span tag).
+
+        ``linking``
+          A way to configure additional options available for a link, e.g. target or rel attributes.
+
+        ``formatting``
+          Various formatting options (see example below for all available options).
 
       Example::
 
         inline:
           editorOptions:
-            placeholder: 'Insert text here'
+            placeholder: i18n
             autoparagraph: true
+            linking:
+              anchor: true
+              title: true
+              relNofollow: true
+              targetBlank: true
             formatting:
-              'strong': true
-              'em': true
-              'u': true
-              'sub': true
-              'sup': true
-              'p': true
-              'h1': true
-              'h2': true
-              'h3': true
-              'h4': false
-              'h5': false
-              'h6': false
-              'code': false
-              'removeFormat': true
-              'table': true
-              'a': true
-              'ul': true
-              'ol': true
-              'left': true
-              'center': true
-              'right': true
-              'justify': true
+              strong: true
+              em: true
+              u: true
+              sub: true
+              sup: true
+              del: true
+              p: true
+              h1: true
+              h2: true
+              h3: true
+              h4: true
+              h5: true
+              h6: true
+              pre: true
+              underline: true
+              strikethrough: true
+              removeFormat: true
+              left: true
+              right: true
+              center: true
+              justify: true
+              table: true
+              ol: true
+              ul: true
+              a: true
 
     ``inspector``
       These settings configure the inspector in the Neos UI for the property.

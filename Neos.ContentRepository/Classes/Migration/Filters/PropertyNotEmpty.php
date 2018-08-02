@@ -38,7 +38,7 @@ class PropertyNotEmpty implements FilterInterface
     }
 
     /**
-     * Returns TRUE if the given node has the property and the value is not empty.
+     * Returns true if the given node has the property and the value is not empty.
      *
      * @param NodeData $node
      * @return boolean

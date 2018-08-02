@@ -32,24 +32,24 @@ class CropImageAdjustment extends AbstractImageAdjustment
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $x;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $y;
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $width;
 
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $height;
 

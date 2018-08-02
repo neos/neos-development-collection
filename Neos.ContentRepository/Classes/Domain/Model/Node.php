@@ -1128,7 +1128,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * Checks if the given Node $name is configured as auto-created childNode in the NodeType configuration.
      *
      * @param string $name The node name to check.
-     * @return boolean TRUE if the given nodeName is configured as auto-created child node.
+     * @return boolean true if the given nodeName is configured as auto-created child node.
      */
     protected function willChildNodeBeAutoCreated($name)
     {
@@ -1233,7 +1233,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * Checks if this node has any child nodes.
      *
      * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
-     * @return boolean TRUE if this node has child nodes, otherwise FALSE
+     * @return boolean true if this node has child nodes, otherwise false
      * @api
      */
     public function hasChildNodes($nodeTypeFilter = null)
@@ -1242,7 +1242,7 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * Removes this node and all its child nodes. This is an alias for setRemoved(TRUE)
+     * Removes this node and all its child nodes. This is an alias for setRemoved(true)
      *
      * @return void
      * @api
@@ -1255,7 +1255,7 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Enables using the remove method when only setters are available
      *
-     * @param boolean $removed If TRUE, this node and it's child nodes will be removed. If it is FALSE only this node will be restored.
+     * @param boolean $removed If true, this node and it's child nodes will be removed. If it is false only this node will be restored.
      * @return void
      * @api
      */
@@ -1295,7 +1295,7 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Sets the "hidden" flag for this node.
      *
-     * @param boolean $hidden If TRUE, this Node will be hidden
+     * @param boolean $hidden If true, this Node will be hidden
      * @return void
      * @api
      */
@@ -1385,7 +1385,7 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Sets if this node should be hidden in indexes, such as a site navigation.
      *
-     * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
+     * @param boolean $hidden true if it should be hidden, otherwise false
      * @return void
      * @api
      */
@@ -1577,12 +1577,12 @@ class Node implements NodeInterface, CacheAwareInterface
      * $detachedCopy only has an influence if we are copying from one dimension to the other, possibly creating a new
      * node variant:
      *
-     * - If $detachedCopy is TRUE, the whole (recursive) copy is done without connecting original and copied node,
+     * - If $detachedCopy is true, the whole (recursive) copy is done without connecting original and copied node,
      *   so NOT CREATING a new node variant.
-     * - If $detachedCopy is FALSE, and the node does not yet have a variant in the target dimension, we are CREATING
+     * - If $detachedCopy is false, and the node does not yet have a variant in the target dimension, we are CREATING
      *   a new node variant.
      *
-     * As a caller of this method, $detachedCopy should be TRUE if $this->getNodeType()->isAggregate() is TRUE, and FALSE
+     * As a caller of this method, $detachedCopy should be true if $this->getNodeType()->isAggregate() is true, and false
      * otherwise.
      *
      * @param NodeInterface $referenceNode
@@ -1791,7 +1791,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * Checks if the given $nodeType would be allowed as a child node of this node according to the configured constraints.
      *
      * @param NodeType $nodeType
-     * @return boolean TRUE if the passed $nodeType is allowed as child node
+     * @return boolean true if the passed $nodeType is allowed as child node
      */
     public function isNodeTypeAllowedAsChildNode(NodeType $nodeType)
     {
@@ -1806,7 +1806,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * Determine if this node is configured as auto-created childNode of the parent node. If that is the case, it
      * should not be deleted.
      *
-     * @return boolean TRUE if this node is auto-created by the parent.
+     * @return boolean true if this node is auto-created by the parent.
      */
     public function isAutoCreated()
     {
@@ -1928,7 +1928,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param NodeInterface $node
      * @param string $oldPath
      * @param string $newPath
-     * @param boolean $recursion TRUE if the node path change was caused because a parent node path was changed
+     * @param boolean $recursion true if the node path change was caused because a parent node path was changed
      */
     protected function emitNodePathChanged(NodeInterface $node, $oldPath, $newPath, $recursion)
     {

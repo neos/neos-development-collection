@@ -27,7 +27,7 @@ class QualityImageAdjustment extends AbstractImageAdjustment
     protected $position = 30;
     /**
      * @var integer
-     * @ORM\Column(nullable = TRUE)
+     * @ORM\Column(nullable = true)
      */
     protected $quality;
     /**

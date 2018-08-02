@@ -10,7 +10,7 @@ prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Neos:Menu) {
 	}
 
 	# if documents which are hidden in index should be rendered or not
-	renderHiddenInIndex = TRUE
+	renderHiddenInIndex = true
 
 	# name of the dimension to use (optional)
 	# dimension = 'language'
@@ -19,7 +19,7 @@ prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Neos:Menu) {
 	# presets = ${['en_US']}
 
 	# if true, items for all presets will be included, ignoring dimension constraints
-	includeAllPresets = FALSE
+	includeAllPresets = false
 }
 
 # included for backwards-compatibility only

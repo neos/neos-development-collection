@@ -72,7 +72,7 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
                 $this->output .= sprintf('<div class="value" title="%s">', $typeEscaped);
                 switch ($typeEscaped) {
                             case 'boolean':
-                                $this->output .= ($value ? 'TRUE' : 'FALSE');
+                                $this->output .= ($value ? 'true' : 'false');
                                 break;
                             case 'NULL':
                                 $this->output .= 'NULL';

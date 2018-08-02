@@ -252,7 +252,7 @@ class NodeType
     }
 
     /**
-     * Return boolean TRUE if marked abstract
+     * Return boolean true if marked abstract
      *
      * @return boolean
      */
@@ -262,7 +262,7 @@ class NodeType
     }
 
     /**
-     * Return boolean TRUE if marked final
+     * Return boolean true if marked final
      *
      * @return boolean
      */
@@ -298,7 +298,7 @@ class NodeType
      * - when moving this node, all node variants are also moved (across all dimensions)
      * - Recursive copying only happens *inside* this aggregate, and stops at nested aggregates.
      *
-     * @return boolean TRUE if the node type is an aggregate
+     * @return boolean true if the node type is an aggregate
      * @api
      */
     public function isAggregate()
@@ -311,7 +311,7 @@ class NodeType
      * has the given name.
      *
      * @param string $nodeType
-     * @return boolean TRUE if this node type is of the given kind, otherwise FALSE
+     * @return boolean true if this node type is of the given kind, otherwise false
      * @api
      */
     public function isOfType($nodeType)
@@ -517,7 +517,7 @@ class NodeType
      * Otherwise, allowsGrandchildNodeType() needs to be called on the *parent node type*.
      *
      * @param NodeType $nodeType
-     * @return boolean TRUE if the $nodeType is allowed as child node, FALSE otherwise.
+     * @return boolean true if the $nodeType is allowed as child node, false otherwise.
      */
     public function allowsChildNodeType(NodeType $nodeType)
     {
@@ -533,7 +533,7 @@ class NodeType
      *
      * @param string $childNodeName The name of a configured childNode of this NodeType
      * @param NodeType $nodeType The NodeType to check constraints for.
-     * @return boolean TRUE if the $nodeType is allowed as grandchild node, FALSE otherwise.
+     * @return boolean true if the $nodeType is allowed as grandchild node, false otherwise.
      * @throws \InvalidArgumentException If the given $childNodeName is not configured to be auto-created in $this.
      */
     public function allowsGrandchildNodeType($childNodeName, NodeType $nodeType)
@@ -558,8 +558,8 @@ class NodeType
     /**
      * Internal method to check whether the passed-in $nodeType is allowed by the $constraints array.
      *
-     * $constraints is an associative array where the key is the Node Type Name. If the value is "TRUE",
-     * the node type is explicitly allowed. If the value is "FALSE", the node type is explicitly denied.
+     * $constraints is an associative array where the key is the Node Type Name. If the value is "true",
+     * the node type is explicitly allowed. If the value is "false", the node type is explicitly denied.
      * If nothing is specified, the fallback "*" is used. If that one is also not specified, we DENY by
      * default.
      *
@@ -592,7 +592,7 @@ class NodeType
     /**
      * @param NodeType $nodeType
      * @param array $constraints
-     * @return boolean TRUE if the passed $nodeType is allowed by the $constraints
+     * @return boolean true if the passed $nodeType is allowed by the $constraints
      */
     protected function isNodeTypeAllowedByDirectConstraints(NodeType $nodeType, array $constraints)
     {

@@ -162,7 +162,57 @@ must be defined or other initialization routines must be run in order for the in
   - globalRegistry: The global registry
   - persistChange: Will dispatch the respective action from '@neos-project/neos-ui-redux-store' package (actions.Changes.persistChanges)
 
-CKEditor-specific registries
+CKEditor5-specific registries
+=============================
+
+The integration of CKeditor5 is dead simple and tries to introduce a minimal amount of abstractions on top of CKeditor5.
+There are only two registries involved in configuring it: `config` and `richtextToolbar`
+
+Configuration of CKeditor5
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Way to retrieve: `globalRegistry.get('ckEditor5').get('config')`
+
+In CKE all things are configured via a single configuration object: plugins, custom configs, etc (@see https://docs.ckeditor.com/ckeditor5/latest/builds/guides/integration/configuration.html)
+
+This registry allows to register a custom configuration processor that takes a configuration object, modifies it and returns a new one. Example:
+
+config.set('doSmthWithConfig' (ckeConfig, editorOptions) => {
+    ckeConfig.mySetting = true;
+    return ckeConfig;
+})
+
+That is all you need to know about configuring CKE in Neos,
+Refer to CKeditor5 documentation for more details on what you can do with it: https://docs.ckeditor.com/ckeditor5/latest/index.html
+
+Richtext Toolbar
+~~~~~~~~~~~~~~~~
+
+Way to retrieve: `globalRegistry.get('ckEditor5').get('richtextToolbar')`
+
+Contains the Rich Text Editing Toolbar components.
+
+Buttons in the Rich Text Editing Toolbar are just plain React components.
+The only way for these components to communicate with CKE is via its commands mechanism
+(@see https://docs.ckeditor.com/ckeditor5/latest/framework/guides/architecture/core-editor-architecture.html#commands)
+Some commands may take arguments. Commands also contain state that is serialized into `formattingUnderCursor` redux state.
+Commands are provided and handled by CKE plugins, which may be registered via the configuration registry explained above.
+
+The values are objects of the following form:
+
+    {
+        commandName: 'bold' // A CKE command that gets dispatched
+        commandArgs: [arg1, arg2] // Additional arguments passed together with a command
+        component: Button // the React component being used for rendering
+        isVisible: (editorOptions, formattingUnderCursor) => true // A function that decides is the button should be visible or not
+        isActive: (formattingUnderCursor, editorOptions) => true // A function that decides is the button should be active or not
+        callbackPropName: 'onClick' // Name of the callback prop of the Component which is
+                                    fired when the component's value changes.
+
+        // all other properties are directly passed on to the component.
+    }
+
+CKEditor4-specific registries
 ============================
 
 Formatting rules
@@ -177,7 +227,7 @@ Enabled Styles
 
 The actual *enabled* styles are determined by the NodeTypes configuration of the property.
 This means, that if the node is configured using NodeTypes
-\`properties.[propertyName].ui.aloha.formatting.strong=true\`, then the "strong" key inside this registry
+\`properties.[propertyName].ui.inline.editorOptions.formatting.strong=true\`, then the "strong" key inside this registry
 is actually enabled for the editor.
 
 For backwards compatibility reasons, the formatting-and-styling-registry *KEYS* must match the "pre-React"

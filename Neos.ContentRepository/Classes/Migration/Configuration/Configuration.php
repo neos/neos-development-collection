@@ -44,7 +44,7 @@ abstract class Configuration implements ConfigurationInterface
     }
 
     /**
-     * If the given version is available, TRUE is returned.
+     * If the given version is available, true is returned.
      *
      * @param string $version
      * @return boolean

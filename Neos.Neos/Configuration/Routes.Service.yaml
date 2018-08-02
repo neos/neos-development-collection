@@ -9,7 +9,7 @@
   defaults:
     '@controller': 'Service\Nodes'
     '@action':     'index'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['GET']
 
 -
@@ -18,7 +18,7 @@
   defaults:
     '@controller': 'Service\Nodes'
     '@action':     'show'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['HEAD', 'GET']
 
 -
@@ -27,7 +27,7 @@
   defaults:
     '@controller': 'Service\Nodes'
     '@action':     'create'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['POST']
 
 # UserPreferencesController routes
@@ -60,7 +60,7 @@
   defaults:
     '@controller': 'Service\Assets'
     '@action':     'index'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['GET']
 
 -
@@ -69,7 +69,7 @@
   defaults:
     '@controller': 'Service\Assets'
     '@action':     'show'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['HEAD', 'GET']
 
 # RESTful WorkspacesController routes
@@ -81,7 +81,7 @@
     '@package':    'Neos.Neos'
     '@controller': 'Service\Workspaces'
     '@action':     'index'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['GET']
 
 -
@@ -114,7 +114,7 @@
     '@controller': 'Service\Workspaces'
     '@action':     'update'
     '@format':     'json'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['PUT']
 
 # Legacy WorkspaceController routes
@@ -127,7 +127,7 @@
     '@action':     'getWorkspaceWideUnpublishedNodes'
     '@controller': 'Workspace'
     '@format':     'json'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['GET']
 
 -
@@ -365,7 +365,7 @@
     '@action':     'index'
     '@format':     'json'
     dataSourceIdentifier: ''
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['GET']
 
 # ContentDimensionController routes
@@ -376,7 +376,7 @@
     '@package':    'Neos.Neos'
     '@controller': 'Service\ContentDimensions'
     '@action':     'index'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['GET']
 
 -
@@ -387,5 +387,5 @@
     '@controller': 'Service\ContentDimensions'
     '@action':     'show'
     '@format':     'html'
-  appendExceedingArguments: TRUE
+  appendExceedingArguments: true
   httpMethods: ['GET']

@@ -564,7 +564,7 @@ class NodeData extends AbstractNodeData
     }
 
     /**
-     * Removes this node and all its child nodes. This is an alias for setRemoved(TRUE)
+     * Removes this node and all its child nodes. This is an alias for setRemoved(true)
      *
      * @return void
      */
@@ -576,7 +576,7 @@ class NodeData extends AbstractNodeData
     /**
      * Enables using the remove method when only setters are available
      *
-     * @param boolean $removed If TRUE, this node and it's child nodes will be removed. This can handle FALSE as well.
+     * @param boolean $removed If true, this node and it's child nodes will be removed. This can handle false as well.
      * @return void
      */
     public function setRemoved($removed)
@@ -999,7 +999,7 @@ class NodeData extends AbstractNodeData
 
     /**
      * This becomes a shdow of the given NodeData object.
-     * If NULL or no argument is given then movedTo is nulled and removed is set to FALSE effectively turning this into a normal NodeData.
+     * If NULL or no argument is given then movedTo is nulled and removed is set to false effectively turning this into a normal NodeData.
      *
      * @param NodeData $nodeData
      * @return void

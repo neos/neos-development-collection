@@ -36,7 +36,7 @@ class BrowserState
      * @param string $key
      * @param mixed $value
      * @return void
-     * @Flow\Session(autoStart = TRUE)
+     * @Flow\Session(autoStart = true)
      */
     public function set(string $key, $value)
     {

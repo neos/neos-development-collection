@@ -57,7 +57,7 @@ class DimensionValues implements FilterInterface
     }
 
     /**
-     * Returns TRUE if the given node has the default dimension values.
+     * Returns true if the given node has the default dimension values.
      *
      * @param NodeData $node
      * @return boolean
