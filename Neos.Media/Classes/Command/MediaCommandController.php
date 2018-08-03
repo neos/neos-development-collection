@@ -171,7 +171,8 @@ class MediaCommandController extends CommandController
         $assetTagsMatchFilterTags = function (Collection $assetTags, string $filterTags): bool {
             $filterTagValues = Arrays::trimExplode(',', $filterTags);
             $assetTagValues = [];
-            foreach ($assetTags as $tag) { /** @var Tag $tag */
+            foreach ($assetTags as $tag) {
+                /** @var Tag $tag */
                 $assetTagValues[] = $tag->getLabel();
             }
             return count(array_intersect($filterTagValues, $assetTagValues)) > 0;
@@ -182,7 +183,7 @@ class MediaCommandController extends CommandController
         foreach ($this->assetRepository->iterate($iterator) as $asset) {
             !$quiet && $this->output->progressAdvance(1);
 
-            if($unusedAssetCount === $limit) {
+            if ($unusedAssetCount === $limit) {
                 break;
             }
 
