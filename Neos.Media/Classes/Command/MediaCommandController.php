@@ -149,9 +149,10 @@ class MediaCommandController extends CommandController
      * @param bool $quiet If set, only errors will be displayed.
      * @param bool $assumeYes If set, "yes" is assumed for the "shall I remove ..." dialogs
      * @param string $onlyTags Comma-separated list of asset tags, that should be taken into account
+     * @param int $limit Limit the result of unused assets displayed and removed for this run.
      * @return void
      */
-    public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '')
+    public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '', int $limit = 0)
     {
         $iterator = $this->assetRepository->findAllIterator();
         $assetCount = $this->assetRepository->countAll();
@@ -181,6 +182,10 @@ class MediaCommandController extends CommandController
         foreach ($this->assetRepository->iterate($iterator) as $asset) {
             !$quiet && $this->output->progressAdvance(1);
 
+            if($unusedAssetCount === $limit) {
+                break;
+            }
+
             if (!($asset instanceof Asset)) {
                 continue;
             }
@@ -193,7 +198,6 @@ class MediaCommandController extends CommandController
             if (trim($onlyTags) && !($assetTagsMatchFilterTags($asset->getTags(), $onlyTags))) {
                 continue;
             }
-
             if ($asset->getUsageCount() !== 0) {
                 continue;
             }
