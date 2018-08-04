@@ -64,17 +64,26 @@ class NodeSearchService implements NodeSearchServiceInterface
         $searchResult = array();
         $nodeTypeFilter = implode(',', $searchNodeTypes);
 
-        if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $term) !== 0) {
-            $nodeByIdentifier = $context->getNodeByIdentifier($term);
-            if ($nodeByIdentifier !== null && $this->nodeSatisfiesSearchNodeTypes($nodeByIdentifier, $searchNodeTypes)) {
-                $searchResult[$nodeByIdentifier->getPath()] = $nodeByIdentifier;
+        if (is_string($term)) {
+            $searchTerm = [$term];
+        } else {
+            $searchTerm = $term;
+        }
+
+        foreach ($searchTerm as $term) {
+            if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $term) !== 0) {
+                $nodeByIdentifier = $context->getNodeByIdentifier($term);
+                if ($nodeByIdentifier !== null && $this->nodeSatisfiesSearchNodeTypes($nodeByIdentifier, $searchNodeTypes)) {
+                    $searchResult[$nodeByIdentifier->getIdentifier()] = $nodeByIdentifier;
+                }
             }
         }
-        $nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : null);
+
+        $nodeDataRecords = $this->nodeDataRepository->findByProperties($searchTerm, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : null);
         foreach ($nodeDataRecords as $nodeData) {
             $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
             if ($node !== null) {
-                $searchResult[$node->getPath()] = $node;
+                $searchResult[$node->getIdentifier()] = $node;
             }
         }
 
