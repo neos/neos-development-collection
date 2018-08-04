@@ -722,9 +722,9 @@
 				<source>Node Properties</source>
 			<target xml:lang="de">Element-Eigenschaften</target><alt-trans><target xml:lang="de">Knoteneigenschaften</target></alt-trans></trans-unit>
       <!-- New UI labels -->
-      <trans-unit id="copy__from__to--title" xml:space="preserve">
+      <trans-unit id="copy__from__to--title" xml:space="preserve" approved="yes">
 				<source>Copy {source} to {target}</source>
-			<target xml:lang="de" state="translated">{source} zu {target} kopieren</target></trans-unit>
+			<target xml:lang="de">{source} zu {target} kopieren</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
 			<target xml:lang="de" state="translated">{source} zu {target} verschieben</target></trans-unit>
@@ -752,9 +752,9 @@
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
 			<target xml:lang="de" state="translated">Tiefgestellt</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve" approved="yes">
 				<source>Superscript</source>
-			<target xml:lang="de" state="translated">Hochgestellt</target></trans-unit>
+			<target xml:lang="de">Hochgestellt</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
 			<target xml:lang="de" state="translated">Durchgestrichen</target></trans-unit>
@@ -770,18 +770,18 @@
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
 				<source>Align left</source>
 			<target xml:lang="de" state="translated">Linksbündig</target><alt-trans><target xml:lang="de">Links ausrichten</target></alt-trans></trans-unit>
-      <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve" approved="yes">
 				<source>Align right</source>
-			<target xml:lang="de" state="translated">Rechtsbündig</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
+			<target xml:lang="de">Rechtsbündig</target></trans-unit>
+      <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve" approved="yes">
 				<source>Align center</source>
-			<target xml:lang="de" state="translated">Zentriert</target></trans-unit>
+			<target xml:lang="de">Zentriert</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
 				<source>Align justify</source>
 			<target xml:lang="de" state="translated">Blocksatz</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__table" xml:space="preserve" approved="yes">
 				<source>Table</source>
-			<target xml:lang="de" state="translated">Tabelle</target></trans-unit>
+			<target xml:lang="de">Tabelle</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
 				<source>Remove format</source>
 			<target xml:lang="de" state="translated">Format entfernen</target></trans-unit>
