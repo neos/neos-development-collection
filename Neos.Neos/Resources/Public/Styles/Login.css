@@ -4167,7 +4167,7 @@ html,
 }
 .neos .neos-row-fluid .neos-offset10:first-child {
   margin-left: 85.10638%;
-  *margin-left: 85.0%;
+  *margin-left: 85%;
 }
 .neos .neos-row-fluid .neos-offset11 {
   margin-left: 95.74468%;
@@ -5355,8 +5355,12 @@ html,
   width: 100%;
   height: 40px;
 }
-.neos .neos-login-box .neos-actions button {
+.neos .neos-login-box .neos-actions button, .neos .neos-login-box .neos-actions .btn {
+  text-align: center;
+  text-decoration: none !important;
+  display: block;
   height: 40px;
+  line-height: 40px;
   color: #fff;
   border: none;
   background-image: none;
@@ -5371,17 +5375,17 @@ html,
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-.neos .neos-login-box .neos-actions button:focus {
+.neos .neos-login-box .neos-actions button:focus, .neos .neos-login-box .neos-actions .btn:focus {
   outline: none;
 }
-.neos .neos-login-box .neos-actions button.neos-login-btn {
+.neos .neos-login-box .neos-actions button.neos-login-btn, .neos .neos-login-box .neos-actions .btn.neos-login-btn {
   background-color: #00b5ff;
   width: 100%;
 }
-.neos .neos-login-box .neos-actions button.neos-hidden {
+.neos .neos-login-box .neos-actions button.neos-hidden, .neos .neos-login-box .neos-actions .btn.neos-hidden {
   display: none;
 }
-.neos .neos-login-box .neos-actions button.neos-disabled {
+.neos .neos-login-box .neos-actions button.neos-disabled, .neos .neos-login-box .neos-actions .btn.neos-disabled {
   cursor: not-allowed;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=65);
   opacity: 0.65;
