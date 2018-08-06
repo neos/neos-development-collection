@@ -50,7 +50,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
     /**
      * Handle an exception by displaying an error message inside the Neos backend, if logged in and not displaying the live workspace.
      *
-     * @param array $fusionPath path causing the exception
+     * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
      * @param integer $referenceCode
      * @return string
