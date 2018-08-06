@@ -196,7 +196,7 @@ class MediaCommandController extends CommandController
             if ($filterByAssetSourceIdentifier !== '' && $asset->getAssetSourceIdentifier() !== $filterByAssetSourceIdentifier) {
                 continue;
             }
-            if (trim($onlyTags) && !($assetTagsMatchFilterTags($asset->getTags(), $onlyTags))) {
+            if ($onlyTags === '' && !($assetTagsMatchFilterTags($asset->getTags(), $onlyTags))) {
                 continue;
             }
             if ($asset->getUsageCount() !== 0) {
