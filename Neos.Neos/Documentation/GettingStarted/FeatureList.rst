@@ -9,7 +9,8 @@ Feature List
 
 	The following list contains the key technical features of Neos. If you want to learn about the great
 	features and experience that neos offers to editors and visitors please have a look at the `Neos Website
-	<http://www.neos.io>`_. The `Neos editor documentation<https://www.neos.io/docs-and-support/editor-documentation.html>` is on our website.
+	<http://www.neos.io>`_. The `Neos editor documentation
+  <https://www.neos.io/docs-and-support/editor-documentation.html>` is on our website.
 
 
 ContentRepository and ContentElements
