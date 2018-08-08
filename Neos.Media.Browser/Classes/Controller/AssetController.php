@@ -25,21 +25,25 @@ use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\ResourceTypeConverter;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\Browser\Domain\Session\BrowserState;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetNotFoundExceptionInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\NeosAssetProxyInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyRepositoryInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceConnectionExceptionInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetTypeFilter;
-use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetProxy;
 use Neos\Media\Domain\Model\AssetSource\SupportsCollectionsInterface;
 use Neos\Media\Domain\Model\AssetSource\SupportsSortingInterface;
+use Neos\Media\Domain\Model\AssetSource\SupportsStorageCollectionInterface;
 use Neos\Media\Domain\Model\AssetSource\SupportsTaggingInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
@@ -53,6 +57,7 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Utility\Files;
 use Neos\Utility\MediaTypes;
+use Neos\Utility\TypeHandling;
 
 /**
  * Controller for asset handling
@@ -358,7 +363,7 @@ class AssetController extends ActionController
             if ($assetProxyRepository instanceof SupportsTaggingInterface && $assetProxyRepository instanceof SupportsCollectionsInterface) {
                 // TODO: For generic implementation (allowing other asset sources to provide asset collections), the following needs to be refactored:
 
-                if ($assetProxy instanceof NeosAssetProxy) {
+                if ($assetProxy instanceof NeosAssetProxyInterface) {
                     /** @var Asset $asset */
                     $asset = $assetProxy->getAsset();
                     $assetCollections = $asset->getAssetCollections();
@@ -427,6 +432,22 @@ class AssetController extends ActionController
         $assetMappingConfiguration->allowProperties('title', 'resource', 'tags', 'assetCollections');
         $assetMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
         $assetMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE, true);
+
+        $this->detectCollectionNameByAssetSource($assetMappingConfiguration);
+    }
+
+    protected function detectCollectionNameByAssetSource(PropertyMappingConfiguration $assetMappingConfiguration) {
+        $assetSource = $this->getAssetSourceFromBrowserState();
+        if ($assetSource instanceof SupportsStorageCollectionInterface) {
+            $assetMappingConfiguration
+                ->forProperty('resource')
+                ->setTypeConverterOption(
+                    ResourceTypeConverter::class,
+                    ResourceTypeConverter::CONFIGURATION_COLLECTION_NAME,
+                    $assetSource->getCollectionName()
+                );
+
+        }
     }
 
     /**
@@ -438,9 +459,12 @@ class AssetController extends ActionController
      */
     public function createAction(Asset $asset)
     {
+        $this->enforceAssetSourceConfiguration($asset);
+
         if ($this->persistenceManager->isNewObject($asset)) {
             $this->assetRepository->add($asset);
         }
+
         $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
         $this->redirect('index', null, null, [], 0, 201);
     }
@@ -457,6 +481,8 @@ class AssetController extends ActionController
         $assetMappingConfiguration->allowProperties('title', 'resource');
         $assetMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
         $assetMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE, true);
+
+        $this->detectCollectionNameByAssetSource($assetMappingConfiguration);
     }
 
     /**
@@ -471,6 +497,8 @@ class AssetController extends ActionController
         if (($tag = $this->browserState->get('activeTag')) !== null) {
             $asset->addTag($tag);
         }
+
+        $this->enforceAssetSourceConfiguration($asset);
 
         if ($this->persistenceManager->isNewObject($asset)) {
             $this->assetRepository->add($asset);
@@ -879,5 +907,16 @@ class AssetController extends ActionController
         if ($assetProxyRepository instanceof SupportsCollectionsInterface) {
             $assetProxyRepository->filterByCollection($this->getActiveAssetCollectionFromBrowserState());
         }
+    }
+
+    protected function enforceAssetSourceConfiguration(AssetInterface $asset)
+    {
+        $assetSource = $this->getAssetSourceFromBrowserState();
+
+        if (!$asset instanceof AssetSourceAwareInterface) {
+            throw new \RuntimeException('The asset type ' . TypeHandling::getTypeForValue($asset) . ' does not implement the required MediaAssetsSourceAware interface.', 1516630096);
+        }
+
+        $asset->setAssetSourceIdentifier($assetSource->getIdentifier());
     }
 }

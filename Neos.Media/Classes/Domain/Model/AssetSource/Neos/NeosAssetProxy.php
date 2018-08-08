@@ -18,13 +18,14 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\NeosAssetProxyInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\ThumbnailServiceException;
 use Psr\Http\Message\UriInterface;
 
-final class NeosAssetProxy implements AssetProxyInterface
+final class NeosAssetProxy implements AssetProxyInterface, NeosAssetProxyInterface
 {
     /**
      * @var NeosAssetSource
