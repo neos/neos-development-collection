@@ -344,6 +344,24 @@ class NodeTypeTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function isOfTypeReturnsFalseForDirectlyDisabledSuperTypes()
+    {
+        $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Shortcut');
+        $this->assertFalse($nodeType->isOfType('Neos.ContentRepository.Testing:SomeMixin'));
+    }
+
+    /**
+     * @test
+     */
+    public function isOfTypeReturnsFalseForIndirectlyDisabledSuperTypes()
+    {
+        $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubShortcut');
+        $this->assertFalse($nodeType->isOfType('Neos.ContentRepository.Testing:SomeMixin'));
+    }
+
+    /**
      * This test asserts that a supertype that has been inherited can be removed by a supertype again.
      * @test
      */
