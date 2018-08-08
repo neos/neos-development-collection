@@ -275,14 +275,32 @@ class AssetController extends ActionController
     /**
      * New asset form
      *
+     * @param string|null $assetSourceIdentifier
      * @return void
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    public function newAction()
+    public function newAction(string $assetSourceIdentifier = null)
     {
+        if ($assetSourceIdentifier !== null && !isset($this->assetSources[$assetSourceIdentifier])) {
+            throw new \RuntimeException('Given asset source is not configured.', 1533746220);
+        }
+
+        $assetSource = $assetSourceIdentifier ? $this->assetSources[$assetSourceIdentifier] : $this->getAssetSourceFromBrowserState();
+
+        if ($assetSource->isReadOnly()) {
+            throw new \RuntimeException('The current asset source is readonly', 1533746480);
+        }
+
+        $this->applyActiveAssetSourceToBrowserState($assetSource->getIdentifier());
+
         $maximumFileUploadSize = $this->getMaximumFileUploadSize();
         $this->view->assignMultiple([
             'tags' => $this->tagRepository->findAll(),
             'assetCollections' => $this->assetCollectionRepository->findAll(),
+            'activeAssetSource' => $assetSource,
+            'assetSources' => array_filter($this->assetSources, function (AssetSourceInterface $source) {
+                return $source->isReadOnly() === false;
+            }),
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
         ]);

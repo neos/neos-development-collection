@@ -44,6 +44,23 @@
     </f:form>
 </f:section>
 
+<f:section name="Sidebar">
+  <f:if condition="{assetSources -> f:count()} > 1">
+    <div class="neos-media-aside-group">
+      <h2>{neos:backend.translate(id: 'mediaSources', package: 'Neos.Media.Browser')}</h2>
+      <ul class="neos-media-aside-list">
+        <f:for each="{assetSources}" key="assetSourceIdentifier" as="assetSource">
+          <li>
+            <f:link.action action="new" title="{assetSource.label}" class="{f:if(condition: '{assetSourceIdentifier} === {activeAssetSource.identifier}', then: ' neos-active')}" arguments="{assetSourceIdentifier: assetSourceIdentifier}">
+              {assetSource.label}
+            </f:link.action>
+          </li>
+        </f:for>
+      </ul>
+    </div>
+  </f:if>
+</f:section>
+
 <f:section name="Scripts">
     <script type="text/javascript">
         var maximumFileUploadSize = {maximumFileUploadSize};

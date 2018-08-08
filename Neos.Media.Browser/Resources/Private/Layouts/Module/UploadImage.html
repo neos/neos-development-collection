@@ -1,9 +1,16 @@
 <div class="{settings.bodyClasses}">
-    <div class="neos-row-fluid">
+  <div class="neos-media-content">
+    <div class="neos-media-assets">
+      <div class="neos-notification-container">
         <f:render partial="FlashMessages"/>
+      </div>
 
-        <f:render section="Content"/>
+      <f:render section="Content"/>
     </div>
+    <aside class="neos-media-aside">
+      <f:render section="Sidebar"/>
+    </aside>
+  </div>
 </div>
 
 <f:render section="Scripts" optional="TRUE"/>
