@@ -106,7 +106,9 @@ class XliffService
                 $sources = $this->collectPackageSources($package, $sourcesToBeIncluded);
 
                 //get the xliff files for those sources
-                foreach ($sources as $sourceName) {
+                foreach ($sources as $source) {
+                    list($packageKey, $sourceName) = $source;
+
                     $fileId = $packageKey . ':' . $sourceName;
                     $file = $this->xliffFileProvider->getFile($fileId, $locale);
 
@@ -175,9 +177,6 @@ class XliffService
                         $targetPackageKey = $file->getAttribute('product-name') ?: $packageKey;
                         $source = $file->getAttribute('original') ?: $source;
                     }
-                    if ($packageKey !== $targetPackageKey) {
-                        return;
-                    }
                     if (is_array($sourcesToBeIncluded)) {
                         $addSource = false;
                         foreach ($sourcesToBeIncluded as $sourcePattern) {
@@ -190,11 +189,11 @@ class XliffService
                             return;
                         }
                     }
-                    $sources[$source] = true;
+                    $sources[$source] = [$targetPackageKey, $source];
                 }
             );
         }
-        return array_keys($sources);
+        return array_values($sources);
     }
 
     /**
