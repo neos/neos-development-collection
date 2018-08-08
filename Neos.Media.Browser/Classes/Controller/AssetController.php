@@ -299,6 +299,9 @@ class AssetController extends ActionController
      */
     public function replaceAssetResourceAction(Asset $asset)
     {
+        $assetSourceIdentifier = $asset->getAssetSourceIdentifier();
+        $this->applyActiveAssetSourceToBrowserState($assetSourceIdentifier);
+
         $maximumFileUploadSize = $this->getMaximumFileUploadSize();
         $this->view->assignMultiple([
             'asset' => $asset,
@@ -571,6 +574,26 @@ class AssetController extends ActionController
     }
 
     /**
+     * Initialization for updateAssetResourceAction
+     *
+     * @return void
+     * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
+     */
+    protected function initializeUpdateAssetResourceAction()
+    {
+        $assetMappingConfiguration = $this->arguments->getArgument('resource')->getPropertyMappingConfiguration();
+        $assetSource = $this->getAssetSourceFromBrowserState();
+        if ($assetSource instanceof SupportsStorageCollectionInterface) {
+            $assetMappingConfiguration
+                ->setTypeConverterOption(
+                    ResourceTypeConverter::class,
+                    ResourceTypeConverter::CONFIGURATION_COLLECTION_NAME,
+                    $assetSource->getCollectionName()
+                );
+        }
+    }
+
+    /**
      * Update the resource on an asset.
      *
      * @param AssetInterface $asset
@@ -600,7 +623,8 @@ class AssetController extends ActionController
             $originalFilename = $asset->getLabel();
             $this->assetService->replaceAssetResource($asset, $resource, $options);
         } catch (\Exception $exception) {
-            $this->addFlashMessage('couldNotReplaceAsset', '', Message::SEVERITY_OK, [], 1463472606);
+            $this->addFlashMessage('couldNotReplaceAsset', '', Message::SEVERITY_ERROR, [], 1463472606);
+            $this->systemLogger->logException($exception);
             $this->forwardToReferringRequest();
             return;
         }
