@@ -436,7 +436,8 @@ class AssetController extends ActionController
         $this->detectCollectionNameByAssetSource($assetMappingConfiguration);
     }
 
-    protected function detectCollectionNameByAssetSource(PropertyMappingConfiguration $assetMappingConfiguration) {
+    protected function detectCollectionNameByAssetSource(PropertyMappingConfiguration $assetMappingConfiguration): void
+    {
         $assetSource = $this->getAssetSourceFromBrowserState();
         if ($assetSource instanceof SupportsStorageCollectionInterface) {
             $assetMappingConfiguration
@@ -446,7 +447,6 @@ class AssetController extends ActionController
                     ResourceTypeConverter::CONFIGURATION_COLLECTION_NAME,
                     $assetSource->getCollectionName()
                 );
-
         }
     }
 
@@ -909,7 +909,7 @@ class AssetController extends ActionController
         }
     }
 
-    protected function enforceAssetSourceConfiguration(AssetInterface $asset)
+    protected function enforceAssetSourceConfiguration(AssetInterface $asset): void
     {
         $assetSource = $this->getAssetSourceFromBrowserState();
 
