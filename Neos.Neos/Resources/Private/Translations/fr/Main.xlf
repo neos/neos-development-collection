@@ -724,7 +724,7 @@
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
 				<source>Copy {source} to {target}</source>
-			<target xml:lang="fr" state="translated">Copiez {source} vers {target}</target></trans-unit>
+			<target xml:lang="fr" state="translated">Copier {source} vers {target}</target><alt-trans><target xml:lang="fr">Copiez {source} vers {target}</target></alt-trans></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
 			<target xml:lang="fr" state="translated">Déplacer {source} vers {target}</target></trans-unit>
