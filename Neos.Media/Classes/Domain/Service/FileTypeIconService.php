@@ -11,59 +11,42 @@ namespace Neos\Media\Domain\Service;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\FileTypeIcon;
 
 /**
  * Service that retrieves an icon for the file type of a given filename
  */
 class FileTypeIconService
 {
+    protected static $cache = [];
+
     /**
      * Returns an icon for a file type within given dimensions
      *
      * @param string $filename
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
      * @return array
      */
-    public static function getIcon($filename, $maximumWidth, $maximumHeight)
+    public static function getIcon($filename): array
     {
-        $iconPackage = 'Neos.Media';
-        $iconSize = self::getDocumentIconSize($maximumWidth, $maximumHeight);
 
-        $pathInfo = pathinfo($filename);
-        $fileExtension = isset($pathInfo['extension']) ? $pathInfo['extension'] : '';
-
-        if (is_file('resource://' . $iconPackage . '/Public/Icons/16px/' . $fileExtension . '.png')) {
-            $icon = sprintf('Icons/%spx/' . $fileExtension . '.png', $iconSize);
-        } else {
-            $icon = sprintf('Icons/%spx/_blank.png', $iconSize);
+        $fileExtention = self::extractFileExtension($filename);
+        if (isset(self::$cache[$fileExtention])) {
+            return self::$cache[$fileExtention];
         }
 
-        return [
-            'width' => $iconSize,
-            'height' => $iconSize,
-            'src' => 'resource://' . $iconPackage . '/Public/' . $icon,
-            'alt' => $fileExtension
+        $fileTypeIcon = new FileTypeIcon($fileExtention);
+
+        self::$cache[$fileExtention] = [
+            'src' => $fileTypeIcon->path(),
+            'alt' => $fileTypeIcon->alt()
         ];
+
+        return self::$cache[$fileExtention];
     }
 
-    /**
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return integer
-     */
-    protected static function getDocumentIconSize($maximumWidth, $maximumHeight)
+    protected static function extractFileExtension(string $filename): string
     {
-        $size = max($maximumWidth, $maximumHeight);
-        if ($size <= 16) {
-            return 16;
-        } elseif ($size <= 32) {
-            return 32;
-        } elseif ($size <= 48) {
-            return 48;
-        } else {
-            return 512;
-        }
+        $pathInfo = pathinfo($filename);
+        return isset($pathInfo['extension']) ? $pathInfo['extension'] : 'blank';
     }
 }

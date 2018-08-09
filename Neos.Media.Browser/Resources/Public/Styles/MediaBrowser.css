@@ -740,6 +740,7 @@
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label > img {
   float: left;
   padding: 4px;
+  width: 24px;
 }
 @media (max-width: 540px) {
   .neos.media-browser .neos-media-assets .page-navigation ul li {
