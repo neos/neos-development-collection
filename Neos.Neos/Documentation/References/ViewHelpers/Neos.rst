@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2017-05-11
+This reference was automatically generated from code on 2018-08-10
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -328,7 +328,7 @@ This ViewHelper is *WORK IN PROGRESS* and *NOT STABLE YET*
 Arguments
 *********
 
-* ``format`` (string, *optional*): Supported are "fullFirstName" and "initials
+* ``format`` (string, *optional*): Supported are "fullFirstName", "initials" and "fullName
 
 
 
@@ -1035,7 +1035,7 @@ Examples
 
 **Defaults**::
 
-	<link rel="some-module" href="{neos:link.module(path: 'system/useradmin')}" />
+	<link rel="some-module" href="{neos:uri.module(path: 'system/useradmin')}" />
 
 
 Expected result::
