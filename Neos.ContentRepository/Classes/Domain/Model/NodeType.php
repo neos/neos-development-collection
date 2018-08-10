@@ -319,9 +319,6 @@ class NodeType
         if ($nodeType === $this->name) {
             return true;
         }
-        if (array_key_exists($nodeType, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeType] === null) {
-            return false;
-        }
         foreach ($this->declaredSuperTypes as $superType) {
             if ($superType !== null && $superType->isOfType($nodeType) === true) {
                 return true;
