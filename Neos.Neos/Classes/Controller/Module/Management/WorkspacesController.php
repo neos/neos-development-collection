@@ -577,7 +577,12 @@ class WorkspacesController extends AbstractModuleController
                         'diff' => $diffArray
                     ];
                 }
-            } elseif ($originalPropertyValue instanceof ImageInterface || $changedPropertyValue instanceof ImageInterface) {
+                // The && in belows condition is on purpose as creating a thumbnail for comparison only works if actually
+                // BOTH are ImageInterface (or NULL).
+            } elseif (
+                ($originalPropertyValue instanceof ImageInterface || $originalPropertyValue === null)
+                && ($changedPropertyValue instanceof ImageInterface || $changedPropertyValue === null)
+            ) {
                 $contentChanges[$propertyName] = [
                     'type' => 'image',
                     'propertyLabel' => $this->getPropertyLabel($propertyName, $changedNode),
