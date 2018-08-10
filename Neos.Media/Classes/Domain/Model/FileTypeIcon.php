@@ -49,7 +49,7 @@ final class FileTypeIcon
         return $icon;
     }
 
-    protected function getIconPath(string $name)
+    protected function getIconPath(string $name): string
     {
         return  $this->getIconSet() . '/' . $name . '.' . $this->getIconExtension();
     }
