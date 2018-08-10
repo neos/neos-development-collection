@@ -3,7 +3,7 @@
 Media ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2017-05-11
+This reference was automatically generated from code on 2018-08-10
 
 
 .. _`Media ViewHelper Reference: neos.media:fileTypeIcon`:
@@ -57,13 +57,13 @@ Examples
 
 **Rendering an asset filetype icon**::
 
-	<neos.media:fileTypeIcon file="{assetObject}" height="16" />
+	<typo3.media:fileTypeIcon file="{assetObject}" height="16" />
 
 
 Expected result::
 
 	(depending on the asset, no scaling applied)
-	<img src="_Resources/Static/Packages/Neos/Media/Icons/16px/jpg.png" height="16" alt="filetype alt text" />
+	<img src="_Resources/Static/Packages/TYPO3/Media/Icons/16px/jpg.png" height="16" alt="filetype alt text" />
 
 
 
@@ -148,12 +148,12 @@ Expected result::
 
 **Bind to object property**::
 
-	<neos.media:form.checkbox property="interests" value="Neos" />
+	<neos.media:form.checkbox property="interests" value="TYPO3" />
 
 
 Expected result::
 
-	<input type="checkbox" name="user[interests][]" value="Neos" checked="checked" />
+	<input type="checkbox" name="user[interests][]" value="TYPO3" checked="checked" />
 	(depending on property "interests")
 
 
@@ -215,6 +215,8 @@ Arguments
 * ``async`` (boolean, *optional*): Return asynchronous image URI in case the requested image does not exist already
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
+
+* ``quality`` (integer, *optional*): Quality of the image
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -340,6 +342,8 @@ Arguments
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
 
+* ``quality`` (integer, *optional*): Quality of the image
+
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -456,6 +460,8 @@ Arguments
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
 
+* ``quality`` (integer, *optional*): Quality of the image
+
 
 
 
@@ -518,6 +524,8 @@ Arguments
 * ``async`` (boolean, *optional*): Return asynchronous image URI in case the requested image does not exist already
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
+
+* ``quality`` (integer, *optional*): Quality of the image
 
 
 

@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2017-05-11
+This reference was automatically generated from code on 2018-08-10
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -362,6 +362,40 @@ Get the last element inside the context.
 
 
 
+.. _`FlowQuery Operation Reference: neosUiDefaultNodes`:
+
+neosUiDefaultNodes
+------------------
+
+Fetches all nodes needed for the given state of the UI
+
+:Implementation: Neos\\Neos\\Ui\\FlowQueryOperations\\NeosUiDefaultNodesOperation
+:Priority: 100
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: neosUiFilteredChildren`:
+
+neosUiFilteredChildren
+----------------------
+
+"children" operation working on ContentRepository nodes. It iterates over all
+context elements and returns all child nodes or only those matching
+the filter expression specified as optional argument.
+
+:Implementation: Neos\\Neos\\Ui\\FlowQueryOperations\\NeosUiFilteredChildrenOperation
+:Priority: 100
+:Final: No
+:Returns: void
+
+
+
+
+
 .. _`FlowQuery Operation Reference: next`:
 
 next
@@ -571,6 +605,24 @@ it only returns the nodes matching the given expression.
 property
 --------
 
+Used to access properties of a ContentRepository Node. If the property mame is
+prefixed with _, internal node properties like start time, end time,
+hidden are accessed.
+
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\PropertyOperation
+:Priority: 100
+:Final: Yes
+:Returns: mixed
+
+
+
+
+
+.. _`FlowQuery Operation Reference: property`:
+
+property
+--------
+
 Access properties of an object using ObjectAccess.
 
 Expects the name of a property as argument. If the context is empty, NULL
@@ -586,19 +638,17 @@ element is returned.
 
 
 
-.. _`FlowQuery Operation Reference: property`:
+.. _`FlowQuery Operation Reference: search`:
 
-property
---------
+search
+------
 
-Used to access properties of a ContentRepository Node. If the property mame is
-prefixed with _, internal node properties like start time, end time,
-hidden are accessed.
 
-:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\PropertyOperation
+
+:Implementation: Neos\\Neos\\Ui\\FlowQueryOperations\\SearchOperation
 :Priority: 100
-:Final: Yes
-:Returns: mixed
+:Final: No
+:Returns: void
 
 
 
@@ -630,8 +680,7 @@ slice
 Slice the current context
 
 If no arguments are given, the full context is returned. Otherwise the
-values contained in the context are sliced from begin given as the first
-argument to an optional end in the second argument.
+value contained in the context are sliced with offset and length.
 
 :Implementation: Neos\\Eel\\FlowQuery\\Operations\\SliceOperation
 :Priority: 1
