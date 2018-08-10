@@ -53,7 +53,7 @@ class IconThumbnailGenerator extends AbstractThumbnailGenerator
             $icon = FileTypeIconService::getIcon($asset->getResource()->getFilename());
             $thumbnail->setStaticResource($icon['src']);
             $thumbnail->setWidth($width);
-            $thumbnail->setHeight($width);
+            $thumbnail->setHeight($height);
         } catch (\Exception $exception) {
             $message = sprintf('Unable to generate thumbnail for the given image (filename: %s, SHA1: %s)', $thumbnail->getOriginalAsset()->getResource()->getFilename(), $thumbnail->getOriginalAsset()->getResource()->getSha1());
             throw new Exception\NoThumbnailAvailableException($message, 1433109654, $exception);
