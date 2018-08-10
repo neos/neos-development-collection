@@ -76,7 +76,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      * (including inheritance) is updated.
      *
      * @param string|NodeType|string[]|NodeType[] $nodeType
-     * @param NodeInterface $contextNode|null
+     * @param NodeInterface|null $contextNode
      * @return string|string[]
      */
     public function nodeTypeTag($nodeType, $contextNode = null)
@@ -137,7 +137,7 @@ class CachingHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param string $contextNode
+     * @param string $workspaceName
      * @return string
      */
     public function renderWorkspaceTagForContextNode(string $workspaceName)
