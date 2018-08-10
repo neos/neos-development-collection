@@ -3,7 +3,7 @@
 Fusion ViewHelper Reference
 ===========================
 
-This reference was automatically generated from code on 2017-03-30
+This reference was automatically generated from code on 2018-08-10
 
 
 .. _`Fusion ViewHelper Reference: fusion:render`:
@@ -54,7 +54,7 @@ Expected result::
 
 **Fusion from a foreign package**::
 
-	<ts:render path="some.given.path" typoScriptPackageKey="Acme.Bookstore" />
+	<ts:render path="some.given.path" fusionPackageKey="Acme.Bookstore" />
 
 
 Expected result::
