@@ -1,40 +1,3 @@
-
-TYPO3:
-  DocTools:
-    collections:
-      Media:
-        commandReferences:
-          - 'Media:Commands'
-        references:
-          - 'Media:ViewHelpers'
-          - 'Media:Validators'
-    commandReferences:
-      'Media:Commands':
-        title: 'Media Command Reference'
-        packageKeys:
-          - Neos.Media
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/Commands.rst'
-    references:
-      'Media:Validators':
-        title: 'Media Validator Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/Validators.rst'
-        affectedClasses:
-          parentClassName: Neos\Flow\Validation\Validator\AbstractValidator
-          classNamePattern: '/^TYPO3\\Media\\Validator\\.*$/i'
-        parser:
-          implementationClassName: TYPO3\DocTools\Domain\Service\FlowValidatorClassParser
-      'Media:ViewHelpers':
-        title: 'Media ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/ViewHelpers.rst'
-        affectedClasses:
-          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
-          classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
-        parser:
-          implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
-          options:
-            namespaces:
-              typo3.media: Neos\Media\ViewHelpers
-
 Neos:
   Flow:
     persistence:
@@ -101,3 +64,39 @@ Neos:
         supportedExtensions:
           - ttf
           - otf
+
+  DocTools:
+    collections:
+      Media:
+        commandReferences:
+          - 'Media:Commands'
+        references:
+          - 'Media:ViewHelpers'
+          - 'Media:Validators'
+    commandReferences:
+      'Media:Commands':
+        title: 'Media Command Reference'
+        packageKeys:
+          - Neos.Media
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/Commands.rst'
+    references:
+      'Media:Validators':
+        title: 'Media Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/Validators.rst'
+        affectedClasses:
+          parentClassName: Neos\Flow\Validation\Validator\AbstractValidator
+          classNamePattern: '/^Neos\\Media\\Validator\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FlowValidatorClassParser
+      'Media:ViewHelpers':
+        title: 'Media ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/ViewHelpers.rst'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^Neos\\Media\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              neos.media: Neos\Media\ViewHelpers
+
