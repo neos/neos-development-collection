@@ -28,7 +28,6 @@ class FileTypeIconService
      */
     public static function getIcon($filename): array
     {
-
         $fileExtention = self::extractFileExtension($filename);
         if (isset(self::$cache[$fileExtention])) {
             return self::$cache[$fileExtention];
