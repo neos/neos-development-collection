@@ -22,6 +22,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
  * Used to access properties of a ContentRepository Node. If the property mame is
  * prefixed with _, internal node properties like start time, end time,
  * hidden are accessed.
+ * The second parameter denotes, if references to nodes should be resolved, defaults to true.
  */
 class PropertyOperation extends AbstractOperation
 {
@@ -65,6 +66,7 @@ class PropertyOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return mixed
+     * @throws FlowQueryException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -79,10 +81,12 @@ class PropertyOperation extends AbstractOperation
             }
 
             $element = $context[0];
+            $returnNodesAsIdentifiers = isset($arguments[1]) && (bool) $arguments[1] === false ? true : false;
+
             if ($propertyPath[0] === '_') {
                 return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {
-                return $element->getProperty($propertyPath);
+                return $element->getProperty($propertyPath, $returnNodesAsIdentifiers);
             }
         }
     }
