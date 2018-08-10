@@ -186,19 +186,6 @@ class FindOperationTest extends AbstractNodeTest
     /**
      * @test
      */
-    public function findByNodeWithInstanceofFilterExcludeNodesWithADisabledCorrespondingSuperType()
-    {
-        $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:ContentMixin]')->get();
-        $foundNodeTypeNames = array_map(function (NodeInterface $node) {
-            return $node->getNodeType()->getName();
-        }, $foundNodes);
-        $this->assertNotContains('Neos.ContentRepository.Testing:ThreeColumn', $foundNodeTypeNames);
-    }
-
-    /**
-     * @test
-     */
     public function findByNodeWithMultipleInstanceofFilterReturnsMatchingNodesRecursively()
     {
         $q = new FlowQuery(array($this->node));
