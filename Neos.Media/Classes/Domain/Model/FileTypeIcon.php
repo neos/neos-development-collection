@@ -12,6 +12,7 @@ namespace Neos\Media\Domain\Model;
  */
 
 use Neos\Flow\Annotations as Flow;
+
 /**
  * File Type Icon
  */
