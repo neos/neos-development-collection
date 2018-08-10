@@ -33,7 +33,7 @@ final class FileTypeIcon
         $this->extension = $extension;
     }
 
-    public function alt(): string 
+    public function alt(): string
     {
         return $this->extension;
     }
@@ -54,12 +54,12 @@ final class FileTypeIcon
         return  $this->getIconSet() . '/' . $name . '.' . $this->getIconExtension();
     }
 
-    protected function getIconSet(): string 
+    protected function getIconSet(): string
     {
         return $this->settings['path'] ?? 'resource://Neos.Media/Public/IconSets/vivid';
     }
 
-    protected function getIconExtension(): string 
+    protected function getIconExtension(): string
     {
         return $this->settings['extension'] ?? 'svg';
     }
