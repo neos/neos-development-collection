@@ -78,18 +78,18 @@ Neos:
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/Validators.rst'
         affectedClasses:
           parentClassName: Neos\Flow\Validation\Validator\AbstractValidator
-          classNamePattern: '/^TYPO3\\Media\\Validator\\.*$/i'
+          classNamePattern: '/^Neos\\Media\\Validator\\.*$/i'
         parser:
-          implementationClassName: TYPO3\DocTools\Domain\Service\FlowValidatorClassParser
+          implementationClassName: Neos\DocTools\Domain\Service\FlowValidatorClassParser
       'Media:ViewHelpers':
         title: 'Media ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/ViewHelpers.rst'
         affectedClasses:
           parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
-          classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
+          classNamePattern: '/^Neos\\Media\\ViewHelpers\\.*$/i'
         parser:
-          implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
+          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
           options:
             namespaces:
-              typo3.media: Neos\Media\ViewHelpers
+              neos.media: Neos\Media\ViewHelpers
 
