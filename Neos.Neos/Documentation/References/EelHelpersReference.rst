@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2017-05-11
+This reference was automatically generated from code on 2018-08-10
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -55,11 +55,14 @@ If a value has several occurrences, the latest key will be used as its value, an
 Array.indexOf(array, searchElement, fromIndex)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``array`` (array)
-* ``searchElement`` (mixed)
-* ``fromIndex`` (integer, *optional*)
+Returns the first index at which a given element can be found in the array,
+or -1 if it is not present
 
-**Return** (mixed)
+* ``array`` (array) The array
+* ``searchElement`` (mixed) The element value to find
+* ``fromIndex`` (int, *optional*) Position in the array to start the search.
+
+**Return** (int)
 
 Array.isEmpty(array)
 ^^^^^^^^^^^^^^^^^^^^
@@ -142,6 +145,20 @@ Picks a random element from the array
 * ``array`` (array)
 
 **Return** (mixed) A random entry or NULL if the array is empty
+
+Array.range(start, end, step)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Create an array containing a range of elements
+
+If a step value is given, it will be used as the increment between elements in the sequence.
+step should be given as a positive number. If not specified, step will default to 1.
+
+* ``start`` (mixed) First value of the sequence.
+* ``end`` (mixed) The sequence is ended upon reaching the end value.
+* ``step`` (integer, *optional*) The increment between items, will default to 1.
+
+**Return** (array) Array of elements from start to end, inclusive.
 
 Array.reverse(array)
 ^^^^^^^^^^^^^^^^^^^^
@@ -267,6 +284,32 @@ Examples::
 
 
 
+.. _`Eel Helpers Reference: ContentDimensions`:
+
+ContentDimensions
+-----------------
+
+
+
+Implemented in: ``Neos\Neos\Ui\Fusion\Helper\ContentDimensionsHelper``
+
+ContentDimensions.allowedPresetsByName(dimensions)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``dimensions`` (array) Dimension values indexed by dimension name
+
+**Return** (array) Allowed preset names for the given dimension combination indexed by dimension name
+
+ContentDimensions.contentDimensionsByName()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Return** (array) Dimensions indexed by name with presets indexed by name
+
+
+
+
+
+
 .. _`Eel Helpers Reference: Date`:
 
 Date
@@ -283,6 +326,20 @@ Add an interval to a date and return a new DateTime object
 
 * ``date`` (\DateTime)
 * ``interval`` (string|\DateInterval)
+
+**Return** (\DateTime)
+
+Date.create(time)
+^^^^^^^^^^^^^^^^^
+
+Get a date object by given date or time format
+
+Examples::
+
+    Date.create('2018-12-04')
+    Date.create('first day of next year')
+
+* ``time`` (String) A date/time string. For valid formats see http://php.net/manual/en/datetime.formats.php
 
 **Return** (\DateTime)
 
@@ -314,6 +371,17 @@ See formatting options as in PHP date()
 
 * ``date`` (integer|string|\DateTime|\DateInterval)
 * ``format`` (string)
+
+**Return** (string)
+
+Date.formatCldr(date, cldrFormat, locale)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Format a date to a string with a given cldr format
+
+* ``date`` (integer|string|\DateTime)
+* ``cldrFormat`` (string) Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
+* ``locale`` (null|string, *optional*) String locale - example (de|en|ru_RU)
 
 **Return** (string)
 
@@ -405,6 +473,54 @@ Get the year of a date
 
 
 
+.. _`Eel Helpers Reference: File`:
+
+File
+----
+
+Helper to read files.
+
+Implemented in: ``Neos\Eel\Helper\FileHelper``
+
+File.fileInfo(filepath)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Get file name and path information
+
+* ``filepath`` (string)
+
+**Return** (array) with keys dirname, basename, extension (if any), and filename
+
+File.getSha1(filepath)
+^^^^^^^^^^^^^^^^^^^^^^
+
+* ``filepath`` (string)
+
+**Return** (string)
+
+File.readFile(filepath)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Read and return the files contents for further use.
+
+* ``filepath`` (string)
+
+**Return** (string)
+
+File.stat(filepath)
+^^^^^^^^^^^^^^^^^^^
+
+Get file information like creation and modification times as well as size.
+
+* ``filepath`` (string)
+
+**Return** (array) with keys mode, uid, gid, size, atime, mtime, ctime, (blksize, blocks, dev, ino, nlink, rdev)
+
+
+
+
+
+
 .. _`Eel Helpers Reference: Json`:
 
 Json
@@ -424,12 +540,17 @@ JSON decode the given string
 
 **Return** (mixed)
 
-Json.stringify(value)
-^^^^^^^^^^^^^^^^^^^^^
+Json.stringify(value, options)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 JSON encode the given value
 
+Usage example for options:
+
+Json.stringify(value, ['JSON_UNESCAPED_UNICODE', 'JSON_FORCE_OBJECT'])
+
 * ``value`` (mixed)
+* ``options`` (array, *optional*) Array of option constant names as strings
 
 **Return** (string)
 
@@ -806,7 +927,7 @@ Implemented in: ``Neos\Neos\Fusion\Helper\ArrayHelper``
 Neos.Array.filter(set, filterProperty)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to TRUE.
+Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to true.
 
 * ``set`` (array|Collection)
 * ``filterProperty`` (string)
@@ -816,7 +937,7 @@ Filter an array of objects, by only keeping the elements where each object's $fi
 Neos.Array.filterNegated(set, filterProperty)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to FALSE.
+Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to false.
 
 * ``set`` (array|Collection)
 * ``filterProperty`` (string)
@@ -870,15 +991,23 @@ given nodes (for any variant) is updated.
 
 **Return** (array)
 
-Neos.Caching.nodeTypeTag(nodeType)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Neos.Caching.nodeTypeTag(nodeType, contextNode)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Generate an `@cache` entry tag for a node type
 A cache entry with this tag will be flushed whenever a node
-(for any variant) that is of the given node type (including inheritance)
-is updated.
+(for any variant) that is of the given node type(s)
+(including inheritance) is updated.
 
-* ``nodeType`` (NodeType)
+* ``nodeType`` (string|NodeType|string[]|NodeType[])
+* ``contextNode`` (NodeInterface|null, *optional*)
+
+**Return** (string|string[])
+
+Neos.Caching.renderWorkspaceTagForContextNode(workspaceName)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``workspaceName`` (string)
 
 **Return** (string)
 
@@ -948,6 +1077,17 @@ Eel helper for ContentRepository Nodes
 
 Implemented in: ``Neos\Neos\Fusion\Helper\NodeHelper``
 
+Neos.Node.isOfType(node, nodeType)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If this node type or any of the direct or indirect super types
+has the given name.
+
+* ``node`` (NodeInterface)
+* ``nodeType`` (string)
+
+**Return** (bool)
+
 Neos.Node.nearestContentCollection(node, nodePath)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -997,6 +1137,229 @@ Neos.Rendering.renderDimensions(dimensions)
 Render a human-readable description for the passed $dimensions
 
 * ``dimensions`` (array)
+
+**Return** (string)
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Neos.Ui.Activation`:
+
+Neos.Ui.Activation
+------------------
+
+
+
+Implemented in: ``Neos\Neos\Ui\Fusion\Helper\ActivationHelper``
+
+Neos.Ui.Activation.isLegacyBackendEnabled()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Neos.Ui.Modules`:
+
+Neos.Ui.Modules
+---------------
+
+
+
+Implemented in: ``Neos\Neos\Ui\Fusion\Helper\ModulesHelper``
+
+Neos.Ui.Modules.isAllowed(modulePath)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Checks whether the current user has access to a module
+
+* ``modulePath`` (string)
+
+**Return** (boolean)
+
+Neos.Ui.Modules.isAvailable(moduleName)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Checks, whether a module is available to the current user
+
+* ``moduleName`` (string)
+
+**Return** (boolean)
+
+Neos.Ui.Modules.isEnabled(modulePath)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Checks whether a module is enabled
+
+* ``modulePath`` (string)
+
+**Return** (boolean)
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Neos.Ui.PositionalArraySorter`:
+
+Neos.Ui.PositionalArraySorter
+-----------------------------
+
+
+
+Implemented in: ``Neos\Neos\Ui\Fusion\Helper\PositionalArraySorterHelper``
+
+Neos.Ui.PositionalArraySorter.sort(array, positionPath)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``array`` (array)
+* ``positionPath`` (string, *optional*)
+
+**Return** (array)
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Neos.Ui.Sites`:
+
+Neos.Ui.Sites
+-------------
+
+
+
+Implemented in: ``Neos\Neos\Ui\Fusion\Helper\SitesHelper``
+
+Neos.Ui.Sites.isActive(siteNode)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Neos.Ui.StaticResources`:
+
+Neos.Ui.StaticResources
+-----------------------
+
+
+
+Implemented in: ``Neos\Neos\Ui\Fusion\Helper\StaticResourcesHelper``
+
+Neos.Ui.StaticResources.compiledResourcePackage()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Neos.Ui.Workspace`:
+
+Neos.Ui.Workspace
+-----------------
+
+
+
+Implemented in: ``Neos\Neos\Ui\Fusion\Helper\WorkspaceHelper``
+
+Neos.Ui.Workspace.getAllowedTargetWorkspaces()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Neos.Ui.Workspace.getPersonalWorkspace()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Neos.Ui.Workspace.getPublishableNodeInfo(workspace)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``workspace`` (Workspace)
+
+**Return** (array)
+
+
+
+
+
+
+.. _`Eel Helpers Reference: NodeInfo`:
+
+NodeInfo
+--------
+
+
+
+Implemented in: ``Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper``
+
+NodeInfo.createRedirectToNode(controllerContext, node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``controllerContext`` (ControllerContext)
+* ``node`` (NodeInterface, *optional*)
+
+**Return** (string)
+
+NodeInfo.defaultNodesForBackend(site, documentNode, controllerContext)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``site`` (NodeInterface)
+* ``documentNode`` (NodeInterface)
+* ``controllerContext`` (ControllerContext)
+
+**Return** (array)
+
+NodeInfo.renderDocumentNodeAndChildContent(documentNode, controllerContext)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``documentNode`` (NodeInterface)
+* ``controllerContext`` (ControllerContext)
+
+**Return** (array)
+
+NodeInfo.renderNodeWithMinimalPropertiesAndChildrenInformation(node, controllerContext, nodeTypeFilterOverride)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``node`` (NodeInterface)
+* ``controllerContext`` (ControllerContext|null, *optional*)
+* ``nodeTypeFilterOverride`` (string, *optional*)
+
+**Return** (array)
+
+NodeInfo.renderNodeWithPropertiesAndChildrenInformation(node, controllerContext, nodeTypeFilterOverride)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``node`` (NodeInterface)
+* ``controllerContext`` (ControllerContext|null, *optional*)
+* ``nodeTypeFilterOverride`` (string, *optional*)
+
+**Return** (array)
+
+NodeInfo.renderNodes(nodes, controllerContext, omitMostPropertiesForTreeState)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``nodes`` (array)
+* ``controllerContext`` (ControllerContext)
+* ``omitMostPropertiesForTreeState`` (bool, *optional*)
+
+**Return** (array)
+
+NodeInfo.renderNodesWithParents(nodes, controllerContext)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``nodes`` (array)
+* ``controllerContext`` (ControllerContext)
+
+**Return** (array)
+
+NodeInfo.uri(node, controllerContext)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``node`` (NodeInterface)
+* ``controllerContext`` (ControllerContext)
 
 **Return** (string)
 
@@ -1216,6 +1579,21 @@ Example::
 
     String.pregMatch("For more information, see Chapter 3.4.5.1", "/(chapter \d+(\.\d)*)/i")
       == ['Chapter 3.4.5.1', 'Chapter 3.4.5.1', '.1']
+
+* ``string`` (string) The input string
+* ``pattern`` (string) A PREG pattern
+
+**Return** (array) The matches as array or NULL if not matched
+
+String.pregMatchAll(string, pattern)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Perform a global regular expression match (PREG style)
+
+Example::
+
+    String.pregMatchAll("<hr id="icon-one" /><hr id="icon-two" />", '/id="icon-(.+?)"/')
+      == [['id="icon-one"', 'id="icon-two"'],['one','two']]
 
 * ``string`` (string) The input string
 * ``pattern`` (string) A PREG pattern
@@ -1492,7 +1870,7 @@ translated label.
 
 * ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
 * ``originalLabel`` (string, *optional*) The original translation value (the untranslated source string).
-* ``arguments`` (array, *optional*) Numerically indexed array of values to be inserted into placeholders
+* ``arguments`` (array, *optional*) Array of numerically indexed or named values to be inserted into placeholders. Have a look at the internationalization documentation in the definitive guide for details.
 * ``source`` (string, *optional*) Name of file with translations
 * ``package`` (string, *optional*) Target package key. If not set, the current package key will be used
 * ``quantity`` (mixed, *optional*) A number to find plural form for (float or int), NULL to not use plural forms
