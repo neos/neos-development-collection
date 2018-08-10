@@ -3,7 +3,7 @@
 Media ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2017-05-11
+This reference was automatically generated from code on 2018-08-10
 
 
 .. _`Media ViewHelper Reference: neos.media:fileTypeIcon`:
@@ -11,7 +11,7 @@ This reference was automatically generated from code on 2017-05-11
 neos.media:fileTypeIcon
 -----------------------
 
-Renders an <img> HTML tag for a filetype icon for a given Neos.Media's asset instance
+Renders an <img> HTML tag for a file type icon for a given Neos.Media's asset instance
 
 :Implementation: Neos\\Media\\ViewHelpers\\FileTypeIconViewHelper
 
@@ -25,7 +25,11 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``file`` (Neos\Media\Domain\Model\AssetInterface)
+* ``file`` (mixed, *optional*): The Asset object. DEPRECATED, use $asset instead!
+
+* ``asset`` (mixed, *optional*): An Asset object to determine the file type icon for. Alternatively $filename can be specified.
+
+* ``filename`` (string, *optional*):  A filename to determine the file type icon for. Alternatively $asset can be specified.
 
 * ``width`` (mixed, *optional*)
 
@@ -55,15 +59,26 @@ Arguments
 Examples
 ********
 
-**Rendering an asset filetype icon**::
+**Rendering an asset file type icon**::
 
-	<neos.media:fileTypeIcon file="{assetObject}" height="16" />
+	<neos.media:fileTypeIcon asset="{assetObject}" height="16" />
 
 
 Expected result::
 
 	(depending on the asset, no scaling applied)
-	<img src="_Resources/Static/Packages/Neos/Media/Icons/16px/jpg.png" height="16" alt="filetype alt text" />
+	<img src="_Resources/Static/Packages/Neos/Media/Icons/16px/jpg.png" height="16" alt="file type alt text" />
+
+
+**Rendering a file type icon by given filename**::
+
+	<neos.media:fileTypeIcon filename="{someFilename}" height="16" />
+
+
+Expected result::
+
+	(depending on the asset, no scaling applied)
+	<img src="_Resources/Static/Packages/Neos/Media/Icons/16px/jpg.png" height="16" alt="file type alt text" />
 
 
 
@@ -148,12 +163,12 @@ Expected result::
 
 **Bind to object property**::
 
-	<neos.media:form.checkbox property="interests" value="Neos" />
+	<neos.media:form.checkbox property="interests" value="TYPO3" />
 
 
 Expected result::
 
-	<input type="checkbox" name="user[interests][]" value="Neos" checked="checked" />
+	<input type="checkbox" name="user[interests][]" value="TYPO3" checked="checked" />
 	(depending on property "interests")
 
 
@@ -215,6 +230,8 @@ Arguments
 * ``async`` (boolean, *optional*): Return asynchronous image URI in case the requested image does not exist already
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
+
+* ``quality`` (integer, *optional*): Quality of the image
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -340,6 +357,8 @@ Arguments
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
 
+* ``quality`` (integer, *optional*): Quality of the image
+
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -456,6 +475,8 @@ Arguments
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
 
+* ``quality`` (integer, *optional*): Quality of the image
+
 
 
 
@@ -518,6 +539,8 @@ Arguments
 * ``async`` (boolean, *optional*): Return asynchronous image URI in case the requested image does not exist already
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
+
+* ``quality`` (integer, *optional*): Quality of the image
 
 
 
