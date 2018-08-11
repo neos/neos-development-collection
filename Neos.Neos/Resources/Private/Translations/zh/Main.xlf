@@ -287,46 +287,46 @@
 			<target xml:lang="zh-CN" state="translated">主要</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="zh-CN" state="needs-translation">Package</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">包</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target xml:lang="zh-CN" state="needs-translation">Deactivated</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="zh-CN" state="needs-translation">Unavailable</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">不可用</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="zh-CN" state="needs-translation">Inactive</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">未激活</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
 			<target xml:lang="zh-CN" state="translated">点击编辑</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="zh-CN" state="needs-translation">Click to deactivate</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">单击使无效</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="zh-CN" state="needs-translation">Click to activate</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">点击激活</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="zh-CN" state="translated">点击删除</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="zh-CN" state="needs-translation">Click to create new</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">点击创建</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="zh-CN" state="needs-translation">Status</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">状态</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="zh-CN" state="needs-translation">Active</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">启用</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="zh-CN" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">领域</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="zh-CN" state="needs-translation">Domain</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">域</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="zh-CN" state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">是, 删掉它!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target xml:lang="zh-CN" state="needs-translation">Package Key</target></trans-unit>
