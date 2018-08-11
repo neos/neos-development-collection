@@ -187,7 +187,7 @@ class MediaCommandController extends CommandController
                 break;
             }
 
-            if (!($asset instanceof Asset)) {
+            if (!$asset instanceof Asset) {
                 continue;
             }
             if (!$asset instanceof AssetSourceAwareInterface) {
@@ -196,7 +196,7 @@ class MediaCommandController extends CommandController
             if ($filterByAssetSourceIdentifier !== '' && $asset->getAssetSourceIdentifier() !== $filterByAssetSourceIdentifier) {
                 continue;
             }
-            if ($onlyTags === '' && !($assetTagsMatchFilterTags($asset->getTags(), $onlyTags))) {
+            if ($onlyTags !== '' && $assetTagsMatchFilterTags($asset->getTags(), $onlyTags) === false) {
                 continue;
             }
             if ($asset->getUsageCount() !== 0) {
