@@ -260,13 +260,13 @@
 			<target xml:lang="zh-CN" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
-			<target xml:lang="zh-CN" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">{0} 复制了 {1} "{2}"。</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target xml:lang="zh-CN" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">{0} 将 {1} "{2}" 重命名为 "{3}"。</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target xml:lang="zh-CN" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">{0} 修改了 {1} "{2}" 上的内容。</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="zh-CN" state="translated">{0} 为 {2} 创建一个新用户"{1}"。</target></trans-unit>
