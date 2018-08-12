@@ -293,7 +293,7 @@
 			<target xml:lang="pt-PT" state="needs-translation">Deactivated</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="pt-PT" state="translated">Não disponível</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Indisponível</target><alt-trans><target xml:lang="pt-PT">Não disponível</target></alt-trans></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
 			<target xml:lang="pt-PT" state="translated">Inativo</target></trans-unit>
@@ -314,7 +314,7 @@
 			<target xml:lang="pt-PT" state="translated">Clique para criar um novo</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="pt-PT" state="translated">Estatuto</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Estado</target><alt-trans><target xml:lang="pt-PT">Estatuto</target></alt-trans></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
 			<target xml:lang="pt-PT" state="translated">Ativo</target></trans-unit>
@@ -326,7 +326,7 @@
 			<target xml:lang="pt-PT" state="translated">Domínio</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="pt-PT" state="translated">Sim, elimine!</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Sim, elimine-o!</target><alt-trans><target xml:lang="pt-PT">Sim, elimine!</target></alt-trans></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target xml:lang="pt-PT" state="needs-translation">Package Key</target></trans-unit>
@@ -742,7 +742,7 @@
 			<target xml:lang="pt-PT" state="translated">Mover {source} para {target}</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target xml:lang="pt-PT" state="translated">Por favor, selecione a posição em que você deseja inserir a {source} em relação a {target}.</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Por favor, selecione a posição onde deseja inserir a {source} em relação a {target}.</target><alt-trans><target xml:lang="pt-PT">Por favor, selecione a posição em que você deseja inserir a {source} em relação a {target}.</target></alt-trans></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
 			<target xml:lang="pt-PT" state="translated">Inserir</target></trans-unit>
@@ -811,7 +811,7 @@
 			<target xml:lang="pt-PT" state="translated">Não foram encontradas correspondências</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target xml:lang="pt-PT" state="translated">Por favor, inserir ###CHARACTERS### mais caracteres</target></trans-unit>
+			<target xml:lang="pt-PT" state="translated">Por favor, inserir ###CHARACTERS### mais carateres</target><alt-trans><target xml:lang="pt-PT">Por favor, inserir ###CHARACTERS### mais caracteres</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
