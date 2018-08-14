@@ -20,6 +20,10 @@ Neos:
     # Automatically create thumbnails for configured presets when assets are added
     autoCreateThumbnailPresets: true
 
+    iconSet:
+      path: 'resource://Neos.Media/Public/IconSets/vivid'
+      extension: 'svg'
+
     assetSources:
       'neos':
         assetSource: 'Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetSource'
