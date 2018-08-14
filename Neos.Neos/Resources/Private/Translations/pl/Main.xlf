@@ -341,10 +341,10 @@
 			<target xml:lang="pl" state="translated">Pokaż opcje publikowania</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target xml:lang="pl" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="pl" state="translated">Aktywuj edycję w trybie pełnoekranowym</target></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target xml:lang="pl" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="pl" state="translated">Dezaktywuj edycję w trybie pełnoekranowym</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
 			<target xml:lang="pl" state="translated">Pokaż podgląd</target></trans-unit>
@@ -673,12 +673,12 @@
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
 			<target xml:lang="pl">Błąd bazy danych</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="pl">Przepraszamy, wykryliśmy błąd w twojej bazie danych. Sprawdź swoje pliki dziennika w Data/Logs/* aby uzyskać więcej informacji.</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
+			<target xml:lang="pl" state="translated">Brak połączenia bazy danych lub nie został jeszcze utworzony schemat Neos bazy danych.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="pl">Powinieneś skonfigurować lub sprawdzić konfigurację bazy danych w ustawieniach.</target><alt-trans><target xml:lang="pl">Możesz chcieć skonfigurować lub sprawdzić konfigurację bazy danych w ustawieniach.</target></alt-trans></trans-unit>
+			<target xml:lang="pl" state="translated">Uruchom instalator, aby skonfigurować bazę danych.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target xml:lang="pl">Nie znaleziono strony</target></trans-unit>
