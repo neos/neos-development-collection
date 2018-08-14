@@ -341,10 +341,10 @@
 			<target xml:lang="pl" state="translated">Pokaż opcje publikowania</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target xml:lang="pl" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="pl" state="translated">Aktywuj edycję w trybie pełnoekranowym</target></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target xml:lang="pl" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="pl" state="translated">Dezaktywuj edycję w trybie pełnoekranowym</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
 			<target xml:lang="pl" state="translated">Pokaż podgląd</target></trans-unit>
@@ -681,10 +681,10 @@
 			<target xml:lang="pl">Błąd bazy danych</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target xml:lang="pl" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Brak połączenia bazy danych lub nie został jeszcze utworzony schemat Neos bazy danych.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target xml:lang="pl" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Uruchom instalator, aby skonfigurować bazę danych.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target xml:lang="pl">Nie znaleziono strony</target></trans-unit>
