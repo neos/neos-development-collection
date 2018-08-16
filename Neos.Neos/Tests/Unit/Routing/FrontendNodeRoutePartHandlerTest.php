@@ -11,23 +11,25 @@ namespace Neos\Neos\Tests\Unit\Routing;
  * source code.
  */
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Statement;
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Algorithms;
-use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Routing\Exception\NoHomepageException;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for the frontend node route part handler
@@ -75,10 +77,27 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     protected $routePartHandler;
 
     /**
+     * @var EntityManagerInterface|MockObject
+     */
+    protected $mockEntityManager;
+
+    /**
+     * @var Connection|MockObject
+     */
+    protected $mockConnection;
+
+    /**
+     * @var Statement|MockObject
+     */
+    protected $mockStatement;
+
+    /**
      * Setup the most commonly used mocks and a real FrontendRoutePartHandler. The mock objects created by this function
      * will not be sufficient for most tests, but they are the lowest common denominator.
      *
      * @return void
+     * @throws \Neos\ContentRepository\Exception
+     * @throws \ReflectionException
      */
     protected function setUp()
     {
@@ -121,6 +140,12 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->contentDimensionPresetSource = new ConfigurationContentDimensionPresetSource();
         $this->contentDimensionPresetSource->setConfiguration(array());
         $this->inject($this->routePartHandler, 'contentDimensionPresetSource', $this->contentDimensionPresetSource);
+
+        $this->mockConnection = $this->getMockBuilder(\Doctrine\DBAL\Driver\Connection::class)->disableOriginalConstructor()->getMock();
+        $this->mockStatement = $this->getMockBuilder(Statement::class)->disableOriginalConstructor()->getMock();
+        $this->mockEntityManager = $this->getMockBuilder(EntityManagerInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockEntityManager->expects($this->any())->method('getConnection')->will($this->returnValue($this->mockConnection));
+        $this->inject($this->routePartHandler, 'entityManager', $this->mockEntityManager);
     }
 
     /**
@@ -153,11 +178,20 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-        $expectedContextPath = '/sites/examplecom/home';
+        $expectedUriPathSegment = 'home';
+        $expectedContextPath = '/sites/examplecom/' . $expectedUriPathSegment . '@live';
 
-        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
-        $mockSubNode->mockProperties['uriPathSegment'] = 'home';
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, $expectedUriPathSegment);
+        $mockSubNode->mockProperties['uriPathSegment'] = $expectedUriPathSegment;
         $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue($expectedContextPath));
+        $this->mockConnection->expects($this->any())->method('query')->will($this->returnCallback(function ($sqlString) use ($expectedUriPathSegment) {
+            if (strpos($sqlString, sprintf('%%"uripathsegment": "%s"%%', $expectedUriPathSegment)) !== false) {
+                return $this->mockStatement;
+            }
+
+            throw new \InvalidArgumentException('query() was not called with the expected uriPathSegment matcher', 1534402275);
+        }));
+        $this->mockStatement->expects($this->any())->method('fetch')->will($this->returnValue(['path' => '/' . $expectedUriPathSegment]));
 
         $routePath = 'home';
         $this->assertTrue($this->routePartHandler->match($routePath));
@@ -197,8 +231,28 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
-        $mockSubNode->mockProperties['uriPathSegment'] = 'home';
+        $expectedUriPathSegment = 'home';
+        $expectedContextPath = '/sites/examplecom/' . $expectedUriPathSegment . '@live';
+
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, $expectedUriPathSegment);
+        $mockSubNode->mockProperties['uriPathSegment'] = $expectedUriPathSegment;
+        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue($expectedContextPath));
+        $this->mockConnection->expects($this->at(0))->method('query')->will($this->returnCallback(function ($sqlString) use ($expectedUriPathSegment) {
+            if (strpos($sqlString, sprintf('%%"uripathsegment": "%s"%%', $expectedUriPathSegment)) !== false) {
+                return $this->mockStatement;
+            }
+
+            throw new \InvalidArgumentException('query() was not called with the expected uriPathSegment matcher', 1534402275);
+        }));
+        $this->mockConnection->expects($this->at(1))->method('query')->will($this->returnCallback(function ($sqlString) {
+            if (strpos($sqlString, '%"uripathsegment": "about-us"%') !== false) {
+                return $this->mockStatement;
+            }
+
+            throw new \InvalidArgumentException('query() was not called with the expected uriPathSegment matcher', 1534402275);
+        }));
+        $this->mockStatement->expects($this->at(0))->method('fetch')->will($this->returnValue(['path' => '/' . $expectedUriPathSegment]));
+        $this->mockStatement->expects($this->at(1))->method('fetch')->will($this->returnValue(false));
 
         $routePath = 'home/about-us';
         $this->assertFalse($this->routePartHandler->match($routePath));
@@ -236,9 +290,20 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
-        $mockSubNode->mockProperties['uriPathSegment'] = 'features';
-        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/features@user-robert'));
+        $expectedUriPathSegment = 'features';
+        $expectedContextPath = '/sites/examplecom/' . $expectedUriPathSegment . '@user-robert';
+
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, $expectedUriPathSegment);
+        $mockSubNode->mockProperties['uriPathSegment'] = $expectedUriPathSegment;
+        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue($expectedContextPath));
+        $this->mockConnection->expects($this->any())->method('query')->will($this->returnCallback(function ($sqlString) use ($expectedUriPathSegment) {
+            if (strpos($sqlString, sprintf('%%"uripathsegment": "%s"%%', $expectedUriPathSegment)) !== false) {
+                return $this->mockStatement;
+            }
+
+            throw new \InvalidArgumentException('query() was not called with the expected uriPathSegment matcher', 1534402275);
+        }));
+        $this->mockStatement->expects($this->any())->method('fetch')->will($this->returnValue(['path' => '/' . $expectedUriPathSegment]));
 
         $routePath = 'features';
         $this->assertTrue($this->routePartHandler->match($routePath));
@@ -260,8 +325,20 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
-        $mockSubNode->mockProperties['uriPathSegment'] = 'features';
+        $expectedUriPathSegment = 'features';
+        $expectedContextPath = '/sites/examplecom/' . $expectedUriPathSegment . '@live';
+
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, $expectedUriPathSegment);
+        $mockSubNode->mockProperties['uriPathSegment'] = $expectedUriPathSegment;
+        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue($expectedContextPath));
+        $this->mockConnection->expects($this->any())->method('query')->will($this->returnCallback(function ($sqlString) use ($expectedUriPathSegment) {
+            if (strpos($sqlString, sprintf('%%"uripathsegment": "%s"%%', $expectedUriPathSegment)) !== false) {
+                return $this->mockStatement;
+            }
+
+            throw new \InvalidArgumentException('query() was not called with the expected uriPathSegment matcher', 1534402275);
+        }));
+        $this->mockStatement->expects($this->any())->method('fetch')->will($this->returnValue(['path' => '/' . $expectedUriPathSegment]));
 
         $routePath = 'features';
         $this->assertTrue($this->routePartHandler->match($routePath));
@@ -286,8 +363,20 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
-        $mockSubNode->mockProperties['uriPathSegment'] = 'home';
+        $expectedUriPathSegment = 'home';
+        $expectedContextPath = '/sites/examplecom/' . $expectedUriPathSegment . '@live';
+
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, $expectedUriPathSegment);
+        $mockSubNode->mockProperties['uriPathSegment'] = $expectedUriPathSegment;
+        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue($expectedContextPath));
+        $this->mockConnection->expects($this->any())->method('query')->will($this->returnCallback(function ($sqlString) use ($expectedUriPathSegment) {
+            if (strpos($sqlString, sprintf('%%"uripathsegment": "%s"%%', $expectedUriPathSegment)) !== false) {
+                return $this->mockStatement;
+            }
+
+            throw new \InvalidArgumentException('query() was not called with the expected uriPathSegment matcher', 1534402275);
+        }));
+        $this->mockStatement->expects($this->any())->method('fetch')->will($this->returnValue(['path' => '/' . $expectedUriPathSegment]));
 
         $that = $this;
         $this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
@@ -308,8 +397,20 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
-        $mockSubNode->mockProperties['uriPathSegment'] = 'home';
+        $expectedUriPathSegment = 'home';
+        $expectedContextPath = '/sites/examplecom/' . $expectedUriPathSegment . '@live';
+
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, $expectedUriPathSegment);
+        $mockSubNode->mockProperties['uriPathSegment'] = $expectedUriPathSegment;
+        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue($expectedContextPath));
+        $this->mockConnection->expects($this->any())->method('query')->will($this->returnCallback(function ($sqlString) use ($expectedUriPathSegment) {
+            if (strpos($sqlString, sprintf('%%"uripathsegment": "%s"%%', $expectedUriPathSegment)) !== false) {
+                return $this->mockStatement;
+            }
+
+            throw new \InvalidArgumentException('query() was not called with the expected uriPathSegment matcher', 1534402275);
+        }));
+        $this->mockStatement->expects($this->any())->method('fetch')->will($this->returnValue(['path' => '/' . $expectedUriPathSegment]));
 
         $that = $this;
         $this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
@@ -324,6 +425,10 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     /**
      * @test
      * @dataProvider contextPathsAndRequestPathsDataProvider
+     * @param string $expectedContextPath Note: unused here, but the dataProvider is shared with another test
+     * @param string $requestPath
+     * @param bool $supportEmptySegmentForDimensions
+     * @throws \Neos\ContentRepository\Exception
      */
     public function matchConsidersDimensionValuePresetsSpecifiedInTheRequestUriWhileBuildingTheContext($expectedContextPath, $requestPath, $supportEmptySegmentForDimensions)
     {
@@ -390,8 +495,20 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
-        $mockSubNode->mockProperties['uriPathSegment'] = 'home';
+        $expectedUriPathSegment = 'home';
+        $expectedContextPath = '/sites/examplecom/' . $expectedUriPathSegment . '@user-robert';
+
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, $expectedUriPathSegment);
+        $mockSubNode->mockProperties['uriPathSegment'] = $expectedUriPathSegment;
+        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue($expectedContextPath));
+        $this->mockConnection->expects($this->any())->method('query')->will($this->returnCallback(function ($sqlString) use ($expectedUriPathSegment) {
+            if (strpos($sqlString, sprintf('%%"uripathsegment": "%s"%%', $expectedUriPathSegment)) !== false) {
+                return $this->mockStatement;
+            }
+
+            throw new \InvalidArgumentException('query() was not called with the expected uriPathSegment matcher', 1534402275);
+        }));
+        $this->mockStatement->expects($this->any())->method('fetch')->will($this->returnValue(['path' => '/' . $expectedUriPathSegment]));
 
         $routePath = 'home@user-robert.html';
         $this->assertFalse($this->routePartHandler->match($routePath));
@@ -408,11 +525,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
+        $this->mockStatement->expects($this->any())->method('fetch')->will($this->returnValue(['path' => '/home']));
 
-        $this->routePartHandler->setOptions(array('splitString' => '.'));
+        $this->routePartHandler->setSplitString('.');
 
         $routePath = 'home@user-robert.html';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        $routePath = '';
+        $this->assertTrue($this->routePartHandler->match($routePath));
     }
 
     /**
@@ -782,6 +901,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
         $mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue($contextProperties['workspaceName']));
+        $mockWorkspace->expects($this->any())->method('getBaseWorkspaces')->will($this->returnValue([]));
 
         $mockContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
         $mockContext->mockWorkspace = $mockWorkspace;

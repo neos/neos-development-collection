@@ -11,6 +11,9 @@ namespace Neos\Neos\Routing;
  * source code.
  */
 
+use Doctrine\DBAL\FetchMode;
+use Doctrine\ORM\EntityManagerInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
@@ -32,12 +35,26 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
  */
 class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendNodeRoutePartHandlerInterface
 {
+    const DIMENSION_REQUEST_PATH_MATCHER = '|^
+        (?<firstUriPart>[^/@]+)                    # the first part of the URI, before the first slash, may contain the encoded dimension preset
+        (?:                                        # start of non-capturing submatch for the remaining URL
+            /?                                     # a "/"; optional. it must also match en@user-admin
+            (?<remainingRequestPath>.*)            # the remaining request path
+        )?                                         # ... and this whole remaining URL is optional
+        $                                          # make sure we consume the full string
+    |x';
 
     /**
      * @Flow\Inject
      * @var SystemLoggerInterface
      */
     protected $systemLogger;
+
+    /**
+     * @Flow\Inject
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
 
     /**
      * @Flow\Inject
@@ -75,15 +92,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected $contentDimensionPresetSource;
 
-    const DIMENSION_REQUEST_PATH_MATCHER = '|^
-        (?<firstUriPart>[^/@]+)                    # the first part of the URI, before the first slash, may contain the encoded dimension preset
-        (?:                                        # start of non-capturing submatch for the remaining URL
-            /?                                     # a "/"; optional. it must also match en@user-admin
-            (?<remainingRequestPath>.*)            # the remaining request path
-        )?                                         # ... and this whole remaining URL is optional
-        $                                          # make sure we consume the full string
-    |x';
-
     /**
      * Extracts the node path from the request path.
      *
@@ -112,7 +120,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * in time the route part handler is invoked, the security framework is not yet fully initialized.
      *
      * @param string $requestPath The request path (without leading "/", relative to the current Site Node)
-     * @return boolean true if the $requestPath could be matched, otherwise false
+     * @return bool true if the $requestPath could be matched, otherwise false
      * @throws \Exception
      * @throws Exception\NoHomepageException if no node could be found on the homepage (empty $requestPath)
      */
@@ -152,13 +160,17 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      *
      * @param string $requestPath The request path, for example /the/node/path@some-workspace
      * @return NodeInterface
-     * @throws \Neos\Neos\Routing\Exception\NoWorkspaceException
-     * @throws \Neos\Neos\Routing\Exception\NoSiteException
-     * @throws \Neos\Neos\Routing\Exception\NoSuchNodeException
-     * @throws \Neos\Neos\Routing\Exception\NoSiteNodeException
-     * @throws \Neos\Neos\Routing\Exception\InvalidRequestPathException
+     * @throws Exception\NoSiteException
+     * @throws Exception\NoSiteNodeException
+     * @throws Exception\NoSuchNodeException
+     * @throws Exception\NoWorkspaceException
+     * @throws InvalidDimensionPresetCombinationException
+     * @throws InvalidRequestPathException
+     * @throws NoSuchDimensionValueException
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    protected function convertRequestPathToNode($requestPath)
+    protected function convertRequestPathToNode(string $requestPath): NodeInterface
     {
         $contentContext = $this->buildContextFromRequestPath($requestPath);
         $requestPathWithoutContext = $this->removeContextFromPath($requestPath);
@@ -179,11 +191,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             throw new Exception\NoSiteNodeException(sprintf('No site node found for request path "%s". %s', $requestPath, $currentDomain), 1346949728);
         }
 
+        $node = null;
         if ($requestPathWithoutContext === '') {
             $node = $siteNode;
-        } else {
+        } elseif ($requestPathWithoutContext !== null) {
             $relativeNodePath = $this->getRelativeNodePathByUriPathSegmentProperties($siteNode, $requestPathWithoutContext);
-            $node = ($relativeNodePath !== false) ? $siteNode->getNode($relativeNodePath) : null;
+            $node = ($relativeNodePath !== '') ? $siteNode->getNode($relativeNodePath) : null;
         }
 
         if (!$node instanceof NodeInterface) {
@@ -206,9 +219,11 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * $this->value:       homepage/about@user-admin
      *
      * @param mixed $node Either a Node object or an absolute context node path
-     * @return boolean true if value could be resolved successfully, otherwise false.
+     * @return bool true if value could be resolved successfully, otherwise false.
+     * @throws Exception\MissingNodePropertyException
+     * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    protected function resolveValue($node)
+    protected function resolveValue($node): bool
     {
         if (!$node instanceof NodeInterface && !is_string($node)) {
             return false;
@@ -250,8 +265,11 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      *
      * @param string &$requestPath The request path. If at least one content dimension is configured, the first path segment will identify the content dimension values
      * @return ContentContext The built content context
+     * @throws InvalidDimensionPresetCombinationException
+     * @throws InvalidRequestPathException
+     * @throws NoSuchDimensionValueException
      */
-    protected function buildContextFromRequestPath(&$requestPath)
+    protected function buildContextFromRequestPath(string &$requestPath): ContentContext
     {
         $workspaceName = 'live';
         $dimensionsAndDimensionValues = $this->parseDimensionsAndNodePathFromRequestPath($requestPath);
@@ -277,11 +295,10 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * Creates a content context from the given "context path", i.e. a string used for _resolving_ (not matching) a node.
      *
      * @param string $path a path containing the context, such as /sites/examplecom/home@user-johndoe or /assets/pictures/my-picture or /assets/pictures/my-picture@user-john;language=de&country=global
-     * @param boolean $convertLiveDimensions Whether to parse dimensions from the context path in a non-live workspace
+     * @param bool $convertLiveDimensions Whether to parse dimensions from the context path in a non-live workspace
      * @return ContentContext based on the specified path; only evaluating the context information (i.e. everything after "@")
-     * @throws Exception\InvalidRequestPathException
      */
-    protected function buildContextFromPath($path, $convertLiveDimensions)
+    protected function buildContextFromPath(string $path, bool $convertLiveDimensions): ContentContext
     {
         $workspaceName = 'live';
         $dimensions = null;
@@ -300,7 +317,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @param array $dimensions
      * @return ContentContext
      */
-    protected function buildContextFromWorkspaceName($workspaceName, array $dimensions = null)
+    protected function buildContextFromWorkspaceName(string $workspaceName, array $dimensions = null): ContentContext
     {
         $contextProperties = [
             'workspaceName' => $workspaceName,
@@ -317,9 +334,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
     /**
      * @param string $path an absolute or relative node path which possibly contains context information, for example "/sites/somesite/the/node/path@some-workspace"
-     * @return string the same path without context information
+     * @return string|null the same path without context information
      */
-    protected function removeContextFromPath($path)
+    protected function removeContextFromPath(string $path): ?string
     {
         if ($path === '' || NodePaths::isContextPath($path) === false) {
             return $path;
@@ -338,9 +355,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     /**
      * Whether the current route part should only match/resolve site nodes (e.g. the homepage)
      *
-     * @return boolean
+     * @return bool
      */
-    protected function onlyMatchSiteNodes()
+    protected function onlyMatchSiteNodes(): bool
     {
         return isset($this->options['onlyMatchSiteNodes']) && $this->options['onlyMatchSiteNodes'] === true;
     }
@@ -354,8 +371,11 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      *
      * @param NodeInterface $node The node where the generated path should lead to
      * @return string The relative route path, possibly prefixed with a segment for identifying the current content dimension values
+     * @throws Exception\MissingNodePropertyException
+     * @throws \Neos\ContentRepository\Exception\NodeException
+     * @throws \RuntimeException
      */
-    protected function resolveRoutePathForNode(NodeInterface $node)
+    protected function resolveRoutePathForNode(NodeInterface $node): string
     {
         $workspaceName = $node->getContext()->getWorkspaceName();
 
@@ -378,40 +398,101 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      *
      * @param NodeInterface $siteNode The site node, used as a starting point while traversing the tree
      * @param string $relativeRequestPath The request path, relative to the site's root path
-     * @throws \Neos\Neos\Routing\Exception\NoSuchNodeException
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Neos\ContentRepository\Exception\NodeException
      * @return string
      */
-    protected function getRelativeNodePathByUriPathSegmentProperties(NodeInterface $siteNode, $relativeRequestPath)
+    protected function getRelativeNodePathByUriPathSegmentProperties(NodeInterface $siteNode, string $relativeRequestPath): string
     {
-        $relativeNodePathSegments = [];
-        $node = $siteNode;
+        // The DBAL implementation below does not support multiple dimensions yet,
+        // therefore fall back to implementation using the CR API if needed.
+        $dimensionPresets = $this->contentDimensionPresetSource->getAllPresets();
+        if (count($dimensionPresets) > 1 || (count($dimensionPresets) === 1 && count(current($dimensionPresets)['presets']) > 1)) {
+            $node = $siteNode;
+            $relativeNodePathSegments = [];
 
-        foreach (explode('/', $relativeRequestPath) as $pathSegment) {
-            $foundNodeInThisSegment = false;
-            foreach ($node->getChildNodes('Neos.Neos:Document') as $node) {
-                /** @var NodeInterface $node */
-                if ($node->getProperty('uriPathSegment') === $pathSegment) {
-                    $relativeNodePathSegments[] = $node->getName();
-                    $foundNodeInThisSegment = true;
-                    break;
+            foreach (explode('/', $relativeRequestPath) as $pathSegment) {
+                $foundNodeInThisSegment = false;
+                foreach ($node->getChildNodes('Neos.Neos:Document') as $node) {
+                    /** @var NodeInterface $node */
+                    if ($node->getProperty('uriPathSegment') === $pathSegment) {
+                        $relativeNodePathSegments[] = $node->getName();
+                        $foundNodeInThisSegment = true;
+                        break;
+                    }
+                }
+                if (!$foundNodeInThisSegment) {
+                    return '';
                 }
             }
-            if (!$foundNodeInThisSegment) {
-                return false;
-            }
+        } else {
+            $relativeNodePathSegments = $this->findRelativeNodePathByUriPathSegmentPropertiesUsingSql($siteNode, $relativeRequestPath);
         }
 
         return implode('/', $relativeNodePathSegments);
     }
 
     /**
+     * Fix for performance issue: if a given node contains thousands of child nodes, this implementation would load all
+     * these nodes into memory in order to compare the current path segment with $node->getProperty('uriPathSegment').
+     *
+     * @param NodeInterface $siteNode
+     * @param string $relativeRequestPath
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function findRelativeNodePathByUriPathSegmentPropertiesUsingSql(NodeInterface $siteNode, string $relativeRequestPath): array
+    {
+        $relativeNodePathSegments = [];
+        $currentNodeRecord = [
+            'path' => $siteNode->getPath()
+        ];
+        $workspaceNames = [$siteNode->getContext()->getWorkspace()->getName()];
+        $baseWorkspaces = $siteNode->getContext()->getWorkspace()->getBaseWorkspaces();
+        array_walk($baseWorkspaces, function (Workspace $workspace) use (&$workspaceNames) {
+            $workspaceNames[] = $workspace->getName();
+        });
+
+        $queryTemplate = "
+              SELECT path, parentPath
+              FROM neos_contentrepository_domain_model_nodedata AS nodedata
+              WHERE LOWER(CAST(nodedata.properties AS CHAR)) LIKE '%s'
+              AND nodedata.parentpathhash = '%s'
+              AND workspace IN (%s)
+              ORDER BY FIELD(workspace, %s) ASC
+              LIMIT 1
+        ";
+
+        $connection = $this->entityManager->getConnection();
+        foreach (explode('/', $relativeRequestPath) as $pathSegment) {
+            $statement = $connection->query(sprintf(
+                $queryTemplate,
+                "%\"uripathsegment\": \"$pathSegment\"%",
+                md5($currentNodeRecord['path']),
+                "'" . implode("','", $workspaceNames) . "'",
+                "'" . implode("','", $workspaceNames) . "'"
+            ));
+
+            $fetchResult = $statement->fetch(FetchMode::ASSOCIATIVE);
+            if ($fetchResult === false) {
+                return [];
+            }
+
+            $currentNodeRecord = $fetchResult;
+            $relativeNodePathSegments[] = substr($currentNodeRecord['path'], (strrpos($currentNodeRecord['path'], '/') + 1));
+        }
+
+        return $relativeNodePathSegments;
+    }
+    /**
      * Renders a request path based on the "uriPathSegment" properties of the nodes leading to the given node.
      *
      * @param NodeInterface $node The node where the generated path should lead to
      * @return string A relative request path
      * @throws Exception\MissingNodePropertyException if the given node doesn't have a "uriPathSegment" property set
+     * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    protected function getRequestPathByNode(NodeInterface $node)
+    protected function getRequestPathByNode(NodeInterface $node): string
     {
         if ($node->getParentPath() === SiteService::SITES_ROOT_PATH) {
             return '';
@@ -440,12 +521,15 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     }
 
     /**
-    * Choose between default method for parsing dimensions or the one which allows uriSegment to be empty for default preset.
-    *
-    * @param string &$requestPath The request path currently being processed by this route part handler, e.g. "de_global/startseite/ueber-uns"
-    * @return array An array of dimension name => dimension values (array of string)
-    */
-    protected function parseDimensionsAndNodePathFromRequestPath(&$requestPath)
+     * Choose between default method for parsing dimensions or the one which allows uriSegment to be empty for default preset.
+     *
+     * @param string &$requestPath The request path currently being processed by this route part handler, e.g. "de_global/startseite/ueber-uns"
+     * @return array An array of dimension name => dimension values (array of string)
+     * @throws InvalidDimensionPresetCombinationException
+     * @throws InvalidRequestPathException
+     * @throws NoSuchDimensionValueException
+     */
+    protected function parseDimensionsAndNodePathFromRequestPath(string &$requestPath): array
     {
         if ($this->supportEmptySegmentForDimensions) {
             $dimensionsAndDimensionValues = $this->parseDimensionsAndNodePathFromRequestPathAllowingEmptySegment($requestPath);
@@ -466,7 +550,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @return array An array of dimension name => dimension values (array of string)
      * @throws InvalidDimensionPresetCombinationException
      */
-    protected function parseDimensionsAndNodePathFromRequestPathAllowingEmptySegment(&$requestPath)
+    protected function parseDimensionsAndNodePathFromRequestPathAllowingEmptySegment(string &$requestPath): array
     {
         $dimensionPresets = $this->contentDimensionPresetSource->getAllPresets();
         if (count($dimensionPresets) === 0) {
@@ -522,7 +606,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @throws InvalidRequestPathException
      * @throws NoSuchDimensionValueException
      */
-    protected function parseDimensionsAndNodePathFromRequestPathAllowingNonUniqueSegment(&$requestPath)
+    protected function parseDimensionsAndNodePathFromRequestPathAllowingNonUniqueSegment(string &$requestPath): array
     {
         $dimensionPresets = $this->contentDimensionPresetSource->getAllPresets();
         if (count($dimensionPresets) === 0) {
@@ -575,7 +659,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @param array $dimensionsAndDimensionValues An array of dimension names (index) and their values (array of strings). See also: ContextFactory
      * @return ContentContext
      */
-    protected function buildContextFromWorkspaceNameAndDimensions($workspaceName, array $dimensionsAndDimensionValues)
+    protected function buildContextFromWorkspaceNameAndDimensions(string $workspaceName, array $dimensionsAndDimensionValues): ContentContext
     {
         $contextProperties = [
             'workspaceName' => $workspaceName,
@@ -596,9 +680,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @param array $dimensionsValues An array of dimensions and their values, indexed by dimension name
      * @param boolean $currentNodeIsSiteNode If the current node is actually the site node
      * @return string
-     * @throws \Exception
+     * @throws \RuntimeException
      */
-    protected function getUriSegmentForDimensions(array $dimensionsValues, $currentNodeIsSiteNode)
+    protected function getUriSegmentForDimensions(array $dimensionsValues, bool $currentNodeIsSiteNode): string
     {
         $uriSegment = '';
         $allDimensionPresetsAreDefault = true;
@@ -616,7 +700,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
                 $allDimensionPresetsAreDefault = false;
             }
             if (!isset($preset['uriSegment'])) {
-                throw new \Exception(sprintf('No "uriSegment" configured for content dimension preset "%s" for dimension "%s". Please check the content dimension configuration in Settings.yaml', $preset['identifier'], $dimensionName), 1395824520);
+                throw new \RuntimeException(sprintf('No "uriSegment" configured for content dimension preset "%s" for dimension "%s". Please check the content dimension configuration in Settings.yaml', $preset['identifier'], $dimensionName), 1395824520);
             }
             $uriSegment .= $preset['uriSegment'] . '_';
         }
