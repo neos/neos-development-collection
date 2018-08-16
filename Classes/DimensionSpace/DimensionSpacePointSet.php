@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
  *
  * E.g.: {[language => es, country => ar], [language => es, country => es]}
  */
-final class DimensionSpacePointSet implements \JsonSerializable, \Iterator
+final class DimensionSpacePointSet implements \JsonSerializable, \Iterator, \Countable
 {
     /**
      * @var array|DimensionSpacePoint[]
@@ -89,5 +89,10 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Iterator
     public function __toString(): string
     {
         return 'dimension space points:[' . implode(',', $this->points) . ']';
+    }
+
+    public function count(): int
+    {
+        return count($this->points);
     }
 }
