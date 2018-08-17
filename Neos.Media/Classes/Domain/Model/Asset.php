@@ -467,7 +467,15 @@ class Asset implements AssetInterface
     public function getAssetProxy(): ?AssetProxyInterface
     {
         $assetSource = $this->getAssetSource();
+        if ($assetSource === null) {
+            $this->systemLogger->log(sprintf('Asset %s: Invalid asset source "%s"', $this->getIdentifier(), $this->getAssetSourceIdentifier()), LOG_NOTICE);
+            return null;
+        }
         $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($this->getIdentifier());
+        if ($importedAsset === null) {
+            $this->systemLogger->log(sprintf('Asset %s: Imported asset not found for asset source %s (%s)', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel()), LOG_NOTICE);
+            return null;
+        }
 
         try {
             if ($importedAsset instanceof ImportedAsset) {
@@ -476,10 +484,10 @@ class Asset implements AssetInterface
                 return $assetSource->getAssetProxyRepository()->getAssetProxy($this->getIdentifier());
             }
         } catch (AssetNotFoundExceptionInterface $e) {
-            $this->systemLogger->log(sprintf('Asset %s not found in asset source %s (%s)', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel()), LOG_NOTICE);
+            $this->systemLogger->log(sprintf('Asset %s: Not found in asset source %s (%s)', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel()), LOG_NOTICE);
             return null;
         } catch (AssetSourceConnectionExceptionInterface $e) {
-            $this->systemLogger->log(sprintf('Failed connecting to asset source %s (%s): %s', $assetSource->getIdentifier(), $assetSource->getLabel(), $e->getMessage()), LOG_ERR);
+            $this->systemLogger->log(sprintf('Asset %s: Failed connecting to asset source %s (%s): %s', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel(), $e->getMessage()), LOG_ERR);
             return null;
         }
     }
