@@ -179,9 +179,9 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
 			<target xml:lang="pl">Widok miniatur</target></trans-unit>
-      <trans-unit id="connectionError" xml:space="preserve">
+      <trans-unit id="connectionError" xml:space="preserve" approved="yes">
 				<source>Connection error</source>
-			<target xml:lang="pl" state="translated">Błąd połączenia</target></trans-unit>
+			<target xml:lang="pl">Błąd połączenia</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
 			<target xml:lang="pl" state="translated">Źródło danych</target></trans-unit>
@@ -293,9 +293,9 @@
       <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve" approved="yes">
 				<source>Caption</source>
 			<target xml:lang="pl">Podpis</target></trans-unit>
-      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve" approved="yes">
 				<source>Copyright Notice</source>
-			<target xml:lang="pl" state="translated">Informacja o prawach autorskich</target></trans-unit>
+			<target xml:lang="pl">Informacja o prawach autorskich</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="pl">Pogdląd</target></trans-unit>
