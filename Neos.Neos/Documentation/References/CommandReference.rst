@@ -63,13 +63,13 @@ configuration and constraints.
 *Remove undefined node properties*
 removeUndefinedProperties
 
+Will remove all undefined properties according to the node type configuration.
+
 *Remove broken object references*
 removeBrokenEntityReferences
 
 Detects and removes references from nodes to entities which don't exist anymore (for
 example Image nodes referencing ImageVariant objects which are gone for some reason).
-
-Will remove all undefined properties according to the node type configuration.
 
 *Remove nodes with invalid dimensions*
 removeNodesWithInvalidDimensions
@@ -120,6 +120,7 @@ have different node paths, but don't have a corresponding shadow node with a "mo
 value.
 
 *Generate missing URI path segments*
+generateUriPathSegments
 
 Generates URI path segment properties for all document nodes which don't have a path
 segment set yet.
