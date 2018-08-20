@@ -453,25 +453,35 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $workspaceNames[] = $workspace->getName();
         });
 
-        $queryTemplate = "
-              SELECT path, parentPath
+        $queryTemplate = 'SELECT path, parentPath
               FROM neos_contentrepository_domain_model_nodedata AS nodedata
-              WHERE LOWER(CAST(nodedata.properties AS CHAR)) LIKE '%s'
-              AND nodedata.parentpathhash = '%s'
-              AND workspace IN (%s)
-              ORDER BY FIELD(workspace, %s) ASC
-              LIMIT 1
-        ";
+              WHERE LOWER(CAST(nodedata.properties AS CHAR)) LIKE ?
+              AND nodedata.parentpathhash = ?
+              AND workspace IN (?)
+              ORDER BY FIELD(workspace, ?) ASC
+              LIMIT 1';
+        $workspaceNames = [$siteNode->getContext()->getWorkspace()->getName()];
+        $baseWorkspaces = $siteNode->getContext()->getWorkspace()->getBaseWorkspaces();
+        array_walk($baseWorkspaces, function (Workspace $workspace) use (&$workspaceNames) {
+            $workspaceNames[] = $workspace->getName();
+        });
 
-        $connection = $this->entityManager->getConnection();
         foreach (explode('/', $relativeRequestPath) as $pathSegment) {
-            $statement = $connection->query(sprintf(
+            $statement = $connection->executeQuery(
                 $queryTemplate,
-                "%\"uripathsegment\": \"$pathSegment\"%",
-                md5($currentNodeRecord['path']),
-                "'" . implode("','", $workspaceNames) . "'",
-                "'" . implode("','", $workspaceNames) . "'"
-            ));
+                [
+                    '%"uripathsegment": "' . $pathSegment . '"%',
+                    md5($currentNodeRecord['path']),
+                    $workspaceNames,
+                    $workspaceNames
+                ],
+                [
+                    ParameterType::STRING,
+                    ParameterType::STRING,
+                    \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+                    \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+                ]
+            );
 
             $fetchResult = $statement->fetch(FetchMode::ASSOCIATIVE);
             if ($fetchResult === false) {
