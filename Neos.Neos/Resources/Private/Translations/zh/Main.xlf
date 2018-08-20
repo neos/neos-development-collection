@@ -660,13 +660,13 @@
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
 				<source>Welcome to Neos</source>
-			<target xml:lang="zh-CN" state="needs-translation">Welcome to Neos</target></trans-unit>
+			<target xml:lang="zh-CN"/></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
 			<target xml:lang="zh-CN" state="translated">跳转到安装程序</target><alt-trans><target xml:lang="zh-CN">转到安装程序</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
 				<source>Technical Information</source>
-			<target xml:lang="zh-CN" state="needs-translation">Technical Information</target></trans-unit>
+			<target xml:lang="zh-CN"/></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target xml:lang="zh-CN" state="translated">找不到主页</target></trans-unit>
@@ -681,10 +681,10 @@
 			<target xml:lang="zh-CN" state="translated">数据库错误</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target xml:lang="zh-CN" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">对不起，我们检测到数据库错误。请检查Data/Logs/*里的日志文件获取更多的信息。</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target xml:lang="zh-CN" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">你可能想要通过安装程序配置或检查数据库配置。</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="zh-CN" state="translated">找不到页面</target></trans-unit>

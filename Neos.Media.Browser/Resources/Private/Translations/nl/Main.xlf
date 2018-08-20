@@ -67,7 +67,7 @@
 			<target xml:lang="nl">Slepen en neerzetten op tag of collectie</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target xml:lang="nl" state="needs-translation">View</target></trans-unit>
+			<target xml:lang="nl" state="translated">Weergeven</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
 			<target xml:lang="nl" state="needs-translation">View asset</target></trans-unit>
@@ -181,7 +181,7 @@
 			<target xml:lang="nl">Miniatuurweergave</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target xml:lang="nl" state="needs-translation">Connection error</target></trans-unit>
+			<target xml:lang="nl" state="translated">Verbindingsfout</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
 			<target xml:lang="nl" state="needs-translation">Media source</target></trans-unit>
@@ -299,15 +299,6 @@
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="nl">Voorbeeld</target></trans-unit>
-      <trans-unit id="download" xml:space="preserve">
-				<source>Download</source>
-			<target xml:lang="nl" state="needs-translation">Download</target></trans-unit>
-      <trans-unit id="next" xml:space="preserve">
-				<source>Next</source>
-			<target xml:lang="nl" state="needs-translation">Next</target></trans-unit>
-      <trans-unit id="previous" xml:space="preserve">
-				<source>Previous</source>
-			<target xml:lang="nl" state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target xml:lang="nl">Kan het bestand niet uploaden</target></trans-unit>
