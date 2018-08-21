@@ -660,13 +660,13 @@
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
 				<source>Welcome to Neos</source>
-			<target xml:lang="id"/></trans-unit>
+			<target xml:lang="id" state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
 			<target xml:lang="id" state="translated">Pergi ke pengaturan</target></trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
 				<source>Technical Information</source>
-			<target xml:lang="id"/></trans-unit>
+			<target xml:lang="id" state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target xml:lang="id" state="translated">Homepage hilang</target></trans-unit>
@@ -681,10 +681,10 @@
 			<target xml:lang="id" state="translated">Database Error</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target xml:lang="id" state="translated">Maaf, kami mendeteksi galat dengan database Anda. Periksa file log dalam Data log / * untuk informasi lebih lanjut.</target></trans-unit>
+			<target xml:lang="id" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target xml:lang="id" state="translated">Anda mungkin ingin mengkonfigurasi atau memeriksa konfigurasi database Anda dalam setup.</target></trans-unit>
+			<target xml:lang="id" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="id" state="translated">Halaman Tidak Ditemukan</target></trans-unit>

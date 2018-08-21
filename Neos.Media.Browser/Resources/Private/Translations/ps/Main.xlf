@@ -301,13 +301,13 @@
 			<target xml:lang="ps" state="needs-translation">Preview</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target xml:lang="ps"/></trans-unit>
+			<target xml:lang="ps" state="needs-translation">Download</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target xml:lang="ps"/></trans-unit>
+			<target xml:lang="ps" state="needs-translation">Next</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target xml:lang="ps"/></trans-unit>
+			<target xml:lang="ps" state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="ps" state="needs-translation">Cannot upload the file</target></trans-unit>
