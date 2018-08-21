@@ -12,6 +12,7 @@ namespace Neos\Neos\Routing;
  */
 
 use Doctrine\DBAL\FetchMode;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Annotations as Flow;
@@ -466,6 +467,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $workspaceNames[] = $workspace->getName();
         });
 
+        $connection = $this->entityManager->getConnection();
         foreach (explode('/', $relativeRequestPath) as $pathSegment) {
             $statement = $connection->executeQuery(
                 $queryTemplate,
