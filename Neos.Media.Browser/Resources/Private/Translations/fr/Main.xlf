@@ -106,7 +106,7 @@
 			<target xml:lang="fr" state="translated">Remplacer</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="fr" state="needs-translation">Replace asset resource</target></trans-unit>
+			<target xml:lang="fr" state="translated">Remplacer la ressource d'actifs</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="fr">Enregistrer</target></trans-unit>
