@@ -12,10 +12,13 @@ namespace Neos\Media\Tests\Functional\Domain\Model;
  */
 use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Persistence\Repository;
+use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
 use Neos\Media\Tests\Functional\AbstractTest;
 
@@ -118,6 +121,29 @@ class AssetTest extends AbstractTest
         }
 
         $this->assertCount(0, $expectedTagLabels);
+    }
+
+    /**
+     * @test
+     */
+    public function getAssetProxyReturnsNullIfAssetSourceIdentifierPointsToNonExistingAssetSource()
+    {
+        $asset = $this->buildAssetObject();
+        $asset->setAssetSourceIdentifier('non-existing-asset-source');
+        $this->assertNull($asset->getAssetProxy());
+    }
+
+    /**
+     * @test
+     */
+    public function getAssetProxyReturnsNullIfNoCorrespondingImportedAssetExists()
+    {
+        $asset = $this->buildAssetObject();
+        $mockImportedAssetRepository = $this->getMockBuilder(Repository::class)->disableOriginalConstructor()->setMethods(['findOneByLocalAssetIdentifier'])->getMock();
+        $this->inject($asset, 'importedAssetRepository', $mockImportedAssetRepository);
+
+        $mockImportedAssetRepository->expects($this->atLeastOnce())->method('findOneByLocalAssetIdentifier')->with($asset->getIdentifier())->willReturn(null);
+        $this->assertNull($asset->getAssetProxy());
     }
 
     /**
