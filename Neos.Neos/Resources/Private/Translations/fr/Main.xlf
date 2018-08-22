@@ -745,7 +745,7 @@
 			<target xml:lang="fr" state="translated">Mode &amp;insertion</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target xml:lang="fr" state="needs-translation">Choose an Aspect Ratio</target></trans-unit>
+			<target xml:lang="fr" state="translated">Choisissez un format d'aspect</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
 			<target xml:lang="fr" state="translated">Gras</target></trans-unit>
