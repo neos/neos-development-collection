@@ -69,7 +69,7 @@ class Version20180211175500 extends AbstractMigration
             // fusion object assignments
             $this->searchAndReplaceRegex('/(?<=\\=)([\\s]*)(' . preg_quote($name) . ')(?=[$\\s\\{])/u', '$1Neos.Neos:$2', ['ts2', 'fusion']);
             // prototype declarations
-            $this->searchAndReplaceRegex('/(?<=prototype\\()(' . preg_quote($name) . ' )(?=\\))/u', 'Neos.Neos:$1', ['ts2', 'fusion']);
+            $this->searchAndReplaceRegex('/(?<=prototype\\()(' . preg_quote($name) . ')(?=\\))/u', 'Neos.Neos:$1', ['ts2', 'fusion']);
         }
     }
 }
