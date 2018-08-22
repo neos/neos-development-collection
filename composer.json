@@ -29,7 +29,7 @@
         "neos/setup": "*",
         "neos/twitter-bootstrap": "*",
         "neos/form": "*",
-        "neos/kickstarter": "*"
+        "neos/kickstarter": "~5.1.0"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
@@ -116,7 +116,7 @@
                 "Neos.Neos/Resources/Private/Installer/"
             ]
         },
-        "neos/flow": {
+        "typo3/flow": {
             "manage-resources": true
         }
     },
