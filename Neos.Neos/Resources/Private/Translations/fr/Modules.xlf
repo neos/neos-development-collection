@@ -568,49 +568,49 @@
 			<target xml:lang="fr" state="translated">Activé ce site</target></trans-unit>
       <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="fr" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target xml:lang="fr" state="translated">Êtes-vous sûr de vouloir supprimer "{0}"? Cette action est irréversible.</target></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the site</source>
-			<target xml:lang="fr" state="needs-translation">Yes, delete the site</target></trans-unit>
+			<target xml:lang="fr" state="translated">Oui, je veux supprimer le site</target></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve">
 				<source>Import a site</source>
-			<target xml:lang="fr" state="needs-translation">Import a site</target></trans-unit>
+			<target xml:lang="fr" state="translated">Importer un site</target></trans-unit>
       <trans-unit id="sites.select" xml:space="preserve">
 				<source>Select a site package</source>
-			<target xml:lang="fr" state="needs-translation">Select a site package</target></trans-unit>
+			<target xml:lang="fr" state="translated">Sélectionner un package pour le site</target></trans-unit>
       <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
 				<source>No site packages are available. Make sure you have an active site package.</source>
-			<target xml:lang="fr" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+			<target xml:lang="fr" state="translated">Aucun package pour le site n'est disponible. Assurez-vous que vous avez un package actif.</target></trans-unit>
       <trans-unit id="sites.createBlank" xml:space="preserve">
 				<source>Create a blank site</source>
-			<target xml:lang="fr" state="needs-translation">Create a blank site</target></trans-unit>
+			<target xml:lang="fr" state="translated">Créer un site de zéro</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
-			<target xml:lang="fr" state="needs-translation">Select a document nodeType</target></trans-unit>
+			<target xml:lang="fr" state="translated">Selectionnez un document nodeType</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
-			<target xml:lang="fr" state="needs-translation">Site name</target></trans-unit>
+			<target xml:lang="fr" state="translated">Nom du site</target></trans-unit>
       <trans-unit id="sites.createNode" xml:space="preserve">
 				<source>Create empty site</source>
-			<target xml:lang="fr" state="needs-translation">Create empty site</target></trans-unit>
+			<target xml:lang="fr" state="translated">Créer un site vide</target><alt-trans><target xml:lang="fr">Creer un site vide</target></alt-trans></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve">
 				<source>Create a new site package</source>
-			<target xml:lang="fr" state="needs-translation">Create a new site package</target></trans-unit>
+			<target xml:lang="fr" state="translated">Créer un package pour le site</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
-			<target xml:lang="fr" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+			<target xml:lang="fr" state="translated">NomDuVendeur.MaCléDuPackage</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target xml:lang="fr" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+			<target xml:lang="fr" state="translated">Le package &lt;em&gt;Neos Kickstarter&lt;/em&gt; n'est pas installé, Installez le pour lancer un nouveau site en kickstart.</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="fr" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target xml:lang="fr" state="translated">Êtes-vous sûr de vouloir supprimer "{0}"? Cette action est irréversible.</target></trans-unit>
       <trans-unit id="domain.new" xml:space="preserve">
 				<source>New domain</source>
-			<target xml:lang="fr" state="needs-translation">New domain</target></trans-unit>
+			<target xml:lang="fr" state="translated">Nouveau domaine</target></trans-unit>
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
-			<target xml:lang="fr" state="needs-translation">Edit domain</target></trans-unit>
+			<target xml:lang="fr" state="translated">Modifier le domaine</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target xml:lang="fr">Configuration</target></trans-unit>
