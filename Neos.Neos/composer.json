@@ -36,7 +36,7 @@
         }
     },
     "extra": {
-        "typo3/flow": {
+        "neos/flow": {
             "manage-resources": true
         },
         "neos": {

@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "dev-master",
+        "neos/flow-development-collection": "5.1.x-dev",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -116,7 +116,7 @@
                 "Neos.Neos/Resources/Private/Installer/"
             ]
         },
-        "typo3/flow": {
+        "neos/flow": {
             "manage-resources": true
         }
     },
