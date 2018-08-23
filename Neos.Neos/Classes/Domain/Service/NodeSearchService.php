@@ -61,15 +61,20 @@ class NodeSearchService implements NodeSearchServiceInterface
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
 
-        $searchResult = array();
+        $searchResult = [];
         $nodeTypeFilter = implode(',', $searchNodeTypes);
 
-        if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $term) !== 0) {
-            $nodeByIdentifier = $context->getNodeByIdentifier($term);
-            if ($nodeByIdentifier !== null && $this->nodeSatisfiesSearchNodeTypes($nodeByIdentifier, $searchNodeTypes)) {
-                $searchResult[$nodeByIdentifier->getPath()] = $nodeByIdentifier;
+        $searchTerm = is_string($term) ? [$term] : $term;
+
+        foreach ($searchTerm as $term) {
+            if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $term) !== 0) {
+                $nodeByIdentifier = $context->getNodeByIdentifier($term);
+                if ($nodeByIdentifier !== null && $this->nodeSatisfiesSearchNodeTypes($nodeByIdentifier, $searchNodeTypes)) {
+                    $searchResult[$nodeByIdentifier->getPath()] = $nodeByIdentifier;
+                }
             }
         }
+
         $nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : null);
         foreach ($nodeDataRecords as $nodeData) {
             $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
