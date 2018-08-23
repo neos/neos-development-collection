@@ -11,6 +11,7 @@ namespace Neos\Media\Command;
  * source code.
  */
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,12 +20,13 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
-use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
+use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
+use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 
 /**
@@ -146,9 +148,11 @@ class MediaCommandController extends CommandController
      * @param string $assetSource If specified, only assets of this asset source are considered. For example "neos" or "my-asset-management-system"
      * @param bool $quiet If set, only errors will be displayed.
      * @param bool $assumeYes If set, "yes" is assumed for the "shall I remove ..." dialogs
+     * @param string $onlyTags Comma-separated list of asset tags, that should be taken into account
+     * @param int $limit Limit the result of unused assets displayed and removed for this run.
      * @return void
      */
-    public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false)
+    public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '', int $limit = 0)
     {
         $iterator = $this->assetRepository->findAllIterator();
         $assetCount = $this->assetRepository->countAll();
@@ -164,35 +168,57 @@ class MediaCommandController extends CommandController
             !$quiet && $this->outputLine('<b>Searching for unused assets of asset source "%s":</b>', [$filterByAssetSourceIdentifier]);
         }
 
+        $assetTagsMatchFilterTags = function (Collection $assetTags, string $filterTags): bool {
+            $filterTagValues = Arrays::trimExplode(',', $filterTags);
+            $assetTagValues = [];
+            foreach ($assetTags as $tag) {
+                /** @var Tag $tag */
+                $assetTagValues[] = $tag->getLabel();
+            }
+            return count(array_intersect($filterTagValues, $assetTagValues)) > 0;
+        };
+
         !$quiet && $this->output->progressStart($assetCount);
 
         foreach ($this->assetRepository->iterate($iterator) as $asset) {
-            if ($asset instanceof Asset && $asset->getUsageCount() === 0) {
-                if (!$asset instanceof AssetSourceAwareInterface) {
-                    continue;
-                }
-                if ($filterByAssetSourceIdentifier !== '' && $asset->getAssetSourceIdentifier() !== $filterByAssetSourceIdentifier) {
-                    continue;
-                }
-
-                $fileSize = str_pad(Files::bytesToSizeString($asset->getResource()->getFileSize()), 9, ' ', STR_PAD_LEFT);
-
-                $unusedAssets[] = $asset;
-                $tableRowsByAssetSource[$asset->getAssetSourceIdentifier()][] = [
-                    $asset->getIdentifier(),
-                    $asset->getResource()->getFilename(),
-                    $fileSize
-                ];
-                $unusedAssetCount++;
-                $unusedAssetsTotalSize += $asset->getResource()->getFileSize();
-            }
             !$quiet && $this->output->progressAdvance(1);
+
+            if ($unusedAssetCount === $limit) {
+                break;
+            }
+
+            if (!$asset instanceof Asset) {
+                continue;
+            }
+            if (!$asset instanceof AssetSourceAwareInterface) {
+                continue;
+            }
+            if ($filterByAssetSourceIdentifier !== '' && $asset->getAssetSourceIdentifier() !== $filterByAssetSourceIdentifier) {
+                continue;
+            }
+            if ($onlyTags !== '' && $assetTagsMatchFilterTags($asset->getTags(), $onlyTags) === false) {
+                continue;
+            }
+            if ($asset->getUsageCount() !== 0) {
+                continue;
+            }
+
+            $fileSize = str_pad(Files::bytesToSizeString($asset->getResource()->getFileSize()), 9, ' ', STR_PAD_LEFT);
+
+            $unusedAssets[] = $asset;
+            $tableRowsByAssetSource[$asset->getAssetSourceIdentifier()][] = [
+                $asset->getIdentifier(),
+                $asset->getResource()->getFilename(),
+                $fileSize
+            ];
+            $unusedAssetCount++;
+            $unusedAssetsTotalSize += $asset->getResource()->getFileSize();
         }
 
         !$quiet && $this->output->progressFinish();
 
         if ($unusedAssetCount === 0) {
-            !$quiet && $this->output->outputLine(PHP_EOL . sprintf('No unused assets found.'));
+            !$quiet && $this->output->outputLine(PHP_EOL . 'No unused assets found.');
             exit;
         }
 

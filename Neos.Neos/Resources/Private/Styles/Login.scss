@@ -202,8 +202,12 @@ html,
 			width: 100%;
 			height: $unit;
 
-			button {
+			button, .btn {
+				text-align: center;
+				text-decoration: none !important;
+				display: block;
 				height: $unit;
+				line-height: $unit;
 				color: #fff;
 				border: none;
 				background-image: none;

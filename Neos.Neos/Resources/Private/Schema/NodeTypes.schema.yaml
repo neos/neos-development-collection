@@ -41,8 +41,6 @@ additionalProperties:
 
                   'inline':
                     type: ['null', 'dictionary']
-                    additionalProperties: false
-                    properties:
 
                   'aloha':
                     type:
