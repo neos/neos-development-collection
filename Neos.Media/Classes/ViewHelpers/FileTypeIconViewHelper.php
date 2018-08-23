@@ -84,7 +84,7 @@ class FileTypeIconViewHelper extends AbstractTagBasedViewHelper
             $filename = $asset->getResource()->getFilename();
         }
 
-        $icon = FileTypeIconService::getIcon($filename, $width, $height);
+        $icon = FileTypeIconService::getIcon($filename);
         $this->tag->addAttribute('src', $this->resourceManager->getPublicPackageResourceUriByPath($icon['src']));
         $this->tag->addAttribute('alt', $icon['alt']);
 
