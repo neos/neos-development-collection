@@ -681,10 +681,10 @@
 			<target xml:lang="de">Datenbankfehler</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target xml:lang="de" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+			<target xml:lang="de" state="translated">Es gibt noch keine Datenbankverbindung oder das Neos-Datenbankschema wurde noch nicht erstellt.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target xml:lang="de" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+			<target xml:lang="de" state="translated">Führen Sie das Setup aus, um die Datenbank zu konfigurieren.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target xml:lang="de">Seite nicht gefunden</target></trans-unit>
