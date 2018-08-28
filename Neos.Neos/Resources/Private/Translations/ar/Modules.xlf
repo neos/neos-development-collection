@@ -244,10 +244,10 @@
 			<target xml:lang="ar" state="translated">أنه لم يتم تسجيل أية أحداث بعد الذي يمكن أن يتم عرضها في هذا التاريخ.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target xml:lang="ar" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target xml:lang="ar" state="translated">{0} انشأ ال{1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target xml:lang="ar" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target xml:lang="ar" state="translated">{0} ازال ال{1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
 			<target xml:lang="ar" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
