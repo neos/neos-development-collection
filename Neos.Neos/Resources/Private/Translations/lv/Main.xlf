@@ -673,12 +673,12 @@
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
 			<target xml:lang="lv">Datubāzes kļūda</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="lv">Atvainojiet, mēs atklājām kļūdu jūsu datu bāzē. Skatieties jūsu žurnāla failus - Data/Logs/* lai iegūtu papildinformāciju.</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
+			<target xml:lang="lv" state="translated">Nav datu bāzes savienojuma vai Neos datubāzes shēma nav izveidota.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="lv">Mēģiniet konfigurēt vai pārbaudīt jūsu datu bāzes konfigurāciju programmas uzstādījumos.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Palaidiet uzstādīšanas programmu, lai konfigurētu datu bāzi.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target xml:lang="lv">Lapa nav atrasta</target></trans-unit>
