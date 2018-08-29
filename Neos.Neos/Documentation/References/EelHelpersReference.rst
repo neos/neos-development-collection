@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2018-08-10
+This reference was automatically generated from code on 2018-08-29
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -71,7 +71,7 @@ Check if an array is empty
 
 * ``array`` (array) The array
 
-**Return** (boolean) TRUE if the array is empty
+**Return** (boolean) true if the array is empty
 
 Array.join(array, separator)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -188,7 +188,7 @@ Array.shuffle(array, preserveKeys)
 Shuffle an array
 
 Randomizes entries an array with the option to preserve the existing keys.
-When this option is set to FALSE, all keys will be replaced
+When this option is set to false, all keys will be replaced
 
 * ``array`` (array)
 * ``preserveKeys`` (boolean, *optional*) Wether to preserve the keys when shuffling the array
@@ -737,7 +737,7 @@ This is equivalent to the global isFinite() function in JavaScript.
 
 * ``x`` (mixed) A value
 
-**Return** (boolean) TRUE if the value is a finite (not NAN) number
+**Return** (boolean) true if the value is a finite (not NAN) number
 
 Math.isInfinite(x)
 ^^^^^^^^^^^^^^^^^^
@@ -748,7 +748,7 @@ This function has no direct equivalent in JavaScript.
 
 * ``x`` (mixed) A value
 
-**Return** (boolean) TRUE if the value is INF or -INF
+**Return** (boolean) true if the value is INF or -INF
 
 Math.isNaN(x)
 ^^^^^^^^^^^^^
@@ -759,7 +759,7 @@ This is equivalent to the global isNaN() function in JavaScript.
 
 * ``x`` (mixed) A value
 
-**Return** (boolean) TRUE if the value is not a number
+**Return** (boolean) true if the value is not a number
 
 Math.log(x)
 ^^^^^^^^^^^
@@ -1387,12 +1387,12 @@ Get the account of the first authenticated token.
 Security.hasRole(roleIdentifier)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Returns TRUE, if at least one of the currently authenticated accounts holds
+Returns true, if at least one of the currently authenticated accounts holds
 a role with the given identifier, also recursively.
 
 * ``roleIdentifier`` (string) The string representation of the role to search for
 
-**Return** (boolean) TRUE, if a role with the given string representation was found
+**Return** (boolean) true, if a role with the given string representation was found
 
 
 
@@ -1407,6 +1407,25 @@ String
 String helpers for Eel contexts
 
 Implemented in: ``Neos\Eel\Helper\StringHelper``
+
+String.base64decode(string, strict)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Implementation of the PHP base64_decode function
+
+* ``string`` (string) The encoded data.
+* ``strict`` (bool, *optional*) If TRUE this function will return FALSE if the input contains character from outside the base64 alphabet.
+
+**Return** (string|bool) The decoded data or FALSE on failure. The returned data may be binary.
+
+String.base64encode(string)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Implementation of the PHP base64_encode function
+
+* ``string`` (string) The data to encode.
+
+**Return** (string) The encoded data
 
 String.charAt(string, index)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1470,7 +1489,7 @@ Example::
 * ``search`` (string) A string to search
 * ``position`` (integer, *optional*) Optional position for limiting the string
 
-**Return** (boolean) TRUE if the string ends with the given search
+**Return** (boolean) true if the string ends with the given search
 
 String.firstLetterToLowerCase(string)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1760,7 +1779,7 @@ String.toBoolean(string)
 
 Convert a string to boolean
 
-A value is ``true``, if it is either the string ``"TRUE"`` or ``"true"`` or the number ``1``.
+A value is ``true``, if it is either the string ``"true"`` or ``"true"`` or the number ``1``.
 
 * ``string`` (string) The string to convert
 

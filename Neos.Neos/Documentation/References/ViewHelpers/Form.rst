@@ -3,7 +3,7 @@
 Form ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2018-08-10
+This reference was automatically generated from code on 2018-08-29
 
 
 .. _`Form ViewHelper Reference: neos.form:form`:
@@ -57,7 +57,7 @@ Arguments
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``fieldNamePrefix`` (string, *optional*): Prefix that will be added to all field names within this form
 

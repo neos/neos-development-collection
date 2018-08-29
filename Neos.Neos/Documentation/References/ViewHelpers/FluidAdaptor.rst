@@ -3,7 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2018-08-10
+This reference was automatically generated from code on 2018-08-29
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:debug`:
@@ -199,7 +199,7 @@ Arguments
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``fieldNamePrefix`` (string, *optional*): Prefix that will be added to all field names within this form
 
@@ -1635,11 +1635,11 @@ Arguments
 
 * ``value`` (string, *optional*): string to format
 
-* ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
+* ``keepQuotes`` (boolean, *optional*): if true, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
 * ``encoding`` (string, *optional*): the encoding format
 
-* ``doubleEncode`` (string, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
+* ``doubleEncode`` (string, *optional*): If false existing html entities won't be encoded, the default is to convert everything.
 
 
 
@@ -1661,7 +1661,7 @@ Arguments
 
 * ``value`` (string, *optional*): string to format
 
-* ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
+* ``keepQuotes`` (boolean, *optional*): if true, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
 
 * ``encoding`` (string, *optional*): the encoding format
 
@@ -1925,11 +1925,11 @@ Arguments
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
 
-* ``absolute`` (boolean, *optional*): By default this ViewHelper renders links with absolute URIs. If this is FALSE, a relative URI is created instead
+* ``absolute`` (boolean, *optional*): By default this ViewHelper renders links with absolute URIs. If this is false, a relative URI is created instead
 
 * ``useMainRequest`` (boolean, *optional*): If set, the main Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
 
@@ -2384,11 +2384,11 @@ Arguments
 
 * ``additionalParams`` (array, *optional*): additional query parameters that won't be prefixed like $arguments (overrule $arguments)
 
-* ``absolute`` (boolean, *optional*): By default this ViewHelper renders links with absolute URIs. If this is FALSE, a relative URI is created instead
+* ``absolute`` (boolean, *optional*): By default this ViewHelper renders links with absolute URIs. If this is false, a relative URI is created instead
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
-* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+* ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = true
 
 * ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
 
@@ -2734,9 +2734,9 @@ Arguments
 
 * ``format`` (string, *optional*): The requested format, e.g. ".html
 
-* ``ajax`` (boolean, *optional*): TRUE if the URI should be to an AJAX widget, FALSE otherwise.
+* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise.
 
-* ``includeWidgetContext`` (boolean, *optional*): TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
+* ``includeWidgetContext`` (boolean, *optional*): true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -2817,9 +2817,9 @@ Arguments
 
 * ``format`` (string, *optional*): The requested format, e.g. ".html
 
-* ``ajax`` (boolean, *optional*): TRUE if the URI should be to an AJAX widget, FALSE otherwise.
+* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise.
 
-* ``includeWidgetContext`` (boolean, *optional*): TRUE if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
+* ``includeWidgetContext`` (boolean, *optional*): true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
 
 
 
