@@ -14,22 +14,22 @@
 			<target xml:lang="ko" state="needs-translation">Review changes</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="ko" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="ko" state="translated">적용</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="ko" state="needs-translation">Apply changes</target></trans-unit>
+			<target xml:lang="ko" state="translated">변경 내용 적용</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="ko" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="ko" state="translated">취소</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="ko" state="needs-translation">Back</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="ko" state="needs-translation">Choose</target></trans-unit>
+			<target xml:lang="ko" state="translated">고르세요</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="ko" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="ko" state="translated">검색어를 입력해주세요</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="ko" state="needs-translation">Content</target></trans-unit>
@@ -47,46 +47,46 @@
 			<target xml:lang="ko" state="needs-translation">Create new</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="ko" state="needs-translation">Close</target></trans-unit>
+			<target xml:lang="ko" state="translated">닫기</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="ko" state="needs-translation">Copy</target></trans-unit>
+			<target xml:lang="ko" state="translated">복사하기</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
 			<target xml:lang="ko" state="needs-translation">Cut</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="ko" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="ko" state="translated">삭제하기</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target xml:lang="ko" state="needs-translation">Yes, delete the element</target></trans-unit>
+			<target xml:lang="ko" state="translated">예, 요소를 삭제합니다.</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="ko" state="needs-translation">Delete the element</target></trans-unit>
+			<target xml:lang="ko" state="translated">구성 요소 삭제</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="ko" state="needs-translation">Discard</target></trans-unit>
+			<target xml:lang="ko" state="translated">삭제한다</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="ko" state="needs-translation">Discard changes</target></trans-unit>
+			<target xml:lang="ko" state="translated">변경사항 취소</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="ko" state="needs-translation">Edit title</target></trans-unit>
+			<target xml:lang="ko" state="translated">제목 수정</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="ko" state="needs-translation">Edit / Preview</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집 / 미리보기</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ko" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target xml:lang="ko" state="needs-translation">Hide / Unhide</target></trans-unit>
+			<target xml:lang="ko" state="translated">숨기기 / 펼치기</target><alt-trans><target xml:lang="ko">숨기기 / 숨기기 해제</target></alt-trans></trans-unit>
       <trans-unit id="hide" xml:space="preserve">
 				<source>Hide</source>
 			<target xml:lang="ko" state="needs-translation">Hide</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="ko" state="needs-translation">Unhide</target></trans-unit>
+			<target xml:lang="ko" state="translated">펼치기</target><alt-trans><target xml:lang="ko">숨기기 해제</target></alt-trans></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
 			<target xml:lang="ko" state="needs-translation">into</target></trans-unit>
@@ -119,7 +119,7 @@
 			<target xml:lang="ko" state="needs-translation">Page</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="ko" state="needs-translation">Paste</target></trans-unit>
+			<target xml:lang="ko" state="translated">붙여넣기</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
 			<target xml:lang="ko" state="needs-translation">Paste After</target></trans-unit>
@@ -131,10 +131,10 @@
 			<target xml:lang="ko" state="needs-translation">Paste Into</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="ko" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="ko" state="translated">비밀 번호</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="ko" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="ko" state="translated">미리보기</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
 			<target xml:lang="ko" state="needs-translation">Publish</target></trans-unit>
@@ -161,34 +161,34 @@
 			<target xml:lang="ko" state="needs-translation">Toggle publish menu</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target xml:lang="ko" state="needs-translation">Target workspace</target></trans-unit>
+			<target xml:lang="ko" state="translated">대상 작업 영역</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target xml:lang="ko" state="needs-translation">Current workspace</target></trans-unit>
+			<target xml:lang="ko" state="translated">현재 작업 영역</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
-			<target xml:lang="ko" state="needs-translation">Remove</target></trans-unit>
+			<target xml:lang="ko" state="translated">삭제</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target xml:lang="ko" state="needs-translation">Refresh</target></trans-unit>
+			<target xml:lang="ko" state="translated">새로고침</target></trans-unit>
       <trans-unit id="save" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="ko" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target xml:lang="ko" state="needs-translation">Saving</target></trans-unit>
+			<target xml:lang="ko" state="translated">저장 중...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target xml:lang="ko" state="needs-translation">Saved</target></trans-unit>
+			<target xml:lang="ko" state="translated">저장 완료!</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="ko" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="ko" state="translated">검색</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
 			<target xml:lang="ko" state="needs-translation">Toggle inspector</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
 			<target xml:lang="ko" state="needs-translation">You</target></trans-unit>
@@ -370,7 +370,7 @@
 			<target xml:lang="ko" state="needs-translation">Click {0} to open the link.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="ko" state="needs-translation">(no target has been selected)</target></trans-unit>
+			<target xml:lang="ko" state="translated">(선택된 항목이 없습니다.)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="ko" state="needs-translation">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
@@ -380,7 +380,7 @@
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="ko" state="needs-translation">Full Screen</target></trans-unit>
+			<target xml:lang="ko" state="translated">전체화면</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
         <note>Deprecated, replaced by previewShortcutButton.title</note>
@@ -390,13 +390,13 @@
 			<target xml:lang="ko" state="needs-translation">Open page in target workspace</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
-			<target xml:lang="ko" state="needs-translation">Discard all</target></trans-unit>
+			<target xml:lang="ko" state="translated">모두 삭제</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="ko" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="ko" state="translated">모든 변경사항을 취소</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="ko" state="needs-translation">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
+			<target xml:lang="ko" state="translated">정말로 이 작업영역에 있는 모든 변경사항을 취소하시겠습니까?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target xml:lang="ko" state="needs-translation">Publish all</target></trans-unit>
@@ -417,7 +417,7 @@
 			<target xml:lang="ko" state="needs-translation">Please review your changes, publish or discard them, and then choose a new target workspace again.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="ko" state="needs-translation">Editing Modes</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집 모드</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
 			<target xml:lang="ko" state="needs-translation">Preview Central</target></trans-unit>
@@ -435,16 +435,16 @@
 			<target xml:lang="ko" state="needs-translation">The fields marked with an error are not yet correctly filled in. Please complete them properly.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target xml:lang="ko" state="needs-translation">Continue editing</target></trans-unit>
+			<target xml:lang="ko" state="translated">계속 편집하기</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
 			<target xml:lang="ko" state="needs-translation">Throw away</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="ko" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="ko" state="translated">적용</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
-			<target xml:lang="ko" state="needs-translation">Select a Plugin</target></trans-unit>
+			<target xml:lang="ko" state="translated">플러그인 선택</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
 				<source>No plugin configured</source>
 			<target xml:lang="ko" state="needs-translation">No plugin configured</target></trans-unit>
@@ -480,10 +480,10 @@
 			<target xml:lang="ko" state="needs-translation">Document options</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
-			<target xml:lang="ko" state="needs-translation">The length of this text must be between {minimum} and {maximum} characters.</target></trans-unit>
+			<target xml:lang="ko" state="translated">이 텍스트의 길이는 반드시 {minimum} 과 {maximum} 의 사이여야 합니다.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
 				<source>This field must contain at least {minimum} characters.</source>
-			<target xml:lang="ko" state="needs-translation">This field must contain at least {minimum} characters.</target></trans-unit>
+			<target xml:lang="ko" state="translated">이 필드에는 최소 {minimum} 이상이 포함 되어야 합니다.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
 				<source>This text may not exceed {maximum} characters.</source>
 			<target xml:lang="ko" state="needs-translation">This text may not exceed {maximum} characters.</target></trans-unit>
