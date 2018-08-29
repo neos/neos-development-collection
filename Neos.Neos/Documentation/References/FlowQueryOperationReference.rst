@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2018-08-10
+This reference was automatically generated from code on 2018-08-29
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -336,7 +336,7 @@ is
 
 Check whether the at least one of the context elements match the given filter.
 
-Without arguments is evaluates to TRUE if the context is not empty. If arguments
+Without arguments is evaluates to true if the context is not empty. If arguments
 are given, they are used to filter the context before evaluation.
 
 :Implementation: Neos\\Eel\\FlowQuery\\Operations\\IsOperation
