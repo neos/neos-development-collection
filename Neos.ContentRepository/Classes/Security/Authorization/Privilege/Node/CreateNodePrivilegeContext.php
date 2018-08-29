@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * An Eel context matching expression for the CreateNodePrivilege
@@ -18,30 +20,46 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
 class CreateNodePrivilegeContext extends NodePrivilegeContext
 {
     /**
-     * @var string
+     * @Flow\Inject
+     * @var NodeTypeManager
      */
-    protected $creationNodeTypes;
+    protected $nodeTypeManager;
 
     /**
-     * @param string|array $creationNodeTypes either an array of supported node type identifiers or a single node type identifier (for example "Neos.Neos:Document")
-     * @return boolean Has to return true, to evaluate the eel expression correctly in any case
+     * @var string[]
      */
-    public function createdNodeIsOfType($creationNodeTypes)
+    protected $creationNodeTypes = [];
+
+    /**
+     * @param string|string[] $creationNodeTypes either an array of supported node type identifiers or a single node type identifier (for example "Neos.Neos:Document")
+     * @param bool $includeSubNodeTypes indicates if the sub node types should be added to the allowed node types
+     *
+     * @return bool Has to return true, to evaluate the eel expression correctly in any case
+     */
+    public function createdNodeIsOfType($creationNodeTypes, bool $includeSubNodeTypes = false)
     {
-        $this->creationNodeTypes = $creationNodeTypes;
+        $this->creationNodeTypes = is_array($creationNodeTypes) ? $creationNodeTypes : [$creationNodeTypes];
+
+        if ($includeSubNodeTypes) {
+            $creationNodeTypeNames = [];
+            foreach ($this->creationNodeTypes as $creationNodeTypeName) {
+                $creationNodeTypeNames[$creationNodeTypeName] = true;
+                $subNodeTypes = $this->nodeTypeManager->getSubNodeTypes($creationNodeTypeName, false);
+                foreach ($subNodeTypes as $subNodeTypeName => $subNodeType) {
+                    $creationNodeTypeNames[$subNodeTypeName] = true;
+                }
+            }
+            $this->creationNodeTypes = array_keys($creationNodeTypeNames);
+        }
+
         return true;
     }
 
     /**
-     * @return array $creationNodeTypes
+     * @return string[] $creationNodeTypes
      */
     public function getCreationNodeTypes()
     {
-        if (is_array($this->creationNodeTypes)) {
-            return $this->creationNodeTypes;
-        } elseif (is_string($this->creationNodeTypes)) {
-            return [$this->creationNodeTypes];
-        }
-        return [];
+        return $this->creationNodeTypes;
     }
 }
