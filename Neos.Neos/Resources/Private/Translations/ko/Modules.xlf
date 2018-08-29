@@ -7,7 +7,7 @@
 			<target xml:lang="ko" state="needs-translation">Back</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="ko" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="ko" state="translated">취소</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -125,7 +125,7 @@
 			<target xml:lang="ko" state="needs-translation">Publish selected changes</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="ko" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="ko" state="translated">모든 변경사항을 취소</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target xml:lang="ko" state="needs-translation">Publish all changes</target></trans-unit>
@@ -282,7 +282,7 @@
 			<target xml:lang="ko" state="needs-translation">New</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ko" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="ko" state="needs-translation">Edit account</target></trans-unit>
@@ -303,10 +303,10 @@
 			<target xml:lang="ko" state="needs-translation">User Data</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="ko" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="ko" state="translated">비밀 번호</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="ko" state="needs-translation">Repeat password</target></trans-unit>
@@ -363,7 +363,7 @@
 			<target xml:lang="ko" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ko" state="needs-translation">Roles</target></trans-unit>
@@ -408,7 +408,7 @@
 			<target xml:lang="ko" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="ko" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
@@ -659,10 +659,10 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target xml:lang="ko" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ko" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ko" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="ko" state="needs-translation">New electronic address</target></trans-unit>
@@ -692,7 +692,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target xml:lang="ko" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ko" state="needs-translation">Roles</target></trans-unit>
