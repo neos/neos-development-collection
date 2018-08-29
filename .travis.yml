@@ -43,7 +43,7 @@ cache:
     - $HOME/.composer/cache
 before_install:
   - export NEOS_TARGET_REPOSITORY=neos/neos-development-collection
-  - export NEOS_TARGET_VERSION=master
+  - export NEOS_TARGET_VERSION=4.1
   - if [ "$DB" = "pgsql" ]; then sudo mount -o remount,size=25% /var/ramfs ; fi
   - phpenv config-rm xdebug.ini
   - env
@@ -55,7 +55,7 @@ before_install:
   - git clone https://github.com/neos/neos-development-distribution.git -b ${NEOS_TARGET_VERSION}
   - cd neos-development-distribution
 install:
-  - composer self-update -q 1.6.3
+  - composer self-update -q
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer update --no-progress --no-interaction
   - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
