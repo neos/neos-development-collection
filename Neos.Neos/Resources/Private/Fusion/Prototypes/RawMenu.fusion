@@ -1,0 +1,15 @@
+# Neos.Neos:RawMenu provides basic menu rendering
+#
+prototype(Neos.Neos:RawMenu) {
+	@class = 'Neos\\Neos\\Fusion\\RawMenuImplementation'
+
+	node = ${node}
+	items = ${this.items}
+
+	entryLevel = ${this.startingPoint ? 0 : 1}
+	maximumLevels = 2
+
+	filter = 'Neos.Neos:Document'
+
+	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ContextDependentHandler'
+}
