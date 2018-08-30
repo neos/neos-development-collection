@@ -675,10 +675,10 @@
 			<target xml:lang="vi" state="translated">Lỗi cơ sở dữ liệu</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="vi" state="needs-translation">Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</target></trans-unit>
+			<target xml:lang="vi" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="vi" state="translated">Bạn có thể muốn đặt cấu hình hoặc kiểm tra cấu hình cơ sở dữ liệu của bạn trong việc cài đặt.</target></trans-unit>
+			<target xml:lang="vi" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="vi" state="translated">Không tìm thấy trang này</target></trans-unit>

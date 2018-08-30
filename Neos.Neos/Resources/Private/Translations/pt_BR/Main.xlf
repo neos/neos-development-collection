@@ -675,10 +675,10 @@
 			<target xml:lang="pt-BR" state="translated">Erro no banco de dados</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="pt-BR" state="translated">Desculpa, detectamos um erro com seu banco de dados. Verifique os arquivos de log em Data/Logs/* para obter mais informações.</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="pt-BR" state="translated">Você pode querer configurar ou verificar sua configuração de banco de dados na configuração.</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="pt-BR" state="translated">Página Não Encontrada</target></trans-unit>

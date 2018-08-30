@@ -673,12 +673,12 @@
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
 			<target xml:lang="fi">Tietokantavirhe</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="fi">Virhe tietokannassa. Tarkista lokitiedostot sijainnissa Data/Logs/* saadaksesi lisätietoja.</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
+			<target xml:lang="fi" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="fi">Määritä tai tarkista asennuksen tietokanta-asetukset.</target></trans-unit>
+			<target xml:lang="fi" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target xml:lang="fi">Sivua ei löydy</target></trans-unit>

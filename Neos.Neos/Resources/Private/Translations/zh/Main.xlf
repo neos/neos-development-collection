@@ -675,10 +675,10 @@
 			<target xml:lang="zh-CN" state="translated">数据库错误</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="zh-CN" state="translated">对不起，我们检测到数据库错误。请检查Data/Logs/*里的日志文件获取更多的信息。</target></trans-unit>
+			<target xml:lang="zh-CN" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="zh-CN" state="translated">你可能想要通过安装程序配置或检查数据库配置。</target></trans-unit>
+			<target xml:lang="zh-CN" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="zh-CN" state="translated">找不到页面</target></trans-unit>

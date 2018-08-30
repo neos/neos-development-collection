@@ -675,10 +675,10 @@
 			<target xml:lang="cs" state="translated">Chyba databáze</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="cs" state="translated">Bohužel byly zjištěny problémy s vaší databází. Zkontolujte soubry protokolů v Data/Logs/* pro více informací.</target></trans-unit>
+			<target xml:lang="cs" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="cs" state="translated">Možná bude nutné nastavit nebo zkontrolovat konfiguraci databáze během instalace.</target><alt-trans><target xml:lang="cs">Možná budete chtít nastavit nebo zkontrolovat konfiguraci databáze během instalace.</target></alt-trans></trans-unit>
+			<target xml:lang="cs" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="cs" state="translated">Strana nebyla nalezena</target></trans-unit>
