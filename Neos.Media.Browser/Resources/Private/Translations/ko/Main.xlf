@@ -100,7 +100,7 @@
 			<target xml:lang="ko" state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="ko" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="ko" state="translated">취소</target></trans-unit>
       <trans-unit id="replace" xml:space="preserve">
 				<source>Replace</source>
 			<target xml:lang="ko" state="needs-translation">Replace</target></trans-unit>
@@ -127,7 +127,7 @@
 			<target xml:lang="ko" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="ko" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="ko" state="translated">검색</target></trans-unit>
       <trans-unit id="search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="ko" state="needs-translation">{0} items</target></trans-unit>
@@ -259,7 +259,7 @@
 			<target xml:lang="ko" state="needs-translation">Basics</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="ko" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="ko" state="translated">삭제하기</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="ko" state="needs-translation">Click to delete</target></trans-unit>
@@ -298,7 +298,7 @@
 			<target xml:lang="ko" state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="ko" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="ko" state="translated">미리보기</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="ko" state="needs-translation">Cannot upload the file</target></trans-unit>

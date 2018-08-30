@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="ko" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="ko" state="translated">뒤로</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="ko" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="ko" state="translated">취소</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -17,13 +17,13 @@
 			<target xml:lang="ko" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="ko" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="ko" state="translated">작업 공간</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
 				<source>Details for "{0}"</source>
 			<target xml:lang="ko" state="needs-translation">Details for "{0}"</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
-			<target xml:lang="ko" state="needs-translation">Create new workspace</target></trans-unit>
+			<target xml:lang="ko" state="translated">새 작업영역을 만듭니다.</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
 				<source>Create workspace</source>
 			<target xml:lang="ko" state="needs-translation">Create workspace</target></trans-unit>
@@ -125,7 +125,7 @@
 			<target xml:lang="ko" state="needs-translation">Publish selected changes</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="ko" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="ko" state="translated">모든 변경사항을 취소</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target xml:lang="ko" state="needs-translation">Publish all changes</target></trans-unit>
@@ -137,13 +137,13 @@
 			<target xml:lang="ko" state="needs-translation">Changed Content</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
-			<target xml:lang="ko" state="needs-translation">deleted</target></trans-unit>
+			<target xml:lang="ko" state="translated">삭제됨</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
 				<source>created</source>
 			<target xml:lang="ko" state="needs-translation">created</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
 				<source>moved</source>
-			<target xml:lang="ko" state="needs-translation">moved</target></trans-unit>
+			<target xml:lang="ko" state="translated">이동 완료</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>hidden</source>
 			<target xml:lang="ko" state="needs-translation">hidden</target></trans-unit>
@@ -212,7 +212,7 @@
       </trans-unit>
       <trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
-			<target xml:lang="ko" state="needs-translation">History</target></trans-unit>
+			<target xml:lang="ko" state="translated">최근 기록</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target xml:lang="ko" state="needs-translation">This module provides an overview of all relevant events affecting this Neos installation.</target></trans-unit>
@@ -282,7 +282,7 @@
 			<target xml:lang="ko" state="needs-translation">New</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ko" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="ko" state="needs-translation">Edit account</target></trans-unit>
@@ -303,10 +303,10 @@
 			<target xml:lang="ko" state="needs-translation">User Data</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="ko" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="ko" state="translated">비밀 번호</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="ko" state="needs-translation">Repeat password</target></trans-unit>
@@ -363,7 +363,7 @@
 			<target xml:lang="ko" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ko" state="needs-translation">Roles</target></trans-unit>
@@ -408,7 +408,7 @@
 			<target xml:lang="ko" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="ko" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
@@ -659,10 +659,10 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target xml:lang="ko" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ko" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ko" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="ko" state="needs-translation">New electronic address</target></trans-unit>
@@ -692,7 +692,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target xml:lang="ko" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ko" state="needs-translation">Roles</target></trans-unit>
@@ -704,7 +704,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target xml:lang="ko" state="needs-translation">Electronic addresses</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="ko" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="ko" state="translated">정말로 삭제 하시겠습니까?</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
 				<source>Yes, delete electronic address</source>
 			<target xml:lang="ko" state="needs-translation">Yes, delete electronic address</target></trans-unit>
