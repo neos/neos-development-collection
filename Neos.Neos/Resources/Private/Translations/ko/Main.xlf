@@ -23,7 +23,7 @@
 			<target xml:lang="ko" state="translated">취소</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="ko" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="ko" state="translated">뒤로</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			<target xml:lang="ko" state="translated">고르세요</target></trans-unit>
@@ -53,7 +53,7 @@
 			<target xml:lang="ko" state="translated">복사하기</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target xml:lang="ko" state="needs-translation">Cut</target></trans-unit>
+			<target xml:lang="ko" state="translated">잘라내기</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
 			<target xml:lang="ko" state="translated">삭제하기</target></trans-unit>
@@ -200,7 +200,7 @@
 			<target xml:lang="ko" state="needs-translation">Label</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Content Type</source>
-			<target xml:lang="ko" state="needs-translation">Content Type</target></trans-unit>
+			<target xml:lang="ko" state="translated">콘텐츠 유형</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
 			<target xml:lang="ko" state="needs-translation">Path</target></trans-unit>
@@ -233,7 +233,7 @@
 			<target xml:lang="ko" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="ko" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="ko" state="translated">작업 공간</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve">
 				<source>Structure</source>
 			<target xml:lang="ko" state="needs-translation">Structure</target></trans-unit>
@@ -242,7 +242,7 @@
 			<target xml:lang="ko" state="needs-translation">Toggle context structure</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
-			<target xml:lang="ko" state="needs-translation">Filter</target></trans-unit>
+			<target xml:lang="ko" state="translated">필터</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
 			<target xml:lang="ko" state="needs-translation">Toggle menu</target></trans-unit>
@@ -257,7 +257,7 @@
 			<target xml:lang="ko" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
 				<source>You cannot copy this node</source>
-			<target xml:lang="ko" state="needs-translation">You cannot copy this node</target></trans-unit>
+			<target xml:lang="ko" state="translated">이 노드를 복사할 수 없습니다.</target></trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
 			<target xml:lang="ko" state="needs-translation">You cannot cut this node</target></trans-unit>
@@ -299,7 +299,7 @@
 			<target xml:lang="ko" state="needs-translation">Inactive</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target xml:lang="ko" state="needs-translation">Click to edit</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집하려면 클릭하세요.</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
 			<target xml:lang="ko" state="needs-translation">Click to deactivate</target></trans-unit>
@@ -486,7 +486,7 @@
 			<target xml:lang="ko" state="translated">이 필드에는 최소 {minimum} 이상이 포함 되어야 합니다.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
 				<source>This text may not exceed {maximum} characters.</source>
-			<target xml:lang="ko" state="needs-translation">This text may not exceed {maximum} characters.</target></trans-unit>
+			<target xml:lang="ko" state="translated">이 텍스트는 {maximum} 자를 초과해선 안됩니다.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
 			<target xml:lang="ko" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
@@ -498,7 +498,7 @@
 			<target xml:lang="ko" state="needs-translation">The count must be between {minimum} and {maximum}.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
 				<source>The given value was not a valid date.</source>
-			<target xml:lang="ko" state="needs-translation">The given value was not a valid date.</target></trans-unit>
+			<target xml:lang="ko" state="translated">이 값은 유효한 값이 아닙니다.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
 				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
 			<target xml:lang="ko" state="needs-translation">The given date must be between {formatEarliestDate} and {formatLatestDate}</target></trans-unit>
@@ -558,7 +558,7 @@
 			<target xml:lang="ko" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target xml:lang="ko" state="needs-translation">Create empty</target></trans-unit>
+			<target xml:lang="ko" state="translated">빈 문서를 생성</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
 			<target xml:lang="ko" state="needs-translation">Create and copy</target></trans-unit>
@@ -573,10 +573,10 @@
 			<target xml:lang="ko" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="ko" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="ko" state="translated">정말로 삭제 하시겠습니까?</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
-			<target xml:lang="ko" state="needs-translation">This will delete the element</target></trans-unit>
+			<target xml:lang="ko" state="translated">이 행동은 요소를 삭제할 것입니다.</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
 			<target xml:lang="ko" state="needs-translation">and it's children</target></trans-unit>
@@ -585,16 +585,16 @@
 			<target xml:lang="ko" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="ko" state="needs-translation">Height</target></trans-unit>
+			<target xml:lang="ko" state="translated">높이</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="ko" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="ko" state="translated">정말로 삭제 하시겠습니까?</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
-			<target xml:lang="ko" state="needs-translation">this element</target></trans-unit>
+			<target xml:lang="ko" state="translated">이 요소</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="ko" state="needs-translation">This will delete the element.</target></trans-unit>
+			<target xml:lang="ko" state="translated">이 행동은 요소를 삭제할 것입니다.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="ko" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
@@ -612,16 +612,16 @@
 			<target xml:lang="ko" state="needs-translation">Missing required property: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="ko" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="ko" state="translated">작업 공간</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="ko" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="ko" state="translated">작업 공간</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target xml:lang="ko" state="needs-translation">An error occurred during saving</target></trans-unit>
+			<target xml:lang="ko" state="translated">저장 중에 오류가 발생했습니다.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="ko" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
+			<target xml:lang="ko" state="translated">문제를 해결하기 위해 페이지를 다시 불러옵니다.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
 			<target xml:lang="ko" state="needs-translation">Reload the backend</target></trans-unit>
@@ -640,7 +640,7 @@
 			<target xml:lang="ko" state="needs-translation">Raw Content Mode</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
-			<target xml:lang="ko" state="needs-translation">Desktop</target></trans-unit>
+			<target xml:lang="ko" state="translated">바탕 화면</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
@@ -687,10 +687,10 @@
 			<target xml:lang="ko" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="ko" state="needs-translation">Page Not Found</target></trans-unit>
+			<target xml:lang="ko" state="translated">페이지를 찾을 수 없습니다.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="ko" state="needs-translation">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="ko" state="translated">죄송합니다, 요청하신 페이지를 찾을 수 없습니다.</target></trans-unit>
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
 				<source>Invalid NodeType</source>
 			<target xml:lang="ko" state="needs-translation">Invalid NodeType</target></trans-unit>
@@ -702,10 +702,10 @@
 			<target xml:lang="ko" state="needs-translation">Unexpected error while creating node</target></trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
-			<target xml:lang="ko" state="needs-translation">Unexpected error while deleting node</target></trans-unit>
+			<target xml:lang="ko" state="translated">노드를 삭제하는 중에 예상하지 못한 오류가 발생했습니다.</target></trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
 				<source>Unexpected error while updating node</source>
-			<target xml:lang="ko" state="needs-translation">Unexpected error while updating node</target></trans-unit>
+			<target xml:lang="ko" state="translated">노드를 업데이트하는 중에 예상하지 못한 오류가 발생했습니다.</target></trans-unit>
       <trans-unit id="error.node.move.unexpected" xml:space="preserve">
 				<source>Unexpected error while moving node</source>
 			<target xml:lang="ko" state="needs-translation">Unexpected error while moving node</target></trans-unit>
