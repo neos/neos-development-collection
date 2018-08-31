@@ -20,6 +20,7 @@ use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\TagRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Utility\Arrays;
 
 /**
  * Controller for tag handling
@@ -58,11 +59,19 @@ class AssetCollectionController extends ActionController
      * @Flow\Validate(argumentName="title", type="NotEmpty")
      * @Flow\Validate(argumentName="title", type="Label")
      */
-    public function createAction($title)
+    public function createAction(string $title)
+    {
+        foreach (Arrays::trimExplode(',', $title) as $title) {
+            $this->createAsetCollection($title);
+
+        }
+        $this->redirect('index', 'Asset', 'Neos.Media.Browser');
+    }
+
+    protected function createAsetCollection(string $title): void
     {
         $this->assetCollectionRepository->add(new AssetCollection($title));
         $this->addFlashMessage('collectionHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars($title)]);
-        $this->redirect('index', 'Asset', 'Neos.Media.Browser');
     }
 
     /**

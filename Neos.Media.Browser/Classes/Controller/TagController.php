@@ -20,6 +20,7 @@ use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
+use Neos\Utility\Arrays;
 
 /**
  * Controller for tag handling
@@ -58,7 +59,15 @@ class TagController extends ActionController
      * @Flow\Validate(argumentName="label", type="NotEmpty")
      * @Flow\Validate(argumentName="label", type="Label")
      */
-    public function createAction($label)
+    public function createAction(string $label)
+    {
+        foreach (Arrays::trimExplode(',', $label) as $tag) {
+            $this->createTag($tag);
+        }
+        $this->redirect('index', 'Asset', 'Neos.Media.Browser');
+    }
+
+    protected function createTag(string $label): void
     {
         $existingTag = $this->tagRepository->findOneByLabel($label);
         if ($existingTag !== null) {
@@ -74,7 +83,6 @@ class TagController extends ActionController
             }
             $this->addFlashMessage('tagHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars($label)]);
         }
-        $this->redirect('index', 'Asset', 'Neos.Media.Browser');
     }
 
     /**
