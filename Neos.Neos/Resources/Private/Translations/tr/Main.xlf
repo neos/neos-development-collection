@@ -675,10 +675,10 @@
 			<target xml:lang="tr" state="translated">Veri tabanı hatası</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="tr" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Maalesef, veritabanınızla ilgili bir hata tespit ettik. Daha fazla bilgi için günlük dosyalarınızı Veri / Günlükler / * içinde kontrol edin.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="tr" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Kurulumda veritabanı yapılandırmanızı yapılandırmak veya kontrol etmek isteyebilirsiniz.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="tr" state="translated">Sayfa bulunamadı</target></trans-unit>
