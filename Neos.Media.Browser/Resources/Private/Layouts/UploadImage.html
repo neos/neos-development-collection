@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title><f:render section="Title" /></title>
+
+	<f:for each="{settings.styles}" as="style">
+		<link rel="stylesheet" href="{f:uri.resource(path: style)}" />
+	</f:for>
+</head>
+<body class="{settings.bodyClasses} media-browser-inspector">
+<div class="neos-row-fluid">
+	<f:render partial="FlashMessages" />
+
+	<f:render section="Content" />
+</div>
+<f:for each="{settings.scripts}" as="script">
+	<script src="{f:uri.resource(path: script)}"></script>
+</f:for>
+<f:render section="Scripts" optional="TRUE" />
+</body>
+</html>
