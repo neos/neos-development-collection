@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2018-08-30
+This reference was automatically generated from code on 2018-09-04
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -1327,7 +1327,7 @@ NodeInfo.renderNodeWithMinimalPropertiesAndChildrenInformation(node, controllerC
 * ``controllerContext`` (ControllerContext|null, *optional*)
 * ``nodeTypeFilterOverride`` (string, *optional*)
 
-**Return** (array)
+**Return** (array|null)
 
 NodeInfo.renderNodeWithPropertiesAndChildrenInformation(node, controllerContext, nodeTypeFilterOverride)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1336,7 +1336,7 @@ NodeInfo.renderNodeWithPropertiesAndChildrenInformation(node, controllerContext,
 * ``controllerContext`` (ControllerContext|null, *optional*)
 * ``nodeTypeFilterOverride`` (string, *optional*)
 
-**Return** (array)
+**Return** (array|null)
 
 NodeInfo.renderNodes(nodes, controllerContext, omitMostPropertiesForTreeState)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
