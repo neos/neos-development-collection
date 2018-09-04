@@ -1,0 +1,17 @@
+`4.1.6 (2018-09-04) <https://github.com/neos/neos-development-collection/releases/tag/4.1.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add missing Layout to access mediabrowser from inspector <https://github.com/neos/neos-development-collection/pull/2171>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+This fix a regressing introduced by https://github.com/neos/neos-development-collection/pull/1745
+
+Fixes: #2170
+
+* Packages: ``Browser`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.1.1...4.1.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
