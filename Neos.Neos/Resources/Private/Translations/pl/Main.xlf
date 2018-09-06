@@ -333,6 +333,21 @@
       <trans-unit id="description" xml:space="preserve" approved="yes">
 				<source>Description</source>
 			<target xml:lang="pl">Opis</target></trans-unit>
+      <trans-unit id="toggleContentTree" xml:space="preserve">
+				<source>Toggle content tree</source>
+			<target xml:lang="pl" state="translated">Przełącz strukturę treści</target></trans-unit>
+      <trans-unit id="showPublishOptions" xml:space="preserve">
+				<source>Show publish options</source>
+			<target xml:lang="pl" state="translated">Pokaż opcje publikowania</target></trans-unit>
+      <trans-unit id="activateFullscreen" xml:space="preserve">
+				<source>Activate Fullscreen edit mode</source>
+			<target xml:lang="pl" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+      <trans-unit id="deactivateFullscreen" xml:space="preserve">
+				<source>Deactivate Fullscreen edit mode</source>
+			<target xml:lang="pl" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+      <trans-unit id="showPreview" xml:space="preserve">
+				<source>Show preview</source>
+			<target xml:lang="pl" state="translated">Pokaż podgląd</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -379,9 +394,6 @@
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
 			<target xml:lang="pl">Odrzuć wszystkie zmiany</target></trans-unit>
-      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve" approved="yes">
-				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target xml:lang="pl">Czy jesteś pewien, że chcesz odrzucić {numberOfChanges} zmianę(y) w tym obszarze roboczym?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target xml:lang="pl">Czy na pewno chcesz odrzucić wszystkie zmiany w tym obszarze roboczym?</target></trans-unit>
@@ -445,12 +457,6 @@
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve" approved="yes">
 				<source>No date set</source>
 			<target xml:lang="pl">Nie wybrano daty</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve" approved="yes">
-				<source>Today</source>
-			<target xml:lang="pl">Dzisiaj</target></trans-unit>
-      <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve" approved="yes">
-				<source>Apply</source>
-			<target xml:lang="pl">Zastosuj</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve" approved="yes">
 				<source>Edit code</source>
 			<target xml:lang="pl">Edytuj kod</target><alt-trans><target xml:lang="pl">Edycja kodu</target></alt-trans></trans-unit>

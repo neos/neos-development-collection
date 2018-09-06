@@ -218,19 +218,16 @@ Shows the result of Fusion Expressions directly.
 
 Example::
 
-  debugObject = Debug {
+  valueToDebug = "hello neos world"
+  valueToDebug.@process.debug = Neos.Fusion:Debug {
         title = 'Debug of hello world'
-
-        # If only the "value"-key is given it is debugged directly,
-        # otherwise all keys except "title" and "plaintext" are debugged.
-        value = "hello neos world"
 
         # Additional values for debugging
         documentTitle = ${q(documentNode).property('title')}
         documentPath = ${documentNode.path}
   }
 
-  # the value of this object is the formatted debug output of all keys given to the object
+  # the initial value is not changed, so you can define the Debug prototype anywhere in your Fusion code
 
 
 .. _Neos_Fusion__Component:
@@ -517,6 +514,18 @@ Example::
 		}
 	}
 
+Neos.Fusion:CanRender
+---------------------
+
+Check whether a Fusion prototype can be rendered. For being renderable a prototype must exist and have an implementation class, or inherit from an existing renderable prototype. The implementation class can be defined indirectly via base prototypes.
+
+:type: (string) The prototype name that is checked
+
+Example::
+
+	canRender = Neos.Fusion:CanRender {
+		type = 'My.Package:Prototype'
+	}
 
 Neos.Neos Fusion Objects
 =============================
@@ -525,13 +534,10 @@ The Fusion objects defined in the Neos package contain all Fusion objects which
 are needed to integrate a site. Often, it contains generic Fusion objects
 which do not need a particular node type to work on.
 
-As Neos.Neos is the default namespace, the Fusion objects do not need to be
-prefixed with Neos.Neos.
-
 .. _Neos_Neos__Page:
 
-Page
-----
+Neos.Neos:Page
+--------------
 Subclass of :ref:`Neos_Fusion__Http_Message`, which is based on :ref:`Neos_Fusion__Array`. Main entry point
 into rendering a page; responsible for rendering the ``<html>`` tag and everything inside.
 
@@ -608,8 +614,8 @@ Adding body attributes with ``bodyTag.attributes``:
 
 .. _Neos_Neos__ContentCollection:
 
-ContentCollection
------------------
+Neos.Neos:ContentCollection
+---------------------------
 
 Render nested content from a ``ContentCollection`` node. Individual nodes are rendered using the
 :ref:`Neos_Neos__ContentCase` object.
@@ -623,10 +629,10 @@ Example::
 
 	page.body {
 		content {
-			main = PrimaryContent {
+			main = Neos.Neos:PrimaryContent {
 				nodePath = 'main'
 			}
-			footer = ContentCollection {
+			footer = Neos.Neos:ContentCollection {
 				nodePath = 'footer'
 			}
 		}
@@ -634,8 +640,8 @@ Example::
 
 .. _Neos_Neos__PrimaryContent:
 
-PrimaryContent
---------------
+Neos.Neos:PrimaryContent
+------------------------
 
 Primary content rendering, extends :ref:`Neos_Fusion__Case`. This is a prototype that can be used from packages
 to extend the default content rendering (e.g. to handle specific document node types).
@@ -648,7 +654,7 @@ Example for basic usage::
 
 	page.body {
 		content {
-			main = PrimaryContent {
+			main = Neos.Neos:PrimaryContent {
 				nodePath = 'main'
 			}
 		}
@@ -665,8 +671,8 @@ Example for custom matcher::
 
 .. _Neos_Neos__ContentCase:
 
-ContentCase
------------
+Neos.Neos:ContentCase
+---------------------
 
 Render a content node, extends :ref:`Neos_Fusion__Case`. This is a prototype that is used by the default content
 rendering (:ref:`Neos_Neos__ContentCollection`) and can be extended to add custom matchers.
@@ -676,8 +682,8 @@ rendering (:ref:`Neos_Neos__ContentCollection`) and can be extended to add custo
 
 .. _Neos_Neos__Content:
 
-Content
--------
+Neos.Neos:Content
+-----------------
 
 Base type to render content nodes, extends :ref:`Neos_Fusion__Template`. This prototype is extended by the
 auto-generated Fusion to define prototypes for each node type extending ``Neos.Neos:Content``.
@@ -697,8 +703,8 @@ Example::
 
 .. _Neos_Neos__ContentComponent:
 
-ContentComponent
-----------------
+Neos.Neos:ContentComponent
+--------------------------
 
 Base type to render component based content-nodes, extends :ref:`Neos_Fusion__Component`.
 
@@ -707,8 +713,8 @@ Base type to render component based content-nodes, extends :ref:`Neos_Fusion__Co
 
 .. _Neos_Neos__Editable:
 
-Editable
---------
+Neos.Neos:Editable
+------------------
 
 Create an editable tag for a property. In the frontend, only the content of the property gets rendered.
 
@@ -727,8 +733,8 @@ Example::
 
 .. _Neos_Neos__Plugin:
 
-Plugin
-------
+Neos.Neos:Plugin
+----------------
 
 Base type to render plugin content nodes or static plugins. A *plugin* is a Flow controller that can implement
 arbitrary logic.
@@ -749,8 +755,8 @@ Example::
 
 .. _Neos_Neos__Menu:
 
-Menu
-----
+Neos.Neos:Menu
+--------------
 
 Render a menu with items for nodes. Extends :ref:`Neos_Fusion__Template`.
 
@@ -784,7 +790,7 @@ Custom menu template:
 
 ::
 
-	menu = Menu {
+	menu = Neos.Neos:Menu {
 		entryLevel = 1
 		maximumLevels = 3
 		templatePath = 'resource://My.Site/Private/Templates/FusionObjects/MyMenu.html'
@@ -795,7 +801,7 @@ Menu including site node:
 
 ::
 
-	menu = Menu {
+	menu = Neos.Neos:Menu {
 		itemCollection = ${q(site).add(q(site).children('[instanceof Neos.Neos:Document]')).get()}
 	}
 
@@ -804,7 +810,7 @@ Menu with custom starting point:
 
 ::
 
-	menu = Menu {
+	menu = Neos.Neos:Menu {
 		entryLevel = 2
 		maximumLevels = 1
 		startingPoint = ${q(site).children('[uriPathSegment="metamenu"]').get(0)}
@@ -812,20 +818,20 @@ Menu with custom starting point:
 
 .. _Neos_Neos__BreadcrumbMenu:
 
-BreadcrumbMenu
---------------
+Neos.Neos:BreadcrumbMenu
+------------------------
 
 Render a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__Menu`.
 
 Example::
 
-	breadcrumb = BreadcrumbMenu
+	breadcrumb = Neos.Neos:BreadcrumbMenu
 
 .. _Neos_Neos__DimensionMenu:
 .. _Neos_Neos__DimensionsMenu:
 
-DimensionsMenu
---------------
+Neos.Neos:DimensionsMenu
+------------------------
 
 Create links to other node variants (e.g. variants of the current node in other dimensions) by using this Fusion object.
 
@@ -904,8 +910,8 @@ no node be assigned (so no link will be created and the items will have the ``ab
 
 .. _Neos_Neos__NodeUri:
 
-NodeUri
--------
+Neos.Neos:NodeUri
+-----------------
 
 Build a URI to a node. Accepts the same arguments as the node link/uri view helpers.
 
@@ -926,8 +932,8 @@ Example::
 
 .. _Neos_Neos__ImageUri:
 
-ImageUri
---------
+Neos.Neos:ImageUri
+------------------
 
 Get a URI to a (thumbnail) image for an asset.
 
@@ -953,8 +959,8 @@ Example::
 
 .. _Neos_Neos__ImageTag:
 
-ImageTag
---------
+Neos.Neos:ImageTag
+------------------
 
 Render an image tag for an asset.
 
@@ -971,8 +977,8 @@ Example::
 
 .. _Neos_Neos__ConvertUris:
 
-ConvertUris
------------
+Neos.Neos:ConvertUris
+---------------------
 
 Convert internal node and asset URIs (``node://...`` or ``asset://...``) in a string to public URIs and allows for
 overriding the target attribute for external links and resource links.
@@ -992,8 +998,8 @@ Example::
 
 .. _TYPO3_Neos__ContentElementWrapping:
 
-ContentElementWrapping
-----------------------
+Neos.Neos:ContentElementWrapping
+--------------------------------
 
 Processor to augment rendered HTML code with node metadata that allows the Neos UI to select the node and show
 node properties in the inspector. This is especially useful if your renderer prototype is not derived from ``Neos.Neos:Content``.
@@ -1017,8 +1023,8 @@ Example::
 
 .. _TYPO3_Neos__ContentElementEditable:
 
-ContentElementEditable
-----------------------
+Neos.Neos:ContentElementEditable
+--------------------------------
 
 Processor to augment an HTML tag with metadata for inline editing to make a rendered representation of a property editable.
 

@@ -11,14 +11,13 @@ namespace Neos\ContentRepository\Migration\Service;
  * source code.
  */
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package\PackageManager;
-use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Migration\Exception\MigrationException;
-use Neos\ContentRepository\Migration\Service\NodeFilter;
-use Neos\ContentRepository\Migration\Service\NodeTransformation;
+use Neos\Flow\Persistence\Doctrine\Query;
 
 /**
  * Service that runs over all nodes and applies migrations to them as given by configuration.
@@ -33,12 +32,6 @@ class NodeMigration
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
-     */
-    protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
      * @var NodeFilter
      */
     protected $nodeFilterService;
@@ -50,26 +43,25 @@ class NodeMigration
     protected $nodeTransformationService;
 
     /**
-     * Migration configuration
-     * @var array
+     * @Flow\Inject
+     * @var PersistenceManager
      */
-    protected $configuration = array();
-
-    /**
-     * @var Workspace
-     */
-    protected $workspace;
+    protected $persistenceManager;
 
     /**
      * @Flow\Inject
-     * @var PackageManager
+     * @var EntityManagerInterface
      */
-    protected $packageManager;
+    protected $entityManager;
 
+    /**
+     * Migration configuration
+     * @var array
+     */
+    protected $configuration = [];
 
     /**
      * @param array $configuration
-     * @throws MigrationException
      */
     public function __construct(array $configuration)
     {
@@ -77,21 +69,57 @@ class NodeMigration
     }
 
     /**
-     * Execute the migration
+     * Execute all migrations
      *
-     * @return void
+     * @throws \Neos\ContentRepository\Migration\Exception\MigrationException
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function execute()
     {
-        foreach ($this->nodeDataRepository->findAll() as $node) {
-            foreach ($this->configuration as $migrationDescription) {
-                if ($this->nodeFilterService->matchFilters($node, $migrationDescription['filters'])) {
-                    $this->nodeTransformationService->execute($node, $migrationDescription['transformations']);
-                    if (!$this->nodeDataRepository->isInRemovedNodes($node)) {
-                        $this->nodeDataRepository->update($node);
-                    }
+        foreach ($this->configuration as $migrationDescription) {
+            /** array $migrationDescription */
+            $this->executeSingle($migrationDescription);
+        }
+    }
+
+    /**
+     * Execute a single migration
+     *
+     * @param array $migrationDescription
+     * @return void
+     * @throws \Neos\ContentRepository\Migration\Exception\MigrationException
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     */
+    protected function executeSingle(array $migrationDescription)
+    {
+        $filterExpressions = [];
+        $baseQuery = new Query(NodeData::class);
+        foreach ($this->nodeFilterService->getFilterExpressions($migrationDescription['filters'], $baseQuery) as $filterExpression) {
+            $filterExpressions[] = $filterExpression;
+        }
+
+        $query = new Query(NodeData::class);
+        if ($filterExpressions !== []) {
+            $query->matching(call_user_func_array([new Expr(), 'andX'], $filterExpressions));
+        }
+        $iterator = $query->getQueryBuilder()->getQuery()->iterate();
+
+        $processed = 0;
+        foreach ($this->nodeDataRepository->iterate($iterator) as $node) {
+            if ($this->nodeFilterService->matchFilters($node, $migrationDescription['filters'])) {
+                $this->nodeTransformationService->execute($node, $migrationDescription['transformations']);
+
+                if (!$this->nodeDataRepository->isInRemovedNodes($node)) {
+                    $this->nodeDataRepository->update($node);
                 }
             }
+
+            if ($processed % 1000 === 0) {
+                $this->persistenceManager->persistAll();
+                $this->persistenceManager->clearState();
+            }
+
+            $processed++;
         }
     }
 }

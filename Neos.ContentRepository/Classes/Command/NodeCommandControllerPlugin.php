@@ -11,8 +11,12 @@ namespace Neos\ContentRepository\Command;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
@@ -77,11 +81,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     protected $nodeDataRepository;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
-     *
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -389,9 +390,9 @@ HELPTEXT;
                     $queryBuilder = $this->entityManager->createQueryBuilder();
                     $queryBuilder->update(NodeData::class, 'n')
                         ->set('n.identifier', $queryBuilder->expr()->literal($newNodeIdentifier))
-                        ->where('n.identifier = ?1')
-                        ->setParameter(1, $oldNodeIdentifier);
-                    $result = $queryBuilder->getQuery()->getResult();
+                        ->where('n.identifier = :oldNodeIdentifier')
+                        ->setParameter('oldNodeIdentifier', $oldNodeIdentifier);
+                    $queryBuilder->getQuery()->getResult();
                     $updatedNodesCount++;
                     $this->output->outputLine('Updated node identifier from %s to %s because it was not a "stable" identifier', [ $oldNodeIdentifier, $newNodeIdentifier ]);
                 }

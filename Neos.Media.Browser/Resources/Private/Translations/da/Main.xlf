@@ -65,6 +65,12 @@
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="da">Træk og slip på tag eller samling</target></trans-unit>
+      <trans-unit id="view" xml:space="preserve">
+				<source>View</source>
+			<target xml:lang="da" state="needs-translation">View</target></trans-unit>
+      <trans-unit id="viewAsset" xml:space="preserve">
+				<source>View asset</source>
+			<target xml:lang="da" state="needs-translation">View asset</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="da">Rediger fil</target><alt-trans><target xml:lang="da">Rediger</target></alt-trans></trans-unit>
@@ -173,6 +179,15 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
 			<target xml:lang="da">Eksempelvisning</target><alt-trans><target xml:lang="da">Eksempel visning</target></alt-trans></trans-unit>
+      <trans-unit id="connectionError" xml:space="preserve">
+				<source>Connection error</source>
+			<target xml:lang="da" state="needs-translation">Connection error</target></trans-unit>
+      <trans-unit id="mediaSource" xml:space="preserve">
+				<source>Media source</source>
+			<target xml:lang="da" state="needs-translation">Media source</target></trans-unit>
+      <trans-unit id="mediaSources" xml:space="preserve">
+				<source>Media sources</source>
+			<target xml:lang="da" state="needs-translation">Media sources</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target xml:lang="da">Samlinger</target></trans-unit>
@@ -272,9 +287,27 @@
       <trans-unit id="metadata.identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
 			<target xml:lang="da">ID</target><alt-trans><target xml:lang="da">Identifikator</target></alt-trans></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve" approved="yes">
+				<source>Title</source>
+			<target xml:lang="da">Titel</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve" approved="yes">
+				<source>Caption</source>
+			<target xml:lang="da">Billedtekst</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target xml:lang="da" state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="da">Forhåndsvisning</target></trans-unit>
+      <trans-unit id="download" xml:space="preserve">
+				<source>Download</source>
+			<target xml:lang="da" state="needs-translation">Download</target></trans-unit>
+      <trans-unit id="next" xml:space="preserve">
+				<source>Next</source>
+			<target xml:lang="da" state="needs-translation">Next</target></trans-unit>
+      <trans-unit id="previous" xml:space="preserve">
+				<source>Previous</source>
+			<target xml:lang="da" state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target xml:lang="da">Kan ikke uploade filen</target></trans-unit>

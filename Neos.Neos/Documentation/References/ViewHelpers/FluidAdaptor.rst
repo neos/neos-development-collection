@@ -1234,9 +1234,9 @@ Expected result::
 
 
 
-.. _`FluidAdaptor ViewHelper Reference: f:form.validationResults`:
+.. _`FluidAdaptor ViewHelper Reference: f:validation.results`:
 
-f:form.validationResults
+f:validation.results
 ------------------------
 
 

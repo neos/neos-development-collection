@@ -18,14 +18,11 @@
 						{neos:backend.translate(id: 'package', value: 'Package')}:
 						<neos:link.module path="administration/packages" section="Sites" class="neos-label" title="{sitePackageAndSite.package.packageMetaData.description}" additionalAttributes="{data-neos-toggle: 'tooltip'}">{sitePackageAndSite.packageKey}</neos:link.module>
 						<f:if condition="{sitePackageAndSite.package}">
-							<f:then>
-								<f:if condition="{sitePackageAndSite.packageIsActive}"><f:else><span class="neos-badge neos-badge-{f:if(condition: sitePackageAndSite.sites, then: 'important', else: 'warning')}">{neos:backend.translate(id: 'deactivated', value: 'Deactivated')}</span></f:else></f:if>
-							</f:then>
 							<f:else><span class="neos-badge neos-badge-important">{neos:backend.translate(id: 'unavailable', value: 'Unavailable')}</span></f:else>
 						</f:if>
 					</td>
 					<td class="neos-priority1 neos-aRight">
-						<i class="fold-toggle icon-chevron-up icon-white" data-toggle="fold-{sitePackageKey}"></i>
+						<i class="fold-toggle fas fa-chevron-up icon-white" data-toggle="fold-{sitePackageKey}"></i>
 					</td>
 				</tr>
 				<f:if condition="{sitePackageAndSite.sites}">
@@ -45,26 +42,26 @@
 								<td class="neos-action">
 									<div class="neos-pull-right">
 										<f:link.action action="edit" arguments="{site: site}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
-											<i class="icon-pencil icon-white"></i>
+											<i class="fas fa-pencil-alt icon-white"></i>
 										</f:link.action>
 										<f:if condition="{site.state} === 1">
 											<f:then>
 												<f:form action="deactivateSite" arguments="{site: site}" class="neos-inline">
 													<button class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'clickToDeactivate', value: 'Click to deactivate')}" data-neos-toggle="tooltip">
-														<i class="icon-minus-sign icon-white"></i>
+														<i class="fas fa-minus-circle icon-white"></i>
 													</button>
 												</f:form>
 											</f:then>
 											<f:else>
 												<f:form action="activateSite" arguments="{site: site}" class="neos-inline">
 													<button class="neos-button neos-button-success" title="{neos:backend.translate(id: 'clickToActivate', value: 'Click to activate')}" data-neos-toggle="tooltip">
-														<i class="icon-plus-sign icon-white"></i>
+														<i class="fas fa-plus-circle icon-white"></i>
 													</button>
 												</f:form>
 											</f:else>
 										</f:if>
 										<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', value: 'Click to delete')}" data-toggle="modal" href="#{site.nodeName}" data-neos-toggle="tooltip">
-											<i class="icon-trash icon-white"></i>
+											<i class="fas fa-trash-alt icon-white"></i>
 										</button>
 										<div class="neos-hide" id="{site.nodeName}">
 											<div class="neos-modal-centered">
@@ -106,7 +103,7 @@
 	<script>
 		(function($) {
 			$('.fold-toggle').click(function() {
-				$(this).toggleClass('icon-chevron-down icon-chevron-up');
+				$(this).toggleClass('fas fa-chevron-down fas fa-chevron-up');
 				$('tr.' + $(this).data('toggle')).toggle();
 			});
 		})(jQuery);

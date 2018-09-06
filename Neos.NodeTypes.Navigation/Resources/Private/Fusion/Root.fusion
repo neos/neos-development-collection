@@ -33,8 +33,8 @@ prototype(Neos.NodeTypes.Navigation:Navigation) < prototype(Neos.Neos:Content) {
       node = ${node}
     }
     entryTags {
-      1 = 'NodeType_Neos.Neos:Document'
-      2 = ${'Node_' + node.identifier}
+      1 = ${Neos.Caching.nodeTypeTag('Neos.Neos:Document', node)}
+      2 = ${Neos.Caching.nodeTag(node)}
     }
   }
 }

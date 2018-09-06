@@ -131,7 +131,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		tagName = 'div'
 		@position = 'after neosBackendDocumentNodeData'
 		attributes = Neos.Fusion:Attributes {
-			data-preview-uri = NodeUri {
+			data-preview-uri = Neos.Neos:NodeUri {
 				node = ${q(documentNode).context({'workspaceName': documentNode.context.workspace.baseWorkspace.name}).get(0)}
 			}
 		}
@@ -203,9 +203,11 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 			documentNode = ${node}
 		}
 		entryTags {
-			1 = ${'Node_' + node.identifier}
+			1 = ${Neos.Caching.nodeTag(node)}
 		}
 	}
+
+  @process.debugDump = Neos.Fusion:DebugDump
 
 	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\PageHandler'
 }

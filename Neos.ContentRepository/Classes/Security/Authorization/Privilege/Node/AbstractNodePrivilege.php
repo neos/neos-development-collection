@@ -55,6 +55,20 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
     protected $initialized = false;
 
     /**
+     * Constructor
+     *
+     * @param PrivilegeTarget $privilegeTarget
+     * @param string $matcher
+     * @param string $permission
+     * @param $parameters
+     */
+    public function __construct(PrivilegeTarget $privilegeTarget, string $matcher, string $permission, $parameters)
+    {
+        parent::__construct($privilegeTarget, $matcher, $permission, $parameters);
+        $this->cacheEntryIdentifier = null;
+    }
+
+    /**
      * @return void
      */
     public function initialize()
@@ -63,19 +77,17 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
             return;
         }
         $this->initialized = true;
-
+        $this->eelCompilingEvaluator = $this->objectManager->get(CompilingEvaluator::class);
         $this->nodeContext = new $this->nodeContextClassName();
-        $eelContext = new Context($this->nodeContext);
+        $this->initializeMethodPrivilege();
+    }
 
-        $this->eelCompilingEvaluator = new CompilingEvaluator();
-
-        $this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
-
-        $methodPrivilegeMatcher = $this->buildMethodPrivilegeMatcher();
-
-        $methodPrivilegeTarget = new PrivilegeTarget($this->privilegeTarget->getIdentifier() . '__methodPrivilege', MethodPrivilege::class, $methodPrivilegeMatcher);
-        $methodPrivilegeTarget->injectObjectManager($this->objectManager);
-        $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege($this->getPermission(), $this->getParameters());
+    /**
+     * @return void
+     */
+    protected function buildCacheEntryIdentifier()
+    {
+        $this->cacheEntryIdentifier = md5($this->privilegeTarget->getIdentifier() . '__methodPrivilege' . '|' . $this->buildMethodPrivilegeMatcher());
     }
 
     /**
@@ -83,10 +95,13 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      *
      * @return string
      */
-    public function getCacheEntryIdentifier()
+    public function getCacheEntryIdentifier(): string
     {
-        $this->initialize();
-        return $this->methodPrivilege->getCacheEntryIdentifier();
+        if ($this->cacheEntryIdentifier === null) {
+            $this->buildCacheEntryIdentifier();
+        }
+
+        return $this->cacheEntryIdentifier;
     }
 
     /**
@@ -100,12 +115,12 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
             throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', AbstractNodePrivilege::class, NodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417014368);
         }
 
-        $this->initialize();
-
         if ($subject instanceof MethodPrivilegeSubject) {
+            $this->initializeMethodPrivilege();
             return $this->methodPrivilege->matchesSubject($subject);
         }
 
+        $this->initialize();
         $nodeContext = new $this->nodeContextClassName($subject->getNode());
         $eelContext = new Context($nodeContext);
 
@@ -119,7 +134,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      */
     public function matchesMethod($className, $methodName)
     {
-        $this->initialize();
+        $this->initializeMethodPrivilege();
         return $this->methodPrivilege->matchesMethod($className, $methodName);
     }
 
@@ -128,8 +143,33 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      */
     public function getPointcutFilterComposite()
     {
-        $this->initialize();
+        $this->initializeMethodPrivilege();
         return $this->methodPrivilege->getPointcutFilterComposite();
+    }
+
+    /**
+     * @throws \Neos\Flow\Security\Exception
+     */
+    protected function initializeMethodPrivilege()
+    {
+        if ($this->methodPrivilege !== null) {
+            return;
+        }
+        $methodPrivilegeMatcher = $this->buildMethodPrivilegeMatcher();
+        $methodPrivilegeTarget = new PrivilegeTarget($this->privilegeTarget->getIdentifier() . '__methodPrivilege', MethodPrivilege::class, $methodPrivilegeMatcher);
+        $methodPrivilegeTarget->injectObjectManager($this->objectManager);
+        $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege($this->getPermission(), $this->getParameters());
+    }
+
+    /**
+     * Evaluates the matcher with this objects nodeContext and returns the result.
+     *
+     * @return mixed
+     */
+    protected function evaluateNodeContext()
+    {
+        $eelContext = new Context($this->nodeContext);
+        return $this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
     }
 
     /**

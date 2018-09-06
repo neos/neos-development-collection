@@ -1,0 +1,172 @@
+{namespace m=Neos\Media\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="EditImage"/>
+
+<f:section name="Title">Related nodes</f:section>
+
+<f:section name="Content">
+    <div class="neos-media-options">
+        <legend>{neos:backend.translate(id: 'relatedNodes.referencesTo', package: 'Neos.Media.Browser', arguments: {asset: asset.label})}
+            ({neos:backend.translate(id: 'relatedNodes', quantity: '{asset.usageCount}', arguments: {0:asset.usageCount}, package: 'Neos.Media.Browser')})
+        </legend>
+    </div>
+
+    <f:if condition="{inaccessibleRelations}">
+        <table class="neos-table neos-no-hover fold-{site.site.nodeName}">
+            <thead>
+            <tr>
+                <th>{neos:backend.translate(id: 'document', package: 'Neos.Neos')}</th>
+                <th>{neos:backend.translate(id: 'workspace', package: 'Neos.Neos')}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <f:for each="{inaccessibleRelations}" as="inaccessibleRelation">
+                <tr>
+                    <td>
+                        <f:if condition="{inaccessibleRelation.type} == {nodeUsageClass}">
+                            <f:then>
+                                {neos:backend.translate(id: inaccessibleRelation.nodeType.label)} ({inaccessibleRelation.nodeIdentifier})
+                            </f:then>
+                            <f:else>
+                                ---
+                            </f:else>
+                        </f:if>
+                    </td>
+                    <td>
+                        <f:switch expression="{true}">
+                            <f:case value="{inaccessibleRelation.workspace.personalWorkspace}">
+                                <i class="fas fa-user"
+                                   title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'Neos.Neos')}"
+                                   data-neos-toggle="tooltip"></i>
+                                {neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'Neos.Neos')}
+                            </f:case>
+                            <f:case value="{inaccessibleRelation.workspace.privateWorkspace}">
+                                <i class="fas fa-shield"
+                                   title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package: 'Neos.Neos')}"
+                                   data-neos-toggle="tooltip"></i>
+                                {neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package:
+                                'Neos.Neos')}
+                            </f:case>
+                            <f:case value="{inaccessibleRelation.workspace.internalWorkspace}">
+                                <i class="fas fa-group"
+                                   title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package: 'Neos.Neos')}"
+                                   data-neos-toggle="tooltip"></i>
+                                {neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package:
+                                'Neos.Neos')}
+                            </f:case>
+                            <f:defaultCase>
+                                ---
+                            </f:defaultCase>
+                        </f:switch>
+                    </td>
+                </tr>
+            </f:for>
+            </tbody>
+        </table>
+    </f:if>
+
+
+    <f:for each="{relatedNodes}" as="site">
+        <div class="neos-folder">
+            <span title="{site.site.nodeName}" class="neos-label" data-neos-toggle="tooltip">{site.site.name}</span>
+            <i class="fold-toggle fas fa-chevron-up icon-white" data-toggle=".fold-{site.site.nodeName}"></i>
+        </div>
+
+        <table class="neos-table neos-no-hover fold-{site.site.nodeName}">
+            <thead>
+                <tr>
+                    <th>{neos:backend.translate(id: 'document', package: 'Neos.Neos')}</th>
+                    <th>{neos:backend.translate(id: 'reference', package: 'Neos.Neos')}</th>
+                    <th>&nbsp;
+                        <f:if condition="{contentDimensions}">
+                            {neos:backend.translate(id: 'contentDimensions', package: 'Neos.Neos')}
+                        </f:if>
+                    </th>
+                    <th>{neos:backend.translate(id: 'workspace', package: 'Neos.Neos')}</th>
+                    <th class="neos-aRight">{neos:backend.translate(id: 'lastModification', package: 'Neos.Neos')}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <f:for each="{site.nodes}" as="nodeInformation">
+                    <tr>
+                        <td>
+                            <f:if condition="{nodeInformation.documentNode.nodeType.ui.icon}">
+                                <i class="{nodeInformation.documentNode.nodeType.ui.icon}" title="{f:if(condition: nodeInformation.documentNode.nodeType.label, then: '{neos:backend.translate(id: nodeInformation.documentNode.nodeType.label, package: \'Neos.Neos\')}', else: nodeInformation.documentNode.nodeType.name)}" data-neos-toggle="tooltip"></i>
+                            </f:if>
+                            <f:if condition="{nodeInformation.documentNode}">
+                                <f:then>
+                                    <neos:link.node node="{nodeInformation.documentNode}" target="_blank"
+                                                    title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: nodeInformation.documentNode.workspace.title})}">
+                                <span title="{f:render(partial: 'Module/Shared/DocumentBreadcrumb', arguments: {node: nodeInformation.documentNode})}" data-neos-toggle="tooltip">{nodeInformation.documentNode.label}</span>
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </neos:link.node>
+                                </f:then>
+                                <f:else>
+                                    <span><i class="fas fa-warning" data-neos-toggle="tooltip" data-placement="left"
+                                        title="{neos:backend.translate(id: 'media.missingDocumentNode', source: 'Modules', package: 'Neos.Neos')}"></i></span>
+                                </f:else>
+                            </f:if>
+                        </td>
+                        <td>
+                            <f:if condition="{nodeInformation.node.nodeType.ui.icon}">
+                                <i class="{nodeInformation.node.nodeType.ui.icon}"
+                                   title="{f:if(condition: nodeInformation.node.nodeType.label, then: '{neos:backend.translate(id: nodeInformation.node.nodeType.label, package: \'Neos.Neos\')}', else: '{nodeInformation.node.nodeType.name}')}"
+                                   data-neos-toggle="tooltip" data-placement="left"></i>
+                            </f:if>
+                            <span title="{nodeInformation.node.path}" data-neos-toggle="tooltip" data-placement="left">{nodeInformation.node.label}</span>
+                        </td>
+                        <td>
+                        <f:if condition="{contentDimensions}">
+                            <f:render partial="Module/Shared/NodeContentDimensionsInformation.html" arguments="{contentDimensions: contentDimensions, node: nodeInformation.node}"/>
+                        </f:if>
+                        </td>
+                        <td>
+                            <f:if condition="{userWorkspace} == {nodeInformation.node.workspace}">
+                                <f:then>
+                                    <i class="fas fa-user"
+                                       title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'Neos.Neos')}"
+                                       data-neos-toggle="tooltip"></i>
+                                </f:then>
+                                <f:else>
+                                    <f:if condition="{nodeInformation.node.workspace.privateWorkspace}">
+                                        <f:then>
+                                            <i class="fas fa-shield"
+                                               title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package: 'Neos.Neos')}"
+                                               data-neos-toggle="tooltip"></i>
+                                        </f:then>
+                                        <f:else>
+                                            <i class="fas fa-group"
+                                               title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package: 'Neos.Neos')}"
+                                               data-neos-toggle="tooltip"></i>
+                                        </f:else>
+                                    </f:if>
+                                </f:else>
+                            </f:if>
+                            <span title="{nodeInformation.node.workspace.name}" data-neos-toggle="tooltip">{nodeInformation.node.workspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span>
+                        </td>
+                        <td class="neos-aRight">
+                         <span title="{nodeInformation.node.lastModificationDateTime -> f:format.date(format: 'Y-m-d H:i')}" data-neos-toggle="tooltip">{nodeInformation.node.lastModificationDateTime -> m:format.relativeDate()}</span>
+                        </td>
+                    </tr>
+                </f:for>
+            </tbody>
+        </table>
+    </f:for>
+
+    <div class="neos-footer">
+        <!-- TODO: Find a nicer way to send the referer for a get request -->
+        <a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'back', package: 'Neos.Neos')}</a>
+    </div>
+
+</f:section>
+
+<f:section name="Scripts">
+    <script>
+        (function ($) {
+            $('.fold-toggle').click(function () {
+                $(this).toggleClass('fas fa-chevron-down fas fa-chevron-up');
+                $($(this).data('toggle')).toggle();
+            });
+        })(jQuery);
+    </script>
+</f:section>

@@ -65,6 +65,12 @@
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="pl">Przeciągnij i upuść na tag lub kolekcję</target></trans-unit>
+      <trans-unit id="view" xml:space="preserve">
+				<source>View</source>
+			<target xml:lang="pl" state="translated">Widok</target></trans-unit>
+      <trans-unit id="viewAsset" xml:space="preserve">
+				<source>View asset</source>
+			<target xml:lang="pl" state="translated">Widok zasobów</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="pl">Edytuj zasób</target></trans-unit>
@@ -173,6 +179,15 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
 			<target xml:lang="pl">Widok miniatur</target></trans-unit>
+      <trans-unit id="connectionError" xml:space="preserve">
+				<source>Connection error</source>
+			<target xml:lang="pl" state="translated">Błąd połączenia</target></trans-unit>
+      <trans-unit id="mediaSource" xml:space="preserve">
+				<source>Media source</source>
+			<target xml:lang="pl" state="translated">Źródło danych</target></trans-unit>
+      <trans-unit id="mediaSources" xml:space="preserve">
+				<source>Media sources</source>
+			<target xml:lang="pl" state="translated">Źródła danych</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target xml:lang="pl">Kolekcje</target></trans-unit>
@@ -272,9 +287,27 @@
       <trans-unit id="metadata.identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
 			<target xml:lang="pl">Identyfikator</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve" approved="yes">
+				<source>Title</source>
+			<target xml:lang="pl">Tytuł</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve" approved="yes">
+				<source>Caption</source>
+			<target xml:lang="pl">Podpis</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target xml:lang="pl" state="translated">Informacja o prawach autorskich</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="pl">Pogdląd</target></trans-unit>
+      <trans-unit id="download" xml:space="preserve">
+				<source>Download</source>
+			<target xml:lang="pl" state="needs-translation">Download</target></trans-unit>
+      <trans-unit id="next" xml:space="preserve">
+				<source>Next</source>
+			<target xml:lang="pl" state="needs-translation">Next</target></trans-unit>
+      <trans-unit id="previous" xml:space="preserve">
+				<source>Previous</source>
+			<target xml:lang="pl" state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target xml:lang="pl">Nie można załadować pliku</target></trans-unit>

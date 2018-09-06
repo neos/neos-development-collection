@@ -12,13 +12,7 @@ namespace Neos\Neos\Controller\Module\Administration;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Error;
-use Neos\Error\Messages\Message;
-use Neos\Error\Messages\Warning;
 use Neos\Flow\Package;
-use Neos\Flow\Package\Exception\ProtectedPackageKeyException;
-use Neos\Flow\Package\Exception\UnknownPackageException;
-use Neos\Flow\Package\Exception;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 
@@ -49,9 +43,7 @@ class PackagesController extends AbstractModuleController
                 'name' => $package->getComposerManifest('name'),
                 'type' => $package->getComposerManifest('type'),
                 'description' => $package->getComposerManifest('description'),
-                'isActive' => $this->packageManager->isPackageActive($package->getPackageKey()),
-                'isFrozen' => $this->packageManager->isPackageFrozen($package->getPackageKey()),
-                'isProtected' => $package->isProtected()
+                'isFrozen' => $this->packageManager->isPackageFrozen($package->getPackageKey())
             );
         }
         ksort($packageGroups);

@@ -12,15 +12,17 @@ namespace Neos\Fusion\FusionObjects;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\DebugMessage;
+use Neos\Fusion\Service\DebugStack;
 
 /**
- * A Fusion object for debugging ts-values
+ * A Fusion object for debugging fusion-values
  *
  * If only value is given it is debugged directly. Otherwise all keys except title an plaintext are debugged.
  *
- * //tsPath value The variable to display a dump of.
- * //tsPath title $title optional custom title for the debug output
- * //tsPath plaintext If TRUE, the dump is in plain text, if FALSE the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
+ * //fusionPath value The variable to display a dump of.
+ * //fusionPath title $title optional custom title for the debug output
+ * //fusionPath plaintext If TRUE, the dump is in plain text, if FALSE the debug output is in HTML format. If not specified, the mode is guessed from FLOW_SAPITYPE
  * @api
  */
 class DebugImplementation extends ArrayImplementation
@@ -34,32 +36,32 @@ class DebugImplementation extends ArrayImplementation
     protected $ignoreProperties = ['__meta', 'title', 'plaintext'];
 
     /**
-     * @return mixed
+     * @var DebugStack
+     * @Flow\Inject
      */
-    public function getTitle()
+    protected $stack;
+
+    public function getTitle() : string
     {
-        return $this->fusionValue('title');
+        return $this->fusionValue('title') ?: '';
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPlaintext()
+    public function getPlaintext() : bool
     {
-        return $this->fusionValue('plaintext');
+        return $this->fusionValue('plaintext') ?: false;
     }
 
     /**
      * Return the values in a human readable form
      *
-     * @return void|string
+     * @return string
      */
     public function evaluate()
     {
-        $title = $this->getTitle();
+        $title = trim($this->getTitle());
         $plaintext = $this->getPlaintext();
 
-        $debugData = array();
+        $debugData = [];
         foreach (array_keys($this->properties) as $key) {
             if (in_array($key, $this->ignoreProperties)) {
                 continue;
@@ -67,12 +69,21 @@ class DebugImplementation extends ArrayImplementation
             $debugData[$key] = $this->fusionValue($key);
         }
 
+        $title .= ' @ ' . $this->path;
+
         if (count($debugData) === 0) {
-            $debugData = null;
-        } elseif (array_key_exists('value', $debugData) && count($debugData) === 1) {
-            $debugData = $debugData['value'];
+            $debugData =[null];
         }
 
-        return \Neos\Flow\var_dump($debugData, $title, true, $plaintext);
+        foreach ($debugData as $suffix => $data) {
+            if (is_string($suffix)) {
+                $message = (new DebugMessage(trim($title . '.' . $suffix), $this->path, $data, $plaintext));
+            } else {
+                $message = (new DebugMessage(trim($title), $this->path, $data, $plaintext));
+            }
+            $this->stack->register($message);
+        }
+
+        return $this->fusionValue('value');
     }
 }

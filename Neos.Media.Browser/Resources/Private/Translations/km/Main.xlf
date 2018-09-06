@@ -66,6 +66,12 @@
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="km">អូសនិងទម្លាក់លើស្លាករឺការប្រមូល</target></trans-unit>
+      <trans-unit id="view" xml:space="preserve">
+				<source>View</source>
+			<target xml:lang="km" state="needs-translation">View</target></trans-unit>
+      <trans-unit id="viewAsset" xml:space="preserve">
+				<source>View asset</source>
+			<target xml:lang="km" state="needs-translation">View asset</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="km">កែសម្រួលទ្រព្យសម្បត្តិ</target></trans-unit>
@@ -174,6 +180,15 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
 			<target xml:lang="km">ទិដ្ឋភាពរូបភាពតូច</target></trans-unit>
+      <trans-unit id="connectionError" xml:space="preserve">
+				<source>Connection error</source>
+			<target xml:lang="km" state="needs-translation">Connection error</target></trans-unit>
+      <trans-unit id="mediaSource" xml:space="preserve">
+				<source>Media source</source>
+			<target xml:lang="km" state="needs-translation">Media source</target></trans-unit>
+      <trans-unit id="mediaSources" xml:space="preserve">
+				<source>Media sources</source>
+			<target xml:lang="km" state="needs-translation">Media sources</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target xml:lang="km">ការប្រមូល</target></trans-unit>
@@ -275,9 +290,28 @@
       <trans-unit id="metadata.identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
 			<target xml:lang="km">អត្តសញ្ញាណ</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve" approved="yes">
+				<source>Title</source>
+			<target xml:lang="km">ចំណងជើង</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve" approved="yes">
+				<source>Caption</source>
+			<target xml:lang="km">
+ចំណងជើង</target></trans-unit>
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target xml:lang="km" state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="km">មើលជាមុន</target></trans-unit>
+      <trans-unit id="download" xml:space="preserve">
+				<source>Download</source>
+			<target xml:lang="km" state="needs-translation">Download</target></trans-unit>
+      <trans-unit id="next" xml:space="preserve">
+				<source>Next</source>
+			<target xml:lang="km" state="needs-translation">Next</target></trans-unit>
+      <trans-unit id="previous" xml:space="preserve">
+				<source>Previous</source>
+			<target xml:lang="km" state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target xml:lang="km">មិនអាចផ្ទុកនូវឯកសារ</target></trans-unit>

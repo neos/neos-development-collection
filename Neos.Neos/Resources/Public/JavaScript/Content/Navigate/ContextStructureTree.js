@@ -149,7 +149,7 @@ define(
 						nodeType: nodeType,
 						nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : '',
 						addClass: 'typo3-neos-page',
-						iconClass: 'icon-sitemap'
+						iconClass: 'fas fa-sitemap'
 					}
 				],
 

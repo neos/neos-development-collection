@@ -11,9 +11,32 @@ All configuration values that begin with ``ClientEval:`` are dynamically evaluat
 the client side. They are written in plain JavaScript (evaluated with ``eval``) and
 have ``node`` variable in the scope pointing to the currently focused node, with all
 transient inspector changes applied. For now it is only related to the nodetypes
-inspector configuration, but in the future may be extended to the other parts of
-the user interface.
+label and inspector configuration (with the exception of the group and position), but
+in the future may be extended to the other parts of the user interface.
 
+The following data is available in the ``node`` variable:
+
+``children``
+  An array of all direct children of the node containing an object with the ``nodeType``
+  of each child.
+
+``depth``
+  The depth of the node in the node tree.
+
+``identifier``
+  The identifier of the node.
+
+``label``
+  The label with which the node is displayed inside the Neos UI.
+
+``name``
+  The name of the node.
+
+``nodeType``
+  The Node Type of the node.
+
+``properties``
+  An object with key–value pairs of all properties of the node.
 
 A few Practical Examples
 ========================
@@ -22,7 +45,7 @@ Hiding one property when the other one is not set
 -------------------------------------------------
 
 Here is an example how to hide the property ``borderColor`` if ``borderWidth`` is empty
-by changing its group name to a non-existant value:
+by hiding it in the inspector:
 
 .. code-block:: yaml
 
@@ -37,7 +60,7 @@ by changing its group name to a non-existant value:
         type: string
         ui:
           inspector:
-            group: 'ClientEval:node.properties.borderWidth ? "style" : "invalid-group"'
+            hidden: 'ClientEval:node.properties.borderWidth ? false : true'
 
 Dependent SelectBoxes
 ---------------------
