@@ -218,9 +218,7 @@ additionalProperties:
 
                   'tab': { type: string, description: "Reference to a tab identifier." }
 
-                  'position': { type: integer, description: 'Position of the inspector group, small numbers are sorted on top.' }
-
-                  'hidden': { type: ['boolean', 'null'], description: 'If TRUE, the editor of this property won't be shown in the inspector group.' }
+                  'position': { type: integer, description: 'Position of the inspector group, small numbers are sorted on top' }
 
                   'collapsed': { type: boolean, description: 'If TRUE, the group in the inspector panel is collapsed by default.' }
 
