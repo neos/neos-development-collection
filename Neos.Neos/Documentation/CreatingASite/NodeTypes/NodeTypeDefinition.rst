@@ -346,7 +346,7 @@ The following options are allowed:
         Position inside the inspector group, small numbers are sorted on top.
 
       ``hidden``
-        If `true`, the editor of this property won't be shown in the inspector group. Used for :ref:`dynamic-configuration-processing`.
+        If `true`, the editor of this property won't be shown in the inspector group. May be used for :ref:`dynamic-configuration-processing`.
 
       ``editor``
         Name of the JavaScript Editor Class which is instantiated to edit this element in the inspector.
