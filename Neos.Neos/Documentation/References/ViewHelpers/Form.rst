@@ -3,7 +3,7 @@
 Form ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2017-03-30
+This reference was automatically generated from code on 2018-08-10
 
 
 .. _`Form ViewHelper Reference: neos.form:form`:
@@ -416,7 +416,9 @@ Renders the values of a form
 Arguments
 *********
 
-* ``renderable`` (Neos\Form\Core\Model\Renderable\RootRenderableInterface)
+* ``renderable`` (Neos\Form\Core\Model\Renderable\RootRenderableInterface, *optional*): If specified, only the values of the given renderable are rendered, otherwise all form elements are rendered
+
+* ``formRuntime`` (Neos\Form\Core\Runtime\FormRuntime, *optional*): If not set, the Form Runtime will be fetched from the View, which only works within the FluidFormRenderer
 
 * ``as`` (string, *optional*)
 
