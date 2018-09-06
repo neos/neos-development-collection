@@ -130,7 +130,9 @@ additionalProperties:
 
                           'group': { type: ['string', 'null'], description: 'Identifier of the inspector group in which this property should be edited. If not set, will not appear in inspector at all.' }
 
-                          'position': { type: ['integer', 'null'], description: 'Position inside the inspector group, small numbers are sorted on top' }
+                          'position': { type: ['integer', 'null'], description: 'Position inside the inspector group, small numbers are sorted on top.' }
+
+                          'hidden': { type: ['boolean', 'null'], description: 'If TRUE, the editor of this property won't be shown in the inspector group.' }
 
                           'editor': { type: ['string', 'null'], description: 'Name of the JavaScript Editor Class which is instanciated to edit this element in the inspector.' }
 
