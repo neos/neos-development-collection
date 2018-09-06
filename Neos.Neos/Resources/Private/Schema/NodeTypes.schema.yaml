@@ -243,6 +243,8 @@ additionalProperties:
 
                   'position': { type: integer, description: 'Position of the view, small numbers are sorted on top' }
 
+                  'hidden': { type: ['boolean', 'null'], description: 'If TRUE, the editor of this property won't be shown in the inspector group.' }
+
         'creationDialog':
           type: dictionary
           additionalProperties: FALSE
