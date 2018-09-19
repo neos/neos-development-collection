@@ -1,4 +1,6 @@
 @mixin neos-media-aside-condensed {
+	flex-direction: column;
+
 	.neos-media-aside {
 		margin-top: $wideMargin;
 		@include clearfix;
@@ -266,6 +268,9 @@
 	}
 
 	.neos-media-content {
+		display: flex;
+		flex-direction: row;
+
 		&:not(.neos-media-aside-condensed) {
 			@include clearfix;
 
@@ -662,15 +667,6 @@
 			outline: $tightMargin solid $blue;
 		}
 	}
-
-  .neos-media-content {
-    display: flex;
-    flex-direction: row;
-
-    @media screen and (max-width: 767px) {
-      flex-direction: column;
-    }
-  }
 
   .neos-image-inputs,
   .neos-image-example {
