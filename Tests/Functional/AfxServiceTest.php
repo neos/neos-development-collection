@@ -448,6 +448,93 @@ EOF;
     /**
      * @test
      */
+    public function childrenWithPathesAreRendered()
+    {
+        $afxCode = '<Vendor.Site:Prototype><strong @path="namedProp">foo</strong></Vendor.Site:Prototype>';
+        $expectedFusion = <<<'EOF'
+Vendor.Site:Prototype {
+    namedProp = Neos.Fusion:Tag {
+        tagName = 'strong'
+        content = 'foo'
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function multipleChildrenWithPathesAreRendered()
+    {
+        $afxCode = '<Vendor.Site:Prototype><strong @path="propOne">foo</strong><Vendor.Site:Prototype @path="propTwo">bar</Vendor.Site:Prototype></Vendor.Site:Prototype>';
+        $expectedFusion = <<<'EOF'
+Vendor.Site:Prototype {
+    propOne = Neos.Fusion:Tag {
+        tagName = 'strong'
+        content = 'foo'
+    }
+    propTwo = Vendor.Site:Prototype {
+        content = 'bar'
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function childrenWithPathesAreCompatibleWithContentChildren()
+    {
+        $afxCode = '<Vendor.Site:Prototype><strong @path="propOne">foo</strong><Vendor.Site:Prototype @path="propTwo">bar</Vendor.Site:Prototype><div>a tag</div><div>another tag</div></Vendor.Site:Prototype>';
+        $expectedFusion = <<<'EOF'
+Vendor.Site:Prototype {
+    propOne = Neos.Fusion:Tag {
+        tagName = 'strong'
+        content = 'foo'
+    }
+    propTwo = Vendor.Site:Prototype {
+        content = 'bar'
+    }
+    content = Neos.Fusion:Array {
+        item_1 = Neos.Fusion:Tag {
+            tagName = 'div'
+            content = 'a tag'
+        }
+        item_2 = Neos.Fusion:Tag {
+            tagName = 'div'
+            content = 'another tag'
+        }
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function childrenWithDeepPathesAreSupported()
+    {
+        $afxCode = '<Vendor.Site:Prototype><strong @path="a.fusion.path">foo</strong><Vendor.Site:Prototype @path="another.fusion.path">bar</Vendor.Site:Prototype></Vendor.Site:Prototype>';
+        $expectedFusion = <<<'EOF'
+Vendor.Site:Prototype {
+    a.fusion.path = Neos.Fusion:Tag {
+        tagName = 'strong'
+        content = 'foo'
+    }
+    another.fusion.path = Vendor.Site:Prototype {
+        content = 'bar'
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
     public function spacesNewLinesAndSpacesAroundAreIgnored()
     {
         $afxCode = '<h1>
