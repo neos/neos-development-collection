@@ -189,9 +189,36 @@ Vendor.Site:Prototype {
 }
 ```
 
+The `@path`-property of tag-children can be used to render a specific afx-child into the given fusion path
+instead of beeing included into the `content`. This allows to render AFX children into different props and
+to assign Fusion-prototypes to props.
+
+```
+<Vendor.Site:Prototype>
+    <h2 @path="title">{props.title}</h1> 
+    <p @path="description">{props.description}</p>
+</Vendor.Site:Prototype>
+``` 
+Is transpiled as:
+```
+Vendor.Site:Prototype {
+    title = Neos.Fusion:Tag {
+        tagName = 'h2'
+        content  = ${props.title}
+    }
+    description = Neos.Fusion:Tag {
+        tagName = 'p'
+        content  = ${props.description}
+    }
+}
+```
+
 ### Meta-Attributes
 
 In general all meta-attributes start with an @-sign. 
+
+The `@path`-attribute can be used to render a child node directly into the given path below the parent Fusion:Object
+instead of beeing included into the `content` property. 
 
 The `@children`-attribute defined the property that is used to render the content/children of the current tag into. 
 The default property name for the children is `content`.
