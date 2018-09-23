@@ -14,7 +14,7 @@
     "replace": {
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/event-sourced-content-repository": "self.version",
-        "neos/neos-event-sourced-site-and-workspace": "self.version"
+        "neos/event-sourced-neos-adjustments": "self.version"
     },
     "suggest": [],
     "autoload": {
@@ -25,8 +25,8 @@
             "Neos\\EventSourcedContentRepository\\": [
                 "Neos.EventSourcedContentRepository/Classes"
             ],
-            "Neos\\Neos\\EventSourcedSiteAndWorkspace\\": [
-                "Neos.Neos.EventSourcedSiteAndWorkspace/Classes"
+            "Neos\\EventSourcedNeosAdjustments\\": [
+                "Neos.EventSourcedNeosAdjustments/Classes"
             ]
         }
     },
