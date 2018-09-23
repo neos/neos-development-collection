@@ -11,7 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 final class NodeName implements \JsonSerializable
 {
