@@ -6,12 +6,6 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/flow": "*",
-        "neos/cache": "*",
-        "neos/eel": "*",
-        "neos/utility-objecthandling": "*",
-        "neos/utility-files": "*",
-        "neos/utility-arrays": "*",
         "neos/event-sourcing": "dev-master"
     },
     "autoload": {
