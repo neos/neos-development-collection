@@ -6,7 +6,6 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/neos-development-collection": "dev-master",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
