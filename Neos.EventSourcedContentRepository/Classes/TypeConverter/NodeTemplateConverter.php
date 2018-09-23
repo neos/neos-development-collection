@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\TypeConverter;
+namespace Neos\EventSourcedContentRepository\TypeConverter;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,9 +13,9 @@ namespace Neos\ContentRepository\TypeConverter;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
-use Neos\ContentRepository\Domain\Model\NodeTemplate;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\EventSourcedContentRepository\Domain\Model\NodeTemplate;
+use Neos\EventSourcedContentRepository\Domain\Model\NodeType;
+use Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager;
 
 /**
  * An Object Converter for NodeTemplates.

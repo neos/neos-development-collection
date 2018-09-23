@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\TypeConverter;
+namespace Neos\EventSourcedContentRepository\TypeConverter;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,10 +11,10 @@ namespace Neos\ContentRepository\TypeConverter;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;

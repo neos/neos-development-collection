@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\TypeConverter;
+namespace Neos\EventSourcedContentRepository\TypeConverter;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\TypeConverter;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 

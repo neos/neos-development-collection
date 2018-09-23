@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\TypeConverter;
+namespace Neos\EventSourcedContentRepository\TypeConverter;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,11 +12,11 @@ namespace Neos\ContentRepository\TypeConverter;
  */
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
-use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -30,15 +30,15 @@ use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\Context as TYPO3CRContext;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
-use Neos\ContentRepository\Exception\NodeException;
+use Neos\EventSourcedContentRepository\Domain\Factory\NodeFactory;
+use Neos\EventSourcedContentRepository\Domain\Model\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Model\NodeType;
+use Neos\EventSourcedContentRepository\Domain\Service\Context as TYPO3CRContext;
+use Neos\EventSourcedContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\EventSourcedContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager;
+use Neos\EventSourcedContentRepository\Domain\Utility\NodePaths;
+use Neos\EventSourcedContentRepository\Exception\NodeException;
 
 /**
  * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
@@ -57,7 +57,7 @@ class NewNodeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class;
+    protected $targetType = \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface::class;
 
     /**
      * @var integer

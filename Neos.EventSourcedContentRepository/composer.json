@@ -11,7 +11,8 @@
         "neos/eel": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-files": "*",
-        "neos/utility-arrays": "*"
+        "neos/utility-arrays": "*",
+        "neos/event-sourcing": "dev-master"
     },
     "autoload": {
         "psr-4": {
