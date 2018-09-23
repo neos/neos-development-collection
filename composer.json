@@ -11,8 +11,7 @@
         "neos/eel": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-files": "*",
-        "neos/utility-arrays": "*",
-        "doctrine/dbal": "~2.6.0"
+        "neos/utility-arrays": "*"
     },
     "replace": {
         "neos/event-sourced-content-repository": "self.version"
