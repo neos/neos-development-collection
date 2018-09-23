@@ -1,0 +1,150 @@
+<?php
+namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
+
+/*
+ * This file is part of the Neos.ContentRepository package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\EventSourcing\Event\EventInterface;
+
+class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossContentStreamsInterface
+{
+
+    /**
+     * @var ContentStreamIdentifier
+     */
+    private $contentStreamIdentifier;
+
+    /**
+     * @var NodeIdentifier
+     */
+    private $sourceNodeIdentifier;
+
+    /**
+     * Node identifier for the translated node
+     *
+     * @var NodeIdentifier
+     */
+    private $destinationNodeIdentifier;
+
+    /**
+     * Node identifier of the parent node for the translated node
+     *
+     * @var NodeIdentifier
+     */
+    private $destinationParentNodeIdentifier;
+
+    /**
+     * Dimension space point for the translated node
+     *
+     * @var DimensionSpacePoint
+     */
+    private $dimensionSpacePoint;
+
+    /**
+     * Visibility of node in the dimension space
+     *
+     * @var DimensionSpacePointSet
+     */
+    private $visibleDimensionSpacePoints;
+
+    /**
+     * NodeInAggregateWasTranslated constructor.
+     *
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeIdentifier $sourceNodeIdentifier
+     * @param NodeIdentifier $destinationNodeIdentifier
+     * @param NodeIdentifier $destinationParentNodeIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
+     */
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeIdentifier $sourceNodeIdentifier,
+        NodeIdentifier $destinationNodeIdentifier,
+        NodeIdentifier $destinationParentNodeIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        DimensionSpacePointSet $visibleDimensionSpacePoints
+    ) {
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->sourceNodeIdentifier = $sourceNodeIdentifier;
+        $this->destinationNodeIdentifier = $destinationNodeIdentifier;
+        $this->destinationParentNodeIdentifier = $destinationParentNodeIdentifier;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->visibleDimensionSpacePoints = $visibleDimensionSpacePoints;
+    }
+
+    /**
+     * @return ContentStreamIdentifier
+     */
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifier;
+    }
+
+    /**
+     * @return NodeIdentifier
+     */
+    public function getSourceNodeIdentifier(): NodeIdentifier
+    {
+        return $this->sourceNodeIdentifier;
+    }
+
+    /**
+     * @return NodeIdentifier
+     */
+    public function getDestinationNodeIdentifier(): NodeIdentifier
+    {
+        return $this->destinationNodeIdentifier;
+    }
+
+    /**
+     * @return NodeIdentifier
+     */
+    public function getDestinationParentNodeIdentifier(): NodeIdentifier
+    {
+        return $this->destinationParentNodeIdentifier;
+    }
+
+    /**
+     * @return DimensionSpacePoint
+     */
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
+    }
+
+    /**
+     * @return DimensionSpacePointSet
+     */
+    public function getVisibleDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->visibleDimensionSpacePoints;
+    }
+
+    /**
+     * @param ContentStreamIdentifier $targetContentStream
+     * @return NodeInAggregateWasTranslated
+     */
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        return new NodeInAggregateWasTranslated(
+            $targetContentStream,
+            $this->sourceNodeIdentifier,
+            $this->destinationNodeIdentifier,
+            $this->destinationParentNodeIdentifier,
+            $this->dimensionSpacePoint,
+            $this->visibleDimensionSpacePoints
+        );
+    }
+}
