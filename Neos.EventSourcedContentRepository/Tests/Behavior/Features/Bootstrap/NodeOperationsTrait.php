@@ -88,8 +88,8 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
         } else {
-            /** @var \Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager $nodeTypeManager */
-            $nodeTypeManager = $this->getObjectManager()->get(\Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager::class);
+            /** @var \Neos\ContentRepository\Domain\Service\NodeTypeManager $nodeTypeManager */
+            $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
 
             $rows = $table->getHash();
             foreach ($rows as $row) {
@@ -849,7 +849,7 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->getObjectManager()->get(\Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes(array());
+            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes(array());
         }
     }
 
@@ -867,7 +867,7 @@ trait NodeOperationsTrait
                 $this->nodeTypesConfiguration = Yaml::parse($nodeTypesConfiguration->getRaw());
                 $configuration = $this->nodeTypesConfiguration;
             }
-            $this->getObjectManager()->get(\Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes($configuration);
+            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes($configuration);
         }
     }
 
@@ -880,7 +880,7 @@ trait NodeOperationsTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($not)), 'integer', escapeshellarg($nodeTypeName)));
         } else {
             $currentNode = $this->iShouldHaveOneNode();
-            $nodeType = $this->getObjectManager()->get(\Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager::class)->getNodeType($nodeTypeName);
+            $nodeType = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->getNodeType($nodeTypeName);
             if (empty($not)) {
                 // ALLOWED to create node
                 Assert::assertTrue($currentNode->isNodeTypeAllowedAsChildNode($nodeType), 'isNodeTypeAllowed returned the wrong value');

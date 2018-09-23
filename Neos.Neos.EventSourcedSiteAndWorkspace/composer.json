@@ -1,22 +1,15 @@
 {
-    "name": "neos/event-sourced-content-repository",
+    "name": "neos/neos-event-sourced-site-and-workspace",
     "type": "neos-package",
-    "description": "Event sourced Content repository based on Flow, specifically made for Neos.",
+    "description": "Event sourced Site and Workspace for Neos.",
     "license": [
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/event-sourcing": "dev-master",
-        "neos/content-repository": "*"
     },
     "autoload": {
         "psr-4": {
-            "Neos\\EventSourcedContentRepository\\": "Classes"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Neos\\EventSourcedContentRepository\\Tests\\": "Tests"
+            "Neos\\Neos\\EventSourcedSiteAndWorkspace\\": "Classes"
         }
     },
     "extra": {

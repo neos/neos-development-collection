@@ -42,7 +42,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\RootNodeWasCrea
 use Neos\EventSourcedContentRepository\Domain\Model\Node;
 use Neos\EventSourcedContentRepository\Domain\Model\NodeType;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePointSet;

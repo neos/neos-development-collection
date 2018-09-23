@@ -24,8 +24,7 @@ use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Neos\Domain\Context\Content\NodeAddress;
-use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
+use Neos\Neos\EventSourcedSiteAndWorkspace\Domain\Context\Content\NodeAddressFactory;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Exception\InvalidTypeException;
@@ -36,7 +35,7 @@ use Neos\EventSourcedContentRepository\Domain\Model\NodeType;
 use Neos\EventSourcedContentRepository\Domain\Service\Context as TYPO3CRContext;
 use Neos\EventSourcedContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\EventSourcedContentRepository\Domain\Service\NodeServiceInterface;
-use Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Utility\NodePaths;
 use Neos\EventSourcedContentRepository\Exception\NodeException;
 

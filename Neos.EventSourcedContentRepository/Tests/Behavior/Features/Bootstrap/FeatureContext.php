@@ -28,7 +28,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
-use Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;

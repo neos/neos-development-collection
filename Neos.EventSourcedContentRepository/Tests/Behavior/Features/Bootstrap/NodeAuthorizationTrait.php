@@ -36,7 +36,7 @@ trait NodeAuthorizationTrait
 
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager
+     * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -160,7 +160,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $nodeTypeManager = $this->getObjectManager()->get(\Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager::class);
+                $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
                 $this->currentNodes[0]->setNodeType($nodeTypeManager->getNodeType('Neos.Neos:Node'));
                 if ($not === 'not') {
                     Assert::fail('NodeType should not be settable on the current node!');
@@ -241,7 +241,7 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeType)));
         } else {
             /** @var NodeTypeManager $nodeTypeManager */
-            $nodeTypeManager = $this->getObjectManager()->get(\Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager::class);
+            $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
 
             try {
                 $this->currentNodes[0]->createNode($nodeName, $nodeTypeManager->getNodeType($nodeType));
@@ -269,7 +269,7 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeTypeName)));
         } else {
             /** @var NodeTypeManager $nodeTypeManager */
-            $nodeTypeManager = $this->getObjectManager()->get(\Neos\EventSourcedContentRepository\Domain\Service\NodeTypeManager::class);
+            $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
             $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
 
             if ($expectedResult === 'TRUE') {
