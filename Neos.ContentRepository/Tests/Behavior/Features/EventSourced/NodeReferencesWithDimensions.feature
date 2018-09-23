@@ -12,15 +12,11 @@ Feature: Node References with Dimensions
       | Identifier | Default | Values          | Generalizations      |
       | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
 
-    And the command "CreateRootWorkspace" is executed with payload:
+    And the command CreateWorkspace is executed with payload:
       | Key                      | Value                                | Type |
       | workspaceName            | live                                 |      |
-      | workspaceTitle           | Live                                 |      |
-      | workspaceDescription     | The live workspace                   |      |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
       | contentStreamIdentifier  | cs-identifier                        | Uuid |
       | rootNodeIdentifier       | rn-identifier                        | Uuid |
-      | rootNodeTypeName         | Neos.ContentRepository:Root          |      |
 
     And I have the following NodeTypes configuration:
     """
@@ -34,7 +30,7 @@ Feature: Node References with Dimensions
           type: references
     """
 
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:[cs-identifier]:NodeAggregate:[source-nodeAgg-identifier]" with payload:
+    And the Event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                               | Type                   |
       | contentStreamIdentifier       | cs-identifier                                                                       | Uuid                   |
       | nodeAggregateIdentifier       | source-nodeAgg-identifier                                                           | Uuid                   |
@@ -44,10 +40,9 @@ Feature: Node References with Dimensions
       | nodeIdentifier                | source-node-identifier                                                              | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                                                                       | Uuid                   |
       | nodeName                      | dest                                                                                |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                  | json                   |
 
 
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:[cs-identifier]:NodeAggregate:[source-nodeAgg-identifier]" with payload:
+    And the Event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                                        | Type                   |
       | contentStreamIdentifier       | cs-identifier                                                                                                                                                | Uuid                   |
       | nodeAggregateIdentifier       | dest-nodeAgg-identifier                                                                                                                                      | Uuid                   |
@@ -57,7 +52,6 @@ Feature: Node References with Dimensions
       | nodeIdentifier                | dest-node-identifier                                                                                                                                         | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                                                                                                                                                | Uuid                   |
       | nodeName                      | dest                                                                                                                                                         |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                           | json                   |
 
 
     And the command "SetNodeReferences" is executed with payload:
