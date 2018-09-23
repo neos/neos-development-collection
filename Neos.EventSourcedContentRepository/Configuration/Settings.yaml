@@ -1,0 +1,4 @@
+Neos:
+  EventSourcedContentRepository:
+    features:
+      newRoutingEnabled: false

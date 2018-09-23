@@ -76,7 +76,7 @@ This is the package bundle you can install alongside a plain Neos to play around
 - [x] command to import from NodeData to events
 - [ ] ensure Behavioral Tests run again
 - [ ] ensure Functional Tests run again
-- [ ] ensure Unit Tests run again
+- [X] ensure Unit Tests run again
 - [ ] add switch to use event-sourced read model in Fusion rendering (!possibly difficult due to method signatures!)
 - [ ] figure out how/if to use event sourced Site/Domain (!possibly difficult!) -> maybe already bring upstream?
 - [ ] change RoutePart Handler when using event-sourced mode
