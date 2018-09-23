@@ -17,6 +17,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFind
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -24,8 +25,6 @@ use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Neos\Domain\Context\Content\NodeAddress;
-use Neos\Neos\Domain\Context\Content\NodeAddressFactory;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Exception\InvalidTypeException;

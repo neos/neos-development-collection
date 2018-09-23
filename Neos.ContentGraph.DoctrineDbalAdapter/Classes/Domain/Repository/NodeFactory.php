@@ -11,6 +11,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
@@ -27,7 +29,7 @@ final class NodeFactory
 {
     /**
      * @Flow\Inject
-     * @var ContentRepository\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
