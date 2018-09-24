@@ -143,6 +143,9 @@ class EventSourcedNodeController extends ActionController
 
         $contextParameters = $this->createContextParameters($inBackend);
         $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
+        if (!$site) {
+            throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
+        }
 
         $this->fillCacheWithContentNodes($subgraph, $nodeAddress, $contextParameters);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
@@ -185,7 +188,7 @@ class EventSourcedNodeController extends ActionController
      */
     protected function createContextParameters(bool $inBackend): ContextParameters
     {
-        return new ContextParameters($this->now, $this->securityContext->getRoles(), $inBackend, $inBackend);
+        return new ContextParameters(\DateTimeImmutable::createFromMutable($this->now), $this->securityContext->getRoles(), $inBackend, $inBackend);
     }
 
     /**

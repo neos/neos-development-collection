@@ -1,0 +1,5 @@
+'Neos.Neos:Sites': []
+
+'Neos.Neos:Site':
+  superTypes:
+    'Neos.Neos:Document': TRUE

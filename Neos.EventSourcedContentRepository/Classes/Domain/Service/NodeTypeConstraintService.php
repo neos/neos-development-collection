@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Service;
  * source code.
  */
 use Neos\ContentRepository\Domain;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
@@ -30,7 +31,7 @@ class NodeTypeConstraintService
     protected $nodeTypeManager;
 
 
-    public function unserializeFilters(string $serializedFilters): Domain\ValueObject\NodeTypeConstraints
+    public function unserializeFilters(string $serializedFilters): NodeTypeConstraints
     {
         $wildcardAllowed = empty($serializedFilters);
         $explicitlyAllowedNodeTypeNames = [];
@@ -57,6 +58,6 @@ class NodeTypeConstraintService
             }
         }
 
-        return new Domain\ValueObject\NodeTypeConstraints($wildcardAllowed, $explicitlyAllowedNodeTypeNames, $explicitlyDisallowedNodeTypeNames);
+        return new NodeTypeConstraints($wildcardAllowed, $explicitlyAllowedNodeTypeNames, $explicitlyDisallowedNodeTypeNames);
     }
 }
