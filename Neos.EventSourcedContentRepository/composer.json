@@ -7,7 +7,8 @@
     ],
     "require": {
         "neos/event-sourcing": "dev-master",
-        "neos/content-repository": "*"
+        "neos/content-repository": "*",
+        "neos/content-repository-dimensionspace": "dev-master"
     },
     "autoload": {
         "psr-4": {

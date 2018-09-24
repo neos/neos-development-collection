@@ -12,12 +12,16 @@ This is the package bundle you can install alongside a plain Neos to play around
             {
                 "type": "git",
                 "url": "https://github.com/skurfuerst/contentrepository-development-collection.git"
+            },
+            {
+                "type": "git",
+                "url": "https://github.com/neos/content-repository-dimensionspace.git"
             }
         ]
     }
     ```
 
-2. Then, run `composer require neos/contentrepository-development-collection:@dev neos/event-sourcing:dev-master`.
+2. Then, run `composer require neos/contentrepository-development-collection:@dev neos/event-sourcing:dev-master neos/content-repository-dimensionspace:dev-master`.
 
 3. If using dimensions, the dimension configuration has changed. Use the following configuration in `Settings.yaml` for the Demo site (Adjust as needed):
 
