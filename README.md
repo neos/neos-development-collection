@@ -78,9 +78,9 @@ This is the package bundle you can install alongside a plain Neos to play around
 
 - [x] create standalone package collection instead of branches
 - [x] command to import from NodeData to events
+- [x] make it work with Neos.ContentRepository.DimensionSpace package
 - [ ] ensure Behavioral Tests run again
 - [ ] ensure Functional Tests run again
-- [X] ensure Unit Tests run again
 - [ ] add switch to use event-sourced read model in Fusion rendering (!possibly difficult due to method signatures!)
 - [ ] figure out how/if to use event sourced Site/Domain (!possibly difficult!) -> maybe already bring upstream?
 - [ ] change RoutePart Handler when using event-sourced mode

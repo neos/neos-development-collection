@@ -602,7 +602,7 @@ class ProjectionContentGraph
     protected function mapRawDataToHierarchyRelation(array $rawData): HierarchyRelation
     {
         $dimensionSpacePointData = json_decode($rawData['dimensionspacepoint'], true);
-        $dimensionSpacePoint = new DimensionSpacePoint($dimensionSpacePointData['coordinates']);
+        $dimensionSpacePoint = new DimensionSpacePoint($dimensionSpacePointData);
 
         return new HierarchyRelation(
             new NodeRelationAnchorPoint($rawData['parentnodeanchor']),

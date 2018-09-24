@@ -4,6 +4,14 @@ Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface:
   arguments:
     1:
       setting: "Neos.EventSourcedContentRepository.contentDimensions"
+
+
+Neos\ContentRepository\DimensionSpace\Dimension\ConfigurationBasedContentDimensionSource:
+  scope: singleton
+  arguments:
+    1:
+      setting: "Neos.EventSourcedContentRepository.contentDimensions"
+
 Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper:
   scope: singleton
   arguments:
