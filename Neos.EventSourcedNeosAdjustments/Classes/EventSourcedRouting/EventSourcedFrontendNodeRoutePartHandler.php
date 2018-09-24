@@ -23,6 +23,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Routing\WorkspaceNameAndDimensionSpacePointForUriSerialization;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
@@ -34,6 +35,10 @@ use Neos\Flow\Security\Context;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Routing\Exception\MissingNodePropertyException;
+use Neos\Neos\Routing\Exception\NoSiteException;
+use Neos\Neos\Routing\Exception\NoSuchNodeException;
+use Neos\Neos\Routing\Exception\NoWorkspaceException;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface;
 
 /**
@@ -173,7 +178,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      * @param string $requestPath
      * @param array $tagArray
      * @return NodeInterface
-     * @throws Exception\NoSuchNodeException
+     * @throws NoSuchNodeException
      */
     protected function fetchNodeForRequestPath(ContentSubgraphInterface $subgraph, NodeInterface $site, string $requestPath, array &$tagArray): NodeInterface
     {
@@ -210,7 +215,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             });
 
         if (!$matchingNode instanceof NodeInterface) {
-            throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $requestPath), 1346949857);
+            throw new NoSuchNodeException(sprintf('No node found on request path "%s"', $requestPath), 1346949857);
         }
         return $matchingNode;
     }
@@ -218,13 +223,13 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
     /**
      * @param string $requestPath
      * @return ContentSubgraphInterface
-     * @throws Exception\NoWorkspaceException
+     * @throws NoWorkspaceException
      */
     protected function fetchSubgraphForParameters(string $requestPath): ContentSubgraphInterface
     {
         $workspace = $this->workspaceFinder->findOneByName($this->getWorkspaceNameFromParameters() ?: WorkspaceName::forLive());
         if (!$workspace) {
-            throw new Exception\NoWorkspaceException(sprintf('No workspace found for request path "%s"', $requestPath), 1346949318);
+            throw new NoWorkspaceException(sprintf('No workspace found for request path "%s"', $requestPath), 1346949318);
         }
 
         return $this->contentGraph->getSubgraphByIdentifier(
@@ -238,7 +243,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      * @param ContentSubgraphInterface $contentSubgraph
      * @param string $requestPath
      * @return NodeInterface
-     * @throws Exception\NoSiteException
+     * @throws NoSiteException
      */
     protected function fetchSiteFromRequest(NodeInterface $rootNode, ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
     {
@@ -255,7 +260,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
         }
 
         if (!$site) {
-            throw new Exception\NoSiteException(sprintf('No site found for request path "%s"', $requestPath), 1346949693);
+            throw new NoSiteException(sprintf('No site found for request path "%s"', $requestPath), 1346949693);
         }
 
         return $site;
@@ -379,7 +384,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(true),
                 function (NodeInterface $node) use (&$requestPathSegments) {
                     if (!$node->hasProperty('uriPathSegment')) {
-                        throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
+                        throw new MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
                             $node->getNodeIdentifier()), 1415020326);
                     }
 

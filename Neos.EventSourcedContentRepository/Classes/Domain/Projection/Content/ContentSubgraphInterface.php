@@ -11,6 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
@@ -140,9 +141,9 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier;
 
     /**
-     * @return Domain\ValueObject\DimensionSpacePoint
+     * @return DimensionSpacePoint
      */
-    public function getDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint;
+    public function getDimensionSpacePoint(): DimensionSpacePoint;
 
     /**
      * @param NodeAggregateIdentifier[] $entryNodeAggregateIdentifiers

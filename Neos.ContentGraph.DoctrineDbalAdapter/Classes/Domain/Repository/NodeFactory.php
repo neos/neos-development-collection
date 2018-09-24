@@ -12,12 +12,17 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
 
 
 /**
@@ -34,6 +39,19 @@ final class NodeFactory
     protected $nodeTypeManager;
 
     /**
+     * @Flow\Inject
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
+     * @Flow\Inject
+     * @var ReflectionService
+     */
+    protected $reflectionService;
+
+
+    /**
      * @param array $nodeRow Node Row from projection (neos_contentgraph_node table)
      * @return ContentProjection\NodeInterface
      * @throws \Exception
@@ -43,7 +61,7 @@ final class NodeFactory
     public function mapNodeRowToNode(array $nodeRow): ContentProjection\NodeInterface
     {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
-        $className = $nodeType->getNodeInterfaceImplementationClassName();
+        $className = $this->getNodeInterfaceImplementationClassName($nodeType);
 
         // $serializedSubgraphIdentifier is empty for the root node
         if (!empty($nodeRow['dimensionspacepointhash'])) {
@@ -105,6 +123,25 @@ final class NodeFactory
                 new ContentProjection\PropertyCollection([])
             );
             return $node;
+        }
+    }
+
+
+    protected function getNodeInterfaceImplementationClassName(NodeType $nodeType): string
+    {
+        $customClassName = $nodeType->getConfiguration('class');
+        if (!empty($customClassName)) {
+            if (!class_exists($customClassName)) {
+                throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $nodeType . '" does not exist.', 1505805774);
+            } elseif (!$this->reflectionService->isClassImplementationOf($customClassName, ContentProjection\NodeInterface::class)) {
+                if ($this->reflectionService->isClassImplementationOf($customClassName, NodeInterface::class)) {
+                    throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $nodeType. '" inherits from the OLD (pre-event-sourced) NodeInterface; which is not supported anymore. Your custom Node class now needs to implement ' . ContentProjection\NodeInterface::class . '.', 1520069750);
+                }
+                throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $nodeType. '" does not inherit from ' . ContentProjection\NodeInterface::class . '.', 1406884014);
+            }
+            return $customClassName;
+        } else {
+            return $this->objectManager->getClassNameByObjectName(ContentProjection\NodeInterface::class);
         }
     }
 }

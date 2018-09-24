@@ -12,6 +12,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
@@ -68,12 +69,12 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $contentStreamIdentifier;
 
     /**
-     * @var ContentRepository\ValueObject\DimensionSpacePoint
+     * @var DimensionSpacePoint
      */
     protected $dimensionSpacePoint;
 
 
-    public function __construct(ContentRepository\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint)
+    public function __construct(ContentRepository\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -118,7 +119,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         return $this->contentStreamIdentifier;
     }
 
-    public function getDimensionSpacePoint(): ContentRepository\ValueObject\DimensionSpacePoint
+    public function getDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->dimensionSpacePoint;
     }

@@ -11,8 +11,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\EventSourcedContentRepository\Domain;
-use Neos\EventSourcedContentRepository\Domain\Model\NodeType;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -33,7 +33,7 @@ class Node implements NodeInterface
     protected $contentStreamIdentifier;
 
     /**
-     * @var Domain\ValueObject\DimensionSpacePoint
+     * @var DimensionSpacePoint
      */
     protected $dimensionSpacePoint;
 
