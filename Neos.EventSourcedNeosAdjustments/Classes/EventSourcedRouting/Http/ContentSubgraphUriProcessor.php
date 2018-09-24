@@ -11,8 +11,8 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Dimension;
-use Neos\EventSourcedContentRepository\Domain\Context\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;

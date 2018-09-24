@@ -2,7 +2,7 @@
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
 
 /**

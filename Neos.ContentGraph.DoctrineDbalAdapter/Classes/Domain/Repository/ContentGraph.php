@@ -19,7 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeName;

@@ -16,7 +16,7 @@ use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Model\NodeType;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;

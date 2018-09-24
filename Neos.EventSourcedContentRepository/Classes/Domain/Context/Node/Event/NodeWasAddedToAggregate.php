@@ -12,8 +12,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;

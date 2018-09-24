@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodePropertyCollection;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;

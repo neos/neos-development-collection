@@ -12,8 +12,8 @@ namespace Neos\EventSourcedContentRepository\Tests\Functional\Domain\Context\Dim
  * source code.
  */
 use Neos\EventSourcedContentRepository\Domain;
-use Neos\EventSourcedContentRepository\Domain\Context\Dimension;
-use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**

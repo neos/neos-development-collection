@@ -11,7 +11,7 @@ namespace Neos\EventSourcedContentRepository\Tests\Functional\Domain\Context\Dim
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Flow\Annotations as Flow;
 /**
  * The dimension source fixture with variation examples

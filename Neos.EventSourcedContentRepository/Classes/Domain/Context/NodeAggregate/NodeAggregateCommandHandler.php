@@ -12,12 +12,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
-use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Exception\NodeConstraintException;
 

@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimen
  */
 
 use Neos\Flow\Mvc\Routing;
-use Neos\EventSourcedContentRepository\Domain\Context\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension;
 
 /**
  * Interface for processing an URI to match the given content dimension value

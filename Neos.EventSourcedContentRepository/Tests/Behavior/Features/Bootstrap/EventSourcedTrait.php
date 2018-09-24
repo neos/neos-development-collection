@@ -18,8 +18,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionS
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
@@ -550,7 +550,7 @@ trait EventSourcedTrait
 
                 return;
             case 'DimensionSpacePointIsNoSpecialization':
-                Assert::assertInstanceOf(\Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\DimensionSpacePointIsNoSpecialization::class, $this->lastCommandException);
+                Assert::assertInstanceOf(\Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointIsNoSpecialization::class, $this->lastCommandException);
 
                 return;
             case 'DimensionSpacePointIsAlreadyOccupied':
@@ -562,7 +562,7 @@ trait EventSourcedTrait
 
                 return;
             case 'DimensionSpacePointIsNoGeneralization':
-                Assert::assertInstanceOf(\Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace\DimensionSpacePointIsNoGeneralization::class, $this->lastCommandException);
+                Assert::assertInstanceOf(\Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointIsNoGeneralization::class, $this->lastCommandException);
 
                 return;
             case 'NodeTypeNotFound':

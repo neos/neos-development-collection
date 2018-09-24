@@ -13,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStream;
 use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;

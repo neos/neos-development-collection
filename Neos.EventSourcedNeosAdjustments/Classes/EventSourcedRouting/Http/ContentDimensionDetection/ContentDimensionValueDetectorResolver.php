@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimen
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;
 

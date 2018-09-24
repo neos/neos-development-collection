@@ -13,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 

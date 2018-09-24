@@ -12,7 +12,7 @@ namespace Neos\EventSourcedContentRepository\Tests\Unit\Domain\Model;
  */
 
 use Neos\EventSourcedContentRepository\Domain;
-use Neos\EventSourcedContentRepository\Domain\Context\Dimension;
+use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**

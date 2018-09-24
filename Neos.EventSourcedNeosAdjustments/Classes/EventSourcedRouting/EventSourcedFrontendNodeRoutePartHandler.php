@@ -17,7 +17,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraver
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeName;

@@ -11,8 +11,8 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Dimension;
-use Neos\EventSourcedContentRepository\Domain\Context\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Model\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\EventSourcedContentRepository\Domain\Service\PublishingServiceInterface;

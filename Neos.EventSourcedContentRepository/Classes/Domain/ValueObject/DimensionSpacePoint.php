@@ -12,7 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 use Neos\Cache\CacheAwareInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\RootNodeIdentifiers;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Utility\Arrays;
