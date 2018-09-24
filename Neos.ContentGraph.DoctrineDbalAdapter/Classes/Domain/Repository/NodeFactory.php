@@ -12,6 +12,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -75,7 +76,7 @@ final class NodeFactory
 
             $contentStreamIdentifier = new ContentRepository\Context\ContentStream\ContentStreamIdentifier($nodeRow['contentstreamidentifier']);
             // FIXME Move to DimensionSpacePoint::fromJson
-            $dimensionSpacePoint = new ContentRepository\ValueObject\DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true)['coordinates']);
+            $dimensionSpacePoint = new DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true));
 
             $nodeIdentifier = new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']);
 

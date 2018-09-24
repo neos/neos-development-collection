@@ -83,8 +83,10 @@ This is the package bundle you can install alongside a plain Neos to play around
 - [ ] ensure Functional Tests run again
 - [ ] add switch to use event-sourced read model in Fusion rendering (!possibly difficult due to method signatures!)
 - [ ] figure out how/if to use event sourced Site/Domain (!possibly difficult!) -> maybe already bring upstream?
-- [ ] change RoutePart Handler when using event-sourced mode
+- [x] change RoutePart Handler when using event-sourced mode
+- [ ] adjust NodeController when using event-sourced mode
 - [ ] allow to open User Interface based on Event-Sourced read model
 - [ ] create Commands in response to UI interaction
 - [ ] create feature list in this README, detailing what is supported and what not yet.
+- [ ] support empty content dimension values in URL; e.g. "/de/..." for german, and "/..." for english
 - [ ] (further TODOs here; this list is not complete yet)
