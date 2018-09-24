@@ -12,7 +12,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\AllowedDimensionSubspace;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
@@ -88,12 +87,6 @@ final class NodeCommandHandler
      * @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface
      */
     protected $contentGraph;
-
-    /**
-     * @Flow\Inject
-     * @var AllowedDimensionSubspace
-     */
-    protected $allowedDimensionSubspace;
 
     /**
      * @Flow\Inject

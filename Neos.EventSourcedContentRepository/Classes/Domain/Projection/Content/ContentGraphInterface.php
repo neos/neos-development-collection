@@ -11,6 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -24,12 +25,12 @@ interface ContentGraphInterface
 {
     /**
      * @param \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
-     * @param Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePoint $dimensionSpacePoint
      * @return ContentSubgraphInterface|null
      */
     public function getSubgraphByIdentifier(
         Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
-        Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint
+        DimensionSpacePoint $dimensionSpacePoint
     ): ?ContentSubgraphInterface;
 
     /**
@@ -53,13 +54,13 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param Domain\ValueObject\DimensionSpacePointSet|null $dimensionSpacePointSet
+     * @param DimensionSpacePointSet $dimensionSpacePointSet
      * @return array|NodeInterface[]
      */
     public function findNodesByNodeAggregateIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        Domain\ValueObject\DimensionSpacePointSet $dimensionSpacePointSet = null
+        DimensionSpacePointSet $dimensionSpacePointSet = null
     ): array;
 
     /**
@@ -86,19 +87,19 @@ interface ContentGraphInterface
 
     /**
      * @param Domain\Context\Node\ReadOnlyNodeInterface $node
-     * @return Domain\ValueObject\DimensionSpacePointSet
+     * @return DimensionSpacePointSet
      */
-    public function findVisibleDimensionSpacePointsOfNode(Domain\Context\Node\ReadOnlyNodeInterface $node): Domain\ValueObject\DimensionSpacePointSet;
+    public function findVisibleDimensionSpacePointsOfNode(Domain\Context\Node\ReadOnlyNodeInterface $node): DimensionSpacePointSet;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return Domain\ValueObject\DimensionSpacePointSet
+     * @return DimensionSpacePointSet
      */
     public function findVisibleDimensionSpacePointsOfNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): Domain\ValueObject\DimensionSpacePointSet;
+    ): DimensionSpacePointSet;
 
     public function resetCache();
 }

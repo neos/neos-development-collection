@@ -11,6 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
@@ -38,7 +39,7 @@ final class NodeAggregateCommandHandler
     /**
      * Used for constraint checks against the current outside configuration state of content dimensions
      *
-     * @var DimensionSpace\AllowedDimensionSubspace
+     * @var DimensionSpacePointSet
      */
     protected $allowedDimensionSubspace;
 
@@ -67,14 +68,14 @@ final class NodeAggregateCommandHandler
     public function __construct(
         ContentStream\ContentStreamRepository $contentStreamRepository,
         NodeTypeManager $nodeTypeManager,
-        DimensionSpace\AllowedDimensionSubspace $allowedDimensionSubspace,
+        DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         ContentGraphInterface $contentGraph,
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         NodeEventPublisher $nodeEventPublisher
     ) {
         $this->contentStreamRepository = $contentStreamRepository;
         $this->nodeTypeManager = $nodeTypeManager;
-        $this->allowedDimensionSubspace = $allowedDimensionSubspace;
+        $this->allowedDimensionSubspace = $contentDimensionZookeeper->getAllowedDimensionSubspace();
         $this->contentGraph = $contentGraph;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
         $this->nodeEventPublisher = $nodeEventPublisher;

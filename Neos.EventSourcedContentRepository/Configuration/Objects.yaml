@@ -1,0 +1,18 @@
+Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface:
+  scope: singleton
+  className: 'Neos\ContentRepository\DimensionSpace\Dimension\ConfigurationBasedContentDimensionSource'
+  arguments:
+    1:
+      setting: "Neos.EventSourcedContentRepository.contentDimensions"
+Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper:
+  scope: singleton
+  arguments:
+    1:
+      object: 'Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface'
+Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph:
+  scope: singleton
+  arguments:
+    1:
+      object: 'Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface'
+    2:
+      object: 'Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper'

@@ -1117,10 +1117,6 @@ trait NodeOperationsTrait
         $contentDimensionZookeeper = $this->getObjectManager()->get(Dimension\ContentDimensionZookeeper::class);
         ObjectAccess::setProperty($contentDimensionZookeeper, 'allowedCombinations', null, true);
 
-        /** @var DimensionSpace\AllowedDimensionSubspace $allowedDimensionSubspace */
-        $allowedDimensionSubspace = $this->getObjectManager()->get(DimensionSpace\AllowedDimensionSubspace::class);
-        $allowedDimensionSubspace->initializeObject();
-
         /** @var DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph */
         $interDimensionalVariationGraph = $this->getObjectManager()->get(DimensionSpace\InterDimensionalVariationGraph::class);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'subgraphs', null, true);
