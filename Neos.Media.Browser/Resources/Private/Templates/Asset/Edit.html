@@ -148,7 +148,7 @@
 <f:section name="ContentImage">
     <label>{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}</label>
     <div class="neos-preview-image">
-        <a href="{assetProxy.originalUri}" target="_blank">
+        <a href="{assetProxy.importStream}" target="_blank">
             <img src="{assetProxy.previewUri}" class="img-polaroid" alt="{assetProxy.label}"/>
         </a>
     </div>
