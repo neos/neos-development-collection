@@ -168,19 +168,23 @@ class UserService
         $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
         $cacheIdentifier = $authenticationProviderName . '~' . $username;
 
-        if (!array_key_exists($cacheIdentifier, $this->runtimeUserCache)) {
-            $user = $this->findUserForAccount($username, $authenticationProviderName);
-            $this->runtimeUserCache[$cacheIdentifier] = $user === null ? null : $this->persistenceManager->getIdentifierByObject($user);
-            return $user;
+        if (array_key_exists($cacheIdentifier, $this->runtimeUserCache)) {
+            $userIdentifier = $this->runtimeUserCache[$cacheIdentifier];
+            return $this->partyRepository->findByIdentifier($userIdentifier);
         }
 
-        $userIdentifier = $this->runtimeUserCache[$cacheIdentifier];
-        if ($userIdentifier === null) {
-            return null;
+        $user = $this->findUserForAccount($username, $authenticationProviderName);
+
+        if (isset($user)) {
+            $userIdentifier = $this->persistenceManager->getIdentifierByObject($user);
         }
 
-        $user = $this->partyRepository->findByIdentifier($userIdentifier);
-        return $user;
+        if (isset($userIdentifier)) {
+            $this->runtimeUserCache[$cacheIdentifier] = $userIdentifier;
+            return $this->partyRepository->findByIdentifier($userIdentifier);
+        }
+
+        return null;
     }
 
     /**
