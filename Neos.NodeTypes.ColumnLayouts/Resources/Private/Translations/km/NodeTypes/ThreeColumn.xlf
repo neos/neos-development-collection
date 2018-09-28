@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Three column content</source>
-			<target xml:lang="km">ទិន្នន័យ​ដែល​មាន​៣ជួរ​ឈរ</target></trans-unit>
+			<target xml:lang="km" state="translated">ទិន្នន័យ​ដែល​មាន​៣ជួរ​ឈរ</target></trans-unit>
     </body>
   </file>
 </xliff>
