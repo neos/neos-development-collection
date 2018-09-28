@@ -163,13 +163,13 @@
 			<target xml:lang="tl" state="translated">Mga imahe</target></trans-unit>
       <trans-unit id="filter.documents" xml:space="preserve" approved="yes">
 				<source>Documents</source>
-			<target xml:lang="tl">Mga dokyumento</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga dokyumento</target></trans-unit>
       <trans-unit id="filter.video" xml:space="preserve" approved="yes">
 				<source>Video</source>
-			<target xml:lang="tl">Video</target></trans-unit>
+			<target xml:lang="tl" state="translated">Video</target></trans-unit>
       <trans-unit id="filter.audio" xml:space="preserve" approved="yes">
 				<source>Audio</source>
-			<target xml:lang="tl">Audio</target></trans-unit>
+			<target xml:lang="tl" state="translated">Audio</target></trans-unit>
       <trans-unit id="tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
 			<target xml:lang="tl" state="needs-translation">Sort options</target></trans-unit>
@@ -190,7 +190,7 @@
 			<target xml:lang="tl" state="needs-translation">Media sources</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
-			<target xml:lang="tl">Mga koleksiyon</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga koleksiyon</target></trans-unit>
       <trans-unit id="editCollections" xml:space="preserve">
 				<source>Edit collections</source>
 			<target xml:lang="tl" state="needs-translation">Edit collections</target></trans-unit>
