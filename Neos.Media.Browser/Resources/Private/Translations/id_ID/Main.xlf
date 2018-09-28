@@ -313,7 +313,7 @@
 			<target xml:lang="id" state="translated">Tidak dapat meng-upload file</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve" approved="yes">
 				<source>No file selected</source>
-			<target xml:lang="id">Tidak ada file yang dipilih</target></trans-unit>
+			<target xml:lang="id" state="translated">Tidak ada file yang dipilih</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="id" state="translated">Ukuran file {0} melampaui batas yang diperbolehkan dari {1}</target></trans-unit>
