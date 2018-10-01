@@ -200,7 +200,7 @@ The following methods are provided by default to create all kind of patterns of 
 ``Everything``
   Flushes cache entries for every changed node.
 
-``${Neos.Caching.nodeTypeTag('[My.Package:NodeTypeName]', node}``
+``${Neos.Caching.nodeTypeTag('[My.Package:NodeTypeName]', node)}``
   Flushes cache entries if any node with the given node type changes. ``[My.Package:NodeTypeName]`` needs to be
   replaced by any node type name. Inheritance will be taken into account, so for a changed node of type
   ``Neos.NodeTypes:Page`` the tags ``NodeType_Neos.NodeTypes:Page`` and ``NodeType_Neos.Neos:Document``
