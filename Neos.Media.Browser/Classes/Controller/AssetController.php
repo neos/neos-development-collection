@@ -355,6 +355,7 @@ class AssetController extends ActionController
             $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
 
             $tags = [];
+            $contentPreview = 'ContentDefault';
             if ($assetProxyRepository instanceof SupportsTaggingInterface && $assetProxyRepository instanceof SupportsCollectionsInterface) {
                 // TODO: For generic implementation (allowing other asset sources to provide asset collections), the following needs to be refactored:
 
@@ -363,17 +364,13 @@ class AssetController extends ActionController
                     $asset = $assetProxy->getAsset();
                     $assetCollections = $asset->getAssetCollections();
                     $tags = $assetCollections->count() > 0 ? $this->tagRepository->findByAssetCollections($assetCollections->toArray()) : $this->tagRepository->findAll();
-                } else {
-                    $tags = [];
-                }
-            }
 
-            switch ($asset->getFileExtension()) {
-                case 'pdf':
-                    $contentPreview = 'ContentPdf';
-                    break;
-                default:
-                    $contentPreview = 'ContentDefault';
+                    switch ($asset->getFileExtension()) {
+                        case 'pdf':
+                            $contentPreview = 'ContentPdf';
+                            break;
+                    }
+                }
             }
 
             $this->view->assignMultiple([

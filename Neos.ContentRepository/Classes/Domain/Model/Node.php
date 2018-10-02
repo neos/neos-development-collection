@@ -553,15 +553,16 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new NodeException('The root node cannot be moved.', 1285005924);
         }
 
-        if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== null) {
-            throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503468);
+        $name = $newName !== null ? $newName : $this->getName();
+
+        if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($name) !== null) {
+            throw new NodeExistsException('Node with path "' . $name . '" already exists.', 1292503468);
         }
 
-        if (!$referenceNode->getParent()->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+        if (!$referenceNode->getParent()->willChildNodeBeAutoCreated($name) && !$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
             throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1400782413);
         }
 
-        $name = $newName !== null ? $newName : $this->getName();
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
         if ($referenceNode->getParentPath() !== $this->getParentPath()) {
             $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $name));
@@ -598,15 +599,16 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new NodeException('The root node cannot be moved.', 1316361483);
         }
 
-        if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== null) {
-            throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503469);
+        $name = $newName !== null ? $newName : $this->getName();
+
+        if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($name) !== null) {
+            throw new NodeExistsException('Node with path "' . $name . '" already exists.', 1292503469);
         }
 
-        if (!$referenceNode->getParent()->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+        if (!$referenceNode->getParent()->willChildNodeBeAutoCreated($name) && !$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
             throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648100);
         }
 
-        $name = $newName !== null ? $newName : $this->getName();
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
         if ($referenceNode->getParentPath() !== $this->getParentPath()) {
             $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $name));
@@ -643,15 +645,16 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new NodeException('The root node cannot be moved.', 1346769001);
         }
 
-        if ($referenceNode !== $this->getParent() && $referenceNode->getNode($this->getName()) !== null) {
-            throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503470);
+        $name = $newName !== null ? $newName : $this->getName();
+
+        if ($referenceNode !== $this->getParent() && $referenceNode->getNode($name) !== null) {
+            throw new NodeExistsException('Node with path "' . $name . '" already exists.', 1292503470);
         }
 
-        if (!$referenceNode->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+        if (!$referenceNode->willChildNodeBeAutoCreated($name) && !$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
             throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648124);
         }
 
-        $name = $newName !== null ? $newName : $this->getName();
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
         $this->setPath(NodePaths::addNodePathSegment($referenceNode->getPath(), $name));
         $this->nodeDataRepository->persistEntities();
