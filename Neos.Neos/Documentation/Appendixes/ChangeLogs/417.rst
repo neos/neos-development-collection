@@ -1,0 +1,65 @@
+`4.1.7 (2018-10-02) <https://github.com/neos/neos-development-collection/releases/tag/4.1.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: FileTypeIconViewHelper should work with new $asset argument <https://github.com/neos/neos-development-collection/pull/2191>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+If the newly added `$asset` argument is used, it's ignored and overridden to the deprecated `$file` argument.
+
+Resolves #2186
+
+* Packages: ``AssetList`` ``BaseMixins`` ``Browser`` ``ColumnLayouts`` ``ContentReferences`` ``Form`` ``Html`` ``Media`` ``Navigation`` ``Neos`` ``NodeTypes``
+
+`BUGFIX: Fix typo in cache documentation <https://github.com/neos/neos-development-collection/pull/2194>`_
+----------------------------------------------------------------------------------------------------------
+
+**What I did**
+Fixed a small typo in the caching documentation.
+
+**How I did it**
+
+**How to verify it**
+
+**Checklist**
+
+- [X] Code follows the PSR-2 coding style
+- [X] Tests have been created, run and adjusted as needed
+- [X] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``AssetList`` ``BaseMixins`` ``Browser`` ``ColumnLayouts`` ``ContentReferences`` ``Form`` ``Html`` ``Navigation`` ``Neos`` ``NodeTypes``
+
+`BUGFIX: Fix condensed layout in Media Browser <https://github.com/neos/neos-development-collection/pull/2181>`_
+----------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Fixed the condensed layout of the media browser added when having more than 25 tags.
+
+Regression of #1745
+
+**How to verify it**
+Have more than 25 tags or add the class `neos-media-aside-condensed` to the div with the class `neos-media-content`.
+
+* Packages: ``Browser``
+
+`BUGFIX: Avoid fatal error when asset not available <https://github.com/neos/neos-development-collection/pull/2177>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This fixes what is basically a merge error. It lead to a method call
+on an unset variable.
+
+* Packages: ``Browser``
+
+`BUGFIX: Use the possible new node name to check it's existance in the move to location <https://github.com/neos/neos-development-collection/pull/2161>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The NodeExistsException was thrown even if the new nodeName does not exist in the new location, because only the old nodeName was checked.
+
+Affected Versions: 3.3+ (I did not check the previous versions because it's not security critical)
+
+* Packages: ``Browser`` ``ContentRepository`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.1.6...4.1.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
