@@ -350,7 +350,7 @@
 			<target xml:lang="nl" state="translated">Referenties naar "{asset}"</target></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="nl" state="needs-translation">Replace "{filename}"</target></trans-unit>
+			<target xml:lang="nl" state="translated">Vervang "{filename}"</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
 			<target xml:lang="nl" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
