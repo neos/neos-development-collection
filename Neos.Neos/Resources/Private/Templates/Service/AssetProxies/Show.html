@@ -1,0 +1,37 @@
+{namespace neos=Neos\Neos\ViewHelpers}{namespace media=Neos\Media\ViewHelpers}
+<html>
+    <head>
+        <title>Asset Proxy</title>
+        <meta charset="UTF-8"/>
+    </head>
+    <body>
+        <div>
+            <h1>Asset Proxy</h1>
+            <table>
+                <tr>
+                    <th>Label</th>
+                    <th>Asset Source Identifier</th>
+                    <th>Asset Proxy Identifier</th>
+                    <th>Local Asset Identifier</th>
+                    <th>Links</th>
+                </tr>
+                <tr class="asset-proxy">
+                    <td class="asset-proxy-label">{assetProxy.label}</td>
+                    <td class="asset-source-identifier">{assetProxy.assetSource.identifier}</td>
+                    <td class="asset-proxy-identifier">{assetProxy.identifier}</td>
+                    <td class="local-asset-identifier">{assetProxy.localAssetIdentifier}</td>
+                    <td>
+                        <ul>
+                            <li>
+                                <f:if condition="{assetProxy.thumbnailUri}">
+                                    <f:then><a rel="thumbnail" href="{assetProxy.thumbnailUri}">{neos:backend.translate(id: 'thumbnail', value: 'thumbnail')}</a></f:then>
+                                    <f:else><a rel="thumbnail" href="{f:uri.resource(path:'Images/dummy-image.svg', package:'Neos.Neos')}">{neos:backend.translate(id: 'thumbnail', value: 'thumbnail')}</a></f:else>
+                                </f:if>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
