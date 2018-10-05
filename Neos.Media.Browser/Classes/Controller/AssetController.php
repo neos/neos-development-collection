@@ -44,7 +44,7 @@ use Neos\Media\Domain\Model\AssetSource\SupportsTaggingInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Media\Domain\Repository\AssetSourceRepository;
+use Neos\Media\Domain\Service\AssetSourceService;
 use Neos\Media\Domain\Repository\TagRepository;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
@@ -136,9 +136,9 @@ class AssetController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var AssetSourceRepository
+     * @var \Neos\Media\Domain\Service\AssetSourceService
      */
-    protected $assetSourceRepository;
+    protected $assetSourceService;
 
     /**
      * @var AssetSourceInterface[]
@@ -158,7 +158,7 @@ class AssetController extends ActionController
             $this->browserState->set('automaticAssetCollectionSelection', true);
         }
 
-        $this->assetSources = $this->assetSourceRepository->findAll();
+        $this->assetSources = $this->assetSourceService->getAssetsSources();
     }
 
     /**
