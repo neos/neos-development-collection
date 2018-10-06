@@ -7,7 +7,7 @@
     ],
     "require": {
         "neos/event-sourcing": "dev-master",
-        "neos/content-repository": "*",
+        "neos/neos-development-collection": "dev-event-sourced-patch",
         "neos/content-repository-dimensionspace": "dev-master"
     },
     "autoload": {
