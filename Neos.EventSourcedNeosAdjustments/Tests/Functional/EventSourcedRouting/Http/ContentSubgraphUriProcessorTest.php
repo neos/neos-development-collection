@@ -21,14 +21,14 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
 use Neos\Utility\ObjectAccess;
 
-/**
- * Test cases for the ContentSubgraphUriProcessor
- */
+
 class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 {
     public function setUp()
@@ -130,8 +130,8 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 
     /**
      * @test
-     * @throws \Neos\Neos\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException
-     * @throws \Neos\Utility\Exception\PropertyNotAccessibleException
+     * @throws PropertyNotAccessibleException
+     * @throws InvalidContentDimensionValueUriProcessorException
      */
     public function resolveDimensionUriConstraintsExtractsUriConstraintsFromSubgraph()
     {

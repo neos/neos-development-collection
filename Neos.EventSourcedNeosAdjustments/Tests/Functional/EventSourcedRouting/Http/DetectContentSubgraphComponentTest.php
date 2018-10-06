@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Tests\Functional\Http;
+namespace Neos\EventSourcedNeosAdjustments\Tests\Functional\EventSourcedRouting\Http;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,19 +10,18 @@ namespace Neos\Neos\Tests\Functional\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Domain\Context\Dimension;
-use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
+
+use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Neos\Http\BasicContentDimensionResolutionMode;
-use Neos\Neos\Http\DetectContentSubgraphComponent;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphComponent;
 
-/**
- * Test cases for the DetectContentSubgraphComponent
- */
 class DetectContentSubgraphComponentTest extends FunctionalTestCase
 {
     public function setUp()
@@ -123,7 +122,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
     /**
      * @test
-     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
+     * @throws InvalidContentDimensionValueDetectorException
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithAllDimensionValuesGivenLiveWorkspaceAndDefaultDelimiter()
     {
@@ -153,7 +152,6 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
     /**
      * @test
-     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithAllDimensionValuesGivenLiveWorkspaceAndModifiedDelimiter()
     {
@@ -184,7 +182,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
     /**
      * @test
-     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
+     * @throws InvalidContentDimensionValueDetectorException
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithMinimalDimensionValuesGivenLiveWorkspaceAndModifiedDelimiter()
     {
@@ -214,7 +212,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
     /**
      * @test
-     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
+     * @throws InvalidContentDimensionValueDetectorException
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithDimensionValuesGivenButOverriddenViaContextPath()
     {
