@@ -11,6 +11,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+
 /**
  * A content stream's event stream name
  */

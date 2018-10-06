@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Site\Command;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
 final class DeactivateSite
 {

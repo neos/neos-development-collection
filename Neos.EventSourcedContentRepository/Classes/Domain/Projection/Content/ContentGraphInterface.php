@@ -12,10 +12,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
 
 /**
@@ -24,12 +26,12 @@ use Neos\EventSourcedContentRepository\Domain;
 interface ContentGraphInterface
 {
     /**
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return ContentSubgraphInterface|null
      */
     public function getSubgraphByIdentifier(
-        Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
     ): ?ContentSubgraphInterface;
 
@@ -46,10 +48,10 @@ interface ContentGraphInterface
     public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): ?NodeInterface;
 
     /**
-     * @param Domain\ValueObject\NodeTypeName $nodeTypeName
+     * @param NodeTypeName $nodeTypeName
      * @return NodeInterface|null
      */
-    public function findRootNodeByType(Domain\ValueObject\NodeTypeName $nodeTypeName): ?NodeInterface;
+    public function findRootNodeByType(NodeTypeName $nodeTypeName): ?NodeInterface;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier

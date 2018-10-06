@@ -11,8 +11,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 
 final class HideNode
 {

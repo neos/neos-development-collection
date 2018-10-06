@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Site\Event;
  */
 
 use Neos\EventSourcing\Event\EventInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
 final class SiteWasDeactivated implements EventInterface
 {

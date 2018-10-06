@@ -19,13 +19,13 @@ use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
 
 /**
@@ -213,7 +213,7 @@ final class ContentGraph implements ContentGraphInterface
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    public function findRootNodeByType(Domain\ValueObject\NodeTypeName $nodeTypeName): ?NodeInterface
+    public function findRootNodeByType(NodeTypeName $nodeTypeName): ?NodeInterface
     {
         $connection = $this->client->getConnection();
 

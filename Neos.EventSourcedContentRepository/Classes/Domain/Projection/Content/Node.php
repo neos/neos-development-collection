@@ -12,13 +12,14 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\EventSourcedContentRepository\Domain;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 
 
 /**
@@ -28,7 +29,7 @@ class Node implements NodeInterface
 {
 
     /**
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @var ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
@@ -38,7 +39,7 @@ class Node implements NodeInterface
     protected $dimensionSpacePoint;
 
     /**
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier
+     * @var NodeAggregateIdentifier
      */
     protected $nodeAggregateIdentifier;
 
@@ -162,10 +163,9 @@ class Node implements NodeInterface
     }
 
     /**
-     * @return PropertyCollection
-     *
+     * @return PropertyCollectionInterface
      */
-    public function getProperties(): PropertyCollection
+    public function getProperties(): PropertyCollectionInterface
     {
         return $this->properties;
     }
@@ -179,7 +179,6 @@ class Node implements NodeInterface
      *
      * @param string $propertyName Name of the property
      * @return mixed value of the property
-     * @throws NodeException if the node does not contain the specified property
      * @api
      */
     public function getProperty($propertyName)

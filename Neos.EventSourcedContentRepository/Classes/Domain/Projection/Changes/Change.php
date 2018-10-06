@@ -12,8 +12,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
  */
 
 use Doctrine\DBAL\Connection;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**

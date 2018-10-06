@@ -11,7 +11,7 @@ namespace Neos\EventSourcedContentRepository\Exception;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Exception;
 
 /**

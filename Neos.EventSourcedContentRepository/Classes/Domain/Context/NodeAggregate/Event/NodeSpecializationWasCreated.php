@@ -11,8 +11,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 use Neos\EventSourcing\Event\EventInterface;
@@ -23,51 +26,51 @@ use Neos\EventSourcing\Event\EventInterface;
 final class NodeSpecializationWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
-     * @var ContentStream\ContentStreamIdentifier
+     * @var ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
     /**
-     * @var NodeAggregate\NodeAggregateIdentifier
+     * @var NodeAggregateIdentifier
      */
     protected $nodeAggregateIdentifier;
 
     /**
-     * @var Domain\ValueObject\DimensionSpacePoint
+     * @var DimensionSpacePoint
      */
     protected $sourceDimensionSpacePoint;
 
     /**
-     * @var Domain\ValueObject\NodeIdentifier
+     * @var NodeIdentifier
      */
     protected $specializationIdentifier;
 
     /**
-     * @var Domain\ValueObject\DimensionSpacePoint
+     * @var DimensionSpacePoint
      */
     protected $specializationLocation;
 
     /**
-     * @var Domain\ValueObject\DimensionSpacePointSet
+     * @var DimensionSpacePointSet
      */
     protected $specializationVisibility;
 
 
     /**
-     * @param ContentStream\ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param Domain\ValueObject\NodeIdentifier $specializationIdentifier
-     * @param Domain\ValueObject\DimensionSpacePoint $specializationLocation
-     * @param Domain\ValueObject\DimensionSpacePointSet $specializationVisibility
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $sourceDimensionSpacePoint
+     * @param NodeIdentifier $specializationIdentifier
+     * @param DimensionSpacePoint $specializationLocation
+     * @param DimensionSpacePointSet $specializationVisibility
      */
     public function __construct(
-        ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier,
-        Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint,
-        Domain\ValueObject\NodeIdentifier $specializationIdentifier,
-        Domain\ValueObject\DimensionSpacePoint $specializationLocation,
-        Domain\ValueObject\DimensionSpacePointSet $specializationVisibility
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $sourceDimensionSpacePoint,
+        NodeIdentifier $specializationIdentifier,
+        DimensionSpacePoint $specializationLocation,
+        DimensionSpacePointSet $specializationVisibility
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -79,59 +82,59 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
 
 
     /**
-     * @return ContentStream\ContentStreamIdentifier
+     * @return ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): ContentStream\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
     /**
-     * @return NodeAggregate\NodeAggregateIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeAggregateIdentifier(): NodeAggregate\NodeAggregateIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
     /**
-     * @return Domain\ValueObject\DimensionSpacePoint
+     * @return DimensionSpacePoint
      */
-    public function getSourceDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
+    public function getSourceDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->sourceDimensionSpacePoint;
     }
 
     /**
-     * @return Domain\ValueObject\NodeIdentifier
+     * @return NodeIdentifier
      */
-    public function getSpecializationIdentifier(): Domain\ValueObject\NodeIdentifier
+    public function getSpecializationIdentifier(): NodeIdentifier
     {
         return $this->specializationIdentifier;
     }
 
     /**
-     * @return Domain\ValueObject\DimensionSpacePoint
+     * @return DimensionSpacePoint
      */
-    public function getSpecializationLocation(): Domain\ValueObject\DimensionSpacePoint
+    public function getSpecializationLocation(): DimensionSpacePoint
     {
         return $this->specializationLocation;
     }
 
     /**
-     * @return Domain\ValueObject\DimensionSpacePointSet
+     * @return DimensionSpacePointSet
      */
-    public function getSpecializationVisibility(): Domain\ValueObject\DimensionSpacePointSet
+    public function getSpecializationVisibility(): DimensionSpacePointSet
     {
         return $this->specializationVisibility;
     }
 
 
     /**
-     * @param ContentStream\ContentStreamIdentifier $targetContentStream
+     * @param ContentStreamIdentifier $targetContentStream
      * @return NodeSpecializationWasCreated
      */
-    public function createCopyForContentStream(ContentStream\ContentStreamIdentifier $targetContentStream): NodeSpecializationWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeSpecializationWasCreated
     {
         return new NodeSpecializationWasCreated(
             $targetContentStream,

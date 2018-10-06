@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Site\Command;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcedNeosAdjustments\Domain\ValueObject\NodeType;
 use Neos\EventSourcedNeosAdjustments\Domain\ValueObject\PackageKey;
 use Neos\EventSourcedNeosAdjustments\Domain\ValueObject\SiteActive;

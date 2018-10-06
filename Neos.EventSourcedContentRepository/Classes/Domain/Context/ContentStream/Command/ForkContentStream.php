@@ -11,9 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Comman
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 
 /**
  * ForkContentStream for creating a new fork of a content stream.

@@ -11,9 +11,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Event\EventInterface;
 
 final class ContentStreamWasCreated implements EventInterface

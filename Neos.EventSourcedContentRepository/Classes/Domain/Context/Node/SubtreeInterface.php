@@ -7,7 +7,7 @@
  */
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
 
 /**
