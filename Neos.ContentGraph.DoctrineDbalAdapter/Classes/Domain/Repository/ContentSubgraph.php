@@ -14,8 +14,11 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodePath;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
@@ -451,7 +454,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findParentNodeByNodeAggregateIdentifier(ContentRepository\Context\NodeAggregate\NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
+    public function findParentNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
     {
         $params = [
             'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
@@ -595,7 +598,7 @@ ORDER BY hc.position LIMIT 1',
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(
-        ContentRepository\Context\NodeAggregate\NodeAggregateIdentifier $parentAggregateIdentifier,
+        NodeAggregateIdentifier $parentAggregateIdentifier,
         NodeName $edgeName
     ): ?NodeInterface {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
@@ -647,7 +650,7 @@ ORDER BY hc.position LIMIT 1',
 
     /**
      * @param NodeIdentifier $sibling
-     * @return ContentRepository\Model\NodeInterface|null
+     * @return NodeInterface|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException

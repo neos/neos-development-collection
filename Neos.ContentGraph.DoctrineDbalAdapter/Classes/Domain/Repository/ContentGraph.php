@@ -213,7 +213,7 @@ final class ContentGraph implements ContentGraphInterface
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    public function findRootNodeByType(Domain\ValueObject\NodeTypeName $nodeTypeName): ?NodeInterface
+    public function findRootNodeByType(NodeTypeName $nodeTypeName): ?NodeInterface
     {
         $connection = $this->client->getConnection();
 
