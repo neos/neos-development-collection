@@ -2,6 +2,36 @@
 
 This is the package bundle you can install alongside a plain Neos to play around with the event-sourced CR.
 
+## Feature comparison
+
+✅ Done
+
+⏩ Currently worked on
+
+🚫 Will not be supported
+
+| Feature                     | Current CR | Event Sourced CR |
+| --------------------------- |:----------:|:----------------:|
+| **Basics**                  |            |                  |
+| Create/ Edit / Delete Nodes |     ✅     |        ⏩        |
+| Query Nodes                 |     ✅     |        ⏩        |
+| Cut / Copy / Paste          |     ✅     |                  |
+| Move Nodes                  |     ✅     |        ⏩        |
+| Hide Nodes                  |     ✅     |                  |
+| History                     |     ✅     |                  |
+| Undo / Redo                 |     🚫     |                  |
+| Setting Start / End time    |     ✅     |                  |
+| Workspaces                  |     ✅     |                  |
+| Resolving Referencing Nodes |     🚫     |        ⏩        |
+| **Advanced**                |            |                  |
+| Dimensions                  |     ✅     |        ⏩        |
+| Dimension Fallback          |     ✅     |        ⏩        |
+| Multiple Sites              |     ✅     |                  |
+| **Maintenance**             |            |                  |
+| Export / Import             |     ✅     |                  |
+| Node Migrations             |     ✅     |                  |
+| Node Repair                 |     ✅     |                  |
+
 ## Getting Started / Installation
 
 1. In your distribution's `composer.json`, add this repository to the `repositories` section:
@@ -28,7 +58,7 @@ This is the package bundle you can install alongside a plain Neos to play around
         "require": {
             "neos/neos-development-collection": "dev-event-sourced-patch as dev-master",
             "neos/flow-development-collection": "@dev",
-    
+
             "neos/contentrepository-development-collection": "@dev",
             "neos/event-sourcing": "dev-master",
             ...
@@ -81,7 +111,7 @@ This is the package bundle you can install alongside a plain Neos to play around
                 label: Latvian
                 resolution:
                   value: lv
-    
+
     ```
 
 4. Ensure to have your Site node marked with `Neos.Neos:Site`; for the Demo Site, put the following in `NodeTypes.yaml`:
@@ -109,6 +139,6 @@ This is the package bundle you can install alongside a plain Neos to play around
 - [ ] add switch to use event-sourced read model in Fusion rendering (!possibly difficult due to method signatures!)
 - [ ] allow to open User Interface based on Event-Sourced read model
 - [ ] create Commands in response to UI interaction
-- [ ] create feature list in this README, detailing what is supported and what not yet.
+- [x] create feature list in this README, detailing what is supported and what not yet.
 - [ ] support empty content dimension values in URL; e.g. "/de/..." for german, and "/..." for english
 - [ ] (further TODOs here; this list is not complete yet)
