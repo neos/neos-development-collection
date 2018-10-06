@@ -11,7 +11,7 @@ This is the package bundle you can install alongside a plain Neos to play around
         "repositories": [
             {
                 "type": "git",
-                "url": "https://github.com/skurfuerst/contentrepository-development-collection.git"
+                "url": "https://github.com/neos/contentrepository-development-collection.git"
             },
             {
                 "type": "git",
@@ -74,7 +74,7 @@ This is the package bundle you can install alongside a plain Neos to play around
     ```yaml
     'Neos.Demo:Homepage':
       superTypes:
-        'Neos.Neos:Site': TRUE
+        'Neos.Neos:Site': true
     ```
 
 5. create necessary tables using `./flow doctrine:migrate`
