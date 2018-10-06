@@ -13,16 +13,17 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeConstraints;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -64,7 +65,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $inMemoryCache;
 
     /**
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @var ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
@@ -74,7 +75,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $dimensionSpacePoint;
 
 
-    public function __construct(ContentRepository\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -86,7 +87,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      * @param $query
      */
     protected static function addNodeTypeConstraintsToQuery(
-        ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
+        NodeTypeConstraints $nodeTypeConstraints = null,
         SqlQueryBuilder $query,
         string $markerToReplaceInQuery = null
     ): void {
@@ -114,7 +115,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     }
 
 
-    public function getContentStreamIdentifier(): ContentRepository\Context\ContentStream\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
@@ -125,14 +126,14 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     }
 
     /**
-     * @param ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier
+     * @param NodeIdentifier $nodeIdentifier
      * @return NodeInterface|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findNodeByIdentifier(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier): ?NodeInterface
+    public function findNodeByIdentifier(NodeIdentifier $nodeIdentifier): ?NodeInterface
     {
         $cache = $this->inMemoryCache->getNodeByNodeIdentifierCache();
         if ($cache->knowsAbout($nodeIdentifier)) {
@@ -189,16 +190,16 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     }
 
     /**
-     * @param ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier
-     * @param ContentRepository\ValueObject\NodeTypeConstraints|null $nodeTypeConstraints
+     * @param NodeIdentifier $parentNodeIdentifier
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
      * @return array|NodeInterface[]
      * @throws \Exception
      */
     public function findChildNodes(
-        ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier,
-        ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
+        NodeIdentifier $parentNodeIdentifier,
+        NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
     ): array {
@@ -276,8 +277,8 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
     }
 
     public function countChildNodes(
-        ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier,
-        ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null
+        NodeIdentifier $parentNodeIdentifier,
+        NodeTypeConstraints $nodeTypeConstraints = null
     ): int {
         $query = new SqlQueryBuilder();
         $query->addToQuery('SELECT COUNT(c.nodeidentifier) FROM neos_contentgraph_node p
@@ -298,11 +299,11 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
     }
 
     /**
-     * @param ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier
-     * @param ContentRepository\ValueObject\PropertyName $name
+     * @param NodeIdentifier $nodeIdentifier
+     * @param PropertyName $name
      * @return NodeInterface[]
      */
-    public function findReferencedNodes(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentRepository\ValueObject\PropertyName $name = null): array
+    public function findReferencedNodes(NodeIdentifier $nodeIdentifier, PropertyName $name = null): array
     {
         $params = [
             'nodeIdentifier' => (string)$nodeIdentifier,
@@ -343,11 +344,11 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
     }
 
     /**
-     * @param ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier
-     * @param ContentRepository\ValueObject\PropertyName $name
+     * @param NodeIdentifier $nodeIdentifier
+     * @param PropertyName $name
      * @return NodeInterface[]
      */
-    public function findReferencingNodes(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentRepository\ValueObject\PropertyName $name = null) :array
+    public function findReferencingNodes(NodeIdentifier $nodeIdentifier, PropertyName $name = null) :array
     {
         $node = $this->findNodeByIdentifier($nodeIdentifier);
 
@@ -386,14 +387,14 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchy
     }
 
     /**
-     * @param ContentRepository\ValueObject\NodeIdentifier $childNodeIdentifier
+     * @param NodeIdentifier $childNodeIdentifier
      * @return NodeInterface|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findParentNode(ContentRepository\ValueObject\NodeIdentifier $childNodeIdentifier): ?NodeInterface
+    public function findParentNode(NodeIdentifier $childNodeIdentifier): ?NodeInterface
     {
         $cache = $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
 
@@ -478,10 +479,10 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
     }
 
     /**
-     * @param ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier
+     * @param NodeIdentifier $parentNodeIdentifier
      * @return NodeInterface|null
      */
-    public function findFirstChildNode(ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier): ?NodeInterface
+    public function findFirstChildNode(NodeIdentifier $parentNodeIdentifier): ?NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             '
@@ -530,13 +531,13 @@ SELECT c.* FROM neos_contentgraph_node p
     }
 
     /**
-     * @param ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier
-     * @param ContentRepository\ValueObject\NodeName $edgeName
+     * @param NodeIdentifier $parentNodeIdentifier
+     * @param NodeName $edgeName
      * @return NodeInterface|null
      */
     public function findChildNodeConnectedThroughEdgeName(
-        ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier,
-        ContentRepository\ValueObject\NodeName $edgeName
+        NodeIdentifier $parentNodeIdentifier,
+        NodeName $edgeName
     ): ?NodeInterface {
         $cache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         if ($cache->contains($parentNodeIdentifier, $edgeName)) {
@@ -595,7 +596,7 @@ ORDER BY hc.position LIMIT 1',
      */
     public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(
         ContentRepository\Context\NodeAggregate\NodeAggregateIdentifier $parentAggregateIdentifier,
-        ContentRepository\ValueObject\NodeName $edgeName
+        NodeName $edgeName
     ): ?NodeInterface {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
@@ -623,7 +624,7 @@ ORDER BY hc.position LIMIT 1',
      * @return ContentRepository\Model\NodeInterface|null
      * @throws \Exception
      */
-    public function findSucceedingSibling(ContentRepository\ValueObject\NodeIdentifier $sibling): ?NodeInterface
+    public function findSucceedingSibling(NodeIdentifier $sibling): ?NodeInterface
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery($this->getSiblingBaseQuery() . '
   AND h.position > (
@@ -652,7 +653,7 @@ ORDER BY hc.position LIMIT 1',
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findPrecedingSibling(ContentRepository\ValueObject\NodeIdentifier $sibling): ?NodeInterface
+    public function findPrecedingSibling(NodeIdentifier $sibling): ?NodeInterface
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery($this->getSiblingBaseQuery() . '
   AND h.position < (
@@ -692,14 +693,14 @@ ORDER BY hc.position LIMIT 1',
 
 
     /**
-     * @param ContentRepository\ValueObject\NodeTypeName $nodeTypeName
+     * @param NodeTypeName $nodeTypeName
      * @return array|NodeInterface[]
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findNodesByType(ContentRepository\ValueObject\NodeTypeName $nodeTypeName): array
+    public function findNodesByType(NodeTypeName $nodeTypeName): array
     {
         $result = [];
 
@@ -728,14 +729,14 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
     /**
      * @param NodeInterface $startNode
      * @param ContentProjection\HierarchyTraversalDirection $direction
-     * @param ContentRepository\ValueObject\NodeTypeConstraints|null $nodeTypeConstraints
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param callable $callback
      * @throws \Exception
      */
     public function traverseHierarchy(
         NodeInterface $startNode,
         ContentProjection\HierarchyTraversalDirection $direction = null,
-        ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
+        NodeTypeConstraints $nodeTypeConstraints = null,
         callable $callback
     ): void {
         if (is_null($direction)) {
@@ -768,7 +769,7 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
     }
 
 
-    public function findNodePath(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier): ContentRepository\ValueObject\NodePath
+    public function findNodePath(NodeIdentifier $nodeIdentifier): NodePath
     {
         $cache = $this->inMemoryCache->getNodePathCache();
 
@@ -807,7 +808,7 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
             }
 
             $nodePath = array_reverse($nodePath);
-            $nodePath = new ContentRepository\ValueObject\NodePath('/' . implode('/', $nodePath));
+            $nodePath = new NodePath('/' . implode('/', $nodePath));
             $cache->add($nodeIdentifier, $nodePath);
         }
 

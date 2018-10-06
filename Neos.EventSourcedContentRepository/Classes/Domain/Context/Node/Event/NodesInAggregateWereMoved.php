@@ -11,8 +11,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\ReferencePosition;
 use Neos\EventSourcing\Event\EventInterface;
 

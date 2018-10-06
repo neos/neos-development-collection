@@ -11,6 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;

@@ -12,7 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Service;
  * source code.
  */
 use Neos\ContentRepository\Domain;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeConstraints;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 

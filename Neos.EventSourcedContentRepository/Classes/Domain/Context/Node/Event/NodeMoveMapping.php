@@ -3,7 +3,7 @@
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 
 /**
  * Nodes were moved

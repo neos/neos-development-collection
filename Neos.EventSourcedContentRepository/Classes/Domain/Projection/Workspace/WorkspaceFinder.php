@@ -12,7 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineFinder;
 use Neos\Flow\Annotations as Flow;

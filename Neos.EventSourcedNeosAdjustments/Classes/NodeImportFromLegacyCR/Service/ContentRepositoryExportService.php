@@ -22,14 +22,14 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasAddedToA
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodePath;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -447,10 +447,10 @@ class ContentRepositoryExportService
             /* @var $site Site */
             // TODO: move Site Handling to Neos!!
             $this->eventPublisher->publish('Neos.Neos:Site:' . $site->getNodeName(), new SiteWasCreated(
-                new \Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName($site->getNodeName()),
+                new \Neos\ContentRepository\Domain\ValueObject\NodeName($site->getNodeName()),
                 new PackageKey($site->getSiteResourcesPackageKey()),
                 new NodeType('Neos.Neos:Site'), // TODO
-                new \Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName($site->getNodeName()),
+                new \Neos\ContentRepository\Domain\ValueObject\NodeName($site->getNodeName()),
                 new SiteActive(true)
             ));
         }

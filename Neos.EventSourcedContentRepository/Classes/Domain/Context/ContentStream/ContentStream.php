@@ -11,8 +11,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregate;
 use Neos\EventSourcing\EventStore;
 
 /**
@@ -61,12 +63,12 @@ final class ContentStream
     }
 
 
-    public function getNodeAggregate(NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate\NodeAggregate
+    public function getNodeAggregate(NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate
     {
         if (!isset($this->nodeAggregates[(string)$nodeAggregateIdentifier])) {
             $nodeAggregateStreamName = $this->getStreamName() . ':NodeAggregate:' . $nodeAggregateIdentifier;
             $eventStore = $this->eventStoreManager->getEventStoreForStreamName($nodeAggregateStreamName);
-            $this->nodeAggregates[(string)$nodeAggregateIdentifier] = new NodeAggregate\NodeAggregate($nodeAggregateIdentifier, $eventStore, $nodeAggregateStreamName, $this->nodeEventPublisher);
+            $this->nodeAggregates[(string)$nodeAggregateIdentifier] = new NodeAggregate($nodeAggregateIdentifier, $eventStore, $nodeAggregateStreamName, $this->nodeEventPublisher);
         }
 
         return $this->nodeAggregates[(string)$nodeAggregateIdentifier];

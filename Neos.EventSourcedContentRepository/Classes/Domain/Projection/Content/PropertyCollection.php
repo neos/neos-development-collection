@@ -12,13 +12,14 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Annotations as Flow;
 
 
-final class PropertyCollection implements \ArrayAccess
+final class PropertyCollection implements PropertyCollectionInterface
 {
 
     /**

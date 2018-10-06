@@ -22,12 +22,12 @@ use Neos\EventSourcedContentRepository\Domain;
 final class CreateNodeSpecialization
 {
     /**
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @var \Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
     /**
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier
+     * @var \Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier
      */
     protected $nodeAggregateIdentifier;
 
@@ -48,8 +48,8 @@ final class CreateNodeSpecialization
 
 
     /**
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param \Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
+     * @param \Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint
      * @param Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint
      * @param Domain\ValueObject\NodeIdentifier $specializationIdentifier
@@ -69,7 +69,7 @@ final class CreateNodeSpecialization
     }
 
     /**
-     * @return \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier
+     * @return \Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier
      */
     public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier
     {
@@ -77,7 +77,7 @@ final class CreateNodeSpecialization
     }
 
     /**
-     * @return \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier
+     * @return \Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier
      */
     public function getNodeAggregateIdentifier(): Domain\Context\NodeAggregate\NodeAggregateIdentifier
     {

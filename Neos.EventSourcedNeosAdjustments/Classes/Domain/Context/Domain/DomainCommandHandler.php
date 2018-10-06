@@ -27,7 +27,7 @@ use Neos\EventSourcedNeosAdjustments\Domain\Context\Domain\Exception\DomainDoesN
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Domain\Exception\SiteDoesNotExist;
 use Neos\EventSourcedNeosAdjustments\Domain\Projection\Domain\DomainFinder;
 use Neos\EventSourcedNeosAdjustments\Domain\Projection\Site\SiteFinder;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcedNeosAdjustments\Domain\ValueObject\SchemeHostPort;
 
 /**

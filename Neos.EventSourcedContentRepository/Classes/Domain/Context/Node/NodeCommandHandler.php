@@ -11,6 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
@@ -38,22 +39,18 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Model\Node;
-use Neos\EventSourcedContentRepository\Domain\Model\NodeType;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Exception;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
-use Neos\EventSourcedContentRepository\Exception\NodeConstraintException;
-use Neos\EventSourcedContentRepository\Exception\NodeExistsException;
 use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
@@ -697,7 +694,6 @@ final class NodeCommandHandler
             $parentNodeAggregateIdentifier = $sourceParentNode->getNodeAggregateIdentifier();
             $destinationContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier,
                 $dimensionSpacePoint);
-            /** @var Node $destinationParentNode */
             $destinationParentNode = $destinationContentSubgraph->findNodeByNodeAggregateIdentifier($parentNodeAggregateIdentifier);
             if ($destinationParentNode === null) {
                 throw new Exception\NodeException(sprintf('Could not find suitable parent node for %s in %s',
@@ -719,7 +715,6 @@ final class NodeCommandHandler
 
         // TODO Add a recursive flag and translate _all_ child nodes in this case
         foreach ($sourceNode->getNodeType()->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
-            /** @var Node $childNode */
             $childNode = $sourceContentSubgraph->findChildNodeConnectedThroughEdgeName($sourceNodeIdentifier, new NodeName($childNodeNameStr));
             if ($childNode === null) {
                 throw new Exception\NodeException(sprintf('Could not find auto-created child node with name %s for %s in %s',
@@ -778,12 +773,11 @@ final class NodeCommandHandler
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
-     * @return Node
+     * @return NodeInterface
      * @throws NodeNotFoundException
      */
     private function getNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): NodeInterface
     {
-        /** @var Node $node */
         $node = $this->contentGraph->findNodeByIdentifierInContentStream($contentStreamIdentifier, $nodeIdentifier);
         if ($node === null) {
             throw new NodeNotFoundException(sprintf('Node %s not found', $nodeIdentifier), 1506074496, $nodeIdentifier);

@@ -21,7 +21,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -424,7 +424,7 @@ trait EventSourcedTrait
         $command = new NodeAggregate\Command\ChangeNodeAggregateType(
             new ContentStream\ContentStreamIdentifier($commandArguments['contentStreamIdentifier']),
             new NodeAggregate\NodeAggregateIdentifier($commandArguments['nodeAggregateIdentifier']),
-            new \Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeName($commandArguments['newNodeTypeName']),
+            new \Neos\ContentRepository\Domain\ValueObject\NodeTypeName($commandArguments['newNodeTypeName']),
             $commandArguments['strategy'] ? new NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy($commandArguments['strategy']) : null
         );
         /** @var NodeAggregate\NodeAggregateCommandHandler $commandHandler */
@@ -957,7 +957,7 @@ trait EventSourcedTrait
             $destinationNodes = $subgraph->findReferencedNodes(new NodeIdentifier($nodeIdentifier), new PropertyName($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
-                    if ($item instanceof \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface) {
+                    if ($item instanceof \Neos\ContentRepository\Domain\Projection\Content\NodeInterface) {
                         return (string)$item->getNodeAggregateIdentifier();
                     } else {
                         return $item;
@@ -984,7 +984,7 @@ trait EventSourcedTrait
             $destinationNodes = $subgraph->findReferencingNodes(new NodeIdentifier($nodeIdentifier), new PropertyName($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
-                    if ($item instanceof \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface) {
+                    if ($item instanceof \Neos\ContentRepository\Domain\Projection\Content\NodeInterface) {
                         return (string)$item->getNodeAggregateIdentifier();
                     } else {
                         return $item;

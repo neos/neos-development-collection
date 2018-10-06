@@ -13,14 +13,15 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\Traversab
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeName;
 
 /**
  * This class is purely for code organization of TraversableNode.
@@ -75,7 +76,7 @@ trait NodeInterfaceProxy
         return $this->node->getDimensionSpacePoint();
     }
 
-    public function getProperties(): Domain\Projection\Content\PropertyCollection
+    public function getProperties(): PropertyCollectionInterface
     {
         return $this->node->getProperties();
     }

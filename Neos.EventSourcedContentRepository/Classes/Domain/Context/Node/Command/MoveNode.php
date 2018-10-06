@@ -12,9 +12,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**

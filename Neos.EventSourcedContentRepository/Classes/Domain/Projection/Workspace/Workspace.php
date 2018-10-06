@@ -12,7 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Annotations as CQRS;
 use Neos\Flow\Annotations as Flow;

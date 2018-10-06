@@ -12,19 +12,14 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain;
-use Neos\EventSourcedContentRepository\Domain\Model\NodeType;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode\NodeInterfaceProxy;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodePath;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeConstraints;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\Cache\CacheAwareInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodePath;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode\NodeInterfaceProxy;
 
 /**
  * See {@see TraversableNodeInterface} for explanation.
@@ -40,11 +35,11 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
     protected $subgraph;
 
     /**
-     * @var Domain\Context\Parameters\ContextParameters
+     * @var ContextParameters
      */
     protected $contextParameters;
 
-    public function __construct(NodeInterface $node, ContentSubgraphInterface $subgraph, Domain\Context\Parameters\ContextParameters $contextParameters)
+    public function __construct(NodeInterface $node, ContentSubgraphInterface $subgraph, ContextParameters $contextParameters)
     {
         $this->node = $node;
         $this->subgraph = $subgraph;
@@ -57,7 +52,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         return $this->subgraph;
     }
 
-    public function getContextParameters(): Domain\Context\Parameters\ContextParameters
+    public function getContextParameters(): ContextParameters
     {
         return $this->contextParameters;
     }
