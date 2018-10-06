@@ -9,7 +9,7 @@
         "doctrine/dbal": "~2.7.0",
         "doctrine/migrations": "~1.8.0",
         "neos/event-sourcing": "dev-master",
-        "neos/neos-development-collection": "dev-event-sourced-patch",
+        "neos/content-repository": "*",
         "neos/content-repository-dimensionspace": "dev-master",
         "neos/neos": "*"
     },
