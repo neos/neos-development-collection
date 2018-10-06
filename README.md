@@ -21,9 +21,24 @@ This is the package bundle you can install alongside a plain Neos to play around
     }
     ```
 
-2. Then, run `composer require neos/contentrepository-development-collection:@dev neos/event-sourcing:dev-master neos/content-repository-dimensionspace:dev-master`.
+2. Adjust the distribution `composer.json` as follows:
 
-3. If using dimensions, the dimension configuration has changed. Use the following configuration in `Settings.yaml` for the Demo site (Adjust as needed):
+    ```
+    {
+        "require": {
+            "neos/neos-development-collection": "dev-event-sourced-patch as dev-master",
+            "neos/flow-development-collection": "@dev",
+    
+            "neos/contentrepository-development-collection": "@dev",
+            "neos/event-sourcing": "dev-master",
+            ...
+        }
+    }
+    ```
+
+3. Then, run `composer update`.
+
+4. If using dimensions, the dimension configuration has changed. Use the following configuration in `Settings.yaml` for the Demo site (Adjust as needed):
 
     ```yaml
     Neos:
