@@ -32,9 +32,9 @@ interface TraversableNodeInterface extends NodeInterface
     public function getSubgraph(): ContentSubgraphInterface;
     public function getContextParameters(): ContextParameters;
 
-    public function getParent(): ?TraversableNodeInterface;
+    public function findParentNode(): ?TraversableNodeInterface;
 
-    public function getNodePath(): NodePath;
+    public function findNodePath(): NodePath;
 
     public function findNamedChildNode(NodeName $nodeName): ?TraversableNodeInterface;
 
@@ -48,5 +48,5 @@ interface TraversableNodeInterface extends NodeInterface
      * @return array<TraversableNodeInterface>|TraversableNodeInterface[] An array of nodes or an empty array if no child nodes matched
      * @api
      */
-    public function getChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, $limit = null, $offset = null);
+    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, $limit = null, $offset = null);
 }
