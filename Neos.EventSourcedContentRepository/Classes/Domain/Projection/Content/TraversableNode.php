@@ -57,8 +57,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         return $this->contextParameters;
     }
 
-    // TODO: rename to findParent() because it is a DB operation
-    public function getParent(): ?TraversableNodeInterface
+    public function findParentNode(): ?TraversableNodeInterface
     {
         $node = $this->subgraph->findParentNode($this->node->getNodeIdentifier());
         return $node ? new TraversableNode($node, $this->subgraph, $this->contextParameters) : null;
@@ -70,8 +69,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         return $node ? new TraversableNode($node, $this->subgraph, $this->contextParameters) : null;
     }
 
-    // TODO: rename to findChildNodes() because it is a DB operation
-    public function getChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, $limit = null, $offset = null)
+    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, $limit = null, $offset = null)
     {
         $childNodes = $this->subgraph->findChildNodes($this->node->getNodeIdentifier(), $nodeTypeConstraints, $limit, $offset);
 
@@ -82,8 +80,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         return $traversableChildNodes;
     }
 
-    // TODO: rename to findNodePath() because it is a DB operation
-    public function getNodePath(): NodePath
+    public function findNodePath(): NodePath
     {
         return $this->subgraph->findNodePath($this->node->getNodeIdentifier());
     }
