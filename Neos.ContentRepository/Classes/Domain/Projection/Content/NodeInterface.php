@@ -30,7 +30,6 @@ use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
  */
 interface NodeInterface extends CacheAwareInterface
 {
-
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
 
     public function getNodeIdentifier(): NodeIdentifier;
