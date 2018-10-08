@@ -11,3 +11,7 @@ Neos:
     contentDimensions:
       resolution:
         uriPathSegmentDelimiter: '_'
+
+  Fusion:
+    defaultContext:
+      Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper

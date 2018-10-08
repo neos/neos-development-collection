@@ -1,0 +1,5 @@
+prototype(Neos.Fusion:GlobalCacheIdentifiers) {
+    workspaceChain = ${Array.join(Array.keys(Neos.EventSourcedNeosAdjustments.Workspace.getWorkspaceChain(documentNode.subgraph)), ',')}
+    editPreviewMode = ${editPreviewMode}
+    dimensionSpacePoint = ${documentNode.subgraph.dimensionSpacePoint}
+}
