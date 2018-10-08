@@ -18,3 +18,14 @@ prototype(Neos.Neos:Menu) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\MenuImplementation'
     subgraph = ${documentNode.subgraph}
 }
+
+
+prototype(Neos.Neos:ContentCollection) {
+    @context.node = ${Neos.EventSourcedNeosAdjustments.Node.nearestContentCollection(node, this.nodePath)}
+    // TODO FIX ME HERE!!!
+    @cache.maximumLifetime = ${null}
+}
+
+prototype(Neos.Neos:ContentCollectionRenderer) {
+    @process.appendRemovedContentForBackend = ''
+}
