@@ -106,7 +106,7 @@ final class AssetSourceService
      * @throws AssetSourceServiceException
      * @throws \Exception
      */
-    public function importAsset(string $assetSourceIdentifier, string $assetIdentifier)
+    public function importAsset(string $assetSourceIdentifier, string $assetIdentifier): ImportedAsset
     {
         $this->initialize();
 
