@@ -11,6 +11,7 @@ namespace Neos\Neos\View;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Response;
 use Neos\Flow\I18n\Locale;
@@ -18,8 +19,7 @@ use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface as LegacyNodeInterface;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Flow\Security\Context;
@@ -78,14 +78,18 @@ class FusionView extends AbstractView
     public function render()
     {
         $currentNode = $this->getCurrentNode();
-        $currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
+        $currentSiteNode = $this->getCurrentSiteNode();
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
-        $dimensions = $currentNode->getContext()->getDimensions();
-        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
-            $currentLocale = new Locale($dimensions['language'][0]);
-            $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            $this->i18nService->getConfiguration()->setFallbackRule(array('strict' => false, 'order' => array_reverse($dimensions['language'])));
+        if ($currentNode instanceof LegacyNodeInterface) {
+            $dimensions = $currentNode->getContext()->getDimensions();
+            if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
+                $currentLocale = new Locale($dimensions['language'][0]);
+                $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
+                $this->i18nService->getConfiguration()->setFallbackRule(array('strict' => false, 'order' => array_reverse($dimensions['language'])));
+            }
+        } else {
+            // TODO: special case for Language DimensionSpacePoint!
         }
 
         $fusionRuntime->pushContextArray(array(
@@ -171,35 +175,55 @@ class FusionView extends AbstractView
     }
 
     /**
-     * @param NodeInterface $node
-     * @return NodeInterface
+     * @param TraversableNodeInterface $node
+     * @return TraversableNodeInterface
      */
-    protected function getClosestDocumentNode(NodeInterface $node)
+    protected function getClosestDocumentNode(TraversableNodeInterface $node)
     {
         while ($node !== null && !$node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $node = $node->getParent();
+            $node = $node->findParentNode();
         }
         return $node;
     }
 
     /**
-     * @return NodeInterface
+     * @return TraversableNodeInterface
      * @throws Exception
      */
-    protected function getCurrentNode()
+    protected function getCurrentSiteNode(): TraversableNodeInterface
     {
-        $currentNode = isset($this->variables['value']) ? $this->variables['value'] : null;
-        if (!$currentNode instanceof Node) {
-            throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1329736456);
+        $currentNode = isset($this->variables['site']) ? $this->variables['site'] : null;
+        if ($currentNode === null && $this->getCurrentNode() instanceof LegacyNodeInterface) {
+            // fallback to Legacy node API
+            /* @var $node LegacyNodeInterface */
+            $node = $this->getCurrentNode();
+            return $node->getContext()->getCurrentSiteNode();
+        }
+        if (!$currentNode instanceof TraversableNodeInterface) {
+            throw new Exception('FusionView needs a variable \'site\' set with a Node object.', 1538996432);
         }
         return $currentNode;
     }
 
     /**
-     * @param NodeInterface $currentSiteNode
+     * @return TraversableNodeInterface
+     * @throws Exception
+     */
+    protected function getCurrentNode(): TraversableNodeInterface
+    {
+        $currentNode = isset($this->variables['value']) ? $this->variables['value'] : null;
+        if (!$currentNode instanceof TraversableNodeInterface) {
+            throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1329736456);
+        }
+        return $currentNode;
+    }
+
+
+    /**
+     * @param TraversableNodeInterface $currentSiteNode
      * @return \Neos\Fusion\Core\Runtime
      */
-    protected function getFusionRuntime(NodeInterface $currentSiteNode)
+    protected function getFusionRuntime(TraversableNodeInterface $currentSiteNode)
     {
         if ($this->fusionRuntime === null) {
             $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);
