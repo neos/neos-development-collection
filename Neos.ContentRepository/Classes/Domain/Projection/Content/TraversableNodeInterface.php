@@ -28,7 +28,6 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraph
  */
 interface TraversableNodeInterface extends NodeInterface
 {
-
     public function getSubgraph(): ContentSubgraphInterface;
     public function getContextParameters(): ContextParameters;
 
