@@ -1,4 +1,4 @@
 Neos:
   EventSourcedContentRepository:
     features:
-      newRoutingEnabled: false
+      newRoutingEnabled: true
