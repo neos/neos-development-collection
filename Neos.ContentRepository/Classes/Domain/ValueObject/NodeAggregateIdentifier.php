@@ -13,8 +13,6 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\RootNodeIdentifiers;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeName;
-use Neos\EventSourcedContentRepository\Utility;
 use Ramsey\Uuid\Uuid;
 
 /**
