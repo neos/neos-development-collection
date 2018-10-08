@@ -11,6 +11,19 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodePath;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
+use Neos\ContentRepository\Exception\UnsupportedNodeMethodException;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -32,7 +45,7 @@ use Neos\ContentRepository\Utility;
  * @Flow\Scope("prototype")
  * @api
  */
-class Node implements NodeInterface, CacheAwareInterface
+class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterface
 {
     /**
      * The NodeData entity this version is for.
@@ -418,7 +431,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
     }
@@ -858,7 +871,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @return boolean
      * @api
      */
-    public function hasProperty($propertyName)
+    public function hasProperty($propertyName): bool
     {
         return $this->nodeData->hasProperty($propertyName);
     }
@@ -957,14 +970,14 @@ class Node implements NodeInterface, CacheAwareInterface
      * @return array Property values, indexed by their name
      * @api
      */
-    public function getProperties($returnNodesAsIdentifiers = false)
+    public function getProperties($returnNodesAsIdentifiers = false): PropertyCollectionInterface
     {
         $properties = [];
         foreach ($this->getPropertyNames() as $propertyName) {
             $properties[$propertyName] = $this->getProperty($propertyName, $returnNodesAsIdentifiers);
         }
 
-        return $properties;
+        return new ArrayPropertyCollection($properties);
     }
 
     /**
@@ -1053,7 +1066,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @return NodeType
      * @api
      */
-    public function getNodeType()
+    public function getNodeType(): NodeType
     {
         return $this->nodeData->getNodeType();
     }
@@ -1935,5 +1948,78 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     protected function emitNodePathChanged(NodeInterface $node, $oldPath, $newPath, $recursion)
     {
+    }
+
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        throw new UnsupportedNodeMethodException('getContentStreamIdentifier is unsupported in the legacy Node API.');
+    }
+
+    public function getNodeIdentifier(): NodeIdentifier
+    {
+        throw new UnsupportedNodeMethodException('getNodeIdentifier is unsupported in the legacy Node API. could be implemented if needed by returning flow_persistence_identifier of NodeData');
+    }
+
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    {
+        return new NodeAggregateIdentifier($this->getIdentifier());
+    }
+
+    public function getNodeTypeName(): NodeTypeName
+    {
+        return new NodeTypeName($this->getNodeType()->getName());
+    }
+
+    public function getNodeName(): NodeName
+    {
+        return new NodeName($this->getName());
+    }
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        throw new UnsupportedNodeMethodException('getDimensionSpacePoint is unsupported in the legacy Node API.');
+    }
+
+    public function getSubgraph(): ContentSubgraphInterface
+    {
+        throw new UnsupportedNodeMethodException('getSubgraph is unsupported in the legacy Node API.');
+    }
+
+    public function getContextParameters(): ContextParameters
+    {
+        throw new UnsupportedNodeMethodException('getContextParameters is unsupported in the legacy Node API.');
+    }
+
+    public function findParentNode(): ?TraversableNodeInterface
+    {
+        // It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time.
+        return $this->getParent();
+    }
+
+    public function findNodePath(): NodePath
+    {
+        return new NodePath($this->getPath());
+    }
+
+    public function findNamedChildNode(NodeName $nodeName): ?TraversableNodeInterface
+    {
+        // It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time.
+        return $this->getNode((string)$nodeName);
+    }
+
+    /**
+     * Returns all direct child nodes of this node.
+     * If a node type is specified, only nodes of that type are returned.
+     *
+     * @param NodeTypeConstraints If specified, only nodes with that node type are considered
+     * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
+     * @param integer $offset An optional offset for the query
+     * @return array<TraversableNodeInterface>|TraversableNodeInterface[] An array of nodes or an empty array if no child nodes matched
+     * @api
+     */
+    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, $limit = null, $offset = null)
+    {
+        // It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time.
+        return $this->getChildNodes($nodeTypeConstraints->asLegacyNodeTypeFilterString(), $limit, $offset);
     }
 }

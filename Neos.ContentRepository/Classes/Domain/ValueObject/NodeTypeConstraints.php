@@ -103,4 +103,22 @@ final class NodeTypeConstraints
         $disallowedNodeTypeNames[] = $nodeTypeName;
         return new NodeTypeConstraints($this->wildcardAllowed, $this->explicitlyAllowedNodeTypeNames, $disallowedNodeTypeNames);
     }
+
+    /**
+     * return the legacy (pre-event-sourced) Node Type filter string looking like "Foo:Bar,!MyPackage:Exclude"
+     * @deprecated
+     */
+    public function asLegacyNodeTypeFilterString(): string
+    {
+        $legacyParts = [];
+        foreach ($this->explicitlyDisallowedNodeTypeNames as $nodeTypeName) {
+            $legacyParts[] = '!' . (string)$nodeTypeName;
+        }
+
+        foreach ($this->explicitlyAllowedNodeTypeNames as $nodeTypeName) {
+            $legacyParts[] = (string)$nodeTypeName;
+        }
+
+        return implode(',', $legacyParts);
+    }
 }
