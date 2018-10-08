@@ -101,14 +101,14 @@ class AssetProxiesController extends ActionController
             if ($assetSourceIdentifier !== '' && $assetSource->getIdentifier() !== $assetSourceIdentifier) {
                 continue;
             }
-           try {
+            try {
                 $assetProxyRepository = $assetSource->getAssetProxyRepository();
                 $assetProxyQueryResult = $assetProxyRepository->findBySearchTerm($searchTerm);
                 $addedResults = 0;
                 while ($assetProxyQueryResult->valid() && $addedResults < $limitPerAssetSource) {
                     $assetProxies[] = $assetProxyQueryResult->current();
                     $assetProxyQueryResult->next();
-                    $addedResults ++;
+                    $addedResults++;
                 }
             } catch (\Exception $exception) {
             }
