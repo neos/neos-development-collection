@@ -92,7 +92,7 @@ class AssetProxiesController extends ActionController
      * @param string $assetSourceIdentifier If specified, results are only from the given asset source
      * @return string
      */
-    public function indexAction($searchTerm = '', $assetSourceIdentifier = '')
+    public function indexAction(string $searchTerm = '', string $assetSourceIdentifier = '')
     {
         $assetSources = $this->assetSourceService->getAssetsSources();
         $assetProxies = [];
