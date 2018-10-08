@@ -13,3 +13,8 @@ prototype(Neos.Neos:DimensionsMenu) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\DimensionsMenuImplementation'
     subgraph = ${documentNode.subgraph}
 }
+
+prototype(Neos.Neos:Menu) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\MenuImplementation'
+    subgraph = ${documentNode.subgraph}
+}
