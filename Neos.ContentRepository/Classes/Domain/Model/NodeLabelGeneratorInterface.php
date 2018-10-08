@@ -25,5 +25,5 @@ interface NodeLabelGeneratorInterface
      * @return string
      * @api
      */
-    public function getLabel(NodeInterface $node);
+    public function getLabel($node);
 }
