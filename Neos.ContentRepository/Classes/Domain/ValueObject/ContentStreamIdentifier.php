@@ -14,10 +14,46 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\RootNodeIdentifiers;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\AbstractIdentifier;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
-final class ContentStreamIdentifier extends AbstractIdentifier implements CacheAwareInterface
+final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInterface
 {
+    /**
+     * @var UuidInterface
+     */
+    protected $uuid;
+
+    /**
+     * Constructor.
+     *
+     * @param string $existingIdentifier
+     */
+    public function __construct(string $existingIdentifier = null)
+    {
+        if ($existingIdentifier !== null) {
+            $this->uuid = Uuid::fromString($existingIdentifier);
+        } else {
+            $this->uuid = Uuid::uuid4();
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->uuid->toString();
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize()
+    {
+        return $this->uuid->toString();
+    }
+
     /**
      * @return string
      */
