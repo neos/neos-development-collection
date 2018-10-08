@@ -13,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
  */
 
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodePath;
+use Neos\ContentRepository\Domain\ValueObject\NodePath;
 
 
 /**

@@ -1,0 +1,14 @@
+
+privilegeTargets:
+
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+    'Neos.EventSourcedNeosAdjustments:PublicFrontendAccess':
+      matcher: 'method(Neos\EventSourcedNeosAdjustments\EventSourcedFrontController\EventSourcedNodeController->showAction())'
+
+roles:
+
+  'Neos.Flow:Everybody':
+    privileges:
+    -
+      privilegeTarget: 'Neos.EventSourcedNeosAdjustments:PublicFrontendAccess'
+      permission: GRANT

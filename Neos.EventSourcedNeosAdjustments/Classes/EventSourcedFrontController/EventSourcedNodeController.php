@@ -12,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedFrontController;
  */
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
+use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -21,7 +22,6 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\Service\NodeTypeConstraintService;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodePath;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
@@ -188,7 +188,7 @@ class EventSourcedNodeController extends ActionController
      */
     protected function createContextParameters(bool $inBackend): ContextParameters
     {
-        return new ContextParameters(\DateTimeImmutable::createFromMutable($this->now), $this->securityContext->getRoles(), $inBackend, $inBackend);
+        return new ContextParameters($this->now, $this->securityContext->getRoles(), $inBackend, $inBackend);
     }
 
     /**
