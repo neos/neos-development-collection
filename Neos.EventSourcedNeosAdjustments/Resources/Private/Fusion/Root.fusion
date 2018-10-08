@@ -3,3 +3,13 @@ prototype(Neos.Fusion:GlobalCacheIdentifiers) {
     editPreviewMode = ${editPreviewMode}
     dimensionSpacePoint = ${documentNode.subgraph.dimensionSpacePoint}
 }
+
+prototype(Neos.Neos:NodeUri) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\NodeUriImplementation'
+    subgraph = ${documentNode.subgraph}
+}
+
+prototype(Neos.Neos:DimensionsMenu) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\DimensionsMenuImplementation'
+    subgraph = ${documentNode.subgraph}
+}
