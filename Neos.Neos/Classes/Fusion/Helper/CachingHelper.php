@@ -12,6 +12,7 @@ namespace Neos\Neos\Fusion\Helper;
  */
 
 use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Exception;
@@ -37,7 +38,7 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodes = [];
         }
 
-        if ($nodes instanceof NodeInterface) {
+        if (!is_array($nodes) && ($nodes instanceof NodeInterface || $nodes instanceof TraversableNodeInterface)) {
             $nodes = [$nodes];
         }
 
@@ -47,10 +48,15 @@ class CachingHelper implements ProtectedContextAwareInterface
 
         $prefixedNodeIdentifiers = [];
         foreach ($nodes as $node) {
-            if (!$node instanceof NodeInterface) {
+            if ($node instanceof NodeInterface) {
+                /* @var $node NodeInterface */
+                $prefixedNodeIdentifiers[] = $prefix . '_' . $this->renderWorkspaceTagForContextNode($node->getContext()->getWorkspace()->getName()) . '_' . $node->getIdentifier();
+            } elseif ($node instanceof TraversableNodeInterface) {
+                /* @var $node TraversableNodeInterface */
+                $prefixedNodeIdentifiers[] = $prefix . '_' . $this->renderWorkspaceTagForContextNode((string)$node->getContentStreamIdentifier()) . '_' . $node->getNodeAggregateIdentifier();
+            } else {
                 throw new Exception(sprintf('One of the elements in array passed to this helper was not a Node, but of type: "%s".', gettype($node)), 1437169991);
             }
-            $prefixedNodeIdentifiers[] = $prefix . '_' . $this->renderWorkspaceTagForContextNode($node->getContext()->getWorkspace()->getName()) . '_' . $node->getIdentifier();
         }
         return $prefixedNodeIdentifiers;
     }

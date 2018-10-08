@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
@@ -45,7 +46,7 @@ class ParentsOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -58,13 +59,14 @@ class ParentsOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = array();
-        $outputNodePaths = array();
+        $outputNodeIdentifiers = array();
         foreach ($flowQuery->getContext() as $contextNode) {
-            while ($contextNode->getParent() !== null) {
-                $contextNode = $contextNode->getParent();
-                if (!isset($outputNodePaths[$contextNode->getPath()])) {
+            /* @var $contextNode \Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface */
+            while ($contextNode->findParentNode() !== null) {
+                $contextNode = $contextNode->findParentNode();
+                if (!isset($outputNodeIdentifiers[(string)$contextNode->getNodeIdentifier()])) {
                     $output[] = $contextNode;
-                    $outputNodePaths[$contextNode->getPath()] = true;
+                    $outputNodeIdentifiers[(string)$contextNode->getNodeIdentifier()] = true;
                 }
             }
         }
