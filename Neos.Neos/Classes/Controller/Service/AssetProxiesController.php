@@ -90,9 +90,10 @@ class AssetProxiesController extends ActionController
      *
      * @param string $searchTerm An optional search term used for filtering the list of assets
      * @param string $assetSourceIdentifier If specified, results are only from the given asset source
-     * @return string
+     * @param int $limitPerAssetSource The maximum number of results shown per asset source
+     * @return void
      */
-    public function indexAction(string $searchTerm = '', string $assetSourceIdentifier = '')
+    public function indexAction(string $searchTerm = '', string $assetSourceIdentifier = '', int $limitPerAssetSource = 10): void
     {
         $assetSources = $this->assetSourceService->getAssetsSources();
         $assetProxies = [];
@@ -102,9 +103,13 @@ class AssetProxiesController extends ActionController
             }
            try {
                 $assetProxyRepository = $assetSource->getAssetProxyRepository();
-                $assetProxiesInThisSource = $assetProxyRepository->findBySearchTerm($searchTerm);
-
-                $assetProxies = array_merge($assetProxies, $assetProxiesInThisSource->toArray());
+                $assetProxyQueryResult = $assetProxyRepository->findBySearchTerm($searchTerm);
+                $addedResults = 0;
+                while ($assetProxyQueryResult->valid() && $addedResults < $limitPerAssetSource) {
+                    $assetProxies[] = $assetProxyQueryResult->current();
+                    $assetProxyQueryResult->next();
+                    $addedResults ++;
+                }
             } catch (\Exception $exception) {
             }
         }
@@ -116,11 +121,11 @@ class AssetProxiesController extends ActionController
      *
      * @param string $assetSourceIdentifier
      * @param string $assetProxyIdentifier
-     * @return string
+     * @return void
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
      */
-    public function showAction(string $assetSourceIdentifier, string $assetProxyIdentifier)
+    public function showAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
     {
         $assetSources = $this->assetSourceService->getAssetsSources();
         if (!isset($assetSources[$assetSourceIdentifier])) {
@@ -139,11 +144,12 @@ class AssetProxiesController extends ActionController
     /**
      * @param string $assetSourceIdentifier
      * @param string $assetProxyIdentifier
+     * @return void
      * @throws AssetSourceServiceException
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
      */
-    public function importAction(string $assetSourceIdentifier, string $assetProxyIdentifier)
+    public function importAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
     {
         $assetSources = $this->assetSourceService->getAssetsSources();
         if (!isset($assetSources[$assetSourceIdentifier])) {
