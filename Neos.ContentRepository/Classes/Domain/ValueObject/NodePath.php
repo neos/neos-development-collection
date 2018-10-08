@@ -70,5 +70,4 @@ final class NodePath implements \JsonSerializable
     {
         return $this->path;
     }
-
 }
