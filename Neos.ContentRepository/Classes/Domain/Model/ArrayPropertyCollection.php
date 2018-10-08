@@ -13,5 +13,6 @@ namespace Neos\ContentRepository\Domain\Model;
 
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 
-class ArrayPropertyCollection extends \ArrayObject implements PropertyCollectionInterface {
+class ArrayPropertyCollection extends \ArrayObject implements PropertyCollectionInterface
+{
 }
