@@ -11,12 +11,12 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\ObjectAccess;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Used to access properties of a ContentRepository Node. If the property mame is
@@ -82,6 +82,7 @@ class PropertyOperation extends AbstractOperation
             if ($propertyPath[0] === '_') {
                 return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {
+                /* @var $element NodeInterface */
                 return $element->getProperty($propertyPath);
             }
         }
