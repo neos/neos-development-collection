@@ -44,7 +44,7 @@ interface TraversableNodeInterface extends NodeInterface
      * @param NodeTypeConstraints If specified, only nodes with that node type are considered
      * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
      * @param integer $offset An optional offset for the query
-     * @return array<TraversableNodeInterface>|TraversableNodeInterface[] An array of nodes or an empty array if no child nodes matched
+     * @return TraversableNodeInterface[]|array<TraversableNodeInterface>| An array of nodes or an empty array if no child nodes matched
      * @api
      */
     public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, $limit = null, $offset = null);
