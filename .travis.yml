@@ -2,6 +2,34 @@ language: php
 matrix:
   fast_finish: true
   include:
+    - php: 7.1
+      env: DB=mysql
+      addons:
+        mariadb: '10.2'
+    - php: 7.1
+      env: DB=pgsql
+      sudo: required
+      addons:
+        postgresql: "9.4"
+    - php: 7.1
+      env: DB=pgsql
+      sudo: required
+      addons:
+        postgresql: "9.5"
+    - php: 7.1
+      env: DB=mysql BEHAT=true
+      addons:
+        mariadb: '10.2'
+    - php: 7.1
+      env: DB=pgsql BEHAT=true
+      sudo: required
+      addons:
+        postgresql: "9.4"
+    - php: 7.1
+      env: DB=pgsql BEHAT=true
+      sudo: required
+      addons:
+        postgresql: "9.5"
     - php: 7.2
       env: DB=mysql
       addons:
