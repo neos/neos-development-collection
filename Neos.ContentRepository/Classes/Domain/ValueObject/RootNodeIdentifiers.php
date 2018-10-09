@@ -35,6 +35,7 @@ final class RootNodeIdentifiers
      * "root" content stream.
      *
      * @return ContentStreamIdentifier
+     * @throws \Exception
      */
     public static function rootContentStreamIdentifier(): ContentStreamIdentifier
     {
@@ -62,6 +63,7 @@ final class RootNodeIdentifiers
      * the Root node is its own Node Aggregate
      *
      * @return NodeAggregateIdentifier
+     * @throws \Exception
      */
     public static function rootNodeAggregateIdentifier(): NodeAggregateIdentifier
     {

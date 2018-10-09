@@ -22,20 +22,6 @@ final class NodeName implements \JsonSerializable
     private static $rootNodeName;
 
     /**
-     * the Root node does not have a name; so it is assigned this special NodeName
-     *
-     * @return NodeName
-     */
-    public static function root(): NodeName
-    {
-        if (!self::$rootNodeName) {
-            self::$rootNodeName = new NodeName('-');
-        }
-        return self::$rootNodeName;
-    }
-
-
-    /**
      * @var string
      */
     private $name;
@@ -47,6 +33,19 @@ final class NodeName implements \JsonSerializable
         }
 
         $this->name = $name;
+    }
+
+    /**
+     * the Root node does not have a name; so it is assigned this special NodeName
+     *
+     * @return NodeName
+     */
+    public static function root(): NodeName
+    {
+        if (!self::$rootNodeName) {
+            self::$rootNodeName = new NodeName('-');
+        }
+        return self::$rootNodeName;
     }
 
     /**

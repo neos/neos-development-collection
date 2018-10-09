@@ -28,24 +28,41 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraph
  */
 interface TraversableNodeInterface extends NodeInterface
 {
+    /**
+     * @return ContentSubgraphInterface
+     */
     public function getSubgraph(): ContentSubgraphInterface;
+
+    /**
+     * @return ContextParameters
+     */
     public function getContextParameters(): ContextParameters;
 
+    /**
+     * @return TraversableNodeInterface|null
+     */
     public function findParentNode(): ?TraversableNodeInterface;
 
+    /**
+     * @return NodePath
+     */
     public function findNodePath(): NodePath;
 
+    /**
+     * @param NodeName $nodeName
+     * @return TraversableNodeInterface|null
+     */
     public function findNamedChildNode(NodeName $nodeName): ?TraversableNodeInterface;
 
     /**
      * Returns all direct child nodes of this node.
      * If a node type is specified, only nodes of that type are returned.
      *
-     * @param NodeTypeConstraints If specified, only nodes with that node type are considered
-     * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
-     * @param integer $offset An optional offset for the query
+     * @param NodeTypeConstraints $nodeTypeConstraints If specified, only nodes with that node type are considered
+     * @param int $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
+     * @param int $offset An optional offset for the query
      * @return TraversableNodeInterface[]|array<TraversableNodeInterface>| An array of nodes or an empty array if no child nodes matched
      * @api
      */
-    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, $limit = null, $offset = null);
+    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null);
 }

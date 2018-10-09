@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\ValueObject;
 
 /*
@@ -11,7 +10,6 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 
 
 interface PropertyCollectionInterface extends \ArrayAccess
