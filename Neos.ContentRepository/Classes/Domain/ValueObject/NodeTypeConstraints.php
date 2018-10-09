@@ -33,7 +33,6 @@ final class NodeTypeConstraints
      */
     protected $explicitlyDisallowedNodeTypeNames;
 
-
     /**
      * @param bool $wildCardAllowed
      * @param array $explicitlyAllowedNodeTypeNames
@@ -89,7 +88,6 @@ final class NodeTypeConstraints
         // otherwise, we return $wildcardAllowed.
         return $this->wildcardAllowed;
     }
-
 
     /**
      * IMMUTABLE, returns a new instance

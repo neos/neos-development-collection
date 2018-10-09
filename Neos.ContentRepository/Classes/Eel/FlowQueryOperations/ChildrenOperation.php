@@ -63,6 +63,7 @@ class ChildrenOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws \Neos\Eel\FlowQuery\FizzleException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -100,6 +101,7 @@ class ChildrenOperation extends AbstractOperation
      * @param FlowQuery $flowQuery
      * @param array $parsedFilter
      * @return boolean
+     * @throws \Neos\Eel\Exception
      */
     protected function earlyOptimizationOfFilters(FlowQuery $flowQuery, array $parsedFilter)
     {

@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
@@ -68,12 +69,13 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
     /**
      * Render a node label
      *
-     * @param NodeInterface $node
+     * @param TraversableNodeInterface $node
      * @return string
+     * @throws \Neos\Eel\Exception
      */
-    public function getLabel($node)
+    public function getLabel(TraversableNodeInterface $node)
     {
-        $label = Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, array('node' => $node), $this->defaultContextConfiguration);
+        $label = Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, ['node' => $node], $this->defaultContextConfiguration);
         return $label;
     }
 }

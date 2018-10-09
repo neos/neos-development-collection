@@ -27,6 +27,7 @@ final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInte
      * Constructor.
      *
      * @param string $existingIdentifier
+     * @throws \Exception
      */
     public function __construct(string $existingIdentifier = null)
     {
@@ -48,7 +49,7 @@ final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInte
     /**
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->uuid->toString();
     }

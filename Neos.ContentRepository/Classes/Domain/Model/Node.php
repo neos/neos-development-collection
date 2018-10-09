@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
+use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\UnsupportedNodeMethodException;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
@@ -515,10 +516,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     /**
      * Returns the parent node of this node
      *
-     * @return NodeInterface The parent node or NULL if this is the root node
+     * @return TraversableNodeInterface The parent node or NULL if this is the root node
      * @api
      */
-    public function getParent()
+    public function getParent(): ?TraversableNodeInterface
     {
         if ($this->getPath() === '/') {
             return null;
@@ -885,6 +886,9 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @param string $propertyName Name of the property
      * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeInterface instances
      * @return mixed value of the property
+     * @throws NodeException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      * @api
      */
     public function getProperty($propertyName, $returnNodesAsIdentifiers = false)
@@ -1160,6 +1164,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
      * @return NodeInterface the freshly generated node
      * @api
+     * @throws NodeConfigurationException
      */
     public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = null)
     {
@@ -1176,10 +1181,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns a node specified by the given relative path.
      *
      * @param string $path Path specifying the node, relative to this node
-     * @return NodeInterface The specified node or NULL if no such node exists
+     * @return TraversableNodeInterface The specified node or NULL if no such node exists
      * @api
      */
-    public function getNode($path)
+    public function getNode($path): ?TraversableNodeInterface
     {
         $absolutePath = $this->nodeService->normalizePath($path, $this->getPath());
         $node = $this->context->getFirstLevelNodeCache()->getByPath($absolutePath);
@@ -1602,9 +1607,11 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * otherwise.
      *
      * @param NodeInterface $referenceNode
-     * @param boolean $detachedCopy
      * @param string $nodeName
+     * @param boolean $detachedCopy
      * @return NodeInterface
+     * @throws NodeConstraintException
+     * @throws NodeExistsException
      */
     protected function createRecursiveCopy(NodeInterface $referenceNode, $nodeName, $detachedCopy)
     {
@@ -1715,6 +1722,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      *
      * @param Context $context
      * @return NodeInterface
+     * @throws NodeConfigurationException
      */
     public function createVariantForContext($context)
     {
@@ -1852,6 +1860,129 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     }
 
     /**
+     * @return ContentStreamIdentifier
+     * @throws UnsupportedNodeMethodException
+     */
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        throw new UnsupportedNodeMethodException('getContentStreamIdentifier is unsupported in the legacy Node API.');
+    }
+
+    /**
+     * @return NodeIdentifier
+     * @throws UnsupportedNodeMethodException
+     */
+    public function getNodeIdentifier(): NodeIdentifier
+    {
+        throw new UnsupportedNodeMethodException('getNodeIdentifier is unsupported in the legacy Node API. could be implemented if needed by returning flow_persistence_identifier of NodeData');
+    }
+
+    /**
+     * @return NodeAggregateIdentifier
+     */
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    {
+        return new NodeAggregateIdentifier($this->getIdentifier());
+    }
+
+    /**
+     * @return NodeTypeName
+     */
+    public function getNodeTypeName(): NodeTypeName
+    {
+        return new NodeTypeName($this->getNodeType()->getName());
+    }
+
+    /**
+     * @return NodeName
+     */
+    public function getNodeName(): NodeName
+    {
+        return new NodeName($this->getName());
+    }
+
+    /**
+     * @return DimensionSpacePoint
+     * @throws UnsupportedNodeMethodException
+     */
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        throw new UnsupportedNodeMethodException('getDimensionSpacePoint is unsupported in the legacy Node API.');
+    }
+
+    /**
+     * @return ContentSubgraphInterface
+     * @throws UnsupportedNodeMethodException
+     */
+    public function getSubgraph(): ContentSubgraphInterface
+    {
+        throw new UnsupportedNodeMethodException('getSubgraph is unsupported in the legacy Node API.');
+    }
+
+    /**
+     * @return ContextParameters
+     * @throws UnsupportedNodeMethodException
+     */
+    public function getContextParameters(): ContextParameters
+    {
+        throw new UnsupportedNodeMethodException('getContextParameters is unsupported in the legacy Node API.');
+    }
+
+    /**
+     * @return TraversableNodeInterface|null
+     */
+    public function findParentNode(): ?TraversableNodeInterface
+    {
+        // It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time.
+        return $this->getParent();
+    }
+
+    public function findNodePath(): NodePath
+    {
+        return new NodePath($this->getPath());
+    }
+
+    /**
+     * @param NodeName $nodeName
+     * @return TraversableNodeInterface|null
+     */
+    public function findNamedChildNode(NodeName $nodeName): ?TraversableNodeInterface
+    {
+        // It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time.
+        return $this->getNode((string)$nodeName);
+    }
+
+    /**
+     * Returns all direct child nodes of this node.
+     * If a node type is specified, only nodes of that type are returned.
+     *
+     * @param NodeTypeConstraints $nodeTypeConstraints If specified, only nodes with that node type are considered
+     * @param int $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
+     * @param int $offset An optional offset for the query
+     * @return array<TraversableNodeInterface>|TraversableNodeInterface[] An array of nodes or an empty array if no child nodes matched
+     * @api
+     */
+    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null)
+    {
+        $filter = $nodeTypeConstraints !== null ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : null;
+        // It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time.
+        return $this->getChildNodes($filter, $limit, $offset);
+    }
+
+    /**
+     * Signals that the node path has been changed.
+     *
+     * @Flow\Signal
+     * @param NodeInterface $node
+     * @param string $oldPath
+     * @param string $newPath
+     * @param boolean $recursion true if the node path change was caused because a parent node path was changed
+     */
+    protected function emitNodePathChanged(NodeInterface $node, $oldPath, $newPath, $recursion)
+    {
+    }
+
+    /**
      * Signals that a node will be created.
      *
      * @Flow\Signal
@@ -1935,92 +2066,5 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      */
     protected function emitNodePropertyChanged(NodeInterface $node, $propertyName, $oldValue, $newValue)
     {
-    }
-
-    /**
-     * Signals that the node path has been changed.
-     *
-     * @Flow\Signal
-     * @param NodeInterface $node
-     * @param string $oldPath
-     * @param string $newPath
-     * @param boolean $recursion true if the node path change was caused because a parent node path was changed
-     */
-    protected function emitNodePathChanged(NodeInterface $node, $oldPath, $newPath, $recursion)
-    {
-    }
-
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        throw new UnsupportedNodeMethodException('getContentStreamIdentifier is unsupported in the legacy Node API.');
-    }
-
-    public function getNodeIdentifier(): NodeIdentifier
-    {
-        throw new UnsupportedNodeMethodException('getNodeIdentifier is unsupported in the legacy Node API. could be implemented if needed by returning flow_persistence_identifier of NodeData');
-    }
-
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
-    {
-        return new NodeAggregateIdentifier($this->getIdentifier());
-    }
-
-    public function getNodeTypeName(): NodeTypeName
-    {
-        return new NodeTypeName($this->getNodeType()->getName());
-    }
-
-    public function getNodeName(): NodeName
-    {
-        return new NodeName($this->getName());
-    }
-
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        throw new UnsupportedNodeMethodException('getDimensionSpacePoint is unsupported in the legacy Node API.');
-    }
-
-    public function getSubgraph(): ContentSubgraphInterface
-    {
-        throw new UnsupportedNodeMethodException('getSubgraph is unsupported in the legacy Node API.');
-    }
-
-    public function getContextParameters(): ContextParameters
-    {
-        throw new UnsupportedNodeMethodException('getContextParameters is unsupported in the legacy Node API.');
-    }
-
-    public function findParentNode(): ?TraversableNodeInterface
-    {
-        // It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time.
-        return $this->getParent();
-    }
-
-    public function findNodePath(): NodePath
-    {
-        return new NodePath($this->getPath());
-    }
-
-    public function findNamedChildNode(NodeName $nodeName): ?TraversableNodeInterface
-    {
-        // It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time.
-        return $this->getNode((string)$nodeName);
-    }
-
-    /**
-     * Returns all direct child nodes of this node.
-     * If a node type is specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints If specified, only nodes with that node type are considered
-     * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
-     * @param integer $offset An optional offset for the query
-     * @return array<TraversableNodeInterface>|TraversableNodeInterface[] An array of nodes or an empty array if no child nodes matched
-     * @api
-     */
-    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, $limit = null, $offset = null)
-    {
-        $filter = $nodeTypeConstraints !== null ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : null;
-        // It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time.
-        return $this->getChildNodes($filter, $limit, $offset);
     }
 }

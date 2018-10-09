@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+
 /**
  * Interface for rendering a node label string based on some strategy
  *
@@ -21,9 +23,9 @@ interface NodeLabelGeneratorInterface
     /**
      * Render a node label
      *
-     * @param NodeInterface $node
+     * @param TraversableNodeInterface $node
      * @return string
      * @api
      */
-    public function getLabel($node);
+    public function getLabel(TraversableNodeInterface $node);
 }

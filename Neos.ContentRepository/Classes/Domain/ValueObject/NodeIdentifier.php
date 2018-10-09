@@ -25,6 +25,7 @@ final class NodeIdentifier implements \JsonSerializable
      * Constructor.
      *
      * @param string $existingIdentifier
+     * @throws \Exception
      */
     public function __construct(string $existingIdentifier = null)
     {
@@ -46,7 +47,7 @@ final class NodeIdentifier implements \JsonSerializable
     /**
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->uuid->toString();
     }
