@@ -10,9 +10,11 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Eel\FlowQueryOperations\FilterOperation;
 
 /**
@@ -23,11 +25,11 @@ class FilterOperationTest extends UnitTestCase
     /**
      * @test
      */
-    public function filterWithIdentifierUsesNodeIdentifier()
+    public function filterWithIdentifierUsesNodeAggregateIdentifier()
     {
         $node1 = $this->createMock(NodeInterface::class);
         $node2 = $this->createMock(NodeInterface::class);
-        $node2->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-identifier-uuid'));
+        $node2->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('node-identifier-uuid')));
 
         $context = array($node1, $node2);
         $q = new FlowQuery($context);
