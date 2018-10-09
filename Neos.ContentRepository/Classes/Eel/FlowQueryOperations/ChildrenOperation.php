@@ -11,12 +11,12 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\EventSourcedContentRepository\Domain\Service\NodeTypeConstraintService;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -42,9 +42,9 @@ class ChildrenOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeTypeConstraintService
+     * @var NodeTypeConstraintFactory
      */
-    protected $nodeTypeConstraintService;
+    protected $nodeTypeConstraintFactory;
 
     /**
      * {@inheritdoc}
@@ -143,7 +143,7 @@ class ChildrenOperation extends AbstractOperation
                     /** @var TraversableNodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
                         /** @var TraversableNodeInterface $childNode */
-                        foreach ($contextNode->findChildNodes($this->nodeTypeConstraintService->unserializeFilters(implode($allowedNodeTypes, ','))) as $childNode) {
+                        foreach ($contextNode->findChildNodes($this->nodeTypeConstraintFactory->parseFilterString(implode($allowedNodeTypes, ','))) as $childNode) {
                             if (!isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
                                 $filteredOutput[] = $childNode;
                                 $filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;
