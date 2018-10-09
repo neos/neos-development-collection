@@ -11,11 +11,12 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Eel\FlowQueryOperations\ParentOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Testcase for the FlowQuery ParentsOperation
@@ -28,34 +29,34 @@ class ParentOperationTest extends UnitTestCase
     protected $mockContext;
 
     /**
-     * @var NodeInterface
+     * @var TraversableNodeInterface
      */
     protected $siteNode;
 
     /**
-     * @var NodeInterface
+     * @var TraversableNodeInterface
      */
     protected $firstLevelNode;
 
     /**
-     * @var NodeInterface
+     * @var TraversableNodeInterface
      */
     protected $secondLevelNode;
 
     public function setUp()
     {
-        $this->siteNode = $this->createMock(NodeInterface::class);
-        $this->firstLevelNode = $this->createMock(NodeInterface::class);
-        $this->secondLevelNode = $this->createMock(NodeInterface::class);
+        $this->siteNode = $this->createMock(TraversableNodeInterface::class);
+        $this->firstLevelNode = $this->createMock(TraversableNodeInterface::class);
+        $this->secondLevelNode = $this->createMock(TraversableNodeInterface::class);
 
-        $this->siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
-        $this->siteNode->expects($this->any())->method('getChildNodes')->will($this->returnValue(array($this->firstLevelNode)));
+        $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site')));
+        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(array($this->firstLevelNode)));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->firstLevelNode->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->firstLevelNode->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));
-        $this->secondLevelNode->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->secondLevelNode->expects($this->any())->method('getPath')->will($this->returnValue('/site/first/second'));
+        $this->firstLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->firstLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site/first')));
+        $this->secondLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->secondLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site/first/second')));
     }
 
     /**
