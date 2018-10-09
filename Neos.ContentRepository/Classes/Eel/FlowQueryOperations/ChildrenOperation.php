@@ -11,11 +11,13 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\EventSourcedContentRepository\Domain\Service\NodeTypeConstraintService;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "children" operation working on ContentRepository nodes. It iterates over all
@@ -39,6 +41,12 @@ class ChildrenOperation extends AbstractOperation
     protected static $priority = 100;
 
     /**
+     * @Flow\Inject
+     * @var NodeTypeConstraintService
+     */
+    protected $nodeTypeConstraintService;
+
+    /**
      * {@inheritdoc}
      *
      * @param array (or array-like object) $context onto which this operation should be applied
@@ -46,7 +54,7 @@ class ChildrenOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return isset($context[0]) && ($context[0] instanceof NodeInterface);
+        return isset($context[0]) && ($context[0] instanceof TraversableNodeInterface);
     }
 
     /**
@@ -59,7 +67,7 @@ class ChildrenOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = array();
-        $outputNodePaths = array();
+        $outputNodeIdentifiers = array();
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $parsedFilter = FizzleParser::parseFilterGroup($arguments[0]);
             if ($this->earlyOptimizationOfFilters($flowQuery, $parsedFilter)) {
@@ -67,13 +75,13 @@ class ChildrenOperation extends AbstractOperation
             }
         }
 
-        /** @var NodeInterface $contextNode */
+        /** @var TraversableNodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            /** @var NodeInterface $childNode */
-            foreach ($contextNode->getChildNodes() as $childNode) {
-                if (!isset($outputNodePaths[$childNode->getPath()])) {
+            /** @var TraversableNodeInterface $childNode */
+            foreach ($contextNode->findChildNodes() as $childNode) {
+                if (!isset($outputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
                     $output[] = $childNode;
-                    $outputNodePaths[$childNode->getPath()] = true;
+                    $outputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;
                 }
             }
         }
@@ -97,7 +105,7 @@ class ChildrenOperation extends AbstractOperation
     {
         $optimized = false;
         $output = array();
-        $outputNodePaths = array();
+        $outputNodeIdentifiers = array();
         foreach ($parsedFilter['Filters'] as $filter) {
             $instanceOfFilters = array();
             $attributeFilters = array();
@@ -115,16 +123,16 @@ class ChildrenOperation extends AbstractOperation
             if ((isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) || count($instanceOfFilters) > 0 || $optimized === true) {
                 $optimized = true;
                 $filteredOutput = array();
-                $filteredOutputNodePaths = array();
+                $filteredOutputNodeIdentifiers = array();
                 // Optimize property name filter if present
                 if (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                     $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
-                    /** @var NodeInterface $contextNode */
+                    /** @var TraversableNodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
-                        $childNode = $contextNode->getNode($nodePath);
-                        if ($childNode !== null && !isset($filteredOutputNodePaths[$childNode->getPath()])) {
+                        $childNode = $contextNode->findNamedChildNode(new NodeName($nodePath));
+                        if ($childNode !== null && !isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
                             $filteredOutput[] = $childNode;
-                            $filteredOutputNodePaths[$childNode->getPath()] = true;
+                            $filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;
                         }
                     }
                 } elseif (count($instanceOfFilters) > 0) {
@@ -132,13 +140,13 @@ class ChildrenOperation extends AbstractOperation
                     $allowedNodeTypes = array_map(function ($instanceOfFilter) {
                         return $instanceOfFilter['Operand'];
                     }, $instanceOfFilters);
-                    /** @var NodeInterface $contextNode */
+                    /** @var TraversableNodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
-                        /** @var NodeInterface $childNode */
-                        foreach ($contextNode->getChildNodes(implode($allowedNodeTypes, ',')) as $childNode) {
-                            if (!isset($filteredOutputNodePaths[$childNode->getPath()])) {
+                        /** @var TraversableNodeInterface $childNode */
+                        foreach ($contextNode->findChildNodes($this->nodeTypeConstraintService->unserializeFilters(implode($allowedNodeTypes, ','))) as $childNode) {
+                            if (!isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
                                 $filteredOutput[] = $childNode;
-                                $filteredOutputNodePaths[$childNode->getPath()] = true;
+                                $filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;
                             }
                         }
                     }
@@ -156,7 +164,8 @@ class ChildrenOperation extends AbstractOperation
 
                 // Add filtered nodes to output
                 foreach ($filteredOutput as $filteredNode) {
-                    if (!isset($outputNodePaths[$filteredNode->getPath()])) {
+                    /** @var TraversableNodeInterface $filteredNode */
+                    if (!isset($outputNodeIdentifiers[(string)$filteredNode->getNodeIdentifier()])) {
                         $output[] = $filteredNode;
                     }
                 }
