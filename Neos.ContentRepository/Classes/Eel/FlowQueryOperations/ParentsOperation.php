@@ -59,14 +59,14 @@ class ParentsOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = array();
-        $outputNodeIdentifiers = array();
+        $outputNodeAggregateIdentifiers = array();
         foreach ($flowQuery->getContext() as $contextNode) {
             /* @var $contextNode \Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface */
             while ($contextNode->findParentNode() !== null) {
                 $contextNode = $contextNode->findParentNode();
-                if (!isset($outputNodeIdentifiers[(string)$contextNode->getNodeIdentifier()])) {
+                if (!isset($outputNodeAggregateIdentifiers[(string)$contextNode->getNodeAggregateIdentifier()])) {
                     $output[] = $contextNode;
-                    $outputNodeIdentifiers[(string)$contextNode->getNodeIdentifier()] = true;
+                    $outputNodeAggregateIdentifiers[(string)$contextNode->getNodeAggregateIdentifier()] = true;
                 }
             }
         }

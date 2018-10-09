@@ -67,7 +67,7 @@ class ChildrenOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = array();
-        $outputNodeIdentifiers = array();
+        $outputNodeAggregateIdentifiers = array();
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $parsedFilter = FizzleParser::parseFilterGroup($arguments[0]);
             if ($this->earlyOptimizationOfFilters($flowQuery, $parsedFilter)) {
@@ -79,9 +79,9 @@ class ChildrenOperation extends AbstractOperation
         foreach ($flowQuery->getContext() as $contextNode) {
             /** @var TraversableNodeInterface $childNode */
             foreach ($contextNode->findChildNodes() as $childNode) {
-                if (!isset($outputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
+                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
                     $output[] = $childNode;
-                    $outputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;
+                    $outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
                 }
             }
         }
@@ -105,7 +105,7 @@ class ChildrenOperation extends AbstractOperation
     {
         $optimized = false;
         $output = array();
-        $outputNodeIdentifiers = array();
+        $outputNodeAggregateIdentifiers = array();
         foreach ($parsedFilter['Filters'] as $filter) {
             $instanceOfFilters = array();
             $attributeFilters = array();
@@ -130,9 +130,9 @@ class ChildrenOperation extends AbstractOperation
                     /** @var TraversableNodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
                         $childNode = $contextNode->findNamedChildNode(new NodeName($nodePath));
-                        if ($childNode !== null && !isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
+                        if ($childNode !== null && !isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
                             $filteredOutput[] = $childNode;
-                            $filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;
+                            $filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
                         }
                     }
                 } elseif (count($instanceOfFilters) > 0) {
@@ -144,9 +144,9 @@ class ChildrenOperation extends AbstractOperation
                     foreach ($flowQuery->getContext() as $contextNode) {
                         /** @var TraversableNodeInterface $childNode */
                         foreach ($contextNode->findChildNodes($this->nodeTypeConstraintFactory->parseFilterString(implode($allowedNodeTypes, ','))) as $childNode) {
-                            if (!isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
+                            if (!isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
                                 $filteredOutput[] = $childNode;
-                                $filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;
+                                $filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
                             }
                         }
                     }
@@ -165,7 +165,7 @@ class ChildrenOperation extends AbstractOperation
                 // Add filtered nodes to output
                 foreach ($filteredOutput as $filteredNode) {
                     /** @var TraversableNodeInterface $filteredNode */
-                    if (!isset($outputNodeIdentifiers[(string)$filteredNode->getNodeIdentifier()])) {
+                    if (!isset($outputNodeAggregateIdentifiers[(string)$filteredNode->getNodeAggregateIdentifier()])) {
                         $output[] = $filteredNode;
                     }
                 }
