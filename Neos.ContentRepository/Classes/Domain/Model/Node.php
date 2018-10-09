@@ -2019,7 +2019,8 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      */
     public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, $limit = null, $offset = null)
     {
+        $filter = $nodeTypeConstraints !== null ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : null;
         // It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time.
-        return $this->getChildNodes($nodeTypeConstraints->asLegacyNodeTypeFilterString(), $limit, $offset);
+        return $this->getChildNodes($filter, $limit, $offset);
     }
 }
