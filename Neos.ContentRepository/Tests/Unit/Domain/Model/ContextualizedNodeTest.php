@@ -48,6 +48,8 @@ class ContextualizedNodeTest extends UnitTestCase
     }
 
     /**
+     * @param $methodName
+     * @param null $argument1
      */
     protected function assertThatOriginalOrNewNodeIsCalled($methodName, $argument1 = null)
     {

@@ -30,19 +30,39 @@ use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
  */
 interface NodeInterface extends CacheAwareInterface
 {
+    /**
+     * @return ContentStreamIdentifier
+     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
 
+    /**
+     * @return NodeIdentifier
+     */
     public function getNodeIdentifier(): NodeIdentifier;
 
+    /**
+     * @return NodeAggregateIdentifier
+     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier;
 
+    /**
+     * @return NodeTypeName
+     */
     public function getNodeTypeName(): NodeTypeName;
 
+    /**
+     * @return NodeType
+     */
     public function getNodeType(): NodeType;
 
-
+    /**
+     * @return NodeName
+     */
     public function getNodeName(): NodeName;
 
+    /**
+     * @return DimensionSpacePoint
+     */
     public function getDimensionSpacePoint(): DimensionSpacePoint;
 
     /**
@@ -61,11 +81,9 @@ interface NodeInterface extends CacheAwareInterface
      *
      * @param string $propertyName Name of the property
      * @return mixed value of the property
-     * @throws NodeException if the node does not contain the specified property
      * @api
      */
     public function getProperty($propertyName);
-
 
     /**
      * If this node has a property with the given name. Does NOT check the NodeType; but checks

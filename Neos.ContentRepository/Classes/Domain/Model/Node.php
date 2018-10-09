@@ -22,6 +22,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Exception\UnsupportedNodeMethodException;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
@@ -844,6 +845,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @param string $propertyName Name of the property
      * @param mixed $value Value of the property
      * @return mixed
+     * @throws NodeException
+     * @throws NodeTypeNotFoundException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      * @api
      */
     public function setProperty($propertyName, $value)
@@ -889,6 +894,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
+     * @throws NodeTypeNotFoundException
      * @api
      */
     public function getProperty($propertyName, $returnNodesAsIdentifiers = false)
@@ -1069,6 +1075,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      *
      * @return NodeType
      * @api
+     * @throws NodeTypeNotFoundException
      */
     public function getNodeType(): NodeType
     {
@@ -1084,6 +1091,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
      * @return NodeInterface
      * @api
+     * @throws NodeConstraintException
      */
     public function createNode($name, NodeType $nodeType = null, $identifier = null)
     {

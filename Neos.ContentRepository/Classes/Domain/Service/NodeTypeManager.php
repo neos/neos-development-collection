@@ -133,7 +133,7 @@ class NodeTypeManager
      */
     public function getNodeType($nodeTypeName)
     {
-        if ($this->cachedNodeTypes === array()) {
+        if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
         if (isset($this->cachedNodeTypes[$nodeTypeName])) {

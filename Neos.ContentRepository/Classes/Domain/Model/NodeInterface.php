@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -205,7 +206,7 @@ interface NodeInterface
      * @return NodeType
      * @api
      */
-    public function getNodeType();
+    public function getNodeType(): NodeType;
 
     /**
      * Sets the "hidden" flag for this node.
