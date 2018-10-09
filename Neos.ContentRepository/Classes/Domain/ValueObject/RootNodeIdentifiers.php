@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 
-
 final class RootNodeIdentifiers
 {
     /**
@@ -72,5 +71,4 @@ final class RootNodeIdentifiers
         }
         return self::$rootNodeAggregateIdentifier;
     }
-
 }
