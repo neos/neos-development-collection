@@ -14,6 +14,7 @@ This is the package bundle you can install alongside a plain Neos to play around
 | --------------------------- |:----------:|:----------------:|
 | **Basics**                  |            |                  |
 | Create/ Edit / Delete Nodes |     ✅     |        ⏩        |
+| Shortcut Handling            |     ✅     |                |
 | Query Nodes                 |     ✅     |        ⏩        |
 | Cut / Copy / Paste          |     ✅     |                  |
 | Move Nodes                  |     ✅     |        ⏩        |
@@ -31,6 +32,9 @@ This is the package bundle you can install alongside a plain Neos to play around
 | Export / Import             |     ✅     |                  |
 | Node Migrations             |     ✅     |                  |
 | Node Repair                 |     ✅     |                  |
+| **other**             |            |                  |
+| absolute node referencing for ContentCollection (e.g. shared footer in Demo Site            |     ✅     |                |
+
 
 ## Getting Started / Installation
 
