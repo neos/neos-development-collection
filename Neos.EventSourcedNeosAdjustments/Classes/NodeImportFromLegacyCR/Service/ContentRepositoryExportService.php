@@ -40,11 +40,6 @@ use Neos\EventSourcing\Event\EventPublisher;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Site\Event\SiteWasCreated;
-use Neos\EventSourcedNeosAdjustments\Domain\ValueObject\NodeType;
-use Neos\EventSourcedNeosAdjustments\Domain\ValueObject\PackageKey;
-use Neos\EventSourcedNeosAdjustments\Domain\ValueObject\SiteActive;
-use Neos\Neos\Domain\Model\Site;
 use Neos\Utility\TypeHandling;
 
 /**
@@ -146,7 +141,6 @@ class ContentRepositoryExportService
         ));
 
         $this->createWorkspaceAndRootNode();
-        $this->migrateSites();
 
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -432,28 +426,6 @@ class ContentRepositoryExportService
             new NodeTypeName('Neos.Neos:Sites'),
             UserIdentifier::forSystemUser()
         ));
-
-    }
-
-    private function migrateSites()
-    {
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-
-        $query = $queryBuilder->select('s')
-            ->from(Site::class, 's');
-
-        foreach ($query->getQuery()->getResult() as $site) {
-            /* @var $site Site */
-            // TODO: move Site Handling to Neos!!
-            $this->eventPublisher->publish('Neos.Neos:Site:' . $site->getNodeName(), new SiteWasCreated(
-                new \Neos\ContentRepository\Domain\ValueObject\NodeName($site->getNodeName()),
-                new PackageKey($site->getSiteResourcesPackageKey()),
-                new NodeType('Neos.Neos:Site'), // TODO
-                new \Neos\ContentRepository\Domain\ValueObject\NodeName($site->getNodeName()),
-                new SiteActive(true)
-            ));
-        }
 
     }
 }
