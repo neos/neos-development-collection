@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -115,9 +116,9 @@ final class NodeFactory
             // ROOT node!
             /* @var $node NodeInterface */
             $node = new $className(
-                ContentProjection\RootNodeIdentifiers::rootContentStreamIdentifier(),
-                ContentProjection\RootNodeIdentifiers::rootDimensionSpacePoint(),
-                ContentProjection\RootNodeIdentifiers::rootNodeAggregateIdentifier(),
+                RootNodeIdentifiers::rootContentStreamIdentifier(),
+                RootNodeIdentifiers::rootDimensionSpacePoint(),
+                RootNodeIdentifiers::rootNodeAggregateIdentifier(),
                 new NodeIdentifier($nodeRow['nodeidentifier']),
                 new NodeTypeName($nodeRow['nodetypename']),
                 $nodeType,
