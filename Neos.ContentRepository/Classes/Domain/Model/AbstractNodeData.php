@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -365,7 +367,7 @@ abstract class AbstractNodeData
     /**
      * Sets the node type of this node.
      *
-     * @param \Neos\ContentRepository\Domain\Model\NodeType $nodeType
+     * @param NodeType $nodeType
      * @return void
      */
     public function setNodeType(NodeType $nodeType)
@@ -379,7 +381,8 @@ abstract class AbstractNodeData
     /**
      * Returns the node type of this node.
      *
-     * @return \Neos\ContentRepository\Domain\Model\NodeType
+     * @return NodeType
+     * @throws NodeTypeNotFoundException
      */
     public function getNodeType()
     {

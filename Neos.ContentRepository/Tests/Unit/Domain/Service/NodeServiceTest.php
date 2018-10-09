@@ -10,6 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -239,10 +241,10 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNodeType->expects($this->once())
             ->method('getProperties')
-            ->will($this->returnValue(array(
-                'title' => array(),
-                'description' => array()
-            )));
+            ->will($this->returnValue([
+                'title' => [],
+                'description' => []
+            ]));
 
         $mockNode->expects($this->once())
             ->method('isRemoved')
@@ -258,11 +260,11 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNode->expects($this->once())
             ->method('getProperties')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue(new PropertyCollection([
                 'title' => 'hello',
                 'description' => 'world',
                 'invalidProperty' => 'world'
-            )));
+            ])));
 
         $nodeService->cleanUpProperties($mockNode);
     }
