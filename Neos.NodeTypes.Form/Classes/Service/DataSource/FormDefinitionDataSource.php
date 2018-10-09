@@ -34,7 +34,7 @@ class FormDefinitionDataSource extends AbstractDataSource
      * @param array $arguments
      * @return \Neos\Flow\Persistence\QueryResultInterface
      */
-    public function getData(NodeInterface $node = null, array $arguments)
+    public function getData(NodeInterface $node = null, array $arguments = [])
     {
         $formDefinitions['']['label'] = '';
         $forms = $this->yamlPersistenceManager->listForms();
