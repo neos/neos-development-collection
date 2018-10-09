@@ -38,5 +38,5 @@ interface DataSourceInterface
      * @return mixed JSON serializable data
      * @api
      */
-    public function getData(NodeInterface $node = null, array $arguments);
+    public function getData(NodeInterface $node = null, array $arguments = []);
 }
