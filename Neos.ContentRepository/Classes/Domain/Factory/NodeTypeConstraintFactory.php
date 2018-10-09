@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\Factory;
 
 /*
@@ -11,14 +10,13 @@ namespace Neos\ContentRepository\Domain\Factory;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
 /**
- * The node type constraints factory
- *
  * @Flow\Scope("singleton")
  */
 class NodeTypeConstraintFactory
@@ -29,7 +27,10 @@ class NodeTypeConstraintFactory
      */
     protected $nodeTypeManager;
 
-
+    /**
+     * @param string $serializedFilters
+     * @return NodeTypeConstraints
+     */
     public function parseFilterString(string $serializedFilters): NodeTypeConstraints
     {
         $wildcardAllowed = empty($serializedFilters);
@@ -44,7 +45,7 @@ class NodeTypeConstraintFactory
             } else {
                 $negate = false;
             }
-            $nodeTypeFilterPartSubTypes = array_merge([$nodeTypeFilterPart], array_map(function(Domain\Model\NodeType $nodeType) {
+            $nodeTypeFilterPartSubTypes = array_merge([$nodeTypeFilterPart], array_map(function (Domain\Model\NodeType $nodeType) {
                 return $nodeType->getName();
             }, $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart, false)));
 
