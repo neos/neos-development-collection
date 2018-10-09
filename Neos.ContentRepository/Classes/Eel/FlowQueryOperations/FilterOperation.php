@@ -103,7 +103,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     protected function matchesIdentifierFilter($element, $identifier)
     {
         /* @var $element NodeInterface */
-        return (strtolower((string)$element->getNodeIdentifier()) === strtolower($identifier));
+        return (strtolower((string)$element->getNodeAggregateIdentifier()) === strtolower($identifier));
     }
 
     /**
