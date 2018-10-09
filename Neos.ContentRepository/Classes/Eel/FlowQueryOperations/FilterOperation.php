@@ -11,11 +11,12 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\ObjectAccess;
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * This filter implementation contains specific behavior for use on ContentRepository
@@ -88,7 +89,8 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function matchesPropertyNameFilter($element, $propertyNameFilter)
     {
-        return ($element->getName() === $propertyNameFilter);
+        /* @var $element NodeInterface */
+        return ((string)$element->getNodeName() === $propertyNameFilter);
     }
 
     /**
@@ -100,7 +102,8 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function matchesIdentifierFilter($element, $identifier)
     {
-        return (strtolower($element->getIdentifier()) === strtolower($identifier));
+        /* @var $element NodeInterface */
+        return (strtolower((string)$element->getNodeIdentifier()) === strtolower($identifier));
     }
 
     /**
@@ -112,6 +115,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
      */
     protected function getPropertyPath($element, $propertyPath)
     {
+        /* @var $element NodeInterface */
         if ($propertyPath[0] === '_') {
             return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
         } else {
@@ -130,9 +134,10 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     protected function evaluateOperator($value, $operator, $operand)
     {
         if ($operator === 'instanceof' && $value instanceof NodeInterface) {
+            /* @var $value NodeInterface */
             if ($this->operandIsSimpleType($operand)) {
                 return $this->handleSimpleTypeOperand($operand, $value);
-            } elseif ($operand === NodeInterface::class || $operand === Node::class) {
+            } elseif ($operand === NodeInterface::class || $operand === Node::class || $operand === \Neos\ContentRepository\Domain\Model\NodeInterface::class || $operand === TraversableNodeInterface::class) {
                 return true;
             } else {
                 $isOfType = $value->getNodeType()->isOfType($operand[0] === '!' ? substr($operand, 1) : $operand);
