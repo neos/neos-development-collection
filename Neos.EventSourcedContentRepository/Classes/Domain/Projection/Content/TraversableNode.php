@@ -69,7 +69,13 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         return $node ? new TraversableNode($node, $this->subgraph, $this->contextParameters) : null;
     }
 
-    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, $limit = null, $offset = null)
+    /**
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array|TraversableNodeInterface[]
+     */
+    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null)
     {
         $childNodes = $this->subgraph->findChildNodes($this->node->getNodeIdentifier(), $nodeTypeConstraints, $limit, $offset);
 
