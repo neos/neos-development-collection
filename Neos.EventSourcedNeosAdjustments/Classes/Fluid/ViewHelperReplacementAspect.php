@@ -31,7 +31,9 @@ class ViewHelperReplacementAspect
 
     protected $viewHelperClassMapping = [
         \Neos\Neos\ViewHelpers\Link\NodeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Link\NodeViewHelper::class,
-        \Neos\Neos\ViewHelpers\Uri\NodeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Uri\NodeViewHelper::class
+        \Neos\Neos\ViewHelpers\Uri\NodeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Uri\NodeViewHelper::class,
+        \Neos\Neos\ViewHelpers\ContentElement\EditableViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement\EditableViewHelper::class,
+        \Neos\Neos\ViewHelpers\ContentElement\WrapViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement\WrapViewHelper::class
     ];
 
     /**

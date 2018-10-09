@@ -29,3 +29,12 @@ prototype(Neos.Neos:ContentCollection) {
 prototype(Neos.Neos:ContentCollectionRenderer) {
     @process.appendRemovedContentForBackend = ''
 }
+
+prototype(Neos.Neos:ContentElementEditable) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ContentElementEditableImplementation'
+}
+
+prototype(Neos.Neos:ContentElementWrapping) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ContentElementWrappingImplementation'
+}
+
