@@ -11,6 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
@@ -18,7 +19,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParametersFactory;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
-use Neos\EventSourcedContentRepository\Domain\Service\NodeTypeConstraintService;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Flow\Annotations as Flow;
 
@@ -29,9 +29,9 @@ class MenuImplementation extends AbstractMenuImplementation
 {
     /**
      * @Flow\Inject
-     * @var NodeTypeConstraintService
+     * @var NodeTypeConstraintFactory
      */
-    protected $nodeTypeConstraintService;
+    protected $nodeTypeConstraintFactory;
 
     /**
      * Hard limit for the maximum number of levels supported by this menu
@@ -270,7 +270,7 @@ class MenuImplementation extends AbstractMenuImplementation
     protected function getNodeTypeConstraints(): NodeTypeConstraints
     {
         if (!$this->nodeTypeConstraints) {
-            $this->nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($this->getFilter());
+            $this->nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($this->getFilter());
         }
 
         return $this->nodeTypeConstraints;

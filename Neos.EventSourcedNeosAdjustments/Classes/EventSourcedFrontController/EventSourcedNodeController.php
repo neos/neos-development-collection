@@ -12,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedFrontController;
  */
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
+use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
@@ -21,7 +22,6 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\Service\NodeTypeConstraintService;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
@@ -104,9 +104,9 @@ class EventSourcedNodeController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var NodeTypeConstraintService
+     * @var NodeTypeConstraintFactory
      */
-    protected $nodeTypeConstraintService;
+    protected $nodeTypeConstraintFactory;
 
     /**
      * @Flow\Inject
@@ -246,7 +246,7 @@ class EventSourcedNodeController extends ActionController
 
     private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, NodeAddress $nodeAddress, ContextParameters $contextParameters)
     {
-        $subtree = $subgraph->findSubtrees([$nodeAddress->getNodeAggregateIdentifier()], 10, $contextParameters, $this->nodeTypeConstraintService->unserializeFilters('!Neos.Neos:Document'));
+        $subtree = $subgraph->findSubtrees([$nodeAddress->getNodeAggregateIdentifier()], 10, $contextParameters, $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document'));
         $subtree = $subtree->getChildren()[0];
 
         $nodeByNodeIdentifierCache = $subgraph->getInMemoryCache()->getNodeByNodeIdentifierCache();
