@@ -174,9 +174,6 @@ class Node implements NodeInterface
     /**
      * Returns the specified property.
      *
-     * If the node has a content object attached, the property will be fetched
-     * there if it is gettable.
-     *
      * @param string $propertyName Name of the property
      * @return mixed value of the property
      * @api
@@ -202,7 +199,7 @@ class Node implements NodeInterface
     }
 
 
-    public function getLabel(): string
+    public function getLabel(): ?string
     {
         return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
     }
