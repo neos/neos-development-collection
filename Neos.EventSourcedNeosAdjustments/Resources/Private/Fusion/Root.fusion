@@ -39,6 +39,9 @@ prototype(Neos.Neos:ContentElementWrapping) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ContentElementWrappingImplementation'
 }
 
+prototype(Neos.Neos:ConvertUris) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ConvertUrisImplementation'
+}
 
 // Exception Handler
 prototype(Neos.Neos:Content) {
