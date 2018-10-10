@@ -104,6 +104,7 @@ class AfxService
     protected static function astNodeToFusion($payload, $indentation = '')
     {
         $tagName = $payload['identifier'];
+        $childrenPropertyName = 'content';
 
         $pathChildren = [];
         $contentChildren = [];
@@ -143,19 +144,32 @@ class AfxService
         }
 
         // Attributes
-        if ($payload['props'] && count($payload['props']) > 0) {
-            foreach ($payload['props'] as $propName => $prop) {
-                if ($propName === '@key' || $propName === '@children' || $propName === '@path') {
-                    continue;
-                } else {
-                    if ($propName{0} === '@') {
-                        $fusionName = $propName;
+        if ($payload['attributes'] && count($payload['attributes']) > 0) {
+            foreach ($payload['attributes'] as $attribute) {
+                if ($attribute['type'] === 'prop') {
+                    $prop = $attribute['payload'];
+                    $propName = $prop['identifier'];
+                    if ($propName === '@key') {
+                        // @key props are handled elsewhere
+                        continue;
+                    } elseif ($propName === '@children') {
+                        if ($prop['type'] === 'string') {
+                            $childrenPropertyName = $prop['payload'];
+                        } else {
+                            throw new AfxException(
+                                sprintf('@children only supports string payloads %s found', $prop['type'])
+                            );
+                        }
                     } else {
-                        $fusionName = $attributePrefix . $propName;
-                    }
-                    $propFusion = self::astToFusion($prop, $indentation . self::INDENTATION);
-                    if ($propFusion !== null) {
-                        $fusion .= $indentation . self::INDENTATION . $fusionName . ' = ' . $propFusion . PHP_EOL;
+                        if ($propName{0} === '@') {
+                            $fusionName = $propName;
+                        } else {
+                            $fusionName = $attributePrefix . $propName;
+                        }
+                        $propFusion =self::astToFusion($prop, $indentation . self::INDENTATION);
+                        if ($propFusion !== null) {
+                            $fusion .= $indentation . self::INDENTATION . $fusionName . ' = ' . $propFusion . PHP_EOL;
+                        }
                     }
                 }
             }
@@ -229,16 +243,20 @@ class AfxService
             foreach ($payload as $astNode) {
                 // detect key
                 $fusionName = 'item_' . $index;
-                if ($keyProperty = Arrays::getValueByPath($astNode, 'payload.props.@key')) {
-                    if ($keyProperty['type'] === 'string') {
-                        $fusionName = $keyProperty['payload'];
-                    } else {
-                        throw new AfxException(
-                            sprintf(
-                                '@key only supports string payloads %s was given',
-                                $keyProperty['type']
-                            )
-                        );
+                if ($astNode['type'] === 'node' && $astNode['payload']['attributes'] !== []) {
+                    foreach ($astNode['payload']['attributes'] as $attribute) {
+                        if ($attribute['type'] === 'prop' && $attribute['payload']['identifier'] === '@key') {
+                            if ($attribute['payload']['type'] === 'string') {
+                                $fusionName = $attribute['payload']['payload'];
+                            } else {
+                                throw new AfxException(
+                                    sprintf(
+                                        '@key only supports string payloads %s was given',
+                                        $attribute['payload']['type']
+                                    )
+                                );
+                            }
+                        }
                     }
                 }
 
