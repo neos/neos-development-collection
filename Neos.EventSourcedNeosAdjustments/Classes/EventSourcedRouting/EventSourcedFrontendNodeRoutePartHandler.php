@@ -138,9 +138,11 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
         $matchingNode = null;
         /** @var NodeInterface $matchingSite */
         $matchingSite = null;
+        /** @var ContentSubgraphInterface $matchingSubgraph */
+        $matchingSubgraph = null;
         $tagArray = [];
 
-        $this->securityContext->withoutAuthorizationChecks(function () use (&$matchingRootNode, &$matchingNode, &$matchingSite, $requestPath, &$tagArray) {
+        $this->securityContext->withoutAuthorizationChecks(function () use (&$matchingRootNode, &$matchingNode, &$matchingSite, &$matchingSubgraph, $requestPath, &$tagArray) {
             // fetch subgraph explicitly without authorization checks because the security context isn't available yet
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:
             $matchingSubgraph = $this->fetchSubgraphForParameters($requestPath);
@@ -160,8 +162,16 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
         if (!$matchingNode) {
             return false;
         }
-        if ($this->onlyMatchSiteNodes() && !$matchingNode->getNodeType()->isOfType('Neos.Neos:Site')) {
-            return false;
+        if ($this->onlyMatchSiteNodes()) {
+            // if we only want to match Site nodes, we need to go one level up and need to find the "Neos.Neos:Sites" node.
+            // Note this operation is usually fast because it is served from the ContentSubgraph's in-memory Cache
+            $parentOfMatchingNode = $matchingSubgraph->findParentNode($matchingNode->getNodeIdentifier());
+            $parentOfMatchingNodeIsSitesNode = $parentOfMatchingNode !== null && $parentOfMatchingNode->getNodeType()->isOfType('Neos.Neos:Sites');
+            if (!$parentOfMatchingNodeIsSitesNode) {
+                return false;
+            }
+
+
         }
 
 
@@ -330,7 +340,9 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             return false;
         }
 
-        $isSiteNode = $node->getNodeType()->isOfType('Neos.Neos:Site');
+        $parentNode = $subgraph->findParentNode($node->getNodeIdentifier());
+        // a node is a site node if the node above it it Neos.Neos:Sites
+        $isSiteNode = $parentNode && $parentNode->getNodeType()->isOfType('Neos.Neos:Sites');
         if ($this->onlyMatchSiteNodes() && !$isSiteNode) {
             return false;
         }
@@ -371,7 +383,9 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      */
     protected function getRequestPathByNode(ContentSubgraphInterface $contentSubgraph, NodeInterface $node)
     {
-        if ($node->getNodeType()->isOfType('Neos.Neos:Site')) {
+        // if the parent is the "sites" node, we return the empty URL.
+        $parentNode = $contentSubgraph->findParentNode($node->getNodeIdentifier());
+        if ($parentNode->getNodeType()->isOfType('Neos.Neos:Sites')) {
             return '';
         }
 
@@ -379,17 +393,20 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
         // the input node is allowed to be seen and we must generate the full path here.
         // To disallow showing a node actually hidden itself has to be ensured in matching
         // a request path, not in building one.
+
+        // TODO: Hidden handling should be solved in the CR itself; not here in the routing.
         $requestPathSegments = [];
         $this->securityContext->withoutAuthorizationChecks(function () use ($contentSubgraph, $node, &$requestPathSegments) {
             $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(true),
-                function (NodeInterface $node) use (&$requestPathSegments) {
+                function (NodeInterface $node) use (&$requestPathSegments, $contentSubgraph) {
                     if (!$node->hasProperty('uriPathSegment')) {
                         throw new MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
                             $node->getNodeIdentifier()), 1415020326);
                     }
 
-                    if ($node->getNodeType()->isOfType('Neos.Neos:Site')) {
-                        // do not traverse further up than the Site node
+                    $parentNode = $contentSubgraph->findParentNode($node->getNodeIdentifier());
+                    if ($parentNode->getNodeType()->isOfType('Neos.Neos:Sites')) {
+                        // do not traverse further up than the Site node (which is one level beneath the "Sites" node.
                         return false;
                     }
 

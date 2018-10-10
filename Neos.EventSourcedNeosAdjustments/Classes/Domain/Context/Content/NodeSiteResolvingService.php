@@ -42,11 +42,13 @@ class NodeSiteResolvingService
             $nodeAddress->getDimensionSpacePoint()
         );
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
-
+        $previousNode = null;
         do {
-            if ($node->getNodeType()->isOfType('Neos.Neos:Site')) {
-                return $node;
+            if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {
+                // the Site node is the one one level underneath the "Sites" node.
+                return $previousNode;
             }
+            $previousNode = $node;
         } while ($node = $subgraph->findParentNode($node->getNodeIdentifier()));
 
         // no Site node found at rootline

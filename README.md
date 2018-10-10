@@ -32,8 +32,7 @@ This is the package bundle you can install alongside a plain Neos to play around
 | Export / Import             |     ✅     |                  |
 | Node Migrations             |     ✅     |                  |
 | Node Repair                 |     ✅     |                  |
-| **other**             |            |                  |
-| absolute node referencing for ContentCollection (e.g. shared footer in Demo Site            |     ✅     |                |
+
 
 
 ## Getting Started / Installation
@@ -118,17 +117,9 @@ This is the package bundle you can install alongside a plain Neos to play around
 
     ```
 
-4. Ensure to have your Site node marked with `Neos.Neos:Site`; for the Demo Site, put the following in `NodeTypes.yaml`:
+4. create necessary tables using `./flow doctrine:migrate`
 
-    ```yaml
-    'Neos.Demo:Homepage':
-      superTypes:
-        'Neos.Neos:Site': true
-    ```
-
-5. create necessary tables using `./flow doctrine:migrate`
-
-6. create events from your (legacy) NodeData by running `./flow contentrepositorymigrate:run` - this also populates the projection
+5. create events from your (legacy) NodeData by running `./flow contentrepositorymigrate:run` - this also populates the projection
 
 ## Road to first running alpha
 
@@ -137,12 +128,13 @@ This is the package bundle you can install alongside a plain Neos to play around
 - [x] make it work with Neos.ContentRepository.DimensionSpace package
 - [ ] ensure Behavioral Tests run again
 - [ ] ensure Functional Tests run again
-- [ ] figure out how/if to use event sourced Site/Domain (!possibly difficult!) -> maybe already bring upstream?
+- [x] figure out how/if to use event sourced Site/Domain (!possibly difficult!) -> fixed
 - [x] change RoutePart Handler when using event-sourced mode
 - [x] adjust NodeController when using event-sourced mode
-- [ ] add switch to use event-sourced read model in Fusion rendering (!possibly difficult due to method signatures!)
+- [x] add switch to use event-sourced read model in Fusion rendering (!possibly difficult due to method signatures!)
 - [ ] allow to open User Interface based on Event-Sourced read model
 - [ ] create Commands in response to UI interaction
 - [x] create feature list in this README, detailing what is supported and what not yet.
 - [ ] support empty content dimension values in URL; e.g. "/de/..." for german, and "/..." for english
 - [ ] (further TODOs here; this list is not complete yet)
+- [ ] absolute node referencing for ContentCollection (e.g. shared footer in Demo Site
