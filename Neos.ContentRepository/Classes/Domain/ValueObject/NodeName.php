@@ -26,8 +26,12 @@ final class NodeName implements \JsonSerializable
      */
     private $name;
 
-    public function __construct(string $name)
+    public function __construct(?string $name)
     {
+        if ($name === null) {
+            return;
+        }
+
         if (!is_string($name) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $name) !== 1) {
             throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain lowercase characters, numbers and the "-" sign).', 1364290748);
         }
