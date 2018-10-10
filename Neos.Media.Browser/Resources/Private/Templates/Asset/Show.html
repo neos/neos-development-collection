@@ -26,7 +26,7 @@
                             </f:if>
                             <tr>
                                 <th>{neos:backend.translate(id: 'metadata.filename', package: 'Neos.Media.Browser')}</th>
-                                <td><a href="#" target="_blank">{assetProxy.filename}</a></td>
+                                <td><a href="{assetProxy.importStream}" target="_blank">{assetProxy.filename}</a></td>
                             </tr>
                             <tr>
                                 <th>{neos:backend.translate(id: 'metadata.lastModified', package: 'Neos.Media.Browser')}</th>
@@ -72,7 +72,7 @@
 <f:section name="ContentImage">
     <label>{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}</label>
     <div class="neos-preview-image">
-        <a href="{assetProxy.originalUri}" target="_blank">
+        <a href="{assetProxy.importStream}" target="_blank">
             <img src="{assetProxy.previewUri}" class="img-polaroid" alt="{assetProxy.label}"/>
         </a>
     </div>
