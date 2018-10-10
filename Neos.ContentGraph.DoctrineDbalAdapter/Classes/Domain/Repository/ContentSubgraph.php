@@ -144,51 +144,27 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
             return $cache->get($nodeIdentifier);
         } else {
             $nodeRow = $this->getDatabaseConnection()->executeQuery(
-                'SELECT n.* FROM neos_contentgraph_node n
-    WHERE n.nodeidentifier = :nodeIdentifier',
+                'SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeidentifier = :nodeIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier       
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'nodeIdentifier' => $nodeIdentifier
+                    'nodeIdentifier' => (string)$nodeIdentifier,
+                    'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                    'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
                 ]
             )->fetch();
-            if (!$nodeRow) {
-                $cache->rememberNonExistingNodeIdentifier($nodeIdentifier);
 
-                return null;
-            }
-
-            // We always allow root nodes
-            if (empty($nodeRow['dimensionspacepointhash'])) {
+            if (is_array($nodeRow)) {
                 $node = $this->nodeFactory->mapNodeRowToNode($nodeRow);
                 $cache->add($nodeIdentifier, $node);
 
                 return $node;
             } else {
-                // We are NOT allowed at this point to access the $nodeRow above anymore; as we only fetched an *arbitrary* node with the identifier; but
-                // NOT the correct one taking content stream and dimension space point into account. In the query below, we fetch everything we need.
+                $cache->rememberNonExistingNodeIdentifier($nodeIdentifier);
 
-                $nodeRow = $this->getDatabaseConnection()->executeQuery(
-                    'SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
-     INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-     WHERE n.nodeidentifier = :nodeIdentifier
-     AND h.contentstreamidentifier = :contentStreamIdentifier       
-     AND h.dimensionspacepointhash = :dimensionSpacePointHash',
-                    [
-                        'nodeIdentifier' => (string)$nodeIdentifier,
-                        'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                        'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
-                    ]
-                )->fetch();
-
-                if (is_array($nodeRow)) {
-                    $node = $this->nodeFactory->mapNodeRowToNode($nodeRow);
-                    $cache->add($nodeIdentifier, $node);
-
-                    return $node;
-                } else {
-                    $cache->rememberNonExistingNodeIdentifier($nodeIdentifier);
-
-                    return null;
-                }
+                return null;
             }
         }
     }

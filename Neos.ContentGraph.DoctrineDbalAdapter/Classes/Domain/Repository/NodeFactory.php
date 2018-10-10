@@ -67,67 +67,51 @@ final class NodeFactory
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
         $className = $this->getNodeInterfaceImplementationClassName($nodeType);
 
-        // $serializedSubgraphIdentifier is empty for the root node
-        if (!empty($nodeRow['dimensionspacepointhash'])) {
-            // NON-ROOT case
-            if (!array_key_exists('contentstreamidentifier', $nodeRow)) {
-                throw new \Exception('The "contentstreamidentifier" property was not found in the $nodeRow; you need to include the "contentstreamidentifier" field in the SQL result.');
-            }
-            if (!array_key_exists('dimensionspacepoint', $nodeRow)) {
-                throw new \Exception('The "dimensionspacepoint" property was not found in the $nodeRow; you need to include the "dimensionspacepoint" field in the SQL result.');
-            }
-
-            $contentStreamIdentifier = new ContentStreamIdentifier($nodeRow['contentstreamidentifier']);
-            // FIXME Move to DimensionSpacePoint::fromJson
-            $dimensionSpacePoint = new DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true));
-
-            $nodeIdentifier = new NodeIdentifier($nodeRow['nodeidentifier']);
-
-            $properties = json_decode($nodeRow['properties'], true);
-
-            // Reference and References "are no properties" anymore by definition; so Node does not know
-            // anything about it.
-            $properties = array_filter($properties, function($propertyName) use ($nodeType) {
-                $propertyType = $nodeType->getPropertyType($propertyName);
-                return $propertyType !== 'reference' && $propertyType !== 'references';
-            }, ARRAY_FILTER_USE_KEY);
-
-            $propertyCollection = new ContentProjection\PropertyCollection($properties);
-
-            /* @var $node NodeInterface */
-            $node = new $className(
-                $contentStreamIdentifier,
-                $dimensionSpacePoint,
-                new NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']),
-                $nodeIdentifier,
-                new NodeTypeName($nodeRow['nodetypename']),
-                $nodeType,
-                new NodeName($nodeRow['name']),
-                $nodeRow['hidden'],
-                $propertyCollection
-            );
-                //new ContentProjection\PropertyCollection(, $referenceProperties, $referencesProperties, $nodeIdentifier, $contentSubgraph),
-
-            if (!array_key_exists('name', $nodeRow)) {
-                throw new \Exception('The "name" property was not found in the $nodeRow; you need to include the "name" field in the SQL result.');
-            }
-            return $node;
-        } else {
-            // ROOT node!
-            /* @var $node NodeInterface */
-            $node = new $className(
-                RootNodeIdentifiers::rootContentStreamIdentifier(),
-                RootNodeIdentifiers::rootDimensionSpacePoint(),
-                RootNodeIdentifiers::rootNodeAggregateIdentifier(),
-                new NodeIdentifier($nodeRow['nodeidentifier']),
-                new NodeTypeName($nodeRow['nodetypename']),
-                $nodeType,
-                NodeName::root(),
-                false,
-                new ContentProjection\PropertyCollection([])
-            );
-            return $node;
+        if (!array_key_exists('dimensionspacepoint', $nodeRow)) {
+            throw new \Exception('The "dimensionspacepoint" property was not found in the $nodeRow; you need to include the "contentstreamidentifier" field in the SQL result.');
         }
+        if (!array_key_exists('contentstreamidentifier', $nodeRow)) {
+            throw new \Exception('The "contentstreamidentifier" property was not found in the $nodeRow; you need to include the "contentstreamidentifier" field in the SQL result.');
+        }
+        if (!array_key_exists('dimensionspacepoint', $nodeRow)) {
+            throw new \Exception('The "dimensionspacepoint" property was not found in the $nodeRow; you need to include the "dimensionspacepoint" field in the SQL result.');
+        }
+
+        $contentStreamIdentifier = new ContentStreamIdentifier($nodeRow['contentstreamidentifier']);
+        // FIXME Move to DimensionSpacePoint::fromJson
+        $dimensionSpacePoint = new DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true));
+
+        $nodeIdentifier = new NodeIdentifier($nodeRow['nodeidentifier']);
+
+        $properties = json_decode($nodeRow['properties'], true);
+
+        // Reference and References "are no properties" anymore by definition; so Node does not know
+        // anything about it.
+        $properties = array_filter($properties, function($propertyName) use ($nodeType) {
+            $propertyType = $nodeType->getPropertyType($propertyName);
+            return $propertyType !== 'reference' && $propertyType !== 'references';
+        }, ARRAY_FILTER_USE_KEY);
+
+        $propertyCollection = new ContentProjection\PropertyCollection($properties);
+
+        /* @var $node NodeInterface */
+        $node = new $className(
+            $contentStreamIdentifier,
+            $dimensionSpacePoint,
+            new NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']),
+            $nodeIdentifier,
+            new NodeTypeName($nodeRow['nodetypename']),
+            $nodeType,
+            new NodeName($nodeRow['name']),
+            $nodeRow['hidden'],
+            $propertyCollection
+        );
+            //new ContentProjection\PropertyCollection(, $referenceProperties, $referencesProperties, $nodeIdentifier, $contentSubgraph),
+
+        if (!array_key_exists('name', $nodeRow)) {
+            throw new \Exception('The "name" property was not found in the $nodeRow; you need to include the "name" field in the SQL result.');
+        }
+        return $node;
     }
 
 

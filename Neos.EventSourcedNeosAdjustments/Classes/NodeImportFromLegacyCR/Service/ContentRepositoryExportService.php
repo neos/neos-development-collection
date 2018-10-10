@@ -18,10 +18,11 @@ use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -75,6 +76,11 @@ class ContentRepositoryExportService
 
     protected $contentStreamIdentifier;
 
+    /**
+     * @Flow\Inject
+     * @var NodeCommandHandler
+     */
+    protected $nodeCommandHandler;
 
     /**
      * @Flow\Inject
@@ -420,7 +426,9 @@ class ContentRepositoryExportService
             $this->contentStreamIdentifier
         ));
 
-        $this->eventPublisher->publish($this->contentStreamName(), new RootNodeWasCreated(
+        // we use the *command handler* instead of directly generating events here for CreateRootNode, because
+        // the root node also contains dimension information (which is resolved in the command handler).
+        $this->nodeCommandHandler->handleCreateRootNode(new CreateRootNode(
             $this->contentStreamIdentifier,
             $this->sitesRootNodeIdentifier,
             new NodeTypeName('Neos.Neos:Sites'),

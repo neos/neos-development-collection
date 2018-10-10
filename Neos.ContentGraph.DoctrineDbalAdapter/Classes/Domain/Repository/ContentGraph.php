@@ -217,8 +217,10 @@ final class ContentGraph implements ContentGraphInterface
     {
         $connection = $this->client->getConnection();
 
+        // TODO: this code might still be broken somehow; because we are not in a DimensionSpacePoint / ContentStreamIdentifier here!
         $nodeRow = $connection->executeQuery(
-            'SELECT n.* FROM neos_contentgraph_node n
+            'SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
+                    INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                   WHERE n.nodetypename = :nodeTypeName',
             [
                 'nodeTypeName' => (string)$nodeTypeName,

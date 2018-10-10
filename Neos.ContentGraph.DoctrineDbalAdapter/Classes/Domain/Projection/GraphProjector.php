@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
+use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
@@ -89,15 +90,23 @@ class GraphProjector implements ProjectorInterface
         $node = new Node(
             $nodeRelationAnchorPoint,
             $event->getNodeIdentifier(),
-            null,
-            null,
-            null,
+            RootNodeIdentifiers::rootNodeAggregateIdentifier(),
+            RootNodeIdentifiers::rootDimensionSpacePoint()->getCoordinates(),
+            RootNodeIdentifiers::rootDimensionSpacePoint()->getHash(),
             [],
             $event->getNodeTypeName()
         );
 
-        $this->transactional(function () use ($node) {
+        $this->transactional(function () use ($node, $event) {
             $node->addToDatabase($this->getDatabaseConnection());
+            $this->connectHierarchy(
+                new NodeRelationAnchorPoint('00000000-0000-0000-0000-000000000000'),
+                $node->relationAnchorPoint,
+                null,
+                $node->nodeName,
+                $event->getContentStreamIdentifier(),
+                $event->getVisibleDimensionSpacePoints()
+            );
         });
     }
 
@@ -198,17 +207,12 @@ class GraphProjector implements ProjectorInterface
         if (!empty($missingParentRelations)) {
             // add yet missing parent relations
             $designatedParentNode = $this->projectionContentGraph->getNode($parentNodeIdentifier, $contentStreamIdentifier);
-            $parentIsRootNode = count($this->projectionContentGraph->findInboundHierarchyRelationsForNode($designatedParentNode->relationAnchorPoint, $contentStreamIdentifier)) === 0;
             foreach ($missingParentRelations as $dimensionSpacePoint) {
-                if ($parentIsRootNode) {
-                    $parentNode = $designatedParentNode;
-                } else {
-                    $parentNode = $this->projectionContentGraph->getNodeInAggregate(
-                        $designatedParentNode->nodeAggregateIdentifier,
-                        $contentStreamIdentifier,
-                        $dimensionSpacePoint
-                    );
-                }
+                $parentNode = $this->projectionContentGraph->getNodeInAggregate(
+                    $designatedParentNode->nodeAggregateIdentifier,
+                    $contentStreamIdentifier,
+                    $dimensionSpacePoint
+                );
 
                 $this->connectHierarchy(
                     $parentNode->relationAnchorPoint,

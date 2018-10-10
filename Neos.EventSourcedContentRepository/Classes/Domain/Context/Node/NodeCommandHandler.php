@@ -11,6 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
@@ -78,6 +79,12 @@ final class NodeCommandHandler
      * @var InterDimensionalVariationGraph
      */
     protected $interDimensionalVariationGraph;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionZookeeper
+     */
+    protected $contentDimensionZookeeper;
 
     /**
      * @Flow\Inject
@@ -300,10 +307,13 @@ final class NodeCommandHandler
         $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
+            $dimensionSpacePointSet = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
+
             $event = new RootNodeWasCreated(
                 $contentStreamIdentifier,
                 $command->getNodeIdentifier(),
                 $command->getNodeTypeName(),
+                $dimensionSpacePointSet,
                 $command->getInitiatingUserIdentifier()
             );
 

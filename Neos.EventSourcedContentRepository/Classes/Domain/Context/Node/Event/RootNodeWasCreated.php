@@ -11,8 +11,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -39,6 +39,13 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     protected $nodeTypeName;
 
     /**
+     * the root node is by definition visible in *all* dimension space points; so we need to include the full list here.
+     *
+     * @var DimensionSpacePointSet
+     */
+    private $visibleDimensionSpacePoints;
+
+    /**
      * @var UserIdentifier
      */
     private $initiatingUserIdentifier;
@@ -49,13 +56,15 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeTypeName $nodeTypeName
+     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
      * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, UserIdentifier $initiatingUserIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, DimensionSpacePointSet $visibleDimensionSpacePoints, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeTypeName = $nodeTypeName;
+        $this->visibleDimensionSpacePoints = $visibleDimensionSpacePoints;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
@@ -86,6 +95,13 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
         return $this->nodeTypeName;
     }
 
+    /**
+     * @return DimensionSpacePointSet
+     */
+    public function getVisibleDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->visibleDimensionSpacePoints;
+    }
 
     /**
      * @return UserIdentifier
@@ -105,6 +121,7 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
             $targetContentStream,
             $this->nodeIdentifier,
             $this->nodeTypeName,
+            $this->visibleDimensionSpacePoints,
             $this->initiatingUserIdentifier
         );
     }
