@@ -145,8 +145,21 @@ class AfxService
 
         // Attributes
         if ($payload['attributes'] && count($payload['attributes']) > 0) {
+            $spreadIndex = 1;
             foreach ($payload['attributes'] as $attribute) {
-                if ($attribute['type'] === 'prop') {
+                if ($attribute['type'] === 'spread') {
+                    if ($attribute['payload']['type'] === 'expression') {
+                        $spreadFusion = self::astToFusion($attribute['payload'], $indentation . self::INDENTATION);
+                        if ($spreadFusion !== null) {
+                            $fusion .= $indentation . self::INDENTATION . $attributePrefix . '@spread.spread_' . $spreadIndex . ' = ' . $spreadFusion . PHP_EOL;
+                            $spreadIndex++;
+                        }
+                    } else {
+                        throw new AfxException(
+                            sprintf('Spreads only support expression payloads %s found', $attribute['payload']['type'])
+                        );
+                    }
+                } elseif ($attribute['type'] === 'prop') {
                     $prop = $attribute['payload'];
                     $propName = $prop['identifier'];
                     if ($propName === '@key') {
@@ -166,7 +179,7 @@ class AfxService
                         } else {
                             $fusionName = $attributePrefix . $propName;
                         }
-                        $propFusion =self::astToFusion($prop, $indentation . self::INDENTATION);
+                        $propFusion = self::astToFusion($prop, $indentation . self::INDENTATION);
                         if ($propFusion !== null) {
                             $fusion .= $indentation . self::INDENTATION . $fusionName . ' = ' . $propFusion . PHP_EOL;
                         }
