@@ -54,7 +54,7 @@
                             </f:if>
                             <tr>
                                 <th>{neos:backend.translate(id: 'metadata.filename', package: 'Neos.Media.Browser')}</th>
-                                <td><a href="#" target="_blank">{assetProxy.filename}</a></td>
+                                <td><a href="{assetProxy.importStream}" target="_blank">{assetProxy.filename}</a></td>
                             </tr>
                             <tr>
                                 <th>{neos:backend.translate(id: 'metadata.lastModified', package: 'Neos.Media.Browser')}</th>
