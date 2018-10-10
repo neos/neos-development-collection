@@ -16,11 +16,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 final class RootNodeIdentifiers
 {
     /**
-     * @var ContentStreamIdentifier
-     */
-    private static $rootContentStreamIdentifier;
-
-    /**
      * @var DimensionSpacePoint
      */
     private static $rootDimensionSpacePoint;
@@ -31,23 +26,8 @@ final class RootNodeIdentifiers
     private static $rootNodeAggregateIdentifier;
 
     /**
-     * the Root node is part of *every* content stream; thus the Root node is assigned a special
-     * "root" content stream.
-     *
-     * @return ContentStreamIdentifier
-     * @throws \Exception
-     */
-    public static function rootContentStreamIdentifier(): ContentStreamIdentifier
-    {
-        if (!self::$rootContentStreamIdentifier) {
-            self::$rootContentStreamIdentifier = new ContentStreamIdentifier('00000000-0000-0000-0000-000000000000');
-        }
-        return self::$rootContentStreamIdentifier;
-    }
-
-    /**
-     * the Root node is part of *every* dimension; thus the Root node is assigned a special
-     * "root" dimension.
+     * the Root node is part of *every* dimension; thus the Root node is at home
+     * in the empty dimension; and it will be visible in *all* dimensions.
      *
      * @return DimensionSpacePoint
      */

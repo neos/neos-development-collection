@@ -61,9 +61,4 @@ final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInte
     {
         return $this->uuid->toString();
     }
-
-    public function isRoot(): bool
-    {
-        return $this === RootNodeIdentifiers::rootContentStreamIdentifier();
-    }
 }
