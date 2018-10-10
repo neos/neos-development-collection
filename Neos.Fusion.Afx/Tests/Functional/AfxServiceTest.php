@@ -515,6 +515,40 @@ EOF;
 
     /**
      * @test
+     */
+    public function slashesInTextNodesArePreserved()
+    {
+        $afxCode = '<h1>\o/</h1>';
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = '\\o/'
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function textsAreEscaped()
+    {
+        $afxCode = <<<'EOF'
+<h1>foo'bar\baz"bam</h1>
+EOF;
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = 'foo\'bar\\baz\"bam'
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+    
+    /**
+     * @test
      * @expectedException \PackageFactory\Afx\Exception
      */
     public function unclosedTagsRaisesException()
