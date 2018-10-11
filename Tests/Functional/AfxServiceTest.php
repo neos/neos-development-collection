@@ -605,11 +605,11 @@ EOF;
      */
     public function spreadsAreEvaluetedForFusionObjectTags()
     {
-        $afxCode = '<Vendor.Site:Prototype {...contextValue} />';
+        $afxCode = '<Vendor.Site:Prototype {...spreadExpression} />';
 
         $expectedFusion = <<<'EOF'
 Vendor.Site:Prototype {
-    @spread.spread_1 = ${contextValue}
+    @spread.spread_1 = ${spreadExpression}
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
@@ -618,20 +618,64 @@ EOF;
     /**
      * @test
      */
+    public function spreadsCanMixWithPropsForFusionObjectTags()
+    {
+        $afxCode = '<Vendor.Site:Prototype stringBefore="string" expressionBefore={expression} {...spreadExpression} stringAfter="string" expressionAfter={expression} />';
+
+        $expectedFusion = <<<'EOF'
+Vendor.Site:Prototype {
+    stringBefore = 'string'
+    expressionBefore = ${expression}
+    @spread.spread_1 = ${spreadExpression}
+    @spread.spread_2 = Neos.Fusion:RawArray {
+        stringAfter = 'string'
+        expressionAfter = ${expression}
+    }
+}
+EOF;
+
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
     public function spreadsAreEvaluetedForHtmlTags()
     {
-        $afxCode = '<h1 {...contextValue} />';
+        $afxCode = '<h1 {...spreadExpression} />';
 
         $expectedFusion = <<<'EOF'
 Neos.Fusion:Tag {
     tagName = 'h1'
     selfClosingTag = true
-    attributes.@spread.spread_1 = ${contextValue}
+    attributes.@spread.spread_1 = ${spreadExpression}
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
+    /**
+     * @test
+     */
+    public function spreadsCanMixWithPropsForHtmlTags()
+    {
+        $afxCode = '<h1 stringBefore="string" expressionBefore={expression} {...spreadExpression} stringAfter="string" expressionAfter={expression} />';
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    selfClosingTag = true
+    attributes.stringBefore = 'string'
+    attributes.expressionBefore = ${expression}
+    attributes.@spread.spread_1 = ${spreadExpression}
+    attributes.@spread.spread_2 = Neos.Fusion:RawArray {
+        stringAfter = 'string'
+        expressionAfter = ${expression}
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
 
     /**
      * @test
@@ -665,6 +709,16 @@ EOF;
 
     /**
      * @test
+     * @expectedException \PackageFactory\Afx\Exception
+     */
+    public function unclosedSpreadRaisesException()
+    {
+        $afxCode = '<h1 {...expression />';
+        AfxService::convertAfxToFusion($afxCode);
+    }
+
+    /**
+     * @test
      * @expectedException \Neos\Fusion\Afx\Exception\AfxException
      */
     public function childPathAnnotationWithExpressionRaisesException()
@@ -692,6 +746,4 @@ EOF;
         $afxCode = '<div @children={expression} ><span/></div>';
         AfxService::convertAfxToFusion($afxCode);
     }
-
-
 }
