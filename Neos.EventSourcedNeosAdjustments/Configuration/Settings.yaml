@@ -12,7 +12,22 @@ Neos:
       resolution:
         uriPathSegmentDelimiter: '_'
 
+    initialState:
+      cr:
+        nodes:
+          byContextPath: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.defaultNodesForBackend(site, documentNode, controllerContext)}'
+        contentDimensions:
+          # TODO: re-enable dimensions
+          allowedPresets: '${[]}'
+      ui:
+        contentCanvas:
+          src: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.uri(Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.nodeAddress(documentNode), controllerContext)}'
+
   Fusion:
     defaultContext:
       Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper
       Neos.EventSourcedNeosAdjustments.Node: Neos\EventSourcedNeosAdjustments\Fusion\Helper\NodeHelper
+  Neos:
+    Ui:
+      configurationDefaultEelContext:
+        Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper

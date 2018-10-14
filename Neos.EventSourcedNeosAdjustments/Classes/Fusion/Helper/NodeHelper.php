@@ -11,9 +11,13 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Neos\Domain\Exception;
 
 /**
@@ -21,6 +25,13 @@ use Neos\Neos\Domain\Exception;
  */
 class NodeHelper implements ProtectedContextAwareInterface
 {
+
+    /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
     /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
      * if no content collection could be found
@@ -47,6 +58,11 @@ class NodeHelper implements ProtectedContextAwareInterface
                 throw new Exception(sprintf('No content collection of type %s could be found in the current node (%s) or at the path "%s". You might want to adjust your node type configuration and create the missing child node through the "flow node:repair --node-type %s" command.', $contentCollectionType, $node->getPath(), $nodePath, (string)$node->getNodeType()), 1389352984);
             }
         }
+    }
+
+    public function nodeAddressToString(NodeInterface $node): string
+    {
+        return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
     }
 
     /**

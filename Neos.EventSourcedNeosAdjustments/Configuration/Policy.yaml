@@ -5,10 +5,18 @@ privilegeTargets:
     'Neos.EventSourcedNeosAdjustments:PublicFrontendAccess':
       matcher: 'method(Neos\EventSourcedNeosAdjustments\EventSourcedFrontController\EventSourcedNodeController->showAction())'
 
+    'Neos.EventSourcedNeosAdjustments:Backend.GeneralAccess':
+      matcher: 'method(Neos\EventSourcedNeosAdjustments\Ui\Controller\BackendController->.*())'
+
 roles:
 
   'Neos.Flow:Everybody':
     privileges:
     -
       privilegeTarget: 'Neos.EventSourcedNeosAdjustments:PublicFrontendAccess'
+      permission: GRANT
+  'Neos.Neos:AbstractEditor':
+    privileges:
+    -
+      privilegeTarget: 'Neos.EventSourcedNeosAdjustments:Backend.GeneralAccess'
       permission: GRANT

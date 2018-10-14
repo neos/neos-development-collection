@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\EventSourcedNeosAdjustments\Domain\Context\ContentStream;
+namespace Neos\EventSourcedNeosAdjustments\Ui;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -27,7 +27,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Authentication;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
-use Neos\EventSourcedNeosAdjustments\Domain\Model\User;
+use Neos\Neos\Domain\Model\User;
 use Neos\Party\Domain\Service\PartyService;
 
 /**

@@ -1,0 +1,16 @@
+include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+include: resource://Neos.Neos/Private/Fusion/Prototypes/NodeUri.fusion
+include: resource://Neos.Neos.Ui/Private/Fusion/Prototypes/RenderConfiguration.fusion
+include: resource://Neos.Neos.Ui/Private/Fusion/Prototypes/ArrayCollection.fusion
+include: resource://Neos.Neos.Ui/Private/Fusion/Prototypes/AppendAllToCollection.fusion
+
+
+prototype(Neos.Neos:NodeUri) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\NodeUriImplementation'
+    subgraph = ${site.subgraph}
+}
+
+prototype(Neos.Neos.Ui:RenderConfiguration) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Ui\\Fusion\\RenderConfigurationImplementation'
+    subgraph = ${site.subgraph}
+}

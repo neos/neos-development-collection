@@ -56,3 +56,8 @@ prototype(Neos.Neos:ContentComponent) {
 prototype(Neos.Neos:Shortcut) {
     @exceptionHandler = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
 }
+
+
+prototype(Neos.Neos:Page) {
+    lastVisitedNodeScript.attributes.data-neos-node = ${Neos.EventSourcedNeosAdjustments.Node.nodeAddressToString(node)}
+}
