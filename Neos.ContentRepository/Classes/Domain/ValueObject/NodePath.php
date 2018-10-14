@@ -61,6 +61,14 @@ final class NodePath implements \JsonSerializable
         }, $pathParts);
     }
 
+    public function getDepth(): int
+    {
+        if (!$this->isAbsolute()) {
+            return new \Exception('TODO: not supported');
+        }
+        return count($this->getParts());
+    }
+
     public function jsonSerialize()
     {
         return $this->path;
