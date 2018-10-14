@@ -28,7 +28,7 @@ final class NodeName implements \JsonSerializable
 
     public function __construct(?string $name)
     {
-        if ($name === null) {
+        if ($name === null || empty($name)) {
             return;
         }
 
