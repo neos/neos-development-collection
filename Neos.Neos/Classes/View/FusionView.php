@@ -148,8 +148,7 @@ class FusionView extends AbstractView
      */
     public function canRenderWithNodeAndPath()
     {
-        $currentNode = $this->getCurrentNode();
-        $currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
+        $currentSiteNode = $this->getCurrentSiteNode();
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
         return $fusionRuntime->canRender($this->fusionPath);
