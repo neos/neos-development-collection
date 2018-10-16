@@ -15,10 +15,10 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Ui\Domain\Service\UserLocaleService;
-use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Service\Mapping\NodePropertyConverterService;
 use Neos\ContentRepository\Service\AuthorizationService;
@@ -135,7 +135,7 @@ class ContentElementWrappingService
 
         $this->userLocaleService->switchToUILocale();
 
-        $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node, $subgraph));
+        $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
 
         $this->userLocaleService->switchToUILocale(true);
 
@@ -169,7 +169,7 @@ class ContentElementWrappingService
             }
 
             if (isset($this->renderedNodes[(string)$node->getNodeIdentifier()]) === false) {
-                $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node, $subgraph));
+                $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
                 $nodeContextPath = $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
             }

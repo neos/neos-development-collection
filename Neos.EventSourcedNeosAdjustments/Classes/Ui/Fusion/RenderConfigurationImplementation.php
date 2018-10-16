@@ -33,7 +33,7 @@ class RenderConfigurationImplementation extends AbstractFusionObject
     protected $settings;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.EventSourcedNeosAdjustments")
+     * @Flow\InjectConfiguration(package="Neos.EventSourcedNeosAdjustments", path="Ui")
      * @var array
      */
     protected $settingsEventSourced;

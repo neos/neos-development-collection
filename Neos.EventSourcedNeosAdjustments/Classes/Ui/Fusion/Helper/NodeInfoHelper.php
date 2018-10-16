@@ -408,12 +408,8 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      * @return string
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
-    public function uri(NodeAddress $nodeAddress = null, ControllerContext $controllerContext)
+    public function uri(NodeAddress $nodeAddress, ControllerContext $controllerContext)
     {
-        if ($nodeAddress === null) {
-            // This happens when the document node os not published yet
-            return '';
-        }
 
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
@@ -470,6 +466,11 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     public function nodeAddress(NodeInterface $node): NodeAddress
     {
         return $this->nodeAddressFactory->createFromNode($node);
+    }
+
+    public function serializedNodeAddress(NodeInterface $node): string
+    {
+        return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
     }
 
     /**

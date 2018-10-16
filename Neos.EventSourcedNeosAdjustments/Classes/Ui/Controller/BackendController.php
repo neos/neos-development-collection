@@ -154,20 +154,19 @@ class BackendController extends ActionController
             $this->redirectToUri($this->uriBuilder->uriFor('index', [], 'Login', 'Neos.Neos'));
         }
 
-        if ($nodeAddress === null) {
-            $nodeAddress = $this->findNodeToEdit();
-        }
-
         $workspaceName = $this->userService->getPersonalWorkspaceName();
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspaceName));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint());
         $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeIdentifier(), new NodeName($this->siteRepository->findDefault()->getNodeName()));
         $siteNode = new TraversableNode($siteNode, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, false));
 
-
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
-        $node = new TraversableNode($node, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, false));
-
+        if (!$nodeAddress) {
+            // TODO: fix resolving node address from session?
+            $node = $siteNode;
+        } else {
+            $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+            $node = new TraversableNode($node, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, false));
+        }
 
         $this->view->assign('user', $user);
         $this->view->assign('documentNode', $node);
@@ -185,24 +184,6 @@ class BackendController extends ActionController
     }
 
     /**
-     * Deactivates the new UI and redirects back to the old one
-     *
-     * @param NodeInterface|null $node
-     * @return void
-     */
-    public function deactivateAction(NodeInterface $node = null)
-    {
-        if ($node === null) {
-            $node = $this->findNodeToEdit();
-        }
-
-        $this->session->start();
-        $this->session->putData('__neosLegacyUiEnabled__', true);
-
-        $this->redirect('show', 'Frontend\Node', 'Neos.Neos', ['node' => $node]);
-    }
-
-    /**
      * @param NodeAddress $node
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
@@ -211,24 +192,6 @@ class BackendController extends ActionController
         $this->response->getHeaders()->setCacheControlDirective('no-cache');
         $this->response->getHeaders()->setCacheControlDirective('no-store');
         $this->redirect('show', 'Frontend\Node', 'Neos.Neos', ['node' => $node]);
-    }
-
-    /**
-     * @return NodeInterface|null
-     */
-    protected function getSiteNodeForLoggedInUser()
-    {
-        // TODO FIXME
-        return null;
-        $user = $this->userService->getBackendUser();
-        if ($user === null) {
-            return null;
-        }
-
-        $workspaceName = $this->userService->getPersonalWorkspaceName();
-        $contentContext = $this->createContext($workspaceName);
-
-        return $contentContext->getCurrentSiteNode();
     }
 
     /**
@@ -244,25 +207,6 @@ class BackendController extends ActionController
         }
 
         return new DimensionSpacePoint($coordinates);
-    }
-
-
-    /**
-     * @return NodeInterface|null
-     */
-    protected function findNodeToEdit()
-    {
-        $siteNode = $this->getSiteNodeForLoggedInUser();
-        return $siteNode; // TODO fixme
-        $reflectionMethod = new \ReflectionMethod($this->backendRedirectionService, 'getLastVisitedNode');
-        $reflectionMethod->setAccessible(true);
-        $node = $reflectionMethod->invoke($this->backendRedirectionService, $siteNode->getContext()->getWorkspaceName());
-
-        if ($node === null) {
-            $node = $siteNode;
-        }
-
-        return $node;
     }
 
     /**
