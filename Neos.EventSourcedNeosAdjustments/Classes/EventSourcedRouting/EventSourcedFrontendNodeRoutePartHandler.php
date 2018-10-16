@@ -146,14 +146,17 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             // fetch subgraph explicitly without authorization checks because the security context isn't available yet
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:
             $matchingSubgraph = $this->fetchSubgraphForParameters($requestPath);
-
             $matchingRootNode = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'));
 
             $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
             $tagArray[] = (string)$matchingSite->getNodeIdentifier();
-            if ($requestPath === '') {
-                $matchingNode = $matchingSite;
 
+            if (strpos($requestPath, '/') === false) {
+                // if the request path does not contain path segments (i.e. no slashes), we *know* that we found the
+                // site node. Note it is not enough to check for empty string here, as the requestPath might contain
+                // a workspace name and/or dimension information like @user-admin;language=en_US. We do not need to
+                // process this information here, as it has been already extracted beforehand and is part of $matchingSubgraph
+                $matchingNode = $matchingSite;
                 return;
             }
 
@@ -319,7 +322,8 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
     protected function resolveValue($node)
     {
         $nodeAddress = $node;
-        if (!$nodeAddress instanceof NodeAddress && !is_string($nodeAddress)) {
+        $nodeAddressIsCorrectType = $nodeAddress instanceof NodeAddress || is_string($nodeAddress);
+        if (!$nodeAddressIsCorrectType) {
             return false;
         }
 
