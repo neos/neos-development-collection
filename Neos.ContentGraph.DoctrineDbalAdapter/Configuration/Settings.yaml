@@ -1,0 +1,6 @@
+Neos:
+  Flow:
+    error:
+      debugger:
+        ignoredClasses:
+          'Neos\\ContentGraph\\DoctrineDbalAdapter.*': true
