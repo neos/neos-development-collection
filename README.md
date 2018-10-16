@@ -64,6 +64,7 @@ This is the package bundle you can install alongside a plain Neos to play around
 
             "neos/contentrepository-development-collection": "@dev",
             "neos/event-sourcing": "dev-master",
+            "neos/neos-ui": "dev-event-sourced-patch as dev-master",
             ...
         }
     }
@@ -120,6 +121,23 @@ This is the package bundle you can install alongside a plain Neos to play around
 4. create necessary tables using `./flow doctrine:migrate`
 
 5. create events from your (legacy) NodeData by running `./flow contentrepositorymigrate:run` - this also populates the projection
+
+6. Do a manual UI rebuild due to https://github.com/neos/neos-ui/pull/2178 currently needed:
+
+    ```
+    cd Packages/Application/Neos.Neos.Ui
+    make setup
+    make build
+    ```
+
+7. Enable FrontendDevelopmentMode in `Settings.yaml`:
+
+    ```
+    Neos:
+      Neos:
+        Ui:
+          frontendDevelopmentMode: true
+    ```
 
 ## Road to first running alpha
 
@@ -269,4 +287,5 @@ A `NodeAddress` is an external representation of a node (used in routing). TODO:
 - `Fusion` (for backend)
   - **Activation**: We load a custom `resource://Neos.EventSourcedNeosAdjustments/Private/Fusion/Backend/Root.fusion` using `Views.yaml`. TODO: make dependent on feature flag?
   - custom `NodeInfoHelper`, calling to a custom `NodePropertyConverterService`
+- adjust the *DimensionSwitcher* JS component in `Resources/Private/UiAdapter`
 - TODO: this is not everything yet.

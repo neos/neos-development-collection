@@ -37,3 +37,9 @@ Neos:
       configurationDefaultEelContext:
         Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
         Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
+
+      resources:
+        javascript:
+
+          'Neos.EventSourcedNeosAdjustments:Ui.UiAdapter':
+            resource: resource://Neos.EventSourcedNeosAdjustments/Public/UiAdapter/Plugin.js

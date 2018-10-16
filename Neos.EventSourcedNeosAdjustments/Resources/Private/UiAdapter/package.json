@@ -1,0 +1,19 @@
+{
+  "description": "Example 1",
+  "license": "GNU GPLv3",
+  "private": true,
+  "scripts": {
+    "build": "neos-react-scripts build",
+    "watch": "neos-react-scripts watch"
+  },
+  "devDependencies": {
+    "@neos-project/neos-ui-extensibility": "~1.3.4"
+  },
+  "neos": {
+    "buildTargetDirectory": "../../Public/UiAdapter"
+  },
+  "dependencies": {
+    "lodash.sortby": "^4.7.0",
+    "lodash.upperfirst": "^4.3.1"
+  }
+}
