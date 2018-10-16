@@ -57,7 +57,33 @@ prototype(Neos.Neos:Shortcut) {
     @exceptionHandler = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
 }
 
+prototype(Neos.Neos.Ui:RenderConfiguration) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Ui\\Fusion\\RenderConfigurationImplementation'
+    subgraph = ${site.subgraph}
+}
 
+// Last-Visited-Node Script
 prototype(Neos.Neos:Page) {
     lastVisitedNodeScript.attributes.data-neos-node = ${Neos.EventSourcedNeosAdjustments.Node.nodeAddressToString(node)}
 }
+
+
+// Neos UI Backend conditions change
+prototype(Neos.Neos:Page) {
+    head {
+        javascriptBackendInformation {
+            @if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+            @cache.entryIdentifier.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+        }
+        guestFrameApplication {
+            @if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+        }
+    }
+
+    newNeosBackendWrappingElement.@if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+    neosBackendNotification.@if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+    // TODO fixme
+    //neosUiNonRenderedNodeMetadata.@if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+
+}
+

@@ -473,6 +473,11 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
     }
 
+    public function inBackend(NodeInterface $node)
+    {
+        return !$this->nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
+    }
+
     /**
      * @param string $methodName
      * @return boolean

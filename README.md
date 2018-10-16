@@ -14,7 +14,7 @@ This is the package bundle you can install alongside a plain Neos to play around
 | --------------------------- |:----------:|:----------------:|
 | **Basics**                  |            |                  |
 | Create/ Edit / Delete Nodes |     ✅     |        ⏩        |
-| Shortcut Handling            |     ✅     |                |
+| Shortcut Handling            |    ✅     |                  |
 | Query Nodes                 |     ✅     |        ⏩        |
 | Cut / Copy / Paste          |     ✅     |                  |
 | Move Nodes                  |     ✅     |        ⏩        |
@@ -150,10 +150,10 @@ This is the package bundle you can install alongside a plain Neos to play around
 - [x] change RoutePart Handler when using event-sourced mode
 - [x] adjust NodeController when using event-sourced mode
 - [x] add switch to use event-sourced read model in Fusion rendering (!possibly difficult due to method signatures!)
-- [ ] allow to open User Interface based on Event-Sourced read model
+- [x] allow to open User Interface based on Event-Sourced read model
 - [ ] create Commands in response to UI interaction
 - [x] create feature list in this README, detailing what is supported and what not yet.
-- [ ] support empty content dimension values in URL; e.g. "/de/..." for german, and "/..." for english
+- [x] support empty content dimension values in URL; e.g. "/de/..." for german, and "/..." for english
 - [ ] (further TODOs here; this list is not complete yet)
 - [ ] absolute node referencing for ContentCollection (e.g. shared footer in Demo Site
 

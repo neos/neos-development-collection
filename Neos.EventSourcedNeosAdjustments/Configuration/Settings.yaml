@@ -27,11 +27,28 @@ Neos:
           contentCanvas:
             src: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.uri(Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.nodeAddress(documentNode), controllerContext)}'
             contextPath: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(documentNode)}'
+      documentNodeInformation:
+        metaData:
+          contextPath: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(documentNode)}'
+          siteNode: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.serializedNodeAddress(site)}'
+
+          # TODO Fix!
+          previewUrl: ''
+          #previewUrl: '${Neos.Ui.NodeInfo.uri(q(documentNode).context({workspaceName: documentNode.context.workspace.baseWorkspace.name}).get(0), controllerContext)}'
+          #previewUrl: '${Neos.Ui.NodeInfo.createRedirectToNode(controllerCon
+
+          contentDimensions:
+            active: '${documentNode.dimensionSpacePoint.coordinates}'
+            allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(documentNode.subgraph.dimensionSpacePoint)}'
+          documentNodeSerialization: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.renderNodeWithPropertiesAndChildrenInformation(documentNode, controllerContext)}'
+          url: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.uri(Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.nodeAddress(documentNode), controllerContext)}'
 
   Fusion:
     defaultContext:
       Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper
       Neos.EventSourcedNeosAdjustments.Node: Neos\EventSourcedNeosAdjustments\Fusion\Helper\NodeHelper
+      Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
+      Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
   Neos:
     Ui:
       configurationDefaultEelContext:
