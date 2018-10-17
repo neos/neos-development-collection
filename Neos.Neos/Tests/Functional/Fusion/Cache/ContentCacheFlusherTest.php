@@ -145,6 +145,10 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest[$liveWorkspace->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($liveWorkspace->getName());
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
 
+        // Check for legacy tags wich are still supported
+        $this->assertArrayHasKey('Node_'.$nodeIdentifier, $tagsToFlush);
+        $this->assertArrayHasKey('DescendantOf_'.$nodeIdentifier, $tagsToFlush);
+
         foreach ($workspacesToTest as $name => $workspaceHash) {
             $this->assertArrayHasKey('Node_'.$workspaceHash.'_'.$nodeIdentifier, $tagsToFlush, 'on workspace ' . $name);
             $this->assertArrayHasKey('DescendantOf_'.$workspaceHash.'_'.$nodeIdentifier, $tagsToFlush, 'on workspace ' . $name);
@@ -178,6 +182,12 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest[$liveWorkspace->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($liveWorkspace->getName());
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
 
+        // Check for legacy tags wich are still supported
+        $this->assertArrayHasKey('NodeType_Neos.Neos:Content', $tagsToFlush);
+        $this->assertArrayHasKey('NodeType_Neos.Neos:Node', $tagsToFlush);
+        $this->assertArrayHasKey('NodeType_Neos.NodeTypes:Text', $tagsToFlush);
+
+        // Check for tags that respect the workspace hash
         foreach ($workspacesToTest as $name => $workspaceHash) {
             $this->assertArrayHasKey('NodeType_'.$workspaceHash.'_Neos.Neos:Content', $tagsToFlush, 'on workspace ' . $name);
             $this->assertArrayHasKey('NodeType_'.$workspaceHash.'_Neos.Neos:Node', $tagsToFlush, 'on workspace ' . $name);
@@ -211,6 +221,11 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest = [];
         $workspacesToTest[$liveWorkspace->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($liveWorkspace->getName());
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
+
+        // Check for legacy tags wich are still supported
+        $this->assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115addd', $tagsToFlush);
+        $this->assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115adde', $tagsToFlush);
+        $this->assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115addf', $tagsToFlush);
 
         foreach ($workspacesToTest as $name => $workspaceHash) {
             $this->assertArrayHasKey('DescendantOf_'.$workspaceHash.'_c381f64d-4269-429a-9c21-6d846115addd', $tagsToFlush, 'on workspace ' . $name);
