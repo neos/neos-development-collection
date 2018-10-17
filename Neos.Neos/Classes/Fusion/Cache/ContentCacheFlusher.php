@@ -112,6 +112,10 @@ class ContentCacheFlusher
             $this->registerChangeOnNodeIdentifier($workspaceHash .'_'. $nodeIdentifier);
             $this->registerChangeOnNodeType($node->getNodeType()->getName(), $nodeIdentifier, $workspaceHash);
 
+            // Still register legacy cache configuration tags
+            $this->registerChangeOnNodeIdentifier($nodeIdentifier);
+            $this->registerChangeOnNodeType($node->getNodeType()->getName(), $nodeIdentifier, '');
+
             $nodeInWorkspace = $node;
             while ($nodeInWorkspace->getDepth() > 1) {
                 $nodeInWorkspace = $nodeInWorkspace->getParent();
@@ -121,6 +125,9 @@ class ContentCacheFlusher
                 }
                 $tagName = 'DescendantOf_' . $workspaceHash . '_' . $nodeInWorkspace->getIdentifier();
                 $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $node->getPath());
+
+                $legacyTagName = 'DescendantOf_' . $nodeInWorkspace->getIdentifier();
+                $this->tagsToFlush[$legacyTagName] = sprintf('which were tagged with legacy "%s" because node "%s" has changed.', $legacyTagName, $node->getPath());
             }
         }
     }
