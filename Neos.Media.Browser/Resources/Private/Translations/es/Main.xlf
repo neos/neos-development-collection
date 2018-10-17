@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="es-ES" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Arrastre y suelte un activo en una colección/etiqueta para añadirlos a ella.</target></trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
 			<target xml:lang="es-ES" state="translated">Conservar el archivo "{0}"</target></trans-unit>
@@ -208,13 +208,13 @@
 			<target xml:lang="es-ES" state="translated">Eliminar etiqueta</target></trans-unit>
       <trans-unit id="placeholder.createTag" xml:space="preserve">
 				<source>Enter tag label</source>
-			<target xml:lang="es-ES" state="needs-translation">Enter tag label</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Introduzca una marca para la etiqueta</target></trans-unit>
       <trans-unit id="createTag" xml:space="preserve">
 				<source>Create tag</source>
 			<target xml:lang="es-ES" state="translated">Crear etiqueta</target></trans-unit>
       <trans-unit id="tags.title.all" xml:space="preserve">
 				<source>All assets</source>
-			<target xml:lang="es-ES" state="needs-translation">All assets</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Todos los recursos</target></trans-unit>
       <trans-unit id="tags.all" xml:space="preserve">
 				<source>All</source>
 			<target xml:lang="es-ES" state="translated">Todo</target></trans-unit>
@@ -301,7 +301,7 @@
 			<target xml:lang="es-ES" state="translated">Creando</target></trans-unit>
       <trans-unit id="deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="es-ES" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El activo no pudo ser eliminado, porque aún hay nodos utilizándolo</target></trans-unit>
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
@@ -320,13 +320,13 @@
 			<target xml:lang="es-ES" state="translated">Reemplazar "{filename}"</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-			<target xml:lang="es-ES" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Puede reemplazar este activo subiendo un nuevo archivo. Una vez reemplazado, el nuevo activo será usado en todos los otros lugares donde el anterior activo era usado en el sitio web.</target></trans-unit>
       <trans-unit id="replaceAsset.note" xml:space="preserve" approved="yes">
 				<source>Note</source>
 			<target xml:lang="es-ES" state="translated">Nota</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
 				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-			<target xml:lang="es-ES" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Esta operación reemplazará al activo en todos los espacios de trabajo publicados o no publicados, incluyendo el sitio web.</target></trans-unit>
       <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
 				<source>Choose a new file</source>
 			<target xml:lang="es-ES" state="translated">Seleccione un nuevo archivo</target></trans-unit>
