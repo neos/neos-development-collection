@@ -192,7 +192,6 @@ Transition package implementing the event sourced CR core. In the longer run, wi
 
 - `Domain\Context\*` implements Commands, Command Handlers, Events for Workspace, Content Stream, Nodes
 - `Domain\Projection\*` implements projections for changes, workspace listing; and contains the definition for the main `Content` Graph projection (`ContentGraphInterface` and `ContentSubgraphInterface`)
-- `EventSourcedContentRepositoryFeatures` - the main feature Flag API. TODO: Move to `Neos.EventSourcedNeosAdjustments`
 
 ## CR / Neos.ContentGraph.DoctrineDbalAdapter
 
@@ -221,8 +220,7 @@ the new CLI command.
 
 We replace the default `FrontendNodeRoutePartHandler` by providing an extra implementation of `FrontendNodeRoutePartHandlerInterface`.
 
-**Activation**: There is a special `FrontendNodeRoutePartHandlerFactory`, configured in `Objects.yaml`, which returns the new route part handler
-if the feature flag is enabled.  
+**Activation**: We replace the implementation of `FrontendNodeRoutePartHandlerInterface` in `Objects.yaml`.
 
 - internally, the `Http` and `Routing` namespaces are used for behaviours internal to the routing.
 
@@ -231,8 +229,7 @@ if the feature flag is enabled.
 
 This is a replacement for `Frontend\NodeController` of Neos.Neos.
 
-**Activation**: We trigger this controller by AOP (in `NodeControllerAspect`): If the feature flag is enabled, we call the new
-controller when `processRequest()` is called for the Neos controller.
+**Activation**: We trigger this controller by AOP (in `NodeControllerAspect`): We call the new controller when `processRequest()` is called for the Neos controller.
 
 
 ### Fusion
@@ -242,9 +239,8 @@ controller when `processRequest()` is called for the Neos controller.
   - `Menu / DimensionMenu`
   - `NodeUri, ConvertUris`
   - `ContentElementEditable / ContentElementWrapping` (because the ContentElementWrapping service has changed quite a lot)
-  - **Activation**: using `FusionLoadingAspect` we load the Fusion file `resource://Neos.EventSourcedNeosAdjustments/Private/Fusion/Root.fusion`
-    if the feature flag is active. This `Root.fusion` *replaces the implementations* for the aforementioned Fusion objects,
-    so things work as expected for integrators (without new namespaces). 
+  - **Activation**: using fusion `autoInclude` in `Settings.yaml`, we load the Fusion file `resource://Neos.EventSourcedNeosAdjustments/Private/Fusion/Root.fusion`.
+    This `Root.fusion` *replaces the implementations* for the aforementioned Fusion objects, so things work as expected for integrators (without new namespaces). 
 
 - Eel `NodeHelper` and `WorkspaceHelper`
   - **Activation**: These helpers are registered under the names `Neos.EventSourcedNeosAdjustments.*`; so a separate name.
@@ -280,12 +276,11 @@ A `NodeAddress` is an external representation of a node (used in routing). TODO:
 ### Ui
 
 - `BackendController` is an alternative implementation for `Neos.Neos.Ui` `BackendController`.
-  - **Activation**: We trigger this controller by AOP (in `BackendControllerAspect`): If the feature flag is enabled, we call the new
-    controller when `processRequest()` is called for the Neos backend controller.
+  - **Activation**: We trigger this controller by AOP (in `BackendControllerAspect`): We call the new controller when `processRequest()` is called for the Neos backend controller.
 - We create Content Streams on backend login using the `EditorContentStreamZookeeper` (TODO change name maybe?).
-  - **Activation**: We trigger this service by Signal/Slot in `Package.php`. TODO: make dependent on feature flag
+  - **Activation**: We trigger this service by Signal/Slot in `Package.php`.
 - `Fusion` (for backend)
-  - **Activation**: We load a custom `resource://Neos.EventSourcedNeosAdjustments/Private/Fusion/Backend/Root.fusion` using `Views.yaml`. TODO: make dependent on feature flag?
+  - **Activation**: We load a custom `resource://Neos.EventSourcedNeosAdjustments/Private/Fusion/Backend/Root.fusion` using `Views.yaml`.
   - custom `NodeInfoHelper`, calling to a custom `NodePropertyConverterService`
 - adjust the *DimensionSwitcher* JS component in `Resources/Private/UiAdapter`
 - TODO: this is not everything yet.

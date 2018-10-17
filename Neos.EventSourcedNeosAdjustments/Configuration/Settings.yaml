@@ -1,4 +1,8 @@
 Neos:
+  EventSourcedNeosAdjustments:
+    contentDimensions:
+      resolution:
+        uriPathSegmentDelimiter: '_'
   Flow:
     http:
       chain:
@@ -6,13 +10,38 @@ Neos:
           chain:
             detectContentSubgraph:
               component: Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphComponent
+    error:
+      debugger:
+        ignoredClasses:
+          'Neos\\ContentRepository\\Domain\\Model\\NodeType': true
+          'Neos\\Eel\\CompilingEvaluator': true
+          'Neos\\EventSourcedContentRepository\\Domain\\Projection\\Content\\PropertyCollection': true
+          'Neos\\Fusion\\FusionObjects\\Helpers\\FusionPathProxy': true
+          'Neos\\ContentRepository\\Domain\\Service\\NodeTypeManager': true
 
-  EventSourcedNeosAdjustments:
-    contentDimensions:
-      resolution:
-        uriPathSegmentDelimiter: '_'
-
+  Fusion:
+    defaultContext:
+      Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper
+      Neos.EventSourcedNeosAdjustments.Node: Neos\EventSourcedNeosAdjustments\Fusion\Helper\NodeHelper
+      Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
+      Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
+  Neos:
+    fusion:
+      autoInclude:
+        Neos.EventSourcedNeosAdjustments: true
     Ui:
+
+      configurationDefaultEelContext:
+        Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
+        Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
+
+      resources:
+        javascript:
+
+          'Neos.EventSourcedNeosAdjustments:Ui.UiAdapter':
+            resource: resource://Neos.EventSourcedNeosAdjustments/Public/UiAdapter/Plugin.js
+
+
       initialState:
         cr:
           nodes:
@@ -42,21 +71,3 @@ Neos:
             allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(documentNode.subgraph.dimensionSpacePoint)}'
           documentNodeSerialization: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.renderNodeWithPropertiesAndChildrenInformation(documentNode, controllerContext)}'
           url: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.uri(Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.nodeAddress(documentNode), controllerContext)}'
-
-  Fusion:
-    defaultContext:
-      Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper
-      Neos.EventSourcedNeosAdjustments.Node: Neos\EventSourcedNeosAdjustments\Fusion\Helper\NodeHelper
-      Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
-      Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
-  Neos:
-    Ui:
-      configurationDefaultEelContext:
-        Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
-        Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
-
-      resources:
-        javascript:
-
-          'Neos.EventSourcedNeosAdjustments:Ui.UiAdapter':
-            resource: resource://Neos.EventSourcedNeosAdjustments/Public/UiAdapter/Plugin.js

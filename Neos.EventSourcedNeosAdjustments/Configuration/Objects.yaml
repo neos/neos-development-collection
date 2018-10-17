@@ -1,7 +1,5 @@
 
 Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
-  className: ~
-  factoryObjectName: Neos\EventSourcedNeosAdjustments\EventSourcedRouting\FrontendNodeRoutePartHandlerFactory
-  factoryMethodName: create
+  className: Neos\EventSourcedNeosAdjustments\EventSourcedRouting\EventSourcedFrontendNodeRoutePartHandler
 'Neos\ContentRepository\Domain\Projection\Content\NodeInterface':
   className: Neos\EventSourcedContentRepository\Domain\Projection\Content\Node

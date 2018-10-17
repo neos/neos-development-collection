@@ -12,10 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedFrontController;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\EventSourcedContentRepositoryFeatures;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 
 /**
  * @Flow\Scope("singleton")
@@ -25,12 +23,6 @@ class NodeControllerAspect
 {
 
     /**
-     * @Flow\Inject
-     * @var EventSourcedContentRepositoryFeatures
-     */
-    protected $eventSourcedContentRepositoryFeatures;
-
-    /**
      * Hooks into standard content element wrapping to render those attributes needed for the package to identify
      * nodes and Fusion paths
      *
@@ -38,14 +30,9 @@ class NodeControllerAspect
      * @param JoinPointInterface $joinPoint the join point
      * @return mixed
      */
-    public function contentElementAugmentation(JoinPointInterface $joinPoint)
+    public function replaceNodeController(JoinPointInterface $joinPoint)
     {
-        if ($this->eventSourcedContentRepositoryFeatures->isNewRoutingEnabled()) {
-            $controller = new EventSourcedNodeController();
-            $controller->processRequest($joinPoint->getMethodArgument('request'), $joinPoint->getMethodArgument('response'));
-        } else {
-            // Legacy mode
-            return $joinPoint->getAdviceChain()->proceed($joinPoint);
-        }
+        $controller = new EventSourcedNodeController();
+        $controller->processRequest($joinPoint->getMethodArgument('request'), $joinPoint->getMethodArgument('response'));
     }
 }

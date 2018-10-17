@@ -12,11 +12,9 @@ namespace Neos\EventSourcedNeosAdjustments\Ui;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\EventSourcedContentRepositoryFeatures;
 use Neos\EventSourcedNeosAdjustments\Ui\Controller\BackendController;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 
 /**
  * @Flow\Scope("singleton")
@@ -25,12 +23,6 @@ use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 class BackendControllerAspect
 {
 
-    /**
-     * @Flow\Inject
-     * @var EventSourcedContentRepositoryFeatures
-     */
-    protected $eventSourcedContentRepositoryFeatures;
-
      /**
      * @Flow\Around("method(Neos\Neos\Ui\Controller\BackendController->processRequest())")
      * @param JoinPointInterface $joinPoint the join point
@@ -38,12 +30,7 @@ class BackendControllerAspect
      */
     public function replaceBackendController(JoinPointInterface $joinPoint)
     {
-        if ($this->eventSourcedContentRepositoryFeatures->isNewRoutingEnabled()) {
-            $controller = new BackendController();
-            $controller->processRequest($joinPoint->getMethodArgument('request'), $joinPoint->getMethodArgument('response'));
-        } else {
-            // Legacy mode
-            return $joinPoint->getAdviceChain()->proceed($joinPoint);
-        }
+        $controller = new BackendController();
+        return $controller->processRequest($joinPoint->getMethodArgument('request'), $joinPoint->getMethodArgument('response'));
     }
 }

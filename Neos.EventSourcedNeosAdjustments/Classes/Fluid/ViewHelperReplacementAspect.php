@@ -12,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\EventSourcedContentRepositoryFeatures;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 
@@ -22,12 +21,6 @@ use Neos\Flow\Aop\JoinPointInterface;
  */
 class ViewHelperReplacementAspect
 {
-
-    /**
-     * @Flow\Inject
-     * @var EventSourcedContentRepositoryFeatures
-     */
-    protected $eventSourcedContentRepositoryFeatures;
 
     protected $viewHelperClassMapping = [
         \Neos\Neos\ViewHelpers\Link\NodeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Link\NodeViewHelper::class,
@@ -43,12 +36,10 @@ class ViewHelperReplacementAspect
      */
     public function createViewHelperInstanceFromClassName(JoinPointInterface $joinPoint)
     {
-        if ($this->eventSourcedContentRepositoryFeatures->isNewRoutingEnabled()) {
-            $viewHelperClassName = $joinPoint->getMethodArgument('viewHelperClassName');
+        $viewHelperClassName = $joinPoint->getMethodArgument('viewHelperClassName');
 
-            if (isset($this->viewHelperClassMapping[$viewHelperClassName])) {
-                $joinPoint->setMethodArgument('viewHelperClassName', $this->viewHelperClassMapping[$viewHelperClassName]);
-            }
+        if (isset($this->viewHelperClassMapping[$viewHelperClassName])) {
+            $joinPoint->setMethodArgument('viewHelperClassName', $this->viewHelperClassMapping[$viewHelperClassName]);
         }
         return $joinPoint->getAdviceChain()->proceed($joinPoint);
     }

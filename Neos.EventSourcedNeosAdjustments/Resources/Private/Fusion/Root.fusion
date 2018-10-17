@@ -57,11 +57,6 @@ prototype(Neos.Neos:Shortcut) {
     @exceptionHandler = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
 }
 
-prototype(Neos.Neos.Ui:RenderConfiguration) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Ui\\Fusion\\RenderConfigurationImplementation'
-    subgraph = ${site.subgraph}
-}
-
 // Last-Visited-Node Script
 prototype(Neos.Neos:Page) {
     lastVisitedNodeScript.attributes.data-neos-node = ${Neos.EventSourcedNeosAdjustments.Node.nodeAddressToString(node)}

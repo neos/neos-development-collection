@@ -10,7 +10,3 @@ prototype(Neos.Neos:NodeUri) {
     subgraph = ${site.subgraph}
 }
 
-prototype(Neos.Neos.Ui:RenderConfiguration) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Ui\\Fusion\\RenderConfigurationImplementation'
-    subgraph = ${site.subgraph}
-}

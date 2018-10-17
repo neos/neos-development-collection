@@ -14,7 +14,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
-use Neos\EventSourcedContentRepository\EventSourcedContentRepositoryFeatures;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
@@ -25,11 +24,6 @@ use Neos\Flow\Aop\JoinPointInterface;
  */
 class NodeServiceAspect
 {
-    /**
-     * @Flow\Inject
-     * @var EventSourcedContentRepositoryFeatures
-     */
-    protected $eventSourcedContentRepositoryFeatures;
 
     /**
      * @Flow\Inject
@@ -50,19 +44,14 @@ class NodeServiceAspect
      */
     public function getNodeFromContextPath(JoinPointInterface $joinPoint)
     {
-        if ($this->eventSourcedContentRepositoryFeatures->isNewRoutingEnabled()) {
-            $contextPath = $joinPoint->getMethodArgument('contextPath');
+        $contextPath = $joinPoint->getMethodArgument('contextPath');
 
-            $nodeAddress = $this->nodeAddressFactory->createFromUriString($contextPath);
-            $subgraph = $this->contentGraph
-                ->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint());
-            $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
-            // TODO: Context Parameter Handling
-            return new TraversableNode($node, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, false));
-        } else {
-            // Legacy mode
-            return $joinPoint->getAdviceChain()->proceed($joinPoint);
-        }
+        $nodeAddress = $this->nodeAddressFactory->createFromUriString($contextPath);
+        $subgraph = $this->contentGraph
+            ->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint());
+        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+        // TODO: Context Parameter Handling
+        return new TraversableNode($node, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, false));
     }
 
 }
