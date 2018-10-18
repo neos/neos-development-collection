@@ -80,7 +80,7 @@
 			<target xml:lang="es-ES" state="translated">Cualquiera que inicie sesión en el editor puede ver y modificar este espacio de trabajo.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
-			<target xml:lang="es-ES" state="needs-translation">Changes</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Cambios</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve" approved="yes">
 				<source>Open page in "{0}" workspace</source>
 			<target xml:lang="es-ES" state="translated">Abrir la página en el espacio de trabajo "{0}"</target></trans-unit>
@@ -92,7 +92,7 @@
 			<target xml:lang="es-ES" state="translated">El espacio de trabajo contiene cambios. Para eliminarlos, descarta los cambios primero.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target xml:lang="es-ES" state="needs-translation">Workspace can't be rebased on a different workspace because it still contains changes.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El espacio de trabajo no puede ser reajustado en un espacio de trabajo distinto ya que contiene cambios.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
 			<target xml:lang="es-ES" state="translated">El espacio de trabajo no se puede eliminar porque otros espacios de trabajo dependen de el.</target></trans-unit>
@@ -170,11 +170,11 @@
       </trans-unit>
       <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes">
         <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
-        <target xml:lang="es-ES" state="needs-translation">An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</target>
+        <target xml:lang="es-ES" state="translated">Un error ha ocurrido mientras se buscaba los nodos no publicados del espacio de trabajo "{0}", nada ha sido eliminado.</target>
       </trans-unit>
       <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges">
         <source>Your personal workspace contains changes, please publish or discard them first.</source>
-        <target xml:lang="es-ES" state="needs-translation">Your personal workspace contains changes, please publish or discard them first.</target>
+        <target xml:lang="es-ES" state="translated">Su espacio de trabajo personal contiene cambios, por favor publíquelos o descártelos.</target>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
@@ -188,7 +188,7 @@
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
         <source>The workspace "{0}" has been removed.</source>
-        <target xml:lang="es-ES" state="needs-translation">The workspace "{0}" has been removed.</target>
+        <target xml:lang="es-ES" state="translated">El espacio de trabajo "{0}" ha sido eliminado.</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangeHasBeenPublished" approved="yes">
         <source>The selected change has been published.</source>
@@ -200,7 +200,7 @@
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenPublished">
         <source>The selected changes have been published.</source>
-        <target xml:lang="es-ES" state="needs-translation">The selected changes have been published.</target>
+        <target xml:lang="es-ES" state="translated">Los cambios seleccionados han sido publicados.</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded">
         <source>The selected changes have been discarded.</source>
@@ -208,11 +208,11 @@
       </trans-unit>
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished">
         <source>All changes from workspace "{0}" have been published to {1}.</source>
-        <target xml:lang="es-ES" state="needs-translation">All changes from workspace "{0}" have been published to {1}.</target>
+        <target xml:lang="es-ES" state="translated">Todos los cambios del espacio de trabajo "{0}" han sido publicados a {1}.</target>
       </trans-unit>
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
         <source>All changes from workspace "{0}" have been discarded.</source>
-        <target xml:lang="es-ES" state="needs-translation">All changes from workspace "{0}" have been discarded.</target>
+        <target xml:lang="es-ES" state="translated">Todos los cambios del espacio de trabajo "{0}" han sido descartados.</target>
       </trans-unit>
       <trans-unit id="history.label" xml:space="preserve" approved="yes">
 				<source>History</source>
@@ -301,7 +301,7 @@
 			<target xml:lang="es-ES" state="translated">Crear usuario</target></trans-unit>
       <trans-unit id="users.actions.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="es-ES" state="needs-translation">Create a new user</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Crear un nuevo usuario</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve">
 				<source>User Data</source>
 			<target xml:lang="es-ES" state="translated">Datos de usuario</target></trans-unit>
@@ -460,7 +460,7 @@
 			<target xml:lang="es-ES" state="translated">Inicio</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
 				<source>Work</source>
-			<target xml:lang="es-ES" state="needs-translation">Work</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Trabajo</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
 			<target xml:lang="es-ES" state="translated">Administrar paquetes</target></trans-unit>
