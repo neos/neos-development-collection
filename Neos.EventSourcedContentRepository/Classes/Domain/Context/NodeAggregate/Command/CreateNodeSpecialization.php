@@ -11,7 +11,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 
 /**
  * Create a specialization of a node in a content stream
@@ -22,44 +25,44 @@ use Neos\EventSourcedContentRepository\Domain;
 final class CreateNodeSpecialization
 {
     /**
-     * @var \Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier
+     * @var ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
     /**
-     * @var \Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier
+     * @var NodeAggregateIdentifier
      */
     protected $nodeAggregateIdentifier;
 
     /**
-     * @var Domain\ValueObject\DimensionSpacePoint
+     * @var DimensionSpacePoint
      */
     protected $sourceDimensionSpacePoint;
 
     /**
-     * @var Domain\ValueObject\DimensionSpacePoint
+     * @var DimensionSpacePoint
      */
     protected $targetDimensionSpacePoint;
 
     /**
-     * @var Domain\ValueObject\NodeIdentifier
+     * @var NodeIdentifier
      */
     protected $specializationIdentifier;
 
 
     /**
-     * @param \Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
-     * @param \Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint
-     * @param Domain\ValueObject\NodeIdentifier $specializationIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $sourceDimensionSpacePoint
+     * @param DimensionSpacePoint $targetDimensionSpacePoint
+     * @param NodeIdentifier $specializationIdentifier
      */
     public function __construct(
-        Domain\Context\ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
-        Domain\Context\NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier,
-        Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint,
-        Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint,
-        Domain\ValueObject\NodeIdentifier $specializationIdentifier
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $sourceDimensionSpacePoint,
+        DimensionSpacePoint $targetDimensionSpacePoint,
+        NodeIdentifier $specializationIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -69,41 +72,41 @@ final class CreateNodeSpecialization
     }
 
     /**
-     * @return \Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier
+     * @return ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): Domain\Context\ContentStream\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
     /**
-     * @return \Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeAggregateIdentifier(): Domain\Context\NodeAggregate\NodeAggregateIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
     /**
-     * @return Domain\ValueObject\DimensionSpacePoint
+     * @return DimensionSpacePoint
      */
-    public function getSourceDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
+    public function getSourceDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->sourceDimensionSpacePoint;
     }
 
     /**
-     * @return Domain\ValueObject\DimensionSpacePoint
+     * @return DimensionSpacePoint
      */
-    public function getTargetDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
+    public function getTargetDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->targetDimensionSpacePoint;
     }
 
     /**
-     * @return Domain\ValueObject\NodeIdentifier
+     * @return NodeIdentifier
      */
-    public function getSpecializationIdentifier(): Domain\ValueObject\NodeIdentifier
+    public function getSpecializationIdentifier(): NodeIdentifier
     {
         return $this->specializationIdentifier;
     }

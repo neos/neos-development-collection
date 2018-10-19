@@ -11,38 +11,41 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 
 final class ChangeNodeAggregateType
 {
     /**
-     * @var ContentStream\ContentStreamIdentifier
+     * @var ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
 
     /**
-     * @var NodeAggregate\NodeAggregateIdentifier
+     * @var NodeAggregateIdentifier
      */
     protected $nodeAggregateIdentifier;
 
     /**
-     * @var Domain\ValueObject\NodeTypeName
+     * @var NodeTypeName
      */
     protected $newNodeTypeName;
 
     /**
-     * @var NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+     * @var NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
      */
     protected $strategy;
 
 
     public function __construct(
-        ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregate\NodeAggregateIdentifier $nodeAggregateIdentifier,
-        Domain\ValueObject\NodeTypeName $newNodeTypeName,
-        ?NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeTypeName $newNodeTypeName,
+        ?NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -51,33 +54,33 @@ final class ChangeNodeAggregateType
     }
 
     /**
-     * @return ContentStream\ContentStreamIdentifier
+     * @return ContentStreamIdentifier
      */
-    public function getContentStreamIdentifier(): ContentStream\ContentStreamIdentifier
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
     /**
-     * @return NodeAggregate\NodeAggregateIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeAggregateIdentifier(): NodeAggregate\NodeAggregateIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
     /**
-     * @return Domain\ValueObject\NodeTypeName
+     * @return NodeTypeName
      */
-    public function getNewNodeTypeName(): Domain\ValueObject\NodeTypeName
+    public function getNewNodeTypeName(): NodeTypeName
     {
         return $this->newNodeTypeName;
     }
 
     /**
-     * @return NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|null
+     * @return NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|null
      */
-    public function getStrategy(): ?NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+    public function getStrategy(): ?NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
     {
         return $this->strategy;
     }
