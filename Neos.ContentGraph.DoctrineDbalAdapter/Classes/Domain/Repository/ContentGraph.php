@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -204,7 +205,7 @@ final class ContentGraph implements ContentGraphInterface
             $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
         }
 
-        return new NodeAggregate($nodeAggregateIdentifier, new NodeTypeName($rawNodeTypeName), new Domain\ValueObject\NodeName($rawNodeName), $nodes);
+        return new NodeAggregate($nodeAggregateIdentifier, new NodeTypeName($rawNodeTypeName), new NodeName($rawNodeName), $nodes);
     }
 
     /**
@@ -285,7 +286,7 @@ final class ContentGraph implements ContentGraphInterface
             $parentAggregates[$rawNodeAggregateIdentifier] = new NodeAggregate(
                 new NodeAggregateIdentifier($rawNodeAggregateIdentifier),
                 new NodeTypeName($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
-                new Domain\ValueObject\NodeName($rawNodeNames[$rawNodeAggregateIdentifier]),
+                new NodeName($rawNodeNames[$rawNodeAggregateIdentifier]),
                 $nodesByAggregate[$rawNodeAggregateIdentifier]
             );
         }
@@ -348,7 +349,7 @@ final class ContentGraph implements ContentGraphInterface
             $childAggregates[$rawNodeAggregateIdentifier] = new NodeAggregate(
                 new NodeAggregateIdentifier($rawNodeAggregateIdentifier),
                 new NodeTypeName($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
-                new Domain\ValueObject\NodeName($rawNodeNames[$rawNodeAggregateIdentifier]),
+                new NodeName($rawNodeNames[$rawNodeAggregateIdentifier]),
                 $nodesByAggregate[$rawNodeAggregateIdentifier]
             );
         }

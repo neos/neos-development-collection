@@ -13,6 +13,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\ContentRepository\NodeException;
+use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
@@ -351,7 +354,7 @@ final class NodeCommandHandler
 
     /**
      * @param SetNodeReferences $command
-     * @throws Exception\NodeException
+     * @throws NodeException
      */
     public function handleSetNodeReferences(SetNodeReferences $command): void
     {
@@ -574,7 +577,7 @@ final class NodeCommandHandler
 
     /**
      * @param ChangeNodeName $command
-     * @throws Exception\NodeException
+     * @throws NodeException
      */
     public function handleChangeNodeName(ChangeNodeName $command)
     {
@@ -584,7 +587,7 @@ final class NodeCommandHandler
             $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
 
             if ($node->getNodeType()->getName() === 'Neos.ContentRepository:Root') {
-                throw new Exception\NodeException('The root node cannot be renamed.', 1346778388);
+                throw new NodeException('The root node cannot be renamed.', 1346778388);
             }
 
             $event = new NodeNameWasChanged(
@@ -664,7 +667,7 @@ final class NodeCommandHandler
 
     /**
      * @param TranslateNodeInAggregate $command
-     * @throws Exception\NodeException
+     * @throws NodeException
      */
     public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command): void
     {
@@ -694,7 +697,7 @@ final class NodeCommandHandler
         /** @var Node $sourceParentNode */
         $sourceParentNode = $sourceContentSubgraph->findParentNode($sourceNodeIdentifier);
         if ($sourceParentNode === null) {
-            throw new Exception\NodeException(sprintf('Parent node for %s in %s not found',
+            throw new NodeException(sprintf('Parent node for %s in %s not found',
                 $sourceNodeIdentifier, $sourceNode->getDimensionSpacePoint()), 1506354274);
         }
 
@@ -706,7 +709,7 @@ final class NodeCommandHandler
                 $dimensionSpacePoint);
             $destinationParentNode = $destinationContentSubgraph->findNodeByNodeAggregateIdentifier($parentNodeAggregateIdentifier);
             if ($destinationParentNode === null) {
-                throw new Exception\NodeException(sprintf('Could not find suitable parent node for %s in %s',
+                throw new NodeException(sprintf('Could not find suitable parent node for %s in %s',
                     $sourceNodeIdentifier, $destinationContentSubgraph->getDimensionSpacePoint()), 1506354275);
             }
             $destinationParentNodeIdentifier = $destinationParentNode->getNodeIdentifier();
@@ -727,7 +730,7 @@ final class NodeCommandHandler
         foreach ($sourceNode->getNodeType()->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
             $childNode = $sourceContentSubgraph->findChildNodeConnectedThroughEdgeName($sourceNodeIdentifier, new NodeName($childNodeNameStr));
             if ($childNode === null) {
-                throw new Exception\NodeException(sprintf('Could not find auto-created child node with name %s for %s in %s',
+                throw new NodeException(sprintf('Could not find auto-created child node with name %s for %s in %s',
                     $childNodeNameStr, $sourceNodeIdentifier, $sourceNode->getDimensionSpacePoint()), 1506506170);
             }
 
