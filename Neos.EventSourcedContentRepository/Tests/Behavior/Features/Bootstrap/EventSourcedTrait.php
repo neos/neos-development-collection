@@ -11,16 +11,22 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
@@ -109,7 +115,7 @@ trait EventSourcedTrait
     public function theEventRootNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $streamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStream\ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $this->publishEvent('Neos.ContentRepository:RootNodeWasCreated', $streamName, $eventPayload);
         $this->rootNodeIdentifier = new NodeIdentifier($eventPayload['nodeIdentifier']);
     }
@@ -135,7 +141,7 @@ trait EventSourcedTrait
             $eventPayload['propertyDefaultValuesAndTypes'] = [];
         }
 
-        $streamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStream\ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
         $this->publishEvent('Neos.ContentRepository:NodeAggregateWithNodeWasCreated', $streamName, $eventPayload);
@@ -148,7 +154,7 @@ trait EventSourcedTrait
     public function theEventNodeSpecializationWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $streamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStream\ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
         $this->publishEvent('Neos.ContentRepository:NodeSpecializationWasCreated', $streamName, $eventPayload);
@@ -161,7 +167,7 @@ trait EventSourcedTrait
     public function theEventNodeGeneralizationWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $streamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStream\ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
         $this->publishEvent('Neos.ContentRepository:NodeGeneralizationWasCreated', $streamName, $eventPayload);
@@ -232,7 +238,7 @@ trait EventSourcedTrait
                         $eventPayload[$line['Key']] = new DimensionSpacePointSet($convertedPoints);
                         break;
                     case 'NodeAggregateIdentifier':
-                        $eventPayload[$line['Key']] = new NodeAggregate\NodeAggregateIdentifier($line['Value']);
+                        $eventPayload[$line['Key']] = new NodeAggregateIdentifier($line['Value']);
                         break;
                     case 'PropertyValue':
                         $tmp = json_decode($line['Value'], true);
@@ -291,8 +297,8 @@ trait EventSourcedTrait
 
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
         $command = $this->propertyMapper->convert($commandArguments, \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeSpecialization::class, $configuration);
-        /** @var NodeAggregate\NodeAggregateCommandHandler $commandHandler */
-        $commandHandler = $this->objectManager->get(NodeAggregate\NodeAggregateCommandHandler::class);
+        /** @var NodeAggregateCommandHandler $commandHandler */
+        $commandHandler = $this->objectManager->get(NodeAggregateCommandHandler::class);
 
         $commandHandler->handleCreateNodeSpecialization($command);
     }
@@ -391,9 +397,9 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
 
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, NodeAggregate\Command\CreateNodeGeneralization::class, $configuration);
-        /** @var NodeAggregate\NodeAggregateCommandHandler $commandHandler */
-        $commandHandler = $this->objectManager->get(NodeAggregate\NodeAggregateCommandHandler::class);
+        $command = $this->propertyMapper->convert($commandArguments, CreateNodeGeneralization::class, $configuration);
+        /** @var NodeAggregateCommandHandler $commandHandler */
+        $commandHandler = $this->objectManager->get(NodeAggregateCommandHandler::class);
 
         $commandHandler->handleCreateNodeGeneralization($command);
     }
@@ -421,14 +427,14 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $command = new NodeAggregate\Command\ChangeNodeAggregateType(
-            new ContentStream\ContentStreamIdentifier($commandArguments['contentStreamIdentifier']),
-            new NodeAggregate\NodeAggregateIdentifier($commandArguments['nodeAggregateIdentifier']),
-            new \Neos\ContentRepository\Domain\ValueObject\NodeTypeName($commandArguments['newNodeTypeName']),
-            $commandArguments['strategy'] ? new NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy($commandArguments['strategy']) : null
+        $command = new ChangeNodeAggregateType(
+            new ContentStreamIdentifier($commandArguments['contentStreamIdentifier']),
+            new NodeAggregateIdentifier($commandArguments['nodeAggregateIdentifier']),
+            new NodeTypeName($commandArguments['newNodeTypeName']),
+            $commandArguments['strategy'] ? new NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy($commandArguments['strategy']) : null
         );
-        /** @var NodeAggregate\NodeAggregateCommandHandler $commandHandler */
-        $commandHandler = $this->objectManager->get(NodeAggregate\NodeAggregateCommandHandler::class);
+        /** @var NodeAggregateCommandHandler $commandHandler */
+        $commandHandler = $this->objectManager->get(NodeAggregateCommandHandler::class);
 
         $commandHandler->handleChangeNodeAggregateType($command);
     }
@@ -462,7 +468,7 @@ trait EventSourcedTrait
         switch ($commandClassName) {
             case \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode::class:
                 $command = new \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode(
-                    is_string($commandArguments['contentStreamIdentifier']) ? new ContentStream\ContentStreamIdentifier($commandArguments['contentStreamIdentifier']) : $commandArguments['contentStreamIdentifier'],
+                    is_string($commandArguments['contentStreamIdentifier']) ? new ContentStreamIdentifier($commandArguments['contentStreamIdentifier']) : $commandArguments['contentStreamIdentifier'],
                     $commandArguments['dimensionSpacePoint'],
                     is_string($commandArguments['nodeAggregateIdentifier']) ? new NodeAggregate\NodeAggregateIdentifier($commandArguments['nodeAggregateIdentifier']) : $commandArguments['nodeAggregateIdentifier'],
                     is_string($commandArguments['newParentNodeAggregateIdentifier']) ? new NodeAggregate\NodeAggregateIdentifier($commandArguments['newParentNodeAggregateIdentifier']) : $commandArguments['newParentNodeAggregateIdentifier'],
@@ -633,7 +639,7 @@ trait EventSourcedTrait
             case 'ForkContentStream':
                 return [
                     ContentStream\Command\ForkContentStream::class,
-                    ContentStream\ContentStreamCommandHandler::class,
+                    ContentStreamCommandHandler::class,
                     'handleForkContentStream'
                 ];
             case 'ChangeNodeName':
@@ -756,7 +762,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @var ContentStream\ContentStreamIdentifier
+     * @var ContentStreamIdentifier
      */
     private $contentStreamIdentifier;
 
@@ -786,7 +792,7 @@ trait EventSourcedTrait
     public function iAmInContentStreamAndDimensionSpacePoint(string $contentStreamIdentifier, string $dimensionSpacePoint)
     {
         $contentStreamIdentifier = $this->replaceUuidIdentifiers($contentStreamIdentifier);
-        $this->contentStreamIdentifier = new ContentStream\ContentStreamIdentifier($contentStreamIdentifier);
+        $this->contentStreamIdentifier = new ContentStreamIdentifier($contentStreamIdentifier);
         $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true));
     }
 

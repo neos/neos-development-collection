@@ -1,0 +1,7 @@
+Neos:
+  Flow:
+    persistence:
+      backendOptions:
+        driver: pdo_mysql
+        user: ''
+        password: ''
