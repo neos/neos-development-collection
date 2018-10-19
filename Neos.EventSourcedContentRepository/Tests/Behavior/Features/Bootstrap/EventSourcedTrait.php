@@ -132,7 +132,7 @@ trait EventSourcedTrait
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
-        $this->publishEvent('Neos.ContentRepository:RootNodeWasCreated', $streamName, $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:RootNodeWasCreated', $streamName, $eventPayload);
         $this->rootNodeIdentifier = new NodeIdentifier($eventPayload['nodeIdentifier']);
     }
 
@@ -160,7 +160,7 @@ trait EventSourcedTrait
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
-        $this->publishEvent('Neos.ContentRepository:NodeAggregateWithNodeWasCreated', $streamName, $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated', $streamName, $eventPayload);
     }
 
     /**
@@ -173,7 +173,7 @@ trait EventSourcedTrait
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
-        $this->publishEvent('Neos.ContentRepository:NodeSpecializationWasCreated', $streamName, $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeSpecializationWasCreated', $streamName, $eventPayload);
     }
 
     /**
@@ -186,7 +186,7 @@ trait EventSourcedTrait
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
-        $this->publishEvent('Neos.ContentRepository:NodeGeneralizationWasCreated', $streamName, $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeGeneralizationWasCreated', $streamName, $eventPayload);
     }
 
     /**

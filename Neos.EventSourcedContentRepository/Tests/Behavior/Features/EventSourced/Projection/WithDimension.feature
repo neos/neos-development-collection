@@ -7,7 +7,7 @@ Feature: Reading of our Graph Projection
       | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
 
   Scenario: Property Changes with two dimensions
-    Given the Event "Neos.ContentRepository:RootNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+    Given the Event "Neos.EventSourcedContentRepository:RootNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
       | Key                      | Value                                |
       | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d |
       | nodeIdentifier           | 5387cb08-2aaf-44dc-a8a1-483497aa0a03 |

@@ -15,7 +15,7 @@ Feature: Create root node
       | nodeTypeName             | Neos.ContentRepository:Root          |
 
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
-    And event at index 0 is of type "Neos.ContentRepository:RootNodeWasCreated" with payload:
+    And event at index 0 is of type "Neos.EventSourcedContentRepository:RootNodeWasCreated" with payload:
       | Key                      | Expected                             |
       | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d |
       | nodeIdentifier           | 5387cb08-2aaf-44dc-a8a1-483497aa0a03 |

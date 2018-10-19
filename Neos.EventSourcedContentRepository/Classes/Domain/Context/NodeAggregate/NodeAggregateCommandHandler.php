@@ -12,6 +12,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralization;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
@@ -20,7 +26,6 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
-use Neos\EventSourcedContentRepository\Exception\NodeConstraintException;
 
 final class NodeAggregateCommandHandler
 {
@@ -86,7 +91,7 @@ final class NodeAggregateCommandHandler
      * @param Command\ChangeNodeAggregateType $command
      * @throws NodeTypeNotFound
      * @throws NodeConstraintException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
+     * @throws NodeTypeNotFoundException
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      */
     public function handleChangeNodeAggregateType(Command\ChangeNodeAggregateType $command)
@@ -102,7 +107,7 @@ final class NodeAggregateCommandHandler
     /**
      * @param Command\ChangeNodeAggregateType $command
      * @throws NodeConstraintException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
+     * @throws NodeTypeNotFoundException
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @return void
      */
@@ -133,7 +138,7 @@ final class NodeAggregateCommandHandler
     /**
      * @param Command\ChangeNodeAggregateType $command
      * @throws NodeConstraintException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
+     * @throws NodeTypeNotFoundException
      * @return \void
      */
     protected function checkConstraintsImposedOnAlreadyPresentDescendants(Command\ChangeNodeAggregateType $command): void
@@ -168,7 +173,7 @@ final class NodeAggregateCommandHandler
      * @throws DimensionSpacePointIsAlreadyOccupied
      * @throws DimensionSpacePointIsNotYetOccupied
      * @throws DimensionSpacePointNotFound
-     * @throws DimensionSpace\DimensionSpacePointIsNoSpecialization
+     * @throws DimensionSpacePointIsNoSpecialization
      * @throws ParentsNodeAggregateNotVisibleInDimensionSpacePoint
      */
     public function handleCreateNodeSpecialization(Command\CreateNodeSpecialization $command): void
@@ -205,7 +210,7 @@ final class NodeAggregateCommandHandler
     /**
      * @param Command\CreateNodeGeneralization $command
      * @throws DimensionSpacePointNotFound
-     * @throws DimensionSpace\DimensionSpacePointIsNoGeneralization
+     * @throws DimensionSpacePointIsNoGeneralization
      * @throws DimensionSpacePointIsAlreadyOccupied
      * @throws DimensionSpacePointIsNotYetOccupied
      */
@@ -247,38 +252,36 @@ final class NodeAggregateCommandHandler
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePoint $generalization
-     * @throws DimensionSpacePointNotFound
-     * @throws DimensionSpace\DimensionSpacePointIsNoSpecialization
+     * @throws DimensionSpacePointIsNoSpecialization
      */
     protected function requireDimensionSpacePointToBeSpecialization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $generalization)
     {
         if (!$this->interDimensionalVariationGraph->getSpecializationSet($generalization)->contains($dimensionSpacePoint)) {
-            throw new DimensionSpace\DimensionSpacePointIsNoSpecialization($dimensionSpacePoint . ' is no specialization of ' . $generalization, 1519931770);
+            throw new DimensionSpacePointIsNoSpecialization($dimensionSpacePoint . ' is no specialization of ' . $generalization, 1519931770);
         }
     }
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePoint $specialization
-     * @throws DimensionSpacePointNotFound
-     * @throws DimensionSpace\DimensionSpacePointIsNoGeneralization
+     * @throws DimensionSpacePointIsNoGeneralization
      */
     protected function requireDimensionSpacePointToBeGeneralization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $specialization)
     {
         if (!$this->interDimensionalVariationGraph->getSpecializationSet($dimensionSpacePoint)->contains($specialization)) {
-            throw new DimensionSpace\DimensionSpacePointIsNoGeneralization($dimensionSpacePoint . ' is no generalization of ' . $dimensionSpacePoint, 1521367710);
+            throw new DimensionSpacePointIsNoGeneralization($dimensionSpacePoint . ' is no generalization of ' . $dimensionSpacePoint, 1521367710);
         }
     }
 
     /**
-     * @param ContentStream\ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $sourceDimensionSpacePoint
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @throws ParentsNodeAggregateNotVisibleInDimensionSpacePoint
      */
     protected function requireParentNodesAggregateToBeVisibleInDimensionSpacePoint(
-        ContentStream\ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $sourceDimensionSpacePoint,
         DimensionSpacePoint $dimensionSpacePoint
@@ -295,7 +298,7 @@ final class NodeAggregateCommandHandler
             1521322565);
     }
 
-    protected function getNodeAggregate(ContentStream\ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate
+    protected function getNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate
     {
         $contentStream = $this->contentStreamRepository->findContentStream($contentStreamIdentifier);
 
