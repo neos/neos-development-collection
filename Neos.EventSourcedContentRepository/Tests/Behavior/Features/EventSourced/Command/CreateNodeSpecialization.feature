@@ -14,15 +14,16 @@ Feature: Create node specialization
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository:Document': []
     """
-    And the Event RootNodeWasCreated was published with payload:
+    And the command "CreateRootWorkspace" is executed with payload:
       | Key                      | Value                                | Type |
       | workspaceName            | live                                 |      |
       | workspaceTitle           | Live                                 |      |
       | workspaceDescription     | The live workspace                   |      |
       | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
       | contentStreamIdentifier  | cs-identifier                        | Uuid |
-      | nodeIdentifier           | rn-identifier                        | Uuid |
-      | nodeTypeName             | Neos.ContentRepository:Root          |      |
+      | rootNodeIdentifier       | rn-identifier                        | Uuid |
+      | rootNodeTypeName         | Neos.ContentRepository:Root          |      |
+
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the Event NodeAggregateWithNodeWasCreated was published with payload:

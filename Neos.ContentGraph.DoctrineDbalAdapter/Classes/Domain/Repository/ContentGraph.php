@@ -375,7 +375,7 @@ final class ContentGraph implements ContentGraphInterface
         ];
         $dimensionSpacePoints = [];
         foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $hierarchyRelationData) {
-            $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['dimensionspacepoint'], true)['coordinates']);
+            $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['dimensionspacepoint'], true));
         }
 
         return new DimensionSpacePointSet($dimensionSpacePoints);
@@ -403,7 +403,7 @@ final class ContentGraph implements ContentGraphInterface
         ];
         $dimensionSpacePoints = [];
         foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $hierarchyRelationData) {
-            $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['dimensionspacepoint'], true)['coordinates']);
+            $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['dimensionspacepoint'], true));
         }
 
         return new DimensionSpacePointSet($dimensionSpacePoints);
