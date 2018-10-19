@@ -37,7 +37,7 @@ Feature: Node References without Dimensions
       | contentStreamIdentifier       | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier       | dest-1-nodeAgg-identifier                 | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences |                        |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":[]}]}           | DimensionSpacePointSet |
+      | visibleDimensionSpacePoints   | [{}]           | DimensionSpacePointSet |
       | nodeIdentifier                | dest-1-node-identifier                    | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
       | nodeName                      | dest-1                                    |                        |
@@ -48,7 +48,7 @@ Feature: Node References without Dimensions
       | contentStreamIdentifier       | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier       | dest-2-nodeAgg-identifier                 | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences |                        |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":[]}]}           | DimensionSpacePointSet |
+      | visibleDimensionSpacePoints   | [{}]           | DimensionSpacePointSet |
       | nodeIdentifier                | dest-2-node-identifier                    | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
       | nodeName                      | dest-2                                    |                        |
@@ -58,7 +58,7 @@ Feature: Node References without Dimensions
       | contentStreamIdentifier       | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier       | dest-3-nodeAgg-identifier                 | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences |                        |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":[]}]}           | DimensionSpacePointSet |
+      | visibleDimensionSpacePoints   | [{}]           | DimensionSpacePointSet |
       | nodeIdentifier                | dest-3-node-identifier                    | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
       | nodeName                      | dest-3                                    |                        |

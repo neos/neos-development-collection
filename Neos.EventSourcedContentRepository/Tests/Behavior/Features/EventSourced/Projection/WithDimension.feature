@@ -13,7 +13,7 @@ Feature: Reading of our Graph Projection
       | nodeIdentifier           | 5387cb08-2aaf-44dc-a8a1-483497aa0a03 |
       | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |
       | nodeTypeName             | Neos.ContentRepository:Root          |
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
+    And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
       | Key                           | Value                                                                                | Type                   |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                                 |                        |
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f                                                 |                        |
@@ -49,7 +49,7 @@ Feature: Reading of our Graph Projection
       | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |
       | nodeTypeName             | Neos.ContentRepository:Root          |
     # Node /sites
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:c2037dc4-a20d-11e7-ba09-b3eb6d631979" with payload:
+    And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:c2037dc4-a20d-11e7-ba09-b3eb6d631979" with payload:
       | Key                           | Value                                                                                                                                                 | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                                                                                                  |      |
       | nodeAggregateIdentifier       | c2037dc4-a20d-11e7-ba09-b3eb6d631979                                                                                                                  |      |
@@ -61,7 +61,7 @@ Feature: Reading of our Graph Projection
       | nodeName                      | sites                                                                                                                                                 |      |
       | propertyDefaultValuesAndTypes | {}                                                                                                                                                    | json |
     # Node /sites/text1 (language=de)
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
+    And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
       | Key                           | Value                                                                            | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                             |      |
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f                                             |      |

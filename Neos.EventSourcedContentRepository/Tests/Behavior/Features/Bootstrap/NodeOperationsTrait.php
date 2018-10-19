@@ -12,8 +12,8 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
@@ -1116,15 +1116,15 @@ trait NodeOperationsTrait
         $contentDimensionZookeeper = $this->getObjectManager()->get(ContentDimensionZookeeper::class);
         ObjectAccess::setProperty($contentDimensionZookeeper, 'allowedCombinations', null, true);
 
-        /** @var DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph */
-        $interDimensionalVariationGraph = $this->getObjectManager()->get(DimensionSpace\InterDimensionalVariationGraph::class);
-        ObjectAccess::setProperty($interDimensionalVariationGraph, 'subgraphs', null, true);
+        /** @var InterDimensionalVariationGraph $interDimensionalVariationGraph */
+        $interDimensionalVariationGraph = $this->getObjectManager()->get(InterDimensionalVariationGraph::class);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightedDimensionSpacePoints', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'indexedGeneralizations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'indexedSpecializations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightedGeneralizations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightedSpecializations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'primaryGeneralizations', null, true);
+        ObjectAccess::setProperty($interDimensionalVariationGraph, 'rootGeneralizations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightNormalizationBase', null, true);
     }
 }

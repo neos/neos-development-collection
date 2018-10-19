@@ -34,7 +34,7 @@ Feature: Translate node in aggregate
       | rootNodeTypeName         | Neos.ContentRepository:Root          |      |
     # We have to add another node since the root node has no aggregate to find the new parent of the translated node
     # Node /sites
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:c2037dc4-a20d-11e7-ba09-b3eb6d631979" with payload:
+    And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:c2037dc4-a20d-11e7-ba09-b3eb6d631979" with payload:
       | Key                           | Value                                                                                                                                                 | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                                                                                                  |      |
       | nodeAggregateIdentifier       | c2037dc4-a20d-11e7-ba09-b3eb6d631979                                                                                                                  |      |
@@ -48,7 +48,7 @@ Feature: Translate node in aggregate
 
   Scenario: Translate node with "mul" parent
     # Node /sites/text1
-    Given the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
+    Given the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
       | Key                           | Value                                                                            | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                             |      |
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f                                             |      |
@@ -79,7 +79,7 @@ Feature: Translate node in aggregate
 
   Scenario: Translate node with "mul" parent and auto-created child nodes
     # Node /sites/home
-    Given the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
+    Given the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
       | Key                           | Value                                                                            | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                             |      |
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f                                             |      |
@@ -91,7 +91,7 @@ Feature: Translate node in aggregate
       | nodeName                      | home                                                                             |      |
       | propertyDefaultValuesAndTypes | {}                                                                               | json |
     # Auto-created node /sites/home/main
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:c7dff472-a35f-11e7-86d3-8f1201f8ad78" with payload:
+    And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:c7dff472-a35f-11e7-86d3-8f1201f8ad78" with payload:
       | Key                           | Value                                                                            | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                             |      |
       | nodeAggregateIdentifier       | c7dff472-a35f-11e7-86d3-8f1201f8ad78                                             |      |
@@ -103,7 +103,7 @@ Feature: Translate node in aggregate
       | nodeName                      | main                                                                             |      |
       | propertyDefaultValuesAndTypes | {}                                                                               | json |
     # Auto-created node /sites/home/main/foo
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:f06a0838-a35f-11e7-a124-13b6f0b1a336" with payload:
+    And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:f06a0838-a35f-11e7-a124-13b6f0b1a336" with payload:
       | Key                           | Value                                                                            | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                             |      |
       | nodeAggregateIdentifier       | f06a0838-a35f-11e7-a124-13b6f0b1a336                                             |      |
