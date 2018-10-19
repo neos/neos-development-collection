@@ -12,11 +12,11 @@ roles:
 
   'Neos.Flow:Everybody':
     privileges:
-    -
-      privilegeTarget: 'Neos.EventSourcedNeosAdjustments:PublicFrontendAccess'
-      permission: GRANT
+      -
+        privilegeTarget: 'Neos.EventSourcedNeosAdjustments:PublicFrontendAccess'
+        permission: GRANT
   'Neos.Neos:AbstractEditor':
     privileges:
-    -
-      privilegeTarget: 'Neos.EventSourcedNeosAdjustments:Backend.GeneralAccess'
-      permission: GRANT
+      -
+        privilegeTarget: 'Neos.EventSourcedNeosAdjustments:Backend.GeneralAccess'
+        permission: GRANT

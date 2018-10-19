@@ -18,9 +18,10 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueSpecializationDepth;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValueVariationEdge;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;
@@ -132,14 +133,14 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
      * @test
      * @throws PropertyNotAccessibleException
      * @throws InvalidContentDimensionValueUriProcessorException
+     * @throws \Exception
      */
     public function resolveDimensionUriConstraintsExtractsUriConstraintsFromSubgraph()
     {
         $uriProcessor = new ContentSubgraphUriProcessor();
 
-        $contentQuery = new ContentQuery(
-            new NodeAggregateIdentifier(),
-            WorkspaceName::forLive(),
+        $contentQuery = new NodeAddress(
+            new ContentStreamIdentifier(),
             new DimensionSpacePoint([
                 'market' => 'GB',
                 'seller' => 'sellerA',
@@ -147,7 +148,7 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
                 'language' => 'en'
             ]),
             new NodeAggregateIdentifier(),
-            new NodeIdentifier()
+            WorkspaceName::forLive()
         );
         $dimensionUriConstraints = $uriProcessor->resolveDimensionUriConstraints($contentQuery, false);
         $constraints = ObjectAccess::getProperty($dimensionUriConstraints, 'constraints', true);

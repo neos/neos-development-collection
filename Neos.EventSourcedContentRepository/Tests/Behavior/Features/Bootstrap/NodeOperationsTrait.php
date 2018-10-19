@@ -13,9 +13,10 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
-use Neos\EventSourcedContentRepository\Domain\Model\Workspace;
-use Neos\EventSourcedContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\EventSourcedContentRepository\Domain\Service\PublishingServiceInterface;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
@@ -984,9 +985,7 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->objectManager->get(\Neos\EventSourcedContentRepository\Domain\Repository\NodeDataRepository::class)->flushNodeRegistry();
-            $this->objectManager->get(\Neos\EventSourcedContentRepository\Domain\Service\ContextFactoryInterface::class)->reset();
-            $this->objectManager->get(\Neos\EventSourcedContentRepository\Domain\Factory\NodeFactory::class)->reset();
+            // TODO
         }
     }
 
@@ -1113,8 +1112,8 @@ trait NodeOperationsTrait
 
     private function resetDimensionSpaceRepositories()
     {
-        /** @var Dimension\ContentDimensionZookeeper $contentDimensionZookeeper */
-        $contentDimensionZookeeper = $this->getObjectManager()->get(Dimension\ContentDimensionZookeeper::class);
+        /** @var ContentDimensionZookeeper $contentDimensionZookeeper */
+        $contentDimensionZookeeper = $this->getObjectManager()->get(ContentDimensionZookeeper::class);
         ObjectAccess::setProperty($contentDimensionZookeeper, 'allowedCombinations', null, true);
 
         /** @var DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph */
