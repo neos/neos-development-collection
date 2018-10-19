@@ -11,18 +11,32 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralization;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\ContentRepository\Exception\NodeExistsException;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregateNotFound;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeTypeNotFound;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -31,6 +45,8 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
+use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\Event\EventTypeResolver;
@@ -93,7 +109,7 @@ trait EventSourcedTrait
     protected $rootNodeIdentifier;
 
     /**
-     * @var \Neos\EventSourcedContentRepository\Domain\Model\NodeInterface
+     * @var NodeInterface
      */
     protected $currentNode;
 
@@ -470,9 +486,9 @@ trait EventSourcedTrait
                 $command = new \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode(
                     is_string($commandArguments['contentStreamIdentifier']) ? new ContentStreamIdentifier($commandArguments['contentStreamIdentifier']) : $commandArguments['contentStreamIdentifier'],
                     $commandArguments['dimensionSpacePoint'],
-                    is_string($commandArguments['nodeAggregateIdentifier']) ? new NodeAggregate\NodeAggregateIdentifier($commandArguments['nodeAggregateIdentifier']) : $commandArguments['nodeAggregateIdentifier'],
-                    is_string($commandArguments['newParentNodeAggregateIdentifier']) ? new NodeAggregate\NodeAggregateIdentifier($commandArguments['newParentNodeAggregateIdentifier']) : $commandArguments['newParentNodeAggregateIdentifier'],
-                    is_string($commandArguments['newSucceedingSiblingNodeAggregateIdentifier']) ? new NodeAggregate\NodeAggregateIdentifier($commandArguments['newSucceedingSiblingNodeAggregateIdentifier']) : $commandArguments['newSucceedingSiblingNodeAggregateIdentifier'],
+                    is_string($commandArguments['nodeAggregateIdentifier']) ? new NodeAggregateIdentifier($commandArguments['nodeAggregateIdentifier']) : $commandArguments['nodeAggregateIdentifier'],
+                    is_string($commandArguments['newParentNodeAggregateIdentifier']) ? new NodeAggregateIdentifier($commandArguments['newParentNodeAggregateIdentifier']) : $commandArguments['newParentNodeAggregateIdentifier'],
+                    is_string($commandArguments['newSucceedingSiblingNodeAggregateIdentifier']) ? new NodeAggregateIdentifier($commandArguments['newSucceedingSiblingNodeAggregateIdentifier']) : $commandArguments['newSucceedingSiblingNodeAggregateIdentifier'],
                     is_string($commandArguments['relationDistributionStrategy']) ? RelationDistributionStrategy::fromConfigurationValue($commandArguments['relationDistributionStrategy']) : $commandArguments['relationDistributionStrategy']
                 );
                 break;
@@ -536,55 +552,55 @@ trait EventSourcedTrait
             case 'Exception':
                 return;
             case 'NodeNotFoundException':
-                Assert::assertInstanceOf(\Neos\EventSourcedContentRepository\Exception\NodeNotFoundException::class, $this->lastCommandException);
+                Assert::assertInstanceOf(NodeNotFoundException::class, $this->lastCommandException);
 
                 return;
             case 'BaseWorkspaceHasBeenModifiedInTheMeantime':
-                Assert::assertInstanceOf(\Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime::class, $this->lastCommandException);
+                Assert::assertInstanceOf(BaseWorkspaceHasBeenModifiedInTheMeantime::class, $this->lastCommandException);
 
                 return;
             case 'NodeAggregateNotFound':
-                Assert::assertInstanceOf(\Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregateNotFound::class, $this->lastCommandException);
+                Assert::assertInstanceOf(NodeAggregateNotFound::class, $this->lastCommandException);
 
                 return;
             case 'NodeExistsException':
-                Assert::assertInstanceOf(\Neos\EventSourcedContentRepository\Exception\NodeExistsException::class, $this->lastCommandException);
+                Assert::assertInstanceOf(NodeExistsException::class, $this->lastCommandException);
 
                 return;
             case 'NodeConstraintException':
-                Assert::assertInstanceOf(\Neos\EventSourcedContentRepository\Exception\NodeConstraintException::class, $this->lastCommandException);
+                Assert::assertInstanceOf(NodeConstraintException::class, $this->lastCommandException);
 
                 return;
             case 'DimensionSpacePointIsNoSpecialization':
-                Assert::assertInstanceOf(\Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointIsNoSpecialization::class, $this->lastCommandException);
+                Assert::assertInstanceOf(DimensionSpacePointIsNoSpecialization::class, $this->lastCommandException);
 
                 return;
             case 'DimensionSpacePointIsAlreadyOccupied':
-                Assert::assertInstanceOf(NodeAggregate\DimensionSpacePointIsAlreadyOccupied::class, $this->lastCommandException);
+                Assert::assertInstanceOf(DimensionSpacePointIsAlreadyOccupied::class, $this->lastCommandException);
 
                 return;
             case 'DimensionSpacePointIsNotYetOccupied':
-                Assert::assertInstanceOf(NodeAggregate\DimensionSpacePointIsNotYetOccupied::class, $this->lastCommandException);
+                Assert::assertInstanceOf(DimensionSpacePointIsNotYetOccupied::class, $this->lastCommandException);
 
                 return;
             case 'DimensionSpacePointIsNoGeneralization':
-                Assert::assertInstanceOf(\Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointIsNoGeneralization::class, $this->lastCommandException);
+                Assert::assertInstanceOf(DimensionSpacePointIsNoGeneralization::class, $this->lastCommandException);
 
                 return;
             case 'NodeTypeNotFound':
-                Assert::assertInstanceOf(NodeAggregate\NodeTypeNotFound::class, $this->lastCommandException);
+                Assert::assertInstanceOf(NodeTypeNotFound::class, $this->lastCommandException);
 
                 return;
             case 'DimensionSpacePointNotFound':
-                Assert::assertInstanceOf(\Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound::class, $this->lastCommandException);
+                Assert::assertInstanceOf(DimensionSpacePointNotFound::class, $this->lastCommandException);
 
                 return;
             case 'ParentsNodeAggregateNotVisibleInDimensionSpacePoint':
-                Assert::assertInstanceOf(\Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint::class, $this->lastCommandException);
+                Assert::assertInstanceOf(ParentsNodeAggregateNotVisibleInDimensionSpacePoint::class, $this->lastCommandException);
 
                 return;
             case 'SpecializedDimensionsMustBePartOfDimensionSpacePointSet':
-                Assert::assertInstanceOf(\Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet::class, $this->lastCommandException);
+                Assert::assertInstanceOf(SpecializedDimensionsMustBePartOfDimensionSpacePointSet::class, $this->lastCommandException);
 
                 return;
             default:
@@ -638,7 +654,7 @@ trait EventSourcedTrait
                 ];
             case 'ForkContentStream':
                 return [
-                    ContentStream\Command\ForkContentStream::class,
+                    ForkContentStream::class,
                     ContentStreamCommandHandler::class,
                     'handleForkContentStream'
                 ];
@@ -862,7 +878,7 @@ trait EventSourcedTrait
         $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)
-            ->findNodeByNodeAggregateIdentifier(new NodeAggregate\NodeAggregateIdentifier($nodeAggregateIdentifier));
+            ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
         Assert::assertNotNull($node, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
     }
 
@@ -875,7 +891,7 @@ trait EventSourcedTrait
         $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)
-            ->findNodeByNodeAggregateIdentifier(new NodeAggregate\NodeAggregateIdentifier($nodeAggregateIdentifier));
+            ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
         Assert::assertNotNull($node, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
     }
 
@@ -904,7 +920,7 @@ trait EventSourcedTrait
         $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)
-            ->findNodeByNodeAggregateIdentifier(new NodeAggregate\NodeAggregateIdentifier($nodeAggregateIdentifier));
+            ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
         Assert::assertNotNull($node, 'Node with ID "' . $nodeIdentifier . '" not found!');
         Assert::assertEquals($nodeIdentifier, (string)$node->getNodeIdentifier(), 'Node ID does not match!');
     }
@@ -928,7 +944,6 @@ trait EventSourcedTrait
     public function iExpectTheNodeToHaveTheProperties($nodeIdentifier, TableNode $expectedProperties)
     {
         $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
-        /** @var \Neos\EventSourcedContentRepository\Domain\Model\Node $node */
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)
             ->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
@@ -963,7 +978,7 @@ trait EventSourcedTrait
             $destinationNodes = $subgraph->findReferencedNodes(new NodeIdentifier($nodeIdentifier), new PropertyName($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
-                    if ($item instanceof \Neos\ContentRepository\Domain\Projection\Content\NodeInterface) {
+                    if ($item instanceof NodeInterface) {
                         return (string)$item->getNodeAggregateIdentifier();
                     } else {
                         return $item;
@@ -990,7 +1005,7 @@ trait EventSourcedTrait
             $destinationNodes = $subgraph->findReferencingNodes(new NodeIdentifier($nodeIdentifier), new PropertyName($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
-                    if ($item instanceof \Neos\ContentRepository\Domain\Projection\Content\NodeInterface) {
+                    if ($item instanceof NodeInterface) {
                         return (string)$item->getNodeAggregateIdentifier();
                     } else {
                         return $item;
