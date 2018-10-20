@@ -31,27 +31,27 @@ Feature: Node References with Dimensions
     """
 
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                               | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                       | Uuid                   |
-      | nodeAggregateIdentifier       | source-nodeAgg-identifier                                                           | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences                                           |                        |
-      | dimensionSpacePoint           | {"coordinates": {"language": "de"}}                                                 | json                   |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "ch"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | source-node-identifier                                                              | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                                                                       | Uuid                   |
-      | nodeName                      | dest                                                                                |                        |
+      | Key                         | Value                                     | Type                   |
+      | contentStreamIdentifier     | cs-identifier                             | Uuid                   |
+      | nodeAggregateIdentifier     | source-nodeAgg-identifier                 | Uuid                   |
+      | nodeTypeName                | Neos.ContentRepository:NodeWithReferences |                        |
+      | dimensionSpacePoint         | {"language": "de"}                        | json                   |
+      | visibleDimensionSpacePoints | [{"language": "de"},{"language": "ch"}]   | DimensionSpacePointSet |
+      | nodeIdentifier              | source-node-identifier                    | Uuid                   |
+      | parentNodeIdentifier        | rn-identifier                             | Uuid                   |
+      | nodeName                    | dest                                      |                        |
 
 
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                                        | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                                | Uuid                   |
-      | nodeAggregateIdentifier       | dest-nodeAgg-identifier                                                                                                                                      | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences                                                                                                                    |                        |
-      | dimensionSpacePoint           | {"coordinates": {"language": "mul"}}                                                                                                                         | json                   |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "en"}}, {"coordinates":{"language": "ch"}}, {"coordinates":{"language": "mul"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | dest-node-identifier                                                                                                                                         | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                                                                                                                                                | Uuid                   |
-      | nodeName                      | dest                                                                                                                                                         |                        |
+      | Key                         | Value                                                                          | Type                   |
+      | contentStreamIdentifier     | cs-identifier                                                                  | Uuid                   |
+      | nodeAggregateIdentifier     | dest-nodeAgg-identifier                                                        | Uuid                   |
+      | nodeTypeName                | Neos.ContentRepository:NodeWithReferences                                      |                        |
+      | dimensionSpacePoint         | {"language": "mul"}                                                            | json                   |
+      | visibleDimensionSpacePoints | [{"language": "de"},{"language": "en"},{"language": "ch"},{"language": "mul"}] | DimensionSpacePointSet |
+      | nodeIdentifier              | dest-node-identifier                                                           | Uuid                   |
+      | parentNodeIdentifier        | rn-identifier                                                                  | Uuid                   |
+      | nodeName                    | dest                                                                           |                        |
 
 
     And the command "SetNodeReferences" is executed with payload:
