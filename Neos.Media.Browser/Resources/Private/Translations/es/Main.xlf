@@ -67,7 +67,7 @@
 			<target xml:lang="es-ES" state="translated">Arrastrar y soltar en la etiqueta o colección</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target xml:lang="es-ES" state="needs-translation">View</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Ver</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
 			<target xml:lang="es-ES" state="needs-translation">View asset</target></trans-unit>
@@ -181,13 +181,13 @@
 			<target xml:lang="es-ES" state="translated">Vista en miniatura</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target xml:lang="es-ES" state="needs-translation">Connection error</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Error de conexión</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target xml:lang="es-ES" state="needs-translation">Media source</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Fuente multimedia</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target xml:lang="es-ES" state="needs-translation">Media sources</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Recursos multimedia</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target xml:lang="es-ES" state="translated">Colecciones</target></trans-unit>
@@ -295,7 +295,7 @@
 			<target xml:lang="es-ES" state="translated">Pie de foto</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target xml:lang="es-ES" state="needs-translation">Copyright Notice</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Aviso del derecho de autor</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="es-ES" state="translated">Vista previa</target></trans-unit>
