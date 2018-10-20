@@ -12,41 +12,38 @@ Feature: Remove NodeAggregate
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository:Document': []
     """
-    And the Event RootNodeWasCreated was published with payload:
+    And the command "CreateRootNode" is executed with payload:
       | Key                      | Value                                | Type |
-      | workspaceName            | live                                 |      |
-      | workspaceTitle           | Live                                 |      |
-      | workspaceDescription     | The live workspace                   |      |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
       | contentStreamIdentifier  | live-cs-identifier                   | Uuid |
       | nodeIdentifier           | rn-identifier                        | Uuid |
+      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
       | nodeTypeName             | Neos.ContentRepository:Root          |      |
-    # We have to add another node since root nodes have no dimension space points and thus cannot be varied
+    # We have to add another node since root nodes are in all dimension space points and thus cannot be varied
     # Node /document
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                             | Type                    |
-      | contentStreamIdentifier       | live-cs-identifier                                                                | Uuid                    |
-      | nodeAggregateIdentifier       | doc-agg-identifier                                                                | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Document                                                   |                         |
-      | dimensionSpacePoint           | {"language":"de"}                                                                 | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language":"de"}},{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
-      | nodeIdentifier                | doc-identifier-de                                                                 | Uuid                    |
-      | parentNodeIdentifier          | rn-identifier                                                                     | Uuid                    |
-      | nodeName                      | document                                                                          |                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                | json                    |
+      | Key                           | Value                                  | Type                    |
+      | contentStreamIdentifier       | live-cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier       | doc-agg-identifier                     | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document        |                         |
+      | dimensionSpacePoint           | {"language":"de"}                      | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
+      | nodeIdentifier                | doc-identifier-de                      | Uuid                    |
+      | parentNodeIdentifier          | rn-identifier                          | Uuid                    |
+      | nodeName                      | document                               |                         |
+      | propertyDefaultValuesAndTypes | {}                                     | json                    |
     # We also want to add a child node to make sure it is correctly removed when the parent is removed
     # Node /document/child-document
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                             | Type                    |
-      | contentStreamIdentifier       | live-cs-identifier                                                                | Uuid                    |
-      | nodeAggregateIdentifier       | cdoc-agg-identifier                                                               | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Document                                                   |                         |
-      | dimensionSpacePoint           | {"language":"de"}                                                                 | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language":"de"}},{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
-      | nodeIdentifier                | cdoc-identifier-de                                                                | Uuid                    |
-      | parentNodeIdentifier          | doc-identifier-de                                                                 | Uuid                    |
-      | nodeName                      | child-document                                                                    |                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                | json                    |
+      | Key                           | Value                                  | Type                    |
+      | contentStreamIdentifier       | live-cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier       | cdoc-agg-identifier                    | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document        |                         |
+      | dimensionSpacePoint           | {"language":"de"}                      | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
+      | nodeIdentifier                | cdoc-identifier-de                     | Uuid                    |
+      | parentNodeIdentifier          | doc-identifier-de                      | Uuid                    |
+      | nodeName                      | child-document                         |                         |
+      | propertyDefaultValuesAndTypes | {}                                     | json                    |
 
     And the command CreateNodeSpecialization was published with payload:
       | Key                       | Value              | Type                    |

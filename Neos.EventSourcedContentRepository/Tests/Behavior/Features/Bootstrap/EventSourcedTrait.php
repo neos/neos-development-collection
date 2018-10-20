@@ -143,16 +143,6 @@ trait EventSourcedTrait
     public function theEventNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (empty($eventPayload['dimensionSpacePoint'])) {
-            $eventPayload['dimensionSpacePoint'] = ['coordinates' => []];
-        }
-        if (empty($eventPayload['visibleDimensionSpacePoints'])) {
-            $eventPayload['visibleDimensionSpacePoints'] =  new DimensionSpacePointSet(
-                [
-                    new DimensionSpacePoint([])
-                ]
-            );
-        }
         if (empty($eventPayload['propertyDefaultValuesAndTypes'])) {
             $eventPayload['propertyDefaultValuesAndTypes'] = [];
         }
@@ -246,9 +236,9 @@ trait EventSourcedTrait
                     case 'DimensionSpacePointSet':
                         $tmp = json_decode($line['Value'], true);
                         $convertedPoints = [];
-                        if (isset($tmp['points'])) {
-                            foreach ($tmp['points'] as $point) {
-                                $convertedPoints[] = new DimensionSpacePoint($point['coordinates']);
+                        if (isset($tmp)) {
+                            foreach ($tmp as $point) {
+                                $convertedPoints[] = new DimensionSpacePoint($point);
                             }
                         }
                         $eventPayload[$line['Key']] = new DimensionSpacePointSet($convertedPoints);
@@ -503,6 +493,8 @@ trait EventSourcedTrait
 
         if (isset($commandArguments['rootNodeIdentifier'])) {
             $this->rootNodeIdentifier = new NodeIdentifier($commandArguments['rootNodeIdentifier']);
+        } elseif ($commandClassName === \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateRootNode::class) {
+            $this->rootNodeIdentifier = new NodeIdentifier($commandArguments['nodeIdentifier']);
         }
     }
 
