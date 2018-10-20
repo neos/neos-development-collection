@@ -120,13 +120,13 @@ final class NodeAggregateCommandHandler
             if (!$parentsNodeType->allowsChildNodeType($newNodeType)) {
                 throw new NodeConstraintException('Node type ' . $command->getNewNodeTypeName() . ' is not allowed below nodes of type ' . $parentAggregate->getNodeTypeName());
             }
-            if ($parentsNodeType->hasAutoCreatedChildNodeWithNodeName($nodeAggregate->getNodeName())
-                && $parentsNodeType->getTypeOfAutoCreatedChildNodeWithNodeName($nodeAggregate->getNodeName())->getName() !== (string)$command->getNewNodeTypeName()) {
+            if ($parentsNodeType->hasAutoCreatedChildNode($nodeAggregate->getNodeName())
+                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())->getName() !== (string)$command->getNewNodeTypeName()) {
                 throw new NodeConstraintException('Cannot change type of auto created child node' . $nodeAggregate->getNodeName() . ' to ' . $command->getNewNodeTypeName());
             }
             foreach ($this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $parentAggregate->getNodeAggregateIdentifier()) as $grandParentAggregate) {
                 $grandParentsNodeType = $this->nodeTypeManager->getNodeType((string)$grandParentAggregate->getNodeTypeName());
-                if ($grandParentsNodeType->hasAutoCreatedChildNodeWithNodeName($parentAggregate->getNodeName())
+                if ($grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->getNodeName())
                     && !$grandParentsNodeType->allowsGrandchildNodeType((string)$parentAggregate->getNodeName(), $newNodeType)) {
                     throw new NodeConstraintException('Node type "' . $command->getNewNodeTypeName() . '" is not allowed below auto created child nodes "' . $parentAggregate->getNodeName()
                         . '" of nodes of type "' . $grandParentAggregate->getNodeTypeName() . '"', 1520011791);
@@ -154,7 +154,7 @@ final class NodeAggregateCommandHandler
                 }
             }
 
-            if ($newNodeType->hasAutoCreatedChildNodeWithNodeName($childAggregate->getNodeName())) {
+            if ($newNodeType->hasAutoCreatedChildNode($childAggregate->getNodeName())) {
                 foreach ($this->contentGraph->findChildAggregates($command->getContentStreamIdentifier(), $childAggregate->getNodeAggregateIdentifier()) as $grandChildAggregate) {
                     $grandChildsNodeType = $this->nodeTypeManager->getNodeType((string)$grandChildAggregate->getNodeTypeName());
                     if (!$newNodeType->allowsGrandchildNodeType((string)$childAggregate->getNodeName(), $grandChildsNodeType)) {

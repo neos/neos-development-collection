@@ -28,26 +28,24 @@ Feature: Change node aggregate type
           type: string
           defaultValue: 'otherText'
     """
-    And the Event RootNodeWasCreated was published with payload:
+    And the command "CreateRootNode" is executed with payload:
       | Key                      | Value                                | Type |
-      | workspaceName            | live                                 |      |
-      | workspaceTitle           | Live                                 |      |
-      | workspaceDescription     | The live workspace                   |      |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
       | contentStreamIdentifier  | cs-identifier                        | Uuid |
       | nodeIdentifier           | rn-identifier                        | Uuid |
+      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
       | nodeTypeName             | Neos.ContentRepository:Root          |      |
+
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                        | Uuid                   |
-      | nodeAggregateIdentifier       | parent-agg-identifier                                                                | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:ParentNodeType                                        |                        |
-      | dimensionSpacePoint           | {"language":"de"}                                                                    | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | parent-identifier-de                                                                 | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                                                                        | Uuid                   |
-      | nodeName                      | parent                                                                               |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                   | json                   |
+      | Key                           | Value                                         | Type                   |
+      | contentStreamIdentifier       | cs-identifier                                 | Uuid                   |
+      | nodeAggregateIdentifier       | parent-agg-identifier                         | Uuid                   |
+      | nodeTypeName                  | Neos.ContentRepository.Testing:ParentNodeType |                        |
+      | dimensionSpacePoint           | {"language":"de"}                             | DimensionSpacePoint    |
+      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]      | DimensionSpacePointSet |
+      | nodeIdentifier                | parent-identifier-de                          | Uuid                   |
+      | parentNodeIdentifier          | rn-identifier                                 | Uuid                   |
+      | nodeName                      | parent                                        |                        |
+      | propertyDefaultValuesAndTypes | {}                                            | json                   |
 
   Scenario: Try to change to a non existing node type
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
@@ -68,16 +66,16 @@ Feature: Change node aggregate type
           'Neos.ContentRepository.Testing:NodeTypeB': FALSE
     """
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                        | Uuid                   |
-      | nodeAggregateIdentifier       | nodea-agg-identifier                                                                 | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA                                             |                        |
-      | dimensionSpacePoint           | {"language":"de"}                                                                    | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | nodea-identifier-de                                                                  | Uuid                   |
-      | parentNodeIdentifier          | parent-identifier-de                                                                 | Uuid                   |
-      | nodeName                      | nodea                                                                                |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                   | json                   |
+      | Key                           | Value                                    | Type                   |
+      | contentStreamIdentifier       | cs-identifier                            | Uuid                   |
+      | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
+      | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
+      | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
+      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
+      | parentNodeIdentifier          | parent-identifier-de                     | Uuid                   |
+      | nodeName                      | nodea                                    |                        |
+      | propertyDefaultValuesAndTypes | {}                                       | json                   |
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                     | Value                                    | Type |
       | contentStreamIdentifier | cs-identifier                            | Uuid |
@@ -100,27 +98,27 @@ Feature: Change node aggregate type
               'Neos.ContentRepository.Testing:NodeTypeB': FALSE
     """
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                        | Uuid                   |
-      | nodeAggregateIdentifier       | auto-agg-identifier                                                                  | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated                                           |                        |
-      | dimensionSpacePoint           | {"language": "de"}                                                                   | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | auto-identifier-de                                                                   | Uuid                   |
-      | parentNodeIdentifier          | parent-identifier-de                                                                 | Uuid                   |
-      | nodeName                      | autocreated                                                                          |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                   | json                   |
+      | Key                           | Value                                      | Type                   |
+      | contentStreamIdentifier       | cs-identifier                              | Uuid                   |
+      | nodeAggregateIdentifier       | auto-agg-identifier                        | Uuid                   |
+      | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated |                        |
+      | dimensionSpacePoint           | {"language": "de"}                         | DimensionSpacePoint    |
+      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
+      | nodeIdentifier                | auto-identifier-de                         | Uuid                   |
+      | parentNodeIdentifier          | parent-identifier-de                       | Uuid                   |
+      | nodeName                      | autocreated                                |                        |
+      | propertyDefaultValuesAndTypes | {}                                         | json                   |
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                        | Uuid                   |
-      | nodeAggregateIdentifier       | nodea-agg-identifier                                                                 | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA                                             |                        |
-      | dimensionSpacePoint           | {"language":"de"}                                                                    | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | nodea-identifier-de                                                                  | Uuid                   |
-      | parentNodeIdentifier          | auto-identifier-de                                                                   | Uuid                   |
-      | nodeName                      | nodea                                                                                |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                   | json                   |
+      | Key                           | Value                                    | Type                   |
+      | contentStreamIdentifier       | cs-identifier                            | Uuid                   |
+      | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
+      | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
+      | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
+      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
+      | parentNodeIdentifier          | auto-identifier-de                       | Uuid                   |
+      | nodeName                      | nodea                                    |                        |
+      | propertyDefaultValuesAndTypes | {}                                       | json                   |
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                     | Value                                    | Type |
       | contentStreamIdentifier | cs-identifier                            | Uuid |
@@ -139,16 +137,16 @@ Feature: Change node aggregate type
           type: 'Neos.ContentRepository.Testing:AutoCreated'
     """
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                        | Uuid                   |
-      | nodeAggregateIdentifier       | auto-agg-identifier                                                                  | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated                                           |                        |
-      | dimensionSpacePoint           | {"language": "de"}                                                                   | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | auto-identifier-de                                                                   | Uuid                   |
-      | parentNodeIdentifier          | parent-identifier-de                                                                 | Uuid                   |
-      | nodeName                      | autocreated                                                                          |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                   | json                   |
+      | Key                           | Value                                      | Type                   |
+      | contentStreamIdentifier       | cs-identifier                              | Uuid                   |
+      | nodeAggregateIdentifier       | auto-agg-identifier                        | Uuid                   |
+      | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated |                        |
+      | dimensionSpacePoint           | {"language": "de"}                         | DimensionSpacePoint    |
+      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
+      | nodeIdentifier                | auto-identifier-de                         | Uuid                   |
+      | parentNodeIdentifier          | parent-identifier-de                       | Uuid                   |
+      | nodeName                      | autocreated                                |                        |
+      | propertyDefaultValuesAndTypes | {}                                         | json                   |
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                     | Value                                         | Type |
       | contentStreamIdentifier | cs-identifier                                 | Uuid |
@@ -167,16 +165,16 @@ Feature: Change node aggregate type
           'Neos.ContentRepository.Testing:NodeTypeA': FALSE
     """
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                        | Uuid                   |
-      | nodeAggregateIdentifier       | nodea-agg-identifier                                                                 | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA                                             |                        |
-      | dimensionSpacePoint           | {"language":"de"}                                                                    | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | nodea-identifier-de                                                                  | Uuid                   |
-      | parentNodeIdentifier          | parent-identifier-de                                                                 | Uuid                   |
-      | nodeName                      | nodea                                                                                |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                   | json                   |
+      | Key                           | Value                                    | Type                   |
+      | contentStreamIdentifier       | cs-identifier                            | Uuid                   |
+      | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
+      | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
+      | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
+      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
+      | parentNodeIdentifier          | parent-identifier-de                     | Uuid                   |
+      | nodeName                      | nodea                                    |                        |
+      | propertyDefaultValuesAndTypes | {}                                       | json                   |
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                     | Value                                          | Type |
       | contentStreamIdentifier | cs-identifier                                  | Uuid |
@@ -207,27 +205,27 @@ Feature: Change node aggregate type
               'Neos.ContentRepository.Testing:NodeTypeA': FALSE
     """
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                        | Uuid                   |
-      | nodeAggregateIdentifier       | auto-agg-identifier                                                                  | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated                                           |                        |
-      | dimensionSpacePoint           | {"language": "de"}                                                                   | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | auto-identifier-de                                                                   | Uuid                   |
-      | parentNodeIdentifier          | parent-identifier-de                                                                 | Uuid                   |
-      | nodeName                      | autocreated                                                                          |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                   | json                   |
+      | Key                           | Value                                      | Type                   |
+      | contentStreamIdentifier       | cs-identifier                              | Uuid                   |
+      | nodeAggregateIdentifier       | auto-agg-identifier                        | Uuid                   |
+      | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated |                        |
+      | dimensionSpacePoint           | {"language": "de"}                         | DimensionSpacePoint    |
+      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
+      | nodeIdentifier                | auto-identifier-de                         | Uuid                   |
+      | parentNodeIdentifier          | parent-identifier-de                       | Uuid                   |
+      | nodeName                      | autocreated                                |                        |
+      | propertyDefaultValuesAndTypes | {}                                         | json                   |
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                        | Uuid                   |
-      | nodeAggregateIdentifier       | nodea-agg-identifier                                                                 | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA                                             |                        |
-      | dimensionSpacePoint           | {"language":"de"}                                                                    | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} | DimensionSpacePointSet |
-      | nodeIdentifier                | nodea-identifier-de                                                                  | Uuid                   |
-      | parentNodeIdentifier          | auto-identifier-de                                                                   | Uuid                   |
-      | nodeName                      | nodea                                                                                |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                   | json                   |
+      | Key                           | Value                                    | Type                   |
+      | contentStreamIdentifier       | cs-identifier                            | Uuid                   |
+      | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
+      | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
+      | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
+      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
+      | parentNodeIdentifier          | auto-identifier-de                       | Uuid                   |
+      | nodeName                      | nodea                                    |                        |
+      | propertyDefaultValuesAndTypes | {}                                       | json                   |
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                     | Value                                          | Type |
       | contentStreamIdentifier | cs-identifier                                  | Uuid |
