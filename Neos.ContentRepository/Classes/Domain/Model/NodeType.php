@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
@@ -511,6 +512,28 @@ class NodeType
 
         return $autoCreatedChildNodes;
     }
+
+    /**
+     * @param NodeName $nodeName
+     * @return bool true if $nodeName is an autocreated child node, false otherwise
+     */
+    public function hasAutoCreatedChildNode(NodeName $nodeName): bool
+    {
+        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]);
+    }
+
+    /**
+     * @param NodeName $nodeName
+     * @return NodeType|null
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function getTypeOfAutoCreatedChildNode(NodeName $nodeName): ?NodeType
+    {
+        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
+            ? $this->nodeTypeManager->getNodeType($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
+            : null;
+    }
+
 
     /**
      * Checks if the given NodeType is acceptable as sub-node with the configured constraints,
