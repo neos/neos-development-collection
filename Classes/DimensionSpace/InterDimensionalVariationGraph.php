@@ -186,8 +186,10 @@ class InterDimensionalVariationGraph
             }
         }
 
-        foreach ($this->weightedGeneralizations as $specializationHash => &$generalizationsByWeight) {
-            ksort($generalizationsByWeight);
+        if ($this->weightedGeneralizations !== null) {
+            foreach ($this->weightedGeneralizations as $specializationHash => &$generalizationsByWeight) {
+                ksort($generalizationsByWeight);
+            }
         }
     }
 
