@@ -36,7 +36,7 @@ Feature: Single Node operations on live workspace
 
 
     Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:[cs-identifier]"
-    And event at index 3 is of type "Neos.ContentRepository:NodePropertyWasSet" with payload:
+    And event at index 3 is of type "Neos.EventSourcedContentRepository:NodePropertyWasSet" with payload:
       | Key                     | Expected                             | Type |
       | contentStreamIdentifier | cs-identifier                        | Uuid |
       | nodeIdentifier          | node-identifier                      | Uuid |
@@ -59,7 +59,7 @@ Feature: Single Node operations on live workspace
 
 
     Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:[cs-identifier]"
-    And event at index 3 is of type "Neos.ContentRepository:NodeWasHidden" with payload:
+    And event at index 3 is of type "Neos.EventSourcedContentRepository:NodeWasHidden" with payload:
       | Key                     | Expected                             | Type |
       | contentStreamIdentifier | cs-identifier                        | Uuid |
       | nodeIdentifier          | node-identifier                      | Uuid |
@@ -78,7 +78,7 @@ Feature: Single Node operations on live workspace
 
 
     Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:[cs-identifier]"
-    And event at index 3 is of type "Neos.ContentRepository:NodeWasShown" with payload:
+    And event at index 3 is of type "Neos.EventSourcedContentRepository:NodeWasShown" with payload:
       | Key                     | Expected                             | Type |
       | contentStreamIdentifier | cs-identifier                        | Uuid |
       | nodeIdentifier          | node-identifier                      | Uuid |
