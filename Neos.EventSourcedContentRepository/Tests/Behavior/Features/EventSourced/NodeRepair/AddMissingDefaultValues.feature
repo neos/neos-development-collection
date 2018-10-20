@@ -41,7 +41,6 @@ Feature: Add Missing Default Values
     And I run the command "node:repair --only addMissingDefaultValues"
     And the graph projection is fully up to date
     When I am in content stream "live-cs-identifier" and Dimension Space Point {}
-    Then I expect the Node "<string>" to have the properties:
     And I expect the Node "doc-identifier-de" to have the properties:
       | Key | Value      |
       | p1  | My Default |
