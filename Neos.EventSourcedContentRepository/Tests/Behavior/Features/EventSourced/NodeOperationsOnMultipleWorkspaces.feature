@@ -59,7 +59,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
 
 
     Then I expect exactly 2 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:[user-cs-identifier]"
-    And event at index 1 is of type "Neos.ContentRepository:NodePropertyWasSet" with payload:
+    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePropertyWasSet" with payload:
       | Key                     | Expected           | Type |
       | contentStreamIdentifier | user-cs-identifier | Uuid |
       | nodeIdentifier          | node-identifier    | Uuid |

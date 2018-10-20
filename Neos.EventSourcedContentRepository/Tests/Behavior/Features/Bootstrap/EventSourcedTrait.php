@@ -146,6 +146,12 @@ trait EventSourcedTrait
         if (empty($eventPayload['propertyDefaultValuesAndTypes'])) {
             $eventPayload['propertyDefaultValuesAndTypes'] = [];
         }
+        if (empty($eventPayload['dimensionSpacePoint'])) {
+            $eventPayload['dimensionSpacePoint'] = [];
+        }
+        if (empty($eventPayload['visibleDimensionSpacePoints'])) {
+            $eventPayload['visibleDimensionSpacePoints'] = [[]];
+        }
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
