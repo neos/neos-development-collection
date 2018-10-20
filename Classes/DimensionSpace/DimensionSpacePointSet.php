@@ -58,7 +58,7 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Iterator, \Cou
 
     public function jsonSerialize(): array
     {
-        return $this->points;
+        return array_values($this->points);
     }
 
     public function current(): ?DimensionSpacePoint
