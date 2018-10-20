@@ -14,42 +14,39 @@ Feature: Create node specialization
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository:Document': []
     """
-    And the command "CreateRootWorkspace" is executed with payload:
+    And the command "CreateRootNode" is executed with payload:
       | Key                      | Value                                | Type |
-      | workspaceName            | live                                 |      |
-      | workspaceTitle           | Live                                 |      |
-      | workspaceDescription     | The live workspace                   |      |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
       | contentStreamIdentifier  | cs-identifier                        | Uuid |
-      | rootNodeIdentifier       | rn-identifier                        | Uuid |
-      | rootNodeTypeName         | Neos.ContentRepository:Root          |      |
+      | nodeIdentifier           | rn-identifier                        | Uuid |
+      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
+      | nodeTypeName             | Neos.ContentRepository:Root          |      |
 
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                                                                                                 | Type                    |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                                                                                         | Uuid                    |
-      | nodeAggregateIdentifier       | doc-agg-identifier                                                                                                                                                                                                    | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Document                                                                                                                                                                                       |                         |
-      | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                                                                                                                                      | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"market":"DE", "language":"de"}},{"coordinates":{"market": "DE", "language":"gsw"}},{"coordinates":{"market": "CH", "language":"de"}},{"coordinates":{"market": "CH", "language":"gsw"}}]} | DimensionSpacePointSet  |
-      | nodeIdentifier                | doc-identifier-de-de                                                                                                                                                                                                  | Uuid                    |
-      | parentNodeIdentifier          | rn-identifier                                                                                                                                                                                                         | Uuid                    |
-      | nodeName                      | document                                                                                                                                                                                                              |                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                                                                                    | json                    |
+      | Key                           | Value                                                                                                                                      | Type                    |
+      | contentStreamIdentifier       | cs-identifier                                                                                                                              | Uuid                    |
+      | nodeAggregateIdentifier       | doc-agg-identifier                                                                                                                         | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document                                                                                                            |                         |
+      | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                                                           | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"},{"market": "CH", "language":"gsw"}] | DimensionSpacePointSet  |
+      | nodeIdentifier                | doc-identifier-de-de                                                                                                                       | Uuid                    |
+      | parentNodeIdentifier          | rn-identifier                                                                                                                              | Uuid                    |
+      | nodeName                      | document                                                                                                                                   |                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                         | json                    |
     # We also want to add a child node to make sure it is still reachable after specializing the parent
     # Node /document/child-document
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                                                                                                 | Type                    |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                                                                                         | Uuid                    |
-      | nodeAggregateIdentifier       | cdoc-agg-identifier                                                                                                                                                                                                   | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Document                                                                                                                                                                                       |                         |
-      | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                                                                                                                                      | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"market":"DE", "language":"de"}},{"coordinates":{"market": "DE", "language":"gsw"}},{"coordinates":{"market": "CH", "language":"de"}},{"coordinates":{"market": "CH", "language":"gsw"}}]} | DimensionSpacePointSet  |
-      | nodeIdentifier                | cdoc-identifier-de-de                                                                                                                                                                                                 | Uuid                    |
-      | parentNodeIdentifier          | doc-identifier-de-de                                                                                                                                                                                                  | Uuid                    |
-      | nodeName                      | child-document                                                                                                                                                                                                        |                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                                                                                    | json                    |
+      | Key                           | Value                                                                                                                                      | Type                    |
+      | contentStreamIdentifier       | cs-identifier                                                                                                                              | Uuid                    |
+      | nodeAggregateIdentifier       | cdoc-agg-identifier                                                                                                                        | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document                                                                                                            |                         |
+      | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                                                           | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"},{"market": "CH", "language":"gsw"}] | DimensionSpacePointSet  |
+      | nodeIdentifier                | cdoc-identifier-de-de                                                                                                                      | Uuid                    |
+      | parentNodeIdentifier          | doc-identifier-de-de                                                                                                                       | Uuid                    |
+      | nodeName                      | child-document                                                                                                                             |                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                         | json                    |
 
   Scenario: Try to create a node specialization in a non existing dimension space point
     When the command CreateNodeSpecialization was published with payload and exceptions are caught:
@@ -63,16 +60,16 @@ Feature: Create node specialization
 
   Scenario: Try to create a node specialization from a non-occupied dimension space point
     Given the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                         | Type                    |
-      | contentStreamIdentifier       | cs-identifier                                                 | Uuid                    |
-      | nodeAggregateIdentifier       | otherdoc-agg-identifier                                       | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Document                               |                         |
-      | dimensionSpacePoint           | {"market":"DE", "language":"de"}                              | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"market":"DE", "language":"de"}}]} | DimensionSpacePointSet  |
-      | nodeIdentifier                | otherdoc-identifier-de-de                                     | Uuid                    |
-      | parentNodeIdentifier          | rn-identifier                                                 | Uuid                    |
-      | nodeName                      | other-document                                                |                         |
-      | propertyDefaultValuesAndTypes | {}                                                            | json                    |
+      | Key                           | Value                              | Type                    |
+      | contentStreamIdentifier       | cs-identifier                      | Uuid                    |
+      | nodeAggregateIdentifier       | otherdoc-agg-identifier            | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document    |                         |
+      | dimensionSpacePoint           | {"market":"DE", "language":"de"}   | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | [{"market":"DE", "language":"de"}] | DimensionSpacePointSet  |
+      | nodeIdentifier                | otherdoc-identifier-de-de          | Uuid                    |
+      | parentNodeIdentifier          | rn-identifier                      | Uuid                    |
+      | nodeName                      | other-document                     |                         |
+      | propertyDefaultValuesAndTypes | {}                                 | json                    |
 
     When the command CreateNodeSpecialization was published with payload and exceptions are caught:
       | Key                       | Value                             | Type                    |
@@ -85,13 +82,13 @@ Feature: Create node specialization
 
   Scenario: Try to create a node specialization in an already occupied dimension space point
     Given the event NodeSpecializationWasCreated was published with payload:
-      | Key                       | Value                                                          | Type                    |
-      | contentStreamIdentifier   | cs-identifier                                                  | Uuid                    |
-      | nodeAggregateIdentifier   | doc-agg-identifier                                             | NodeAggregateIdentifier |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"de"}                               | DimensionSpacePoint     |
-      | specializationIdentifier  | doc-identifier-ch-gsw                                          | Uuid                    |
-      | specializationLocation    | {"market":"CH", "language":"gsw"}                              | DimensionSpacePoint     |
-      | specializationVisibility  | {"points":[{"coordinates":{"market":"CH", "language":"gsw"}}]} | DimensionSpacePointSet  |
+      | Key                       | Value                               | Type                    |
+      | contentStreamIdentifier   | cs-identifier                       | Uuid                    |
+      | nodeAggregateIdentifier   | doc-agg-identifier                  | NodeAggregateIdentifier |
+      | sourceDimensionSpacePoint | {"market":"DE", "language":"de"}    | DimensionSpacePoint     |
+      | specializationIdentifier  | doc-identifier-ch-gsw               | Uuid                    |
+      | specializationLocation    | {"market":"CH", "language":"gsw"}   | DimensionSpacePoint     |
+      | specializationVisibility  | [{"market":"CH", "language":"gsw"}] | DimensionSpacePointSet  |
 
     When the command CreateNodeSpecialization was published with payload and exceptions are caught:
       | Key                       | Value                             | Type                    |
@@ -104,13 +101,13 @@ Feature: Create node specialization
 
   Scenario: Try to create a node specialization in a more general dimension space point
     Given the event NodeSpecializationWasCreated was published with payload:
-      | Key                       | Value                                                          | Type                    |
-      | contentStreamIdentifier   | cs-identifier                                                  | Uuid                    |
-      | nodeAggregateIdentifier   | doc-agg-identifier                                             | NodeAggregateIdentifier |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"de"}                               | DimensionSpacePoint     |
-      | specializationIdentifier  | doc-identifier-ch-gsw                                          | Uuid                    |
-      | specializationLocation    | {"market":"CH", "language":"gsw"}                              | DimensionSpacePoint     |
-      | specializationVisibility  | {"points":[{"coordinates":{"market":"CH", "language":"gsw"}}]} | DimensionSpacePointSet  |
+      | Key                       | Value                               | Type                    |
+      | contentStreamIdentifier   | cs-identifier                       | Uuid                    |
+      | nodeAggregateIdentifier   | doc-agg-identifier                  | NodeAggregateIdentifier |
+      | sourceDimensionSpacePoint | {"market":"DE", "language":"de"}    | DimensionSpacePoint     |
+      | specializationIdentifier  | doc-identifier-ch-gsw               | Uuid                    |
+      | specializationLocation    | {"market":"CH", "language":"gsw"}   | DimensionSpacePoint     |
+      | specializationVisibility  | [{"market":"CH", "language":"gsw"}] | DimensionSpacePointSet  |
 
     When the command CreateNodeSpecialization was published with payload and exceptions are caught:
       | Key                       | Value                             | Type                    |
@@ -123,35 +120,35 @@ Feature: Create node specialization
 
   Scenario: Try to create a node specialization in a dimension space point the parent node's aggregate is not visible in
     Given the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                                              | Type                    |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                                      | Uuid                    |
-      | nodeAggregateIdentifier       | doc2-agg-identifier                                                                                                                                                | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Document                                                                                                                                    |                         |
-      | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                                                                                   | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"market":"DE", "language":"de"}},{"coordinates":{"market": "DE", "language":"gsw"}},{"coordinates":{"market": "CH", "language":"de"}}]} | DimensionSpacePointSet  |
-      | nodeIdentifier                | doc2-identifier-de-de                                                                                                                                              | Uuid                    |
-      | parentNodeIdentifier          | rn-identifier                                                                                                                                                      | Uuid                    |
-      | nodeName                      | document2                                                                                                                                                          |                         |
+      | Key                           | Value                                                                                                   | Type                    |
+      | contentStreamIdentifier       | cs-identifier                                                                                           | Uuid                    |
+      | nodeAggregateIdentifier       | doc2-agg-identifier                                                                                     | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document                                                                         |                         |
+      | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                        | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"}] | DimensionSpacePointSet  |
+      | nodeIdentifier                | doc2-identifier-de-de                                                                                   | Uuid                    |
+      | parentNodeIdentifier          | rn-identifier                                                                                           | Uuid                    |
+      | nodeName                      | document2                                                                                               |                         |
       | propertyDefaultValuesAndTypes | {}                                                                                                                                                                 | json                    |
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                                              | Type                    |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                                      | Uuid                    |
-      | nodeAggregateIdentifier       | cdoc2-agg-identifier                                                                                                                                               | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Document                                                                                                                                    |                         |
-      | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                                                                                   | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"market":"DE", "language":"de"}},{"coordinates":{"market": "DE", "language":"gsw"}},{"coordinates":{"market": "CH", "language":"de"}}]} | DimensionSpacePointSet  |
-      | nodeIdentifier                | cdoc2-identifier-de-de                                                                                                                                             | Uuid                    |
-      | parentNodeIdentifier          | doc2-identifier-de-de                                                                                                                                              | Uuid                    |
-      | nodeName                      | child-document2                                                                                                                                                    |                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                                 | json                    |
+      | Key                           | Value                                                                                                   | Type                    |
+      | contentStreamIdentifier       | cs-identifier                                                                                           | Uuid                    |
+      | nodeAggregateIdentifier       | cdoc2-agg-identifier                                                                                    | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document                                                                         |                         |
+      | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                        | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"}] | DimensionSpacePointSet  |
+      | nodeIdentifier                | cdoc2-identifier-de-de                                                                                  | Uuid                    |
+      | parentNodeIdentifier          | doc2-identifier-de-de                                                                                   | Uuid                    |
+      | nodeName                      | child-document2                                                                                         |                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                                      | json                    |
     Given the event NodeSpecializationWasCreated was published with payload:
-      | Key                       | Value                                                         | Type                    |
-      | contentStreamIdentifier   | cs-identifier                                                 | Uuid                    |
-      | nodeAggregateIdentifier   | cdoc2-agg-identifier                                          | NodeAggregateIdentifier |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"de"}                              | DimensionSpacePoint     |
-      | specializationIdentifier  | doc-identifier-ch-gsw                                         | Uuid                    |
-      | specializationLocation    | {"market":"CH", "language":"de"}                              | DimensionSpacePoint     |
-      | specializationVisibility  | {"points":[{"coordinates":{"market":"CH", "language":"de"}}]} | DimensionSpacePointSet  |
+      | Key                       | Value                              | Type                    |
+      | contentStreamIdentifier   | cs-identifier                      | Uuid                    |
+      | nodeAggregateIdentifier   | cdoc2-agg-identifier               | NodeAggregateIdentifier |
+      | sourceDimensionSpacePoint | {"market":"DE", "language":"de"}   | DimensionSpacePoint     |
+      | specializationIdentifier  | doc-identifier-ch-gsw              | Uuid                    |
+      | specializationLocation    | {"market":"CH", "language":"de"}   | DimensionSpacePoint     |
+      | specializationVisibility  | [{"market":"CH", "language":"de"}] | DimensionSpacePointSet  |
 
     When the command CreateNodeSpecialization was published with payload and exceptions are caught:
       | Key                       | Value                             | Type                    |
