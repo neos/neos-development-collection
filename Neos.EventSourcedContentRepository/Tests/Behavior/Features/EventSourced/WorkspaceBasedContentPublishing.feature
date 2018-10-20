@@ -50,15 +50,15 @@ Feature: Workspace based content publishing
   Scenario: Basic events are emitted
 
     # LIVE workspace
-    Then I expect exactly 4 events to be published on stream "Neos.ContentRepository:ContentStream:[cs-identifier]"
-    And event at index 0 is of type "Neos.ContentRepository:ContentStreamWasCreated" with payload:
+    Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:[cs-identifier]"
+    And event at index 0 is of type "Neos.EventSourcedContentRepository:ContentStreamWasCreated" with payload:
       | Key                      | Expected                 | Type |
       | contentStreamIdentifier  | cs-identifier            | Uuid |
       | initiatingUserIdentifier | initiatingUserIdentifier | Uuid |
 
     # Event 1 is the root Node Created event (we can skip this here, it is tested somewhere else); Event 2 is the SetProperty
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:Workspace:live"
-    And event at index 0 is of type "Neos.ContentRepository:RootWorkspaceWasCreated" with payload:
+    And event at index 0 is of type "Neos.EventSourcedContentRepository:RootWorkspaceWasCreated" with payload:
       | Key                            | Expected                 | Type |
       | workspaceName                  | live                     |      |
       | workspaceTitle                 | Live                     |      |
@@ -68,13 +68,13 @@ Feature: Workspace based content publishing
 
     # USER workspace
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:ContentStream:[cs-2-identifier]"
-    And event at index 0 is of type "Neos.ContentRepository:ContentStreamWasForked" with payload:
+    And event at index 0 is of type "Neos.EventSourcedContentRepository:ContentStreamWasForked" with payload:
       | Key                           | Expected        | Type |
       | contentStreamIdentifier       | cs-2-identifier | Uuid |
       | sourceContentStreamIdentifier | cs-identifier   | Uuid |
 
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:Workspace:user-test"
-    And event at index 0 is of type "Neos.ContentRepository:WorkspaceWasCreated" with payload:
+    And event at index 0 is of type "Neos.EventSourcedContentRepository:WorkspaceWasCreated" with payload:
       | Key                            | Expected                   | Type |
       | workspaceName                  | user-test                  |      |
       | baseWorkspaceName              | live                       |      |
