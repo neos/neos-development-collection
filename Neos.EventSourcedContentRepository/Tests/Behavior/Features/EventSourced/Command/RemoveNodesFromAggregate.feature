@@ -24,55 +24,53 @@ Feature: Remove Nodes from Aggregate
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository:Document': []
     """
-    And the Event RootNodeWasCreated was published with payload:
+    And the command "CreateRootNode" is executed with payload:
       | Key                      | Value                                | Type |
-      | workspaceName            | live                                 |      |
-      | workspaceTitle           | Live                                 |      |
-      | workspaceDescription     | The live workspace                   |      |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
       | contentStreamIdentifier  | live-cs-identifier                   | Uuid |
       | nodeIdentifier           | rn-identifier                        | Uuid |
+      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
       | nodeTypeName             | Neos.ContentRepository:Root          |      |
+
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                             | Type                    |
-      | contentStreamIdentifier       | live-cs-identifier                                                                | Uuid                    |
-      | nodeAggregateIdentifier       | doc-agg-identifier                                                                | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Document                                                   |                         |
-      | dimensionSpacePoint           | {"language":"de"}                                                                 | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language":"de"}},{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
-      | nodeIdentifier                | doc-identifier-de                                                                 | Uuid                    |
-      | parentNodeIdentifier          | rn-identifier                                                                     | Uuid                    |
-      | nodeName                      | document                                                                          |                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                | json                    |
+      | Key                           | Value                                  | Type                    |
+      | contentStreamIdentifier       | live-cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier       | doc-agg-identifier                     | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document        |                         |
+      | dimensionSpacePoint           | {"language":"de"}                      | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
+      | nodeIdentifier                | doc-identifier-de                      | Uuid                    |
+      | parentNodeIdentifier          | rn-identifier                          | Uuid                    |
+      | nodeName                      | document                               |                         |
+      | propertyDefaultValuesAndTypes | {}                                     | json                    |
     # We also want to add a child node to make sure it is correctly removed when the parent is removed
     # Node /document/child-document
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                             | Type                    |
-      | contentStreamIdentifier       | live-cs-identifier                                                                | Uuid                    |
-      | nodeAggregateIdentifier       | cdoc-agg-identifier                                                               | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Document                                                   |                         |
-      | dimensionSpacePoint           | {"language":"de"}                                                                 | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language":"de"}},{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
-      | nodeIdentifier                | cdoc-identifier-de                                                                | Uuid                    |
-      | parentNodeIdentifier          | doc-identifier-de                                                                 | Uuid                    |
-      | nodeName                      | child-document                                                                    |                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                | json                    |
+      | Key                           | Value                                  | Type                    |
+      | contentStreamIdentifier       | live-cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier       | cdoc-agg-identifier                    | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document        |                         |
+      | dimensionSpacePoint           | {"language":"de"}                      | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
+      | nodeIdentifier                | cdoc-identifier-de                     | Uuid                    |
+      | parentNodeIdentifier          | doc-identifier-de                      | Uuid                    |
+      | nodeName                      | child-document                         |                         |
+      | propertyDefaultValuesAndTypes | {}                                     | json                    |
 
     # We also want to add a grandchild node to make sure it is correctly removed when the parent is removed
     # Node /document/child-document/grandchild-document
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                             | Type                    |
-      | contentStreamIdentifier       | live-cs-identifier                                                                | Uuid                    |
-      | nodeAggregateIdentifier       | gcdoc-agg-identifier                                                              | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Document                                                   |                         |
-      | dimensionSpacePoint           | {"language":"de"}                                                                 | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | {"points":[{"coordinates":{"language":"de"}},{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
-      | nodeIdentifier                | gcdoc-identifier-de                                                               | Uuid                    |
-      | parentNodeIdentifier          | cdoc-identifier-de                                                                | Uuid                    |
-      | nodeName                      | grandchild-document                                                               |                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                | json                    |
+      | Key                           | Value                                  | Type                    |
+      | contentStreamIdentifier       | live-cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier       | gcdoc-agg-identifier                   | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Document        |                         |
+      | dimensionSpacePoint           | {"language":"de"}                      | DimensionSpacePoint     |
+      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
+      | nodeIdentifier                | gcdoc-identifier-de                    | Uuid                    |
+      | parentNodeIdentifier          | cdoc-identifier-de                     | Uuid                    |
+      | nodeName                      | grandchild-document                    |                         |
+      | propertyDefaultValuesAndTypes | {}                                     | json                    |
 
 
   ########################
@@ -80,18 +78,18 @@ Feature: Remove Nodes from Aggregate
   ########################
   Scenario: (Exception) Trying to remove a non existing node should fail with an exception
     When the command RemoveNodesFromAggregate was published with payload and exceptions are caught:
-      | Key                     | Value                                                                             | Type                    |
-      | contentStreamIdentifier | live-cs-identifier                                                                | Uuid                    |
-      | nodeAggregateIdentifier | non-existing-agg-identifier                                                       | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}},{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                                  | Type                    |
+      | contentStreamIdentifier | live-cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier | non-existing-agg-identifier            | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
     Then the last command should have thrown an exception of type "NodeAggregateNotFound"
 
   Scenario: (Exception) Trying to remove a node in a parent dimension without specializing the corresponding specialization dimension throw an exception
     When the command RemoveNodesFromAggregate was published with payload and exceptions are caught:
-      | Key                     | Value                                          | Type                    |
-      | contentStreamIdentifier | live-cs-identifier                             | Uuid                    |
-      | nodeAggregateIdentifier | doc-agg-identifier                             | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value               | Type                    |
+      | contentStreamIdentifier | live-cs-identifier  | Uuid                    |
+      | nodeAggregateIdentifier | doc-agg-identifier  | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | [{"language":"de"}] | DimensionSpacePointSet  |
     Then the last command should have thrown an exception of type "SpecializedDimensionsMustBePartOfDimensionSpacePointSet"
 
 
@@ -101,10 +99,10 @@ Feature: Remove Nodes from Aggregate
   Scenario: (1.A.a) In LIVE workspace, removing a node WITHOUT children leads also to removal of the node in the shine-through dimensions if specified
 
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                                                              | Type                    |
-      | contentStreamIdentifier | live-cs-identifier                                                                 | Uuid                    |
-      | nodeAggregateIdentifier | cdoc-agg-identifier                                                                | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}}, {"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                                  | Type                    |
+      | contentStreamIdentifier | live-cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier | cdoc-agg-identifier                    | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"de"}
@@ -123,10 +121,10 @@ Feature: Remove Nodes from Aggregate
       | targetDimensionSpacePoint | {"language":"gsw"}  | DimensionSpacePoint     |
       | specializationIdentifier  | cdoc-identifier-gsw | Uuid                    |
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                           | Type                    |
-      | contentStreamIdentifier | live-cs-identifier                              | Uuid                    |
-      | nodeAggregateIdentifier | cdoc-agg-identifier                             | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                | Type                    |
+      | contentStreamIdentifier | live-cs-identifier   | Uuid                    |
+      | nodeAggregateIdentifier | cdoc-agg-identifier  | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | [{"language":"gsw"}] | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"de"}
@@ -145,10 +143,10 @@ Feature: Remove Nodes from Aggregate
   Scenario: (1.B.a) In LIVE workspace, removing a node WITH children leads also to removal of the node in the shine-through dimensions if specified
 
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                                                              | Type                    |
-      | contentStreamIdentifier | live-cs-identifier                                                                 | Uuid                    |
-      | nodeAggregateIdentifier | doc-agg-identifier                                                                 | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}}, {"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                                  | Type                    |
+      | contentStreamIdentifier | live-cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier | doc-agg-identifier                     | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"de"}
@@ -169,10 +167,10 @@ Feature: Remove Nodes from Aggregate
       | targetDimensionSpacePoint | {"language":"gsw"} | DimensionSpacePoint     |
       | specializationIdentifier  | doc-identifier-gsw | Uuid                    |
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                           | Type                    |
-      | contentStreamIdentifier | live-cs-identifier                              | Uuid                    |
-      | nodeAggregateIdentifier | doc-agg-identifier                              | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                | Type                    |
+      | contentStreamIdentifier | live-cs-identifier   | Uuid                    |
+      | nodeAggregateIdentifier | doc-agg-identifier   | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | [{"language":"gsw"}] | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[live-cs-identifier]" and Dimension Space Point {"language":"de"}
@@ -198,10 +196,10 @@ Feature: Remove Nodes from Aggregate
       | sourceContentStreamIdentifier | live-cs-identifier | Uuid |
 
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                                                              | Type                    |
-      | contentStreamIdentifier | user-cs-identifier                                                                 | Uuid                    |
-      | nodeAggregateIdentifier | cdoc-agg-identifier                                                                | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}}, {"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                                  | Type                    |
+      | contentStreamIdentifier | user-cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier | cdoc-agg-identifier                    | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[user-cs-identifier]" and Dimension Space Point {"language":"de"}
@@ -237,10 +235,10 @@ Feature: Remove Nodes from Aggregate
       | sourceContentStreamIdentifier | live-cs-identifier | Uuid |
 
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                           | Type                    |
-      | contentStreamIdentifier | user-cs-identifier                              | Uuid                    |
-      | nodeAggregateIdentifier | cdoc-agg-identifier                             | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                | Type                    |
+      | contentStreamIdentifier | user-cs-identifier   | Uuid                    |
+      | nodeAggregateIdentifier | cdoc-agg-identifier  | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | [{"language":"gsw"}] | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[user-cs-identifier]" and Dimension Space Point {"language":"de"}
@@ -278,10 +276,10 @@ Feature: Remove Nodes from Aggregate
       | sourceContentStreamIdentifier | live-cs-identifier | Uuid |
 
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                                                              | Type                    |
-      | contentStreamIdentifier | user-cs-identifier                                                                 | Uuid                    |
-      | nodeAggregateIdentifier | doc-agg-identifier                                                                 | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"de"}}, {"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                                  | Type                    |
+      | contentStreamIdentifier | user-cs-identifier                     | Uuid                    |
+      | nodeAggregateIdentifier | doc-agg-identifier                     | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[user-cs-identifier]" and Dimension Space Point {"language":"de"}
@@ -319,10 +317,10 @@ Feature: Remove Nodes from Aggregate
       | sourceContentStreamIdentifier | live-cs-identifier | Uuid |
 
     When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                                           | Type                    |
-      | contentStreamIdentifier | user-cs-identifier                              | Uuid                    |
-      | nodeAggregateIdentifier | doc-agg-identifier                              | NodeAggregateIdentifier |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":{"language":"gsw"}}]} | DimensionSpacePointSet  |
+      | Key                     | Value                | Type                    |
+      | contentStreamIdentifier | user-cs-identifier   | Uuid                    |
+      | nodeAggregateIdentifier | doc-agg-identifier   | NodeAggregateIdentifier |
+      | dimensionSpacePointSet  | [{"language":"gsw"}] | DimensionSpacePointSet  |
     And the graph projection is fully up to date
 
     When I am in content stream "[user-cs-identifier]" and Dimension Space Point {"language":"de"}
