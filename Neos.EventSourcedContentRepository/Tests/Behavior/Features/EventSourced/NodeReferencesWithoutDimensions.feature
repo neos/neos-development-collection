@@ -33,35 +33,35 @@ Feature: Node References without Dimensions
       | nodeName                      | source                                    |                        |
 
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     | Type                   |
-      | contentStreamIdentifier       | cs-identifier                             | Uuid                   |
-      | nodeAggregateIdentifier       | dest-1-nodeAgg-identifier                 | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences |                        |
-      | visibleDimensionSpacePoints   | [{}]           | DimensionSpacePointSet |
-      | nodeIdentifier                | dest-1-node-identifier                    | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
-      | nodeName                      | dest-1                                    |                        |
+      | Key                         | Value                                     | Type                   |
+      | contentStreamIdentifier     | cs-identifier                             | Uuid                   |
+      | nodeAggregateIdentifier     | dest-1-nodeAgg-identifier                 | Uuid                   |
+      | nodeTypeName                | Neos.ContentRepository:NodeWithReferences |                        |
+      | visibleDimensionSpacePoints | [{}]                                      | DimensionSpacePointSet |
+      | nodeIdentifier              | dest-1-node-identifier                    | Uuid                   |
+      | parentNodeIdentifier        | rn-identifier                             | Uuid                   |
+      | nodeName                    | dest-1                                    |                        |
 
 
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     | Type                   |
-      | contentStreamIdentifier       | cs-identifier                             | Uuid                   |
-      | nodeAggregateIdentifier       | dest-2-nodeAgg-identifier                 | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences |                        |
-      | visibleDimensionSpacePoints   | [{}]           | DimensionSpacePointSet |
-      | nodeIdentifier                | dest-2-node-identifier                    | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
-      | nodeName                      | dest-2                                    |                        |
+      | Key                         | Value                                     | Type                   |
+      | contentStreamIdentifier     | cs-identifier                             | Uuid                   |
+      | nodeAggregateIdentifier     | dest-2-nodeAgg-identifier                 | Uuid                   |
+      | nodeTypeName                | Neos.ContentRepository:NodeWithReferences |                        |
+      | visibleDimensionSpacePoints | [{}]                                      | DimensionSpacePointSet |
+      | nodeIdentifier              | dest-2-node-identifier                    | Uuid                   |
+      | parentNodeIdentifier        | rn-identifier                             | Uuid                   |
+      | nodeName                    | dest-2                                    |                        |
 
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                     | Type                   |
-      | contentStreamIdentifier       | cs-identifier                             | Uuid                   |
-      | nodeAggregateIdentifier       | dest-3-nodeAgg-identifier                 | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences |                        |
-      | visibleDimensionSpacePoints   | [{}]           | DimensionSpacePointSet |
-      | nodeIdentifier                | dest-3-node-identifier                    | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
-      | nodeName                      | dest-3                                    |                        |
+      | Key                         | Value                                     | Type                   |
+      | contentStreamIdentifier     | cs-identifier                             | Uuid                   |
+      | nodeAggregateIdentifier     | dest-3-nodeAgg-identifier                 | Uuid                   |
+      | nodeTypeName                | Neos.ContentRepository:NodeWithReferences |                        |
+      | visibleDimensionSpacePoints | [{}]                                      | DimensionSpacePointSet |
+      | nodeIdentifier              | dest-3-node-identifier                    | Uuid                   |
+      | parentNodeIdentifier        | rn-identifier                             | Uuid                   |
+      | nodeName                    | dest-3                                    |                        |
 
   Scenario: Ensure that a reference between nodes can be set and read
 
