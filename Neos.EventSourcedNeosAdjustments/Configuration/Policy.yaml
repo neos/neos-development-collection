@@ -6,7 +6,7 @@ privilegeTargets:
       matcher: 'method(Neos\EventSourcedNeosAdjustments\EventSourcedFrontController\EventSourcedNodeController->showAction())'
 
     'Neos.EventSourcedNeosAdjustments:Backend.GeneralAccess':
-      matcher: 'method(Neos\EventSourcedNeosAdjustments\Ui\Controller\BackendController->.*())'
+      matcher: 'method(Neos\EventSourcedNeosAdjustments\Ui\Controller\(BackendController|BackendServiceController)->.*())'
 
 roles:
 

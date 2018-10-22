@@ -98,6 +98,8 @@ final class ContentGraph implements ContentGraphInterface
     {
         $connection = $this->client->getConnection();
 
+        // TODO: we get an arbitrary DimensionSpacePoint returned here -- and this is actually a problem I guess...
+        // TODO think through in detail
         // HINT: we check the ContentStreamIdentifier on the EDGE; as this is where we actually find out whether the node exists in the content stream
         $nodeRow = $connection->executeQuery(
             'SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n

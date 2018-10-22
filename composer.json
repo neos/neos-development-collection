@@ -11,7 +11,8 @@
         "neos/event-sourcing": "dev-master",
         "neos/content-repository": "*",
         "neos/content-repository-dimensionspace": "dev-master",
-        "neos/neos": "*"
+        "neos/neos": "*",
+        "neos/neos-ui": "*"
     },
     "replace": {
         "neos/contentgraph-doctrinedbaladapter": "self.version",

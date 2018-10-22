@@ -71,3 +71,7 @@ Neos:
             allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(documentNode.subgraph.dimensionSpacePoint)}'
           documentNodeSerialization: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.renderNodeWithPropertiesAndChildrenInformation(documentNode, controllerContext)}'
           url: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.uri(Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.nodeAddress(documentNode), controllerContext)}'
+
+      changes:
+        types:
+          'Neos.Neos.Ui:Property': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Property
