@@ -67,10 +67,10 @@
 			<target xml:lang="ru" state="translated">Перетащите на тег или коллекцию</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target xml:lang="ru" state="needs-translation">View</target></trans-unit>
+			<target xml:lang="ru" state="translated">Вид</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target xml:lang="ru" state="needs-translation">View asset</target></trans-unit>
+			<target xml:lang="ru" state="translated">View asset</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="ru" state="translated">Редактировать медиа-ресурс</target><alt-trans><target xml:lang="ru">Редактировать ресурс</target></alt-trans><alt-trans><target xml:lang="ru">Править медиа-ресурс</target></alt-trans></trans-unit>
@@ -181,13 +181,13 @@
 			<target xml:lang="ru" state="translated">Отображать в виде миниатюр</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target xml:lang="ru" state="needs-translation">Connection error</target></trans-unit>
+			<target xml:lang="ru" state="translated">Connection error</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target xml:lang="ru" state="needs-translation">Media source</target></trans-unit>
+			<target xml:lang="ru" state="translated">Media source</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target xml:lang="ru" state="needs-translation">Media sources</target></trans-unit>
+			<target xml:lang="ru" state="translated">Media sources</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target xml:lang="ru" state="translated">Коллекции</target></trans-unit>
