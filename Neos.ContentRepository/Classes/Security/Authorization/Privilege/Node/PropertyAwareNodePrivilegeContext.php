@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * An Eel context matching expression for the node privileges including

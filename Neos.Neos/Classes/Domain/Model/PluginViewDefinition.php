@@ -11,7 +11,6 @@ namespace Neos\Neos\Domain\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\ContentRepository\Domain\Model\NodeType;
 

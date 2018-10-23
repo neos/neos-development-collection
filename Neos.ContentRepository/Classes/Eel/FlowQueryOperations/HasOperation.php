@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  */
 
 use Neos\Eel\FlowQuery\FizzleException;
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\ContentRepository\Domain\Model\NodeInterface;

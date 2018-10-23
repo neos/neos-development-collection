@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Service\Utility;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Exception\WorkspaceException;
 

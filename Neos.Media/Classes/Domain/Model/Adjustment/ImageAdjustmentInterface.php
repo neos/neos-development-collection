@@ -11,9 +11,7 @@ namespace Neos\Media\Domain\Model\Adjustment;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Imagine\Image\ImageInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\ImageVariant;
 
 /**

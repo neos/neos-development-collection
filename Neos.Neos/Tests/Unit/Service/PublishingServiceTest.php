@@ -14,8 +14,6 @@ namespace Neos\Neos\Tests\Unit\Service;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Repository\DomainRepository;
-use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Service\PublishingService;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeData;

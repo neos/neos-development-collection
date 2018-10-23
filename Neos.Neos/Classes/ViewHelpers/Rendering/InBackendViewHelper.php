@@ -11,7 +11,6 @@ namespace Neos\Neos\ViewHelpers\Rendering;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
