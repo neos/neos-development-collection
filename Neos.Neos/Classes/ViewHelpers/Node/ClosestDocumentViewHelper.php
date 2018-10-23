@@ -26,7 +26,7 @@ class ClosestDocumentViewHelper extends AbstractViewHelper
      */
     public function render(NodeInterface $node)
     {
-        $flowQuery = new FlowQuery(array($node));
+        $flowQuery = new FlowQuery([$node]);
         return $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
     }
 }

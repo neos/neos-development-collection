@@ -37,7 +37,7 @@ interface ContextFactoryInterface
      * @return Context
      * @api
      */
-    public function create(array $contextConfiguration = array());
+    public function create(array $contextConfiguration = []);
 
     /**
      * Clears the instances cache clearing all contexts.

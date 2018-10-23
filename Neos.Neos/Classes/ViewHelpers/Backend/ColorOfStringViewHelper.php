@@ -38,12 +38,12 @@ class ColorOfStringViewHelper extends AbstractViewHelper
 
         $hash = md5($string);
 
-        $rgbValues = array();
+        $rgbValues = [];
         for ($i = 0; $i < 3; $i++) {
-            $rgbValues[$i] = max(array(
+            $rgbValues[$i] = max([
                 round(hexdec(substr($hash, 10 * $i, 10)) / hexdec('FFFFFFFFFF') * 255),
                 $minimalBrightness
-            ));
+            ]);
         }
 
         $output = '#';

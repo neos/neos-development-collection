@@ -23,11 +23,11 @@ class PasswordValidator extends AbstractValidator
     /**
      * @var array
      */
-    protected $supportedOptions = array(
-        'allowEmpty' => array(false, 'Whether an empty password is allowed or not', 'boolean'),
-        'minimum' => array(0, 'Minimum length for a valid string', 'integer'),
-        'maximum' => array(PHP_INT_MAX, 'Maximum length for a valid string', 'integer')
-    );
+    protected $supportedOptions = [
+        'allowEmpty' => [false, 'Whether an empty password is allowed or not', 'boolean'],
+        'minimum' => [0, 'Minimum length for a valid string', 'integer'],
+        'maximum' => [PHP_INT_MAX, 'Maximum length for a valid string', 'integer']
+    ];
 
     /**
      * Returns true, if the given property ($value) is a valid array consistent of two equal passwords and their length
@@ -66,10 +66,10 @@ class PasswordValidator extends AbstractValidator
             return;
         }
 
-        $stringLengthValidator = new StringLengthValidator(array(
+        $stringLengthValidator = new StringLengthValidator([
             'minimum' => $this->options['minimum'],
             'maximum' => $this->options['maximum'],
-        ));
+        ]);
         $stringLengthValidatorResult = $stringLengthValidator->validate($password);
 
         if ($stringLengthValidatorResult->hasErrors() === true) {

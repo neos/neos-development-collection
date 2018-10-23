@@ -24,7 +24,7 @@ class ContentDimensionRepository
     /**
      * @var array
      */
-    protected $dimensionsConfiguration = array();
+    protected $dimensionsConfiguration = [];
 
     /**
      * Returns an array of content dimensions that are available in the system.
@@ -33,7 +33,7 @@ class ContentDimensionRepository
      */
     public function findAll()
     {
-        $dimensions = array();
+        $dimensions = [];
         foreach ($this->dimensionsConfiguration as $dimensionIdentifier => $dimensionConfiguration) {
             $dimensions[] = new ContentDimension($dimensionIdentifier, $dimensionConfiguration['default']);
         }

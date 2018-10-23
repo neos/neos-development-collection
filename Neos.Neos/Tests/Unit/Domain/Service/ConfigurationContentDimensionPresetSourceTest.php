@@ -19,42 +19,42 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
     /**
      * @var array
      */
-    protected $validConfiguration = array(
-        'language' => array(
+    protected $validConfiguration = [
+        'language' => [
             'defaultPreset' => 'all',
             'label' => 'Language',
             'icon' => 'icon-language',
             'position' => 100,
-            'presets' => array(
-                'all' => array(
+            'presets' => [
+                'all' => [
                     'label' => 'All languages',
-                    'values' => array('mul_ZZ'),
+                    'values' => ['mul_ZZ'],
                     'uriSegment' => 'intl',
                     'position' => 100
-                ),
-                'de_DE' => array(
+                ],
+                'de_DE' => [
                     'label' => 'Deutsch (Deutschland)',
-                    'values' => array('de_DE', 'de_ZZ', 'mul_ZZ'),
+                    'values' => ['de_DE', 'de_ZZ', 'mul_ZZ'],
                     'uriSegment' => 'deutsch',
                     'position' => 10
-                )
-            )
-        ),
-        'targetGroups' => array(
+                ]
+            ]
+        ],
+        'targetGroups' => [
             'defaultPreset' => 'all',
             'label' => 'Target Groups',
             'icon' => 'icon-group',
             'position' => 20,
-            'presets' => array(
-                'all' => array(
+            'presets' => [
+                'all' => [
                     'label' => 'All target groups',
-                    'values' => array('all'),
+                    'values' => ['all'],
                     'uriSegment' => 'all',
                     'position' => 100
-                )
-            )
-        )
-    );
+                ]
+            ]
+        ]
+    ];
 
     /**
      * @test
@@ -65,7 +65,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source->setConfiguration($this->validConfiguration);
         $preset = $source->findPresetByUriSegment('language', 'deutsch');
         $this->assertArrayHasKey('values', $preset);
-        $this->assertEquals(array('de_DE', 'de_ZZ', 'mul_ZZ'), $preset['values']);
+        $this->assertEquals(['de_DE', 'de_ZZ', 'mul_ZZ'], $preset['values']);
     }
 
     /**
@@ -86,7 +86,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
     {
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->validConfiguration);
-        $preset = $source->findPresetByDimensionValues('language', array('de_DE', 'de_ZZ', 'mul_ZZ'));
+        $preset = $source->findPresetByDimensionValues('language', ['de_DE', 'de_ZZ', 'mul_ZZ']);
         $this->assertArrayHasKey('uriSegment', $preset);
         $this->assertEquals('deutsch', $preset['uriSegment']);
     }
@@ -98,7 +98,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
     {
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->validConfiguration);
-        $preset = $source->findPresetByDimensionValues('language', array('ja_JP', 'mul_ZZ'));
+        $preset = $source->findPresetByDimensionValues('language', ['ja_JP', 'mul_ZZ']);
         $this->assertNull($preset);
     }
 }

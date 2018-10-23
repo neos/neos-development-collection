@@ -30,7 +30,7 @@ class BackendControllerSecurityTest extends FunctionalTestCase
      */
     public function indexActionIsGrantedForAdministrator()
     {
-        $account = $this->authenticateRoles(array('Neos.Neos:Administrator'));
+        $account = $this->authenticateRoles(['Neos.Neos:Administrator']);
         $account->setAccountIdentifier('admin');
         $this->browser->request('http://localhost/neos/login');
 

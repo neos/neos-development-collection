@@ -57,7 +57,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
     {
         $headers = $this->fusionValue('headers');
         if (!is_array($headers)) {
-            $headers = array();
+            $headers = [];
         }
         return $headers;
     }

@@ -28,18 +28,18 @@ class ContentDimensionsController extends ActionController
     /**
      * @var array
      */
-    protected $viewFormatToObjectNameMap = array(
+    protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
         'json' => JsonView::class
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $supportedMediaTypes = array(
+    protected $supportedMediaTypes = [
         'text/html',
         'application/json'
-    );
+    ];
 
     /**
      * @var ContentDimensionPresetSourceInterface
@@ -78,14 +78,14 @@ class ContentDimensionsController extends ActionController
      * @param array $chosenDimensionPresets An optional array of dimension names and a single preset per dimension
      * @return void
      */
-    public function showAction($dimensionName, $chosenDimensionPresets = array())
+    public function showAction($dimensionName, $chosenDimensionPresets = [])
     {
-        if ($chosenDimensionPresets === array()) {
+        if ($chosenDimensionPresets === []) {
             $contentDimensionsAndPresets = $this->contentDimensionPresetSource->getAllPresets();
             if (!isset($contentDimensionsAndPresets[$dimensionName])) {
                 $this->throwStatus(404, sprintf('The dimension %s does not exist.', $dimensionName));
             }
-            $contentDimensionsAndPresets = array($dimensionName => $contentDimensionsAndPresets[$dimensionName]);
+            $contentDimensionsAndPresets = [$dimensionName => $contentDimensionsAndPresets[$dimensionName]];
         } else {
             $contentDimensionsAndPresets = $this->contentDimensionPresetSource->getAllowedDimensionPresetsAccordingToPreselection($dimensionName, $chosenDimensionPresets);
         }

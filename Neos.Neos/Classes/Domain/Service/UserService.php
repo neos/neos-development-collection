@@ -266,7 +266,7 @@ class UserService
     public function addUser($username, $password, User $user, array $roleIdentifiers = null, $authenticationProviderName = null)
     {
         if ($roleIdentifiers === null) {
-            $roleIdentifiers = array('Neos.Neos:Editor');
+            $roleIdentifiers = ['Neos.Neos:Editor'];
         }
         $roleIdentifiers = $this->normalizeRoleIdentifiers($roleIdentifiers);
         $account = $this->accountFactory->createAccountWithPassword($username, $password, $roleIdentifiers, $authenticationProviderName ?: $this->defaultAuthenticationProviderName);
@@ -341,7 +341,7 @@ class UserService
     public function setUserPassword(User $user, $password)
     {
         $tokens = $this->authenticationManager->getTokens();
-        $indexedTokens = array();
+        $indexedTokens = [];
         foreach ($tokens as $token) {
             /** @var TokenInterface $token */
             $indexedTokens[$token->getAuthenticationProviderName()] = $token;
@@ -468,7 +468,7 @@ class UserService
         if (!$account->hasRole($role)) {
             $account->addRole($role);
             $this->accountRepository->update($account);
-            $this->emitRolesAdded($account, array($role));
+            $this->emitRolesAdded($account, [$role]);
 
             return 1;
         }
@@ -507,7 +507,7 @@ class UserService
         if ($account->hasRole($role)) {
             $account->removeRole($role);
             $this->accountRepository->update($account);
-            $this->emitRolesRemoved($account, array($role));
+            $this->emitRolesRemoved($account, [$role]);
 
             return 1;
         }
@@ -735,10 +735,10 @@ class UserService
      */
     protected function getAllRoles(User $user)
     {
-        $roles = array(
+        $roles = [
             'Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody'),
             'Neos.Flow:AuthenticatedUser' => $this->policyService->getRole('Neos.Flow:AuthenticatedUser')
-        );
+        ];
 
         /** @var Account $account */
         foreach ($user->getAccounts() as $account) {

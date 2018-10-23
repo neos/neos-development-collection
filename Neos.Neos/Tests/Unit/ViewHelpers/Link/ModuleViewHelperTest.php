@@ -46,9 +46,9 @@ class ModuleViewHelperTest extends UnitTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(ModuleViewHelper::class, array('renderChildren'));
+        $this->viewHelper = $this->getAccessibleMock(ModuleViewHelper::class, ['renderChildren']);
         $this->tagBuilder = $this->createMock(TagBuilder::class);
-        $this->uriModuleViewHelper = $this->getMockBuilder(\Neos\Neos\ViewHelpers\Uri\ModuleViewHelper::class)->setMethods(array('setRenderingContext', 'render'))->getMock();
+        $this->uriModuleViewHelper = $this->getMockBuilder(\Neos\Neos\ViewHelpers\Uri\ModuleViewHelper::class)->setMethods(['setRenderingContext', 'render'])->getMock();
 
         $this->dummyRenderingContext = $this->createMock(RenderingContextInterface::class);
         $this->inject($this->viewHelper, 'renderingContext', $this->dummyRenderingContext);
@@ -72,10 +72,10 @@ class ModuleViewHelperTest extends UnitTestCase
     public function callingRenderCallsTheUriModuleViewHelpersRenderMethodWithTheCorrectArguments()
     {
         $this->uriModuleViewHelper->expects($this->once())->method('render')->with(
-            'path', 'action', array('arguments'), 'section', 'format', array('additionalParams'), 'addQueryString', array('argumentsToBeExcludedFromQueryString')
+            'path', 'action', ['arguments'], 'section', 'format', ['additionalParams'], 'addQueryString', ['argumentsToBeExcludedFromQueryString']
         );
         $this->viewHelper->render(
-            'path', 'action', array('arguments'), 'section', 'format', array('additionalParams'), 'addQueryString', array('argumentsToBeExcludedFromQueryString')
+            'path', 'action', ['arguments'], 'section', 'format', ['additionalParams'], 'addQueryString', ['argumentsToBeExcludedFromQueryString']
         );
     }
 

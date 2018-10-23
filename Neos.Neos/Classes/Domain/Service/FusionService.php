@@ -81,13 +81,13 @@ class FusionService
      *
      * @var array
      */
-    protected $appendFusionIncludes = array();
+    protected $appendFusionIncludes = [];
 
     /**
      * @Flow\InjectConfiguration("fusion.autoInclude")
      * @var array
      */
-    protected $autoIncludeConfiguration = array();
+    protected $autoIncludeConfiguration = [];
 
     /**
      * @Flow\Inject
@@ -222,7 +222,7 @@ class FusionService
      */
     protected function prepareAutoIncludeFusion()
     {
-        $autoIncludeFusion = array();
+        $autoIncludeFusion = [];
         foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
             if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
                 $autoIncludeFusionFile = sprintf($this->autoIncludeFusionPattern, $packageKey);

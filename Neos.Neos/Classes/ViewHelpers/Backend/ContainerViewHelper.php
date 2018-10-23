@@ -92,12 +92,12 @@ class ContainerViewHelper extends AbstractViewHelper
 
         $user = $this->partyService->getAssignedPartyOfAccount($this->securityContext->getAccount());
 
-        $innerView->assignMultiple(array(
+        $innerView->assignMultiple([
             'node' => $node,
             'modules' => $this->menuHelper->buildModuleList($this->controllerContext),
             'sites' => $this->menuHelper->buildSiteList($this->controllerContext),
             'user' => $user
-        ));
+        ]);
 
         return $innerView->render();
     }

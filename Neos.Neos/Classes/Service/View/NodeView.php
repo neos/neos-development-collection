@@ -61,19 +61,19 @@ class NodeView extends JsonView
      * @param array $propertyNames Optional list of property names to include in the JSON output
      * @return void
      */
-    public function assignNode(NodeInterface $node, array $propertyNames = array('name', 'path', 'identifier', 'properties', 'nodeType'))
+    public function assignNode(NodeInterface $node, array $propertyNames = ['name', 'path', 'identifier', 'properties', 'nodeType'])
     {
         $this->setConfiguration(
-            array(
-                'value' => array(
-                    'data' => array(
-                        '_only' => array('name', 'path', 'identifier', 'properties', 'nodeType'),
-                        '_descend' => array('properties' => $propertyNames)
-                    )
-                )
-            )
+            [
+                'value' => [
+                    'data' => [
+                        '_only' => ['name', 'path', 'identifier', 'properties', 'nodeType'],
+                        '_descend' => ['properties' => $propertyNames]
+                    ]
+                ]
+            ]
         );
-        $this->assign('value', array('data' => $node, 'success' => true));
+        $this->assign('value', ['data' => $node, 'success' => true]);
     }
 
     /**
@@ -81,23 +81,23 @@ class NodeView extends JsonView
      */
     public function assignNodes(array $nodes)
     {
-        $data = array();
+        $data = [];
         foreach ($nodes as $node) {
             if ($node->getPath() !== '/') {
-                $q = new FlowQuery(array($node));
+                $q = new FlowQuery([$node]);
                 $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
                 if ($closestDocumentNode !== null) {
-                    $data[] = array(
+                    $data[] = [
                         'nodeContextPath' => $node->getContextPath(),
                         'documentNodeContextPath' => $closestDocumentNode->getContextPath(),
-                    );
+                    ];
                 } else {
                     $this->systemLogger->log('You have a node that is no longer connected to a parent. Path: ' . $node->getPath() . ' (Identifier: ' . $node->getIdentifier() . ')');
                 }
             }
         }
 
-        $this->assign('value', array('data' => $data, 'success' => true));
+        $this->assign('value', ['data' => $data, 'success' => true]);
     }
 
     /**
@@ -113,13 +113,13 @@ class NodeView extends JsonView
     public function assignChildNodes(NodeInterface $node, $nodeTypeFilter, $outputStyle = self::STYLE_LIST, $depth = 0, NodeInterface $untilNode = null)
     {
         $this->outputStyle = $outputStyle;
-        $nodes = array();
+        $nodes = [];
         if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
             $this->collectChildNodeData($nodes, $node, ($nodeTypeFilter === '' ? null : $nodeTypeFilter), $depth, $untilNode);
         }
-        $this->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
+        $this->setConfiguration(['value' => ['data' => ['_descendAll' => []]]]);
 
-        $this->assign('value', array('data' => $nodes, 'success' => true));
+        $this->assign('value', ['data' => $nodes, 'success' => true]);
     }
 
     /**
@@ -134,15 +134,15 @@ class NodeView extends JsonView
     public function assignNodeAndChildNodes(NodeInterface $node, $nodeTypeFilter = '', $depth = 0, NodeInterface $untilNode = null)
     {
         $this->outputStyle = self::STYLE_TREE;
-        $data = array();
+        $data = [];
         if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
-            $childNodes = array();
+            $childNodes = [];
             $this->collectChildNodeData($childNodes, $node, ($nodeTypeFilter === '' ? null : $nodeTypeFilter), $depth, $untilNode);
-            $data = $this->collectTreeNodeData($node, true, $childNodes, $childNodes !== array());
+            $data = $this->collectTreeNodeData($node, true, $childNodes, $childNodes !== []);
         }
-        $this->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
+        $this->setConfiguration(['value' => ['data' => ['_descendAll' => []]]]);
 
-        $this->assign('value', array('data' => $data, 'success' => true));
+        $this->assign('value', ['data' => $data, 'success' => true]);
     }
 
     /**
@@ -157,9 +157,9 @@ class NodeView extends JsonView
     {
         $this->outputStyle = $outputStyle;
         $nodes = $this->collectParentNodeData($node, $matchedNodes);
-        $this->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
+        $this->setConfiguration(['value' => ['data' => ['_descendAll' => []]]]);
 
-        $this->assign('value', array('data' => $nodes, 'success' => true));
+        $this->assign('value', ['data' => $nodes, 'success' => true]);
     }
 
     /**
@@ -202,7 +202,7 @@ class NodeView extends JsonView
                     }
                 break;
                 case self::STYLE_TREE:
-                    $children = array();
+                    $children = [];
                     $hasChildNodes = $childNode->hasChildNodes($nodeTypeFilter) === true;
                     if ($expand && $hasChildNodes) {
                         $this->collectChildNodeData($children, $childNode, $nodeTypeFilter, $depth, $untilNode, ($recursionPointer + 1));
@@ -219,7 +219,7 @@ class NodeView extends JsonView
      */
     public function collectParentNodeData(NodeInterface $rootNode, array $nodes)
     {
-        $nodeCollection = array();
+        $nodeCollection = [];
 
         $addNode = function ($node, $matched) use ($rootNode, &$nodeCollection) {
             /** @var NodeInterface $node */
@@ -250,16 +250,16 @@ class NodeView extends JsonView
             }
         }
 
-        $treeNodes = array();
+        $treeNodes = [];
         $self = $this;
         $collectTreeNodeData = function (&$treeNodes, $node) use (&$collectTreeNodeData, $self) {
-            $children = array();
+            $children = [];
             if (isset($node['children'])) {
                 foreach ($node['children'] as $childNode) {
                     $collectTreeNodeData($children, $childNode);
                 }
             }
-            $treeNodes[] = $self->collectTreeNodeData($node['node'], true, $children, $children !== array(), isset($node['matched']));
+            $treeNodes[] = $self->collectTreeNodeData($node['node'], true, $children, $children !== [], isset($node['matched']));
         };
 
         foreach ($nodeCollection as $firstLevelNode) {
@@ -277,7 +277,7 @@ class NodeView extends JsonView
      * @param boolean $matched
      * @return array
      */
-    public function collectTreeNodeData(NodeInterface $node, $expand = true, array $children = array(), $hasChildNodes = false, $matched = false)
+    public function collectTreeNodeData(NodeInterface $node, $expand = true, array $children = [], $hasChildNodes = false, $matched = false)
     {
         $isTimedPage = false;
         $now = new \DateTime();
@@ -292,7 +292,7 @@ class NodeView extends JsonView
             $isTimedPage = true;
         }
 
-        $classes = array();
+        $classes = [];
         if ($isTimedPage === true && $node->isHidden() === false) {
             array_push($classes, 'neos-timedVisibility');
         }
@@ -310,13 +310,13 @@ class NodeView extends JsonView
         $nodeType = $node->getNodeType();
         $nodeTypeConfiguration = $nodeType->getFullConfiguration();
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $node), 'Frontend\Node', 'Neos.Neos');
+            $uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos');
         } else {
             $uriForNode = '#';
         }
         $label = $node->getLabel();
         $nodeTypeLabel = $node->getNodeType()->getLabel();
-        $treeNode = array(
+        $treeNode = [
             'key' => $node->getContextPath(),
             'title' => $label,
             'fullTitle' => $node->getProperty('title'),
@@ -332,7 +332,7 @@ class NodeView extends JsonView
             'name' => $node->getName(),
             'iconClass' => isset($nodeTypeConfiguration['ui']) && isset($nodeTypeConfiguration['ui']['icon']) ? $nodeTypeConfiguration['ui']['icon'] : '',
             'isHidden' => $node->isHidden()
-        );
+        ];
         if ($hasChildNodes) {
             $treeNode['children'] = $children;
         }

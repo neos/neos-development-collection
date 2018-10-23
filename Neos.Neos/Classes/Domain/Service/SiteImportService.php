@@ -102,21 +102,21 @@ class SiteImportService
      *
      * @var array<string>
      */
-    protected $imageVariantClassNames = array();
+    protected $imageVariantClassNames = [];
 
     /**
      * An array that contains all fully qualified class names that implement AssetInterface
      *
      * @var array<string>
      */
-    protected $assetClassNames = array();
+    protected $assetClassNames = [];
 
     /**
      * An array that contains all fully qualified class names that extend \DateTime including \DateTime itself
      *
      * @var array<string>
      */
-    protected $dateTimeClassNames = array();
+    protected $dateTimeClassNames = [];
 
     /**
      * @return void

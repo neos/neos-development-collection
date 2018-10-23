@@ -28,10 +28,10 @@ class RawArrayImplementation extends ArrayImplementation
         $sortedChildFusionKeys = $this->sortNestedFusionKeys();
 
         if (count($sortedChildFusionKeys) === 0) {
-            return array();
+            return [];
         }
 
-        $output = array();
+        $output = [];
         foreach ($sortedChildFusionKeys as $key) {
             $value = $this->fusionValue($key);
             if ($value === null && $this->runtime->getLastEvaluationStatus() === Runtime::EVALUATION_SKIPPED) {

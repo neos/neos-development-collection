@@ -42,10 +42,10 @@ class DomainRepository extends Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array(
+    protected $defaultOrderings = [
         'site' => QueryInterface::ORDER_ASCENDING,
         'hostname' => QueryInterface::ORDER_ASCENDING
-    );
+    ];
 
     /**
      * Finds all active domains matching the given hostname.

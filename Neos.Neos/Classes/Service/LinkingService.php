@@ -223,7 +223,7 @@ class LinkingService
      * @throws \InvalidArgumentException if the given node/baseNode is not valid
      * @throws NeosException if no URI could be resolved for the given node
      */
-    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $resolveShortcuts = true)
+    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true)
     {
         $this->lastLinkedNode = null;
         if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
@@ -286,7 +286,7 @@ class LinkingService
             ->setAddQueryString($addQueryString)
             ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
             ->setFormat($format ?: $request->getFormat())
-            ->uriFor('show', array('node' => $resolvedNode), 'Frontend\Node', 'Neos.Neos');
+            ->uriFor('show', ['node' => $resolvedNode], 'Frontend\Node', 'Neos.Neos');
 
         $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
         if ($siteNode instanceof NodeInterface && NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {

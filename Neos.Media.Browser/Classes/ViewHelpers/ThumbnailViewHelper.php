@@ -70,11 +70,11 @@ class ThumbnailViewHelper extends AbstractTagBasedViewHelper
             $thumbnailUri = $assetProxy->getPreviewUri();
         }
 
-        $this->tag->addAttributes(array(
+        $this->tag->addAttributes([
             'width' => $width,
             'height' => $height,
             'src' => $thumbnailUri
-        ));
+        ]);
 
         return $this->tag->render();
     }

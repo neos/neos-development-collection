@@ -227,7 +227,7 @@ class ResourceUriImplementationTest extends UnitTestCase
             }
             return null;
         }));
-        $this->mockI18nService->expects($this->atLeastOnce())->method('getLocalizedFilename')->will($this->returnValue(array('resource://Some.Package/Public/LocalizedFilename')));
+        $this->mockI18nService->expects($this->atLeastOnce())->method('getLocalizedFilename')->will($this->returnValue(['resource://Some.Package/Public/LocalizedFilename']));
         $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->will($this->returnValue('Static/Resources/Packages/Some.Package/LocalizedFilename'));
 
         $this->assertSame('Static/Resources/Packages/Some.Package/LocalizedFilename', $this->resourceUriImplementation->evaluate());

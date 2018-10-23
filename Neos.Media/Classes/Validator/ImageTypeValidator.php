@@ -28,9 +28,9 @@ class ImageTypeValidator extends AbstractValidator
     /**
      * @var array
      */
-    protected $supportedOptions = array(
-        'allowedTypes' => array(null, 'Allowed image types (using image/* IANA media subtypes)', 'array', true)
-    );
+    protected $supportedOptions = [
+        'allowedTypes' => [null, 'Allowed image types (using image/* IANA media subtypes)', 'array', true]
+    ];
 
     /**
      * The given $value is valid if it is an \Neos\Media\Domain\Model\ImageInterface of the
@@ -56,7 +56,7 @@ class ImageTypeValidator extends AbstractValidator
         });
 
         if (!in_array($image->getMediaType(), $allowedImageTypes)) {
-            $this->addError('The media type "%s" is not allowed for this image.', 1327947647, array($image->getMediaType()));
+            $this->addError('The media type "%s" is not allowed for this image.', 1327947647, [$image->getMediaType()]);
         }
     }
 
@@ -70,7 +70,7 @@ class ImageTypeValidator extends AbstractValidator
     {
         if (!isset($this->options['allowedTypes'])) {
             throw new InvalidValidationOptionsException('The option "allowedTypes" was not specified.', 1327947194);
-        } elseif (!is_array($this->options['allowedTypes']) || $this->options['allowedTypes'] === array()) {
+        } elseif (!is_array($this->options['allowedTypes']) || $this->options['allowedTypes'] === []) {
             throw new InvalidValidationOptionsException('The option "allowedTypes" must be an array with at least one item.', 1327947224);
         }
     }

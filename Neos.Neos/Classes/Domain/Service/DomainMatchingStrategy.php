@@ -35,8 +35,8 @@ class DomainMatchingStrategy
      */
     public function getSortedMatches($hostnameToMatch, array $domains)
     {
-        $matchingDomains = array();
-        $matchQualities = array();
+        $matchingDomains = [];
+        $matchQualities = [];
         $hostnameToMatchPartsReverse = array_reverse(explode('.', $hostnameToMatch));
 
         foreach ($domains as $domain) {

@@ -38,11 +38,11 @@ class MenuController extends ActionController
         $contentModuleUri = $this->getControllerContext()->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)
-            ->uriFor('index', array(), 'Backend\Backend', 'Neos.Neos');
-        return json_encode(array(
+            ->uriFor('index', [], 'Backend\Backend', 'Neos.Neos');
+        return json_encode([
             'contentModuleUri' => $contentModuleUri,
             'sites' => $this->menuHelper->buildSiteList($this->controllerContext),
             'modules' => $this->menuHelper->buildModuleList($this->controllerContext)
-        ));
+        ]);
     }
 }

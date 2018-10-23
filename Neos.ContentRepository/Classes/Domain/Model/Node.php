@@ -1755,7 +1755,7 @@ class Node implements NodeInterface, CacheAwareInterface
                 } else {
                     return false;
                 }
-            } elseif ($targetDimensionValue === null && $dimensions[$dimensionName] === array()) {
+            } elseif ($targetDimensionValue === null && $dimensions[$dimensionName] === []) {
                 continue;
             } elseif (!in_array($targetDimensionValue, $dimensions[$dimensionName], true)) {
                 $contextDimensionValues = $contextDimensions[$dimensionName];

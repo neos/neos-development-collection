@@ -69,7 +69,7 @@ class Event
      * @ORM\Column(type="flow_json_array")
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * The parent event, if exists. E.g. if a "move node" operation triggered a bunch of other events, or a "publish"

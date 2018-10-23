@@ -125,7 +125,7 @@ class NodePrivilegeContext
             return true;
         }
         if (!is_array($nodeTypes)) {
-            $nodeTypes = array($nodeTypes);
+            $nodeTypes = [$nodeTypes];
         }
 
         foreach ($nodeTypes as $nodeType) {
@@ -186,7 +186,7 @@ class NodePrivilegeContext
         $presetIdentifier = $preset['identifier'];
 
         if (!is_array($presets)) {
-            $presets = array($presets);
+            $presets = [$presets];
         }
 
         return in_array($presetIdentifier, $presets);

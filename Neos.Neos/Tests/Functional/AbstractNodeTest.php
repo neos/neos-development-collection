@@ -60,7 +60,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
         $this->markSkippedIfNodeTypesPackageIsNotInstalled();
 
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
-        $contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $contentContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile(__DIR__ . '/' . $this->fixtureFileName, $contentContext);
         $this->persistenceManager->persistAll();
@@ -89,8 +89,8 @@ abstract class AbstractNodeTest extends FunctionalTestCase
     {
         parent::tearDown();
 
-        $this->inject($this->contextFactory, 'contextInstances', array());
-        $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
+        $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', []);
     }
 
     protected function markSkippedIfNodeTypesPackageIsNotInstalled()

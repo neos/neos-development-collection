@@ -182,7 +182,7 @@ HELPTEXT;
      */
     protected function createMissingSitesNode($workspaceName, $dryRun)
     {
-        $this->output->outputLine('Checking for "%s" node ...', array(SiteService::SITES_ROOT_PATH));
+        $this->output->outputLine('Checking for "%s" node ...', [SiteService::SITES_ROOT_PATH]);
         $rootNode = $this->contextFactory->create()->getRootNode();
         // We fetch the workspace to be sure it's known to the persistence manager and persist all
         // so the workspace and site node are persisted before we import any nodes to it.
@@ -229,7 +229,7 @@ HELPTEXT;
             $flowQuery = new FlowQuery($baseContextSiteNodes);
             $siteNodes = $flowQuery->context(['dimensions' => $dimensionCombination, 'targetDimensions' => []])->get();
             if (count($siteNodes) > 0) {
-                $this->output->outputLine('Checking for nodes with missing URI path segment in dimension "%s"', array(trim(NodePaths::generateContextPath('', '', $dimensionCombination), '@;')));
+                $this->output->outputLine('Checking for nodes with missing URI path segment in dimension "%s"', [trim(NodePaths::generateContextPath('', '', $dimensionCombination), '@;')]);
                 foreach ($siteNodes as $siteNode) {
                     $this->generateUriPathSegmentsForNode($siteNode, $dryRun);
                 }
@@ -254,9 +254,9 @@ HELPTEXT;
             $uriPathSegment = $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node);
             if ($dryRun === false) {
                 $node->setProperty('uriPathSegment', $uriPathSegment);
-                $this->output->outputLine('Added missing URI path segment for "%s" (%s) => %s', array($node->getPath(), $name, $uriPathSegment));
+                $this->output->outputLine('Added missing URI path segment for "%s" (%s) => %s', [$node->getPath(), $name, $uriPathSegment]);
             } else {
-                $this->output->outputLine('Found missing URI path segment for "%s" (%s) => %s', array($node->getPath(), $name, $uriPathSegment));
+                $this->output->outputLine('Found missing URI path segment for "%s" (%s) => %s', [$node->getPath(), $name, $uriPathSegment]);
             }
         }
         foreach ($node->getChildNodes('Neos.Neos:Document') as $childNode) {
@@ -315,12 +315,12 @@ HELPTEXT;
      */
     protected function createContext($workspaceName, array $dimensions)
     {
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => $workspaceName,
             'dimensions' => $dimensions,
             'invisibleContentShown' => true,
             'inaccessibleContentShown' => true
-        );
+        ];
 
         return $this->contextFactory->create($contextProperties);
     }

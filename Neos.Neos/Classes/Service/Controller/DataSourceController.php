@@ -31,9 +31,9 @@ class DataSourceController extends AbstractServiceController
     /**
      * @var array
      */
-    protected $viewFormatToObjectNameMap = array(
+    protected $viewFormatToObjectNameMap = [
         'json' => JsonView::class
-    );
+    ];
 
     /**
      * @param string $dataSourceIdentifier
@@ -76,7 +76,7 @@ class DataSourceController extends AbstractServiceController
     {
         $reflectionService = $objectManager->get(ReflectionService::class);
 
-        $dataSources = array();
+        $dataSources = [];
         $dataSourceClassNames = $reflectionService->getAllImplementationClassNamesForInterface(DataSourceInterface::class);
         /** @var $dataSourceClassName DataSourceInterface */
         foreach ($dataSourceClassNames as $dataSourceClassName) {

@@ -100,7 +100,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      */
     protected function formatFusionPath($fusionPath)
     {
-        $pathSegments = array();
+        $pathSegments = [];
         $spacer = '';
         foreach (explode('/', $fusionPath) as $segment) {
             $pathSegments[] = $spacer . $segment . '/';
