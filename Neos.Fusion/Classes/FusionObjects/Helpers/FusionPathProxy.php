@@ -12,9 +12,7 @@ namespace Neos\Fusion\FusionObjects\Helpers;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Exception;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
-use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
 use Neos\Fusion\Exception\UnsupportedProxyMethodException;
 use Neos\Fusion\FusionObjects\TemplateImplementation;
 use Neos\Fusion\Exception as FusionException;

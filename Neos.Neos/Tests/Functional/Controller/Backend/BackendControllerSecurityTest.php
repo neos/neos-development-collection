@@ -12,7 +12,6 @@ namespace Neos\Neos\Tests\Functional\Controller\Backend;
  */
 
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Neos\Domain\Model\User;
 
 /**
  * Testcase for method security of the backend controller

@@ -11,11 +11,9 @@ namespace Neos\Neos\Tests\Unit\Fusion\Cache;
  * source code.
  */
 
-use Doctrine\ORM\Mapping\Cache;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\Neos\Fusion\Helper\CachingHelper;

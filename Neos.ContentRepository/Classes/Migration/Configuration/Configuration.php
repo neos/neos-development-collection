@@ -11,8 +11,6 @@ namespace Neos\ContentRepository\Migration\Configuration;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Migration\Configuration\ConfigurationInterface;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
 
 /**

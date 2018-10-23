@@ -19,7 +19,6 @@ use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
-use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Controller\Exception\DisabledModuleException;
 use Neos\Party\Domain\Service\PartyService;

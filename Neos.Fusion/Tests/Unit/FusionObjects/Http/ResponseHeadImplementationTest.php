@@ -11,11 +11,9 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects\Http;
  * source code.
  */
 
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\Http\ResponseHeadImplementation;
-use Neos\Fusion\FusionObjects\TagImplementation;
 
 /**
  * Testcase for the Fusion ResponseHead object

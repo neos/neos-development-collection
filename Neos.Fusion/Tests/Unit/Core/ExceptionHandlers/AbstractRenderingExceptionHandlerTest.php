@@ -11,7 +11,6 @@ namespace Neos\Fusion\Tests\Unit\Core\ExceptionHandlers;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Tests\UnitTestCase;

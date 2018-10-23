@@ -11,7 +11,6 @@ namespace Neos\Neos\Routing;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 
 /**

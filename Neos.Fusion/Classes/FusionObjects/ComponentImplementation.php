@@ -11,8 +11,6 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Fusion\FusionObjects\ArrayImplementation;
 
 /**
  * A Fusion Component-Object

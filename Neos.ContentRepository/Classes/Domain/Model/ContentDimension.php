@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A content dimension for nodes

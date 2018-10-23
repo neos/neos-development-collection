@@ -16,11 +16,9 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
-use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Fusion\Core\Cache\CacheSegmentParser;
 use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
