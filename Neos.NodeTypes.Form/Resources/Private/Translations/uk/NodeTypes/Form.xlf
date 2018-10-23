@@ -16,7 +16,7 @@
 			<target xml:lang="uk" state="translated">Виберіть індентифікатор форми</target></trans-unit>
       <trans-unit id="content.noValidFormIdentifier" xml:space="preserve">
 				<source>Please select a valid Form identifier in the inspector.</source>
-			<target xml:lang="uk" state="needs-translation">Please select a valid Form identifier in the inspector.</target></trans-unit>
+			<target xml:lang="uk" state="translated">Будь ласка, виберіть дійсний ідентифікатор форми в інспекторі.</target></trans-unit>
     </body>
   </file>
 </xliff>
