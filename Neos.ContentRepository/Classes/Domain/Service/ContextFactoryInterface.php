@@ -10,7 +10,6 @@ namespace Neos\ContentRepository\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Domain\Service\Context;
 
 /**
  * ContextFactory Interface

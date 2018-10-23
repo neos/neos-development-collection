@@ -10,7 +10,6 @@ namespace Neos\ContentRepository\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Exception\NodeException;
 
 /**
  * A node exists exception

@@ -11,7 +11,6 @@ namespace Neos\Neos\Service\Controller;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Response as HttpResponse;
 use Neos\Flow\Mvc\Controller\ActionController;

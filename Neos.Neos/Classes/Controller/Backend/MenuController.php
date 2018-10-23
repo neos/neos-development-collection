@@ -13,7 +13,6 @@ namespace Neos\Neos\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 
 /**

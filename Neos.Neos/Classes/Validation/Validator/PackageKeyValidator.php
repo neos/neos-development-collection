@@ -11,7 +11,6 @@ namespace Neos\Neos\Validation\Validator;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Validation\Validator\RegularExpressionValidator;
 

@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
 
 use Neos\Eel\CompilingEvaluator;
 use Neos\Eel\Context;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Pointcut\PointcutFilterInterface;
 use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege;
