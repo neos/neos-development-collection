@@ -63,7 +63,7 @@ class NodePublishingDependencySolver
         $sortedNodes = $this->resolveDependencies();
 
         $dependencyCount = array_filter($this->dependenciesOutgoing, function ($a) {
-            return $a !== array();
+            return $a !== [];
         });
         if (count($dependencyCount) > 0) {
             throw new WorkspaceException('Cannot publish a list of nodes because of cycles', 1416484223);
@@ -80,11 +80,11 @@ class NodePublishingDependencySolver
      */
     protected function buildNodeDependencies(array $nodes)
     {
-        $this->nodesByPath = array();
-        $this->nodesByNodeData = array();
-        $this->dependenciesOutgoing = array();
-        $this->dependenciesIncoming = array();
-        $this->nodesWithoutIncoming = array();
+        $this->nodesByPath = [];
+        $this->nodesByNodeData = [];
+        $this->dependenciesOutgoing = [];
+        $this->dependenciesIncoming = [];
+        $this->nodesWithoutIncoming = [];
 
         /** @var Node $node */
         foreach ($nodes as $node) {
@@ -135,7 +135,7 @@ class NodePublishingDependencySolver
      */
     protected function resolveDependencies()
     {
-        $sortedNodes = array();
+        $sortedNodes = [];
         while (count($this->nodesWithoutIncoming) > 0) {
             $node = array_pop($this->nodesWithoutIncoming);
             $sortedNodes[] = $node;

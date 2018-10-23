@@ -34,7 +34,7 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
-        $this->systemLogger->log('Absorbed Exception: ' . $exception->getMessage(), LOG_DEBUG, array('fusionPath' => $fusionPath, 'referenceCode' => $referenceCode), 'Neos.Fusion', \Neos\Fusion\Core\ExceptionHandlers\AbsorbingHandler::class);
+        $this->systemLogger->log('Absorbed Exception: ' . $exception->getMessage(), LOG_DEBUG, ['fusionPath' => $fusionPath, 'referenceCode' => $referenceCode], 'Neos.Fusion', \Neos\Fusion\Core\ExceptionHandlers\AbsorbingHandler::class);
         return '';
     }
 

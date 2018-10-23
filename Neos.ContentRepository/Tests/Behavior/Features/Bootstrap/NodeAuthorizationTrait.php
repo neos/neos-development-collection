@@ -216,7 +216,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $this->currentNodes[0]->setAccessRoles(array());
+                $this->currentNodes[0]->setAccessRoles([]);
                 if ($not === 'not') {
                     Assert::fail('Access roles in index should not be settable on the current node!');
                 }
@@ -467,7 +467,7 @@ trait NodeAuthorizationTrait
                         $currentNode->setHiddenInIndex($value);
                         break;
                     case 'accessRoles':
-                        $currentNode->setAccessRoles(array($value));
+                        $currentNode->setAccessRoles([$value]);
                         break;
                     default:
                         $currentNode->setProperty($propertyName, $value);

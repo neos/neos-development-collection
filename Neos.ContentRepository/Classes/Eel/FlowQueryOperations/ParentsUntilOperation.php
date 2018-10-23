@@ -58,13 +58,13 @@ class ParentsUntilOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
+        $output = [];
+        $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             $parentNodes = $this->getParents($contextNode);
             if (isset($arguments[0]) && !empty($arguments[0] && isset($parentNodes[0]))) {
-                $untilQuery = new FlowQuery(array($parentNodes[0]));
-                $untilQuery->pushOperation('closest', array($arguments[0]));
+                $untilQuery = new FlowQuery([$parentNodes[0]]);
+                $untilQuery->pushOperation('closest', [$arguments[0]]);
                 $until = $untilQuery->get();
             }
 
@@ -95,7 +95,7 @@ class ParentsUntilOperation extends AbstractOperation
      */
     protected function getParents(NodeInterface $contextNode)
     {
-        $parents = array();
+        $parents = [];
         while ($contextNode->getParent() !== null) {
             $contextNode = $contextNode->getParent();
             $parents[] = $contextNode;

@@ -36,7 +36,7 @@ class HtmlAugmenterTest extends UnitTestCase
     public function addAttributesDoesNotAlterHtmlIfAttributesArrayIsEmpty()
     {
         $html = '<p>This is some html</p><p>Without a unique root element</p>';
-        $this->assertSame($html, $this->htmlAugmenter->addAttributes($html, array()));
+        $this->assertSame($html, $this->htmlAugmenter->addAttributes($html, []));
     }
 
     public function addAttributesDataProvider()
@@ -51,198 +51,198 @@ class HtmlAugmenterTest extends UnitTestCase
         /** @noinspection PhpUndefinedClassInspection */
         $mockObject = new \ClassWithToStringMethod();
 
-        return array(
+        return [
             // object values with __toString method
-            array(
+            [
                 'html' => '',
-                'attributes' => array('object' => $mockObject),
+                'attributes' => ['object' => $mockObject],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<div object="casted value"></div>'
-            ),
+            ],
 
             // empty source
-            array(
+            [
                 'html' => '',
-                'attributes' => array('class' => 'new-class'),
+                'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<div class="new-class"></div>',
-            ),
-            array(
+            ],
+            [
                 'html' => '   	' . chr(10) . '  ',
-                'attributes' => array('class' => 'new-class'),
+                'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<div class="new-class">   	' . chr(10) . '  </div>',
-            ),
+            ],
 
             // plaintext source
-            array(
+            [
                 'html' => 'Plain Text without html',
-                'attributes' => array('class' => 'some-class'),
+                'attributes' => ['class' => 'some-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<div class="some-class">Plain Text without html</div>',
-            ),
+            ],
 
             // root element detection
-            array(
+            [
                 'html' => '<p>Simple HTML with unique root element</p>',
-                'attributes' => array('class' => 'new-class'),
+                'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<p class="new-class">Simple HTML with unique root element</p>',
-            ),
-            array(
+            ],
+            [
                 'html' => '<p>Simple HTML without</p><p> unique root element</p>',
-                'attributes' => array('class' => 'new-class'),
+                'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<div class="new-class"><p>Simple HTML without</p><p> unique root element</p></div>',
-            ),
-            array(
+            ],
+            [
                 'html' => 'Plain text and simple HTML without<p> unique root element</p>',
-                'attributes' => array('class' => 'new-class'),
+                'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<div class="new-class">Plain text and simple HTML without<p> unique root element</p></div>',
-            ),
-            array(
+            ],
+            [
                 'html' => '   <p>Simple HTML with unique root element in whitespace</p>   ',
-                'attributes' => array('class' => 'some-class'),
+                'attributes' => ['class' => 'some-class'],
                 'fallbackTagName' => 'fallback-tag',
                 'exclusiveAttributes' => null,
                 'expectedResult' => '   <p class="some-class">Simple HTML with unique root element in whitespace</p>   ',
-            ),
-            array(
+            ],
+            [
                 'html' => '<p class="some-class">Simple HTML without</p><p> unique root element</p>',
-                'attributes' => array('class' => 'some-class'),
+                'attributes' => ['class' => 'some-class'],
                 'fallbackTagName' => 'fallback-tag',
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<fallback-tag class="some-class"><p class="some-class">Simple HTML without</p><p> unique root element</p></fallback-tag>',
-            ),
+            ],
 
             // attribute handling
-            array(
+            [
                 'html' => '<root class="some-class">merging attributes</root>',
-                'attributes' => array('class' => 'new-class'),
+                'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<root class="new-class some-class">merging attributes</root>',
-            ),
-            array(
+            ],
+            [
                 'html' => '<root class="some-class">similar attribute value</root>',
-                'attributes' => array('class' => 'some-class'),
+                'attributes' => ['class' => 'some-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<root class="some-class">similar attribute value</root>',
-            ),
-            array(
+            ],
+            [
                 'html' => '<root data-foo="">empty attribute value</root>',
-                'attributes' => array('data-bar' => null),
+                'attributes' => ['data-bar' => null],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<root data-bar data-foo="">empty attribute value</root>',
-            ),
-            array(
+            ],
+            [
                 'html' => '<root data-foo="">empty attribute value, overridden</root>',
-                'attributes' => array('data-foo' => null),
+                'attributes' => ['data-foo' => null],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<root data-foo="">empty attribute value, overridden</root>',
-            ),
-            array(
+            ],
+            [
                 'html' => '<root data-foo>omitted attribute value</root>',
-                'attributes' => array('data-bar' => null),
+                'attributes' => ['data-bar' => null],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<root data-bar data-foo>omitted attribute value</root>',
-            ),
-            array(
+            ],
+            [
                 'html' => '<root data-foo>omitted attribute value, overridden</root>',
-                'attributes' => array('data-foo' => ''),
+                'attributes' => ['data-foo' => ''],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<root data-foo="">omitted attribute value, overridden</root>',
-            ),
+            ],
 
             // attribute encoding
-            array(
+            [
                 'html' => '<p data-foo="&">invalid characters are encoded</p>',
-                'attributes' => array('data-bar' => '<&"'),
+                'attributes' => ['data-bar' => '<&"'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<p data-bar="&lt;&amp;&quot;" data-foo="&amp;">invalid characters are encoded</p>',
-            ),
-            array(
+            ],
+            [
                 'html' => '<p data-foo="&quot;&gt;&amp;">encoded entities are preserved</p>',
-                'attributes' => array('data-bar' => null),
+                'attributes' => ['data-bar' => null],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<p data-bar data-foo="&quot;&gt;&amp;">encoded entities are preserved</p>',
-            ),
-            array(
+            ],
+            [
                 // the following test only records the current behavior, I'm not sure whether it is intended
                 'html' => '<p data-foo="&ouml;&auml;&uuml;&szlig;">valid characters are decoded</p>',
-                'attributes' => array('data-bar' => 'öäüß'),
+                'attributes' => ['data-bar' => 'öäüß'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<p data-bar="öäüß" data-foo="öäüß">valid characters are decoded</p>',
-            ),
+            ],
 
             // exclusive attributes
-            array(
+            [
                 'html' => '<p data-foo="foo">exclusive attributes force new root element</p>',
-                'attributes' => array('data-foo' => 'bar'),
+                'attributes' => ['data-foo' => 'bar'],
                 'fallbackTagName' => null,
-                'exclusiveAttributes' => array('data-foo'),
+                'exclusiveAttributes' => ['data-foo'],
                 'expectedResult' => '<div data-foo="bar"><p data-foo="foo">exclusive attributes force new root element</p></div>',
-            ),
-            array(
+            ],
+            [
                 'html' => '<p DaTa-Foo="foo">exclusive attributes are checked case insensitive</p>',
-                'attributes' => array('dAtA-fOO' => 'bar'),
+                'attributes' => ['dAtA-fOO' => 'bar'],
                 'fallbackTagName' => null,
-                'exclusiveAttributes' => array('data-foo'),
+                'exclusiveAttributes' => ['data-foo'],
                 'expectedResult' => '<div dAtA-fOO="bar"><p DaTa-Foo="foo">exclusive attributes are checked case insensitive</p></div>',
-            ),
-            array(
+            ],
+            [
                 'html' => '<div some-attribute>no attribute value is required to make an attribute exclusive</div>',
-                'attributes' => array('some-attribute' => 'value'),
+                'attributes' => ['some-attribute' => 'value'],
                 'fallbackTagName' => null,
-                'exclusiveAttributes' => array('some-attribute'),
+                'exclusiveAttributes' => ['some-attribute'],
                 'expectedResult' => '<div some-attribute="value"><div some-attribute>no attribute value is required to make an attribute exclusive</div></div>',
-            ),
+            ],
             // Escaping possible preg_replace placeholders in attributes
-            array(
+            [
                 'html' => '<p>Simple HTML with unique root element</p>',
-                'attributes' => array('data-label' => 'Cost $0.00'),
+                'attributes' => ['data-label' => 'Cost $0.00'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<p data-label="Cost $0.00">Simple HTML with unique root element</p>',
-            )
-        );
+            ]
+        ];
     }
 
     public function invalidAttributesDataProvider()
     {
-        return array(
+        return [
             // invalid attributes
-            array(
+            [
                 'html' => '',
-                'attributes' => array('data-foo' => []),
+                'attributes' => ['data-foo' => []],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<root>array value ignored</root>',
-            ),
-            array(
+            ],
+            [
                 'html' => '',
-                'attributes' => array('data-foo' => (object)[]),
+                'attributes' => ['data-foo' => (object)[]],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<root>array value ignored</root>',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

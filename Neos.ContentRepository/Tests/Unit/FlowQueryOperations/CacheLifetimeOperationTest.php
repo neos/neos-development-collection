@@ -49,12 +49,12 @@ class CacheLifetimeOperationTest extends UnitTestCase
         $oneDayAgo = clone $this->now;
         $oneDayAgo->sub(new \DateInterval('P1D'));
 
-        $this->dateFixtures = array(
+        $this->dateFixtures = [
             'now' => $this->now,
             '+1D' => $inOneDay,
             '+2D' => $inTwoDays,
             '-1D' => $oneDayAgo
-        );
+        ];
     }
 
     /**
@@ -64,65 +64,65 @@ class CacheLifetimeOperationTest extends UnitTestCase
     {
         $mockNode = $this->createMock(NodeInterface::class);
 
-        $result = $this->operation->canEvaluate(array($mockNode));
+        $result = $this->operation->canEvaluate([$mockNode]);
         $this->assertTrue($result);
     }
 
     public function nodePropertiesAndLifetime()
     {
-        return array(
-            'Minimum in hiddenBeforeDateTime' => array(
-                array(
-                    array('hiddenBeforeDateTime' => '+1D', 'hiddenAfterDateTime' => null),
-                    array('hiddenBeforeDateTime' => null, 'hiddenAfterDateTime' => '+2D')
-                ),
+        return [
+            'Minimum in hiddenBeforeDateTime' => [
+                [
+                    ['hiddenBeforeDateTime' => '+1D', 'hiddenAfterDateTime' => null],
+                    ['hiddenBeforeDateTime' => null, 'hiddenAfterDateTime' => '+2D']
+                ],
                 86400
-            ),
-            'Minimum in hiddenAfterDateTime' => array(
-                array(
-                    array('hiddenBeforeDateTime' => '+2D', 'hiddenAfterDateTime' => null),
-                    array('hiddenBeforeDateTime' => null, 'hiddenAfterDateTime' => '+1D')
-                ),
+            ],
+            'Minimum in hiddenAfterDateTime' => [
+                [
+                    ['hiddenBeforeDateTime' => '+2D', 'hiddenAfterDateTime' => null],
+                    ['hiddenBeforeDateTime' => null, 'hiddenAfterDateTime' => '+1D']
+                ],
                 86400
-            ),
-            'Past hiddenBeforeDateTime' => array(
-                array(
-                    array('hiddenBeforeDateTime' => '-1D', 'hiddenAfterDateTime' => null)
-                ),
+            ],
+            'Past hiddenBeforeDateTime' => [
+                [
+                    ['hiddenBeforeDateTime' => '-1D', 'hiddenAfterDateTime' => null]
+                ],
                 null
-            ),
-            'Past hiddenBeforeDateTime and future hiddenBeforeDateTime' => array(
-                array(
-                    array('hiddenBeforeDateTime' => '-1D', 'hiddenAfterDateTime' => null),
-                    array('hiddenBeforeDateTime' => '+2D', 'hiddenAfterDateTime' => null)
-                ),
+            ],
+            'Past hiddenBeforeDateTime and future hiddenBeforeDateTime' => [
+                [
+                    ['hiddenBeforeDateTime' => '-1D', 'hiddenAfterDateTime' => null],
+                    ['hiddenBeforeDateTime' => '+2D', 'hiddenAfterDateTime' => null]
+                ],
                 2*86400
-            ),
-            'Hidden just now' => array(
-                array(
-                    array('hiddenBeforeDateTime' => 'now', 'hiddenAfterDateTime' => null)
-                ),
+            ],
+            'Hidden just now' => [
+                [
+                    ['hiddenBeforeDateTime' => 'now', 'hiddenAfterDateTime' => null]
+                ],
                 null
-            ),
-            'Hidden just now with hiddenAfterDateTime' => array(
-                array(
-                    array('hiddenBeforeDateTime' => 'now', 'hiddenAfterDateTime' => null),
-                    array('hiddenBeforeDateTime' => null, 'hiddenAfterDateTime' => '+1D')
-                ),
+            ],
+            'Hidden just now with hiddenAfterDateTime' => [
+                [
+                    ['hiddenBeforeDateTime' => 'now', 'hiddenAfterDateTime' => null],
+                    ['hiddenBeforeDateTime' => null, 'hiddenAfterDateTime' => '+1D']
+                ],
                 86400
-            ),
-            'No dates set' => array(
-                array(
-                    array('hiddenBeforeDateTime' => null, 'hiddenAfterDateTime' => null),
-                    array('hiddenBeforeDateTime' => null, 'hiddenAfterDateTime' => null)
-                ),
+            ],
+            'No dates set' => [
+                [
+                    ['hiddenBeforeDateTime' => null, 'hiddenAfterDateTime' => null],
+                    ['hiddenBeforeDateTime' => null, 'hiddenAfterDateTime' => null]
+                ],
                 null
-            ),
-            'Empty array of nodes' => array(
-                array(),
+            ],
+            'Empty array of nodes' => [
+                [],
                 null
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -132,7 +132,7 @@ class CacheLifetimeOperationTest extends UnitTestCase
     public function evaluateReturnsMinimumOfFutureHiddenDates($nodes, $expectedLifetime)
     {
         $mockFlowQuery = $this->buildFlowQueryWithNodesInContext($nodes);
-        $lifetime = $this->operation->evaluate($mockFlowQuery, array());
+        $lifetime = $this->operation->evaluate($mockFlowQuery, []);
 
         if ($expectedLifetime === null) {
             $this->assertNull($lifetime);
@@ -147,7 +147,7 @@ class CacheLifetimeOperationTest extends UnitTestCase
      */
     protected function buildFlowQueryWithNodesInContext($nodes)
     {
-        $contextValues = array();
+        $contextValues = [];
         foreach ($nodes as $nodeProperties) {
             $mockNode = $this->createMock(NodeInterface::class);
             $mockNode->expects($this->any())->method('getHiddenBeforeDateTime')->will($this->returnValue($nodeProperties['hiddenBeforeDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenBeforeDateTime']] : null));

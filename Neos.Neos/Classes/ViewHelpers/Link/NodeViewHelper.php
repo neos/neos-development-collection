@@ -150,7 +150,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @return string The rendered link
      * @throws ViewHelperException
      */
-    public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode', $resolveShortcuts = true)
+    public function render($node = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode', $resolveShortcuts = true)
     {
         $baseNode = null;
         if (!$node instanceof NodeInterface) {

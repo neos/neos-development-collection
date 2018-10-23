@@ -22,7 +22,7 @@ class PropertyAwareNodePrivilegeContext extends NodePrivilegeContext
     /**
      * @var array
      */
-    protected $propertyNames = array();
+    protected $propertyNames = [];
 
     /**
      * @param string|array $propertyNames
@@ -31,7 +31,7 @@ class PropertyAwareNodePrivilegeContext extends NodePrivilegeContext
     public function nodePropertyIsIn($propertyNames)
     {
         if (!is_array($propertyNames)) {
-            $propertyNames = array($propertyNames);
+            $propertyNames = [$propertyNames];
         }
         $this->propertyNames = $propertyNames;
         return true;
@@ -52,6 +52,6 @@ class PropertyAwareNodePrivilegeContext extends NodePrivilegeContext
      */
     public function hasProperties()
     {
-        return $this->propertyNames !== array();
+        return $this->propertyNames !== [];
     }
 }

@@ -67,7 +67,7 @@ class XliffServiceTest extends FunctionalTestCase
                 $this->equalTo('Vendor.BasePackage'),
                 $this->equalTo('Vendor.DependentPackage')
             ))
-            ->will($this->returnCallback(array($this, 'myCallback')));
+            ->will($this->returnCallback([$this, 'myCallback']));
         $this->inject($this->xliffService, 'packageManager', $mockPackageManager);
         $this->inject($this->fileProvider, 'packageManager', $mockPackageManager);
 

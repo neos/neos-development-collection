@@ -101,7 +101,7 @@ class PluginViewDefinition
      */
     public function getControllerActionPairs()
     {
-        return isset($this->configuration['controllerActions']) ? $this->configuration['controllerActions'] : array();
+        return isset($this->configuration['controllerActions']) ? $this->configuration['controllerActions'] : [];
     }
 
     /**

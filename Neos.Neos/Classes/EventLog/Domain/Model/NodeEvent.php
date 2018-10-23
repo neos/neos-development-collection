@@ -146,22 +146,22 @@ class NodeEvent extends Event
         } else {
             $siteIdentifier = null;
         }
-        $this->data = Arrays::arrayMergeRecursiveOverrule($this->data, array(
+        $this->data = Arrays::arrayMergeRecursiveOverrule($this->data, [
             'nodeContextPath' => $node->getContextPath(),
             'nodeLabel' => $node->getLabel(),
             'nodeType' => $node->getNodeType()->getName(),
             'site' => $siteIdentifier
-        ));
+        ]);
 
         $node = self::getClosestAggregateNode($node);
 
         if ($node !== null) {
             $this->documentNodeIdentifier = $node->getIdentifier();
-            $this->data = Arrays::arrayMergeRecursiveOverrule($this->data, array(
+            $this->data = Arrays::arrayMergeRecursiveOverrule($this->data, [
                 'documentNodeContextPath' => $node->getContextPath(),
                 'documentNodeLabel' => $node->getLabel(),
                 'documentNodeType' => $node->getNodeType()->getName()
-            ));
+            ]);
         }
     }
 
@@ -202,12 +202,12 @@ class NodeEvent extends Event
     public function getDocumentNode()
     {
         try {
-            $context = $this->contextFactory->create(array(
+            $context = $this->contextFactory->create([
                 'workspaceName' => $this->userService->getPersonalWorkspaceName(),
                 'dimensions' => $this->dimension,
                 'currentSite' => $this->getCurrentSite(),
                 'invisibleContentShown' => true
-            ));
+            ]);
             return $context->getNodeByIdentifier($this->documentNodeIdentifier);
         } catch (EntityNotFoundException $e) {
             return null;
@@ -226,12 +226,12 @@ class NodeEvent extends Event
     public function getNode()
     {
         try {
-            $context = $this->contextFactory->create(array(
+            $context = $this->contextFactory->create([
                 'workspaceName' => $this->userService->getPersonalWorkspaceName(),
                 'dimensions' => $this->dimension,
                 'currentSite' => $this->getCurrentSite(),
                 'invisibleContentShown' => true
-            ));
+            ]);
             return $context->getNodeByIdentifier($this->nodeIdentifier);
         } catch (EntityNotFoundException $e) {
             return null;

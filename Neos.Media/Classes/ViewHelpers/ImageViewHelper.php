@@ -134,10 +134,10 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->tag->addAttribute('src', $thumbnailData['src']);
 
         if ($thumbnailData['width'] > 0 && $thumbnailData['height'] > 0) {
-            $this->tag->addAttributes(array(
+            $this->tag->addAttributes([
                 'width' => $thumbnailData['width'],
                 'height' => $thumbnailData['height']
-            ));
+            ]);
         }
 
         // alt argument must be set because it is required (see $this->initializeArguments())

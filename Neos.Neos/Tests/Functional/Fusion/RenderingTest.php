@@ -324,18 +324,18 @@ class RenderingTest extends AbstractNodeTest
         $fusionRuntime = $this->createRuntimeWithFixtures($additionalFusionFile);
         $fusionRuntime->setEnableContentCache(false);
         if ($debugMode) {
-            $fusionRuntime->injectSettings(array('debugMode' => true, 'rendering' => array('exceptionHandler' => \Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler::class)));
+            $fusionRuntime->injectSettings(['debugMode' => true, 'rendering' => ['exceptionHandler' => \Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler::class]]);
         }
         $contentContext = $this->node->getContext();
         if (!$contentContext instanceof ContentContext) {
             $this->fail('Node context must be of type ContentContext');
         }
-        $fusionRuntime->pushContextArray(array(
+        $fusionRuntime->pushContextArray([
             'node' => $this->node,
             'documentNode' => $this->node,
             'site' => $contentContext->getCurrentSiteNode(),
             'fixturesDirectory' => __DIR__ . '/Fixtures'
-        ));
+        ]);
         $output = $fusionRuntime->render('page1');
         $fusionRuntime->popContext();
 
@@ -354,7 +354,7 @@ class RenderingTest extends AbstractNodeTest
         $fusionService->setSiteRootFusionPattern(__DIR__ . '/Fixtures/Base.fusion');
 
         if ($additionalFusionFile !== null) {
-            $fusionService->setAppendFusionIncludes(array($additionalFusionFile));
+            $fusionService->setAppendFusionIncludes([$additionalFusionFile]);
         }
 
         $controllerContext = $this->buildMockControllerContext();

@@ -53,7 +53,7 @@ class UserInitialsViewHelper extends AbstractViewHelper
      */
     public function render($format = 'initials')
     {
-        if (!in_array($format, array('fullFirstName', 'initials', 'fullName'))) {
+        if (!in_array($format, ['fullFirstName', 'initials', 'fullName'])) {
             throw new \InvalidArgumentException(sprintf('Format "%s" given to backend.userInitials(), only supporting "fullFirstName", "initials" and "fullName".', $format), 1415705861);
         }
 

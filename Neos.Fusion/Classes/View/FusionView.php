@@ -37,13 +37,13 @@ class FusionView extends AbstractView
      *
      * @var array
      */
-    protected $supportedOptions = array(
-        'fusionPathPatterns' => array(array('resource://@package/Private/Fusion'), 'Fusion files will be recursively loaded from this paths.', 'array'),
-        'fusionPath' => array(null, 'The Fusion path which should be rendered; derived from the controller and action names or set by the user.', 'string'),
-        'packageKey' => array(null, 'The package key where the Fusion should be loaded from. If not given, is automatically derived from the current request.', 'string'),
-        'debugMode' => array(false, 'Flag to enable debug mode of the Fusion runtime explicitly (overriding the global setting).', 'boolean'),
-        'enableContentCache' => array(false, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean')
-    );
+    protected $supportedOptions = [
+        'fusionPathPatterns' => [['resource://@package/Private/Fusion'], 'Fusion files will be recursively loaded from this paths.', 'array'],
+        'fusionPath' => [null, 'The Fusion path which should be rendered; derived from the controller and action names or set by the user.', 'string'],
+        'packageKey' => [null, 'The package key where the Fusion should be loaded from. If not given, is automatically derived from the current request.', 'string'],
+        'debugMode' => [false, 'Flag to enable debug mode of the Fusion runtime explicitly (overriding the global setting).', 'boolean'],
+        'enableContentCache' => [false, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean']
+    ];
 
     /**
      * @Flow\Inject
@@ -129,7 +129,7 @@ class FusionView extends AbstractView
      */
     public function setFusionPathPattern($pathPattern)
     {
-        $this->setOption('fusionPathPatterns', array($pathPattern));
+        $this->setOption('fusionPathPatterns', [$pathPattern]);
     }
 
     /**

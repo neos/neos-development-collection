@@ -163,7 +163,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
      */
     public function getIterator()
     {
-        $evaluatedArray = array();
+        $evaluatedArray = [];
         foreach ($this->partialFusionTree as $key => $value) {
             if (!is_array($value)) {
                 $evaluatedArray[$key] = $value;

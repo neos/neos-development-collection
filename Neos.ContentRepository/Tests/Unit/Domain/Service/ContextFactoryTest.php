@@ -31,12 +31,12 @@ class ContextFactoryTest extends UnitTestCase
         $this->inject($contextFactory, 'now', new Now());
 
         $mockContentDimensionRepository = $this->createMock(ContentDimensionRepository::class);
-        $mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue(array()));
+        $mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue([]));
         $this->inject($contextFactory, 'contentDimensionRepository', $mockContentDimensionRepository);
         $this->inject($contextFactory, 'securityContext', $this->createMock(Context::class));
 
-        $context1 = $contextFactory->create(array());
-        $context2 = $contextFactory->create(array('workspaceName' => 'live'));
+        $context1 = $contextFactory->create([]);
+        $context2 = $contextFactory->create(['workspaceName' => 'live']);
 
         $this->assertSame($context1, $context2, 'Contexts should be re-used');
     }

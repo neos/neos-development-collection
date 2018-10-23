@@ -26,7 +26,7 @@ abstract class AbstractAdjustment implements AdjustmentInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         foreach ($options as $optionKey => $optionValue) {
             $methodName = 'set' . ucfirst($optionKey);

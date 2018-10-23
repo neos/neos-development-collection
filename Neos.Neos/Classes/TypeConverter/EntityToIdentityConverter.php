@@ -27,7 +27,7 @@ class EntityToIdentityConverter extends AbstractTypeConverter
      *
      * @var array<string>
      */
-    protected $sourceTypes = array('object');
+    protected $sourceTypes = ['object'];
 
     /**
      * The target type this converter can convert to.
@@ -72,7 +72,7 @@ class EntityToIdentityConverter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return array
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         return [
             '__identity' => $this->persistenceManager->getIdentifierByObject($source),

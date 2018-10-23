@@ -25,7 +25,7 @@ class ImageTypeValidatorTest extends UnitTestCase
      */
     public function validatorReturnsErrorsIfGivenValueIsNoImage()
     {
-        $validator = new ImageTypeValidator(array('allowedTypes' => array('png')));
+        $validator = new ImageTypeValidator(['allowedTypes' => ['png']]);
         $value = new \stdClass();
         $this->assertTrue($validator->validate($value)->hasErrors());
     }
@@ -35,13 +35,13 @@ class ImageTypeValidatorTest extends UnitTestCase
      */
     public function validatorTestsDataProvider()
     {
-        return array(
-            array(array('allowedTypes' => array('png')), null, false),
-            array(array('allowedTypes' => array('png')), 'image/bmp', false),
-            array(array('allowedTypes' => array('png')), 'image/png', true),
-            array(array('allowedTypes' => array('jpeg', 'gif')), 'image/ico', false),
-            array(array('allowedTypes' => array('jpeg', 'gif')), 'image/gif', true),
-        );
+        return [
+            [['allowedTypes' => ['png']], null, false],
+            [['allowedTypes' => ['png']], 'image/bmp', false],
+            [['allowedTypes' => ['png']], 'image/png', true],
+            [['allowedTypes' => ['jpeg', 'gif']], 'image/ico', false],
+            [['allowedTypes' => ['jpeg', 'gif']], 'image/gif', true],
+        ];
     }
 
     /**

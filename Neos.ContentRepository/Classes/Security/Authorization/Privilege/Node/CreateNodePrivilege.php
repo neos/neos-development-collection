@@ -53,7 +53,7 @@ class CreateNodePrivilege extends AbstractNodePrivilege
             $allowedCreationNodeTypes = $this->nodeContext->getCreationNodeTypes();
             $actualNodeType = $joinPoint->getMethodName() === 'createNodeFromTemplate' ? $joinPoint->getMethodArgument('nodeTemplate')->getNodeType()->getName() : $joinPoint->getMethodArgument('nodeType')->getName();
 
-            if ($allowedCreationNodeTypes !== array() && !in_array($actualNodeType, $allowedCreationNodeTypes)) {
+            if ($allowedCreationNodeTypes !== [] && !in_array($actualNodeType, $allowedCreationNodeTypes)) {
                 return false;
             }
 
@@ -64,7 +64,7 @@ class CreateNodePrivilege extends AbstractNodePrivilege
             return $result;
         }
 
-        if ($this->nodeContext->getCreationNodeTypes() === array() || ($subject->hasCreationNodeType() === false) || in_array($subject->getCreationNodeType()->getName(), $this->nodeContext->getCreationNodeTypes()) === true) {
+        if ($this->nodeContext->getCreationNodeTypes() === [] || ($subject->hasCreationNodeType() === false) || in_array($subject->getCreationNodeType()->getName(), $this->nodeContext->getCreationNodeTypes()) === true) {
             return parent::matchesSubject($subject);
         }
         return false;

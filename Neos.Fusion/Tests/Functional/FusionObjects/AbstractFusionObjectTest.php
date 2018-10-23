@@ -49,7 +49,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
         $this->controllerContext = new ControllerContext(
             $request,
             new Response(),
-            new Arguments(array()),
+            new Arguments([]),
             $uriBuilder
         );
 

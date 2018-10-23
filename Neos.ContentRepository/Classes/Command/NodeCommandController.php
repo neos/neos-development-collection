@@ -47,7 +47,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
     /**
      * @var array
      */
-    protected $pluginConfigurations = array();
+    protected $pluginConfigurations = [];
 
     /**
      * Repair inconsistent nodes
@@ -85,7 +85,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
         $this->pluginConfigurations = self::detectPlugins($this->objectManager);
 
         if ($this->workspaceRepository->countByName($workspace) === 0) {
-            $this->outputLine('Workspace "%s" does not exist', array($workspace));
+            $this->outputLine('Workspace "%s" does not exist', [$workspace]);
             exit(1);
         }
 
@@ -93,7 +93,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
             if ($this->nodeTypeManager->hasNodeType($nodeType)) {
                 $nodeType = $this->nodeTypeManager->getNodeType($nodeType);
             } else {
-                $this->outputLine('Node type "%s" does not exist', array($nodeType));
+                $this->outputLine('Node type "%s" does not exist', [$nodeType]);
                 exit(1);
             }
         }
@@ -157,12 +157,12 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      */
     protected static function detectPlugins(ObjectManagerInterface $objectManager)
     {
-        $pluginConfigurations = array();
+        $pluginConfigurations = [];
         $classNames = $objectManager->get(ReflectionService::class)->getAllImplementationClassNamesForInterface(NodeCommandControllerPluginInterface::class);
         foreach ($classNames as $className) {
-            $pluginConfigurations[$className] = array(
+            $pluginConfigurations[$className] = [
                 'object' => $objectManager->get($objectManager->getObjectNameByClassName($className))
-            );
+            ];
         }
         return $pluginConfigurations;
     }

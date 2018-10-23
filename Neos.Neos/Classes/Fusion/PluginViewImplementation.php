@@ -76,7 +76,7 @@ class PluginViewImplementation extends PluginImplementation
             return $pluginRequest;
         }
 
-        $controllerObjectPairs = array();
+        $controllerObjectPairs = [];
         $pluginViewName = $this->pluginViewNode->getProperty('view');
         foreach ($this->pluginService->getPluginViewDefinitionsByPluginNodeType($this->node->getNodeType()) as $pluginViewDefinition) {
             /** @var PluginViewDefinition $pluginViewDefinition */
@@ -87,7 +87,7 @@ class PluginViewImplementation extends PluginImplementation
             break;
         }
 
-        if ($controllerObjectPairs === array()) {
+        if ($controllerObjectPairs === []) {
             return $pluginRequest;
         }
 

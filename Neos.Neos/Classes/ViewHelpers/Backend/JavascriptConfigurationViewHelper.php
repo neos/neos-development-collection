@@ -96,7 +96,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      */
     public function render()
     {
-        $configuration = array(
+        $configuration = [
             'window.T3Configuration = {};',
             'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
             'window.T3Configuration.nodeTypes = {};',
@@ -105,7 +105,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             'window.T3Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', '')) . ';',
             'window.T3Configuration.requirejs.paths = ' . json_encode($this->getRequireJsPathMapping()) . ';',
             'window.T3Configuration.maximumFileUploadSize = ' . $this->renderMaximumFileUploadSize()
-        );
+        ];
 
         $neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://Neos.Neos/Public/JavaScript');
 
@@ -133,7 +133,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     {
         $localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
 
-        $matches = array();
+        $matches = [];
         try {
             if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
                 $packageKey = $matches[1];
@@ -151,7 +151,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      */
     protected function getRequireJsPathMapping()
     {
-        $pathMappings = array();
+        $pathMappings = [];
 
         $validatorSettings = ObjectAccess::getPropertyPath($this->settings, 'userInterface.validators');
         if (is_array($validatorSettings)) {
@@ -186,17 +186,17 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      */
     protected function getNodeTypeGroupsSettings()
     {
-        $settings = array();
+        $settings = [];
         $nodeTypeGroupsSettings = new PositionalArraySorter($this->settings['nodeTypes']['groups']);
         foreach ($nodeTypeGroupsSettings->toArray() as $nodeTypeGroupName => $nodeTypeGroupSettings) {
             if (!isset($nodeTypeGroupSettings['label'])) {
                 continue;
             }
-            $settings[] = array(
+            $settings[] = [
                 'name' => $nodeTypeGroupName,
                 'label' => $nodeTypeGroupSettings['label'],
                 'collapsed' => isset($nodeTypeGroupSettings['collapsed']) ? $nodeTypeGroupSettings['collapsed'] : true
-            );
+            ];
         }
 
         return $settings;

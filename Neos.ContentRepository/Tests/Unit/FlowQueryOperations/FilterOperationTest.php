@@ -29,13 +29,13 @@ class FilterOperationTest extends UnitTestCase
         $node2 = $this->createMock(NodeInterface::class);
         $node2->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-identifier-uuid'));
 
-        $context = array($node1, $node2);
+        $context = [$node1, $node2];
         $q = new FlowQuery($context);
 
         $operation = new FilterOperation();
-        $operation->evaluate($q, array('#node-identifier-uuid'));
+        $operation->evaluate($q, ['#node-identifier-uuid']);
 
-        $this->assertEquals(array($node2), $q->getContext());
+        $this->assertEquals([$node2], $q->getContext());
     }
 
     /**
@@ -46,12 +46,12 @@ class FilterOperationTest extends UnitTestCase
         $node1 = $this->createMock(NodeInterface::class);
         $node2 = $this->createMock(NodeInterface::class);
 
-        $context = array($node1, $node2);
+        $context = [$node1, $node2];
         $q = new FlowQuery($context);
 
         $operation = new FilterOperation();
-        $operation->evaluate($q, array($node2));
+        $operation->evaluate($q, [$node2]);
 
-        $this->assertEquals(array($node2), $q->getContext());
+        $this->assertEquals([$node2], $q->getContext());
     }
 }
