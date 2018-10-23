@@ -11,8 +11,6 @@ namespace Neos\ContentRepository\Migration\Domain\Model;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Migration configuration for a specific direction.

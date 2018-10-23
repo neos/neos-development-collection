@@ -14,7 +14,6 @@ namespace Neos\Media\Imagine;
 use Imagine\Image\BoxInterface;
 use Imagine\Image\Point;
 use Imagine\Image\PointInterface;
-use Neos\Flow\Annotations as Flow;
 
 class Box implements BoxInterface
 {

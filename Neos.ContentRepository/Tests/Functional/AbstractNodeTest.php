@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Tests\Functional;
  * source code.
  */
 
-use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;

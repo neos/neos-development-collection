@@ -12,7 +12,6 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\Files;

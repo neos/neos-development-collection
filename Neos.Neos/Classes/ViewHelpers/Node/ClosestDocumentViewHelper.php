@@ -11,7 +11,6 @@ namespace Neos\Neos\ViewHelpers\Node;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;

@@ -11,7 +11,6 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Exception\InvalidPositionException;
 use Neos\Utility\PositionalArraySorter;
 use Neos\Fusion;

@@ -11,7 +11,6 @@ namespace Neos\Fusion\Core\ExceptionHandlers;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Fusion\Core\Runtime;

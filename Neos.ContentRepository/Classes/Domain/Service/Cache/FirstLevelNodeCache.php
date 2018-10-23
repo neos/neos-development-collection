@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Domain\Service\Cache;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A first level cache for the NodeDataRepository. It is used to keep

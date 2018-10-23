@@ -11,7 +11,6 @@ namespace Neos\Media\ViewHelpers\Format;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Now;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 

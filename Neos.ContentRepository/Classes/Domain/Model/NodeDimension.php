@@ -12,8 +12,6 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeData;
 
 /**
  * NOTE: This is internal only and should not be used or extended by userland code.

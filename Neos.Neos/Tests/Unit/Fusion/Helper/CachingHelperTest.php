@@ -11,7 +11,6 @@ namespace Neos\Neos\Tests\Unit\Fusion\Helper;
  * source code.
  */
 
-use Doctrine\ORM\Mapping\Cache;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;

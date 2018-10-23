@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
