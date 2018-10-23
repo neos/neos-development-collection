@@ -57,8 +57,8 @@ class PrevOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
+        $output = [];
+        $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             $prevNode = $this->getPrevForNode($contextNode);
             if ($prevNode !== null && !isset($outputNodePaths[$prevNode->getPath()])) {

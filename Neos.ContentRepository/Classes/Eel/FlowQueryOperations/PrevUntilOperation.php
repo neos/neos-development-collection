@@ -57,15 +57,15 @@ class PrevUntilOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
-        $until = array();
+        $output = [];
+        $outputNodePaths = [];
+        $until = [];
 
         foreach ($flowQuery->getContext() as $contextNode) {
             $prevNodes = $this->getPrevForNode($contextNode);
             if (isset($arguments[0]) && !empty($arguments[0])) {
                 $untilQuery = new FlowQuery($prevNodes);
-                $untilQuery->pushOperation('filter', array($arguments[0]));
+                $untilQuery->pushOperation('filter', [$arguments[0]]);
 
                 $until = $untilQuery->get();
             }
@@ -88,7 +88,7 @@ class PrevUntilOperation extends AbstractOperation
         $flowQuery->setContext($output);
 
         if (isset($arguments[1]) && !empty($arguments[1])) {
-            $flowQuery->pushOperation('filter', array($arguments[1]));
+            $flowQuery->pushOperation('filter', [$arguments[1]]);
         }
     }
 

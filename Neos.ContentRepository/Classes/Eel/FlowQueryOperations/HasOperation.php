@@ -61,15 +61,15 @@ class HasOperation extends AbstractOperation
     {
         $subject = $arguments[0];
         if (!isset($subject) || empty($subject)) {
-            $flowQuery->setContext(array());
+            $flowQuery->setContext([]);
             return;
         }
 
-        $filteredContext = array();
+        $filteredContext = [];
         $context = $flowQuery->getContext();
         if (is_string($subject)) {
             foreach ($context as $contextElement) {
-                $contextElementQuery = new FlowQuery(array($contextElement));
+                $contextElementQuery = new FlowQuery([$contextElement]);
                 $contextElementQuery->pushOperation('children', $arguments);
                 if ($contextElementQuery->count() > 0) {
                     $filteredContext[] = $contextElement;
@@ -81,7 +81,7 @@ class HasOperation extends AbstractOperation
             } elseif ($subject instanceof \Traversable) {
                 $elements = iterator_to_array($subject);
             } elseif (is_object($subject)) {
-                $elements = array($subject);
+                $elements = [$subject];
             } elseif (is_array($subject)) {
                 $elements = $subject;
             } else {
@@ -89,9 +89,9 @@ class HasOperation extends AbstractOperation
             }
             foreach ($elements as $element) {
                 if ($element instanceof NodeInterface) {
-                    $parentsQuery = new FlowQuery(array($element));
+                    $parentsQuery = new FlowQuery([$element]);
                     /** @var NodeInterface $parent */
-                    foreach ($parentsQuery->parents(array())->get() as $parent) {
+                    foreach ($parentsQuery->parents([])->get() as $parent) {
                         /** @var NodeInterface $contextElement */
                         foreach ($context as $contextElement) {
                             if ($contextElement->getIdentifier() === $parent->getIdentifier()) {

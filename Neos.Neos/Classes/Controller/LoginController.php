@@ -77,18 +77,18 @@ class LoginController extends AbstractAuthenticationController
     /**
      * @var array
      */
-    protected $viewFormatToObjectNameMap = array(
+    protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
         'json' => JsonView::class
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $supportedMediaTypes = array(
+    protected $supportedMediaTypes = [
         'text/html',
         'application/json'
-    );
+    ];
 
     /**
      * @return void
@@ -168,9 +168,9 @@ class LoginController extends AbstractAuthenticationController
     protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null)
     {
         if ($this->view instanceof JsonView) {
-            $this->view->assign('value', array('success' => false));
+            $this->view->assign('value', ['success' => false]);
         } else {
-            $this->addFlashMessage('The entered username or password was wrong', 'Wrong credentials', Message::SEVERITY_ERROR, array(), ($exception === null ? 1347016771 : $exception->getCode()));
+            $this->addFlashMessage('The entered username or password was wrong', 'Wrong credentials', Message::SEVERITY_ERROR, [], ($exception === null ? 1347016771 : $exception->getCode()));
         }
     }
 
@@ -183,7 +183,7 @@ class LoginController extends AbstractAuthenticationController
     protected function onAuthenticationSuccess(ActionRequest $originalRequest = null)
     {
         if ($this->view instanceof JsonView) {
-            $this->view->assign('value', array('success' => $this->authenticationManager->isAuthenticated(), 'csrfToken' => $this->securityContext->getCsrfProtectionToken()));
+            $this->view->assign('value', ['success' => $this->authenticationManager->isAuthenticated(), 'csrfToken' => $this->securityContext->getCsrfProtectionToken()]);
         } else {
             if ($this->request->hasArgument('lastVisitedNode') && strlen($this->request->getArgument('lastVisitedNode')) > 0) {
                 $this->session->putData('lastVisitedNode', $this->request->getArgument('lastVisitedNode'));
@@ -212,13 +212,13 @@ class LoginController extends AbstractAuthenticationController
         parent::logoutAction();
         switch ($this->request->getFormat()) {
             case 'json':
-                $this->view->assign('value', array('success' => true));
+                $this->view->assign('value', ['success' => true]);
             break;
             default:
                 if ($possibleRedirectionUri !== null) {
                     $this->redirectToUri($possibleRedirectionUri);
                 }
-                $this->addFlashMessage('Successfully logged out', 'Logged out', Message::SEVERITY_NOTICE, array(), 1318421560);
+                $this->addFlashMessage('Successfully logged out', 'Logged out', Message::SEVERITY_NOTICE, [], 1318421560);
                 $this->redirect('index');
         }
     }

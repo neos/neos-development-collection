@@ -133,11 +133,11 @@ class ThumbnailViewHelper extends AbstractTagBasedViewHelper
             return '';
         }
 
-        $this->tag->addAttributes(array(
+        $this->tag->addAttributes([
             'width' => $thumbnailData['width'],
             'height' => $thumbnailData['height'],
             'src' => $thumbnailData['src']
-        ));
+        ]);
 
         return $this->tag->render();
     }

@@ -42,15 +42,15 @@ trait CreateContentContextTrait
      * @param array $dimensions Optional list of dimensions and their values which should be set
      * @return ContentContext
      */
-    protected function createContentContext($workspaceName, array $dimensions = array())
+    protected function createContentContext($workspaceName, array $dimensions = [])
     {
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => $workspaceName,
             'invisibleContentShown' => true,
             'inaccessibleContentShown' => true
-        );
+        ];
 
-        if ($dimensions !== array()) {
+        if ($dimensions !== []) {
             $contextProperties['dimensions'] = $dimensions;
             $contextProperties['targetDimensions'] = array_map(function ($dimensionValues) {
                 return array_shift($dimensionValues);

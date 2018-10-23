@@ -25,7 +25,7 @@ class ImageSizeValidatorTest extends UnitTestCase
      */
     public function validatorReturnsErrorsIfGivenValueIsNoImage()
     {
-        $validator = new ImageSizeValidator(array('minimumWidth' => 123));
+        $validator = new ImageSizeValidator(['minimumWidth' => 123]);
 
         $value = new \stdClass();
         $this->assertTrue($validator->validate($value)->hasErrors());
@@ -36,13 +36,13 @@ class ImageSizeValidatorTest extends UnitTestCase
      */
     public function invalidOptionsTestsDataProvider()
     {
-        return array(
-            array(array()),
-            array(array('someNonExistingOption' => 123)),
-            array(array('minimumWidth' => 123, 'maximumWidth' => 122)),
-            array(array('minimumHeight' => 123, 'maximumHeight' => 122)),
-            array(array('minimumResolution' => 15000, 'maximumResolution' => 14999)),
-        );
+        return [
+            [[]],
+            [['someNonExistingOption' => 123]],
+            [['minimumWidth' => 123, 'maximumWidth' => 122]],
+            [['minimumHeight' => 123, 'maximumHeight' => 122]],
+            [['minimumResolution' => 15000, 'maximumResolution' => 14999]],
+        ];
     }
 
     /**
@@ -63,32 +63,32 @@ class ImageSizeValidatorTest extends UnitTestCase
      */
     public function validatorTestsDataProvider()
     {
-        return array(
-            array(array('minimumWidth' => 123), 122, 0, false),
-            array(array('minimumWidth' => 123), 123, 0, true),
+        return [
+            [['minimumWidth' => 123], 122, 0, false],
+            [['minimumWidth' => 123], 123, 0, true],
 
-            array(array('minimumHeight' => 123), 0, 122, false),
-            array(array('minimumHeight' => 123), 0, 123, true),
+            [['minimumHeight' => 123], 0, 122, false],
+            [['minimumHeight' => 123], 0, 123, true],
 
-            array(array('maximumWidth' => 123), 124, 0, false),
-            array(array('maximumWidth' => 123), 123, 0, true),
+            [['maximumWidth' => 123], 124, 0, false],
+            [['maximumWidth' => 123], 123, 0, true],
 
-            array(array('maximumHeight' => 123), 0, 124, false),
-            array(array('maximumHeight' => 123), 0, 123, true),
+            [['maximumHeight' => 123], 0, 124, false],
+            [['maximumHeight' => 123], 0, 123, true],
 
-            array(array('minimumResolution' => 6150), 123, 49, false),
-            array(array('minimumResolution' => 6150), 123, 50, true),
+            [['minimumResolution' => 6150], 123, 49, false],
+            [['minimumResolution' => 6150], 123, 50, true],
 
-            array(array('maximumResolution' => 6150), 123, 51, false),
-            array(array('maximumResolution' => 6150), 123, 50, true),
+            [['maximumResolution' => 6150], 123, 51, false],
+            [['maximumResolution' => 6150], 123, 50, true],
 
-            array(array('minimumWidth' => 123, 'minimumHeight' => 50, 'maximumWidth' => 123, 'maximumHeight' => 50), 123, 51, false),
-            array(array('minimumWidth' => 123, 'minimumHeight' => 50, 'maximumWidth' => 123, 'maximumHeight' => 50), 122, 50, false),
-            array(array('minimumWidth' => 123, 'minimumHeight' => 50, 'maximumWidth' => 123, 'maximumHeight' => 50), 123, 50, true),
+            [['minimumWidth' => 123, 'minimumHeight' => 50, 'maximumWidth' => 123, 'maximumHeight' => 50], 123, 51, false],
+            [['minimumWidth' => 123, 'minimumHeight' => 50, 'maximumWidth' => 123, 'maximumHeight' => 50], 122, 50, false],
+            [['minimumWidth' => 123, 'minimumHeight' => 50, 'maximumWidth' => 123, 'maximumHeight' => 50], 123, 50, true],
 
-            array(array('minimumWidth' => 123, 'minimumHeight' => 50, 'minimumResolution' => 6050, 'maximumResolution' => 6050), 123, 50, false),
-            array(array('minimumWidth' => 123, 'minimumHeight' => 50, 'minimumResolution' => 6150, 'maximumResolution' => 6150), 123, 50, true),
-        );
+            [['minimumWidth' => 123, 'minimumHeight' => 50, 'minimumResolution' => 6050, 'maximumResolution' => 6050], 123, 50, false],
+            [['minimumWidth' => 123, 'minimumHeight' => 50, 'minimumResolution' => 6150, 'maximumResolution' => 6150], 123, 50, true],
+        ];
     }
 
     /**

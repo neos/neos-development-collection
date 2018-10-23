@@ -125,7 +125,7 @@ class ContentContext extends Context
      */
     public function getProperties()
     {
-        return array(
+        return [
             'workspaceName' => $this->workspaceName,
             'currentDateTime' => $this->currentDateTime,
             'dimensions' => $this->dimensions,
@@ -135,7 +135,7 @@ class ContentContext extends Context
             'inaccessibleContentShown' => $this->inaccessibleContentShown,
             'currentSite' => $this->currentSite,
             'currentDomain' => $this->currentDomain
-        );
+        ];
     }
 
     /**

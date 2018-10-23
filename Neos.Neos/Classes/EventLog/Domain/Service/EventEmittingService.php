@@ -41,7 +41,7 @@ class EventEmittingService
      *
      * @var array<Event>
      */
-    protected $eventContext = array();
+    protected $eventContext = [];
 
     /**
      * @var string

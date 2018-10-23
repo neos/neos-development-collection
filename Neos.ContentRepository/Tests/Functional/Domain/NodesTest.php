@@ -970,20 +970,20 @@ class NodesTest extends FunctionalTestCase
      */
     public function nodeDataRepositoryRenumbersNodesIfNoFreeSortingIndexesAreAvailableAcrossDimensions()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration(array(
-            'test' => array(
+        $this->contentDimensionRepository->setDimensionsConfiguration([
+            'test' => [
                 'default' => 'a'
-            )
-        ));
+            ]
+        ]);
 
-        $variantContextA = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('a')),
-            'targetDimensions' => array('test' => 'a')
-        ));
-        $variantContextB = $this->contextFactory->create(array(
-            'dimensions' => array('test' => array('b', 'a')),
-            'targetDimensions' => array('test' => 'b')
-        ));
+        $variantContextA = $this->contextFactory->create([
+            'dimensions' => ['test' => ['a']],
+            'targetDimensions' => ['test' => 'a']
+        ]);
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b']
+        ]);
 
         $rootNodeA = $variantContextA->getRootNode();
         $rootNodeB = $rootNodeA->createVariantForContext($variantContextB);
@@ -991,7 +991,7 @@ class NodesTest extends FunctionalTestCase
         $liveParentNodeA = $rootNodeA->createNode('parent-node');
         $liveParentNodeB = $liveParentNodeA->createVariantForContext($variantContextB);
 
-        $nodesA = array();
+        $nodesA = [];
         $nodesA[0] = $liveParentNodeA->createNode('node000');
         $nodesA[150] = $liveParentNodeA->createNode('node150');
 

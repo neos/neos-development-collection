@@ -254,7 +254,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      */
     public function getVariants()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -311,7 +311,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
         if (!$existingAdjustmentFound) {
             $this->adjustments->add($adjustment);
             $adjustment->setImageVariant($this);
-            $this->adjustments = $this->adjustments->matching(new Criteria(null, array('position' => 'ASC')));
+            $this->adjustments = $this->adjustments->matching(new Criteria(null, ['position' => 'ASC']));
         }
 
         $this->lastModified = new \DateTime();

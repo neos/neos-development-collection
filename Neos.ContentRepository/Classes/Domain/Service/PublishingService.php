@@ -69,11 +69,11 @@ class PublishingService implements PublishingServiceInterface
     public function getUnpublishedNodes(Workspace $workspace)
     {
         if ($workspace->getBaseWorkspace() === null) {
-            return array();
+            return [];
         }
 
         $nodeData = $this->nodeDataRepository->findByWorkspace($workspace);
-        $unpublishedNodes = array();
+        $unpublishedNodes = [];
         foreach ($nodeData as $singleNodeData) {
             /** @var NodeData $singleNodeData */
             // Skip the root entry from the workspace as it can't be published
@@ -287,20 +287,20 @@ class PublishingService implements PublishingServiceInterface
      * @param array $contextProperties Additional pre-defined context properties
      * @return Context
      */
-    protected function createContext(Workspace $workspace, array $dimensionValues, array $contextProperties = array())
+    protected function createContext(Workspace $workspace, array $dimensionValues, array $contextProperties = [])
     {
         $presetsMatchingDimensionValues = $this->contentDimensionPresetSource->findPresetsByTargetValues($dimensionValues);
         $dimensions = array_map(function ($preset) {
             return $preset['values'];
         }, $presetsMatchingDimensionValues);
 
-        $contextProperties += array(
+        $contextProperties += [
             'workspaceName' => $workspace->getName(),
             'inaccessibleContentShown' => true,
             'invisibleContentShown' => true,
             'removedContentShown' => true,
             'dimensions' => $dimensions
-        );
+        ];
 
         return $this->contextFactory->create($contextProperties);
     }

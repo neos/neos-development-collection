@@ -33,14 +33,14 @@ class NodeTypeManager
      *
      * @var array
      */
-    protected $cachedNodeTypes = array();
+    protected $cachedNodeTypes = [];
 
     /**
      * Node types, indexed by supertype (also including abstract node types)
      *
      * @var array
      */
-    protected $cachedSubNodeTypes = array();
+    protected $cachedSubNodeTypes = [];
 
     /**
      * @Flow\Inject
@@ -74,7 +74,7 @@ class NodeTypeManager
      */
     public function getNodeTypes($includeAbstractNodeTypes = true)
     {
-        if ($this->cachedNodeTypes === array()) {
+        if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
         if ($includeAbstractNodeTypes) {
@@ -99,7 +99,7 @@ class NodeTypeManager
      */
     public function getSubNodeTypes($superTypeName, $includeAbstractNodeTypes = true)
     {
-        if ($this->cachedNodeTypes === array()) {
+        if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
 
@@ -133,7 +133,7 @@ class NodeTypeManager
      */
     public function getNodeType($nodeTypeName)
     {
-        if ($this->cachedNodeTypes === array()) {
+        if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
         if (isset($this->cachedNodeTypes[$nodeTypeName])) {
@@ -159,7 +159,7 @@ class NodeTypeManager
      */
     public function hasNodeType($nodeTypeName)
     {
-        if ($this->cachedNodeTypes === array()) {
+        if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
         return isset($this->cachedNodeTypes[$nodeTypeName]);
@@ -217,7 +217,7 @@ class NodeTypeManager
      */
     public function overrideNodeTypes(array $completeNodeTypeConfiguration)
     {
-        $this->cachedNodeTypes = array();
+        $this->cachedNodeTypes = [];
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
             $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration);
         }

@@ -65,7 +65,7 @@ class ThumbnailGeneratorStrategy
         $generatorClassNames = $reflectionService->getAllImplementationClassNamesForInterface(ThumbnailGeneratorInterface::class);
         $configurationManager = $objectManager->get(ConfigurationManager::class);
         $generatorOptions = $configurationManager->getConfiguration('Settings', 'Neos.Media.thumbnailGenerators');
-        $generators = array();
+        $generators = [];
         foreach ($generatorClassNames as $generatorClassName) {
             if (isset($generatorOptions[$generatorClassName]['disable']) && $generatorOptions[$generatorClassName]['disable'] === true) {
                 continue;
@@ -75,10 +75,10 @@ class ThumbnailGeneratorStrategy
             } else {
                 $priority = $generatorClassName::getPriority();
             }
-            $generators[] = array(
+            $generators[] = [
                 'priority' => (integer)$priority,
                 'className' => $generatorClassName
-            );
+            ];
         }
 
         $sorter = new PositionalArraySorter($generators, 'priority');

@@ -556,7 +556,7 @@ class Runtime
         $configuration = $this->fusionConfiguration;
 
         $pathUntilNow = '';
-        $currentPrototypeDefinitions = array();
+        $currentPrototypeDefinitions = [];
         if (isset($configuration['__prototypes'])) {
             $currentPrototypeDefinitions = $configuration['__prototypes'];
         }
@@ -700,7 +700,7 @@ class Runtime
             /** @var $fusionObject AbstractArrayFusionObject */
             if (isset($fusionConfiguration['__meta']['ignoreProperties'])) {
                 $evaluatedIgnores = $this->evaluate($fusionPath . '/__meta/ignoreProperties', $fusionObject);
-                $fusionObject->setIgnoreProperties(is_array($evaluatedIgnores) ? $evaluatedIgnores : array());
+                $fusionObject->setIgnoreProperties(is_array($evaluatedIgnores) ? $evaluatedIgnores : []);
             }
             $this->setPropertiesOnFusionObject($fusionObject, $fusionConfiguration);
         }
@@ -876,7 +876,7 @@ class Runtime
     protected function getDefaultContextVariables()
     {
         if ($this->defaultContextVariables === null) {
-            $this->defaultContextVariables = array();
+            $this->defaultContextVariables = [];
             if (isset($this->settings['defaultContext']) && is_array($this->settings['defaultContext'])) {
                 $this->defaultContextVariables = EelUtility::getDefaultContextVariables($this->settings['defaultContext']);
             }

@@ -215,7 +215,7 @@ class XliffService
         // Walk/build the array to the specified key
         while ($arrayKey = array_shift($keys)) {
             if (!array_key_exists($arrayKey, $arrayPointer)) {
-                $arrayPointer[$arrayKey] = array();
+                $arrayPointer[$arrayKey] = [];
             }
             $arrayPointer = &$arrayPointer[$arrayKey];
         }

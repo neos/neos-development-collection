@@ -43,14 +43,14 @@ class FileMonitorListener
      */
     public function flushContentCacheOnFileChanges($fileMonitorIdentifier, array $changedFiles)
     {
-        $fileMonitorsThatTriggerContentCacheFlush = array(
+        $fileMonitorsThatTriggerContentCacheFlush = [
             'ContentRepository_NodeTypesConfiguration',
             'Fusion_Files',
             'Fluid_TemplateFiles',
             'Flow_ClassFiles',
             'Flow_ConfigurationFiles',
             'Flow_TranslationFiles'
-        );
+        ];
 
         if (in_array($fileMonitorIdentifier, $fileMonitorsThatTriggerContentCacheFlush)) {
             $this->flowCacheManager->getCache('Neos_Fusion_Content')->flush();

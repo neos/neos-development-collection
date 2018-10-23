@@ -61,7 +61,7 @@ class UserSettingsController extends AbstractModuleController
             $propertyMappingConfigurationForPrimaryAccount = $propertyMappingConfigurationForUser->forProperty('user.primaryAccount');
             $propertyMappingConfigurationForPrimaryAccount->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, Account::class);
             /** @var PropertyMappingConfiguration $propertyMappingConfiguration */
-            foreach (array($propertyMappingConfigurationForUser, $propertyMappingConfigurationForUserName, $propertyMappingConfigurationForPrimaryAccount) as $propertyMappingConfiguration) {
+            foreach ([$propertyMappingConfigurationForUser, $propertyMappingConfigurationForUserName, $propertyMappingConfigurationForPrimaryAccount] as $propertyMappingConfiguration) {
                 $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
             }
         }
@@ -87,9 +87,9 @@ class UserSettingsController extends AbstractModuleController
     {
         $this->assignElectronicAddressOptions();
 
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'user' => $this->currentUser
-        ));
+        ]);
     }
 
     /**
@@ -113,10 +113,10 @@ class UserSettingsController extends AbstractModuleController
      */
     public function editAccountAction(Account $account)
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'account' => $account,
             'user' => $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName())
-        ));
+        ]);
     }
 
     /**
@@ -126,7 +126,7 @@ class UserSettingsController extends AbstractModuleController
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      * @return void
      */
-    public function updateAccountAction(array $password = array())
+    public function updateAccountAction(array $password = [])
     {
         $user = $this->currentUser;
         $password = array_shift($password);
@@ -163,8 +163,8 @@ class UserSettingsController extends AbstractModuleController
         $user->addElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        $this->addFlashMessage('An electronic address "%s" (%s) has been added.', 'Electronic address added', Message::SEVERITY_OK, array(htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType())), 1412374814);
-        $this->redirect('edit', null, null, array('user' => $user));
+        $this->addFlashMessage('An electronic address "%s" (%s) has been added.', 'Electronic address added', Message::SEVERITY_OK, [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType())], 1412374814);
+        $this->redirect('edit', null, null, ['user' => $user]);
     }
 
     /**
@@ -179,8 +179,8 @@ class UserSettingsController extends AbstractModuleController
         $user->removeElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, array(htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($user->getName())), 1412374678);
-        $this->redirect('edit', null, null, array('user' => $user));
+        $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($user->getName())], 1412374678);
+        $this->redirect('edit', null, null, ['user' => $user]);
     }
 
     /**
@@ -189,18 +189,18 @@ class UserSettingsController extends AbstractModuleController
     protected function assignElectronicAddressOptions()
     {
         $electronicAddress = new ElectronicAddress();
-        $electronicAddressTypes = array();
+        $electronicAddressTypes = [];
         foreach ($electronicAddress->getAvailableElectronicAddressTypes() as $type) {
             $electronicAddressTypes[$type] = $type;
         }
-        $electronicAddressUsageTypes = array();
+        $electronicAddressUsageTypes = [];
         foreach ($electronicAddress->getAvailableUsageTypes() as $type) {
             $electronicAddressUsageTypes[$type] = $type;
         }
         array_unshift($electronicAddressUsageTypes, '');
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'electronicAddressTypes' => $electronicAddressTypes,
             'electronicAddressUsageTypes' => $electronicAddressUsageTypes
-        ));
+        ]);
     }
 }

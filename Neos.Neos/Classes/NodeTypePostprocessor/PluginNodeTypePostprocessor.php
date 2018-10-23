@@ -46,22 +46,22 @@ class PluginNodeTypePostprocessor implements NodeTypePostprocessorInterface
     public function process(NodeType $nodeType, array &$configuration, array $options)
     {
         $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType($nodeType);
-        if ($pluginViewDefinitions === array()) {
+        if ($pluginViewDefinitions === []) {
             return;
         }
-        $configuration['ui']['inspector']['groups']['pluginViews'] = array(
+        $configuration['ui']['inspector']['groups']['pluginViews'] = [
             'position' => '9999',
             'label' => 'Plugin Views'
-        );
-        $configuration['properties']['views'] = array(
+        ];
+        $configuration['properties']['views'] = [
             'type' => 'string',
-            'ui' => array(
-                'inspector' => array(
+            'ui' => [
+                'inspector' => [
                     'group' => 'pluginViews',
                     'position' => '20',
                     'editor' => 'Neos.Neos/Inspector/Editors/PluginViewsEditor'
-                )
-            )
-        );
+                ]
+            ]
+        ];
     }
 }

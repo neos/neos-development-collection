@@ -39,77 +39,77 @@ class VieSchemaBuilderTest extends UnitTestCase
      *
      * @var array
      */
-    protected $nodeTypesFixture = array(
-        'Neos.Neos:ContentObject' => array(
-            'ui' => array(
+    protected $nodeTypesFixture = [
+        'Neos.Neos:ContentObject' => [
+            'ui' => [
                 'label' => 'Abstract content object',
-            ),
+            ],
             'abstract' => true,
-            'properties' => array(
-                '_hidden' => array(
+            'properties' => [
+                '_hidden' => [
                     'type' => 'boolean',
                     'label' => 'Hidden',
                     'category' => 'visibility',
                     'priority' => 1
-                ),
-            ),
-            'propertyGroups' => array(
-                'visibility' => array(
+                ],
+            ],
+            'propertyGroups' => [
+                'visibility' => [
                     'label' => 'Visibility',
                     'priority' => 1
-                )
-            )
-        ),
-        'Neos.Neos:MyFinalType' => array(
-            'superTypes' => array('Neos.Neos:ContentObject' => true),
+                ]
+            ]
+        ],
+        'Neos.Neos:MyFinalType' => [
+            'superTypes' => ['Neos.Neos:ContentObject' => true],
             'final' => true
-        ),
-        'Neos.Neos:AbstractType' => array(
-            'superTypes' => array('Neos.Neos:ContentObject' => true),
-            'ui' => array(
+        ],
+        'Neos.Neos:AbstractType' => [
+            'superTypes' => ['Neos.Neos:ContentObject' => true],
+            'ui' => [
                 'label' => 'Abstract type',
-            ),
+            ],
             'abstract' => true
-        ),
-        'Neos.Neos:Text' => array(
-            'superTypes' => array('Neos.Neos:ContentObject' => true),
-            'ui' => array(
+        ],
+        'Neos.Neos:Text' => [
+            'superTypes' => ['Neos.Neos:ContentObject' => true],
+            'ui' => [
                 'label' => 'Text',
-            ),
-            'properties' => array(
-                'headline' => array(
+            ],
+            'properties' => [
+                'headline' => [
                     'type' => 'string',
                     'placeholder' => 'Enter headline here'
-                ),
-                'text' => array(
+                ],
+                'text' => [
                     'type' => 'string',
                     'placeholder' => '<p>Enter text here</p>'
-                )
-            ),
-            'inlineEditableProperties' => array('headline', 'text')
-        ),
-        'Neos.Neos:TextWithImage' => array(
-            'superTypes' => array('Neos.Neos:Text' => true),
-            'ui' => array(
+                ]
+            ],
+            'inlineEditableProperties' => ['headline', 'text']
+        ],
+        'Neos.Neos:TextWithImage' => [
+            'superTypes' => ['Neos.Neos:Text' => true],
+            'ui' => [
                 'label' => 'Text with image',
-            ),
-            'properties' => array(
-                'image' => array(
+            ],
+            'properties' => [
+                'image' => [
                     'type' => Image::class,
                     'label' => 'Image'
-                )
-            )
-        )
-    );
+                ]
+            ]
+        ]
+    ];
 
     public function setUp()
     {
-        $this->vieSchemaBuilder = $this->getAccessibleMock(VieSchemaBuilder::class, array('dummy'));
+        $this->vieSchemaBuilder = $this->getAccessibleMock(VieSchemaBuilder::class, ['dummy']);
 
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
         $mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('NodeTypes')->will($this->returnValue($this->nodeTypesFixture));
 
-        $this->nodeTypeManager = $this->getAccessibleMock(NodeTypeManager::class, array('dummy'));
+        $this->nodeTypeManager = $this->getAccessibleMock(NodeTypeManager::class, ['dummy']);
         $this->nodeTypeManager->_set('configurationManager', $mockConfigurationManager);
 
         $mockCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
@@ -124,7 +124,7 @@ class VieSchemaBuilderTest extends UnitTestCase
      */
     public function generateVieSchemaReturnsCachedConfigurationIfAvailable()
     {
-        $testConfig = array('foo' => 'bar');
+        $testConfig = ['foo' => 'bar'];
         $this->vieSchemaBuilder->_set('configuration', $testConfig);
         $this->assertEquals($testConfig, $this->vieSchemaBuilder->generateVieSchema());
     }
@@ -134,16 +134,16 @@ class VieSchemaBuilderTest extends UnitTestCase
      */
     public function readNodeTypeConfigurationFillsTypeAndPropertyConfiguration()
     {
-        $this->assertEquals($this->vieSchemaBuilder->_get('superTypeConfiguration'), array());
-        $this->assertEquals($this->vieSchemaBuilder->_get('types'), array());
-        $this->assertEquals($this->vieSchemaBuilder->_get('properties'), array());
+        $this->assertEquals($this->vieSchemaBuilder->_get('superTypeConfiguration'), []);
+        $this->assertEquals($this->vieSchemaBuilder->_get('types'), []);
+        $this->assertEquals($this->vieSchemaBuilder->_get('properties'), []);
 
         $this->vieSchemaBuilder->_call('readNodeTypeConfiguration', 'Neos.Neos:TextWithImage', $this->nodeTypeManager->getNodeType('Neos.Neos:TextWithImage'));
 
         $this->assertEquals(
-            array(
-                'typo3:Neos.Neos:TextWithImage' => array('typo3:Neos.Neos:Text')
-            ),
+            [
+                'typo3:Neos.Neos:TextWithImage' => ['typo3:Neos.Neos:Text']
+            ],
             $this->vieSchemaBuilder->_get('superTypeConfiguration')
         );
         $this->arrayHasKey('typo3:Neos.Neos:TextWithImage', $this->vieSchemaBuilder->_get('types'));

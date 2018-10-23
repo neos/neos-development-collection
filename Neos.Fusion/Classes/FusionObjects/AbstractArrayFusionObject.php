@@ -28,20 +28,20 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      * @var array
      * @internal
      */
-    protected $properties = array();
+    protected $properties = [];
 
     /**
      * If you iterate over "properties" these in here should usually be ignored. For example additional properties in "Case" that are not "Matchers".
      *
      * @var array
      */
-    protected $ignoreProperties = array();
+    protected $ignoreProperties = [];
 
     /**
      * @param array $ignoreProperties
      * @return void
      */
-    public function setIgnoreProperties($ignoreProperties = array())
+    public function setIgnoreProperties($ignoreProperties = [])
     {
         $this->ignoreProperties = $ignoreProperties;
     }

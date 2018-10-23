@@ -61,14 +61,14 @@ class ClosestOperation extends AbstractOperation
             throw new FlowQueryException('closest() requires a filter argument', 1332492263);
         }
 
-        $output = array();
+        $output = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $contextNodeQuery = new FlowQuery(array($contextNode));
-            $contextNodeQuery->pushOperation('first', array());
+            $contextNodeQuery = new FlowQuery([$contextNode]);
+            $contextNodeQuery->pushOperation('first', []);
             $contextNodeQuery->pushOperation('filter', $arguments);
 
-            $parentsQuery = new FlowQuery(array($contextNode));
-            $contextNodeQuery->pushOperation('add', array($parentsQuery->parents($arguments[0])->get()));
+            $parentsQuery = new FlowQuery([$contextNode]);
+            $contextNodeQuery->pushOperation('add', [$parentsQuery->parents($arguments[0])->get()]);
 
             foreach ($contextNodeQuery as $result) {
                 $output[$result->getPath()] = $result;

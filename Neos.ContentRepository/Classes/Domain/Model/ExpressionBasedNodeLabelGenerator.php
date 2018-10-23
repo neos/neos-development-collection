@@ -73,7 +73,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
      */
     public function getLabel(NodeInterface $node)
     {
-        $label = Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, array('node' => $node), $this->defaultContextConfiguration);
+        $label = Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, ['node' => $node], $this->defaultContextConfiguration);
         return $label;
     }
 }

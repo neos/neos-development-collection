@@ -70,7 +70,7 @@ class MenuHelper
         $requestUriHost = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
 
         $domainsFound = false;
-        $sites = array();
+        $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
             $uri = null;
             $active = false;
@@ -84,28 +84,28 @@ class MenuHelper
                     $uri = $controllerContext->getUriBuilder()
                         ->reset()
                         ->setCreateAbsoluteUri(true)
-                        ->uriFor('index', array(), 'Backend\Backend', 'Neos.Neos');
+                        ->uriFor('index', [], 'Backend\Backend', 'Neos.Neos');
                 } else {
                     $uri = $controllerContext->getUriBuilder()
                         ->reset()
-                        ->uriFor('switchSite', array('site' => $site), 'Backend\Backend', 'Neos.Neos');
+                        ->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
                 }
                 $domainsFound = true;
             }
 
-            $sites[] = array(
+            $sites[] = [
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName(),
                 'uri' => $uri,
                 'active' => $active
-            );
+            ];
         }
 
         if ($domainsFound === false) {
             $uri = $controllerContext->getUriBuilder()
                 ->reset()
                 ->setCreateAbsoluteUri(true)
-                ->uriFor('index', array(), 'Backend\Backend', 'Neos.Neos');
+                ->uriFor('index', [], 'Backend\Backend', 'Neos.Neos');
             $sites[0]['uri'] = $uri;
         }
 
@@ -118,7 +118,7 @@ class MenuHelper
      */
     public function buildModuleList(ControllerContext $controllerContext)
     {
-        $modules = array();
+        $modules = [];
         foreach ($this->settings['modules'] as $moduleName => $moduleConfiguration) {
             if (!$this->isModuleEnabled($moduleName)) {
                 continue;
@@ -130,7 +130,7 @@ class MenuHelper
             if (isset($moduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($moduleConfiguration['privilegeTarget'])) {
                 continue;
             }
-            $submodules = array();
+            $submodules = [];
             if (isset($moduleConfiguration['submodules'])) {
                 foreach ($moduleConfiguration['submodules'] as $submoduleName => $submoduleConfiguration) {
                     $modulePath = $moduleName . '/' . $submoduleName;
@@ -149,7 +149,7 @@ class MenuHelper
             }
             $modules[] = array_merge(
                 $this->collectModuleData($controllerContext, $moduleName, $moduleConfiguration, $moduleName),
-                array('group' => $moduleName, 'submodules' => $submodules)
+                ['group' => $moduleName, 'submodules' => $submodules]
             );
         }
         return $modules;
@@ -187,10 +187,10 @@ class MenuHelper
         $moduleUri = $controllerContext->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)
-            ->uriFor('index', array('module' => $modulePath), 'Backend\Module', 'Neos.Neos');
+            ->uriFor('index', ['module' => $modulePath], 'Backend\Module', 'Neos.Neos');
 
         $icon = isset($moduleConfiguration['icon']) ? $this->iconMapper->convert($moduleConfiguration['icon']) : '';
-        return array(
+        return [
             'module' => $module,
             'modulePath' => $modulePath,
             'uri' => $moduleUri,
@@ -198,6 +198,6 @@ class MenuHelper
             'description' => isset($moduleConfiguration['description']) ? $moduleConfiguration['description'] : '',
             'icon' => $icon,
             'hideInMenu' => isset($moduleConfiguration['hideInMenu']) ? (boolean)$moduleConfiguration['hideInMenu'] : false
-        );
+        ];
     }
 }

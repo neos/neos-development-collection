@@ -37,7 +37,7 @@ abstract class AbstractNodePropertyPrivilege extends AbstractNodePrivilege
      *
      * @var array
      */
-    protected $methodNameToPropertyMapping = array();
+    protected $methodNameToPropertyMapping = [];
 
     /**
      * @param PrivilegeSubjectInterface|PropertyAwareNodePrivilegeSubject|MethodPrivilegeSubject $subject

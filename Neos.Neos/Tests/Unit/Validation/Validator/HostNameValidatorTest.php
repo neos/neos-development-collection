@@ -22,26 +22,26 @@ class HostNameValidatorTest extends UnitTestCase
 {
     public function hostNameDataProvider()
     {
-        return array(
+        return [
             // correct names
-            'hostname'                            => array('hostName' => 'localhost', 'valid' => true),
-            'www.host.de'                        => array('hostName' => 'www.host.de', 'valid' => true),
-            'www.host.travel'                    => array('hostName' => 'www.host.travel', 'valid' => true),
-            'digits in local nodes are allowed'    => array('hostName' => '4you.test.de', 'valid' => true),
+            'hostname'                            => ['hostName' => 'localhost', 'valid' => true],
+            'www.host.de'                        => ['hostName' => 'www.host.de', 'valid' => true],
+            'www.host.travel'                    => ['hostName' => 'www.host.travel', 'valid' => true],
+            'digits in local nodes are allowed'    => ['hostName' => '4you.test.de', 'valid' => true],
 
             // incorrect names
-            'part longer than 63 characters'    => array('hostName' => 'www.' . str_repeat('abcd', 16) . '.de', 'valid' => false),
-            'name longer than 253 characters'    => array('hostName' => str_repeat('abcd.', 50) . 'neos', 'valid' => false),
-            'two consecutive dots'                => array('hostName' => 'www..de', 'valid' => false),
-            'node does not start with -'        => array('hostName' => '-test.de', 'valid' => false),
-            'node does not end with -'            => array('hostName' => 'test-.de', 'valid' => false),
-            'singleNode does not start with -'    => array('hostName' => '-localhost', 'valid' => false),
-            'singleNode does not end with -'    => array('hostName' => 'localhost-', 'valid' => false),
-            'tld consist of min 2 chars'        => array('hostName' => 'test.x', 'valid' => false),
-            'tld should not start with -'        => array('hostName' => 'test.-de', 'valid' => false),
-            'tld should not end with -'            => array('hostName' => 'test.de-', 'valid' => false),
-            'tld should not contain digits'        => array('hostName' => 'you.test.42', 'valid' => false),
-        );
+            'part longer than 63 characters'    => ['hostName' => 'www.' . str_repeat('abcd', 16) . '.de', 'valid' => false],
+            'name longer than 253 characters'    => ['hostName' => str_repeat('abcd.', 50) . 'neos', 'valid' => false],
+            'two consecutive dots'                => ['hostName' => 'www..de', 'valid' => false],
+            'node does not start with -'        => ['hostName' => '-test.de', 'valid' => false],
+            'node does not end with -'            => ['hostName' => 'test-.de', 'valid' => false],
+            'singleNode does not start with -'    => ['hostName' => '-localhost', 'valid' => false],
+            'singleNode does not end with -'    => ['hostName' => 'localhost-', 'valid' => false],
+            'tld consist of min 2 chars'        => ['hostName' => 'test.x', 'valid' => false],
+            'tld should not start with -'        => ['hostName' => 'test.-de', 'valid' => false],
+            'tld should not end with -'            => ['hostName' => 'test.de-', 'valid' => false],
+            'tld should not contain digits'        => ['hostName' => 'you.test.42', 'valid' => false],
+        ];
     }
 
     /**

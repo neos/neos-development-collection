@@ -87,9 +87,9 @@ class AuthorizationService
 
         $allNodeTypes = $this->nodeTypeManager->getNodeTypes();
 
-        $deniedCreationNodeTypes = array();
-        $grantedCreationNodeTypes = array();
-        $abstainedCreationNodeTypes = array();
+        $deniedCreationNodeTypes = [];
+        $grantedCreationNodeTypes = [];
+        $abstainedCreationNodeTypes = [];
         foreach ($this->securityContext->getRoles() as $role) {
             /** @var CreateNodePrivilege $createNodePrivilege */
             foreach ($role->getPrivilegesByType(CreateNodePrivilege::class) as $createNodePrivilege) {
@@ -97,7 +97,7 @@ class AuthorizationService
                     continue;
                 }
 
-                $affectedNodeTypes = ($createNodePrivilege->getCreationNodeTypes() !== array() ? $createNodePrivilege->getCreationNodeTypes() : $allNodeTypes);
+                $affectedNodeTypes = ($createNodePrivilege->getCreationNodeTypes() !== [] ? $createNodePrivilege->getCreationNodeTypes() : $allNodeTypes);
 
                 if ($createNodePrivilege->isGranted()) {
                     $grantedCreationNodeTypes = array_merge($grantedCreationNodeTypes, $affectedNodeTypes);
@@ -154,9 +154,9 @@ class AuthorizationService
     {
         $privilegeSubject = new PropertyAwareNodePrivilegeSubject($node);
 
-        $deniedNodePropertyNames = array();
-        $grantedNodePropertyNames = array();
-        $abstainedNodePropertyNames = array();
+        $deniedNodePropertyNames = [];
+        $grantedNodePropertyNames = [];
+        $abstainedNodePropertyNames = [];
         foreach ($this->securityContext->getRoles() as $role) {
             /** @var EditNodePropertyPrivilege $editNodePropertyPrivilege */
             foreach ($role->getPrivilegesByType(EditNodePropertyPrivilege::class) as $editNodePropertyPrivilege) {

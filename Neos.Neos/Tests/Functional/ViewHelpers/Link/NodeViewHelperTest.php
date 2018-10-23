@@ -84,9 +84,9 @@ class NodeViewHelperTest extends FunctionalTestCase
         $domainRepository = $this->objectManager->get(DomainRepository::class);
         $siteRepository = $this->objectManager->get(SiteRepository::class);
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => 'live'
-        );
+        ];
         $contentContext = $this->contextFactory->create($contextProperties);
         $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile(__DIR__ . '/../../Fixtures/NodeStructure.xml', $contentContext);
@@ -111,23 +111,23 @@ class NodeViewHelperTest extends FunctionalTestCase
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
         $httpRequest = $requestHandler->getHttpRequest();
         $httpRequest->setBaseUri(new Uri('http://neos.test/'));
-        $controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder());
+        $controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments([]), new UriBuilder());
         $this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
-        $fusionObject = $this->getAccessibleMock(TemplateImplementation::class, array('dummy'), array(), '', false);
-        $this->runtime = new Runtime(array(), $controllerContext);
-        $this->runtime->pushContextArray(array(
+        $fusionObject = $this->getAccessibleMock(TemplateImplementation::class, ['dummy'], [], '', false);
+        $this->runtime = new Runtime([], $controllerContext);
+        $this->runtime->pushContextArray([
             'documentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home'),
             'alternativeDocumentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission')
-        ));
+        ]);
         $this->inject($fusionObject, 'runtime', $this->runtime);
         /** @var AbstractTemplateView|\PHPUnit_Framework_MockObject_MockObject $mockView */
-        $mockView = $this->getAccessibleMock(FluidView::class, array(), array(), '', false);
+        $mockView = $this->getAccessibleMock(FluidView::class, [], [], '', false);
         $mockView->expects($this->any())->method('getFusionObject')->will($this->returnValue($fusionObject));
         $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
         $this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
-        $templateVariableContainer = new TemplateVariableContainer(array());
+        $templateVariableContainer = new TemplateVariableContainer([]);
         $this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
         $this->viewHelper->setRenderChildrenClosure(function () use ($templateVariableContainer) {
             $linkedNode = $templateVariableContainer->get('linkedNode');
@@ -140,8 +140,8 @@ class NodeViewHelperTest extends FunctionalTestCase
     {
         parent::tearDown();
 
-        $this->inject($this->contextFactory, 'contextInstances', array());
-        $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
+        $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', []);
     }
 
     /**
@@ -200,7 +200,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
 
         // The tests should also work in a regular fluid view, so we set that and repeat the tests
-        $mockView = $this->getAccessibleMock(TemplateView::class, array(), array(), '', false);
+        $mockView = $this->getAccessibleMock(TemplateView::class, [], [], '', false);
         $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
         $this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
@@ -232,7 +232,7 @@ class NodeViewHelperTest extends FunctionalTestCase
      */
     public function viewHelperRespectsBaseNodeNameParameter()
     {
-        $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render(null, null, false, array(), '', false, array(), 'alternativeDocumentNode'));
+        $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render(null, null, false, [], '', false, [], 'alternativeDocumentNode'));
     }
 
     /**
@@ -240,7 +240,7 @@ class NodeViewHelperTest extends FunctionalTestCase
      */
     public function viewHelperRespectsArgumentsParameter()
     {
-        $this->assertSame('<a href="/en/home.html?foo=bar">Home</a>', $this->viewHelper->render('/sites/example/home@live', null, false, array('foo' => 'bar')));
+        $this->assertSame('<a href="/en/home.html?foo=bar">Home</a>', $this->viewHelper->render('/sites/example/home@live', null, false, ['foo' => 'bar']));
     }
 
     /**
@@ -288,7 +288,7 @@ class NodeViewHelperTest extends FunctionalTestCase
      */
     public function viewHelperUsesNodeTitleIfEmpty()
     {
-        $templateVariableContainer = new TemplateVariableContainer(array());
+        $templateVariableContainer = new TemplateVariableContainer([]);
         $this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
         $this->viewHelper->setRenderChildrenClosure(function () use ($templateVariableContainer) {
             return null;
@@ -301,11 +301,11 @@ class NodeViewHelperTest extends FunctionalTestCase
      */
     public function viewHelperAssignsLinkedNodeToNodeVariableName()
     {
-        $templateVariableContainer = new TemplateVariableContainer(array());
+        $templateVariableContainer = new TemplateVariableContainer([]);
         $this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
         $this->viewHelper->setRenderChildrenClosure(function () use ($templateVariableContainer) {
             return $templateVariableContainer->get('alternativeLinkedNode')->getLabel();
         });
-        $this->assertSame('<a href="/en/home.html">Home</a>', $this->viewHelper->render('/sites/example/home@live', null, false, array(), '', false, array(), 'documentNode', 'alternativeLinkedNode'));
+        $this->assertSame('<a href="/en/home.html">Home</a>', $this->viewHelper->render('/sites/example/home@live', null, false, [], '', false, [], 'documentNode', 'alternativeLinkedNode'));
     }
 }

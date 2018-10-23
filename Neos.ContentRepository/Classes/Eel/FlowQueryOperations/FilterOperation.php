@@ -64,7 +64,7 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
         }
 
         if ($arguments[0] instanceof NodeInterface) {
-            $filteredContext = array();
+            $filteredContext = [];
             $context = $flowQuery->getContext();
             foreach ($context as $element) {
                 if ($element === $arguments[0]) {

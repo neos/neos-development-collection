@@ -35,7 +35,7 @@ class MigrationConfiguration
     /**
      * @param array $configuration
      */
-    public function __construct(array $configuration = array())
+    public function __construct(array $configuration = [])
     {
         $this->comments = isset($configuration['comments']) ? $configuration['comments'] : null;
         $this->warnings = isset($configuration['warnings']) ? $configuration['warnings'] : null;

@@ -119,14 +119,14 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
      */
     protected function prepareIterationInformation($collectionCount)
     {
-        $iteration = array(
+        $iteration = [
             'index' => $this->numberOfRenderedNodes,
             'cycle' => ($this->numberOfRenderedNodes + 1),
             'isFirst' => false,
             'isLast' => false,
             'isEven' => false,
             'isOdd' => false
-        );
+        ];
 
         if ($this->numberOfRenderedNodes === 0) {
             $iteration['isFirst'] = true;

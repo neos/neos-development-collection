@@ -39,7 +39,7 @@ abstract class AbstractNodeData
      * @ORM\Column(type="flow_json_array")
      * @var array<mixed>
      */
-    protected $properties = array();
+    protected $properties = [];
 
     /**
      * An optional object which is used as a content container alternative to $properties
@@ -104,7 +104,7 @@ abstract class AbstractNodeData
      * @ORM\Column(type="flow_json_array")
      * @var array<string>
      */
-    protected $accessRoles = array();
+    protected $accessRoles = [];
 
     /**
      * @Flow\Inject
@@ -164,7 +164,7 @@ abstract class AbstractNodeData
         if (!is_object($this->contentObjectProxy)) {
             switch ($this->getNodeType()->getPropertyType($propertyName)) {
                 case 'references':
-                    $nodeIdentifiers = array();
+                    $nodeIdentifiers = [];
                     if (is_array($value)) {
                         foreach ($value as $nodeIdentifier) {
                             if ($nodeIdentifier instanceof NodeInterface || $nodeIdentifier instanceof AbstractNodeData) {
@@ -211,7 +211,7 @@ abstract class AbstractNodeData
     protected function persistRelatedEntities($value)
     {
         if (!is_array($value) && !$value instanceof \Iterator) {
-            $value = array($value);
+            $value = [$value];
         }
         foreach ($value as $element) {
             if (is_object($element) && $element instanceof PersistenceMagicInterface) {
@@ -254,7 +254,7 @@ abstract class AbstractNodeData
             if (!empty($value)) {
                 if ($this->getNodeType()->getPropertyType($propertyName) === 'references') {
                     if (!is_array($value)) {
-                        $value = array();
+                        $value = [];
                     }
                 }
             }
@@ -301,7 +301,7 @@ abstract class AbstractNodeData
             return ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
         }
 
-        $properties = array();
+        $properties = [];
         foreach ($this->properties as $propertyName => $propertyValue) {
             $properties[$propertyName] = $this->getProperty($propertyName);
         }

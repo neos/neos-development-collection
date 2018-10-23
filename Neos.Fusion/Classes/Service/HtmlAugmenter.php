@@ -43,7 +43,7 @@ class HtmlAugmenter
      */
     public function addAttributes($html, array $attributes, $fallbackTagName = 'div', array $exclusiveAttributes = null)
     {
-        if ($attributes === array()) {
+        if ($attributes === []) {
             return $html;
         }
         $rootElement = $this->getHtmlRootElement($html);
@@ -99,14 +99,14 @@ class HtmlAugmenter
         foreach ($element->attributes as $attribute) {
             $oldAttributeValue = $attribute->hasChildNodes() ? $attribute->value : null;
             $newAttributeValue = isset($newAttributes[$attribute->name]) ? $newAttributes[$attribute->name] : null;
-            $mergedAttributes = array();
+            $mergedAttributes = [];
             if ($newAttributeValue !== null && $newAttributeValue !== $oldAttributeValue) {
                 $mergedAttributes[] = $newAttributeValue;
             }
             if ($oldAttributeValue !== null) {
                 $mergedAttributes[] = $oldAttributeValue;
             }
-            $newAttributes[$attribute->name] = $mergedAttributes !== array() ? implode(' ', $mergedAttributes) : null;
+            $newAttributes[$attribute->name] = $mergedAttributes !== [] ? implode(' ', $mergedAttributes) : null;
         }
     }
 

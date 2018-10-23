@@ -110,7 +110,7 @@ class MediaCommandController extends CommandController
         $statement->execute();
         $resourceInfos = $statement->fetchAll();
 
-        if ($resourceInfos === array()) {
+        if ($resourceInfos === []) {
             $this->outputLine('Found no resources which need to be imported.');
             $this->quit();
         }
@@ -119,11 +119,11 @@ class MediaCommandController extends CommandController
             $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], PersistentResource::class);
 
             if ($resource === null) {
-                $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
+                $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
                 continue;
             }
             if (!$resource->getStream()) {
-                $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
+                $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
                 continue;
             }
 
@@ -131,10 +131,10 @@ class MediaCommandController extends CommandController
             $resourceObj = new $className($resource);
 
             if ($simulate) {
-                $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', array($resourceObj->getResource()->getFilename(), $className));
+                $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
             } else {
                 $this->assetRepository->add($resourceObj);
-                $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', array($resourceObj->getResource()->getFilename(), $className));
+                $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
             }
         }
     }
@@ -343,7 +343,7 @@ class MediaCommandController extends CommandController
     {
         if (!$this->entityManager instanceof EntityManager) {
             $this->outputLine('This command only supports database connections provided by the Doctrine ORM Entity Manager.
-				However, the current entity manager is an instance of %s.', array(get_class($this->entityManager)));
+				However, the current entity manager is an instance of %s.', [get_class($this->entityManager)]);
             $this->quit(1);
         }
 
