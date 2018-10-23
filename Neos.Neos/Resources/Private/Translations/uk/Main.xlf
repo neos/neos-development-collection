@@ -290,7 +290,7 @@
 			<target xml:lang="uk" state="needs-translation">Package</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
-			<target xml:lang="uk" state="needs-translation">Deactivated</target></trans-unit>
+			<target xml:lang="uk" state="translated">Деактивовано</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
 			<target xml:lang="uk" state="needs-translation">Unavailable</target></trans-unit>
@@ -299,7 +299,7 @@
 			<target xml:lang="uk" state="needs-translation">Inactive</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target xml:lang="uk" state="needs-translation">Click to edit</target></trans-unit>
+			<target xml:lang="uk" state="translated">Натисніть для редагування</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
 			<target xml:lang="uk" state="needs-translation">Click to deactivate</target></trans-unit>
@@ -329,7 +329,7 @@
 			<target xml:lang="uk" state="needs-translation">Yes, delete it!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
-			<target xml:lang="uk" state="needs-translation">Package Key</target></trans-unit>
+			<target xml:lang="uk" state="translated">Ключ пакету</target></trans-unit>
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
 			<target xml:lang="uk" state="translated">Опис</target></trans-unit>
@@ -714,7 +714,7 @@
 			<target xml:lang="uk" state="needs-translation">Nodes</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
-			<target xml:lang="uk" state="needs-translation">Show</target></trans-unit>
+			<target xml:lang="uk" state="translated">Показати</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
 			<target xml:lang="uk" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
