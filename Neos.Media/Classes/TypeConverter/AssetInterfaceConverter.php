@@ -48,7 +48,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array('string', 'array');
+    protected $sourceTypes = ['string', 'array'];
 
     /**
      * @var string
@@ -96,7 +96,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      *
      * @var array
      */
-    protected $resourcesAlreadyConvertedToAssets = array();
+    protected $resourcesAlreadyConvertedToAssets = [];
 
     /**
      * If $source has an identity, we have a persisted Image, and therefore
@@ -128,7 +128,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
     public function getSourceChildPropertiesToBeConverted($source)
     {
         if (is_string($source)) {
-            return array();
+            return [];
         }
         return parent::getSourceChildPropertiesToBeConverted($source);
     }
@@ -198,11 +198,11 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      * @return Error|AssetInterface The converted Asset, a Validation Error or NULL
      * @throws InvalidTargetException
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         $object = null;
         if (is_string($source) && $source !== '') {
-            $source = array('__identity' => $source);
+            $source = ['__identity' => $source];
         }
 
         if (isset($convertedChildProperties['resource']) && $convertedChildProperties['resource'] instanceof PersistentResource) {
@@ -304,7 +304,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      * @param array $source the original source properties for this type converter.
      * @return string Class name of the media model to use for the given resource
      */
-    protected function applyModelMappingStrategy($originalTargetType, PersistentResource $resource, array $source = array())
+    protected function applyModelMappingStrategy($originalTargetType, PersistentResource $resource, array $source = [])
     {
         $finalTargetType = $originalTargetType;
         if (!isset($source['__type'])) {

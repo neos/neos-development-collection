@@ -56,8 +56,8 @@ class SiblingsOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
+        $output = [];
+        $outputNodePaths = [];
         /** @var NodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $outputNodePaths[$contextNode->getPath()] = true;

@@ -34,7 +34,7 @@ class ModuleViewHelperTest extends UnitTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(ModuleViewHelper::class)->setMethods(array('setMainRequestToUriBuilder'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(ModuleViewHelper::class)->setMethods(['setMainRequestToUriBuilder'])->getMock();
         $this->uriBuilder = $this->createMock(UriBuilder::class);
         $this->inject($this->viewHelper, 'uriBuilder', $this->uriBuilder);
     }
@@ -45,14 +45,14 @@ class ModuleViewHelperTest extends UnitTestCase
     public function callingRenderAssignsVariablesCorrectlyToUriBuilder()
     {
         $this->uriBuilder->expects($this->once())->method('setSection')->with('section')->will($this->returnSelf());
-        $this->uriBuilder->expects($this->once())->method('setArguments')->with(array('additionalParams'))->will($this->returnSelf());
-        $this->uriBuilder->expects($this->once())->method('setArgumentsToBeExcludedFromQueryString')->with(array('argumentsToBeExcludedFromQueryString'))->will($this->returnSelf());
+        $this->uriBuilder->expects($this->once())->method('setArguments')->with(['additionalParams'])->will($this->returnSelf());
+        $this->uriBuilder->expects($this->once())->method('setArgumentsToBeExcludedFromQueryString')->with(['argumentsToBeExcludedFromQueryString'])->will($this->returnSelf());
         $this->uriBuilder->expects($this->once())->method('setFormat')->with('format')->will($this->returnSelf());
 
-        $expectedModifiedArguments = array(
+        $expectedModifiedArguments = [
             'module' => 'the/path',
-            'moduleArguments' => array('arguments', '@action' => 'action')
-        );
+            'moduleArguments' => ['arguments', '@action' => 'action']
+        ];
 
         $this->uriBuilder->expects($this->once())->method('uriFor')->with('index', $expectedModifiedArguments);
 
@@ -62,12 +62,12 @@ class ModuleViewHelperTest extends UnitTestCase
         $this->viewHelper->render(
             'the/path',
             'action',
-            array('arguments'),
+            ['arguments'],
             'section',
             'format',
-            array('additionalParams'),
+            ['additionalParams'],
             true, // `addQueryString`,
-            array('argumentsToBeExcludedFromQueryString')
+            ['argumentsToBeExcludedFromQueryString']
         );
     }
 }

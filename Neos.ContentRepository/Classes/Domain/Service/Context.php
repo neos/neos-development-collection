@@ -97,12 +97,12 @@ class Context
     /**
      * @var array
      */
-    protected $dimensions = array();
+    protected $dimensions = [];
 
     /**
      * @var array
      */
-    protected $targetDimensions = array();
+    protected $targetDimensions = [];
 
     /**
      * @Flow\IgnoreValidation
@@ -288,7 +288,7 @@ class Context
      */
     public function getNodeVariantsByIdentifier($identifier)
     {
-        $nodeVariants = array();
+        $nodeVariants = [];
         $nodeDataElements = $this->nodeDataRepository->findByIdentifierWithoutReduce($identifier, $this->getWorkspace());
         /** @var NodeData $nodeData */
         foreach ($nodeDataElements as $nodeData) {
@@ -317,7 +317,7 @@ class Context
         $endPointPath = ($endPoint instanceof NodeInterface) ? $endPoint->getPath() : $endPoint;
 
         $nodeDataElements = $this->nodeDataRepository->findOnPath($startingPointPath, $endPointPath, $this->getWorkspace(), $this->getDimensions(), $this->isRemovedContentShown());
-        $nodes = array();
+        $nodes = [];
         foreach ($nodeDataElements as $nodeData) {
             $node = $this->nodeFactory->createFromNodeData($nodeData, $this);
             if ($node !== null) {
@@ -473,7 +473,7 @@ class Context
      */
     public function getProperties()
     {
-        return array(
+        return [
             'workspaceName' => $this->workspaceName,
             'currentDateTime' => $this->currentDateTime,
             'dimensions' => $this->dimensions,
@@ -481,7 +481,7 @@ class Context
             'invisibleContentShown' => $this->invisibleContentShown,
             'removedContentShown' => $this->removedContentShown,
             'inaccessibleContentShown' => $this->inaccessibleContentShown
-        );
+        ];
     }
 
     /**

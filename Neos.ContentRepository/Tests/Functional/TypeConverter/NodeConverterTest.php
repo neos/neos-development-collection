@@ -87,11 +87,11 @@ class NodeConverterTest extends FunctionalTestCase
     {
         parent::setUp();
         $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
-        $contentDimensionRepository->setDimensionsConfiguration(array(
-            'language' => array(
+        $contentDimensionRepository->setDimensionsConfiguration([
+            'language' => [
                 'default' => 'mul_ZZ'
-            )
-        ));
+            ]
+        ]);
         $this->currentTestWorkspaceName = uniqid('user-');
         $this->contextFactory = $this->objectManager->get(ContextFactory::class);
 
@@ -103,8 +103,8 @@ class NodeConverterTest extends FunctionalTestCase
 
         $this->workspaceRepository->add(new Workspace($this->currentTestWorkspaceName, $this->liveWorkspace));
 
-        $this->personalContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName));
-        $this->liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $this->personalContext = $this->contextFactory->create(['workspaceName' => $this->currentTestWorkspaceName]);
+        $this->liveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $this->rootNodeInLiveWorkspace = $this->liveContext->getNode('/');
         $this->persistenceManager->persistAll();
         $this->rootNodeInPersonalWorkspace = $this->personalContext->getNode('/');
@@ -113,7 +113,7 @@ class NodeConverterTest extends FunctionalTestCase
     public function tearDown()
     {
         $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
-        $contentDimensionRepository->setDimensionsConfiguration(array());
+        $contentDimensionRepository->setDimensionsConfiguration([]);
         parent::tearDown();
     }
 
@@ -139,7 +139,7 @@ class NodeConverterTest extends FunctionalTestCase
         $headlineNodeInPersonalWorkspace = $this->rootNodeInPersonalWorkspace->getNode('headline');
         $headlineNodeInPersonalWorkspace->setProperty('subtitle', 'Brave new world');
 
-        $germanContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName, 'dimensions' => array('language' => array('de_DE', 'mul_ZZ'))));
+        $germanContext = $this->contextFactory->create(['workspaceName' => $this->currentTestWorkspaceName, 'dimensions' => ['language' => ['de_DE', 'mul_ZZ']]]);
         $headlineInGerman = $germanContext->getNode('/headline');
         $headlineInGerman->setProperty('title', 'Hallo Welt');
 
@@ -187,10 +187,10 @@ class NodeConverterTest extends FunctionalTestCase
     public function nodePropertiesAreSetWhenConverterIsCalledWithInputArray()
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
-        $input = array(
+        $input = [
             '__contextNodePath' => '/headline@' . $this->currentTestWorkspaceName,
             'title' => 'New title'
-        );
+        ];
 
         $headlineNode = $this->convert($input);
         $this->assertSame('New title', $headlineNode->getProperty('title'));
@@ -204,11 +204,11 @@ class NodeConverterTest extends FunctionalTestCase
     public function settingUnknownNodePropertiesThrowsException()
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
-        $input = array(
+        $input = [
             '__contextNodePath' => '/headline@' . $this->currentTestWorkspaceName,
             'title' => 'New title',
             'non-existing-input' => 'test'
-        );
+        ];
         $this->convert($input);
     }
 
@@ -218,11 +218,11 @@ class NodeConverterTest extends FunctionalTestCase
     public function unknownNodePropertiesAreSkippedIfTypeConverterIsConfiguredLikeThis()
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
-        $input = array(
+        $input = [
             '__contextNodePath' => '/headline@' . $this->currentTestWorkspaceName,
             'title' => 'New title',
             'non-existing-input' => 'test'
-        );
+        ];
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         $propertyMappingConfiguration->skipUnknownProperties();
         $headlineNode = $this->convert($input, $propertyMappingConfiguration);
@@ -240,7 +240,7 @@ class NodeConverterTest extends FunctionalTestCase
     protected function convert($nodePath, PropertyMappingConfiguration $propertyMappingConfiguration = null)
     {
         $nodeConverter = new NodeConverter();
-        $result = $nodeConverter->convertFrom($nodePath, null, array(), $propertyMappingConfiguration);
+        $result = $nodeConverter->convertFrom($nodePath, null, [], $propertyMappingConfiguration);
         if ($result instanceof Error) {
             $this->fail('Failed with error: ' . $result->getMessage());
         }

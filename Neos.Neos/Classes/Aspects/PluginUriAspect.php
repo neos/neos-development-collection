@@ -64,7 +64,7 @@ class PluginUriAspect
 
         // TODO override namespace
 
-        $q = new FlowQuery(array($targetNode));
+        $q = new FlowQuery([$targetNode]);
         $pageNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
         $result = $this->generateUriForNode($request, $joinPoint, $pageNode);
 

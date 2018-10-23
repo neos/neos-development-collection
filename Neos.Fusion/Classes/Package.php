@@ -47,9 +47,9 @@ class Package extends BasePackage
                             continue;
                         }
 
-                        $fusionPaths = array(
+                        $fusionPaths = [
                             $package->getResourcesPath() . 'Private/Fusion'
-                        );
+                        ];
                         foreach ($fusionPaths as $fusionPath) {
                             if (is_dir($fusionPath)) {
                                 $fusionFileMonitor->monitorDirectory($fusionPath);

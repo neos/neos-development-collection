@@ -84,8 +84,8 @@ class ModuleController extends ActionController
             throw new DisabledModuleException(sprintf('The module "%s" is disabled. You can enable it with the "enabled" flag in Settings.yaml.', $module['module']), 1437148922);
         }
 
-        $moduleBreadcrumb = array();
-        $path = array();
+        $moduleBreadcrumb = [];
+        $path = [];
         foreach ($modules as $moduleIdentifier) {
             array_push($path, $moduleIdentifier);
             $config = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $path));
@@ -111,7 +111,7 @@ class ModuleController extends ActionController
 
             $sites = $this->menuHelper->buildSiteList($this->controllerContext);
 
-            $this->view->assignMultiple(array(
+            $this->view->assignMultiple([
                 'moduleClass' => implode('-', $modules),
                 'moduleContents' => $moduleResponse->getContent(),
                 'title' => $moduleRequest->hasArgument('title') ? $moduleRequest->getArgument('title') : $moduleConfiguration['label'],
@@ -122,7 +122,7 @@ class ModuleController extends ActionController
                 'user' => $user,
                 'modules' => $this->menuHelper->buildModuleList($this->controllerContext),
                 'sites' => $sites
-            ));
+            ]);
         }
     }
 }

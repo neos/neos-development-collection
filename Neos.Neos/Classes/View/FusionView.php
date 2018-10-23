@@ -40,9 +40,9 @@ class FusionView extends AbstractView
      *
      * @var array
      */
-    protected $supportedOptions = array(
-        'enableContentCache' => array(null, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean')
-    );
+    protected $supportedOptions = [
+        'enableContentCache' => [null, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean']
+    ];
 
     /**
      * @Flow\Inject
@@ -82,18 +82,18 @@ class FusionView extends AbstractView
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
         $dimensions = $currentNode->getContext()->getDimensions();
-        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
+        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
             $currentLocale = new Locale($dimensions['language'][0]);
             $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            $this->i18nService->getConfiguration()->setFallbackRule(array('strict' => false, 'order' => array_reverse($dimensions['language'])));
+            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => false, 'order' => array_reverse($dimensions['language'])]);
         }
 
-        $fusionRuntime->pushContextArray(array(
+        $fusionRuntime->pushContextArray([
             'node' => $currentNode,
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSiteNode,
             'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
-        ));
+        ]);
         try {
             $output = $fusionRuntime->render($this->fusionPath);
             $output = $this->mergeHttpResponseFromOutput($output, $fusionRuntime);

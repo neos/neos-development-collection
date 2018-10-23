@@ -34,12 +34,12 @@ class VieSchemaBuilder
     /**
      * @var array
      */
-    protected $properties = array();
+    protected $properties = [];
 
     /**
      * @var array
      */
-    protected $types = array();
+    protected $types = [];
 
     /**
      * @var object
@@ -49,7 +49,7 @@ class VieSchemaBuilder
     /**
      * @var array
      */
-    protected $superTypeConfiguration = array();
+    protected $superTypeConfiguration = [];
 
     /**
      * Converts the nodes types to a fully structured array
@@ -93,15 +93,15 @@ class VieSchemaBuilder
         // Convert the Neos.Neos:ContentCollection element to support content-collection
         // TODO Move to node type definition
         if (isset($this->types['typo3:Neos.Neos:ContentCollection'])) {
-            $this->addProperty('typo3:Neos.Neos:ContentCollection', 'typo3:content-collection', array());
+            $this->addProperty('typo3:Neos.Neos:ContentCollection', 'typo3:content-collection', []);
             $this->types['typo3:Neos.Neos:ContentCollection']->specific_properties[] = 'typo3:content-collection';
             $this->properties['typo3:content-collection']->ranges = array_keys($this->types);
         }
 
-        $this->configuration = (object) array(
+        $this->configuration = (object) [
             'types' => (object) $this->types,
             'properties' => (object) $this->properties,
-        );
+        ];
         return $this->configuration;
     }
 
@@ -113,13 +113,13 @@ class VieSchemaBuilder
     protected function readNodeTypeConfiguration($nodeTypeName, NodeType $nodeType)
     {
         $nodeTypeConfiguration = $nodeType->getFullConfiguration();
-        $this->superTypeConfiguration['typo3:' . $nodeTypeName] = array();
+        $this->superTypeConfiguration['typo3:' . $nodeTypeName] = [];
         /** @var NodeType $superType */
         foreach ($nodeType->getDeclaredSuperTypes() as $superType) {
             $this->superTypeConfiguration['typo3:' . $nodeTypeName][] = 'typo3:' . $superType->getName();
         }
 
-        $nodeTypeProperties = array();
+        $nodeTypeProperties = [];
 
         if (isset($nodeTypeConfiguration['properties'])) {
             foreach ($nodeTypeConfiguration['properties'] as $property => $propertyConfiguration) {
@@ -129,8 +129,8 @@ class VieSchemaBuilder
             }
         }
 
-        $metadata = array();
-        $metaDataPropertyIndexes = array('ui');
+        $metadata = [];
+        $metaDataPropertyIndexes = ['ui'];
         foreach ($metaDataPropertyIndexes as $propertyName) {
             if (isset($nodeTypeConfiguration[$propertyName])) {
                 $metadata[$propertyName] = $nodeTypeConfiguration[$propertyName];
@@ -140,19 +140,19 @@ class VieSchemaBuilder
             $metadata['abstract'] = true;
         }
 
-        $this->types['typo3:' . $nodeTypeName] = (object) array(
+        $this->types['typo3:' . $nodeTypeName] = (object) [
             'label' => $nodeType->getLabel() ?: $nodeTypeName,
             'id' => 'typo3:' . $nodeTypeName,
-            'properties' => array(),
+            'properties' => [],
             'specific_properties' => $nodeTypeProperties,
-            'subtypes' => array(),
+            'subtypes' => [],
             'metadata' => (object)$metadata,
             'supertypes' => $this->superTypeConfiguration['typo3:' . $nodeTypeName],
             'url' => 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
-            'ancestors' => array(),
+            'ancestors' => [],
             'comment' => '',
             'comment_plain' => ''
-        );
+        ];
     }
 
     /**
@@ -169,16 +169,16 @@ class VieSchemaBuilder
             $this->properties[$propertyName]->domains[] = $nodeType;
         } else {
             $propertyLabel = isset($propertyConfiguration['ui']['label']) ? $propertyConfiguration['ui']['label'] : $propertyName;
-            $this->properties[$propertyName] = (object) array(
+            $this->properties[$propertyName] = (object) [
                 'comment' => $propertyLabel,
                 'comment_plain' => $propertyLabel,
-                'domains' => array($nodeType),
+                'domains' => [$nodeType],
                 'id' => $propertyName,
                 'label' => $propertyName,
-                'ranges' => array(),
+                'ranges' => [],
                 'min' => 0,
                 'max' => -1
-            );
+            ];
         }
     }
 
@@ -205,7 +205,7 @@ class VieSchemaBuilder
      */
     protected function getAllSubtypes($type)
     {
-        $subTypes = array();
+        $subTypes = [];
 
         foreach ($this->superTypeConfiguration as $nodeType => $superTypes) {
             if (in_array($type, $superTypes)) {
@@ -234,7 +234,7 @@ class VieSchemaBuilder
     protected function getAllAncestors($type)
     {
         if (!isset($this->superTypeConfiguration[$type])) {
-            return array();
+            return [];
         }
         $ancestors = $this->superTypeConfiguration[$type];
 

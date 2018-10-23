@@ -299,10 +299,10 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->setOption('enableContentCache', true);
         $view->setFusionPath('contentCache/cachedSegmentWithCondition');
 
-        $view->assignMultiple(array(
+        $view->assignMultiple([
             'object' => $object,
             'condition' => true
-        ));
+        ]);
 
         $firstRenderResult = $view->render();
         $this->assertSame('Cached segment|object=Object value 1|End cached', $firstRenderResult);
@@ -327,9 +327,9 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->setOption('enableContentCache', true);
         $view->setFusionPath('contentCache/uncachedSegmentWithCondition');
 
-        $view->assignMultiple(array(
+        $view->assignMultiple([
             'object' => $object
-        ));
+        ]);
 
         /** @var \Neos\Flow\Mvc\ActionRequest $actionRequest */
         $actionRequest = $this->controllerContext->getRequest();
@@ -408,32 +408,32 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $mockCache->expects($this->any())->method('get')->will($this->returnValue(false));
         $mockCache->expects($this->any())->method('has')->will($this->returnValue(false));
 
-        $entriesWritten = array();
+        $entriesWritten = [];
 
         $mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
-            $entriesWritten[$entryIdentifier] = array(
+            $entriesWritten[$entryIdentifier] = [
                 'lifetime' => $lifetime
-            );
+            ];
         }));
 
         $firstRenderResult = $view->render();
         $this->assertEquals('Foo|Bar|Baz', $firstRenderResult);
 
         $this->assertCount(3, $entriesWritten);
-        $this->assertEquals(array(
+        $this->assertEquals([
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.5
-            '7075cb501854d7d8b25926b8c7f79c3e' => array(
+            '7075cb501854d7d8b25926b8c7f79c3e' => [
                 'lifetime' => 60
-            ),
+            ],
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.25
-            '007836f2658952a45cfd706c300e208f' => array(
+            '007836f2658952a45cfd706c300e208f' => [
                 'lifetime' => null
-            ),
+            ],
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments
-            'a604a8f56ba95f256b3df4769b42bc6a' => array(
+            'a604a8f56ba95f256b3df4769b42bc6a' => [
                 'lifetime' => 5
-            )
-        ), $entriesWritten);
+            ]
+        ], $entriesWritten);
     }
 
     /**
@@ -441,14 +441,14 @@ class ContentCacheTest extends AbstractFusionObjectTest
      */
     public function cacheUsesGlobalCacheIdentifiersAsDefaultPrototypeForEntryIdentifier()
     {
-        $entriesWritten = array();
+        $entriesWritten = [];
         $mockCache = $this->createMock(\Neos\Cache\Frontend\FrontendInterface::class);
         $mockCache->expects($this->any())->method('get')->will($this->returnValue(false));
         $mockCache->expects($this->any())->method('has')->will($this->returnValue(false));
         $mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
-            $entriesWritten[$entryIdentifier] = array(
+            $entriesWritten[$entryIdentifier] = [
                 'tags' => $tags
-            );
+            ];
         }));
         $this->inject($this->contentCache, 'cache', $mockCache);
 
@@ -470,14 +470,14 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $secondRenderResult = $view->render();
         $this->assertSame($firstRenderResult, $secondRenderResult);
         $this->assertCount(2, $entriesWritten);
-        $this->assertEquals(array(
-            '49c7f1e2dde942ea9cc6c658a7ece943' => array(
-                'tags' => array('site1')
-            ),
-            'a932d6d5860b204e82079255e224c613' => array(
-                'tags' => array('site2')
-            ),
-        ), $entriesWritten);
+        $this->assertEquals([
+            '49c7f1e2dde942ea9cc6c658a7ece943' => [
+                'tags' => ['site1']
+            ],
+            'a932d6d5860b204e82079255e224c613' => [
+                'tags' => ['site2']
+            ],
+        ], $entriesWritten);
     }
 
     /**
@@ -485,14 +485,14 @@ class ContentCacheTest extends AbstractFusionObjectTest
      */
     public function globalIdentifiersAreUsedWithBlankEntryIdentifiers()
     {
-        $entriesWritten = array();
+        $entriesWritten = [];
         $mockCache = $this->createMock(\Neos\Cache\Frontend\FrontendInterface::class);
         $mockCache->expects($this->any())->method('get')->will($this->returnValue(false));
         $mockCache->expects($this->any())->method('has')->will($this->returnValue(false));
         $mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
-            $entriesWritten[$entryIdentifier] = array(
+            $entriesWritten[$entryIdentifier] = [
                 'tags' => $tags
-            );
+            ];
         }));
         $this->inject($this->contentCache, 'cache', $mockCache);
 
@@ -508,14 +508,14 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $secondRenderResult = $view->render();
         $this->assertSame($firstRenderResult, $secondRenderResult);
         $this->assertCount(2, $entriesWritten);
-        $this->assertEquals(array(
-            'd9deea3648c9bfb24afdcb26bab8c023' => array(
-                'tags' => array('site1')
-            ),
-            '00e5aff1779f8f65ec4abf801834a682' => array(
-                'tags' => array('site2')
-            ),
-        ), $entriesWritten);
+        $this->assertEquals([
+            'd9deea3648c9bfb24afdcb26bab8c023' => [
+                'tags' => ['site1']
+            ],
+            '00e5aff1779f8f65ec4abf801834a682' => [
+                'tags' => ['site2']
+            ],
+        ], $entriesWritten);
     }
 
     /**
@@ -523,7 +523,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
      */
     public function cacheIdentifierPrototypeCanBeOverwritten()
     {
-        $entriesWritten = array();
+        $entriesWritten = [];
         $mockCache = $this->createMock(FrontendInterface::class);
         $mockCache->expects($this->any())->method('get')->will($this->returnCallback(function ($entryIdentifier) use ($entriesWritten) {
             if (isset($entriesWritten[$entryIdentifier])) {
@@ -541,10 +541,10 @@ class ContentCacheTest extends AbstractFusionObjectTest
         }));
         $mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
             if (!isset($entriesWritten[$entryIdentifier])) {
-                $entriesWritten[$entryIdentifier] = array(
+                $entriesWritten[$entryIdentifier] = [
                     'tags' => $tags,
                     'data' => $data
-                );
+                ];
             }
         }));
         $this->inject($this->contentCache, 'cache', $mockCache);
@@ -567,12 +567,12 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $secondRenderResult = $view->render();
         $this->assertSame($firstRenderResult, $secondRenderResult);
         $this->assertCount(1, $entriesWritten);
-        $this->assertEquals(array(
-            '21fe7cb71a709292398e766a9bb45662' => array(
-                'tags' => array('site1'),
+        $this->assertEquals([
+            '21fe7cb71a709292398e766a9bb45662' => [
+                'tags' => ['site1'],
                 'data' => 'Cached segment|Object value 1'
-            ),
-        ), $entriesWritten);
+            ],
+        ], $entriesWritten);
     }
 
 

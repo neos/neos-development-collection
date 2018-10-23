@@ -113,7 +113,7 @@ class NodeViewHelper extends AbstractViewHelper
      * @return string The rendered URI or NULL if no URI could be resolved for the given node
      * @throws ViewHelperException
      */
-    public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $resolveShortcuts = true)
+    public function render($node = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $baseNodeName = 'documentNode', $resolveShortcuts = true)
     {
         $baseNode = null;
         if (!$node instanceof NodeInterface) {

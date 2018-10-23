@@ -124,8 +124,8 @@ class NodeExportService
     public function export($startingPointNodePath = '/', $workspaceName = 'live', \XMLWriter $xmlWriter = null, $tidy = true, $endDocument = true, $resourceSavePath = null, $nodeTypeFilter = null)
     {
         $this->propertyMappingConfiguration = new ImportExportPropertyMappingConfiguration($resourceSavePath);
-        $this->exceptionsDuringExport = array();
-        $this->exportedNodePaths = array();
+        $this->exceptionsDuringExport = [];
+        $this->exportedNodePaths = [];
         if ($startingPointNodePath !== '/') {
             $startingPointParentPath = substr($startingPointNodePath, 0, strrpos($startingPointNodePath, '/'));
             $this->exportedNodePaths[$startingPointParentPath] = true;
@@ -229,7 +229,7 @@ class NodeExportService
         $this->xmlWriter->startElement('nodes');
         $this->xmlWriter->writeAttribute('formatVersion', self::SUPPORTED_FORMAT_VERSION);
 
-        $nodesStack = array();
+        $nodesStack = [];
         foreach ($nodeDataList as $nodeData) {
             $this->exportNodeData($nodeData, $nodesStack);
         }
@@ -290,14 +290,14 @@ class NodeExportService
         }
 
         foreach (
-            array(
+            [
                 'workspace',
                 'nodeType',
                 'version',
                 'removed',
                 'hidden',
                 'hiddenInIndex'
-            ) as $propertyName) {
+            ] as $propertyName) {
             $this->xmlWriter->writeAttribute($propertyName, $nodeData[$propertyName]);
         }
 
@@ -310,7 +310,7 @@ class NodeExportService
         $this->xmlWriter->endElement();
 
         foreach (
-            array(
+            [
                 'accessRoles',
                 'hiddenBeforeDateTime',
                 'hiddenAfterDateTime',
@@ -318,7 +318,7 @@ class NodeExportService
                 'lastModificationDateTime',
                 'lastPublicationDateTime',
                 'contentObjectProxy'
-            ) as $propertyName) {
+            ] as $propertyName) {
             $this->writeConvertedElement($nodeData, $propertyName);
         }
 

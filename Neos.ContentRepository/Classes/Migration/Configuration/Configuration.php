@@ -26,7 +26,7 @@ abstract class Configuration implements ConfigurationInterface
     /**
      * @var array
      */
-    protected $loadedVersions = array();
+    protected $loadedVersions = [];
 
     /**
      * Returns an array with all available versions.

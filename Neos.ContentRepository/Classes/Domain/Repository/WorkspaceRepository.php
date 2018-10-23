@@ -29,8 +29,8 @@ class WorkspaceRepository extends Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array(
+    protected $defaultOrderings = [
         'baseWorkspace' => QueryInterface::ORDER_ASCENDING,
         'title' => QueryInterface::ORDER_ASCENDING
-    );
+    ];
 }

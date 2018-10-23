@@ -27,14 +27,14 @@ class ImageSizeValidator extends AbstractValidator
     /**
      * @var array
      */
-    protected $supportedOptions = array(
-        'minimumWidth' => array(null, 'The minimum width of the image', 'integer'),
-        'minimumHeight' => array(null, 'The minimum height of the image', 'integer'),
-        'maximumWidth' => array(null, 'The maximum width of the image', 'integer'),
-        'maximumHeight' => array(null, 'The maximum height of the image', 'integer'),
-        'minimumResolution' => array(null, 'The minimum resolution of the image', 'integer'),
-        'maximumResolution' => array(null, 'The maximum resolution of the image', 'integer')
-    );
+    protected $supportedOptions = [
+        'minimumWidth' => [null, 'The minimum width of the image', 'integer'],
+        'minimumHeight' => [null, 'The minimum height of the image', 'integer'],
+        'maximumWidth' => [null, 'The maximum width of the image', 'integer'],
+        'maximumHeight' => [null, 'The maximum height of the image', 'integer'],
+        'minimumResolution' => [null, 'The minimum resolution of the image', 'integer'],
+        'maximumResolution' => [null, 'The maximum resolution of the image', 'integer']
+    ];
 
     /**
      * The given $value is valid if it is an \Neos\Media\Domain\Model\ImageInterface of the configured resolution
@@ -53,22 +53,22 @@ class ImageSizeValidator extends AbstractValidator
             return;
         }
         if (isset($this->options['minimumWidth']) && $image->getWidth() < $this->options['minimumWidth']) {
-            $this->addError('The actual image width of %1$d is lower than the allowed minimum width of %2$d.', 1319801362, array($image->getWidth(), $this->options['minimumWidth']));
+            $this->addError('The actual image width of %1$d is lower than the allowed minimum width of %2$d.', 1319801362, [$image->getWidth(), $this->options['minimumWidth']]);
         } elseif (isset($this->options['maximumWidth']) && $image->getWidth() > $this->options['maximumWidth']) {
-            $this->addError('The actual image width of %1$d is higher than the allowed maximum width of %2$d.', 1319801859, array($image->getWidth(), $this->options['maximumWidth']));
+            $this->addError('The actual image width of %1$d is higher than the allowed maximum width of %2$d.', 1319801859, [$image->getWidth(), $this->options['maximumWidth']]);
         }
         if (isset($this->options['minimumHeight']) && $image->getHeight() < $this->options['minimumHeight']) {
-            $this->addError('The actual image height of %1$d is lower than the allowed minimum height of %2$d.', 1319801925, array($image->getHeight(), $this->options['minimumHeight']));
+            $this->addError('The actual image height of %1$d is lower than the allowed minimum height of %2$d.', 1319801925, [$image->getHeight(), $this->options['minimumHeight']]);
         } elseif (isset($this->options['maximumHeight']) && $image->getHeight() > $this->options['maximumHeight']) {
-            $this->addError('The actual image height of %1$d is higher than the allowed maximum height of %2$d.', 1319801929, array($image->getHeight(), $this->options['maximumHeight']));
+            $this->addError('The actual image height of %1$d is higher than the allowed maximum height of %2$d.', 1319801929, [$image->getHeight(), $this->options['maximumHeight']]);
         }
 
         if (isset($this->options['minimumResolution']) || isset($this->options['maximumResolution'])) {
             $resolution = $image->getWidth() * $image->getHeight();
             if (isset($this->options['minimumResolution']) && $resolution < $this->options['minimumResolution']) {
-                $this->addError('The given image size of %1$d x %2$d is too low for the required minimum resolution of %3$d.', 1319813336, array($image->getHeight(), $image->getHeight(), $this->options['minimumResolution']));
+                $this->addError('The given image size of %1$d x %2$d is too low for the required minimum resolution of %3$d.', 1319813336, [$image->getHeight(), $image->getHeight(), $this->options['minimumResolution']]);
             } elseif (isset($this->options['maximumResolution']) && $resolution > $this->options['maximumResolution']) {
-                $this->addError('The given image size of %1$d x %2$d is too high for the required maximum resolution of %3$d.', 1319813355, array($image->getHeight(), $image->getHeight(), $this->options['maximumResolution']));
+                $this->addError('The given image size of %1$d x %2$d is too high for the required maximum resolution of %3$d.', 1319813355, [$image->getHeight(), $image->getHeight(), $this->options['maximumResolution']]);
             }
         }
     }

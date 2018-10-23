@@ -32,15 +32,15 @@ class ContentCacheTest extends UnitTestCase
      */
     public function tags()
     {
-        return array(
-            array('Everything', 'Everything'),
-            array('Node_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef', 'Node_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef'),
-            array('NodeType_Neos.NodeTypes:Page', 'NodeType_Neos_NodeTypes-Page'),
-            array(
+        return [
+            ['Everything', 'Everything'],
+            ['Node_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef', 'Node_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef'],
+            ['NodeType_Neos.NodeTypes:Page', 'NodeType_Neos_NodeTypes-Page'],
+            [
                 'DescendentOf_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef',
                 'DescendentOf_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef'
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -61,9 +61,9 @@ class ContentCacheTest extends UnitTestCase
      */
     public function invalidEntryIdentifierValues()
     {
-        return array(
-            'object not implementing CacheAwareInterface' => array(array('foo' => new \stdClass()))
-        );
+        return [
+            'object not implementing CacheAwareInterface' => [['foo' => new \stdClass()]]
+        ];
     }
 
     /**
@@ -86,13 +86,13 @@ class ContentCacheTest extends UnitTestCase
     public function validEntryIdentifierValues()
     {
         $mockCacheAware = $this->createMock(CacheAwareInterface::class);
-        return array(
-            'string value' => array(array('foo' => 'Bar')),
-            'boolean value' => array(array('foo' => true)),
-            'integer value' => array(array('foo' => 42)),
-            'object implementing CacheAwareInterface' => array(array('foo' => $mockCacheAware)),
-            'null' => array(array('foo' => null))
-        );
+        return [
+            'string value' => [['foo' => 'Bar']],
+            'boolean value' => [['foo' => true]],
+            'integer value' => [['foo' => 42]],
+            'object implementing CacheAwareInterface' => [['foo' => $mockCacheAware]],
+            'null' => [['foo' => null]]
+        ];
     }
 
     /**
@@ -116,7 +116,7 @@ class ContentCacheTest extends UnitTestCase
         $contentCache = new ContentCache();
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
-        $segement = $contentCache->createCacheSegment('My content', '/foo/bar', array(42), array('Foo', 'Bar'), 60);
+        $segement = $contentCache->createCacheSegment('My content', '/foo/bar', [42], ['Foo', 'Bar'], 60);
         $this->assertContains('Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segement);
     }
 
@@ -132,7 +132,7 @@ class ContentCacheTest extends UnitTestCase
         $mockCache = $this->createMock(FrontendInterface::class);
         $this->inject($contentCache, 'cache', $mockCache);
 
-        $segement = $contentCache->createCacheSegment('My content', '/foo/bar', array(42), array('Foo', 'Bar'), 60);
+        $segement = $contentCache->createCacheSegment('My content', '/foo/bar', [42], ['Foo', 'Bar'], 60);
 
         $mockCache->expects($this->once())->method('set')->with($this->anything(), $this->anything(), $this->anything(),
             60);
@@ -154,17 +154,17 @@ class ContentCacheTest extends UnitTestCase
 
         $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your content.';
 
-        $content = $contentCache->createCacheSegment($invalidContent, 'some.fusionh.path', array('node' => 'foo'),
-            array('mytag1', 'mytag2'));
+        $content = $contentCache->createCacheSegment($invalidContent, 'some.fusionh.path', ['node' => 'foo'],
+            ['mytag1', 'mytag2']);
 
         $validContent = 'But the cache should not fail because of it.';
 
-        $content .= $contentCache->createCacheSegment($validContent, 'another.fusionh.path', array('node' => 'bar'),
-            array('mytag2'), 86400);
+        $content .= $contentCache->createCacheSegment($validContent, 'another.fusionh.path', ['node' => 'bar'],
+            ['mytag2'], 86400);
 
         $mockCache->expects($this->at(0))->method('set')->with($this->anything(), $invalidContent,
-            array('mytag1', 'mytag2'), null);
-        $mockCache->expects($this->at(1))->method('set')->with($this->anything(), $validContent, array('mytag2'),
+            ['mytag1', 'mytag2'], null);
+        $mockCache->expects($this->at(1))->method('set')->with($this->anything(), $validContent, ['mytag2'],
             86400);
 
         $output = $contentCache->processCacheSegments($content);
@@ -189,7 +189,7 @@ class ContentCacheTest extends UnitTestCase
         $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your uncached content.';
 
         $content = $contentCache->createUncachedSegment($invalidContent, 'uncached.fusion.path',
-            array('node' => 'A node identifier'));
+            ['node' => 'A node identifier']);
 
         $output = $contentCache->processCacheSegments($content);
 
@@ -219,11 +219,11 @@ class ContentCacheTest extends UnitTestCase
         $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your content.';
 
         $innerCachedContent = $contentCache->createCacheSegment($invalidContent, 'some.fusionh.path.innerCached',
-            array('node' => 'foo'), array('mytag1', 'mytag2'));
+            ['node' => 'foo'], ['mytag1', 'mytag2']);
 
         $uncachedCommandOutput = 'This content is highly dynamic with ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' and ' . ContentCache::CACHE_SEGMENT_END_TOKEN;
         $innerUncachedContent = $contentCache->createUncachedSegment($uncachedCommandOutput,
-            'some.fusionh.path.innerUncached', array('node' => 'A node identifier'));
+            'some.fusionh.path.innerUncached', ['node' => 'A node identifier']);
 
         $outerContentStart = 'You can nest cached segments like <';
         $outerContentMiddle = '> or uncached segments like <';
@@ -231,8 +231,8 @@ class ContentCacheTest extends UnitTestCase
 
         $outerContent = $outerContentStart . $innerCachedContent . $outerContentMiddle . $innerUncachedContent . $outerContentEnd;
 
-        $content = $contentCache->createCacheSegment($outerContent, 'some.fusionh.path', array('node' => 'bar'),
-            array('mytag2'), 86400);
+        $content = $contentCache->createCacheSegment($outerContent, 'some.fusionh.path', ['node' => 'bar'],
+            ['mytag2'], 86400);
         $output = $contentCache->processCacheSegments($content);
 
         $expectedOutput = $outerContentStart . $invalidContent . $outerContentMiddle . $uncachedCommandOutput . $outerContentEnd;
@@ -245,7 +245,7 @@ class ContentCacheTest extends UnitTestCase
             } else {
                 $this->fail('Unexpected command: ' . $command);
             }
-        }, 'some.fusionh.path', array('node' => 'bar'));
+        }, 'some.fusionh.path', ['node' => 'bar']);
 
         $this->assertSame($expectedOutput, $cachedContent);
     }

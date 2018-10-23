@@ -51,8 +51,8 @@ trait HistoryDefinitionsTrait
     {
         $this->getSubcontext('flow')->persistAll();
         $allEvents = $this->getEventRepository()->findAll()->toArray();
-        $eventsByInternalId = array();
-        $unmatchedParentEvents = array();
+        $eventsByInternalId = [];
+        $unmatchedParentEvents = [];
 
         if ($ignoringOrder) {
             foreach ($table->getHash() as $i => $row) {

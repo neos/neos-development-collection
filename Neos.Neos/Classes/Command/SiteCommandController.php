@@ -201,7 +201,7 @@ class SiteCommandController extends CommandController
                 $site = $this->siteImportService->importFromFile($filename);
             } catch (\Exception $exception) {
                 $this->systemLogger->logException($exception);
-                $this->outputLine('<error>During the import of the file "%s" an exception occurred: %s, see log for further information.</error>', array($filename, $exception->getMessage()));
+                $this->outputLine('<error>During the import of the file "%s" an exception occurred: %s, see log for further information.</error>', [$filename, $exception->getMessage()]);
                 $this->quit(1);
             }
         } else {
@@ -209,11 +209,11 @@ class SiteCommandController extends CommandController
                 $site = $this->siteImportService->importFromPackage($packageKey);
             } catch (\Exception $exception) {
                 $this->systemLogger->logException($exception);
-                $this->outputLine('<error>During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', array($packageKey, $exception->getMessage()));
+                $this->outputLine('<error>During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', [$packageKey, $exception->getMessage()]);
                 $this->quit(1);
             }
         }
-        $this->outputLine('Import of site "%s" finished.', array($site->getName()));
+        $this->outputLine('Import of site "%s" finished.', [$site->getName()]);
     }
 
     /**
@@ -253,16 +253,16 @@ class SiteCommandController extends CommandController
         if ($packageKey !== null) {
             $this->siteExportService->exportToPackage($sites, $tidy, $packageKey, $nodeTypeFilter);
             if ($siteNode !== null) {
-                $this->outputLine('The site "%s" has been exported to package "%s".', array($siteNode, $packageKey));
+                $this->outputLine('The site "%s" has been exported to package "%s".', [$siteNode, $packageKey]);
             } else {
-                $this->outputLine('All sites have been exported to package "%s".', array($packageKey));
+                $this->outputLine('All sites have been exported to package "%s".', [$packageKey]);
             }
         } elseif ($filename !== null) {
             $this->siteExportService->exportToFile($sites, $tidy, $filename, $nodeTypeFilter);
             if ($siteNode !== null) {
-                $this->outputLine('The site "%s" has been exported to "%s".', array($siteNode, $filename));
+                $this->outputLine('The site "%s" has been exported to "%s".', [$siteNode, $filename]);
             } else {
-                $this->outputLine('All sites have been exported to "%s".', array($filename));
+                $this->outputLine('All sites have been exported to "%s".', [$filename]);
             }
         } else {
             $this->output($this->siteExportService->export($sites, $tidy, $nodeTypeFilter));
@@ -307,16 +307,16 @@ class SiteCommandController extends CommandController
         $longestSiteName = 4;
         $longestNodeName = 9;
         $longestSiteResource = 17;
-        $availableSites = array();
+        $availableSites = [];
 
         foreach ($sites as $site) {
             /** @var Site $site */
-            array_push($availableSites, array(
+            array_push($availableSites, [
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName(),
                 'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey(),
                 'status' => ($site->getState() === SITE::STATE_ONLINE) ? 'online' : 'offline'
-            ));
+            ]);
             if (strlen($site->getName()) > $longestSiteName) {
                 $longestSiteName = strlen($site->getName());
             }

@@ -90,7 +90,7 @@ class ImageVariantTransformation extends AbstractTransformation
                 }
 
                 if ($propertyConfiguration['type'] === ImageInterface::class) {
-                    $adjustments = array();
+                    $adjustments = [];
                     $oldVariantConfiguration = $nodeProperties[$propertyName];
                     if (is_array($oldVariantConfiguration)) {
                         foreach ($oldVariantConfiguration as $variantPropertyName => $property) {

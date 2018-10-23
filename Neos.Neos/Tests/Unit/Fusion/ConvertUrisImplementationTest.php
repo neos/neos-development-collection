@@ -77,7 +77,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->convertUrisImplementation = $this->getAccessibleMock(ConvertUrisImplementation::class, array('fusionValue'), array(), '', false);
+        $this->convertUrisImplementation = $this->getAccessibleMock(ConvertUrisImplementation::class, ['fusionValue'], [], '', false);
 
         $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
@@ -112,15 +112,15 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->convertUrisImplementation
             ->expects($this->atLeastOnce())
             ->method('fusionValue')
-            ->will($this->returnValueMap(array(
-                array('value', $value),
-                array('node', $node ?: $this->mockNode),
-                array('forceConversion', $forceConversion),
-                array('externalLinkTarget', $externalLinkTarget),
-                array('resourceLinkTarget', $resourceLinkTarget),
-                array('absolute', $absolute),
-                array('setNoOpener', $setNoOpener)
-            )));
+            ->will($this->returnValueMap([
+                ['value', $value],
+                ['node', $node ?: $this->mockNode],
+                ['forceConversion', $forceConversion],
+                ['externalLinkTarget', $externalLinkTarget],
+                ['resourceLinkTarget', $resourceLinkTarget],
+                ['absolute', $absolute],
+                ['setNoOpener', $setNoOpener]
+            ]));
     }
 
     /**

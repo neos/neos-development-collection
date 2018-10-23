@@ -188,7 +188,7 @@ class PluginImplementation extends AbstractArrayFusionObject
             return $nodeArgumentNamespace;
         }
 
-        $argumentNamespace = str_replace(array(':', '.', '\\'), array('_', '_', '_'), ($this->getPackage() . '_' . $this->getSubpackage() . '-' . $this->getController()));
+        $argumentNamespace = str_replace([':', '.', '\\'], ['_', '_', '_'], ($this->getPackage() . '_' . $this->getSubpackage() . '-' . $this->getController()));
         $argumentNamespace = strtolower($argumentNamespace);
 
         return $argumentNamespace;

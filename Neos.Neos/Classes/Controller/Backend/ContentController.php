@@ -281,7 +281,7 @@ class ContentController extends ActionController
     {
         $this->response->setHeader('Content-Type', 'application/json');
 
-        $result = array();
+        $result = [];
         foreach ($assets as $asset) {
             $result[] = $this->getAssetProperties($asset);
         }
@@ -315,7 +315,7 @@ class ContentController extends ActionController
      * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
      * @return string
      */
-    public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = array())
+    public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
     {
         $this->response->setHeader('Content-Type', 'application/json');
 
@@ -323,31 +323,31 @@ class ContentController extends ActionController
         /** @var $node NodeInterface */
         $node = $contentContext->getNodeByIdentifier($identifier);
 
-        $views = array();
+        $views = [];
         if ($node !== null) {
             /** @var $pluginViewDefinition PluginViewDefinition */
             $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType($node->getNodeType());
             foreach ($pluginViewDefinitions as $pluginViewDefinition) {
                 $label = $pluginViewDefinition->getLabel();
 
-                $views[$pluginViewDefinition->getName()] = array('label' => $label);
+                $views[$pluginViewDefinition->getName()] = ['label' => $label];
 
                 $pluginViewNode = $this->pluginService->getPluginViewNodeByMasterPlugin($node, $pluginViewDefinition->getName());
                 if ($pluginViewNode === null) {
                     continue;
                 }
-                $q = new FlowQuery(array($pluginViewNode));
+                $q = new FlowQuery([$pluginViewNode]);
                 $page = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
                 $uri = $this->uriBuilder
                     ->reset()
-                    ->uriFor('show', array('node' => $page), 'Frontend\Node', 'Neos.Neos');
-                $views[$pluginViewDefinition->getName()] = array(
+                    ->uriFor('show', ['node' => $page], 'Frontend\Node', 'Neos.Neos');
+                $views[$pluginViewDefinition->getName()] = [
                     'label' => $label,
-                    'pageNode' => array(
+                    'pageNode' => [
                         'title' => $page->getLabel(),
                         'uri' => $uri
-                    )
-                );
+                    ]
+                ];
             }
         }
         return json_encode((object) $views);
@@ -361,21 +361,21 @@ class ContentController extends ActionController
      * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
      * @return string JSON encoded array of node path => label
      */
-    public function masterPluginsAction($workspaceName = 'live', array $dimensions = array())
+    public function masterPluginsAction($workspaceName = 'live', array $dimensions = [])
     {
         $this->response->setHeader('Content-Type', 'application/json');
 
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
         $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions($contentContext);
 
-        $masterPlugins = array();
+        $masterPlugins = [];
         if (is_array($pluginNodes)) {
             /** @var $pluginNode NodeInterface */
             foreach ($pluginNodes as $pluginNode) {
                 if ($pluginNode->isRemoved()) {
                     continue;
                 }
-                $q = new FlowQuery(array($pluginNode));
+                $q = new FlowQuery([$pluginNode]);
                 $page = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
                 if ($page === null) {
                     continue;

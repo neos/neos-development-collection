@@ -52,7 +52,7 @@ class RenderingHelper implements ProtectedContextAwareInterface
      */
     public function renderDimensions(array $dimensions)
     {
-        $rendered = array();
+        $rendered = [];
         foreach ($dimensions as $dimensionIdentifier => $dimensionValue) {
             $dimensionConfiguration = $this->contentDimensionsConfiguration[$dimensionIdentifier];
             $preset = $this->findPresetInDimension($dimensionConfiguration, $dimensionValue);

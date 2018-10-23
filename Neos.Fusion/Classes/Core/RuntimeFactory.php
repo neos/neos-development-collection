@@ -57,7 +57,7 @@ class RuntimeFactory
         return new ControllerContext(
             $request,
             new Response(),
-            new Arguments(array()),
+            new Arguments([]),
             $uriBuilder
         );
     }

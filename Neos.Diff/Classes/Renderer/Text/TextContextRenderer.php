@@ -22,12 +22,12 @@ class TextContextRenderer extends AbstractRenderer
     /**
      * @var array Array of the different opcode tags and how they map to the context diff equivalent.
      */
-    private $tagMap = array(
+    private $tagMap = [
         'insert' => '+',
         'delete' => '-',
         'replace' => '!',
         'equal' => ' '
-    );
+    ];
 
     /**
      * Render and return a context formatted (old school!) diff file.

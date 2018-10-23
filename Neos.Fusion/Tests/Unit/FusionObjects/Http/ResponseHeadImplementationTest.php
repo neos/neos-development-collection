@@ -33,11 +33,11 @@ class ResponseHeadImplementationTest extends UnitTestCase
 
     public function responseHeadExamples()
     {
-        return array(
-            'default properties' => array(null, null, array(), "HTTP/1.1 200 OK\r\n\r\n"),
-            'set header' => array(null, null, array('Content-Type' => 'application/json'), "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n"),
-            'set status code' => array(null, 404, array(), "HTTP/1.1 404 Not Found\r\n\r\n")
-        );
+        return [
+            'default properties' => [null, null, [], "HTTP/1.1 200 OK\r\n\r\n"],
+            'set header' => [null, null, ['Content-Type' => 'application/json'], "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n"],
+            'set status code' => [null, 404, [], "HTTP/1.1 404 Not Found\r\n\r\n"]
+        ];
     }
 
     /**

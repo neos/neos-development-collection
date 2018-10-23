@@ -44,18 +44,18 @@ class NodeController extends AbstractServiceController
     /**
      * @var array
      */
-    protected $viewFormatToObjectNameMap = array(
+    protected $viewFormatToObjectNameMap = [
         'html' => NodeView::class,
         'json' => NodeView::class
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $supportedMediaTypes = array(
+    protected $supportedMediaTypes = [
         'text/html',
         'application/json'
-    );
+    ];
 
     /**
      * @Flow\Inject
@@ -110,7 +110,7 @@ class NodeController extends AbstractServiceController
             $this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
         }
         $this->uriBuilder->setRequest($this->request->getMainRequest());
-        if (in_array($this->request->getControllerActionName(), array('update', 'updateAndRender'), true)) {
+        if (in_array($this->request->getControllerActionName(), ['update', 'updateAndRender'], true)) {
             // Set PropertyMappingConfiguration for updating the node (and attached objects)
             $propertyMappingConfiguration = $this->arguments->getArgument('node')->getPropertyMappingConfiguration();
             $propertyMappingConfiguration->allowOverrideTargetType();
@@ -149,12 +149,12 @@ class NodeController extends AbstractServiceController
      */
     public function filterChildNodesForTreeAction(Node $node, $term, $nodeType)
     {
-        $nodeTypes = strlen($nodeType) > 0 ? array($nodeType) : array_keys($this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false));
+        $nodeTypes = strlen($nodeType) > 0 ? [$nodeType] : array_keys($this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false));
         $context = $node->getContext();
         if ($term !== '') {
             $nodes = $this->nodeSearchService->findByProperties($term, $nodeTypes, $context, $node);
         } else {
-            $nodes = array();
+            $nodes = [];
             $nodeDataRecords = $this->nodeDataRepository->findByParentAndNodeTypeRecursively($node->getPath(), implode(',', $nodeTypes), $context->getWorkspace(), $context->getDimensions());
             foreach ($nodeDataRecords as $nodeData) {
                 $matchedNode = $this->nodeFactory->createFromNodeData($nodeData, $context);
@@ -188,8 +188,8 @@ class NodeController extends AbstractServiceController
             $this->persistenceManager->persistAll();
         }
 
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'Neos.Neos');
-        $this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => true));
+        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $newNode], 'Frontend\Node', 'Neos.Neos');
+        $this->view->assign('value', ['data' => ['nextUri' => $nextUri], 'success' => true]);
     }
 
     /**
@@ -241,11 +241,11 @@ class NodeController extends AbstractServiceController
             $this->persistenceManager->persistAll();
         }
 
-        $data = array('newNodePath' => $node->getContextPath());
+        $data = ['newNodePath' => $node->getContextPath()];
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $data['nextUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $node), 'Frontend\Node', 'Neos.Neos');
+            $data['nextUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos');
         }
-        $this->view->assign('value', array('data' => $data, 'success' => true));
+        $this->view->assign('value', ['data' => $data, 'success' => true]);
     }
 
     /**
@@ -284,19 +284,19 @@ class NodeController extends AbstractServiceController
             $this->persistenceManager->persistAll();
         }
 
-        $q = new FlowQuery(array($copiedNode));
+        $q = new FlowQuery([$copiedNode]);
         $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
 
-        $requestData = array(
-            'nextUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'Neos.Neos'),
+        $requestData = [
+            'nextUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $closestDocumentNode], 'Frontend\Node', 'Neos.Neos'),
             'newNodePath' => $copiedNode->getContextPath()
-        );
+        ];
 
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $requestData['nodeUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $copiedNode), 'Frontend\Node', 'Neos.Neos');
+            $requestData['nodeUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $copiedNode], 'Frontend\Node', 'Neos.Neos');
         }
 
-        $this->view->assign('value', array('data' => $requestData, 'success' => true));
+        $this->view->assign('value', ['data' => $requestData, 'success' => true]);
     }
 
     /**
@@ -337,17 +337,17 @@ class NodeController extends AbstractServiceController
             $this->persistenceManager->persistAll();
         }
 
-        $q = new FlowQuery(array($node));
+        $q = new FlowQuery([$node]);
         $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'Neos.Neos');
-        $this->view->assign('value', array(
-            'data' => array(
+        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $closestDocumentNode], 'Frontend\Node', 'Neos.Neos');
+        $this->view->assign('value', [
+            'data' => [
                 'workspaceNameOfNode' => $node->getWorkspace()->getName(),
                 'labelOfNode' => $node->getLabel(),
                 'nextUri' => $nextUri
-            ),
+            ],
             'success' => true
-        ));
+        ]);
     }
 
     /**
@@ -377,12 +377,12 @@ class NodeController extends AbstractServiceController
             $this->persistenceManager->persistAll();
         }
 
-        $q = new FlowQuery(array($node));
+        $q = new FlowQuery([$node]);
         $node->remove();
         $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'Neos.Neos');
+        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', ['node' => $closestDocumentNode], 'Frontend\Node', 'Neos.Neos');
 
-        $this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => true));
+        $this->view->assign('value', ['data' => ['nextUri' => $nextUri], 'success' => true]);
     }
 
     /**
@@ -394,7 +394,7 @@ class NodeController extends AbstractServiceController
      */
     protected function redirectToRenderNode(NodeInterface $node, $fusionPath)
     {
-        $q = new FlowQuery(array($node));
+        $q = new FlowQuery([$node]);
         $closestContentCollection = $q->closest('[instanceof Neos.Neos:ContentCollection]')->get(0);
         $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
 
@@ -415,12 +415,12 @@ class NodeController extends AbstractServiceController
      */
     protected function processNodeForEditorPlugins(NodeInterface $node)
     {
-        return array(
+        return [
             'id' => $node->getPath(),
             'name' => $node->getLabel(),
-            'url' => $this->uriBuilder->uriFor('show', array('node' => $node), 'Frontend\Node', 'Neos.Neos'),
+            'url' => $this->uriBuilder->uriFor('show', ['node' => $node], 'Frontend\Node', 'Neos.Neos'),
             'type' => 'neos/internal-link'
-        );
+        ];
     }
 
     /**
@@ -431,9 +431,9 @@ class NodeController extends AbstractServiceController
      */
     protected function createContext($workspaceName)
     {
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => $workspaceName
-        );
+        ];
 
         $currentDomain = $this->domainRepository->findOneByActiveRequest();
         if ($currentDomain !== null) {
