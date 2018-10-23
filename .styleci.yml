@@ -18,3 +18,6 @@ finder:
     - "Neos.NodeTypes/Tests"
     - "Neos.SiteKickstarter/Classes"
     - "Neos.SiteKickstarter/Tests"
+    
+enabled:
+  - no_unused_imports
