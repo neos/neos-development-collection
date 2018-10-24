@@ -112,8 +112,21 @@ class ContentCacheFlusher
             return;
         }
 
+        $this->registerAllTagsToFlushForNodeInWorkspace($node, $node->getWorkspace());
+        if ($targetWorkspace !== null) {
+            $this->registerAllTagsToFlushForNodeInWorkspace($node, $targetWorkspace);
+        }
+    }
+
+    /**
+     * @param NodeInterface $node
+     * @param Workspace $workspace
+     */
+    protected function registerAllTagsToFlushForNodeInWorkspace(NodeInterface $node, Workspace $workspace)
+    {
         $nodeIdentifier = $node->getIdentifier();
-        foreach ($this->workspacesToFlush[$node->getWorkspace()->getName()] as $workspaceName => $workspaceHash) {
+
+        foreach ($this->workspacesToFlush[$workspace->getName()] as $workspaceName => $workspaceHash) {
             $this->registerChangeOnNodeIdentifier($workspaceHash .'_'. $nodeIdentifier);
             $this->registerChangeOnNodeType($node->getNodeType()->getName(), $nodeIdentifier, $workspaceHash);
 
