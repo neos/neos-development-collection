@@ -103,8 +103,8 @@ class Package extends BasePackage
             }
         });
 
-        $dispatcher->connect(PublishingService::class, 'nodePublished', ContentCacheFlusher::class, 'registerNodeChange');
-        $dispatcher->connect(PublishingService::class, 'nodeDiscarded', ContentCacheFlusher::class, 'registerNodeChange');
+        $dispatcher->connect(PublishingService::class, 'nodePublished', ContentCacheFlusher::class, 'registerNodeChange', false);
+        $dispatcher->connect(PublishingService::class, 'nodeDiscarded', ContentCacheFlusher::class, 'registerNodeChange', false);
 
         $dispatcher->connect(Node::class, 'nodePathChanged', RouteCacheFlusher::class, 'registerNodeChange');
         $dispatcher->connect(Node::class, 'nodeRemoved', RouteCacheFlusher::class, 'registerNodeChange');
