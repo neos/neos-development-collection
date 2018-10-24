@@ -287,46 +287,46 @@
 			<target xml:lang="ar" state="translated">الرئيسي</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="ar" state="needs-translation">Package</target></trans-unit>
+			<target xml:lang="ar" state="translated">حزمة</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target xml:lang="ar" state="translated">غير مفعلة</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="ar" state="needs-translation">Unavailable</target></trans-unit>
+			<target xml:lang="ar" state="translated">غير متوفر</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="ar" state="needs-translation">Inactive</target></trans-unit>
+			<target xml:lang="ar" state="translated">غير نشط</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
 			<target xml:lang="ar" state="translated">أنقر للتعديل</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="ar" state="needs-translation">Click to deactivate</target></trans-unit>
+			<target xml:lang="ar" state="translated">انقر لالغاء التفعيل</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="ar" state="needs-translation">Click to activate</target></trans-unit>
+			<target xml:lang="ar" state="translated">انقر للتفعيل</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="ar" state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="ar" state="needs-translation">Click to create new</target></trans-unit>
+			<target xml:lang="ar" state="translated">انقر لإنشاء جديد</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="ar" state="needs-translation">Status</target></trans-unit>
+			<target xml:lang="ar" state="translated">الحالة</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="ar" state="needs-translation">Active</target></trans-unit>
+			<target xml:lang="ar" state="translated">مفعّل</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="ar" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="ar" state="translated">نطاقات</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="ar" state="needs-translation">Domain</target></trans-unit>
+			<target xml:lang="ar" state="translated">النطاق</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="ar" state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target xml:lang="ar" state="translated">نعم، احذف!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target xml:lang="ar" state="translated">مفتاح الحزمة</target></trans-unit>
@@ -736,79 +736,79 @@
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
 				<source>Copy {source} to {target}</source>
-			<target xml:lang="ar" state="needs-translation">Copy {source} to {target}</target></trans-unit>
+			<target xml:lang="ar" state="translated">انسخ {source} إلى {target}</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
-			<target xml:lang="ar" state="needs-translation">Move {source} to {target}</target></trans-unit>
+			<target xml:lang="ar" state="translated">انقل {source} إلى {target}</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
 			<target xml:lang="ar" state="needs-translation">Please select the position at which you want {source} inserted relative to {target}.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
-			<target xml:lang="ar" state="needs-translation">Insert</target></trans-unit>
+			<target xml:lang="ar" state="translated">إدراج</target></trans-unit>
       <trans-unit id="insertMode" xml:space="preserve">
 				<source>Insert mode</source>
-			<target xml:lang="ar" state="needs-translation">Insert mode</target></trans-unit>
+			<target xml:lang="ar" state="translated">إدراج رمز</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
 			<target xml:lang="ar" state="needs-translation">Choose an Aspect Ratio</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
-			<target xml:lang="ar" state="needs-translation">Bold</target></trans-unit>
+			<target xml:lang="ar" state="translated">عريض</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
 				<source>Italic</source>
-			<target xml:lang="ar" state="needs-translation">Italic</target></trans-unit>
+			<target xml:lang="ar" state="translated">مائل</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
 				<source>Underline</source>
-			<target xml:lang="ar" state="needs-translation">Underline</target></trans-unit>
+			<target xml:lang="ar" state="translated">مسطر</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
 			<target xml:lang="ar" state="needs-translation">Subscript</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
-			<target xml:lang="ar" state="needs-translation">Superscript</target></trans-unit>
+			<target xml:lang="ar" state="translated">نص مرتفع</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
-			<target xml:lang="ar" state="needs-translation">Strikethrough</target></trans-unit>
+			<target xml:lang="ar" state="translated">يتوسطه خط</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
 			<target xml:lang="ar" state="translated">الرابط</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
-			<target xml:lang="ar" state="needs-translation">Ordered list</target></trans-unit>
+			<target xml:lang="ar" state="translated">قائمة مرتبة</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
 				<source>Unordered list</source>
-			<target xml:lang="ar" state="needs-translation">Unordered list</target></trans-unit>
+			<target xml:lang="ar" state="translated">قائمة غير مرتبة</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
 				<source>Align left</source>
-			<target xml:lang="ar" state="needs-translation">Align left</target></trans-unit>
+			<target xml:lang="ar" state="translated">محاذاة إلى اليسار</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
 				<source>Align right</source>
-			<target xml:lang="ar" state="needs-translation">Align right</target></trans-unit>
+			<target xml:lang="ar" state="translated">محاذاة إلى اليمين</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
 				<source>Align center</source>
-			<target xml:lang="ar" state="needs-translation">Align center</target></trans-unit>
+			<target xml:lang="ar" state="translated">محاذاة للوسط</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
 				<source>Align justify</source>
 			<target xml:lang="ar" state="needs-translation">Align justify</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
 				<source>Table</source>
-			<target xml:lang="ar" state="needs-translation">Table</target></trans-unit>
+			<target xml:lang="ar" state="translated">الجدول</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
 				<source>Remove format</source>
-			<target xml:lang="ar" state="needs-translation">Remove format</target></trans-unit>
+			<target xml:lang="ar" state="translated">إزالة التنسيق</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
 			<target xml:lang="ar" state="needs-translation">Outdent</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target xml:lang="ar" state="needs-translation">Indent</target></trans-unit>
+			<target xml:lang="ar" state="translated">المسافة البادئة</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target xml:lang="ar" state="translated">إنشاء جديد</target></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
-			<target xml:lang="ar" state="needs-translation">No matches found</target></trans-unit>
+			<target xml:lang="ar" state="translated">لم يتم العثور على تطابق</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
 			<target xml:lang="ar" state="needs-translation">Please enter ###CHARACTERS### more character</target></trans-unit>
