@@ -75,6 +75,9 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
     }
 
+    /**
+     * @test
+     */
     public function flushingANodeWillResolveAllWorkspacesToFlush()
     {
         // Add more workspaces
