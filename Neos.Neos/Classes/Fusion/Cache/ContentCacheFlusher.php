@@ -92,15 +92,20 @@ class ContentCacheFlusher
      * model or the Neos Publishing Service.
      *
      * @param NodeInterface $node The node which has changed in some way
+     * @param Workspace $targetWorkspace An optional workspace to flush
      * @return void
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function registerNodeChange(NodeInterface $node)
+    public function registerNodeChange(NodeInterface $node, Workspace $targetWorkspace = null)
     {
         $this->tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
         if (empty($this->workspacesToFlush[$node->getWorkspace()->getName()])) {
             $this->resolveWorkspaceChain($node->getWorkspace());
+        }
+
+        if ($targetWorkspace !== null && empty($this->workspacesToFlush[$targetWorkspace->getName()])) {
+            $this->resolveWorkspaceChain($targetWorkspace);
         }
 
         if (!array_key_exists($node->getWorkspace()->getName(), $this->workspacesToFlush)) {
