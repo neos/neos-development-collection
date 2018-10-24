@@ -124,6 +124,51 @@ class ContentCacheFlusherTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function flushingANodeWithAnAdditionalTargetWorkspaceWillAlsoResolveThatWorkspace()
+    {
+        // Add more workspaces
+        $workspaceFirstLevel = new Workspace('first-level');
+        $workspaceSecondLevel = new Workspace('second-level');
+        $workspaceAlsoOnSecondLevel = new Workspace('also-second-level');
+        $workspaceThirdLevel = new Workspace('third-level');
+        $workspaceAlsoFirstLevel = new Workspace('also-first-level');
+
+        // And build up a chain
+        $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
+        $workspaceThirdLevel->setBaseWorkspace($workspaceSecondLevel);
+        $workspaceSecondLevel->setBaseWorkspace($workspaceFirstLevel);
+        $workspaceAlsoOnSecondLevel->setBaseWorkspace($workspaceFirstLevel);
+        $workspaceFirstLevel->setBaseWorkspace($liveWorkspace);
+        $workspaceAlsoFirstLevel->setBaseWorkspace($liveWorkspace);
+
+        $this->workspaceRepository->add($workspaceFirstLevel);
+        $this->workspaceRepository->add($workspaceSecondLevel);
+        $this->workspaceRepository->add($workspaceAlsoOnSecondLevel);
+        $this->workspaceRepository->add($workspaceThirdLevel);
+        $this->workspaceRepository->add($workspaceAlsoFirstLevel);
+
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        // Make sure that we do have multiple workspaces set up in our database
+        $this->assertEquals(6, $this->workspaceRepository->countAll());
+
+        // Create/Fetch a node in workspace "first-level"
+        $fistLevelContext = $this->contextFactory->create(['workspaceName' => $workspaceFirstLevel->getName()]);
+        $nodeInFirstLevelWorkspace = $fistLevelContext->getRootNode();
+
+        // When the node is flushed we expect three workspaces to be flushed
+        $this->contentCacheFlusher->registerNodeChange($nodeInFirstLevelWorkspace, $workspaceAlsoFirstLevel);
+
+        $workspacesToFlush = ObjectAccess::getProperty($this->contentCacheFlusher, 'workspacesToFlush', true);
+
+        $this->assertArrayHasKey('also-first-level', $workspacesToFlush);
+        $this->assertArrayHasKey('first-level', $workspacesToFlush);
+    }
+
+    /**
+     * @test
+     */
     public function aNodeChangeWillRegisterNodeIdentifierTagsForAllWorkspaces()
     {
         $workspaceFirstLevel = new Workspace('first-level');
