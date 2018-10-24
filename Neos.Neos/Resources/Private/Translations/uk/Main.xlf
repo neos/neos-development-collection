@@ -290,7 +290,7 @@
 			<target xml:lang="uk" state="needs-translation">Package</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
-			<target xml:lang="uk" state="needs-translation">Deactivated</target></trans-unit>
+			<target xml:lang="uk" state="translated">Деактивовано</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
 			<target xml:lang="uk" state="needs-translation">Unavailable</target></trans-unit>
@@ -299,7 +299,7 @@
 			<target xml:lang="uk" state="needs-translation">Inactive</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target xml:lang="uk" state="needs-translation">Click to edit</target></trans-unit>
+			<target xml:lang="uk" state="translated">Натисніть для редагування</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
 			<target xml:lang="uk" state="needs-translation">Click to deactivate</target></trans-unit>
@@ -329,25 +329,25 @@
 			<target xml:lang="uk" state="needs-translation">Yes, delete it!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
-			<target xml:lang="uk" state="needs-translation">Package Key</target></trans-unit>
+			<target xml:lang="uk" state="translated">Ключ пакету</target></trans-unit>
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
 			<target xml:lang="uk" state="translated">Опис</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target xml:lang="uk" state="needs-translation">Toggle content tree</target></trans-unit>
+			<target xml:lang="uk" state="translated">Переключити дерево вмісту</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target xml:lang="uk" state="needs-translation">Show publish options</target></trans-unit>
+			<target xml:lang="uk" state="translated">Показати опції публікації</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target xml:lang="uk" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="uk" state="translated">Увімкнути повноекранний режим редагування</target><alt-trans><target xml:lang="uk">Активувати повноекранний режим редагування</target></alt-trans></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target xml:lang="uk" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="uk" state="translated">Вимкнути повноекранний режим редагування</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target xml:lang="uk" state="needs-translation">Show preview</target></trans-unit>
+			<target xml:lang="uk" state="translated">Попередній перегляд</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -681,10 +681,10 @@
 			<target xml:lang="uk" state="translated">Помилка бази даних</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target xml:lang="uk" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+			<target xml:lang="uk" state="translated">Зараз немає підключення бази даних або схему бази даних Neos ще не створено.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target xml:lang="uk" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+			<target xml:lang="uk" state="translated">Запустіть програму установки, щоб настроїти базу даних.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="uk" state="translated">Сторінка не знайдена</target></trans-unit>
@@ -726,7 +726,7 @@
 			<target xml:lang="uk" state="needs-translation">Nodes</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
-			<target xml:lang="uk" state="needs-translation">Show</target></trans-unit>
+			<target xml:lang="uk" state="translated">Показати</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
 			<target xml:lang="uk" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
