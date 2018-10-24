@@ -319,12 +319,8 @@ class NodeType
         if ($nodeType === $this->name) {
             return true;
         }
-        foreach ($this->declaredSuperTypes as $superType) {
-            if ($superType !== null && $superType->isOfType($nodeType) === true) {
-                return true;
-            }
-        }
-        return false;
+        $inheritanceChain = $this->buildInheritanceChain();
+        return isset($inheritanceChain[$nodeType]);
     }
 
     /**
