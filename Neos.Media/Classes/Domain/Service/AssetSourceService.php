@@ -91,7 +91,7 @@ final class AssetSourceService
     /**
      * @return AssetSourceInterface[]
      */
-    public function getAssetsSources(): array
+    public function getAssetSources(): array
     {
         $this->initialize();
         return $this->assetSources;

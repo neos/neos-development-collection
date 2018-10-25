@@ -17,6 +17,7 @@ use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\View\TemplateView;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Service\AssetSourceService;
 use Neos\Media\Domain\Repository\TagRepository;
@@ -90,30 +91,35 @@ class AssetProxiesController extends ActionController
      *
      * @param string $searchTerm An optional search term used for filtering the list of assets
      * @param string $assetSourceIdentifier If specified, results are only from the given asset source
-     * @param int $limitPerAssetSource The maximum number of results shown per asset source
+     * @param int $limit The maximum number of results shown in total
      * @return void
      */
-    public function indexAction(string $searchTerm = '', string $assetSourceIdentifier = '', int $limitPerAssetSource = 10): void
+    public function indexAction(string $searchTerm = '', string $assetSourceIdentifier = '', int $limit = 10): void
     {
-        $assetSources = $this->assetSourceService->getAssetsSources();
-        $assetProxies = [];
-        foreach ($assetSources as $assetSource) {
-            if ($assetSourceIdentifier !== '' && $assetSource->getIdentifier() !== $assetSourceIdentifier) {
-                continue;
-            }
-            try {
-                $assetProxyRepository = $assetSource->getAssetProxyRepository();
-                $assetProxyQueryResult = $assetProxyRepository->findBySearchTerm($searchTerm);
-                $addedResults = 0;
-                while ($assetProxyQueryResult->valid() && $addedResults < $limitPerAssetSource) {
-                    $assetProxies[] = $assetProxyQueryResult->current();
-                    $assetProxyQueryResult->next();
-                    $addedResults++;
+        $assetProxyQueryResultsIterator = new \MultipleIterator(\MultipleIterator::MIT_NEED_ANY);
+        foreach ($this->assetSourceService->getAssetSources() as $assetSource) {
+            if ($assetSourceIdentifier === '' || $assetSource->getIdentifier() === $assetSourceIdentifier) {
+                $assetProxyQueryResult = $assetSource->getAssetProxyRepository()->findBySearchTerm($searchTerm);
+                if ($assetProxyQueryResult->valid()) {
+                    $assetProxyQueryResultsIterator->attachIterator($assetProxyQueryResult);
                 }
-            } catch (\Exception $exception) {
             }
         }
-        $this->view->assign('assetProxies', $assetProxies);
+
+        $totalAddedResults = 0;
+        $assetProxiesByAssetSource = [];
+        foreach ($assetProxyQueryResultsIterator as $assetProxies) {
+            foreach ($assetProxies as $assetProxy) {
+                if ($assetProxy instanceof AssetProxyInterface) {
+                    $assetProxiesByAssetSource[$assetProxy->getAssetSource()->getIdentifier()][] = $assetProxy;
+                    $totalAddedResults ++;
+                }
+                if ($totalAddedResults === $limit) {
+                    break 2;
+                }
+            }
+        }
+        $this->view->assign('assetProxiesByAssetSource', $assetProxiesByAssetSource);
     }
 
     /**
@@ -127,7 +133,7 @@ class AssetProxiesController extends ActionController
      */
     public function showAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
     {
-        $assetSources = $this->assetSourceService->getAssetsSources();
+        $assetSources = $this->assetSourceService->getAssetSources();
         if (!isset($assetSources[$assetSourceIdentifier])) {
             $this->throwStatus(404, 'Asset source not found');
         }
@@ -151,7 +157,7 @@ class AssetProxiesController extends ActionController
      */
     public function importAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
     {
-        $assetSources = $this->assetSourceService->getAssetsSources();
+        $assetSources = $this->assetSourceService->getAssetSources();
         if (!isset($assetSources[$assetSourceIdentifier])) {
             $this->throwStatus(404, 'Asset source not found');
         }
