@@ -158,7 +158,7 @@ class AssetController extends ActionController
             $this->browserState->set('automaticAssetCollectionSelection', true);
         }
 
-        $this->assetSources = $this->assetSourceService->getAssetsSources();
+        $this->assetSources = $this->assetSourceService->getAssetSources();
     }
 
     /**
