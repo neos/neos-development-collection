@@ -126,41 +126,52 @@ class AfxService
      */
     protected static function astNodeToFusion($payload, $indentation = '')
     {
-        $tagName = $payload['identifier'];
         $childrenPropertyName = 'content';
+        $tagName = $payload['identifier'];
         $attributes = $payload['attributes'];
 
         // filter attributes and remove @key and @children values
         $attributes = array_filter($attributes, function ($attribute) use (&$childrenPropertyName) {
-            if ($attribute['type'] === 'prop' && $attribute['payload']['identifier'] === '@key') {
-                return false;
-            }
-            if ($attribute['type'] === 'prop' && $attribute['payload']['identifier'] === '@children') {
-                if ($attribute['payload']['type'] === 'string') {
-                    $childrenPropertyName = $attribute['payload']['payload'];
-                } else {
-                    throw new AfxException(
-                        sprintf('@children only supports string payloads %s found', $attribute['payload']['type'])
-                    );
+            if ($attribute['type'] === 'prop') {
+                if ($attribute['payload']['identifier'] === '@key' || $attribute['payload']['identifier'] === '@path') {
+                    return false;
+                } elseif ($attribute['payload']['identifier'] === '@children') {
+                    if ($attribute['payload']['type'] === 'string') {
+                        $childrenPropertyName = $attribute['payload']['payload'];
+                    } else {
+                        throw new AfxException(
+                            sprintf('@children only supports string payloads %s found', $attribute['payload']['type'])
+                        );
+                    }
+                    return false;
                 }
-                return false;
             }
             return true;
         });
 
+        // filter children into path and content children
         $pathChildren = [];
         $contentChildren = [];
-
         if ($payload['children'] && count($payload['children']) > 0) {
             foreach ($payload['children'] as $child) {
-                if ($child['type'] === 'node' && array_key_exists('@path', $child['payload']['props'])) {
-                    if ($child['payload']['props']['@path']['type'] === 'string') {
-                        $pathChildren[$child['payload']['props']['@path']['payload']] = $child;
+                if ($child['type'] === 'node') {
+                    $path = null;
+                    foreach($child['payload']['attributes'] as $attribute) {
+                        if ($attribute['type'] === 'prop' && $attribute['payload']['identifier'] === '@path') {
+                            $pathAttribute = $attribute['payload'];
+                            if ($pathAttribute['type'] === 'string') {
+                                $path = $pathAttribute['payload'];
+                            } else {
+                                throw new AfxException(
+                                    sprintf('@path only supports string payloads %s found', $pathAttribute['type'])
+                                );
+                            }
+                        }
+                    };
+
+                    if ($path) {
+                        $pathChildren[$path] = $child;
                         continue;
-                    } else {
-                        throw new AfxException(
-                            sprintf('@path only supports string payloads %s found', $child['payload']['props']['@path']['type'])
-                        );
                     }
                 }
                 $contentChildren[] = $child;
@@ -229,7 +240,7 @@ class AfxService
                     if ($attribute['payload']['type'] === 'expression') {
                         $spreadFusion = self::astToFusion($attribute['payload'], $indentation . self::INDENTATION);
                         if ($spreadFusion !== null) {
-                            $fusion .= $indentation . self::INDENTATION . $attributePrefix . '@spread.spread_' . $spreadIndex . ' = ' . $spreadFusion . PHP_EOL;
+                            $fusion .= $indentation . self::INDENTATION . $attributePrefix . '@apply.spread_' . $spreadIndex . ' = ' . $spreadFusion . PHP_EOL;
                         }
                     } else {
                         throw new AfxException(
@@ -237,7 +248,7 @@ class AfxService
                         );
                     }
                 } elseif ($attribute['type'] === 'propList') {
-                    $fusion .= $indentation . self::INDENTATION . $attributePrefix . '@spread.spread_' . $spreadIndex . ' = Neos.Fusion:RawArray {' . PHP_EOL;
+                    $fusion .= $indentation . self::INDENTATION . $attributePrefix . '@apply.spread_' . $spreadIndex . ' = Neos.Fusion:RawArray {' . PHP_EOL;
                     $fusion .=  self::propListToFusion($attribute['payload'], '', $indentation . self::INDENTATION);
                     $fusion .= $indentation . self::INDENTATION . '}' . PHP_EOL;
                 }
@@ -259,19 +270,6 @@ class AfxService
 
         // Content Children
         if ($contentChildren !== []) {
-            $childrenProp = Arrays::getValueByPath($payload, 'props.@children');
-            if ($childrenProp) {
-                if ($childrenProp['type'] === 'string') {
-                    $childrenPropertyName = $childrenProp['payload'];
-                } else {
-                    throw new AfxException(
-                        sprintf('@children only supports string payloads %s found', $childrenProp['type'])
-                    );
-                }
-            } else {
-                $childrenPropertyName = 'content';
-            }
-
             $childFusion = self::astNodeListToFusion($contentChildren, $indentation . self::INDENTATION);
             if ($childFusion) {
                 $fusion .= $indentation . self::INDENTATION . $childrenPropertyName . ' = ' . $childFusion . PHP_EOL;
