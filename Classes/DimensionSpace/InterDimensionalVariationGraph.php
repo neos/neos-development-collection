@@ -158,6 +158,7 @@ class InterDimensionalVariationGraph
     {
         $normalizedVariationWeights = [];
         $lowestVariationWeights = [];
+        $this->weightedGeneralizations = [];
 
         foreach ($this->getWeightedDimensionSpacePoints() as $generalizationHash => $generalization) {
             if (!isset($normalizedVariationWeights[$generalizationHash])) {
@@ -186,10 +187,8 @@ class InterDimensionalVariationGraph
             }
         }
 
-        if ($this->weightedGeneralizations !== null) {
-            foreach ($this->weightedGeneralizations as $specializationHash => &$generalizationsByWeight) {
-                ksort($generalizationsByWeight);
-            }
+        foreach ($this->weightedGeneralizations as $specializationHash => &$generalizationsByWeight) {
+            ksort($generalizationsByWeight);
         }
     }
 
