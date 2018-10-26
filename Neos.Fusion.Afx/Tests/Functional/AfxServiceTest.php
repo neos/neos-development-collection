@@ -629,4 +629,36 @@ EOF;
         $afxCode = '<h1 foo={"123" />';
         AfxService::convertAfxToFusion($afxCode);
     }
+
+    /**
+     * @test
+     * @expectedException \Neos\Fusion\Afx\Exception\AfxException
+     */
+    public function childPathAnnotationWithExpressionRaisesException()
+    {
+        $afxCode = '<div><span @path={expression} /></div>';
+        AfxService::convertAfxToFusion($afxCode);
+    }
+
+    /**
+     * @test
+     * @expectedException \Neos\Fusion\Afx\Exception\AfxException
+     */
+    public function keyAnnotationWithExpressionRaisesException()
+    {
+        $afxCode = '<div><span @key={expression} /><span/></div>';
+        AfxService::convertAfxToFusion($afxCode);
+    }
+
+    /**
+     * @test
+     * @expectedException \Neos\Fusion\Afx\Exception\AfxException
+     */
+    public function childrenAnnotationWithExpressionRaisesException()
+    {
+        $afxCode = '<div @children={expression} ><span/></div>';
+        AfxService::convertAfxToFusion($afxCode);
+    }
+
+
 }
