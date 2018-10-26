@@ -110,12 +110,15 @@ class AfxService
 
         if ($payload['children'] && count($payload['children']) > 0) {
             foreach ($payload['children'] as $child) {
-                if ($child['type'] === 'node'
-                    && array_key_exists('@path', $child['payload']['props'])
-                    && $child['payload']['props']['@path']['type'] === 'string'
-                ) {
-                    $pathChildren[$child['payload']['props']['@path']['payload']] = $child;
-                    continue;
+                if ($child['type'] === 'node' && array_key_exists('@path', $child['payload']['props'])) {
+                    if ($child['payload']['props']['@path']['type'] === 'string') {
+                        $pathChildren[$child['payload']['props']['@path']['payload']] = $child;
+                        continue;
+                    } else {
+                        throw new AfxException(
+                            sprintf('@path only supports string payloads %s found', $child['payload']['props']['@path']['type'])
+                        );
+                    }
                 }
                 $contentChildren[] = $child;
             }
@@ -227,13 +230,13 @@ class AfxService
                 // detect key
                 $fusionName = 'item_' . $index;
                 if ($keyProperty = Arrays::getValueByPath($astNode, 'payload.props.@key')) {
-                    if ($keyProperty['type'] == 'string') {
+                    if ($keyProperty['type'] === 'string') {
                         $fusionName = $keyProperty['payload'];
                     } else {
                         throw new AfxException(
                             sprintf(
                                 '@key only supports string payloads %s was given',
-                                $astNode['props']['@key']['type']
+                                $keyProperty['type']
                             )
                         );
                     }

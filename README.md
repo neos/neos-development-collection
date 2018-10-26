@@ -218,13 +218,15 @@ Vendor.Site:Prototype {
 In general all meta-attributes start with an @-sign. 
 
 The `@path`-attribute can be used to render a child node directly into the given path below the parent Fusion:Object
-instead of beeing included into the `content` property. 
+instead of beeing included into the `content` property.
 
 The `@children`-attribute defined the property that is used to render the content/children of the current tag into. 
 The default property name for the children is `content`.
 
 The `@key`-attribute can be used to define the property name of an item among its siblings if an array is rendered. 
 If no `@key` is defined `index_x` is used starting at `x=1. 
+
+Attention: `@path`, `@children` and `@key` only support string-values and no expressions.
 
 All other meta attributes are directly added to the generated prototype and can be used for @if or @process statements. 
 
