@@ -603,13 +603,13 @@ EOF;
     /**
      * @test
      */
-    public function spreadsAreEvaluetedForFusionObjectTags()
+    public function spreadsAreEvaluatedForFusionObjectTags()
     {
         $afxCode = '<Vendor.Site:Prototype {...spreadExpression} />';
 
         $expectedFusion = <<<'EOF'
 Vendor.Site:Prototype {
-    @spread.spread_1 = ${spreadExpression}
+    @apply.spread_1 = ${spreadExpression}
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
@@ -626,8 +626,8 @@ EOF;
 Vendor.Site:Prototype {
     stringBefore = 'string'
     expressionBefore = ${expression}
-    @spread.spread_1 = ${spreadExpression}
-    @spread.spread_2 = Neos.Fusion:RawArray {
+    @apply.spread_1 = ${spreadExpression}
+    @apply.spread_2 = Neos.Fusion:RawArray {
         stringAfter = 'string'
         expressionAfter = ${expression}
     }
@@ -648,7 +648,7 @@ EOF;
 Neos.Fusion:Tag {
     tagName = 'h1'
     selfClosingTag = true
-    attributes.@spread.spread_1 = ${spreadExpression}
+    attributes.@apply.spread_1 = ${spreadExpression}
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
@@ -667,8 +667,8 @@ Neos.Fusion:Tag {
     selfClosingTag = true
     attributes.stringBefore = 'string'
     attributes.expressionBefore = ${expression}
-    attributes.@spread.spread_1 = ${spreadExpression}
-    attributes.@spread.spread_2 = Neos.Fusion:RawArray {
+    attributes.@apply.spread_1 = ${spreadExpression}
+    attributes.@apply.spread_2 = Neos.Fusion:RawArray {
         stringAfter = 'string'
         expressionAfter = ${expression}
     }
