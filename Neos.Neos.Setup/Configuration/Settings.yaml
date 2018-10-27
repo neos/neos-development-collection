@@ -1,0 +1,23 @@
+Neos:
+  Setup:
+    stepOrder:
+      - neosRequirements
+      - database
+      - administrator
+      - siteimport
+      - final
+    steps:
+      neosRequirements:
+        className: Neos\Neos\Setup\Step\NeosSpecificRequirementsStep
+      administrator:
+        className: Neos\Neos\Setup\Step\AdministratorStep
+        requiredConditions:
+          - className: Neos\Setup\Condition\DatabaseConnectionCondition
+      siteimport:
+        className: Neos\Neos\Setup\Step\SiteImportStep
+        requiredConditions:
+          - className: Neos\Setup\Condition\DatabaseConnectionCondition
+      final:
+        className: Neos\Neos\Setup\Step\FinalStep
+    view:
+      title: 'Neos Setup'

@@ -10,7 +10,6 @@
         "neos/flow": "*",
         "neos/media-browser": "*",
         "neos/party": "*",
-        "neos/setup": "*",
         "neos/twitter-bootstrap": "*",
         "neos/content-repository": "*",
         "neos/fusion": "*",

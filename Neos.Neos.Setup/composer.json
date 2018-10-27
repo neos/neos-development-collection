@@ -1,0 +1,27 @@
+{
+    "name": "neos/neos-setup",
+    "type": "neos-package",
+    "description": "Neos specific setup components.",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "require": {
+        "neos/neos": "*",
+        "neos/setup": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Neos\\Setup\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Neos\\Setup\\Tests\\": "Tests"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.Neos.Setup"
+        }
+    }
+}
