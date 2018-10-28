@@ -240,9 +240,9 @@
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve" approved="yes">
 				<source>{0} removed the {1} "{2}".</source>
 			<target xml:lang="pl" state="translated">{0} usunął {1} "{2}".</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
+      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve" approved="yes">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target xml:lang="pl" state="translated">{0} stworzył wariant {1} z {2} "{3}".</target></trans-unit>
+			<target xml:lang="pl" state="translated">{0} utworzył wariant {1} z {2} "{3}".</target><alt-trans><target xml:lang="pl">{0} stworzył wariant {1} z {2} "{3}".</target></alt-trans></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve" approved="yes">
 				<source>{0} modified the {1} "{2}".</source>
 			<target xml:lang="pl" state="translated">{0} zmodyfikował {1} "{2}".</target><alt-trans><target xml:lang="pl">{0} edytował {1} "{2}".</target></alt-trans></trans-unit>
