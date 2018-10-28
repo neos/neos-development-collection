@@ -578,7 +578,7 @@
 			<target xml:lang="ar" state="needs-translation">Default asset collection</target></trans-unit>
       <trans-unit id="sites.sitePackage" xml:space="preserve">
 				<source>Site package</source>
-			<target xml:lang="ar" state="needs-translation">Site package</target></trans-unit>
+			<target xml:lang="ar" state="translated">حزمة الموقع</target></trans-unit>
       <trans-unit id="sites.delete" xml:space="preserve">
 				<source>Delete this site</source>
 			<target xml:lang="ar" state="translated">احذف هذا الموقع</target></trans-unit>
@@ -599,10 +599,10 @@
 			<target xml:lang="ar" state="translated">استيراد موقع</target></trans-unit>
       <trans-unit id="sites.select" xml:space="preserve">
 				<source>Select a site package</source>
-			<target xml:lang="ar" state="needs-translation">Select a site package</target></trans-unit>
+			<target xml:lang="ar" state="translated">اختر حزمة موقع</target></trans-unit>
       <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
 				<source>No site packages are available. Make sure you have an active site package.</source>
-			<target xml:lang="ar" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+			<target xml:lang="ar" state="translated">لا توجد حزمة موقع متاحة. تأكد بأن لديك حزمة موقع مفعلة.</target></trans-unit>
       <trans-unit id="sites.createBlank" xml:space="preserve">
 				<source>Create a blank site</source>
 			<target xml:lang="ar" state="translated">انشئ موقع فارغ</target></trans-unit>
@@ -617,7 +617,7 @@
 			<target xml:lang="ar" state="translated">انشئ موقع فارغ</target></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve">
 				<source>Create a new site package</source>
-			<target xml:lang="ar" state="needs-translation">Create a new site package</target></trans-unit>
+			<target xml:lang="ar" state="translated">انشئ حزمة موقع جديدة</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
 			<target xml:lang="ar" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
@@ -629,10 +629,10 @@
 			<target xml:lang="ar" state="translated">هل تريد حقاً حذف "{0}"؟ هذا الأمر لا يمكن التراجع عنه.</target></trans-unit>
       <trans-unit id="domain.new" xml:space="preserve">
 				<source>New domain</source>
-			<target xml:lang="ar" state="needs-translation">New domain</target></trans-unit>
+			<target xml:lang="ar" state="translated">نطاق جديد</target></trans-unit>
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
-			<target xml:lang="ar" state="needs-translation">Edit domain</target></trans-unit>
+			<target xml:lang="ar" state="translated">تعديل نطاق</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="ar" state="needs-translation">Configuration</target></trans-unit>
