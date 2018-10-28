@@ -65,12 +65,12 @@
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="pl" state="translated">Przeciągnij i upuść na tag lub kolekcję</target></trans-unit>
-      <trans-unit id="view" xml:space="preserve">
+      <trans-unit id="view" xml:space="preserve" approved="yes">
 				<source>View</source>
-			<target xml:lang="pl" state="translated">Widok</target></trans-unit>
-      <trans-unit id="viewAsset" xml:space="preserve">
+			<target xml:lang="pl" state="translated">Wyświetl</target><alt-trans><target xml:lang="pl">Widok</target></alt-trans></trans-unit>
+      <trans-unit id="viewAsset" xml:space="preserve" approved="yes">
 				<source>View asset</source>
-			<target xml:lang="pl" state="translated">Widok zasobów</target></trans-unit>
+			<target xml:lang="pl" state="translated">Wyświetl zasób</target><alt-trans><target xml:lang="pl">Widok zasobów</target></alt-trans></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="pl" state="translated">Edytuj zasób</target></trans-unit>
@@ -182,12 +182,12 @@
       <trans-unit id="connectionError" xml:space="preserve" approved="yes">
 				<source>Connection error</source>
 			<target xml:lang="pl" state="translated">Błąd połączenia</target></trans-unit>
-      <trans-unit id="mediaSource" xml:space="preserve">
+      <trans-unit id="mediaSource" xml:space="preserve" approved="yes">
 				<source>Media source</source>
-			<target xml:lang="pl" state="translated">Źródło danych</target></trans-unit>
-      <trans-unit id="mediaSources" xml:space="preserve">
+			<target xml:lang="pl" state="translated">Źródło multimediów</target><alt-trans><target xml:lang="pl">Źródło danych</target></alt-trans></trans-unit>
+      <trans-unit id="mediaSources" xml:space="preserve" approved="yes">
 				<source>Media sources</source>
-			<target xml:lang="pl" state="translated">Źródła danych</target></trans-unit>
+			<target xml:lang="pl" state="translated">Źródła multimediów</target><alt-trans><target xml:lang="pl">Źródła danych</target></alt-trans></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target xml:lang="pl" state="translated">Kolekcje</target></trans-unit>
