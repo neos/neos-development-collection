@@ -126,11 +126,11 @@ class AfxService
      */
     protected static function astNodeToFusion($payload, $indentation = '')
     {
-        $childrenPropertyName = 'content';
         $tagName = $payload['identifier'];
+        $childrenPropertyName = 'content';
         $attributes = $payload['attributes'];
 
-        // filter attributes and remove @key and @children values
+        // filter attributes and remove @key, @path and @children attributes
         $attributes = array_filter($attributes, function ($attribute) use (&$childrenPropertyName) {
             if ($attribute['type'] === 'prop') {
                 if ($attribute['payload']['identifier'] === '@key' || $attribute['payload']['identifier'] === '@path') {
@@ -198,28 +198,29 @@ class AfxService
 
         // Attributes
         if ($attributes !== []) {
-            $attributesAsDirectFusionKeys = true;
+            $spreadIsPresent = false;
             $metaAttributes = [];
             $fusionAttributes = [];
-            $spreadsOrSpreadAttributeLists = [];
+            $spreadsOrAttributeLists = [];
 
-            // seperate between attributes before and after the first spread and meta attributes
+            // seperate between attributes (before the first spread), meta attributes
+            // spreads and attributes lists between and after spreads
             foreach ($attributes as $attribute) {
                 if ($attribute['type'] === 'prop' && $attribute['payload']['identifier']{0} === '@') {
                     $metaAttributes[] = $attribute;
-                } elseif ($attribute['type'] === 'prop' && $attributesAsDirectFusionKeys) {
+                } elseif ($attribute['type'] === 'prop' && $spreadIsPresent === false) {
                     $fusionAttributes[] = $attribute;
                 } elseif ($attribute['type'] === 'spread') {
-                    $spreadsOrSpreadAttributeLists[] = $attribute;
-                    $attributesAsDirectFusionKeys = false;
+                    $spreadsOrAttributeLists[] = $attribute;
+                    $spreadIsPresent = true;
                 } elseif ($attribute['type'] === 'prop') {
-                    $last = end($spreadsOrSpreadAttributeLists);
-                    $lastPos = key($spreadsOrSpreadAttributeLists);
+                    $last = end($spreadsOrAttributeLists);
+                    $lastPos = key($spreadsOrAttributeLists);
                     if ($last && $last['type'] === 'propList') {
                         $last['payload'][] = $attribute;
-                        $spreadsOrSpreadAttributeLists[$lastPos] = $last;
+                        $spreadsOrAttributeLists[$lastPos] = $last;
                     } else {
-                        $spreadsOrSpreadAttributeLists[] = [
+                        $spreadsOrAttributeLists[] = [
                             'type' => 'propList',
                             'payload' => [$attribute]
                         ];
@@ -232,10 +233,10 @@ class AfxService
                 $fusion .=  self::propListToFusion($fusionAttributes, $attributePrefix, $indentation);
             }
 
-            // starting with the first spread we render as spread values
-            // attributes before the first spread render as fusion keys
+            // starting with the first spread we render spreads as @apply expressions
+            // and attributes as @apply of the respective propList
             $spreadIndex = 1;
-            foreach ($spreadsOrSpreadAttributeLists as $attribute) {
+            foreach ($spreadsOrAttributeLists as $attribute) {
                 if ($attribute['type'] === 'spread') {
                     if ($attribute['payload']['type'] === 'expression') {
                         $spreadFusion = self::astToFusion($attribute['payload'], $indentation . self::INDENTATION);
