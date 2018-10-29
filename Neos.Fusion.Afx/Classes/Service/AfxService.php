@@ -156,7 +156,7 @@ class AfxService
             foreach ($payload['children'] as $child) {
                 if ($child['type'] === 'node') {
                     $path = null;
-                    foreach($child['payload']['attributes'] as $attribute) {
+                    foreach ($child['payload']['attributes'] as $attribute) {
                         if ($attribute['type'] === 'prop' && $attribute['payload']['identifier'] === '@path') {
                             $pathAttribute = $attribute['payload'];
                             if ($pathAttribute['type'] === 'string') {
