@@ -126,30 +126,31 @@ To apply multiple properties to a fusion prototype with a single expression
 afx supports the spread syntax from ES6:
 
 ```
-<Vendor.Site:Prototype {...data} />
+<Vendor.Site:Component {...expression} />
 ```
 Is transpiled as:
 ```
-Vendor.Site:Prototype {
-    @apply.spread_1 = ${data}
+Vendor.Site:Component {
+    @apply.spread_1 = ${expression}
 }
 ```
 
 Spreads can be combined with props and the order of the definition is
-of props and spreads is preserved. So spreads override previously defined
-props but are overwritten again by later properties.
+of props and spreads is preserved, spreads will override previously
+defined props but are overwritten again by later props.
 
-The combination of spreads and properties works by only rendering
-the properties before the first spread as fusion properties. The spreads
-and the following props are transpiled to fusion `@apply` statements
-to preserve the order of the assignment.
+The order preserving combination of spreads and properties works by
+only rendering the properties before the first spread as classic
+fusion properties. Spreads and the following props are transpiled to
+fusion `@apply` statements and are thus able to override all props but
+and are evaluated in the order of definition.
 
 ```
-<Vendor.Site:Prototype title="example" {...data} description="description" {...moreData} />
+<Vendor.Site:Component title="example" {...data} description="description" {...moreData} />
 ```
 Is transpiled as:
 ```
-Vendor.Site:Prototype {
+Vendor.Site:Component {
     title = 'example'
     @apply.spread_1 = ${data}
     @apply.spread_2 = Neos.Fusion:RawArray {
@@ -160,6 +161,7 @@ Vendor.Site:Prototype {
 }
 ```
 
+**This feature is based on the `@apply`-syntax of fusion and thus will only work in Neos > 4.2.**
 
 ### Tag-Children
 
@@ -292,7 +294,7 @@ Neos.Fusion:Tag {
 	tagName = 'h1'
 	contents = Neos.Fusion:Array {
 		item_1 = ${'eelExpression 1'}
-		item_2 = ${'eelExpression 2'}   
+		item_2 = ${'eelExpression 2'}
 	}
 }
 ```
