@@ -144,7 +144,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $controllerContext = $this->runtime->getControllerContext();
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
         $processedContent = preg_replace_callback(
-            '~<a.*?href="(.*?)".*?>~i',
+            '~<a .*?href="(.*?)".*?>~i',
             function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $noOpenerString) {
                 list($linkText, $linkHref) = $matches;
                 $uriHost = parse_url($linkHref, PHP_URL_HOST);
