@@ -53,6 +53,37 @@
     '@format':     'json'
   httpMethods: ['PUT']
 
+# RESTful routes for Asset Proxies service
+-
+  name: 'Asset Proxies - index'
+  uriPattern: 'asset-proxies'
+  defaults:
+    '@controller': 'Service\AssetProxies'
+    '@action':     'index'
+    '@format':     'html'
+  appendExceedingArguments: true
+  httpMethods: ['GET']
+
+-
+  name: 'Assets Proxies - import asset proxy'
+  uriPattern: 'asset-proxies/{assetSourceIdentifier}/{assetProxyIdentifier}'
+  defaults:
+    '@controller': 'Service\AssetProxies'
+    '@action':     'import'
+    '@format':     'html'
+  appendExceedingArguments: true
+  httpMethods: ['POST']
+
+-
+  name: 'Assets Proxies - single asset proxy'
+  uriPattern: 'asset-proxies/{assetSourceIdentifier}/{assetProxyIdentifier}'
+  defaults:
+    '@controller': 'Service\AssetProxies'
+    '@action':     'show'
+    '@format':     'html'
+  appendExceedingArguments: true
+  httpMethods: ['HEAD', 'GET']
+
 # RESTful routes for Assets service
 -
   name: 'Assets - index'
