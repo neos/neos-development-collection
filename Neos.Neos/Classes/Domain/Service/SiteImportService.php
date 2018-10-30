@@ -164,10 +164,16 @@ class SiteImportService
      */
     public function importFromFile($pathAndFilename)
     {
+        if (!file_exists($pathAndFilename)) {
+            throw new NeosException(sprintf('Error: File "%s" does not exist.', $pathAndFilename), 1540934412);
+        }
+
         /** @var Site $importedSite */
         $site = null;
         $xmlReader = new \XMLReader();
-        $xmlReader->open($pathAndFilename, null, LIBXML_PARSEHUGE);
+        if ($xmlReader->open($pathAndFilename, null, LIBXML_PARSEHUGE) === false) {
+            throw new NeosException(sprintf('Error: XMLReader could not open "%s".', $pathAndFilename), 1540934199);
+        }
 
         if ($this->workspaceRepository->findOneByName('live') === null) {
             $this->workspaceRepository->add(new Workspace('live'));
