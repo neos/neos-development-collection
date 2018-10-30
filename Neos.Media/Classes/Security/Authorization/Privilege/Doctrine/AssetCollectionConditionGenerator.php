@@ -33,7 +33,7 @@ class AssetCollectionConditionGenerator extends EntityConditionGenerator
      */
     public function isType($entityType)
     {
-        throw new InvalidPrivilegeException('The isType() operator must not be used in AssectCollection privilege matchers!', 1445941247);
+        throw new InvalidPrivilegeException('The isType() operator must not be used in AssetCollection privilege matchers!', 1445941247);
     }
 
     /**
