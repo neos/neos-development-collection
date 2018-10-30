@@ -76,6 +76,11 @@ trait NodeInterfaceProxy
         return $this->node->getDimensionSpacePoint();
     }
 
+    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->node->getOriginDimensionSpacePoint();
+    }
+
     public function getProperties(): PropertyCollectionInterface
     {
         return $this->node->getProperties();

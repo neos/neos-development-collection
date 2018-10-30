@@ -193,7 +193,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         $query = new SqlQueryBuilder();
         $query->addToQuery('
 -- ContentSubgraph::findChildNodes
-SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
+SELECT c.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeidentifier = :parentNodeIdentifier
@@ -230,7 +230,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
         } else {
             $query = '
 -- ContentSubgraph::findNodeByNodeAggregateIdentifier
-SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
+SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -294,7 +294,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
 
         $query = '
 -- ContentSubgraph::findReferencedNodes
-SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchyrelation sh
+SELECT d.*, dh.contentstreamidentifier, dh.name, dh.dimensionspacepoint FROM neos_contentgraph_hierarchyrelation sh
  INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint 
  INNER JOIN neos_contentgraph_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
  INNER JOIN neos_contentgraph_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
@@ -341,7 +341,7 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
 
         $query = '
 -- ContentSubgraph::findReferencingNodes
-SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchyrelation sh
+SELECT s.*, sh.contentstreamidentifier, sh.name, sh.dimensionspacepoint FROM neos_contentgraph_hierarchyrelation sh
  INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint 
  INNER JOIN neos_contentgraph_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
  INNER JOIN neos_contentgraph_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
@@ -398,7 +398,7 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchy
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             '
 -- ContentSubgraph::findParentNode
-SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
+SELECT p.*, h.contentstreamidentifier, hp.name, hp.dimensionspacepoint FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  INNER JOIN neos_contentgraph_hierarchyrelation hp ON hp.childnodeanchor = p.relationanchorpoint
@@ -441,7 +441,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             '
 -- ContentSubgraph::findParentNodeByNodeAggregateIdentifier
-SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
+SELECT p.*, h.contentstreamidentifier, hp.name, hp.dimensionspacepoint FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  INNER JOIN neos_contentgraph_hierarchyrelation hp ON hp.childnodeanchor = p.relationanchorpoint
@@ -536,7 +536,8 @@ SELECT c.* FROM neos_contentgraph_node p
 SELECT
     c.*,
     hc.name, 
-    hc.contentstreamidentifier
+    hc.contentstreamidentifier,
+    hc.dimensionspacepoint
 FROM
     neos_contentgraph_node p
 INNER JOIN neos_contentgraph_hierarchyrelation hc
@@ -579,7 +580,7 @@ ORDER BY hc.position LIMIT 1',
         NodeName $edgeName
     ): ?NodeInterface {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
+            'SELECT c.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeaggregateidentifier = :parentNodeAggregateIdentifier
@@ -660,7 +661,7 @@ ORDER BY hc.position LIMIT 1',
     protected function getSiblingBaseQuery(): string
     {
         return '
-  SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
+  SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint FROM neos_contentgraph_node n
   INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
   WHERE h.contentstreamidentifier = :contentStreamIdentifier AND h.dimensionspacepointhash = :dimensionSpacePointHash
   AND h.parentnodeanchor = (
@@ -688,7 +689,7 @@ ORDER BY hc.position LIMIT 1',
         foreach ($this->getDatabaseConnection()->executeQuery(
             '
 -- ContentSubgraph::findNodesByType
-SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
+SELECT n.*, h.name, h.position, h.dimensionspacepoint FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodetypename = :nodeTypeName
  AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -831,6 +832,7 @@ with recursive tree as (
      	n.*,
      	h.contentstreamidentifier,
      	h.name,
+     	h.dimensionspacepoint,
 
      	-- see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
      	CAST("ROOT" AS CHAR(50)) as parentNodeIdentifier,
@@ -854,6 +856,7 @@ union
         c.*,
         h.contentstreamidentifier,
         h.name,
+        h.dimensionspacepoint,
 
      	p.nodeidentifier as parentNodeIdentifier,
      	p.level + 1 as level,

@@ -68,18 +68,18 @@ final class NodeFactory
         $className = $this->getNodeInterfaceImplementationClassName($nodeType);
 
         if (!array_key_exists('dimensionspacepoint', $nodeRow)) {
-            throw new \Exception('The "dimensionspacepoint" property was not found in the $nodeRow; you need to include the "contentstreamidentifier" field in the SQL result.');
+            throw new \Exception('The "dimensionspacepoint" property was not found in the $nodeRow; you need to include the "dimensionspacepoint" field in the SQL result.');
         }
         if (!array_key_exists('contentstreamidentifier', $nodeRow)) {
             throw new \Exception('The "contentstreamidentifier" property was not found in the $nodeRow; you need to include the "contentstreamidentifier" field in the SQL result.');
         }
-        if (!array_key_exists('dimensionspacepoint', $nodeRow)) {
-            throw new \Exception('The "dimensionspacepoint" property was not found in the $nodeRow; you need to include the "dimensionspacepoint" field in the SQL result.');
+        if (!array_key_exists('origindimensionspacepoint', $nodeRow)) {
+            throw new \Exception('The "origindimensionspacepoint" property was not found in the $nodeRow; you need to include the "origindimensionspacepoint" field in the SQL result.');
         }
 
         $contentStreamIdentifier = new ContentStreamIdentifier($nodeRow['contentstreamidentifier']);
-        // FIXME Move to DimensionSpacePoint::fromJson
-        $dimensionSpacePoint = new DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true));
+        $dimensionSpacePoint = DimensionSpacePoint::fromJson($nodeRow['dimensionspacepoint']);
+        $originDimensionSpacePoint = DimensionSpacePoint::fromJson($nodeRow['origindimensionspacepoint']);
 
         $nodeIdentifier = new NodeIdentifier($nodeRow['nodeidentifier']);
 
@@ -99,6 +99,7 @@ final class NodeFactory
             $contentStreamIdentifier,
             $dimensionSpacePoint,
             new NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']),
+            $originDimensionSpacePoint,
             $nodeIdentifier,
             new NodeTypeName($nodeRow['nodetypename']),
             $nodeType,

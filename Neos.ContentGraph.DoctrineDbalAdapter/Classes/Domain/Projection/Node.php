@@ -41,12 +41,12 @@ class Node
     /**
      * @var array
      */
-    public $dimensionSpacePoint;
+    public $originDimensionSpacePoint;
 
     /**
      * @var string
      */
-    public $dimensionSpacePointHash;
+    public $originDimensionSpacePointHash;
 
     /**
      * @var array
@@ -76,8 +76,8 @@ class Node
      * @param NodeRelationAnchorPoint $relationAnchorPoint
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param array $dimensionSpacePoint
-     * @param string $dimensionSpacePointHash
+     * @param array $originDimensionSpacePoint
+     * @param string $originDimensionSpacePointHash
      * @param array $properties
      * @param NodeTypeName $nodeTypeName
      * @param bool $hidden
@@ -87,8 +87,8 @@ class Node
         NodeRelationAnchorPoint $relationAnchorPoint,
         NodeIdentifier $nodeIdentifier,
         ?NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ?array $dimensionSpacePoint,
-        ?string $dimensionSpacePointHash,
+        ?array $originDimensionSpacePoint,
+        ?string $originDimensionSpacePointHash,
         ?array $properties,
         NodeTypeName $nodeTypeName,
         bool $hidden = false,
@@ -97,8 +97,8 @@ class Node
         $this->relationAnchorPoint = $relationAnchorPoint;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->dimensionSpacePointHash = $dimensionSpacePointHash;
+        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
+        $this->originDimensionSpacePointHash = $originDimensionSpacePointHash;
         $this->properties = $properties;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeName = $nodeName;
@@ -114,8 +114,8 @@ class Node
             'relationanchorpoint' => (string) $this->relationAnchorPoint,
             'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
             'nodeidentifier' => (string) $this->nodeIdentifier,
-            'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
-            'dimensionspacepointhash' => (string) $this->dimensionSpacePointHash,
+            'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
+            'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
             'nodetypename' => (string) $this->nodeTypeName,
             'hidden' => (int)$this->hidden
@@ -127,8 +127,8 @@ class Node
         $databaseConnection->update('neos_contentgraph_node', [
             'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
             'nodeidentifier' => (string) $this->nodeIdentifier,
-            'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
-            'dimensionspacepointhash' => (string) $this->dimensionSpacePointHash,
+            'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
+            'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
             'nodetypename' => (string) $this->nodeTypeName,
             'hidden' => (int)$this->hidden
@@ -159,8 +159,8 @@ class Node
             new NodeRelationAnchorPoint($databaseRow['relationanchorpoint']),
             new NodeIdentifier($databaseRow['nodeidentifier']),
             $databaseRow['nodeaggregateidentifier'] ? new NodeAggregateIdentifier($databaseRow['nodeaggregateidentifier']) : null,
-            json_decode($databaseRow['dimensionspacepoint'], true),
-            $databaseRow['dimensionspacepointhash'],
+            json_decode($databaseRow['origindimensionspacepoint'], true),
+            $databaseRow['origindimensionspacepointhash'],
             json_decode($databaseRow['properties'], true),
             new NodeTypeName($databaseRow['nodetypename']),
             (bool)$databaseRow['hidden'],

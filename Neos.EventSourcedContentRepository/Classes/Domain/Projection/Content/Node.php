@@ -44,6 +44,11 @@ class Node implements NodeInterface
     protected $nodeAggregateIdentifier;
 
     /**
+     * @var DimensionSpacePoint
+     */
+    protected $originDimensionSpacePoint;
+
+    /**
      * @var NodeIdentifier
      */
     protected $nodeIdentifier;
@@ -78,6 +83,7 @@ class Node implements NodeInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeTypeName $nodeTypeName
      * @param NodeType $nodeType
@@ -85,11 +91,12 @@ class Node implements NodeInterface
      * @param bool $hidden
      * @param PropertyCollection $properties
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, bool $hidden, PropertyCollection $properties)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, bool $hidden, PropertyCollection $properties)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeType = $nodeType;
@@ -120,6 +127,14 @@ class Node implements NodeInterface
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
+    }
+
+    /**
+     * @return DimensionSpacePoint
+     */
+    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->originDimensionSpacePoint;
     }
 
     /**

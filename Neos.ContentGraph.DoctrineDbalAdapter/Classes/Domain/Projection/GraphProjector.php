@@ -161,7 +161,7 @@ class GraphProjector implements ProjectorInterface
      * @param NodeTypeName $nodeTypeName
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeIdentifier $parentNodeIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
      * @param array $propertyDefaultValuesAndTypes
      * @param NodeName $nodeName
@@ -173,7 +173,7 @@ class GraphProjector implements ProjectorInterface
         NodeTypeName $nodeTypeName,
         NodeIdentifier $nodeIdentifier,
         NodeIdentifier $parentNodeIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
+        DimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
         array $propertyDefaultValuesAndTypes,
         NodeName $nodeName
@@ -184,8 +184,8 @@ class GraphProjector implements ProjectorInterface
             $nodeRelationAnchorPoint,
             $nodeIdentifier,
             $nodeAggregateIdentifier,
-            $dimensionSpacePoint->jsonSerialize(),
-            $dimensionSpacePoint->getHash(),
+            $originDimensionSpacePoint->jsonSerialize(),
+            $originDimensionSpacePoint->getHash(),
             array_map(function (ContentRepository\ValueObject\PropertyValue $propertyValue) {
                 return $propertyValue->getValue();
             }, $propertyDefaultValuesAndTypes),
