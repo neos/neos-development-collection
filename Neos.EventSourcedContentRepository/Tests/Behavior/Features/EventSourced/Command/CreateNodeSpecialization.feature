@@ -29,7 +29,7 @@ Feature: Create node specialization
       | nodeAggregateIdentifier       | doc-agg-identifier                                                                                                                         | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document                                                                                                            |                         |
       | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                                                           | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"},{"market": "CH", "language":"gsw"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"},{"market": "CH", "language":"gsw"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | doc-identifier-de-de                                                                                                                       | Uuid                    |
       | parentNodeIdentifier          | rn-identifier                                                                                                                              | Uuid                    |
       | nodeName                      | document                                                                                                                                   |                         |
@@ -42,7 +42,7 @@ Feature: Create node specialization
       | nodeAggregateIdentifier       | cdoc-agg-identifier                                                                                                                        | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document                                                                                                            |                         |
       | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                                                           | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"},{"market": "CH", "language":"gsw"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"},{"market": "CH", "language":"gsw"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | cdoc-identifier-de-de                                                                                                                      | Uuid                    |
       | parentNodeIdentifier          | doc-identifier-de-de                                                                                                                       | Uuid                    |
       | nodeName                      | child-document                                                                                                                             |                         |
@@ -65,7 +65,7 @@ Feature: Create node specialization
       | nodeAggregateIdentifier       | otherdoc-agg-identifier            | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document    |                         |
       | dimensionSpacePoint           | {"market":"DE", "language":"de"}   | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"market":"DE", "language":"de"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"market":"DE", "language":"de"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | otherdoc-identifier-de-de          | Uuid                    |
       | parentNodeIdentifier          | rn-identifier                      | Uuid                    |
       | nodeName                      | other-document                     |                         |
@@ -125,7 +125,7 @@ Feature: Create node specialization
       | nodeAggregateIdentifier       | doc2-agg-identifier                                                                                     | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document                                                                         |                         |
       | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                        | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | doc2-identifier-de-de                                                                                   | Uuid                    |
       | parentNodeIdentifier          | rn-identifier                                                                                           | Uuid                    |
       | nodeName                      | document2                                                                                               |                         |
@@ -136,7 +136,7 @@ Feature: Create node specialization
       | nodeAggregateIdentifier       | cdoc2-agg-identifier                                                                                    | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document                                                                         |                         |
       | dimensionSpacePoint           | {"market":"DE", "language":"de"}                                                                        | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market": "DE", "language":"gsw"},{"market": "CH", "language":"de"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | cdoc2-identifier-de-de                                                                                  | Uuid                    |
       | parentNodeIdentifier          | doc2-identifier-de-de                                                                                   | Uuid                    |
       | nodeName                      | child-document2                                                                                         |                         |

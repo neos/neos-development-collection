@@ -40,7 +40,7 @@ Feature: Translate node in aggregate
       | nodeAggregateIdentifier       | c2037dc4-a20d-11e7-ba09-b3eb6d631979                                       |      |
       | nodeTypeName                  | unstructured                                                               |      |
       | dimensionSpacePoint           | {"language":"mul"}                                                         | json |
-      | visibleDimensionSpacePoints   | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] | json |
+      | visibleInDimensionSpacePoints   | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] | json |
       | nodeIdentifier                | ead94f26-a20d-11e7-8ecc-43aabe596a03                                       |      |
       | parentNodeIdentifier          | 5387cb08-2aaf-44dc-a8a1-483497aa0a03                                       |      |
       | nodeName                      | sites                                                                      |      |
@@ -54,7 +54,7 @@ Feature: Translate node in aggregate
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f   |      |
       | nodeTypeName                  | Neos.ContentRepository.Testing:Content |      |
       | dimensionSpacePoint           | {"language":"de"}                      | json |
-      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"ch"}]  | json |
+      | visibleInDimensionSpacePoints   | [{"language":"de"},{"language":"ch"}]  | json |
       | nodeIdentifier                | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81   |      |
       | parentNodeIdentifier          | ead94f26-a20d-11e7-8ecc-43aabe596a03   |      |
       | nodeName                      | text1                                  |      |
@@ -75,7 +75,7 @@ Feature: Translate node in aggregate
       | destinationNodeIdentifier       | 01831e48-a20c-11e7-851a-dfef4f55c64c |               |
       | destinationParentNodeIdentifier | ead94f26-a20d-11e7-8ecc-43aabe596a03 |               |
       | dimensionSpacePoint             | {"language":"en"}                    | json          |
-      | visibleDimensionSpacePoints     | [{"language":"en"}]                  | json          |
+      | visibleInDimensionSpacePoints     | [{"language":"en"}]                  | json          |
 
   Scenario: Translate node with "mul" parent and auto-created child nodes
     # Node /sites/home
@@ -85,7 +85,7 @@ Feature: Translate node in aggregate
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f                         |      |
       | nodeTypeName                  | Neos.ContentRepository.Testing:NodeWithAutoCreatedChildNodes |      |
       | dimensionSpacePoint           | {"language":"de"}                                            | json |
-      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"ch"}]                        | json |
+      | visibleInDimensionSpacePoints   | [{"language":"de"},{"language":"ch"}]                        | json |
       | nodeIdentifier                | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                         |      |
       | parentNodeIdentifier          | ead94f26-a20d-11e7-8ecc-43aabe596a03                         |      |
       | nodeName                      | home                                                         |      |
@@ -97,7 +97,7 @@ Feature: Translate node in aggregate
       | nodeAggregateIdentifier       | c7dff472-a35f-11e7-86d3-8f1201f8ad78   |      |
       | nodeTypeName                  | Neos.ContentRepository.Testing:SubNode |      |
       | dimensionSpacePoint           | {"language":"de"}                      | json |
-      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"ch"}]  | json |
+      | visibleInDimensionSpacePoints   | [{"language":"de"},{"language":"ch"}]  | json |
       | nodeIdentifier                | d527f9fe-a35f-11e7-a5e7-43351e1ec8d8   |      |
       | parentNodeIdentifier          | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81   |      |
       | nodeName                      | main                                   |      |
@@ -109,7 +109,7 @@ Feature: Translate node in aggregate
       | nodeAggregateIdentifier       | f06a0838-a35f-11e7-a124-13b6f0b1a336      |      |
       | nodeTypeName                  | Neos.ContentRepository.Testing:SubSubNode |      |
       | dimensionSpacePoint           | {"language":"de"}                         | json |
-      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"ch"}]     | json |
+      | visibleInDimensionSpacePoints   | [{"language":"de"},{"language":"ch"}]     | json |
       | nodeIdentifier                | f87b4c26-a35f-11e7-8914-6f1247f2215a      |      |
       | parentNodeIdentifier          | d527f9fe-a35f-11e7-a5e7-43351e1ec8d8      |      |
       | nodeName                      | foo                                       |      |
@@ -130,7 +130,7 @@ Feature: Translate node in aggregate
       | destinationNodeIdentifier       | 01831e48-a20c-11e7-851a-dfef4f55c64c |               |
       | destinationParentNodeIdentifier | ead94f26-a20d-11e7-8ecc-43aabe596a03 |               |
       | dimensionSpacePoint             | {"language":"en"}                    | json          |
-      | visibleDimensionSpacePoints     | [{"language":"en"}]                  | json          |
+      | visibleInDimensionSpacePoints     | [{"language":"en"}]                  | json          |
     And event at index 7 is of type "Neos.EventSourcedContentRepository:NodeInAggregateWasTranslated" with payload:
       | Key                             | Expected                             | AssertionType |
       | contentStreamIdentifier         | c75ae6a2-7254-4d42-a31b-a629e264069d |               |
@@ -139,7 +139,7 @@ Feature: Translate node in aggregate
 #      | destinationNodeIdentifier       | 01831e48-a20c-11e7-851a-dfef4f55c64c           |               |
       | destinationParentNodeIdentifier | 01831e48-a20c-11e7-851a-dfef4f55c64c |               |
       | dimensionSpacePoint             | {"language":"en"}                    | json          |
-      | visibleDimensionSpacePoints     | [{"language":"en"}]                  | json          |
+      | visibleInDimensionSpacePoints     | [{"language":"en"}]                  | json          |
     And event at index 8 is of type "Neos.EventSourcedContentRepository:NodeInAggregateWasTranslated" with payload:
       | Key                         | Expected                             | AssertionType |
       | contentStreamIdentifier     | c75ae6a2-7254-4d42-a31b-a629e264069d |               |
@@ -148,4 +148,4 @@ Feature: Translate node in aggregate
 #      | destinationNodeIdentifier       | 01831e48-a20c-11e7-851a-dfef4f55c64c           |               |
 #      | destinationParentNodeIdentifier | ead94f26-a20d-11e7-8ecc-43aabe596a03           |               |
       | dimensionSpacePoint         | {"language":"en"}                    | json          |
-      | visibleDimensionSpacePoints | [{"language":"en"}]                  | json          |
+      | visibleInDimensionSpacePoints | [{"language":"en"}]                  | json          |

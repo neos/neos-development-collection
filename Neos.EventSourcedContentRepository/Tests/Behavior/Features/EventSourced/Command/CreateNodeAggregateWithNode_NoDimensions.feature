@@ -45,7 +45,7 @@ Feature: Create node aggregate with node
       | nodeAggregateIdentifier                  | 35411439-94d1-4bd4-8fac-0646856c6a1f                            |               |
       | nodeTypeName                             | Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes |               |
       | dimensionSpacePoint                      | {}                                                              | json          |
-      | visibleDimensionSpacePoints              | [{}]                                                            | json          |
+      | visibleInDimensionSpacePoints              | [{}]                                                            | json          |
       | nodeIdentifier                           | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                            |               |
       | parentNodeIdentifier                     | 5387cb08-2aaf-44dc-a8a1-483497aa0a03                            |               |
       | nodeName                                 | foo                                                             |               |
@@ -91,7 +91,7 @@ Feature: Create node aggregate with node
       | nodeAggregateIdentifier                  | 35411439-94d1-4bd4-8fac-0646856c6a1f                         |               |
       | nodeTypeName                             | Neos.ContentRepository.Testing:NodeWithAutoCreatedChildNodes |               |
       | dimensionSpacePoint                      | {}                                                           | json          |
-      | visibleDimensionSpacePoints              | [{}]                                                         | json          |
+      | visibleInDimensionSpacePoints              | [{}]                                                         | json          |
       | nodeIdentifier                           | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                         |               |
       | parentNodeIdentifier                     | 5387cb08-2aaf-44dc-a8a1-483497aa0a03                         |               |
       | nodeName                                 | foo                                                          |               |
@@ -102,7 +102,7 @@ Feature: Create node aggregate with node
       | contentStreamIdentifier     | c75ae6a2-7254-4d42-a31b-a629e264069d   |               |
       | nodeTypeName                | Neos.ContentRepository.Testing:SubNode |               |
       | dimensionSpacePoint         | {}                                     | json          |
-      | visibleDimensionSpacePoints | [{}]                                   | json          |
+      | visibleInDimensionSpacePoints | [{}]                                   | json          |
       | parentNodeIdentifier        | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81   |               |
       | nodeName                    | main                                   |               |
     And event at index 4 is of type "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" with payload:
@@ -111,4 +111,4 @@ Feature: Create node aggregate with node
       | nodeName                    | foo                                       |               |
       | nodeTypeName                | Neos.ContentRepository.Testing:SubSubNode |               |
       | dimensionSpacePoint         | {}                                        | json          |
-      | visibleDimensionSpacePoints | [{}]                                      | json          |
+      | visibleInDimensionSpacePoints | [{}]                                      | json          |

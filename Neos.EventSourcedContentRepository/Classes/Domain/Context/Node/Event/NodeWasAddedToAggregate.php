@@ -53,7 +53,7 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
      *
      * @var DimensionSpacePointSet
      */
-    private $visibleDimensionSpacePoints;
+    private $visibleInDimensionSpacePoints;
 
     /**
      * @var NodeIdentifier
@@ -84,7 +84,7 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeName $nodeTypeName
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
+     * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeIdentifier $parentNodeIdentifier
      * @param NodeName $nodeName
@@ -96,7 +96,7 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
         DimensionSpacePoint $dimensionSpacePoint,
-        DimensionSpacePointSet $visibleDimensionSpacePoints,
+        DimensionSpacePointSet $visibleInDimensionSpacePoints,
         NodeIdentifier $nodeIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         NodeName $nodeName,
@@ -106,7 +106,7 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->visibleDimensionSpacePoints = $visibleDimensionSpacePoints;
+        $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeName = $nodeName;
@@ -148,9 +148,9 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
     /**
      * @return DimensionSpacePointSet
      */
-    public function getVisibleDimensionSpacePoints(): DimensionSpacePointSet
+    public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
     {
-        return $this->visibleDimensionSpacePoints;
+        return $this->visibleInDimensionSpacePoints;
     }
 
     /**
@@ -196,7 +196,7 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->dimensionSpacePoint,
-            $this->visibleDimensionSpacePoints,
+            $this->visibleInDimensionSpacePoints,
             $this->nodeIdentifier,
             $this->parentNodeIdentifier,
             $this->nodeName,

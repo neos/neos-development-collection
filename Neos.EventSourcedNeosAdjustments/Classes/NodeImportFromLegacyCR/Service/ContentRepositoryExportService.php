@@ -232,7 +232,7 @@ class ContentRepositoryExportService
         NodePath $nodePath
     )
     {
-        $visibleDimensionSpacePoints = $this->interDimensionalFallbackGraph->getSpecializationSet($dimensionSpacePoint, true, $excludedSet);
+        $visibleInDimensionSpacePoints = $this->interDimensionalFallbackGraph->getSpecializationSet($dimensionSpacePoint, true, $excludedSet);
         $this->recordNodeIdentifier($nodePath, $dimensionSpacePoint, $nodeIdentifier);
 
         if (isset($this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier])) {
@@ -242,7 +242,7 @@ class ContentRepositoryExportService
                 $nodeAggregateIdentifier,
                 $nodeTypeName,
                 $dimensionSpacePoint,
-                $visibleDimensionSpacePoints,
+                $visibleInDimensionSpacePoints,
                 $nodeIdentifier,
                 $parentNodeIdentifier,
                 $nodeName,
@@ -255,7 +255,7 @@ class ContentRepositoryExportService
                 $nodeAggregateIdentifier,
                 $nodeTypeName,
                 $dimensionSpacePoint,
-                $visibleDimensionSpacePoints,
+                $visibleInDimensionSpacePoints,
                 $nodeIdentifier,
                 $parentNodeIdentifier,
                 $nodeName,
@@ -267,7 +267,7 @@ class ContentRepositoryExportService
         foreach ($propertyReferences as $propertyName => $references) {
             $this->eventPublisher->publish($this->contentStreamName('NodeAggregate:' . $nodeIdentifier), new NodeReferencesWereSet(
                 $this->contentStreamIdentifier,
-                $visibleDimensionSpacePoints,
+                $visibleInDimensionSpacePoints,
                 new NodeIdentifier($nodeIdentifier),
                 new PropertyName($propertyName),
                 $references

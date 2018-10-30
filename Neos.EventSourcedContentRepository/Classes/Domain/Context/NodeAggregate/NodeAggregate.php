@@ -114,9 +114,9 @@ final class NodeAggregate
         return new DimensionSpacePointSet($occupiedDimensionSpacePoints);
     }
 
-    public function getVisibleDimensionSpacePoints(): DimensionSpacePointSet
+    public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
     {
-        $visibleDimensionSpacePoints = [];
+        $visibleInDimensionSpacePoints = [];
 
         $eventStream = $this->getEventStream();
         if ($eventStream) {
@@ -125,20 +125,20 @@ final class NodeAggregate
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
                         /** @var NodeAggregateWithNodeWasCreated $event */
-                        foreach ($event->getVisibleDimensionSpacePoints()->getPoints() as $visibleDimensionSpacePoint) {
-                            $visibleDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
+                        foreach ($event->getVisibleInDimensionSpacePoints()->getPoints() as $visibleDimensionSpacePoint) {
+                            $visibleInDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
                         }
                         break;
                     case Event\NodeSpecializationWasCreated::class:
                         /** @var Event\NodeSpecializationWasCreated $event */
                         foreach ($event->getSpecializationVisibility()->getPoints() as $visibleDimensionSpacePoint) {
-                            $visibleDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
+                            $visibleInDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
                         }
                         break;
                     case Event\NodeGeneralizationWasCreated::class:
                         /** @var Event\NodeGeneralizationWasCreated $event */
                         foreach ($event->getGeneralizationVisibility()->getPoints() as $visibleDimensionSpacePoint) {
-                            $visibleDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
+                            $visibleInDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
                         }
                         break;
                     default:
@@ -147,7 +147,7 @@ final class NodeAggregate
             }
         }
 
-        return new DimensionSpacePointSet($visibleDimensionSpacePoints);
+        return new DimensionSpacePointSet($visibleInDimensionSpacePoints);
     }
 
     public function isDimensionSpacePointOccupied(DimensionSpacePoint $dimensionSpacePoint): bool

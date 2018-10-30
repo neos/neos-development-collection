@@ -43,7 +43,7 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
      *
      * @var DimensionSpacePointSet
      */
-    private $visibleDimensionSpacePoints;
+    private $visibleInDimensionSpacePoints;
 
     /**
      * @var UserIdentifier
@@ -56,15 +56,15 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
+     * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
      * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, DimensionSpacePointSet $visibleDimensionSpacePoints, UserIdentifier $initiatingUserIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, DimensionSpacePointSet $visibleInDimensionSpacePoints, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeTypeName = $nodeTypeName;
-        $this->visibleDimensionSpacePoints = $visibleDimensionSpacePoints;
+        $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
@@ -98,9 +98,9 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     /**
      * @return DimensionSpacePointSet
      */
-    public function getVisibleDimensionSpacePoints(): DimensionSpacePointSet
+    public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
     {
-        return $this->visibleDimensionSpacePoints;
+        return $this->visibleInDimensionSpacePoints;
     }
 
     /**
@@ -121,7 +121,7 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
             $targetContentStream,
             $this->nodeIdentifier,
             $this->nodeTypeName,
-            $this->visibleDimensionSpacePoints,
+            $this->visibleInDimensionSpacePoints,
             $this->initiatingUserIdentifier
         );
     }

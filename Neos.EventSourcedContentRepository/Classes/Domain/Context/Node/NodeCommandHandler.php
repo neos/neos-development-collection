@@ -160,14 +160,14 @@ final class NodeCommandHandler
             }
         }
 
-        $visibleDimensionSpacePoints = $this->getVisibleDimensionSpacePoints($dimensionSpacePoint);
+        $visibleInDimensionSpacePoints = $this->getVisibleInDimensionSpacePoints($dimensionSpacePoint);
 
         $events[] = new NodeAggregateWithNodeWasCreated(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier,
             $command->getNodeTypeName(),
             $dimensionSpacePoint,
-            $visibleDimensionSpacePoints,
+            $visibleInDimensionSpacePoints,
             $command->getNodeIdentifier(),
             $parentNodeIdentifier,
             $command->getNodeName(),
@@ -261,7 +261,7 @@ final class NodeCommandHandler
             }
         }
 
-        $visibleDimensionSpacePoints = $this->calculateVisibilityForNewNodeInNodeAggregate(
+        $visibleInDimensionSpacePoints = $this->calculateVisibilityForNewNodeInNodeAggregate(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier,
             $dimensionSpacePoint
@@ -272,7 +272,7 @@ final class NodeCommandHandler
             $nodeAggregateIdentifier,
             $nodeTypeName,
             $dimensionSpacePoint,
-            $visibleDimensionSpacePoints,
+            $visibleInDimensionSpacePoints,
             $nodeIdentifier,
             $parentNodeIdentifier,
             $command->getNodeName(),
@@ -534,13 +534,13 @@ final class NodeCommandHandler
     protected function getMoveNodeMappings(ReadOnlyNodeInterface $node, MoveNode $command): array
     {
         $nodeMoveMappings = [];
-        $visibleDimensionSpacePoints = $this->contentGraph->findVisibleDimensionSpacePointsOfNode($node);
-        foreach ($visibleDimensionSpacePoints->getPoints() as $visibleDimensionSpacePoint) {
+        $visibleInDimensionSpacePoints = $this->contentGraph->findVisibleDimensionSpacePointsOfNode($node);
+        foreach ($visibleInDimensionSpacePoints->getPoints() as $visibleDimensionSpacePoint) {
             $variantSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $visibleDimensionSpacePoint);
 
             $newParentVariant = $command->getNewParentNodeAggregateIdentifier() ? $variantSubgraph->findNodeByNodeAggregateIdentifier($command->getNewParentNodeAggregateIdentifier()) : null;
             $newSucceedingSiblingVariant = $command->getNewSucceedingSiblingNodeAggregateIdentifier() ? $variantSubgraph->findNodeByNodeAggregateIdentifier($command->getNewSucceedingSiblingNodeAggregateIdentifier()) : null;
-            $mappingDimensionSpacePointSet = $newParentVariant ? $this->contentGraph->findVisibleDimensionSpacePointsOfNode($newParentVariant) : $visibleDimensionSpacePoints;
+            $mappingDimensionSpacePointSet = $newParentVariant ? $this->contentGraph->findVisibleDimensionSpacePointsOfNode($newParentVariant) : $visibleInDimensionSpacePoints;
 
             $nodeMoveMappings[] = new NodeMoveMapping(
                 $node->getNodeIdentifier(),
@@ -715,7 +715,7 @@ final class NodeCommandHandler
             $destinationParentNodeIdentifier = $destinationParentNode->getNodeIdentifier();
         }
 
-        $dimensionSpacePointSet = $this->getVisibleDimensionSpacePoints($dimensionSpacePoint);
+        $dimensionSpacePointSet = $this->getVisibleInDimensionSpacePoints($dimensionSpacePoint);
 
         $events[] = new NodeInAggregateWasTranslated(
             $contentStreamIdentifier,
@@ -778,7 +778,7 @@ final class NodeCommandHandler
      * @return DimensionSpacePointSet
      * @throws DimensionSpacePointNotFound
      */
-    private function getVisibleDimensionSpacePoints($dimensionSpacePoint): DimensionSpacePointSet
+    private function getVisibleInDimensionSpacePoints($dimensionSpacePoint): DimensionSpacePointSet
     {
         return $this->interDimensionalVariationGraph->getSpecializationSet($dimensionSpacePoint);
     }

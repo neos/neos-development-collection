@@ -39,7 +39,7 @@ Feature: Remove Nodes from Aggregate
       | nodeAggregateIdentifier       | doc-agg-identifier                     | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document        |                         |
       | dimensionSpacePoint           | {"language":"de"}                      | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | doc-identifier-de                      | Uuid                    |
       | parentNodeIdentifier          | rn-identifier                          | Uuid                    |
       | nodeName                      | document                               |                         |
@@ -52,7 +52,7 @@ Feature: Remove Nodes from Aggregate
       | nodeAggregateIdentifier       | cdoc-agg-identifier                    | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document        |                         |
       | dimensionSpacePoint           | {"language":"de"}                      | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | cdoc-identifier-de                     | Uuid                    |
       | parentNodeIdentifier          | doc-identifier-de                      | Uuid                    |
       | nodeName                      | child-document                         |                         |
@@ -66,7 +66,7 @@ Feature: Remove Nodes from Aggregate
       | nodeAggregateIdentifier       | gcdoc-agg-identifier                   | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document        |                         |
       | dimensionSpacePoint           | {"language":"de"}                      | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | gcdoc-identifier-de                    | Uuid                    |
       | parentNodeIdentifier          | cdoc-identifier-de                     | Uuid                    |
       | nodeName                      | grandchild-document                    |                         |

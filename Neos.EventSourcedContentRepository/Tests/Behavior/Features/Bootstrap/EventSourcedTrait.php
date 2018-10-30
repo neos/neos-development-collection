@@ -149,8 +149,8 @@ trait EventSourcedTrait
         if (empty($eventPayload['dimensionSpacePoint'])) {
             $eventPayload['dimensionSpacePoint'] = [];
         }
-        if (empty($eventPayload['visibleDimensionSpacePoints'])) {
-            $eventPayload['visibleDimensionSpacePoints'] = [[]];
+        if (empty($eventPayload['visibleInDimensionSpacePoints'])) {
+            $eventPayload['visibleInDimensionSpacePoints'] = [[]];
         }
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));

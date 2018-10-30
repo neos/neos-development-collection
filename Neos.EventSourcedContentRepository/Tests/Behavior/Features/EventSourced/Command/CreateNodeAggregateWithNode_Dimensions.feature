@@ -49,7 +49,7 @@ Feature: Create node aggregate with node
       | nodeAggregateIdentifier                  | 35411439-94d1-4bd4-8fac-0646856c6a1f                                             |               |
       | nodeTypeName                             | Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes |               |
       | dimensionSpacePoint                      | {"language":"de"}                                               | json          |
-      | visibleDimensionSpacePoints              | [{"language":"de"},{"language":"ch"}]                           | json          |
+      | visibleInDimensionSpacePoints              | [{"language":"de"},{"language":"ch"}]                           | json          |
       | nodeIdentifier                           | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                                             |               |
       | parentNodeIdentifier                     | 5387cb08-2aaf-44dc-a8a1-483497aa0a03                                             |               |
       | nodeName                                 | foo                                                                              |               |

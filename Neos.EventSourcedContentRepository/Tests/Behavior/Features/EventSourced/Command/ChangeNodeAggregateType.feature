@@ -41,7 +41,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | parent-agg-identifier                         | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:ParentNodeType |                        |
       | dimensionSpacePoint           | {"language":"de"}                             | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]      | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]      | DimensionSpacePointSet |
       | nodeIdentifier                | parent-identifier-de                          | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                                 | Uuid                   |
       | nodeName                      | parent                                        |                        |
@@ -71,7 +71,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
       | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
       | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
       | parentNodeIdentifier          | parent-identifier-de                     | Uuid                   |
       | nodeName                      | nodea                                    |                        |
@@ -103,7 +103,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | auto-agg-identifier                        | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated |                        |
       | dimensionSpacePoint           | {"language": "de"}                         | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
       | nodeIdentifier                | auto-identifier-de                         | Uuid                   |
       | parentNodeIdentifier          | parent-identifier-de                       | Uuid                   |
       | nodeName                      | autocreated                                |                        |
@@ -114,7 +114,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
       | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
       | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
       | parentNodeIdentifier          | auto-identifier-de                       | Uuid                   |
       | nodeName                      | nodea                                    |                        |
@@ -142,7 +142,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | auto-agg-identifier                        | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated |                        |
       | dimensionSpacePoint           | {"language": "de"}                         | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
       | nodeIdentifier                | auto-identifier-de                         | Uuid                   |
       | parentNodeIdentifier          | parent-identifier-de                       | Uuid                   |
       | nodeName                      | autocreated                                |                        |
@@ -170,7 +170,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
       | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
       | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
       | parentNodeIdentifier          | parent-identifier-de                     | Uuid                   |
       | nodeName                      | nodea                                    |                        |
@@ -210,7 +210,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | auto-agg-identifier                        | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated |                        |
       | dimensionSpacePoint           | {"language": "de"}                         | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
       | nodeIdentifier                | auto-identifier-de                         | Uuid                   |
       | parentNodeIdentifier          | parent-identifier-de                       | Uuid                   |
       | nodeName                      | autocreated                                |                        |
@@ -221,7 +221,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
       | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
       | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
       | parentNodeIdentifier          | auto-identifier-de                       | Uuid                   |
       | nodeName                      | nodea                                    |                        |
@@ -241,7 +241,7 @@ Feature: Change node aggregate type
   #    | nodeAggregateIdentifier                  | nodea-agg-identifier                                                                 | Uuid                   |
   #    | nodeTypeName                             | Neos.ContentRepository.Testing:NodeTypeA                                             |                        |
   #    | dimensionSpacePoint                      | {"language":"de"}                                                                    | DimensionSpacePoint    |
-  #    | visibleDimensionSpacePoints              | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} | DimensionSpacePointSet |
+  #    | visibleInDimensionSpacePoints              | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} | DimensionSpacePointSet |
   #    | nodeIdentifier                           | nodea-identifier-de                                                                  | Uuid                   |
   #    | parentNodeIdentifier                     | parent-identifier                                                                    | Uuid                   |
   #    | nodeName                                 | nodea                                                                                |                        |

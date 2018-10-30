@@ -28,7 +28,7 @@ Feature: Create node generalization
       | nodeAggregateIdentifier       | doc-agg-identifier                  | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document     |                         |
       | dimensionSpacePoint           | {"market":"CH", "language":"gsw"}   | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | doc-identifier-ch-gsw               | Uuid                    |
       | parentNodeIdentifier          | rn-identifier                       | Uuid                    |
       | nodeName                      | document                            |                         |
@@ -41,7 +41,7 @@ Feature: Create node generalization
       | nodeAggregateIdentifier       | cdoc-agg-identifier                 | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document     |                         |
       | dimensionSpacePoint           | {"market":"CH", "language":"gsw"}   | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | cdoc-identifier-ch-gsw              | Uuid                    |
       | parentNodeIdentifier          | doc-identifier-ch-gsw               | Uuid                    |
       | nodeName                      | child-document                      |                         |

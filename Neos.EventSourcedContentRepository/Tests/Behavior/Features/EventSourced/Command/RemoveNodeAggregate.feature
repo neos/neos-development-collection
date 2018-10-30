@@ -26,7 +26,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateIdentifier       | doc-agg-identifier                     | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document        |                         |
       | dimensionSpacePoint           | {"language":"de"}                      | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | doc-identifier-de                      | Uuid                    |
       | parentNodeIdentifier          | rn-identifier                          | Uuid                    |
       | nodeName                      | document                               |                         |
@@ -39,7 +39,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateIdentifier       | cdoc-agg-identifier                    | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document        |                         |
       | dimensionSpacePoint           | {"language":"de"}                      | DimensionSpacePoint     |
-      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | cdoc-identifier-de                     | Uuid                    |
       | parentNodeIdentifier          | doc-identifier-de                      | Uuid                    |
       | nodeName                      | child-document                         |                         |

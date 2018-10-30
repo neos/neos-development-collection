@@ -56,7 +56,7 @@ class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossCont
      *
      * @var DimensionSpacePointSet
      */
-    private $visibleDimensionSpacePoints;
+    private $visibleInDimensionSpacePoints;
 
     /**
      * NodeInAggregateWasTranslated constructor.
@@ -66,7 +66,7 @@ class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossCont
      * @param NodeIdentifier $destinationNodeIdentifier
      * @param NodeIdentifier $destinationParentNodeIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
+     * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -74,14 +74,14 @@ class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossCont
         NodeIdentifier $destinationNodeIdentifier,
         NodeIdentifier $destinationParentNodeIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        DimensionSpacePointSet $visibleDimensionSpacePoints
+        DimensionSpacePointSet $visibleInDimensionSpacePoints
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->sourceNodeIdentifier = $sourceNodeIdentifier;
         $this->destinationNodeIdentifier = $destinationNodeIdentifier;
         $this->destinationParentNodeIdentifier = $destinationParentNodeIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->visibleDimensionSpacePoints = $visibleDimensionSpacePoints;
+        $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
     }
 
     /**
@@ -127,9 +127,9 @@ class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossCont
     /**
      * @return DimensionSpacePointSet
      */
-    public function getVisibleDimensionSpacePoints(): DimensionSpacePointSet
+    public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
     {
-        return $this->visibleDimensionSpacePoints;
+        return $this->visibleInDimensionSpacePoints;
     }
 
     /**
@@ -144,7 +144,7 @@ class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossCont
             $this->destinationNodeIdentifier,
             $this->destinationParentNodeIdentifier,
             $this->dimensionSpacePoint,
-            $this->visibleDimensionSpacePoints
+            $this->visibleInDimensionSpacePoints
         );
     }
 }

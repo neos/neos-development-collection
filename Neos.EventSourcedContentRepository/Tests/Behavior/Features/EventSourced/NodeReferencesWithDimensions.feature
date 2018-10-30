@@ -36,7 +36,7 @@ Feature: Node References with Dimensions
       | nodeAggregateIdentifier     | source-nodeAgg-identifier                 | Uuid                   |
       | nodeTypeName                | Neos.ContentRepository:NodeWithReferences |                        |
       | dimensionSpacePoint         | {"language": "de"}                        | json                   |
-      | visibleDimensionSpacePoints | [{"language": "de"},{"language": "ch"}]   | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "ch"}]   | DimensionSpacePointSet |
       | nodeIdentifier              | source-node-identifier                    | Uuid                   |
       | parentNodeIdentifier        | rn-identifier                             | Uuid                   |
       | nodeName                    | dest                                      |                        |
@@ -48,7 +48,7 @@ Feature: Node References with Dimensions
       | nodeAggregateIdentifier     | dest-nodeAgg-identifier                                                        | Uuid                   |
       | nodeTypeName                | Neos.ContentRepository:NodeWithReferences                                      |                        |
       | dimensionSpacePoint         | {"language": "mul"}                                                            | json                   |
-      | visibleDimensionSpacePoints | [{"language": "de"},{"language": "en"},{"language": "ch"},{"language": "mul"}] | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "en"},{"language": "ch"},{"language": "mul"}] | DimensionSpacePointSet |
       | nodeIdentifier              | dest-node-identifier                                                           | Uuid                   |
       | parentNodeIdentifier        | rn-identifier                                                                  | Uuid                   |
       | nodeName                    | dest                                                                           |                        |

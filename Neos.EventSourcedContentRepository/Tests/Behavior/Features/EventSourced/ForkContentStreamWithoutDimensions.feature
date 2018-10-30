@@ -23,7 +23,7 @@ Feature: ForkContentStream Without Dimensions
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f                            |                        |
       | nodeTypeName                  | Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes |                        |
       | dimensionSpacePoint           | []                                                              | DimensionSpacePoint    |
-      | visibleDimensionSpacePoints   | [{}]                                                            | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints   | [{}]                                                            | DimensionSpacePointSet |
       | nodeIdentifier                | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                            |                        |
       | parentNodeIdentifier          | 5387cb08-2aaf-44dc-a8a1-483497aa0a03                            |                        |
       | nodeName                      | foo                                                             |                        |

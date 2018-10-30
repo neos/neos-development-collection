@@ -105,7 +105,7 @@ class GraphProjector implements ProjectorInterface
                 null,
                 $node->nodeName,
                 $event->getContentStreamIdentifier(),
-                $event->getVisibleDimensionSpacePoints()
+                $event->getVisibleInDimensionSpacePoints()
             );
         });
     }
@@ -124,7 +124,7 @@ class GraphProjector implements ProjectorInterface
                 $event->getNodeIdentifier(),
                 $event->getParentNodeIdentifier(),
                 $event->getDimensionSpacePoint(),
-                $event->getVisibleDimensionSpacePoints(),
+                $event->getVisibleInDimensionSpacePoints(),
                 $event->getPropertyDefaultValuesAndTypes(),
                 $event->getNodeName()
             );
@@ -148,7 +148,7 @@ class GraphProjector implements ProjectorInterface
                 $event->getNodeIdentifier(),
                 $event->getParentNodeIdentifier(),
                 $event->getDimensionSpacePoint(),
-                $event->getVisibleDimensionSpacePoints(),
+                $event->getVisibleInDimensionSpacePoints(),
                 $event->getPropertyDefaultValuesAndTypes(),
                 $event->getNodeName()
             );
@@ -162,7 +162,7 @@ class GraphProjector implements ProjectorInterface
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeIdentifier $parentNodeIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
+     * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
      * @param array $propertyDefaultValuesAndTypes
      * @param NodeName $nodeName
      * @throws \Doctrine\DBAL\DBALException
@@ -174,7 +174,7 @@ class GraphProjector implements ProjectorInterface
         NodeIdentifier $nodeIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        DimensionSpacePointSet $visibleDimensionSpacePoints,
+        DimensionSpacePointSet $visibleInDimensionSpacePoints,
         array $propertyDefaultValuesAndTypes,
         NodeName $nodeName
     )
@@ -193,11 +193,11 @@ class GraphProjector implements ProjectorInterface
         );
 
         // reconnect parent relations
-        $missingParentRelations = $visibleDimensionSpacePoints->getPoints();
+        $missingParentRelations = $visibleInDimensionSpacePoints->getPoints();
         $existingParentRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier,
-            $visibleDimensionSpacePoints
+            $visibleInDimensionSpacePoints
         );
         foreach ($existingParentRelations as $existingParentRelation) {
             $existingParentRelation->assignNewChildNode($nodeRelationAnchorPoint, $this->getDatabaseConnection());
@@ -229,7 +229,7 @@ class GraphProjector implements ProjectorInterface
         $existingChildRelations = $this->projectionContentGraph->findOutboundHierarchyRelationsForNodeAggregate(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier,
-            $visibleDimensionSpacePoints
+            $visibleInDimensionSpacePoints
         );
         foreach ($existingChildRelations as $existingChildRelation) {
             $existingChildRelation->assignNewParentNode($nodeRelationAnchorPoint, $this->getDatabaseConnection());
@@ -563,7 +563,7 @@ class GraphProjector implements ProjectorInterface
                 null,
                 $sourceNode->nodeName,
                 $event->getContentStreamIdentifier(),
-                $event->getVisibleDimensionSpacePoints()
+                $event->getVisibleInDimensionSpacePoints()
             );
         });
     }

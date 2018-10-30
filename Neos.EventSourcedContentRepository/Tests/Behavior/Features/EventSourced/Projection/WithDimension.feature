@@ -20,7 +20,7 @@ Feature: Reading of our Graph Projection
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f                            |                        |
       | nodeTypeName                  | Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes |                        |
       | dimensionSpacePoint           | {"language": "de"}                                              | json                   |
-      | visibleDimensionSpacePoints   | [{"language": "de"},{"language": "mul"}]                        | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "mul"}]                        | DimensionSpacePointSet |
       | nodeIdentifier                | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                            |                        |
       | parentNodeIdentifier          | 5387cb08-2aaf-44dc-a8a1-483497aa0a03                            |                        |
       | nodeName                      | foo                                                             |                        |
@@ -49,7 +49,7 @@ Feature: Reading of our Graph Projection
       | nodeAggregateIdentifier       | c2037dc4-a20d-11e7-ba09-b3eb6d631979                                       |      |
       | nodeTypeName                  | unstructured                                                               |      |
       | dimensionSpacePoint           | {"language":"mul"}                                                         | json |
-      | visibleDimensionSpacePoints   | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] | json |
+      | visibleInDimensionSpacePoints   | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] | json |
       | nodeIdentifier                | ead94f26-a20d-11e7-8ecc-43aabe596a03                                       |      |
       | parentNodeIdentifier          | 5387cb08-2aaf-44dc-a8a1-483497aa0a03                                       |      |
       | nodeName                      | sites                                                                      |      |
@@ -61,7 +61,7 @@ Feature: Reading of our Graph Projection
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f   |      |
       | nodeTypeName                  | Neos.ContentRepository.Testing:Content |      |
       | dimensionSpacePoint           | {"language":"de"}                      | json |
-      | visibleDimensionSpacePoints   | [{"language":"de"},{"language":"ch"}]  | json |
+      | visibleInDimensionSpacePoints   | [{"language":"de"},{"language":"ch"}]  | json |
       | nodeIdentifier                | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81   |      |
       | parentNodeIdentifier          | ead94f26-a20d-11e7-8ecc-43aabe596a03   |      |
       | nodeName                      | text1                                  |      |
@@ -74,7 +74,7 @@ Feature: Reading of our Graph Projection
       | destinationNodeIdentifier       | 01831e48-a20c-11e7-851a-dfef4f55c64c |      |
       | destinationParentNodeIdentifier | ead94f26-a20d-11e7-8ecc-43aabe596a03 |      |
       | dimensionSpacePoint             | {"language":"en"}                    | json |
-      | visibleDimensionSpacePoints     | [{"language":"en"}]                  | json |
+      | visibleInDimensionSpacePoints     | [{"language":"en"}]                  | json |
 
     When the graph projection is fully up to date
     And I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {"language": "en"}

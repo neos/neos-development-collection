@@ -231,7 +231,7 @@ final class NodeAggregateCommandHandler
                 $command->getSourceDimensionSpacePoint(),
                 $command->getGeneralizationIdentifier(),
                 $command->getTargetDimensionSpacePoint(),
-                $this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint(), true, $nodeAggregate->getVisibleDimensionSpacePoints())
+                $this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint(), true, $nodeAggregate->getVisibleInDimensionSpacePoints())
             );
 
             $this->nodeEventPublisher->publish($nodeAggregate->getStreamName(), $event);
