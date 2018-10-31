@@ -61,10 +61,10 @@ class AssetProxiesController extends ActionController
     /**
      * @var array
      */
-    protected $viewFormatToObjectNameMap = array(
+    protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
         'json' => AssetJsonView::class
-    );
+    ];
 
     /**
      * A list of IANA media types which are supported by this controller
@@ -72,10 +72,10 @@ class AssetProxiesController extends ActionController
      * @var array
      * @see http://www.iana.org/assignments/media-types/index.html
      */
-    protected $supportedMediaTypes = array(
+    protected $supportedMediaTypes = [
         'text/html',
         'application/json'
-    );
+    ];
 
     /**
      * @param ViewInterface $view
