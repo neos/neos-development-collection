@@ -214,9 +214,9 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
      * Returns TRUE if the node has a inaccessible parent.
      *
      * @param NodeInterface $node
-     * @return boolean
+     * @return bool
      */
-    protected function isNodeParentHidden(NodeInterface $node)
+    protected function isNodeParentHidden(NodeInterface $node): bool
     {
         $rootNode = $node->getContext()->getRootNode();
         $nodesOnPath = $node->getContext()->getNodesOnPath($rootNode, $node);
