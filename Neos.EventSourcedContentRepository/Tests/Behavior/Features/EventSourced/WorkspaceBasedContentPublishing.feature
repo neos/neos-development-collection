@@ -34,11 +34,12 @@ Feature: Workspace based content publishing
       | nodeName                | foo                                    |      |
 
     When the command "SetNodeProperty" is executed with payload:
-      | Key                     | Value                                | Type |
-      | contentStreamIdentifier | cs-identifier                        | Uuid |
-      | nodeIdentifier          | node-identifier                      | Uuid |
-      | propertyName            | text                                 |      |
-      | value                   | {"value":"Original","type":"string"} | json |
+      | Key                       | Value                                | Type                |
+      | contentStreamIdentifier   | cs-identifier                        | Uuid                |
+      | nodeAggregateIdentifier   | na-identifier                        | Uuid                |
+      | originDimensionSpacePoint | {}                                   | DimensionSpacePoint |
+      | propertyName              | text                                 |                     |
+      | value                     | {"value":"Original","type":"string"} | json                |
 
     And the command CreateWorkspace is executed with payload:
       | Key                     | Value           | Type |
@@ -87,11 +88,12 @@ Feature: Workspace based content publishing
   Scenario: modify the property in the nested workspace and publish afterwards works
 
     When the command "SetNodeProperty" is executed with payload:
-      | Key                     | Value                                | Type |
-      | contentStreamIdentifier | cs-2-identifier                      | Uuid |
-      | nodeIdentifier          | node-identifier                      | Uuid |
-      | propertyName            | text                                 |      |
-      | value                   | {"value":"Modified","type":"string"} | json |
+      | Key                       | Value                                | Type                |
+      | contentStreamIdentifier   | cs-2-identifier                      | Uuid                |
+      | nodeAggregateIdentifier   | na-identifier                        | Uuid                |
+      | originDimensionSpacePoint | {}                                   | DimensionSpacePoint |
+      | propertyName              | text                                 |                     |
+      | value                     | {"value":"Modified","type":"string"} | json                |
 
     And the graph projection is fully up to date
 
@@ -124,18 +126,20 @@ Feature: Workspace based content publishing
   Scenario: modify the property in the nested workspace, do modification in live workspace; publish afterwards will not work because rebase is missing; then rebase and publish
 
     When the command "SetNodeProperty" is executed with payload:
-      | Key                     | Value                                                  | Type |
-      | contentStreamIdentifier | cs-2-identifier                                        | Uuid |
-      | nodeIdentifier          | node-identifier                                        | Uuid |
-      | propertyName            | text                                                   |      |
-      | value                   | {"value":"Modified in user workspace","type":"string"} | json |
+      | Key                       | Value                                                  | Type                |
+      | contentStreamIdentifier   | cs-2-identifier                                        | Uuid                |
+      | nodeAggregateIdentifier   | na-identifier                                          | Uuid                |
+      | originDimensionSpacePoint | {}                                                     | DimensionSpacePoint |
+      | propertyName              | text                                                   |                     |
+      | value                     | {"value":"Modified in user workspace","type":"string"} | json                |
 
     When the command "SetNodeProperty" is executed with payload:
-      | Key                     | Value                                                  | Type |
-      | contentStreamIdentifier | cs-identifier                                          | Uuid |
-      | nodeIdentifier          | node-identifier                                        | Uuid |
-      | propertyName            | text                                                   |      |
-      | value                   | {"value":"Modified in live workspace","type":"string"} | json |
+      | Key                       | Value                                                  | Type                |
+      | contentStreamIdentifier   | cs-identifier                                          | Uuid                |
+      | nodeAggregateIdentifier   | na-identifier                                          | Uuid                |
+      | originDimensionSpacePoint | {}                                                     | DimensionSpacePoint |
+      | propertyName              | text                                                   |                     |
+      | value                     | {"value":"Modified in live workspace","type":"string"} | json                |
 
 
     # PUBLISHING without rebase: error

@@ -705,7 +705,13 @@ class GraphProjector implements ProjectorInterface
         // TODO: do this copy on write on every modification op concerning nodes
 
         // TODO: does this always return a SINGLE anchor point??
-        $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+        if (method_exists($event, 'getNodeIdentifier')) {
+            // DEPRECATED case: NodeIdentifier
+            $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+        } else {
+            $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream($event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint(), $event->getContentStreamIdentifier());
+        }
+
         if ($anchorPointForNode === null) {
             // TODO Log error
             throw new \Exception(sprintf('anchor point for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1519681260000);
@@ -744,7 +750,7 @@ class GraphProjector implements ProjectorInterface
         } else {
             // No copy on write needed :)
 
-            $node = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+            $node = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPointForNode);
             if (!$node) {
                 // TODO: ignore the ShowNode (if all other logic is correct)
                 throw new \Exception("TODO NODE NOT FOUND");

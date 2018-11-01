@@ -200,6 +200,39 @@ class ProjectionContentGraph
         }
     }
 
+    /**
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $originDimensionSpacePoint
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @return NodeRelationAnchorPoint|null
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, ContentStreamIdentifier $contentStreamIdentifier): ?NodeRelationAnchorPoint
+    {
+        $rows = $this->getDatabaseConnection()->executeQuery(
+            'SELECT DISTINCT n.relationanchorpoint FROM neos_contentgraph_node n
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+ AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
+ AND h.contentstreamidentifier = :contentStreamIdentifier',
+            [
+                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash(),
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            ]
+        )->fetchAll();
+
+        if (count($rows) > 1) {
+            throw new \Exception('TODO: I believe this shall not happen; but we need to think this through in detail if it does!!!');
+        }
+
+        if (count($rows) === 1) {
+            return new NodeRelationAnchorPoint($rows[0]['relationanchorpoint']);
+        } else {
+            return null;
+        }
+    }
+
 
     /**
      * @param NodeRelationAnchorPoint $nodeRelationAnchorPoint

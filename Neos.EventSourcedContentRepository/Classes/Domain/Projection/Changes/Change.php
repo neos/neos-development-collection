@@ -12,8 +12,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -27,9 +28,14 @@ class Change
     public $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
-    public $nodeIdentifier;
+    public $nodeAggregateIdentifier;
+
+    /**
+     * @var DimensionSpacePoint
+     */
+    public $originDimensionSpacePoint;
 
     /**
      * @var bool
@@ -43,24 +49,21 @@ class Change
 
     /**
      * Change constructor.
-     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param bool $changed
      * @param bool $moved
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $nodeIdentifier,
-        bool $changed = false,
-        bool $moved = false
-    )
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, bool $changed, bool $moved)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->changed = $changed;
         $this->moved = $moved;
     }
+
 
     /**
      * @param Connection $databaseConnection
@@ -69,7 +72,9 @@ class Change
     {
         $databaseConnection->insert('neos_contentrepository_projection_change', [
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'nodeIdentifier' => (string)$this->nodeIdentifier,
+            'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
+            'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+            'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->getHash(),
             'changed' => (int)$this->changed,
             'moved' => (int)$this->moved
         ]);
@@ -83,7 +88,9 @@ class Change
         ],
         [
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'nodeIdentifier' => (string)$this->nodeIdentifier,
+            'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
+            'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+            'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->getHash(),
         ]);
     }
 
@@ -95,7 +102,8 @@ class Change
     {
         return new static(
             new ContentStreamIdentifier($databaseRow['contentStreamIdentifier']),
-            new NodeIdentifier($databaseRow['nodeIdentifier']),
+            new NodeAggregateIdentifier($databaseRow['nodeAggregateIdentifier']),
+            new DimensionSpacePoint($databaseRow['originDimensionSpacePoint']),
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved']
         );

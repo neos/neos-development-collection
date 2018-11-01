@@ -215,7 +215,8 @@ class Property extends AbstractChange
                 $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
                 $command = new SetNodeProperty(
                     $node->getContentStreamIdentifier(),
-                    $node->getNodeIdentifier(),
+                    $node->getNodeAggregateIdentifier(),
+                    $node->getOriginDimensionSpacePoint(),
                     $propertyName,
                     new PropertyValue($value, $propertyType)
                 );

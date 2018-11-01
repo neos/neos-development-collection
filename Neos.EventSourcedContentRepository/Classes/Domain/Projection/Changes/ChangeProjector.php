@@ -12,6 +12,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
@@ -58,10 +60,11 @@ class ChangeProjector implements ProjectorInterface
 
     public function whenNodePropertyWasSet(NodePropertyWasSet $event)
     {
-        $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeIdentifier());
+        $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint());
     }
 
-    public function whenNodeWasHidden(NodeWasHidden $event)
+    // TODO fix (change from NodeAggregateIdentifier to NodeIdentifier
+    /*public function whenNodeWasHidden(NodeWasHidden $event)
     {
         $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeIdentifier());
     }
@@ -74,7 +77,7 @@ class ChangeProjector implements ProjectorInterface
     public function whenNodeWasMoved(NodeWasMoved $event)
     {
         $this->markAsMoved($event->getContentStreamIdentifier(), $event->getNodeIdentifier());
-    }
+    }*/
 
     public function whenWorkspaceWasRebased(WorkspaceWasRebased $event)
     {
@@ -106,16 +109,18 @@ WHERE contentStreamIdentifier NOT IN (:contentStreamIdentifier)',
         });
     }
 
-    protected function markAsChanged(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier)
+    protected function markAsChanged(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint)
     {
-        $this->transactional(function () use ($contentStreamIdentifier, $nodeIdentifier) {
+        $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() !== null) {
-                $change = $this->getChange($contentStreamIdentifier, $nodeIdentifier);
+                $change = $this->getChange($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint);
                 if ($change === null) {
                     $change = new Change(
                         $contentStreamIdentifier,
-                        $nodeIdentifier,
+                        $nodeAggregateIdentifier,
+                        $originDimensionSpacePoint,
+
                         true,
                         false
                     );
@@ -128,16 +133,17 @@ WHERE contentStreamIdentifier NOT IN (:contentStreamIdentifier)',
         });
     }
 
-    protected function markAsMoved(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier)
+    protected function markAsMoved(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint)
     {
-        $this->transactional(function () use ($contentStreamIdentifier, $nodeIdentifier) {
+        $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
             if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() !== null) {
-                $change = $this->getChange($contentStreamIdentifier, $nodeIdentifier);
+                $change = $this->getChange($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint);
                 if ($change === null) {
                     $change = new Change(
                         $contentStreamIdentifier,
-                        $nodeIdentifier,
+                        $nodeAggregateIdentifier,
+                        $originDimensionSpacePoint,
                         false,
                         true
                     );
@@ -150,15 +156,17 @@ WHERE contentStreamIdentifier NOT IN (:contentStreamIdentifier)',
         });
     }
 
-    protected function getChange(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier)
+    protected function getChange(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint)
     {
         $changeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM neos_contentrepository_projection_change n
 WHERE n.contentStreamIdentifier = :contentStreamIdentifier
-AND n.nodeIdentifier = :nodeIdentifier',
+AND n.nodeAggregateIdentifier = :nodeAggregateIdentifier
+AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
             [
                 'contentStreamIdentifier' => $contentStreamIdentifier,
-                'nodeIdentifier' => $nodeIdentifier
+                'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
+                'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash()
             ]
         )->fetch();
 

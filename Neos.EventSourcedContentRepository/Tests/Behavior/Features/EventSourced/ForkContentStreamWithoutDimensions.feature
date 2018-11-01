@@ -29,13 +29,13 @@ Feature: ForkContentStream Without Dimensions
       | nodeName                      | foo                                                             |                        |
       | propertyDefaultValuesAndTypes | {}                                                              | json                   |
 
-
     And the Event "Neos.EventSourcedContentRepository:NodePropertyWasSet" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
-      | Key                     | Value                                         | Type          |
-      | contentStreamIdentifier | c75ae6a2-7254-4d42-a31b-a629e264069d          |               |
-      | nodeIdentifier          | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81          |               |
-      | propertyName            | test                                          |               |
-      | value                   | {"value": "original value", "type": "string"} | PropertyValue |
+      | Key                       | Value                                         | Type                |
+      | contentStreamIdentifier   | c75ae6a2-7254-4d42-a31b-a629e264069d          |                     |
+      | nodeAggregateIdentifier   | 35411439-94d1-4bd4-8fac-0646856c6a1f          |                     |
+      | originDimensionSpacePoint | {}                                            | DimensionSpacePoint |
+      | propertyName              | test                                          |                     |
+      | value                     | {"value": "original value", "type": "string"} | PropertyValue       |
 
 
   Scenario: Ensure that the node is available in the forked content stream
@@ -58,12 +58,12 @@ Feature: ForkContentStream Without Dimensions
       | sourceContentStreamIdentifier | c75ae6a2-7254-4d42-a31b-a629e264069d |      |
 
     And the Event "Neos.EventSourcedContentRepository:NodePropertyWasSet" was published to stream "Neos.ContentRepository:ContentStream:d548f014-884f-4208-a49a-eafc417b83a3" with payload:
-
-      | Key                     | Value                                         | Type |
-      | contentStreamIdentifier | d548f014-884f-4208-a49a-eafc417b83a3          |      |
-      | nodeIdentifier          | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81          |      |
-      | propertyName            | test                                          |      |
-      | value                   | {"value": "modified value", "type": "string"} | json |
+      | Key                       | Value                                         | Type                |
+      | contentStreamIdentifier   | d548f014-884f-4208-a49a-eafc417b83a3          |                     |
+      | nodeAggregateIdentifier   | 35411439-94d1-4bd4-8fac-0646856c6a1f          |                     |
+      | originDimensionSpacePoint | {}                                            | DimensionSpacePoint |
+      | propertyName              | test                                          |                     |
+      | value                     | {"value": "modified value", "type": "string"} | json                |
 
 
     And the graph projection is fully up to date
@@ -92,12 +92,13 @@ Feature: ForkContentStream Without Dimensions
       | sourceContentStreamIdentifier | c75ae6a2-7254-4d42-a31b-a629e264069d |      |
 
     And the Event "Neos.EventSourcedContentRepository:NodePropertyWasSet" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+      | Key                       | Value                                         | Type                |
+      | contentStreamIdentifier   | c75ae6a2-7254-4d42-a31b-a629e264069d          |                     |
+      | nodeAggregateIdentifier   | 35411439-94d1-4bd4-8fac-0646856c6a1f          |                     |
+      | originDimensionSpacePoint | {}                                            | DimensionSpacePoint |
 
-      | Key                     | Value                                         | Type |
-      | contentStreamIdentifier | c75ae6a2-7254-4d42-a31b-a629e264069d          |      |
-      | nodeIdentifier          | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81          |      |
-      | propertyName            | test                                          |      |
-      | value                   | {"value": "modified value", "type": "string"} | json |
+      | propertyName              | test                                          |                     |
+      | value                     | {"value": "modified value", "type": "string"} | json                |
 
 
     And the graph projection is fully up to date

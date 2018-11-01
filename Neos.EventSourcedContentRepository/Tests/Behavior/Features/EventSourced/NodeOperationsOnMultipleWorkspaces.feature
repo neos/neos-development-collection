@@ -36,11 +36,12 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | nodeName                      | text2                                  |                        |
 
     When the command "SetNodeProperty" is executed with payload:
-      | Key                     | Value                                | Type |
-      | contentStreamIdentifier | cs-identifier                        | Uuid |
-      | nodeIdentifier          | node-identifier                      | Uuid |
-      | propertyName            | text                                 |      |
-      | value                   | {"value":"Original","type":"string"} | json |
+      | Key                       | Value                                | Type                |
+      | contentStreamIdentifier   | cs-identifier                        | Uuid                |
+      | nodeAggregateIdentifier   | na-identifier                        | Uuid                |
+      | originDimensionSpacePoint | {}                                   | DimensionSpacePoint |
+      | propertyName              | text                                 |                     |
+      | value                     | {"value":"Original","type":"string"} | json                |
 
     And the command CreateWorkspace is executed with payload:
       | Key                      | Value                                | Type |
@@ -51,20 +52,22 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
   Scenario: Set property of a node
 
     Given the command "SetNodeProperty" is executed with payload:
-      | Key                     | Value                               | Type |
-      | contentStreamIdentifier | user-cs-identifier                  | Uuid |
-      | nodeIdentifier          | node-identifier                     | Uuid |
-      | propertyName            | text                                |      |
-      | value                   | {"value":"Changed","type":"string"} | json |
+      | Key                       | Value                               | Type                |
+      | contentStreamIdentifier   | user-cs-identifier                  | Uuid                |
+      | nodeAggregateIdentifier   | na-identifier                       | Uuid                |
+      | originDimensionSpacePoint | {}                                  | DimensionSpacePoint |
+      | propertyName              | text                                |                     |
+      | value                     | {"value":"Changed","type":"string"} | json                |
 
 
     Then I expect exactly 2 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:[user-cs-identifier]"
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePropertyWasSet" with payload:
-      | Key                     | Expected           | Type |
-      | contentStreamIdentifier | user-cs-identifier | Uuid |
-      | nodeIdentifier          | node-identifier    | Uuid |
-      | propertyName            | text               |      |
-      | value.value             | Changed            |      |
+      | Key                       | Expected           | Type | AssertionType |
+      | contentStreamIdentifier   | user-cs-identifier | Uuid |               |
+      | nodeAggregateIdentifier   | na-identifier      | Uuid |               |
+      | originDimensionSpacePoint | {}                 |      | json          |
+      | propertyName              | text               |      |               |
+      | value.value               | Changed            |      |               |
 
     And the graph projection is fully up to date
 

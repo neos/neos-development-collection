@@ -13,10 +13,7 @@ namespace Neos\EventSourcedContentRepository\Exception;
 
 use Neos\Flow\Exception;
 
-/**
- * An node not found exception
- *
- */
-class NodeNotFoundException extends Exception
+
+class NodeNotOriginatingInCorrectDimensionSpacePointException extends Exception
 {
 }

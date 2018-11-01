@@ -336,11 +336,12 @@ final class NodeCommandHandler
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node exists
-            $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+            $this->getNodeWithOriginDimensionSpacePoint($contentStreamIdentifier, $command->getNodeAggregateIdentifier(), $command->getOriginDimensionSpacePoint());
 
             $event = new NodePropertyWasSet(
                 $contentStreamIdentifier,
-                $command->getNodeIdentifier(),
+                $command->getNodeAggregateIdentifier(),
+                $command->getOriginDimensionSpacePoint(),
                 $command->getPropertyName(),
                 $command->getValue()
             );
@@ -793,7 +794,22 @@ final class NodeCommandHandler
     {
         $node = $this->contentGraph->findNodeByIdentifierInContentStream($contentStreamIdentifier, $nodeIdentifier);
         if ($node === null) {
-            throw new NodeNotFoundException(sprintf('Node %s not found', $nodeIdentifier), 1506074496, $nodeIdentifier);
+            throw new NodeNotFoundException(sprintf('Node %s not found', $nodeIdentifier), 1506074496);
+        }
+
+        return $node;
+    }
+
+    private function getNodeWithOriginDimensionSpacePoint(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint): NodeInterface
+    {
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $originDimensionSpacePoint);
+        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+        if ($node === null) {
+            throw new NodeNotFoundException(sprintf('Node %s not found in dimension %s', $nodeAggregateIdentifier, $originDimensionSpacePoint), 1541070463);
+        }
+
+        if (!$node->getOriginDimensionSpacePoint()->equals($originDimensionSpacePoint)) {
+            throw new Exception\NodeNotOriginatingInCorrectDimensionSpacePointException(sprintf('Node %s has origin dimension space point %s, but you requested OriginDimensionSpacePoint %s.', $nodeAggregateIdentifier, $node->getOriginDimensionSpacePoint(), $originDimensionSpacePoint), 1541070670);
         }
 
         return $node;

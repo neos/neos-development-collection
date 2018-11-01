@@ -11,8 +11,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 
 final class SetNodeProperty
@@ -24,9 +25,14 @@ final class SetNodeProperty
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
-    private $nodeIdentifier;
+    private $nodeAggregateIdentifier;
+
+    /**
+     * @var DimensionSpacePoint
+     */
+    private $originDimensionSpacePoint;
 
     /**
      * @var string
@@ -40,20 +46,22 @@ final class SetNodeProperty
 
     /**
      * SetNodeProperty constructor.
-     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param string $propertyName
      * @param PropertyValue $value
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $nodeIdentifier,
-        $propertyName,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint,
+        string $propertyName,
         PropertyValue $value
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->propertyName = $propertyName;
         $this->value = $value;
     }
@@ -67,11 +75,19 @@ final class SetNodeProperty
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
+    }
+
+    /**
+     * @return DimensionSpacePoint
+     */
+    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->originDimensionSpacePoint;
     }
 
     /**

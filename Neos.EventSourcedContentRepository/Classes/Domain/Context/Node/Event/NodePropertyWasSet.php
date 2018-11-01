@@ -11,8 +11,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcing\Event\EventInterface;
 
@@ -28,9 +29,14 @@ final class NodePropertyWasSet implements EventInterface, CopyableAcrossContentS
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
-    private $nodeIdentifier;
+    private $nodeAggregateIdentifier;
+
+    /**
+     * @var DimensionSpacePoint
+     */
+    private $originDimensionSpacePoint;
 
     /**
      * @var string
@@ -46,18 +52,21 @@ final class NodePropertyWasSet implements EventInterface, CopyableAcrossContentS
      * NodePropertyWasSet constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param string $propertyName
      * @param PropertyValue $value
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $nodeIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint,
         $propertyName,
         PropertyValue $value
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->propertyName = $propertyName;
         $this->value = $value;
     }
@@ -71,11 +80,19 @@ final class NodePropertyWasSet implements EventInterface, CopyableAcrossContentS
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
+    }
+
+    /**
+     * @return DimensionSpacePoint
+     */
+    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->originDimensionSpacePoint;
     }
 
     /**
@@ -102,7 +119,8 @@ final class NodePropertyWasSet implements EventInterface, CopyableAcrossContentS
     {
         return new NodePropertyWasSet(
             $targetContentStream,
-            $this->nodeIdentifier,
+            $this->nodeAggregateIdentifier,
+            $this->originDimensionSpacePoint,
             $this->propertyName,
             $this->value
         );

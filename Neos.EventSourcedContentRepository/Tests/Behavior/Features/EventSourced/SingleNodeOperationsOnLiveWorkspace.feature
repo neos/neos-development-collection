@@ -28,20 +28,22 @@ Feature: Single Node operations on live workspace
 
   Scenario: Set property of a node
     Given the command "SetNodeProperty" is executed with payload:
-      | Key                     | Value                                | Type |
-      | contentStreamIdentifier | cs-identifier                        | Uuid |
-      | nodeIdentifier          | node-identifier                      | Uuid |
-      | propertyName            | text                                 |      |
-      | value                   | {"value":"Hello","type":"string"}    | json |
+      | Key                       | Value                             | Type                |
+      | contentStreamIdentifier   | cs-identifier                     | Uuid                |
+      | nodeAggregateIdentifier   | na-identifier                     | Uuid                |
+      | originDimensionSpacePoint | {}                                | DimensionSpacePoint |
+      | propertyName              | text                              |                     |
+      | value                     | {"value":"Hello","type":"string"} | json                |
 
 
     Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:[cs-identifier]"
     And event at index 3 is of type "Neos.EventSourcedContentRepository:NodePropertyWasSet" with payload:
-      | Key                     | Expected                             | Type |
-      | contentStreamIdentifier | cs-identifier                        | Uuid |
-      | nodeIdentifier          | node-identifier                      | Uuid |
-      | propertyName            | text                                 |      |
-      | value.value             | Hello                                |      |
+      | Key                       | Expected      | Type | AssertionType |
+      | contentStreamIdentifier   | cs-identifier | Uuid |               |
+      | nodeAggregateIdentifier   | na-identifier | Uuid |               |
+      | originDimensionSpacePoint | {}            |      | json          |
+      | propertyName              | text          |      |               |
+      | value.value               | Hello         |      |               |
 
     And the graph projection is fully up to date
 
