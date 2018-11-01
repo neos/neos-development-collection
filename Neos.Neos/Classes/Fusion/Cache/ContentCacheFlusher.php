@@ -122,7 +122,7 @@ class ContentCacheFlusher
      * @param NodeInterface $node
      * @param Workspace $workspace
      */
-    protected function registerAllTagsToFlushForNodeInWorkspace(NodeInterface $node, Workspace $workspace)
+    protected function registerAllTagsToFlushForNodeInWorkspace(NodeInterface $node, Workspace $workspace): void
     {
         $nodeIdentifier = $node->getIdentifier();
 
