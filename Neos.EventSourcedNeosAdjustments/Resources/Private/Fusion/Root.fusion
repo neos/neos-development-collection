@@ -18,6 +18,10 @@ prototype(Neos.Neos:Menu) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\MenuImplementation'
     subgraph = ${documentNode.subgraph}
 }
+prototype(Neos.NodeTypes.Navigation:Navigation) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\MenuImplementation'
+    subgraph = ${node.subgraph}
+}
 
 
 prototype(Neos.Neos:ContentCollection) {
