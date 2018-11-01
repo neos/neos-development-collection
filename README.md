@@ -144,14 +144,15 @@ This is the package bundle you can install alongside a plain Neos to play around
 - [x] create standalone package collection instead of branches
 - [x] command to import from NodeData to events
 - [x] make it work with Neos.ContentRepository.DimensionSpace package
-- [ ] ensure Behavioral Tests run again
+- [x] ensure Behavioral Tests run again
 - [ ] ensure Functional Tests run again
-- [x] figure out how/if to use event sourced Site/Domain (!possibly difficult!) -> fixed
+- [x] figure out how/if to use event sourced Site/Domain (!possibly difficult!) -> fixed; won't use event sourced site/domain
 - [x] change RoutePart Handler when using event-sourced mode
 - [x] adjust NodeController when using event-sourced mode
 - [x] add switch to use event-sourced read model in Fusion rendering (!possibly difficult due to method signatures!)
 - [x] allow to open User Interface based on Event-Sourced read model
 - [ ] create Commands in response to UI interaction
+  - [x] SetProperty command
 - [x] create feature list in this README, detailing what is supported and what not yet.
 - [x] support empty content dimension values in URL; e.g. "/de/..." for german, and "/..." for english
 - [ ] (further TODOs here; this list is not complete yet)
