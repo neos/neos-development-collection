@@ -96,7 +96,7 @@ class ContentCacheFlusher
      * @return void
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function registerNodeChange(NodeInterface $node, Workspace $targetWorkspace = null)
+    public function registerNodeChange(NodeInterface $node, Workspace $targetWorkspace = null): void
     {
         $this->tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
