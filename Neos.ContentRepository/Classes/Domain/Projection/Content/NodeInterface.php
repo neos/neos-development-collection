@@ -36,14 +36,23 @@ interface NodeInterface extends CacheAwareInterface
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
 
     /**
-     * @return NodeIdentifier
+     * returns the DimensionSpacePoint the node was *requested in*, i.e. one of the DimensionSpacePoints
+     * this node is visible in. If you need the DimensionSpacePoint where the node is actually at home,
+     * see getOriginDimensionSpacePoint()
+     *
+     * @return DimensionSpacePoint
      */
-    public function getNodeIdentifier(): NodeIdentifier;
+    public function getDimensionSpacePoint(): DimensionSpacePoint;
 
     /**
      * @return NodeAggregateIdentifier
      */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier;
+
+    /**
+     * @return NodeIdentifier
+     */
+    public function getNodeIdentifier(): NodeIdentifier;
 
     /**
      * @return NodeTypeName
@@ -61,9 +70,12 @@ interface NodeInterface extends CacheAwareInterface
     public function getNodeName(): NodeName;
 
     /**
+     * returns the DimensionSpacePoint the node is at home in. Usually needed to address a Node in a NodeAggregate
+     * in order to update it.
+     *
      * @return DimensionSpacePoint
      */
-    public function getDimensionSpacePoint(): DimensionSpacePoint;
+    public function getOriginDimensionSpacePoint(): DimensionSpacePoint;
 
     /**
      * Returns all properties of this node. References are NOT part of this API; there you need to check getReference() and getReferences()
