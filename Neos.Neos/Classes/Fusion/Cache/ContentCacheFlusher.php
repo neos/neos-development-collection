@@ -126,6 +126,10 @@ class ContentCacheFlusher
     {
         $nodeIdentifier = $node->getIdentifier();
 
+        if (!array_key_exists($workspace->getName(), $this->workspacesToFlush) || is_array($this->workspacesToFlush[$workspace->getName()]) === false) {
+            return;
+        }
+
         foreach ($this->workspacesToFlush[$workspace->getName()] as $workspaceName => $workspaceHash) {
             $this->registerChangeOnNodeIdentifier($workspaceHash .'_'. $nodeIdentifier);
             $this->registerChangeOnNodeType($node->getNodeType()->getName(), $nodeIdentifier, $workspaceHash);
