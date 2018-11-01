@@ -103,7 +103,7 @@ class Change
         return new static(
             new ContentStreamIdentifier($databaseRow['contentStreamIdentifier']),
             new NodeAggregateIdentifier($databaseRow['nodeAggregateIdentifier']),
-            new DimensionSpacePoint($databaseRow['originDimensionSpacePoint']),
+            new DimensionSpacePoint(json_decode($databaseRow['originDimensionSpacePoint'], true)),
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved']
         );

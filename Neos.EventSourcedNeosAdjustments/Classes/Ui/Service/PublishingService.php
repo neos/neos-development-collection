@@ -12,10 +12,13 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Projection\Changes\Change;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
@@ -67,7 +70,7 @@ class PublishingService
      * Returns a list of nodes contained in the given workspace which are not yet published
      *
      * @param WorkspaceName $workspaceName
-     * @return NodeInterface[]
+     * @return TraversableNodeInterface[]
      * @api
      */
     public function getUnpublishedNodes(WorkspaceName $workspaceName)
@@ -79,12 +82,15 @@ class PublishingService
         $changes = $this->changeFinder->findByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
         $unpublishedNodes = [];
         foreach ($changes as $change) {
-            $node = $this->contentGraph->findNodeByIdentifierInContentStream(
+            /* @var $change Change */
+            $subgraph = $this->contentGraph->getSubgraphByIdentifier(
                 $workspace->getCurrentContentStreamIdentifier(),
-                $change->nodeIdentifier
+                $change->originDimensionSpacePoint
             );
+            $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
+
             if ($node instanceof NodeInterface) {
-                $unpublishedNodes[] = $node;
+                $unpublishedNodes[] = new TraversableNode($node, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, true));
             }
         }
         return $unpublishedNodes;

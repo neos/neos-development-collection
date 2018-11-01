@@ -14,9 +14,9 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
-use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 
@@ -139,7 +139,7 @@ class UpdateNodeInfo extends AbstractFeedback
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint());
 
         $result = [
-            $this->nodeAddressFactory->createFromNode($node)->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $subgraph, $controllerContext)
+            $this->nodeAddressFactory->createFromNode($node)->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)
         ];
 
         if ($this->isRecursive === true) {
