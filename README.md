@@ -151,13 +151,25 @@ This is the package bundle you can install alongside a plain Neos to play around
 - [x] adjust NodeController when using event-sourced mode
 - [x] add switch to use event-sourced read model in Fusion rendering (!possibly difficult due to method signatures!)
 - [x] allow to open User Interface based on Event-Sourced read model
+- [ ] implement Show/Hide of nodes (recursively)
+- [ ] ?? implement new NodeTreeAggregate?
 - [ ] create Commands in response to UI interaction
   - [x] SetProperty command
+  - [ ] CreateNode
+  - [ ] MoveNode
+  - [ ] ShowNode
+  - [ ] HideNode
 - [x] create feature list in this README, detailing what is supported and what not yet.
 - [x] support empty content dimension values in URL; e.g. "/de/..." for german, and "/..." for english
-- [ ] (further TODOs here; this list is not complete yet)
 - [ ] absolute node referencing for ContentCollection (e.g. shared footer in Demo Site
-
+- [ ] fix Policy handling to configure permissions for various UI parts
+- [ ] fix structure tree
+- [ ] show correct workspace state after reload (top publish button)
+- [ ] fix inline linking
+- [ ] fix node tree search
+- [ ] fix node tree filter
+- [ ] Implement Node Repair
+- [ ] (further TODOs here; this list is not complete yet)
 
 # Technical Description (for developers)
 
