@@ -11,20 +11,21 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Error\Messages\Error;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Aop\JoinPointInterface;
 
 /**
- * @Flow\Aspect
  * @Flow\Scope("singleton")
  */
-class NodeServiceAspect
+class NodeService
 {
-
     /**
      * @Flow\Inject
      * @var NodeAddressFactory
@@ -38,14 +39,41 @@ class NodeServiceAspect
     protected $contentGraph;
 
     /**
-     * @Flow\Around("method(Neos\Neos\Ui\ContentRepository\Service\NodeService->getNodeFromContextPath())")
-     * @param JoinPointInterface $joinPoint the join point
-     * @return mixed
+     * Helper method to retrieve the closest document for a node
+     *
+     * @param TraversableNodeInterface $node
+     * @return TraversableNodeInterface
      */
-    public function getNodeFromContextPath(JoinPointInterface $joinPoint)
+    public function getClosestDocument(TraversableNodeInterface $node)
     {
-        $contextPath = $joinPoint->getMethodArgument('contextPath');
+        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
+            return $node;
+        }
 
+        $flowQuery = new FlowQuery([$node]);
+
+        return $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
+    }
+
+    /**
+     * Helper method to check if a given node is a document node.
+     *
+     * @param  TraversableNodeInterface $node The node to check
+     * @return boolean             A boolean which indicates if the given node is a document node.
+     */
+    public function isDocument(TraversableNodeInterface $node)
+    {
+        return ($this->getClosestDocument($node) === $node);
+    }
+
+    /**
+     * Converts a given context path to a node object
+     *
+     * @param string $contextPath
+     * @return NodeInterface|Error
+     */
+    public function getNodeFromContextPath($contextPath)
+    {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($contextPath);
         $subgraph = $this->contentGraph
             ->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint());
@@ -53,5 +81,4 @@ class NodeServiceAspect
         // TODO: Context Parameter Handling
         return new TraversableNode($node, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, false));
     }
-
 }

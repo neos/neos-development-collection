@@ -14,6 +14,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
+use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeCollection;
@@ -38,8 +40,6 @@ use Neos\Neos\Ui\Domain\Model\Feedback\Operations\RemoveNode;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\Neos\Ui\Domain\Service\NodeTreeBuilder;
-use Neos\Neos\Ui\ContentRepository\Service\NodeService;
-use Neos\Neos\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Neos\Ui\Service\NodePolicyService;
 

@@ -12,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\TypeConverter;
  */
 
 use Neos\Error\Messages\Error;
+use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeCollection;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Property;
 use Neos\Flow\Annotations as Flow;
@@ -21,7 +22,6 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Neos\Ui\ContentRepository\Service\NodeService;
 use Neos\Utility\ObjectAccess;
 
 /**

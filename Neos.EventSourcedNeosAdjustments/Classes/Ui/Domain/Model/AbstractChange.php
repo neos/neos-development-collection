@@ -15,12 +15,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Neos\Ui\ContentRepository\Service\NodeService;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\NodeCreated;
-use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 
 abstract class AbstractChange implements ChangeInterface
