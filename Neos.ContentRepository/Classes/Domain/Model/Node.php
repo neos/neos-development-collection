@@ -1919,6 +1919,15 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     }
 
     /**
+     * @return DimensionSpacePoint
+     * @throws UnsupportedNodeMethodException
+     */
+    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    {
+        throw new UnsupportedNodeMethodException('getOriginDimensionSpacePoint is unsupported in the legacy Node API.');
+    }
+
+    /**
      * @return ContentSubgraphInterface
      * @throws UnsupportedNodeMethodException
      */
