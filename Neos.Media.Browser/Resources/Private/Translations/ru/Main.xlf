@@ -295,7 +295,7 @@
 			<target xml:lang="ru" state="translated">Подпись</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target xml:lang="ru" state="needs-translation">Copyright Notice</target></trans-unit>
+			<target xml:lang="ru" state="translated">Авторские права</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="ru" state="translated">Предпросмотр</target><alt-trans><target xml:lang="ru">Просмотр</target></alt-trans><alt-trans><target xml:lang="ru">Предв. Просмотр</target></alt-trans></trans-unit>
