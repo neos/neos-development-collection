@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 
@@ -43,7 +44,7 @@ final class AllChildNodesByNodeIdentifierCache
         if (isset($this->childNodes[$key])) {
             $childNodes = $this->childNodes[$key];
             foreach ($childNodes as $childNode) {
-                /* @var \Neos\EventSourcedContentRepository\Domain\Model\NodeInterface $childNode */
+                /* @var  NodeInterface $childNode */
                 if ($nodeTypeConstraints === null || $nodeTypeConstraints->matches($childNode->getNodeTypeName())) {
                     $result[] = $childNode;
                 }

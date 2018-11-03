@@ -183,6 +183,10 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         int $limit = null,
         int $offset = null
     ): array {
+        if ($limit !== null || $offset !== null) {
+            throw new \RuntimeException("TODO: Limit/Offset not yet supported in findChildNodes");
+        }
+
         $cache = $this->inMemoryCache->getAllChildNodesByNodeIdentifierCache();
         $namedChildNodeCache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         $parentNodeIdentifierCache = $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();

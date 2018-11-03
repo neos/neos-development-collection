@@ -161,9 +161,9 @@ This is the package bundle you can install alongside a plain Neos to play around
   - [ ] HideNode
 - [x] create feature list in this README, detailing what is supported and what not yet.
 - [x] support empty content dimension values in URL; e.g. "/de/..." for german, and "/..." for english
-- [ ] absolute node referencing for ContentCollection (e.g. shared footer in Demo Site
+- [ ] absolute node referencing for ContentCollection (e.g. shared footer in Demo Site)
 - [ ] fix Policy handling to configure permissions for various UI parts
-- [ ] fix structure tree
+- [x] fix structure tree
 - [ ] show correct workspace state after reload (top publish button)
 - [ ] fix inline linking
 - [ ] fix node tree search
