@@ -150,10 +150,10 @@ class LinkingService
      * @param NodeInterface $contextNode
      * @param ControllerContext $controllerContext
      * @param bool $absolute
-     * @return string
+     * @return string|null If the node cannot be resolved, null is returned
      * @throws NeosException
      */
-    public function resolveNodeUri(string $uri, NodeInterface $contextNode, ControllerContext $controllerContext, bool $absolute = false): string
+    public function resolveNodeUri(string $uri, NodeInterface $contextNode, ControllerContext $controllerContext, bool $absolute = false): ?string
     {
         $targetObject = $this->convertUriToObject($uri, $contextNode);
         if ($targetObject === null) {
@@ -167,7 +167,7 @@ class LinkingService
      * Resolves a given asset:// URI to a "normal" HTTP(S) URI for the addressed asset's resource.
      *
      * @param string|Uri $uri
-     * @return string
+     * @return string|null If the URI cannot be resolved, null is returned
      */
     public function resolveAssetUri(string $uri): ?string
     {
