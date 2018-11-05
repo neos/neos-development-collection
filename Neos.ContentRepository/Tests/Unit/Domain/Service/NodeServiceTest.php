@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
+use Neos\ContentRepository\Domain\Model\ArrayPropertyCollection;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -260,7 +260,7 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNode->expects($this->once())
             ->method('getProperties')
-            ->will($this->returnValue(new PropertyCollection([
+            ->will($this->returnValue(new ArrayPropertyCollection([
                 'title' => 'hello',
                 'description' => 'world',
                 'invalidProperty' => 'world'
