@@ -67,6 +67,8 @@ class ChildrenOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
+
+
         $output = array();
         $outputNodeAggregateIdentifiers = array();
         if (isset($arguments[0]) && !empty($arguments[0])) {
@@ -76,9 +78,9 @@ class ChildrenOperation extends AbstractOperation
             }
         }
 
+
         /** @var TraversableNodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            /** @var TraversableNodeInterface $childNode */
             foreach ($contextNode->findChildNodes() as $childNode) {
                 if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
                     $output[] = $childNode;
@@ -129,12 +131,18 @@ class ChildrenOperation extends AbstractOperation
                 // Optimize property name filter if present
                 if (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                     $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
+                    $nodePathSegments = explode('/', $nodePath);
                     /** @var TraversableNodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
-                        $childNode = $contextNode->findNamedChildNode(new NodeName($nodePath));
-                        if ($childNode !== null && !isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
-                            $filteredOutput[] = $childNode;
-                            $filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
+                        $currentPathSegments = $nodePathSegments;
+                        $resolvedNode = $contextNode;
+                        while(($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
+                            $resolvedNode = $resolvedNode->findNamedChildNode(new NodeName($nodePathSegment));
+                        }
+
+                        if (!is_null($resolvedNode) && !isset($filteredOutputNodeIdentifiers[(string)$resolvedNode->getNodeAggregateIdentifier()])) {
+                            $filteredOutput[] = $resolvedNode;
+                            $filteredOutputNodeIdentifiers[(string)$resolvedNode->getNodeAggregateIdentifier()] = true;
                         }
                     }
                 } elseif (count($instanceOfFilters) > 0) {
