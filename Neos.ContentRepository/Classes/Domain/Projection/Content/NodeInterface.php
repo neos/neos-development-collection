@@ -60,9 +60,9 @@ interface NodeInterface extends CacheAwareInterface
     public function getNodeTypeName(): NodeTypeName;
 
     /**
-     * @return NodeType
+     * @return NodeType|null
      */
-    public function getNodeType(): NodeType;
+    public function getNodeType(): ?NodeType;
 
     /**
      * @return NodeName

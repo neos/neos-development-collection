@@ -203,10 +203,10 @@ interface NodeInterface
     /**
      * Returns the node type of this node.
      *
-     * @return NodeType
+     * @return NodeType|null
      * @api
      */
-    public function getNodeType(): NodeType;
+    public function getNodeType(): ?NodeType;
 
     /**
      * Sets the "hidden" flag for this node.
