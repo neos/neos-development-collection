@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
@@ -51,6 +52,7 @@ class ParentOperationTest extends UnitTestCase
 
         $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site')));
         $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(array($this->firstLevelNode)));
+        $this->siteNode->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('site-identifier-uuid')));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->firstLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
