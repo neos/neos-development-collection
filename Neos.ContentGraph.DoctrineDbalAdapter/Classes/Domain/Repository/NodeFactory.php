@@ -78,8 +78,8 @@ final class NodeFactory
         }
 
         $contentStreamIdentifier = new ContentStreamIdentifier($nodeRow['contentstreamidentifier']);
-        $dimensionSpacePoint = DimensionSpacePoint::fromJson($nodeRow['dimensionspacepoint']);
-        $originDimensionSpacePoint = DimensionSpacePoint::fromJson($nodeRow['origindimensionspacepoint']);
+        $dimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
+        $originDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
 
         $nodeIdentifier = new NodeIdentifier($nodeRow['nodeidentifier']);
 
