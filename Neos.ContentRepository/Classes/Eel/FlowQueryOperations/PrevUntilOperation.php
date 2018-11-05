@@ -11,10 +11,9 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "prevUntil" operation working on ContentRepository nodes. It iterates over all context elements
@@ -46,7 +45,7 @@ class PrevUntilOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -76,12 +75,15 @@ class PrevUntilOperation extends AbstractOperation
                 $prevNodes = $this->getNodesUntil($prevNodes, $until);
             }
 
-            if (is_array($prevNodes)) {
-                foreach ($prevNodes as $prevNode) {
-                    if ($prevNode !== null && !isset($outputNodePaths[$prevNode->getPath()])) {
-                        $outputNodePaths[$prevNode->getPath()] = true;
-                        $output[] = $prevNode;
-                    }
+            if (!is_array($prevNodes)) {
+                continue;
+            }
+
+            foreach ($prevNodes as $prevNode) {
+                $nodePath = $prevNode->findNodePath();
+                if ($prevNode !== null && !isset($outputNodePaths[(string)$nodePath])) {
+                    $outputNodePaths[(string)$nodePath] = true;
+                    $output[] = $prevNode;
                 }
             }
         }
@@ -94,12 +96,12 @@ class PrevUntilOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the previous nodes should be found
+     * @param TraversableNodeInterface $contextNode The node for which the previous nodes should be found
      * @return array|NULL The previous nodes of $contextNode or NULL
      */
-    protected function getPrevForNode(NodeInterface $contextNode)
+    protected function getPrevForNode(TraversableNodeInterface $contextNode)
     {
-        $nodesInContext = $contextNode->getParent()->getChildNodes();
+        $nodesInContext = $contextNode->findParentNode()->findChildNodes();
         $count = count($nodesInContext) - 1;
 
         for ($i = $count; $i > 0; $i--) {
@@ -115,15 +117,15 @@ class PrevUntilOperation extends AbstractOperation
 
     /**
      * @param array $prevNodes the remaining nodes
-     * @param NodeInterface $until
-     * @return array
+     * @param TraversableNodeInterface $until
+     * @return TraversableNodeInterface[]
      */
-    protected function getNodesUntil($prevNodes, NodeInterface $until)
+    protected function getNodesUntil($prevNodes, TraversableNodeInterface $until)
     {
         $count = count($prevNodes);
 
         for ($i = 0; $i < $count; $i++) {
-            if ($prevNodes[$i]->getPath() === $until->getPath()) {
+            if ($prevNodes[$i]->findNodePath() === $until->findNodePath()) {
                 unset($prevNodes[$i]);
                 return array_values($prevNodes);
             } else {

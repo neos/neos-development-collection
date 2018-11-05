@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
@@ -46,7 +47,7 @@ class NextUntilOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -75,12 +76,10 @@ class NextUntilOperation extends AbstractOperation
                 $nextNodes = $this->getNodesUntil($nextNodes, $until[0]);
             }
 
-            if (is_array($nextNodes)) {
-                foreach ($nextNodes as $nextNode) {
-                    if ($nextNode !== null && !isset($outputNodePaths[$nextNode->getPath()])) {
-                        $outputNodePaths[$nextNode->getPath()] = true;
-                        $output[] = $nextNode;
-                    }
+            foreach ($nextNodes as $nextNode) {
+                if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->findNodePath()])) {
+                    $outputNodePaths[(string)$nextNode->findNodePath()] = true;
+                    $output[] = $nextNode;
                 }
             }
         }
@@ -93,12 +92,12 @@ class NextUntilOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the next nodes should be found
-     * @return array|NULL The following nodes of $contextNode or NULL
+     * @param TraversableNodeInterface $contextNode The node for which the next nodes should be found
+     * @return TraversableNodeInterface[] The following nodes of $contextNode
      */
-    protected function getNextForNode(NodeInterface $contextNode)
+    protected function getNextForNode(TraversableNodeInterface $contextNode)
     {
-        $nodesInContext = $contextNode->getParent()->getChildNodes();
+        $nodesInContext = $contextNode->findParentNode()->findChildNodes();
         $count = count($nodesInContext);
 
         for ($i = 0; $i < $count; $i++) {
@@ -109,20 +108,20 @@ class NextUntilOperation extends AbstractOperation
                 unset($nodesInContext[$i]);
             }
         }
-        return null;
+        return [];
     }
 
     /**
      * @param array $nextNodes the remaining nodes
-     * @param NodeInterface $until
-     * @return array
+     * @param TraversableNodeInterface $until
+     * @return TraversableNodeInterface[]
      */
-    protected function getNodesUntil($nextNodes, NodeInterface $until)
+    protected function getNodesUntil($nextNodes, TraversableNodeInterface $until)
     {
         $count = count($nextNodes) - 1;
 
         for ($i = $count; $i >= 0; $i--) {
-            if ($nextNodes[$i]->getPath() === $until->getPath()) {
+            if ((string)$nextNodes[$i]->findNodePath() === (string)$until->findNodePath()) {
                 unset($nextNodes[$i]);
                 return array_values($nextNodes);
             } else {
