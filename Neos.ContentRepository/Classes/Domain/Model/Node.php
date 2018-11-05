@@ -1073,11 +1073,11 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     /**
      * Returns the node type of this node.
      *
-     * @return NodeType
+     * @return NodeType|null
      * @api
      * @throws NodeTypeNotFoundException
      */
-    public function getNodeType(): NodeType
+    public function getNodeType(): ?NodeType
     {
         return $this->nodeData->getNodeType();
     }
