@@ -118,7 +118,7 @@ class LinkingService
      * @param string|Uri $uri
      * @return boolean
      */
-    public function hasSupportedScheme($uri)
+    public function hasSupportedScheme($uri): bool
     {
         if ($uri instanceof Uri) {
             $uri = (string)$uri;
@@ -130,7 +130,7 @@ class LinkingService
      * @param string|Uri $uri
      * @return string
      */
-    public function getScheme($uri)
+    public function getScheme($uri): string
     {
         if ($uri instanceof Uri) {
             return $uri->getScheme();
@@ -152,6 +152,9 @@ class LinkingService
      * @param bool $absolute
      * @return string|null If the node cannot be resolved, null is returned
      * @throws NeosException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
     public function resolveNodeUri(string $uri, NodeInterface $contextNode, ControllerContext $controllerContext, bool $absolute = false): ?string
     {
@@ -222,10 +225,12 @@ class LinkingService
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
      * @param boolean $resolveShortcuts INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
      * @return string The rendered URI
-     * @throws \InvalidArgumentException if the given node/baseNode is not valid
      * @throws NeosException if no URI could be resolved for the given node
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
-    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true)
+    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true): string
     {
         $this->lastLinkedNode = null;
         if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
@@ -323,7 +328,7 @@ class LinkingService
      * @return string
      * @throws NeosException
      */
-    public function createSiteUri(ControllerContext $controllerContext, Site $site)
+    public function createSiteUri(ControllerContext $controllerContext, Site $site): string
     {
         $primaryDomain = $site->getPrimaryDomain();
         if ($primaryDomain === null) {
@@ -347,7 +352,7 @@ class LinkingService
      *
      * @return NodeInterface
      */
-    public function getLastLinkedNode()
+    public function getLastLinkedNode(): ?NodeInterface
     {
         return $this->lastLinkedNode;
     }
