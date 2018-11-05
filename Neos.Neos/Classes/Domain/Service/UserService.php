@@ -452,6 +452,39 @@ class UserService
     }
 
     /**
+     * Override or set the authenticationProviderName for Account
+     * 
+     * @param Account $account
+     * @param string|null $authenticationProviderName
+     * @return void
+     * @api
+     */
+    public function setAuthenticationProviderNameForAccount(Account $account, string $authenticationProviderName = null)
+    {
+        $currentAuthenticationProviderName = $account->getAuthenticationProviderName();
+        $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
+
+        if ($currentAuthenticationProviderName !== $authenticationProviderName) {
+            $account->setAuthenticationProviderName($authenticationProviderName);
+            $this->accountRepository->update($account);
+            $this->emitAuthenticationProviderNameUpdated($account, $authenticationProviderName);
+        }
+    }
+
+    /**
+     * Signals that the given user has an updated authenticationProviderName
+     *
+     * @param Account $account the account
+     * @param string $authenticationProviderName the updated authenticationProviderName
+     * @return void
+     * @Flow\Signal
+     * @api
+     */
+    public function emitAuthenticationProviderNameUpdated(Account $account, string $authenticationProviderName)
+    {
+    }
+
+    /**
      * Adds the specified role to the given account and potentially carries out further actions which are needed to
      * properly reflect these changes.
      *

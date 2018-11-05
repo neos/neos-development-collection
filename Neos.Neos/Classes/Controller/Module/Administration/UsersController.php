@@ -201,7 +201,8 @@ class UsersController extends AbstractModuleController
         $this->view->assignMultiple([
             'account' => $account,
             'user' => $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName()),
-            'availableRoles' => $this->policyService->getRoles()
+            'availableRoles' => $this->policyService->getRoles(),
+            'providers' => $this->getAuthenticationProviders()
         ]);
     }
 
@@ -211,10 +212,11 @@ class UsersController extends AbstractModuleController
      * @param Account $account The account to update
      * @param array $roleIdentifiers A possibly updated list of roles for the user's primary account
      * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
+     * @param string $authenticationProviderName Optional name of the authentication provider. If not provided the user server uses the default authentication provider
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      * @return void
      */
-    public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = [])
+    public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = [], $authenticationProviderName = null)
     {
         $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
         if ($user === $this->currentUser) {
@@ -233,6 +235,7 @@ class UsersController extends AbstractModuleController
         }
 
         $this->userService->setRolesForAccount($account, $roleIdentifiers);
+        $this->userService->setAuthenticationProviderNameForAccount($account, $authenticationProviderName);
         $this->addFlashMessage('The account has been updated.', 'Account updated', Message::SEVERITY_OK);
         $this->redirect('edit', null, null, ['user' => $user]);
     }
