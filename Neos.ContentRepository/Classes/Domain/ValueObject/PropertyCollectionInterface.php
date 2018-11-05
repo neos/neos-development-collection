@@ -12,6 +12,6 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 
 
-interface PropertyCollectionInterface extends \ArrayAccess, \Iterator
+interface PropertyCollectionInterface extends \ArrayAccess, \IteratorAggregate
 {
 }
