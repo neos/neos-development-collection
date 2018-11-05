@@ -27,7 +27,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class PropertyCollection implements PropertyCollectionInterface
 {
-
     /**
      * Properties from Nodes
      *
@@ -39,6 +38,11 @@ final class PropertyCollection implements PropertyCollectionInterface
      * @var array
      */
     protected $resolvedPropertyObjects;
+
+    /**
+     * @var \ArrayIterator
+     */
+    protected $iterator;
 
     /**
      * @Flow\Inject
@@ -55,6 +59,7 @@ final class PropertyCollection implements PropertyCollectionInterface
     public function __construct(array $properties)
     {
         $this->properties = $properties;
+        $this->iterator = new \ArrayIterator($properties);
     }
 
     public function offsetExists($offset)
@@ -87,28 +92,9 @@ final class PropertyCollection implements PropertyCollectionInterface
     {
         throw new \RuntimeException("Do not use!");
     }
-    public function current()
-    {
-        return current($this->properties);
-    }
 
-    public function next()
+    public function getIterator()
     {
-        return next($this->properties);
-    }
-
-    public function key()
-    {
-        return key($this->properties);
-    }
-
-    public function valid()
-    {
-        return key($this->properties) !== null;
-    }
-
-    public function rewind()
-    {
-        reset($this->properties);
+        return $this->iterator;
     }
 }
