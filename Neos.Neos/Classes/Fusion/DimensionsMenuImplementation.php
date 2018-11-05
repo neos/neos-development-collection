@@ -101,7 +101,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                 $nodeInDimensions = $this->findAcceptableNode($allowedCombination, $allDimensionPresets);
             }
 
-            if ($nodeInDimensions !== null && ($this->isNodeHidden($nodeInDimensions) || $this->isNodeParentHidden($nodeInDimensions))) {
+            if ($nodeInDimensions !== null && ($this->isNodeHidden($nodeInDimensions) || $this->hasHiddenNodeParent($nodeInDimensions))) {
                 $nodeInDimensions = null;
             }
 
@@ -216,7 +216,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
      * @param NodeInterface $node
      * @return bool
      */
-    protected function isNodeParentHidden(NodeInterface $node): bool
+    protected function hasHiddenNodeParent(NodeInterface $node): bool
     {
         $rootNode = $node->getContext()->getRootNode();
         $nodesOnPath = $node->getContext()->getNodesOnPath($rootNode, $node);
