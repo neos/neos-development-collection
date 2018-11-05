@@ -459,7 +459,7 @@ class UserService
      * @return void
      * @api
      */
-    public function setAuthenticationProviderNameForAccount(Account $account, string $authenticationProviderName = null)
+    public function setAuthenticationProviderNameForAccount(Account $account, string $authenticationProviderName = null) :void
     {
         $currentAuthenticationProviderName = $account->getAuthenticationProviderName();
         $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
