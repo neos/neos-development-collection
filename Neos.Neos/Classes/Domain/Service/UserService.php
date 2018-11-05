@@ -453,7 +453,7 @@ class UserService
 
     /**
      * Override or set the authenticationProviderName for Account
-     * 
+     *
      * @param Account $account
      * @param string|null $authenticationProviderName
      * @return void
