@@ -122,7 +122,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
 
         $this->outputLine('Node repair finished.');
         if ($hasErrors) {
-            $this->outputLine('During run some error were found!!!');
+            $this->outputLine('During run, some error were found!!!');
             exit(1);
         }
     }
