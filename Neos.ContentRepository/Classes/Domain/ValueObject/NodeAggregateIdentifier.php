@@ -78,6 +78,15 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
     }
 
     /**
+     * @param NodeAggregateIdentifier $other
+     * @return bool
+     */
+    public function equals(NodeAggregateIdentifier $other): bool
+    {
+        return $this->identifier === (string) $other;
+    }
+
+    /**
      * @return string
      */
     public function jsonSerialize()
