@@ -34,7 +34,7 @@ class AssetProxyController extends ActionController
      * @param string $assetIdentifier The asset-source specific identifier of the asset to import
      * @return string
      */
-    public function importAction(string $assetSourceIdentifier, string $assetIdentifier)
+    public function importAction(string $assetSourceIdentifier, string $assetIdentifier): string
     {
         $this->response->setHeader('Content-Type', 'application/json');
 

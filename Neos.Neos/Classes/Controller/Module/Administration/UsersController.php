@@ -155,6 +155,7 @@ class UsersController extends AbstractModuleController
         $this->assignElectronicAddressOptions();
 
         $this->view->assignMultiple([
+            'currentUser' => $this->currentUser,
             'user' => $user,
             'availableRoles' => $this->policyService->getRoles()
         ]);
