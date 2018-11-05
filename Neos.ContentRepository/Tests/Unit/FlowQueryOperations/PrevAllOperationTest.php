@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
@@ -49,6 +50,10 @@ class PrevAllOperationTest extends UnitTestCase
      */
     protected $thirdNodeInLevel;
 
+    /**
+     * @throws \ReflectionException
+     * @throws \Exception
+     */
     public function setUp()
     {
         $this->siteNode = $this->createMock(TraversableNodeInterface::class);
@@ -65,11 +70,11 @@ class PrevAllOperationTest extends UnitTestCase
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->firstNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->firstNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site/first')));
+        $this->firstNodeInLevel->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('first-node')));
         $this->secondNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site/second')));
+        $this->secondNodeInLevel->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('second-node')));
         $this->thirdNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site/third')));
+        $this->thirdNodeInLevel->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('third-node')));
     }
 
     /**

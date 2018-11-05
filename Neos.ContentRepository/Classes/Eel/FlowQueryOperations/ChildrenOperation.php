@@ -64,6 +64,7 @@ class ChildrenOperation extends AbstractOperation
      * @param array $arguments the arguments for this operation
      * @return void
      * @throws \Neos\Eel\FlowQuery\FizzleException
+     * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {

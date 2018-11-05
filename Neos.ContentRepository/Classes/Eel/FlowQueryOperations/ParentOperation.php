@@ -57,8 +57,8 @@ class ParentOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodeAggregateIdentifiers = array();
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             /* @var $contextNode TraversableNodeInterface */
             $parentNode = $contextNode->findParentNode();

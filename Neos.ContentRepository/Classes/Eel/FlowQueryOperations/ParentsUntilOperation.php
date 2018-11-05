@@ -54,11 +54,12 @@ class ParentsUntilOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             $parentNodes = $this->getParents($contextNode);
             if (isset($arguments[0]) && !empty($arguments[0] && isset($parentNodes[0]))) {
@@ -72,8 +73,8 @@ class ParentsUntilOperation extends AbstractOperation
             }
 
             foreach ($parentNodes as $parentNode) {
-                if ($parentNode !== null && !isset($outputNodePaths[(string)$parentNode->findNodePath()])) {
-                    $outputNodePaths[(string)$parentNode->findNodePath()] = true;
+                if ($parentNode !== null && !isset($outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()])) {
+                    $outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()] = true;
                     $output[] = $parentNode;
                 }
             }
@@ -102,16 +103,16 @@ class ParentsUntilOperation extends AbstractOperation
     }
 
     /**
-     * @param array $parentNodes the parent nodes
+     * @param array|TraversableNodeInterface[] $parentNodes the parent nodes
      * @param TraversableNodeInterface $until
      * @return TraversableNodeInterface[]
      */
-    protected function getNodesUntil($parentNodes, TraversableNodeInterface $until)
+    protected function getNodesUntil(array $parentNodes, TraversableNodeInterface $until)
     {
         $count = count($parentNodes) - 1;
 
         for ($i = $count; $i >= 0; $i--) {
-            if ((string)$parentNodes[$i]->findNodePath() === (string)$until->findNodePath()) {
+            if ($parentNodes[$i] === $until) {
                 unset($parentNodes[$i]);
                 return array_values($parentNodes);
             } else {

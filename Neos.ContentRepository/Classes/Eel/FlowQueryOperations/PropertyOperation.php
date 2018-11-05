@@ -65,6 +65,7 @@ class PropertyOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return mixed
+     * @throws FlowQueryException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -82,7 +83,7 @@ class PropertyOperation extends AbstractOperation
             if ($propertyPath[0] === '_') {
                 return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {
-                /* @var $element NodeInterface */
+                /* @var NodeInterface $element */
                 return $element->getProperty($propertyPath);
             }
         }

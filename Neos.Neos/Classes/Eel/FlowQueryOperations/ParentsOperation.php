@@ -54,6 +54,7 @@ class ParentsOperation extends AbstractOperation
      *
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
+     * @todo rewrite once the node type Neos.Neos:Site is available for comparison
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)

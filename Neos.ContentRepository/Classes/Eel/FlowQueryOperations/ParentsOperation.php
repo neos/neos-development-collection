@@ -15,7 +15,6 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "parents" operation working on ContentRepository nodes. It iterates over all
@@ -58,16 +57,17 @@ class ParentsOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodeAggregateIdentifiers = array();
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            /* @var $contextNode \Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface */
-            while ($contextNode->findParentNode() !== null) {
-                $contextNode = $contextNode->findParentNode();
-                if (!isset($outputNodeAggregateIdentifiers[(string)$contextNode->getNodeAggregateIdentifier()])) {
-                    $output[] = $contextNode;
-                    $outputNodeAggregateIdentifiers[(string)$contextNode->getNodeAggregateIdentifier()] = true;
+            /* @var TraversableNodeInterface $contextNode */
+            $parentNode = $contextNode->findParentNode();
+            while ($parentNode) {
+                if (!isset($outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()])) {
+                    $output[] = $parentNode;
+                    $outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()] = true;
                 }
+                $parentNode = $parentNode->findParentNode();
             }
         }
 

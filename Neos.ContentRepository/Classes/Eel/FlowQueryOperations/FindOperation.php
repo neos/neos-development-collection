@@ -96,6 +96,8 @@ class FindOperation extends AbstractOperation
     }
 
     /**
+     * This operation operates rather on the given Context object than on the given node
+     * and thus may work with the legacy node interface until subgraphs are available
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object

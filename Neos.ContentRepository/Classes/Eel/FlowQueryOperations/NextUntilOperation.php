@@ -15,7 +15,6 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "nextUntil" operation working on ContentRepository nodes. It iterates over all context elements
@@ -56,12 +55,13 @@ class NextUntilOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
-        $until = array();
+        $output = [];
+        $outputNodeIdentifiers = [];
+        $until = [];
 
         foreach ($flowQuery->getContext() as $contextNode) {
             $nextNodes = $this->getNextForNode($contextNode);
@@ -77,8 +77,8 @@ class NextUntilOperation extends AbstractOperation
             }
 
             foreach ($nextNodes as $nextNode) {
-                if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->findNodePath()])) {
-                    $outputNodePaths[(string)$nextNode->findNodePath()] = true;
+                if ($nextNode !== null && !isset($outputNodeIdentifiers[(string)$nextNode->getNodeAggregateIdentifier()])) {
+                    $outputNodeIdentifiers[(string)$nextNode->getNodeAggregateIdentifier()] = true;
                     $output[] = $nextNode;
                 }
             }
@@ -112,16 +112,16 @@ class NextUntilOperation extends AbstractOperation
     }
 
     /**
-     * @param array $nextNodes the remaining nodes
+     * @param array|TraversableNodeInterface[] $nextNodes the remaining nodes
      * @param TraversableNodeInterface $until
      * @return TraversableNodeInterface[]
      */
-    protected function getNodesUntil($nextNodes, TraversableNodeInterface $until)
+    protected function getNodesUntil(array $nextNodes, TraversableNodeInterface $until)
     {
         $count = count($nextNodes) - 1;
 
         for ($i = $count; $i >= 0; $i--) {
-            if ((string)$nextNodes[$i]->findNodePath() === (string)$until->findNodePath()) {
+            if ($nextNodes[$i] === $until) {
                 unset($nextNodes[$i]);
                 return array_values($nextNodes);
             } else {

@@ -15,7 +15,6 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "prevAll" operation working on ContentRepository nodes. It iterates over all
@@ -58,12 +57,12 @@ class PrevAllOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             foreach ($this->getPrevForNode($contextNode) as $prevNode) {
-                if ($prevNode !== null && !isset($outputNodePaths[(string)$prevNode->findNodePath()])) {
-                    $outputNodePaths[(string)$prevNode->findNodePath()] = true;
+                if ($prevNode !== null && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])) {
+                    $outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()] = true;
                     $output[] = $prevNode;
                 }
             }
