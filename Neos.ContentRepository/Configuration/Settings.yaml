@@ -12,7 +12,7 @@ Neos:
         dql:
           customStringFunctions:
             NEOSCR_TOSTRING: Neos\ContentRepository\Persistence\Ast\ToStringFunction
-
+            JSON_EXTRACT: Neos\ContentRepository\Persistence\Ast\JsonExtractFunction
     # Improve debug output for node objects by ignoring large classes
     error:
       debugger:
