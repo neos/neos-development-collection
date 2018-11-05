@@ -15,16 +15,10 @@ use Neos\Fusion\Exception as FusionException;
 
 /**
  * Abstract implementation of a collection renderer for Fusion.
+ * @deprecated since Neos 4.2 in favor of MapImplementation
  */
-abstract class AbstractCollectionImplementation extends AbstractFusionObject
+abstract class AbstractCollectionImplementation extends MapImplementation
 {
-    /**
-     * The number of rendered nodes, filled only after evaluate() was called.
-     *
-     * @var integer
-     */
-    protected $numberOfRenderedNodes;
-
     /**
      * Render the array collection by triggering the itemRenderer for every element
      *
@@ -36,29 +30,11 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getItemName()
+    public function getItems()
     {
-        return $this->fusionValue('itemName');
-    }
-
-    /**
-     * @return string
-     */
-    public function getItemKey()
-    {
-        return $this->fusionValue('itemKey');
-    }
-
-    /**
-     * If set iteration data (index, cycle, isFirst, isLast) is available in context with the name given.
-     *
-     * @return string
-     */
-    public function getIterationName()
-    {
-        return $this->fusionValue('iterationName');
+        return $this->getCollection();
     }
 
     /**
@@ -69,7 +45,7 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        return implode('', $this->evaluateAsArray());
+        return implode('', parent::evaluate());
     }
 
     /**
@@ -80,66 +56,6 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
      */
     public function evaluateAsArray()
     {
-        $collection = $this->getCollection();
-
-        $result = [];
-        if ($collection === null) {
-            return $result;
-        }
-        $this->numberOfRenderedNodes = 0;
-        $itemName = $this->getItemName();
-        if ($itemName === null) {
-            throw new FusionException('The Collection needs an itemName to be set.', 1344325771);
-        }
-        $itemKey = $this->getItemKey();
-        $iterationName = $this->getIterationName();
-        $collectionTotalCount = count($collection);
-        foreach ($collection as $collectionKey => $collectionElement) {
-            $context = $this->runtime->getCurrentContext();
-            $context[$itemName] = $collectionElement;
-            if ($itemKey !== null) {
-                $context[$itemKey] = $collectionKey;
-            }
-            if ($iterationName !== null) {
-                $context[$iterationName] = $this->prepareIterationInformation($collectionTotalCount);
-            }
-
-            $this->runtime->pushContextArray($context);
-            $result[] =  $this->runtime->render($this->path . '/itemRenderer');
-            $this->runtime->popContext();
-            $this->numberOfRenderedNodes++;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param integer $collectionCount
-     * @return array
-     */
-    protected function prepareIterationInformation($collectionCount)
-    {
-        $iteration = [
-            'index' => $this->numberOfRenderedNodes,
-            'cycle' => ($this->numberOfRenderedNodes + 1),
-            'isFirst' => false,
-            'isLast' => false,
-            'isEven' => false,
-            'isOdd' => false
-        ];
-
-        if ($this->numberOfRenderedNodes === 0) {
-            $iteration['isFirst'] = true;
-        }
-        if (($this->numberOfRenderedNodes + 1) === $collectionCount) {
-            $iteration['isLast'] = true;
-        }
-        if (($this->numberOfRenderedNodes + 1) % 2 === 0) {
-            $iteration['isEven'] = true;
-        } else {
-            $iteration['isOdd'] = true;
-        }
-
-        return $iteration;
+        return parent::evaluate();
     }
 }

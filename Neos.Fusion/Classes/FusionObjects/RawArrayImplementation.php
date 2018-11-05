@@ -11,35 +11,11 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Fusion\Core\Runtime;
 
 /**
  * Evaluate sub objects to an array (instead of a string as ArrayImplementation does)
+ * @deprecated Will be removed with Neos 6
  */
-class RawArrayImplementation extends ArrayImplementation
+class RawArrayImplementation extends DataStructureImplementation
 {
-    /**
-     * {@inheritdoc}
-     *
-     * @return array
-     */
-    public function evaluate()
-    {
-        $sortedChildFusionKeys = $this->sortNestedFusionKeys();
-
-        if (count($sortedChildFusionKeys) === 0) {
-            return [];
-        }
-
-        $output = [];
-        foreach ($sortedChildFusionKeys as $key) {
-            $value = $this->fusionValue($key);
-            if ($value === null && $this->runtime->getLastEvaluationStatus() === Runtime::EVALUATION_SKIPPED) {
-                continue;
-            }
-            $output[$key] = $value;
-        }
-
-        return $output;
-    }
 }
