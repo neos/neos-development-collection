@@ -67,8 +67,6 @@ class ChildrenOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-
-
         $output = array();
         $outputNodeAggregateIdentifiers = array();
         if (isset($arguments[0]) && !empty($arguments[0])) {
@@ -136,7 +134,7 @@ class ChildrenOperation extends AbstractOperation
                     foreach ($flowQuery->getContext() as $contextNode) {
                         $currentPathSegments = $nodePathSegments;
                         $resolvedNode = $contextNode;
-                        while(($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
+                        while (($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
                             $resolvedNode = $resolvedNode->findNamedChildNode(new NodeName($nodePathSegment));
                         }
 
