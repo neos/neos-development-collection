@@ -12,8 +12,11 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -24,12 +27,17 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeAddressFactory
 {
-
     /**
      * @Flow\Inject
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
+
+    /**
+     * @Flow\Inject
+     * @var ContentGraphInterface
+     */
+    protected $contentGraph;
 
     public function createFromNode(NodeInterface $node): NodeAddress
     {
@@ -50,6 +58,25 @@ class NodeAddressFactory
         $contentStreamIdentifier = $this->workspaceFinder->findOneByName($workspaceName)->getCurrentContentStreamIdentifier();
 
         return new NodeAddress($contentStreamIdentifier, $dimensionSpacePoint, $nodeAggregateIdentifier, $workspaceName);
+    }
+
+    /**
+     * @param string $contextPath
+     * @return NodeAddress
+     * @deprecated make use of createFromUriString instead
+     */
+    public function createFromContextPath(string $contextPath): NodeAddress
+    {
+        $pathValues = NodePaths::explodeContextPath($contextPath);
+        $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($pathValues['workspaceName']));
+        $contentStreamIdentifier = $workspace->getCurrentContentStreamIdentifier();
+        $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($pathValues['dimensions']);
+        $nodePath = \mb_strpos($pathValues['nodePath'], '/sites') === 0 ? \mb_substr($pathValues['nodePath'], 6) : $pathValues['nodePath'];
+
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint);
+        $node = $subgraph->findNodeByPath($nodePath, $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'))->getNodeIdentifier());
+
+        return new NodeAddress($contentStreamIdentifier, $dimensionSpacePoint, $node->getNodeAggregateIdentifier(), $workspace->getWorkspaceName());
     }
 
     public function adjustWithDimensionSpacePoint(NodeAddress $baseNodeAddress, DimensionSpacePoint $dimensionSpacePoint): NodeAddress

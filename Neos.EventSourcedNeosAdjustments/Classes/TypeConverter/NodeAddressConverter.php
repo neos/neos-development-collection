@@ -46,6 +46,11 @@ class NodeAddressConverter extends AbstractTypeConverter
      */
     protected $nodeAddressFactory;
 
+    public function canConvertFrom($source, $targetType)
+    {
+        return \mb_substr_count($source, '__') === 2 || \mb_strpos($source, '@') !== false;
+    }
+
     /**
      * @param mixed $source
      * @param string $targetType
@@ -55,6 +60,9 @@ class NodeAddressConverter extends AbstractTypeConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): NodeAddress
     {
-        return $this->nodeAddressFactory->createFromUriString($source);
+        if (\mb_substr_count($source, '__') === 2) {
+            return $this->nodeAddressFactory->createFromUriString($source);
+        }
+        return $this->nodeAddressFactory->createFromContextPath($source);
     }
 }
