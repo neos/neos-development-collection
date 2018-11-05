@@ -223,10 +223,11 @@ HELPTEXT;
      * @param boolean $cleanup If false, cleanup tasks are skipped
      * @param string $skip Skip the given check or checks (comma separated)
      * @param string $only Only execute the given check or checks (comma separated)
-     * @return void
+     * @return boolean
      */
     public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
+        $hasErrors = false;
         $this->output = $output;
         $commandMethods = [
             'removeAbstractAndUndefinedNodes' => [ 'cleanup' => true ],
@@ -257,9 +258,12 @@ HELPTEXT;
                     if (!$cleanup && $commandMethodConfiguration['cleanup']) {
                         continue;
                     }
-                    $this->$commandMethodName($workspaceName, $dryRun, $nodeType);
+                    if ($this->$commandMethodName($workspaceName, $dryRun, $nodeType)){
+                        $hasErrors = true;
+                    }
                 }
         }
+        return $hasErrors;
     }
 
     /**
@@ -292,13 +296,14 @@ HELPTEXT;
      * @param string $workspaceName Name of the workspace to consider
      * @param boolean $dryRun Simulate?
      * @param NodeType $nodeType Only for this node type, if specified
-     * @return void
+     * @return boolean
      */
     protected function createMissingChildNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
+        $hasErrors = false;
         if ($nodeType !== null) {
             $this->output->outputLine('Checking nodes of type "%s" for missing child nodes ...', [$nodeType->getName()]);
-            $this->createChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
+            $hasErrors = $this->createChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
         } else {
             $this->output->outputLine('Checking for missing child nodes ...');
             foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
@@ -306,11 +311,15 @@ HELPTEXT;
                 if ($nodeType->isAbstract()) {
                     continue;
                 }
-                $this->createChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
+                $hasError = $this->createChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
+                if ($hasError) {
+                    $hasErrors = true;
+                }
             }
         }
 
         $this->persistenceManager->persistAll();
+        return $hasError;
     }
 
     /**
@@ -319,7 +328,7 @@ HELPTEXT;
      * @param NodeType $nodeType
      * @param string $workspaceName
      * @param boolean $dryRun
-     * @return void
+     * @return boolean
      */
     protected function createChildNodesByNodeType(NodeType $nodeType, $workspaceName, $dryRun)
     {
@@ -327,6 +336,7 @@ HELPTEXT;
         $updatedNodesCount = 0;
         $incorrectNodeTypeCount = 0;
         $nodeCreationExceptions = 0;
+        $hasError = false;
 
         $nodeIdentifiersWhichNeedUpdate = [];
 
@@ -420,15 +430,19 @@ HELPTEXT;
             } else {
                 if ($createdNodesCount > 0) {
                     $this->output->outputLine('%s missing child nodes need to be created', [$createdNodesCount]);
+                    $hasError = true;
                 }
                 if ($updatedNodesCount > 0) {
                     $this->output->outputLine('%s identifiers of child nodes need to be updated', [$updatedNodesCount]);
+                    $hasError = true;
                 }
                 if ($incorrectNodeTypeCount > 0) {
                     $this->output->outputLine('%s child nodes have incorrect node type', [$incorrectNodeTypeCount]);
+                    $hasError = true;
                 }
             }
         }
+        return $hasError;
     }
 
     /**
@@ -437,13 +451,14 @@ HELPTEXT;
      * @param string $workspaceName Name of the workspace to consider
      * @param boolean $dryRun Simulate?
      * @param NodeType $nodeType Only for this node type, if specified
-     * @return void
+     * @return boolean
      */
     public function addMissingDefaultValues($workspaceName, $dryRun, NodeType $nodeType = null)
     {
+        $hasErrors = false;
         if ($nodeType !== null) {
             $this->output->outputLine('Checking nodes of type "%s" for missing default values ...', [$nodeType->getName()]);
-            $this->addMissingDefaultValuesByNodeType($nodeType, $workspaceName, $dryRun);
+            $hasErrors = $this->addMissingDefaultValuesByNodeType($nodeType, $workspaceName, $dryRun);
         } else {
             $this->output->outputLine('Checking for missing default values ...');
             foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
@@ -451,9 +466,13 @@ HELPTEXT;
                 if ($nodeType->isAbstract()) {
                     continue;
                 }
-                $this->addMissingDefaultValuesByNodeType($nodeType, $workspaceName, $dryRun);
+                $hasError = $this->addMissingDefaultValuesByNodeType($nodeType, $workspaceName, $dryRun);
+                if ($hasError) {
+                    $hasErrors = true;
+                }
             }
         }
+        return $hasErrors;
     }
 
     /**
@@ -462,11 +481,12 @@ HELPTEXT;
      * @param NodeType $nodeType
      * @param string $workspaceName
      * @param boolean $dryRun
-     * @return void
+     * @return boolean
      */
     public function addMissingDefaultValuesByNodeType(NodeType $nodeType = null, $workspaceName, $dryRun)
     {
         $addedMissingDefaultValuesCount = 0;
+        $hasError = false;
 
         $nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), false);
         $nodeTypes[$nodeType->getName()] = $nodeType;
@@ -510,6 +530,7 @@ HELPTEXT;
                             $this->output->outputLine('Set default value for property named "%s" in "%s" (%s)', [$propertyName, $node->getPath(), $node->getNodeType()->getName()]);
                         } else {
                             $this->output->outputLine('Found missing default value for property named "%s" in "%s" (%s)', [$propertyName, $node->getPath(), $node->getNodeType()->getName()]);
+                            $hasError = true;
                         }
                     }
                 }
@@ -522,8 +543,10 @@ HELPTEXT;
                 $this->output->outputLine('Added %s new default values', [$addedMissingDefaultValuesCount]);
             } else {
                 $this->output->outputLine('%s missing default values need to be set', [$addedMissingDefaultValuesCount]);
+                $hasError = true;
             }
         }
+        return $hasError;       
     }
 
     /**
@@ -531,11 +554,12 @@ HELPTEXT;
      *
      * @param string $workspaceName
      * @param boolean $dryRun Simulate?
-     * @return void
+     * @return boolean
      */
     protected function removeAbstractAndUndefinedNodes($workspaceName, $dryRun)
     {
         $this->output->outputLine('Checking for nodes with abstract or undefined node types ...');
+        $hasError = false;
 
         $abstractNodeTypes = [];
         $nonAbstractNodeTypes = [];
@@ -564,7 +588,7 @@ HELPTEXT;
 
         $removableNodesCount = count($nodes);
         if ($removableNodesCount === 0) {
-            return;
+            return $hasError;
         }
 
         foreach ($nodes as $node) {
@@ -584,8 +608,10 @@ HELPTEXT;
             });
         } else {
             $this->output->outputLine('Found %s node%s with abstract or undefined node types to be removed.', [$removableNodesCount, $removableNodesCount > 1 ? 's' : '']);
+            $hasError = true;
         }
         $this->output->outputLine();
+        return $hasError;
     }
 
     /**
@@ -594,11 +620,12 @@ HELPTEXT;
      *
      * @param string $workspaceName
      * @param boolean $dryRun Simulate?
-     * @return void
+     * @return boolean
      */
     protected function removeDisallowedChildNodes($workspaceName, $dryRun)
     {
         $this->output->outputLine('Checking for disallowed child nodes ...');
+        $hasError = false;
 
         /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -646,6 +673,7 @@ HELPTEXT;
                 });
             } else {
                 $this->output->outputLine('Found %s disallowed node%s to be removed.', [$disallowedChildNodesCount, $disallowedChildNodesCount > 1 ? 's' : '']);
+                $hasError = true;
             }
 
             if ($nodeExceptionCount > 0) {
@@ -654,6 +682,7 @@ HELPTEXT;
             }
             $this->output->outputLine();
         }
+        return $hasError;
     }
 
     /**
@@ -662,11 +691,12 @@ HELPTEXT;
      * @param string $workspaceName
      * @param boolean $dryRun Simulate?
      * @param NodeType $nodeType Only for this node type, if specified
-     * @return void
+     * @return boolean
      */
     protected function removeOrphanNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         $this->output->outputLine('Checking for orphan nodes ...');
+        $hasError = false;
 
         /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -704,7 +734,7 @@ HELPTEXT;
 
         $nodesToBeRemoved = count($nodes);
         if ($nodesToBeRemoved === 0) {
-            return;
+            return $hasError;
         }
 
         foreach ($nodes as $node) {
@@ -723,8 +753,10 @@ HELPTEXT;
             });
         } else {
             $this->output->outputLine('Found %s orphan node%s to be removed.', [$nodesToBeRemoved, count($nodes) > 1 ? 's' : '']);
+            $hasError = true;
         }
         $this->output->outputLine();
+        return $hasError;
     }
 
     /**
@@ -733,11 +765,12 @@ HELPTEXT;
      * @param string $workspaceName
      * @param boolean $dryRun Simulate?
      * @param NodeType $nodeType Only for this node type, if specified
-     * @return void
+     * @return boolean
      */
     public function removeUndefinedProperties($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         $this->output->outputLine('Checking for undefined properties ...');
+        $hasError = false;
 
         /** @var \Neos\ContentRepository\Domain\Model\Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
@@ -788,11 +821,13 @@ HELPTEXT;
                 });
             } else {
                 $this->output->outputLine('Found %s undefined propert%s to be removed.', [$undefinedPropertiesCount, $undefinedPropertiesCount > 1 ? 'ies' : 'y']);
+                $hasError = true;
             }
             $this->output->outputLine();
         }
 
         $this->persistenceManager->persistAll();
+        return $hasError;
     }
 
     /**
@@ -802,11 +837,12 @@ HELPTEXT;
      *
      * @param string $workspaceName
      * @param boolean $dryRun
-     * @return void
+     * @return boolean
      */
     public function removeBrokenEntityReferences($workspaceName, $dryRun)
     {
         $this->output->outputLine('Checking for broken entity references ...');
+        $hasError = false;
 
         /** @var \Neos\ContentRepository\Domain\Model\Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
@@ -874,11 +910,13 @@ HELPTEXT;
                 });
             } else {
                 $this->output->outputLine('Found %s broken entity reference%s to be removed.', [$brokenReferencesCount, $brokenReferencesCount > 1 ? 's' : '']);
+                $hasError = true;
             }
             $this->output->outputLine();
 
             $this->persistenceManager->persistAll();
         }
+        return $hasError;
     }
 
     /**
@@ -975,16 +1013,17 @@ HELPTEXT;
      *
      * @param string $workspaceName Name of the workspace to consider
      * @param boolean $dryRun Simulate?
-     * @return void
+     * @return boolean
      */
     public function removeNodesWithInvalidDimensions($workspaceName, $dryRun)
     {
         $this->output->outputLine('Checking for nodes with invalid dimensions ...');
+        $hasError = false;
 
         $allowedDimensionCombinations = $this->contentDimensionCombinator->getAllAllowedCombinations();
         $nodesArray = $this->collectNodesWithInvalidDimensions($workspaceName, $allowedDimensionCombinations);
         if ($nodesArray === []) {
-            return;
+            return $hasError;
         }
 
         if (!$dryRun) {
@@ -999,8 +1038,10 @@ HELPTEXT;
             });
         } else {
             $this->output->outputLine('Found %s node%s with invalid dimension values to be removed.', [count($nodesArray), count($nodesArray) > 1 ? 's' : '']);
+            $hasError = true;
         }
         $this->output->outputLine();
+        return $hasError;
     }
 
     /**
@@ -1058,15 +1099,16 @@ HELPTEXT;
      *
      * @param string $workspaceName This argument will be ignored
      * @param boolean $dryRun Simulate?
-     * @return void
+     * @return boolean
      */
     public function removeNodesWithInvalidWorkspace($workspaceName, $dryRun)
     {
         $this->output->outputLine('Checking for nodes with invalid workspace ...');
+        $hasError = false;
 
         $nodesArray = $this->collectNodesWithInvalidWorkspace();
         if ($nodesArray === []) {
-            return;
+            return $hasError;
         }
 
         if (!$dryRun) {
@@ -1081,8 +1123,10 @@ HELPTEXT;
             });
         } else {
             $this->output->outputLine('Found %s node%s referring to an invalid workspace to be removed.', [count($nodesArray), count($nodesArray) > 1 ? 's' : '']);
+            $hasError = true;
         }
         $this->output->outputLine();
+        return $hasError;
     }
 
     /**
@@ -1128,11 +1172,12 @@ HELPTEXT;
      *
      * @param string $workspaceName This argument will be ignored
      * @param boolean $dryRun Simulate?
-     * @return void
+     * @return boolean
      */
     public function fixNodesWithInconsistentIdentifier($workspaceName, $dryRun)
     {
         $this->output->outputLine('Checking for nodes with inconsistent identifier ...');
+        $hasError = false;
 
         $nodesArray = [];
         $liveWorkspaceNames = [];
@@ -1165,7 +1210,7 @@ HELPTEXT;
         }
 
         if ($nodesArray === []) {
-            return;
+            return $hasError;
         }
 
         if (!$dryRun) {
@@ -1192,8 +1237,10 @@ HELPTEXT;
             });
         } else {
             $this->output->outputLine('Found %s node%s with inconsistent identifiers which need to be fixed.', [count($nodesArray), count($nodesArray) > 1 ? 's' : '']);
+            $hasError = true;
         }
         $this->output->outputLine();
+        return $hasError;
     }
 
     /**
@@ -1202,13 +1249,14 @@ HELPTEXT;
      * @param string $workspaceName Name of the workspace to consider
      * @param boolean $dryRun Simulate?
      * @param NodeType $nodeType Only for this node type, if specified
-     * @return void
+     * @return boolean
      */
     protected function reorderChildNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
+        $hasErrors = false;
         if ($nodeType !== null) {
             $this->output->outputLine('Checking nodes of type "%s" for child nodes that need reordering ...', [$nodeType->getName()]);
-            $this->reorderChildNodesByNodeType($workspaceName, $dryRun, $nodeType);
+            $hasErrors = $this->reorderChildNodesByNodeType($workspaceName, $dryRun, $nodeType);
         } else {
             $this->output->outputLine('Checking for child nodes that need reordering ...');
             foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
@@ -1216,11 +1264,15 @@ HELPTEXT;
                 if ($nodeType->isAbstract()) {
                     continue;
                 }
-                $this->reorderChildNodesByNodeType($workspaceName, $dryRun, $nodeType);
+                $hasError = $this->reorderChildNodesByNodeType($workspaceName, $dryRun, $nodeType);
+                if ($hasError) {
+                    $hasErrors = true;
+                }
             }
         }
 
         $this->persistenceManager->persistAll();
+        return $hasError;
     }
 
     /**
@@ -1229,10 +1281,11 @@ HELPTEXT;
      * @param string $workspaceName
      * @param boolean $dryRun
      * @param NodeType $nodeType
-     * @return void
+     * @return boolean
      */
     protected function reorderChildNodesByNodeType($workspaceName, $dryRun, NodeType $nodeType)
     {
+        $hasError = false;
         $nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), false);
         $nodeTypes[$nodeType->getName()] = $nodeType;
 
@@ -1263,23 +1316,26 @@ HELPTEXT;
                     $childNode = $node->getNode($childNodeName);
                     if ($childNode) {
                         if ($childNodeBefore) {
-                            if ($dryRun === false) {
-                                if ($childNodeBefore->getIndex() >= $childNode->getIndex()) {
+                            if ($childNodeBefore->getIndex() >= $childNode->getIndex()) {
+                                if ($dryRun === false) {
                                     $childNode->moveAfter($childNodeBefore);
                                     $this->output->outputLine('Moved node named "%s" after node named "%s" in "%s"', [$childNodeName, $childNodeBefore->getName(), $node->getPath()]);
+                                } else {
+                                    $this->output->outputLine('Should move node named "%s" after node named "%s" in "%s"', [$childNodeName, $childNodeBefore->getName(), $node->getPath()]);
+                                    $hasError = true;
                                 }
-                            } else {
-                                $this->output->outputLine('Should move node named "%s" after node named "%s" in "%s"', [$childNodeName, $childNodeBefore->getName(), $node->getPath()]);
                             }
                         }
                     } else {
                         $this->output->outputLine('Missing child node named "%s" in "%s".', [$childNodeName, $node->getPath()]);
+                        $hasError = true;
                     }
 
                     $childNodeBefore = $childNode;
                 }
             }
         }
+        return $hasError;
     }
 
     /**
@@ -1291,16 +1347,17 @@ HELPTEXT;
      * @param string $workspaceName Currently ignored
      * @param boolean $dryRun Simulate?
      * @param NodeType $nodeType This argument will be ignored
-     * @return void
+     * @return boolean
      */
     protected function repairShadowNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
+        $hasError = false;
         /** @var Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
         if ($workspace->getBaseWorkspace() === null) {
             $this->output->outputLine('Repairing base workspace "%s", therefore skipping check for shadow nodes.', [$workspaceName]);
             $this->output->outputLine();
-            return;
+            return $hasError;
         }
 
         $this->output->outputLine('Checking for nodes with missing shadow nodes ...');
@@ -1313,6 +1370,10 @@ HELPTEXT;
         ]);
 
         $this->output->outputLine();
+        if (fixedShadowNodes>0){
+            $hasError = true;
+        }
+        return $hasError;
     }
 
     /**

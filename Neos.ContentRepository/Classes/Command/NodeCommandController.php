@@ -106,16 +106,25 @@ class NodeCommandController extends CommandController implements DescriptionAwar
             $this->outputLine('Omitting cleanup tasks.');
         }
 
+        $hasErrors = false;
+
         foreach ($this->pluginConfigurations as $pluginConfiguration) {
             /** @var NodeCommandControllerPluginInterface $plugin */
             $plugin = $pluginConfiguration['object'];
             $this->outputLine('<b>' . $plugin->getSubCommandShortDescription('repair') . '</b>');
             $this->outputLine();
-            $plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun, $cleanup, $skip, $only);
+            $hasError = $plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun, $cleanup, $skip, $only);
+            if ($hasError) {
+                $hasErrors = true;
+            }
             $this->outputLine();
         }
 
         $this->outputLine('Node repair finished.');
+        if ($hasErrors) {
+            $this->outputLine('During run some error were found!!!');
+            exit(1);
+        }
     }
 
     /**
