@@ -61,7 +61,7 @@ class NewNodeConverter extends AbstractTypeConverter
     /**
      * @var integer
      */
-    protected $priority = 1;
+    protected $priority = 2;
 
     /**
      * @Flow\Inject
