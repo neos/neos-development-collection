@@ -258,7 +258,7 @@ HELPTEXT;
                     if (!$cleanup && $commandMethodConfiguration['cleanup']) {
                         continue;
                     }
-                    if ($this->$commandMethodName($workspaceName, $dryRun, $nodeType)){
+                    if ($this->$commandMethodName($workspaceName, $dryRun, $nodeType)) {
                         $hasErrors = true;
                     }
                 }
@@ -546,7 +546,7 @@ HELPTEXT;
                 $hasError = true;
             }
         }
-        return $hasError;       
+        return $hasError;
     }
 
     /**
@@ -1370,7 +1370,7 @@ HELPTEXT;
         ]);
 
         $this->output->outputLine();
-        if (fixedShadowNodes>0){
+        if (fixedShadowNodes>0) {
             $hasError = true;
         }
         return $hasError;
