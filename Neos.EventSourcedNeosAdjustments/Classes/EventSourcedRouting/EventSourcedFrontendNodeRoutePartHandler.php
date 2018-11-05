@@ -269,7 +269,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
                 new NodeName($domain->getSite()->getNodeName())
             );
         } else {
-            $site = $contentSubgraph->findChildNodes($rootNode->getNodeIdentifier(), null, 1)[0] ?? null;
+            $site = $contentSubgraph->findChildNodes($rootNode->getNodeIdentifier())[0] ?? null;
         }
 
         if (!$site) {
