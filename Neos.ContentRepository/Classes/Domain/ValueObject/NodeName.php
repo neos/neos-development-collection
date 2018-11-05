@@ -55,17 +55,17 @@ final class NodeName implements \JsonSerializable
     /**
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
-        return $this->name;
+        return $this->name ?? '';
     }
 
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->name;
+        return $this->name ?? '';
     }
 
     public function isRoot(): bool
