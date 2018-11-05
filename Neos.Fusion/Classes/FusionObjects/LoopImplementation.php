@@ -13,22 +13,22 @@ namespace Neos\Fusion\FusionObjects;
 
 
 /**
- * Render a Fusion collection of nodes
+ * Render a Fusion collection of using the itemRenderer
  *
- * //tsPath collection *Collection
- * //tsPath itemRenderer the TS object which is triggered for each element in the node collection
- * @deprecated since Neos 4.2 in favor of LoopImplementation
+ * //fusionPath items *Collection
+ * //fusionPath itemRenderer the Fusion object which is triggered for each element in the node collection
  */
-class CollectionImplementation extends AbstractCollectionImplementation
+class LoopImplementation extends MapImplementation
 {
+
     /**
-     * Collections are always concatenated with an empty string
+     * Get the glue to insert between items
      *
      * @return string
      */
     public function getGlue()
     {
-        return '';
+        return $this->fusionValue('__meta/glue') ?? '';
     }
 
     /**
@@ -38,6 +38,7 @@ class CollectionImplementation extends AbstractCollectionImplementation
      */
     public function evaluate()
     {
-        return parent::evaluate();
+        $glue = $this->getGlue();
+        return implode($glue, parent::evaluate());
     }
 }
