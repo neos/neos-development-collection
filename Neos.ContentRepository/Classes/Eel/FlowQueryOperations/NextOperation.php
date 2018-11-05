@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
@@ -46,7 +47,7 @@ class NextOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -62,8 +63,8 @@ class NextOperation extends AbstractOperation
         $outputNodePaths = array();
         foreach ($flowQuery->getContext() as $contextNode) {
             $nextNode = $this->getNextForNode($contextNode);
-            if ($nextNode !== null && !isset($outputNodePaths[$nextNode->getPath()])) {
-                $outputNodePaths[$nextNode->getPath()] = true;
+            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->findNodePath()])) {
+                $outputNodePaths[(string)$nextNode->findNodePath()] = true;
                 $output[] = $nextNode;
             }
         }
@@ -75,12 +76,12 @@ class NextOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the preceding node should be found
-     * @return NodeInterface The following node of $contextNode or NULL
+     * @param TraversableNodeInterface $contextNode The node for which the preceding node should be found
+     * @return TraversableNodeInterface The following node of $contextNode or NULL
      */
-    protected function getNextForNode($contextNode)
+    protected function getNextForNode(TraversableNodeInterface $contextNode)
     {
-        $nodesInContext = $contextNode->getParent()->getChildNodes();
+        $nodesInContext = $contextNode->findParentNode()->findChildNodes();
         for ($i = 1; $i < count($nodesInContext); $i++) {
             if ($nodesInContext[$i - 1] === $contextNode) {
                 return $nodesInContext[$i];

@@ -11,10 +11,9 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "parentsUntil" operation working on ContentRepository nodes. It iterates over all
@@ -46,7 +45,7 @@ class ParentsUntilOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -72,12 +71,10 @@ class ParentsUntilOperation extends AbstractOperation
                 $parentNodes = $this->getNodesUntil($parentNodes, $until[0]);
             }
 
-            if (is_array($parentNodes)) {
-                foreach ($parentNodes as $parentNode) {
-                    if ($parentNode !== null && !isset($outputNodePaths[$parentNode->getPath()])) {
-                        $outputNodePaths[$parentNode->getPath()] = true;
-                        $output[] = $parentNode;
-                    }
+            foreach ($parentNodes as $parentNode) {
+                if ($parentNode !== null && !isset($outputNodePaths[(string)$parentNode->findNodePath()])) {
+                    $outputNodePaths[(string)$parentNode->findNodePath()] = true;
+                    $output[] = $parentNode;
                 }
             }
         }
@@ -90,30 +87,31 @@ class ParentsUntilOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode
-     * @return array
+     * @param TraversableNodeInterface $contextNode
+     * @return TraversableNodeInterface[]
      */
-    protected function getParents(NodeInterface $contextNode)
+    protected function getParents(TraversableNodeInterface $contextNode)
     {
-        $parents = array();
-        while ($contextNode->getParent() !== null) {
-            $contextNode = $contextNode->getParent();
-            $parents[] = $contextNode;
+        $parents = [];
+        $node = $contextNode->findParentNode();
+        while ($node !== null) {
+            $parents[] = $node;
+            $node = $contextNode->findParentNode();
         }
         return $parents;
     }
 
     /**
      * @param array $parentNodes the parent nodes
-     * @param NodeInterface $until
-     * @return array
+     * @param TraversableNodeInterface $until
+     * @return TraversableNodeInterface[]
      */
-    protected function getNodesUntil($parentNodes, NodeInterface $until)
+    protected function getNodesUntil($parentNodes, TraversableNodeInterface $until)
     {
         $count = count($parentNodes) - 1;
 
         for ($i = $count; $i >= 0; $i--) {
-            if ($parentNodes[$i]->getPath() === $until->getPath()) {
+            if ((string)$parentNodes[$i]->findNodePath() === (string)$until->findNodePath()) {
                 unset($parentNodes[$i]);
                 return array_values($parentNodes);
             } else {

@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
@@ -45,7 +46,7 @@ class PrevAllOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -60,13 +61,10 @@ class PrevAllOperation extends AbstractOperation
         $output = array();
         $outputNodePaths = array();
         foreach ($flowQuery->getContext() as $contextNode) {
-            $prevNodes = $this->getPrevForNode($contextNode);
-            if (is_array($prevNodes)) {
-                foreach ($prevNodes as $prevNode) {
-                    if ($prevNode !== null && !isset($outputNodePaths[$prevNode->getPath()])) {
-                        $outputNodePaths[$prevNode->getPath()] = true;
-                        $output[] = $prevNode;
-                    }
+            foreach ($this->getPrevForNode($contextNode) as $prevNode) {
+                if ($prevNode !== null && !isset($outputNodePaths[(string)$prevNode->findNodePath()])) {
+                    $outputNodePaths[(string)$prevNode->findNodePath()] = true;
+                    $output[] = $prevNode;
                 }
             }
         }
@@ -78,12 +76,12 @@ class PrevAllOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the preceding node should be found
-     * @return NodeInterface The preceding nodes of $contextNode or NULL
+     * @param TraversableNodeInterface $contextNode The node for which the preceding node should be found
+     * @return TraversableNodeInterface[] The preceding nodes of $contextNode
      */
-    protected function getPrevForNode(NodeInterface $contextNode)
+    protected function getPrevForNode(TraversableNodeInterface $contextNode)
     {
-        $nodesInContext = $contextNode->getParent()->getChildNodes();
+        $nodesInContext = $contextNode->findParentNode()->findChildNodes();
         $count = count($nodesInContext) - 1;
 
         for ($i = $count; $i > 0; $i--) {
@@ -94,6 +92,6 @@ class PrevAllOperation extends AbstractOperation
                 unset($nodesInContext[$i]);
             }
         }
-        return null;
+        return [];
     }
 }
