@@ -15,4 +15,28 @@ use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 
 class ArrayPropertyCollection extends \ArrayObject implements PropertyCollectionInterface
 {
+    public function current()
+    {
+        return current($this);
+    }
+
+    public function next()
+    {
+        return next($this);
+    }
+
+    public function key()
+    {
+        return key($this);
+    }
+
+    public function valid()
+    {
+        return key($this) !== null;
+    }
+
+    public function rewind()
+    {
+        reset($this);
+    }
 }
