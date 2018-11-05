@@ -12,6 +12,7 @@ namespace Neos\Fusion\Core\ExceptionHandlers;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
 
 /**
  * Renders the element as an empty string
@@ -20,7 +21,7 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
 {
     /**
      * @Flow\Inject
-     * @var \Neos\Flow\Log\SystemLoggerInterface
+     * @var PsrSystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -34,7 +35,7 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
-        $this->systemLogger->log('Absorbed Exception: ' . $exception->getMessage(), LOG_DEBUG, ['fusionPath' => $fusionPath, 'referenceCode' => $referenceCode], 'Neos.Fusion', \Neos\Fusion\Core\ExceptionHandlers\AbsorbingHandler::class);
+        $this->systemLogger->debug('Absorbed Exception: ' . $exception->getMessage(), ['fusionPath' => $fusionPath, 'referenceCode' => $referenceCode, 'FLOW_LOG_ENVIRONMENT' => ['packageKey' => 'Neos.Fusion', 'className' => self::class, 'methodName' => 'handle']]);
         return '';
     }
 

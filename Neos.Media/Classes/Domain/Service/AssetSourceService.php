@@ -13,6 +13,7 @@ namespace Neos\Media\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -118,7 +119,7 @@ final class AssetSourceService
         $assetProxy = $assetProxyRepository->getAssetProxy($assetIdentifier);
 
         if (!$assetProxy instanceof HasRemoteOriginalInterface) {
-            $this->systemLogger->log(LOG_ERR, sprintf('Failed importing an the asset %s from asset source %s because it does not have a remote original.', $assetProxy->getFilename(), $assetSourceIdentifier));
+            $this->systemLogger->error(sprintf('Failed importing an the asset %s from asset source %s because it does not have a remote original.', $assetProxy->getFilename(), $assetSourceIdentifier), LogEnvironment::fromMethodName(__METHOD__));
             throw new AssetSourceServiceException(sprintf('Failed importing an the asset %s from asset source %s because it does not have a remote original.', $assetProxy->getFilename(), $assetSourceIdentifier), 1538754066);
         }
 
@@ -128,7 +129,7 @@ final class AssetSourceService
                 $assetResource = $this->resourceManager->importResource($assetProxy->getImportStream());
                 $assetResource->setFilename($assetProxy->getFilename());
             } catch (Exception $exception) {
-                $this->systemLogger->log(LOG_ERR, sprintf('Failed importing an the asset %s from asset source %s. Original URI: %s. Error: %s', $assetProxy->getFilename(), $assetSourceIdentifier, $assetProxy->getImportStream(), $exception->getMessage()));
+                $this->systemLogger->error(sprintf('Failed importing an the asset %s from asset source %s. Original URI: %s. Error: %s', $assetProxy->getFilename(), $assetSourceIdentifier, $assetProxy->getImportStream(), $exception->getMessage()), LogEnvironment::fromMethodName(__METHOD__));
                 throw $exception;
             }
 

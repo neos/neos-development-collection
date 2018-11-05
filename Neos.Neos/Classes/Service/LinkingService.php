@@ -13,7 +13,8 @@ namespace Neos\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Uri;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Property\PropertyMapper;
@@ -97,7 +98,7 @@ class LinkingService
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var PsrSystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -150,12 +151,13 @@ class LinkingService
      * @param ControllerContext $controllerContext
      * @param bool $absolute
      * @return string
+     * @throws NeosException
      */
-    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext, $absolute = false)
+    public function resolveNodeUri(string $uri, NodeInterface $contextNode, ControllerContext $controllerContext, bool $absolute = false): string
     {
         $targetObject = $this->convertUriToObject($uri, $contextNode);
         if ($targetObject === null) {
-            $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri));
+            $this->systemLogger->info(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
         return $this->createNodeUri($controllerContext, $targetObject, null, null, $absolute);
@@ -167,11 +169,11 @@ class LinkingService
      * @param string|Uri $uri
      * @return string
      */
-    public function resolveAssetUri($uri)
+    public function resolveAssetUri(string $uri): ?string
     {
         $targetObject = $this->convertUriToObject($uri);
         if ($targetObject === null) {
-            $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri));
+            $this->systemLogger->info(sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
         return $this->resourceManager->getPublicPersistentResourceUri($targetObject->getResource());
