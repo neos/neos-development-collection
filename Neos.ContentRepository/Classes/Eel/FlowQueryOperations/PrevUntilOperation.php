@@ -63,6 +63,7 @@ class PrevUntilOperation extends AbstractOperation
 
         foreach ($flowQuery->getContext() as $contextNode) {
             $prevNodes = $this->getPrevForNode($contextNode);
+
             if (isset($arguments[0]) && !empty($arguments[0])) {
                 $untilQuery = new FlowQuery($prevNodes);
                 $untilQuery->pushOperation('filter', array($arguments[0]));
@@ -116,16 +117,16 @@ class PrevUntilOperation extends AbstractOperation
     }
 
     /**
-     * @param array $prevNodes the remaining nodes
+     * @param array|TraversableNodeInterface[] $prevNodes the remaining nodes
      * @param TraversableNodeInterface $until
      * @return TraversableNodeInterface[]
      */
-    protected function getNodesUntil($prevNodes, TraversableNodeInterface $until)
+    protected function getNodesUntil(array $prevNodes, TraversableNodeInterface $until)
     {
         $count = count($prevNodes);
 
         for ($i = 0; $i < $count; $i++) {
-            if ($prevNodes[$i]->findNodePath() === $until->findNodePath()) {
+            if ($prevNodes[$i]->findNodePath()->equals($until->findNodePath())) {
                 unset($prevNodes[$i]);
                 return array_values($prevNodes);
             } else {
