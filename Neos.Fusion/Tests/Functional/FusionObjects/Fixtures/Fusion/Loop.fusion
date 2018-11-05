@@ -1,0 +1,36 @@
+prototype(Neos.Fusion:Loop).@class = 'Neos\\Fusion\\FusionObjects\\LoopImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+loop.basicLoop = Neos.Fusion:Loop {
+	items = ${items}
+	itemName = 'element'
+	itemRenderer = Neos.Fusion:TestRenderer {
+		test = ${element}
+	}
+}
+
+loop.basicLoopWithGlue = Neos.Fusion:Loop {
+  @glue = ', '
+  items = ${items}
+  itemName = 'element'
+  itemRenderer = Neos.Fusion:TestRenderer {
+    test = ${element}
+  }
+}
+
+loop.basicLoopOtherContextVariables = Neos.Fusion:Loop {
+  items = ${items}
+	itemName = 'element'
+	itemRenderer = Neos.Fusion:TestRenderer {
+		test = ${element + other}
+	}
+}
+
+loop.iteration = Neos.Fusion:Loop {
+  items = ${items}
+	itemName = 'element'
+	iterationName = 'iteration'
+	itemRenderer = Neos.Fusion:TestRenderer {
+		test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
+	}
+}

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 namespace Neos\Media\Domain\Service;
 
 /*
@@ -145,6 +148,7 @@ final class AssetSourceService
             if ($assetProxy instanceof SupportsIptcMetadataInterface) {
                 $asset->setTitle($assetProxy->getIptcProperty('Title'));
                 $asset->setCaption($assetProxy->getIptcProperty('CaptionAbstract'));
+                $asset->setCopyrightNotice($assetProxy->getIptcProperty('CopyrightNotice'));
             }
 
             $this->assetRepository->add($asset);
@@ -166,7 +170,7 @@ final class AssetSourceService
     /**
      * @return void
      */
-    private function initialize()
+    private function initialize(): void
     {
         if ($this->assetSources === []) {
             foreach ($this->assetSourcesConfiguration as $assetSourceIdentifier => $assetSourceConfiguration) {

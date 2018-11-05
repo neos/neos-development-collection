@@ -99,6 +99,12 @@ class Asset implements AssetInterface
     protected $caption = '';
 
     /**
+     * @var string
+     * @ORM\Column(type="text")
+     */
+    protected $copyrightNotice = '';
+
+    /**
      * @var PersistentResource
      * @ORM\OneToOne(orphanRemoval=true, cascade={"all"})
      */
@@ -300,6 +306,22 @@ class Asset implements AssetInterface
     }
 
     /**
+     * @return string
+     */
+    public function getCopyrightNotice(): string
+    {
+        return $this->copyrightNotice;
+    }
+
+    /**
+     * @param string $copyrightNotice
+     */
+    public function setCopyrightNotice(string $copyrightNotice): void
+    {
+        $this->copyrightNotice = $copyrightNotice;
+    }
+
+    /**
      * Return the tags assigned to this asset
      *
      * @return Collection
@@ -337,6 +359,7 @@ class Asset implements AssetInterface
      * @param string $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio
      * @param boolean $allowUpScaling Whether the resulting image should be upscaled
      * @return Thumbnail
+     * @throws \Exception
      * @api
      */
     public function getThumbnail($maximumWidth = null, $maximumHeight = null, $ratioMode = ImageInterface::RATIOMODE_INSET, $allowUpScaling = null)
