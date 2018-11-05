@@ -18,7 +18,13 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Annotations as Flow;
 
-
+/**
+ * The property collection implementation
+ *
+ * @package Neos\EventSourcedContentRepository
+ *
+ * @todo iterate over resolved properties
+ */
 final class PropertyCollection implements PropertyCollectionInterface
 {
 
@@ -80,5 +86,29 @@ final class PropertyCollection implements PropertyCollectionInterface
     public function offsetUnset($offset)
     {
         throw new \RuntimeException("Do not use!");
+    }
+    public function current()
+    {
+        return current($this->properties);
+    }
+
+    public function next()
+    {
+        return next($this->properties);
+    }
+
+    public function key()
+    {
+        return key($this->properties);
+    }
+
+    public function valid()
+    {
+        return key($this->properties) !== null;
+    }
+
+    public function rewind()
+    {
+        reset($this->properties);
     }
 }
