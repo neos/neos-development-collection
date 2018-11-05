@@ -26,6 +26,9 @@
 			<trans-unit id="field.caption" xml:space="preserve">
 				<source>Caption</source>
 			</trans-unit>
+			<trans-unit id="field.copyrightnotice" xml:space="preserve">
+                <source>Copyright Notice</source>
+            </trans-unit>
 			<trans-unit id="field.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			</trans-unit>
