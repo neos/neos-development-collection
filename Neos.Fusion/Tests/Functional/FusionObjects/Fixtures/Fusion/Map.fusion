@@ -1,0 +1,27 @@
+prototype(Neos.Fusion:Map).@class = 'Neos\\Fusion\\FusionObjects\\MapImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+map.basicLoop = Neos.Fusion:Map {
+  items = ${items}
+	itemName = 'element'
+	itemRenderer = Neos.Fusion:TestRenderer {
+		test = ${element}
+	}
+}
+
+map.basicLoopOtherContextVariables = Neos.Fusion:Map {
+  items = ${items}
+	itemName = 'element'
+	itemRenderer = Neos.Fusion:TestRenderer {
+		test = ${element + other}
+	}
+}
+
+map.iteration = Neos.Fusion:Map {
+	items = ${items}
+	itemName = 'element'
+	iterationName = 'iteration'
+	itemRenderer = Neos.Fusion:TestRenderer {
+		test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
+	}
+}
