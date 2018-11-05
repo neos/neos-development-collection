@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "siblings" operation working on ContentRepository nodes. It iterates over all
@@ -57,12 +56,11 @@ class SiblingsOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
-        /** @var TraversableNodeInterface $contextNode */
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $nodePath = $contextNode->findNodePath();
-            $outputNodePaths[(string)$nodePath] = true;
+            /** @var TraversableNodeInterface $contextNode */
+            $outputNodeAggregateIdentifiers[(string)$contextNode->getNodeAggregateIdentifier()] = true;
         }
 
         foreach ($flowQuery->getContext() as $contextNode) {
@@ -72,10 +70,9 @@ class SiblingsOperation extends AbstractOperation
             }
 
             foreach ($parentNode->findChildNodes() as $childNode) {
-                $nodePath = $childNode->findNodePath();
-                if (!isset($outputNodePaths[(string)$nodePath])) {
+                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
                     $output[] = $childNode;
-                    $outputNodePaths[(string)$nodePath] = true;
+                    $outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
                 }
             }
         }

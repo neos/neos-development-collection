@@ -55,6 +55,8 @@ class ClosestOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws FlowQueryException
+     * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -72,7 +74,7 @@ class ClosestOperation extends AbstractOperation
             $contextNodeQuery->pushOperation('add', array($parentsQuery->parents($arguments[0])->get()));
 
             foreach ($contextNodeQuery as $result) {
-                /* @var $result \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
+                /* @var TraversableNodeInterface $result */
                 $output[(string)$result->getNodeAggregateIdentifier()] = $result;
             }
         }

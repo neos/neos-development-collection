@@ -55,12 +55,15 @@ class ParentsUntilOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @todo rewrite once the node type Neos.Neos:Site is available for comparison
+     * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
+            /** @var NodeInterface $contextNode */
             $siteNode = $contextNode->getContext()->getCurrentSiteNode();
             $parentNodes = $this->getParents($contextNode, $siteNode);
             if (isset($arguments[0]) && !empty($arguments[0] && isset($parentNodes[0]))) {
@@ -75,8 +78,8 @@ class ParentsUntilOperation extends AbstractOperation
 
             if (is_array($parentNodes)) {
                 foreach ($parentNodes as $parentNode) {
-                    if ($parentNode !== null && !isset($outputNodePaths[$parentNode->getPath()])) {
-                        $outputNodePaths[$parentNode->getPath()] = true;
+                    if ($parentNode !== null && !isset($outputNodeAggregateIdentifiers[$parentNode->getIdentifier()])) {
+                        $outputNodeAggregateIdentifiers[$parentNode->getIdentifier()] = true;
                         $output[] = $parentNode;
                     }
                 }
@@ -90,33 +93,40 @@ class ParentsUntilOperation extends AbstractOperation
         }
     }
 
-    protected function getParents(NodeInterface $contextNode, NodeInterface $siteNode)
+    /**
+     * @param NodeInterface $contextNode
+     * @param NodeInterface $siteNode
+     * @return array|NodeInterface[]
+     */
+    protected function getParents(NodeInterface $contextNode, NodeInterface $siteNode): array
     {
-        $parents = array();
+        $parents = [];
         while ($contextNode !== $siteNode && $contextNode->getParent() !== null) {
             $contextNode = $contextNode->getParent();
             $parents[] = $contextNode;
         }
+
         return $parents;
     }
 
     /**
      * @param array $parentNodes the parent nodes
      * @param NodeInterface $until
-     * @return array
+     * @return array|NodeInterface[]
      */
-    protected function getNodesUntil($parentNodes, NodeInterface $until)
+    protected function getNodesUntil($parentNodes, NodeInterface $until): array
     {
         $count = count($parentNodes) - 1;
 
         for ($i = $count; $i >= 0; $i--) {
-            if ($parentNodes[$i]->getPath() === $until->getPath()) {
+            if ($parentNodes[$i] === $until) {
                 unset($parentNodes[$i]);
                 return array_values($parentNodes);
             } else {
                 unset($parentNodes[$i]);
             }
         }
+
         return array_values($parentNodes);
     }
 }

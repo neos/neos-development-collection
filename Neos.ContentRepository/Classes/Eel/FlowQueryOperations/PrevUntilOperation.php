@@ -54,12 +54,13 @@ class PrevUntilOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
-        $until = array();
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
+        $until = [];
 
         foreach ($flowQuery->getContext() as $contextNode) {
             $prevNodes = $this->getPrevForNode($contextNode);
@@ -81,9 +82,8 @@ class PrevUntilOperation extends AbstractOperation
             }
 
             foreach ($prevNodes as $prevNode) {
-                $nodePath = $prevNode->findNodePath();
-                if ($prevNode !== null && !isset($outputNodePaths[(string)$nodePath])) {
-                    $outputNodePaths[(string)$nodePath] = true;
+                if ($prevNode !== null && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])) {
+                    $outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()] = true;
                     $output[] = $prevNode;
                 }
             }
@@ -126,7 +126,7 @@ class PrevUntilOperation extends AbstractOperation
         $count = count($prevNodes);
 
         for ($i = 0; $i < $count; $i++) {
-            if ($prevNodes[$i]->findNodePath()->equals($until->findNodePath())) {
+            if ($prevNodes[$i] === $until) {
                 unset($prevNodes[$i]);
                 return array_values($prevNodes);
             } else {

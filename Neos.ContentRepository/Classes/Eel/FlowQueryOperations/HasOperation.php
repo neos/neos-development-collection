@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -48,7 +49,7 @@ class HasOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -57,6 +58,8 @@ class HasOperation extends AbstractOperation
      * @param FlowQuery $flowQuery
      * @param array $arguments
      * @return void
+     * @throws FizzleException
+     * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -90,12 +93,12 @@ class HasOperation extends AbstractOperation
             }
             foreach ($elements as $element) {
                 if ($element instanceof NodeInterface) {
-                    $parentsQuery = new FlowQuery(array($element));
-                    /** @var NodeInterface $parent */
-                    foreach ($parentsQuery->parents(array())->get() as $parent) {
-                        /** @var NodeInterface $contextElement */
+                    $parentsQuery = new FlowQuery([$element]);
+                    foreach ($parentsQuery->parents([])->get() as $parent) {
+                        /** @var TraversableNodeInterface $parent */
                         foreach ($context as $contextElement) {
-                            if ($contextElement->getIdentifier() === $parent->getIdentifier()) {
+                            /** @var TraversableNodeInterface $contextElement */
+                            if ($contextElement === $parent) {
                                 $filteredContext[] = $contextElement;
                             }
                         }
