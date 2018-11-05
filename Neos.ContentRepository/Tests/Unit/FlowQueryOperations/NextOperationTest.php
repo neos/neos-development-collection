@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -49,25 +51,25 @@ class NextOperationTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->siteNode = $this->createMock(NodeInterface::class);
-        $this->firstNodeInLevel = $this->createMock(NodeInterface::class);
-        $this->secondNodeInLevel = $this->createMock(NodeInterface::class);
-        $this->thirdNodeInLevel = $this->createMock(NodeInterface::class);
+        $this->siteNode = $this->createMock(TraversableNodeInterface::class);
+        $this->firstNodeInLevel = $this->createMock(TraversableNodeInterface::class);
+        $this->secondNodeInLevel = $this->createMock(TraversableNodeInterface::class);
+        $this->thirdNodeInLevel = $this->createMock(TraversableNodeInterface::class);
 
-        $this->siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
-        $this->siteNode->expects($this->any())->method('getChildNodes')->will($this->returnValue(array(
+        $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site')));
+        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(array(
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
         )));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->firstNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->firstNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));
-        $this->secondNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/second'));
-        $this->thirdNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/third'));
+        $this->firstNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->firstNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site/first')));
+        $this->secondNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->secondNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site/second')));
+        $this->thirdNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->thirdNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site/third')));
     }
 
     /**

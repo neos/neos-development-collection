@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
@@ -27,15 +28,16 @@ class FilterOperationTest extends UnitTestCase
      */
     public function filterWithIdentifierUsesNodeAggregateIdentifier()
     {
-        $node1 = $this->createMock(NodeInterface::class);
-        $node2 = $this->createMock(NodeInterface::class);
-        $node2->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('node-identifier-uuid')));
+        $node1 = $this->createMock(TraversableNodeInterface::class);
+        $node1->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('node1-identifier-uuid')));
+        $node2 = $this->createMock(TraversableNodeInterface::class);
+        $node2->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('node2-identifier-uuid')));
 
         $context = array($node1, $node2);
         $q = new FlowQuery($context);
 
         $operation = new FilterOperation();
-        $operation->evaluate($q, array('#node-identifier-uuid'));
+        $operation->evaluate($q, array('#node2-identifier-uuid'));
 
         $this->assertEquals(array($node2), $q->getContext());
     }
@@ -45,8 +47,8 @@ class FilterOperationTest extends UnitTestCase
      */
     public function filterWithNodeInstanceIsSupported()
     {
-        $node1 = $this->createMock(NodeInterface::class);
-        $node2 = $this->createMock(NodeInterface::class);
+        $node1 = $this->createMock(TraversableNodeInterface::class);
+        $node2 = $this->createMock(TraversableNodeInterface::class);
 
         $context = array($node1, $node2);
         $q = new FlowQuery($context);
