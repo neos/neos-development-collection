@@ -69,6 +69,11 @@ final class NodePath implements \JsonSerializable
         return count($this->getParts());
     }
 
+    public function equals(NodePath $other): bool
+    {
+        return (string) $this === (string) $other;
+    }
+
     public function jsonSerialize()
     {
         return $this->path;
