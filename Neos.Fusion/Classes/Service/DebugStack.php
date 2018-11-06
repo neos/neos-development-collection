@@ -38,9 +38,11 @@ class DebugStack
     {
         $data = $this->data;
         $this->flush();
+        $output = '';
         foreach ($data as $debugMessage) {
-            \Neos\Flow\var_dump($debugMessage->getData(), $debugMessage->getTitle(), false, $debugMessage->isPlaintext());
+            $output .= \Neos\Flow\var_dump($debugMessage->getData(), $debugMessage->getTitle(), true, $debugMessage->isPlaintext());
         }
+        return $output;
     }
 
     public function flush()
