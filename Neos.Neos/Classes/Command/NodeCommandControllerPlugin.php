@@ -142,10 +142,11 @@ HELPTEXT;
      * @param boolean $cleanup If false, cleanup tasks are skipped
      * @param string $skip Skip the given check or checks (comma separated)
      * @param string $only Only execute the given check or checks (comma separated)
-     * @return void
+     * @return boolean
      */
     public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
+        $hasErrors = false;
         $this->output = $output;
         $commandMethods = [
             'generateUriPathSegments' => [ 'cleanup' => false ],
@@ -168,9 +169,12 @@ HELPTEXT;
                     if (!$cleanup && $commandMethodConfiguration['cleanup']) {
                         continue;
                     }
-                    $this->$commandMethodName($workspaceName, $dryRun, $nodeType);
+                    if ($this->$commandMethodName($workspaceName, $dryRun, $nodeType)) {
+                        $hasErrors = true;
+                    }
                 }
         }
+        return $hasErrors;
     }
 
     /**
@@ -178,10 +182,11 @@ HELPTEXT;
      *
      * @param string $workspaceName Name of the workspace to consider (unused)
      * @param boolean $dryRun Simulate?
-     * @return void
+     * @return boolean
      */
     protected function createMissingSitesNode($workspaceName, $dryRun)
     {
+        $hasErrors = false;
         $this->output->outputLine('Checking for "%s" node ...', [SiteService::SITES_ROOT_PATH]);
         $rootNode = $this->contextFactory->create()->getRootNode();
         // We fetch the workspace to be sure it's known to the persistence manager and persist all
@@ -195,10 +200,12 @@ HELPTEXT;
                 $this->output->outputLine('Missing "%s" node was created', [SiteService::SITES_ROOT_PATH]);
             } else {
                 $this->output->outputLine('"%s" node is missing!', [SiteService::SITES_ROOT_PATH]);
+                $hasErrors = true;
             }
         }
 
         $this->persistenceManager->persistAll();
+        return $hasErrors;
     }
 
     /**
@@ -209,10 +216,11 @@ HELPTEXT;
      *
      * @param string $workspaceName
      * @param boolean $dryRun
-     * @return void
+     * @return boolean;
      */
     public function generateUriPathSegments($workspaceName, $dryRun)
     {
+        $hasErrors = false;
         $baseContext = $this->createContext($workspaceName, []);
         $baseContextSitesNode = $baseContext->getNode(SiteService::SITES_ROOT_PATH);
         if (!$baseContextSitesNode) {
@@ -231,12 +239,16 @@ HELPTEXT;
             if (count($siteNodes) > 0) {
                 $this->output->outputLine('Checking for nodes with missing URI path segment in dimension "%s"', [trim(NodePaths::generateContextPath('', '', $dimensionCombination), '@;')]);
                 foreach ($siteNodes as $siteNode) {
-                    $this->generateUriPathSegmentsForNode($siteNode, $dryRun);
+                    $hasError = $this->generateUriPathSegmentsForNode($siteNode, $dryRun);
+                    if ($hasError) {
+                        $hasErrors = true;
+                    }
                 }
             }
         }
 
         $this->persistenceManager->persistAll();
+        return $hasErrors;
     }
 
     /**
@@ -245,10 +257,11 @@ HELPTEXT;
      *
      * @param NodeInterface $node The node where the traversal starts
      * @param boolean $dryRun
-     * @return void
+     * @return boolean
      */
     protected function generateUriPathSegmentsForNode(NodeInterface $node, $dryRun)
     {
+        $hasErrors = false;
         if ((string)$node->getProperty('uriPathSegment') === '') {
             $name = $node->getLabel() ?: $node->getName();
             $uriPathSegment = $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node);
@@ -260,8 +273,12 @@ HELPTEXT;
             }
         }
         foreach ($node->getChildNodes('Neos.Neos:Document') as $childNode) {
-            $this->generateUriPathSegmentsForNode($childNode, $dryRun);
+            $hasError = $this->generateUriPathSegmentsForNode($childNode, $dryRun);
+            if ($hasError) {
+                $hasErrors = true;
+            }
         }
+        return $hasErrors;
     }
 
     /**
@@ -272,10 +289,11 @@ HELPTEXT;
      *
      * @param string $workspaceName
      * @param boolean $dryRun
-     * @return void
+     * @return boolean
      */
     public function removeContentDimensionsFromRootAndSitesNode($workspaceName, $dryRun)
     {
+        $hasErrors = false;
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
         $rootNodes = $this->nodeDataRepository->findByPath('/', $workspace);
         $sitesNodes = $this->nodeDataRepository->findByPath('/sites', $workspace);
@@ -289,6 +307,7 @@ HELPTEXT;
                     $this->output->outputLine('Removed content dimensions from root node');
                 } else {
                     $this->output->outputLine('Found root node with content dimensions set.');
+                    $hasErrors = true;
                 }
             }
         }
@@ -301,9 +320,11 @@ HELPTEXT;
                     $this->output->outputLine('Removed content dimensions from node "/sites"');
                 } else {
                     $this->output->outputLine('Found node "/sites"');
+                    $hasErrors = true;
                 }
             }
         }
+        return $hasErrors;
     }
 
     /**

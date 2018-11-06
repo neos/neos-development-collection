@@ -319,7 +319,7 @@ HELPTEXT;
         }
 
         $this->persistenceManager->persistAll();
-        return $hasError;
+        return $hasErrors;
     }
 
     /**
@@ -1272,7 +1272,7 @@ HELPTEXT;
         }
 
         $this->persistenceManager->persistAll();
-        return $hasError;
+        return $hasErrors;
     }
 
     /**
