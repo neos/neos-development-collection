@@ -15,7 +15,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -47,7 +48,7 @@ class Asset implements AssetInterface
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var PsrSystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -361,6 +362,7 @@ class Asset implements AssetInterface
      * @return Thumbnail
      * @throws \Exception
      * @api
+     * @throws \Exception
      */
     public function getThumbnail($maximumWidth = null, $maximumHeight = null, $ratioMode = ImageInterface::RATIOMODE_INSET, $allowUpScaling = null)
     {
@@ -388,7 +390,7 @@ class Asset implements AssetInterface
     public function refresh()
     {
         $assetClassType = str_replace('Neos\Media\Domain\Model\\', '', get_class($this));
-        $this->systemLogger->log(sprintf('%s: refresh() called, clearing all thumbnails. Filename: %s. PersistentResource SHA1: %s', $assetClassType, $this->getResource()->getFilename(), $this->getResource()->getSha1()), LOG_DEBUG);
+        $this->systemLogger->debug(sprintf('%s: refresh() called, clearing all thumbnails. Filename: %s. PersistentResource SHA1: %s', $assetClassType, $this->getResource()->getFilename(), $this->getResource()->getSha1()));
 
         // whitelist objects so they can be deleted (even during safe requests)
         $this->persistenceManager->whitelistObject($this);
@@ -491,12 +493,12 @@ class Asset implements AssetInterface
     {
         $assetSource = $this->getAssetSource();
         if ($assetSource === null) {
-            $this->systemLogger->log(sprintf('Asset %s: Invalid asset source "%s"', $this->getIdentifier(), $this->getAssetSourceIdentifier()), LOG_NOTICE);
+            $this->systemLogger->notice(sprintf('Asset %s: Invalid asset source "%s"', $this->getIdentifier(), $this->getAssetSourceIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
         $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($this->getIdentifier());
         if ($importedAsset === null) {
-            $this->systemLogger->log(sprintf('Asset %s: Imported asset not found for asset source %s (%s)', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel()), LOG_NOTICE);
+            $this->systemLogger->notice(sprintf('Asset %s: Imported asset not found for asset source %s (%s)', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel()), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
 
@@ -507,10 +509,10 @@ class Asset implements AssetInterface
                 return $assetSource->getAssetProxyRepository()->getAssetProxy($this->getIdentifier());
             }
         } catch (AssetNotFoundExceptionInterface $e) {
-            $this->systemLogger->log(sprintf('Asset %s: Not found in asset source %s (%s)', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel()), LOG_NOTICE);
+            $this->systemLogger->notice(sprintf('Asset %s: Not found in asset source %s (%s)', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel()), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         } catch (AssetSourceConnectionExceptionInterface $e) {
-            $this->systemLogger->log(sprintf('Asset %s: Failed connecting to asset source %s (%s): %s', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel(), $e->getMessage()), LOG_ERR);
+            $this->systemLogger->notice(sprintf('Asset %s: Failed connecting to asset source %s (%s): %s', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel(), $e->getMessage()), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
     }

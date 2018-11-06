@@ -12,7 +12,8 @@ namespace Neos\Media\Domain\Model;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
 use Neos\Media\Domain\Repository\ImportedAssetRepository;
@@ -33,18 +34,18 @@ class ImportedAssetManager
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var PsrSystemLoggerInterface
      */
     protected $logger;
 
     /**
      * @param ImportedAsset $importedAsset
-     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
     public function registerImportedAsset(ImportedAsset $importedAsset)
     {
         $this->importedAssetRepository->add($importedAsset);
-        $this->logger->log(sprintf('Asset imported: %s / %s as %s', $importedAsset->getAssetSourceIdentifier(), $importedAsset->getRemoteAssetIdentifier(), $importedAsset->getLocalAssetIdentifier()), LOG_DEBUG);
+        $this->logger->debug(sprintf('Asset imported: %s / %s as %s', $importedAsset->getAssetSourceIdentifier(), $importedAsset->getRemoteAssetIdentifier(), $importedAsset->getLocalAssetIdentifier()));
     }
 
     /**
@@ -53,7 +54,7 @@ class ImportedAssetManager
      * Wired via signal-slot with AssetService::assetCreated – see Package.php
      *
      * @param AssetInterface $asset
-     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
     public function registerCreatedAsset(AssetInterface $asset)
     {
@@ -77,7 +78,7 @@ class ImportedAssetManager
             );
 
             $this->importedAssetRepository->add($variantImportedAsset);
-            $this->logger->log(sprintf('Asset created: %s / %s', $asset->getResource()->getFilename(), $this->persistenceManager->getIdentifierByObject($asset)), LOG_DEBUG);
+            $this->logger->debug(sprintf('Asset created: %s / %s', $asset->getResource()->getFilename(), $this->persistenceManager->getIdentifierByObject($asset)));
         }
     }
 
@@ -87,7 +88,7 @@ class ImportedAssetManager
      * Wired via signal-slot with AssetService::assetRemoved – see Package.php
 
      * @param AssetInterface $asset
-     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
     public function registerRemovedAsset(AssetInterface $asset)
     {
@@ -95,7 +96,7 @@ class ImportedAssetManager
         $importedAsset = $this->importedAssetRepository->findOneByLocalAssetIdentifier($assetIdentifier);
         if ($importedAsset !== null) {
             $this->importedAssetRepository->remove($importedAsset);
-            $this->logger->log(sprintf('Asset removed: %s / %s', $asset->getResource()->getFilename(), $this->persistenceManager->getIdentifierByObject($asset)), LOG_DEBUG);
+            $this->logger->debug(sprintf('Asset removed: %s / %s', $asset->getResource()->getFilename(), $this->persistenceManager->getIdentifierByObject($asset)));
         }
     }
 }
