@@ -78,7 +78,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      * @param boolean $cleanup If false, cleanup tasks are skipped
      * @param string $skip Skip the given check or checks (comma separated)
      * @param string $only Only execute the given check or checks (comma separated)
-     * @return void
+     * @return boolean
      */
     public function repairCommand($nodeType = null, $workspace = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
@@ -114,14 +114,14 @@ class NodeCommandController extends CommandController implements DescriptionAwar
             $this->outputLine('<b>' . $plugin->getSubCommandShortDescription('repair') . '</b>');
             $this->outputLine();
             $hasError = $plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun, $cleanup, $skip, $only);
-            if ($hasError) {
+            if ($hasError === true) {
                 $hasErrors = true;
             }
             $this->outputLine();
         }
 
         $this->outputLine('Node repair finished.');
-        if ($hasErrors) {
+        if ($hasErrors === true) {
             $this->outputLine('During run, some error were found!');
             $this->sendAndExit(1);
         }
