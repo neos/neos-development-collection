@@ -103,6 +103,9 @@ class FindOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws FlowQueryException
+     * @throws \Neos\Eel\Exception
+     * @throws \Neos\Eel\FlowQuery\FizzleException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -133,14 +136,15 @@ class FindOperation extends AbstractOperation
                     if (!preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $filter['IdentifierFilter'])) {
                         throw new FlowQueryException('find() requires a valid node identifier', 1489921359);
                     }
-                    /** @var NodeInterface $contextNode */
                     foreach ($context as $contextNode) {
+                        /** @var NodeInterface $contextNode */
                         $filterResults = array($contextNode->getContext()->getNodeByIdentifier($filter['IdentifierFilter']));
                     }
                     $generatedNodes = true;
                 } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                     $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
                     foreach ($context as $contextNode) {
+                        /** @var NodeInterface $contextNode */
                         $node = $contextNode->getNode($nodePath);
                         if ($node !== null) {
                             array_push($filterResults, $node);
