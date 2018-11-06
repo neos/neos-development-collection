@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Unit\Routing;
  * source code.
  */
 
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Algorithms;
@@ -43,7 +43,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 {
     /**
-     * @var SystemLoggerInterface
+     * @var PsrSystemLoggerInterface
      */
     protected $mockSystemLogger;
 
@@ -104,7 +104,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->mockContextFactory = $mockContextFactory;
         $this->inject($this->routePartHandler, 'contextFactory', $this->mockContextFactory);
 
-        $this->mockSystemLogger = $this->createMock(SystemLoggerInterface::class);
+        $this->mockSystemLogger = $this->createMock(PsrSystemLoggerInterface::class);
         $this->inject($this->routePartHandler, 'systemLogger', $this->mockSystemLogger);
 
         $this->inject($this->routePartHandler, 'securityContext', new SecurityContext());

@@ -13,7 +13,8 @@ namespace Neos\Neos\Service\View;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
@@ -44,7 +45,7 @@ class NodeView extends JsonView
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var PsrSystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -77,9 +78,10 @@ class NodeView extends JsonView
     }
 
     /**
-     * @param array $nodes
+     * @param NodeInterface[] $nodes
+     * @throws \Neos\Eel\Exception
      */
-    public function assignNodes(array $nodes)
+    public function assignNodes(array $nodes): void
     {
         $data = [];
         foreach ($nodes as $node) {
@@ -92,7 +94,7 @@ class NodeView extends JsonView
                         'documentNodeContextPath' => $closestDocumentNode->getContextPath(),
                     ];
                 } else {
-                    $this->systemLogger->log('You have a node that is no longer connected to a parent. Path: ' . $node->getPath() . ' (Identifier: ' . $node->getIdentifier() . ')');
+                    $this->systemLogger->info(sprintf('You have a node that is no longer connected to a parent. Path: %s (Identifier: %s)', $node->getPath(), $node->getIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
                 }
             }
         }
@@ -200,7 +202,7 @@ class NodeView extends JsonView
                     if ($expand) {
                         $this->collectChildNodeData($nodes, $childNode, $nodeTypeFilter, $depth, $untilNode, ($recursionPointer + 1));
                     }
-                break;
+                    break;
                 case self::STYLE_TREE:
                     $children = [];
                     $hasChildNodes = $childNode->hasChildNodes($nodeTypeFilter) === true;
