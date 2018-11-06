@@ -13,10 +13,8 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FizzleException;
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "has" operation working on NodeInterface. Reduce the set of matched elements
@@ -92,7 +90,7 @@ class HasOperation extends AbstractOperation
                 throw new FizzleException('supplied argument for has operation not supported', 1332489625);
             }
             foreach ($elements as $element) {
-                if ($element instanceof NodeInterface) {
+                if ($element instanceof TraversableNodeInterface) {
                     $parentsQuery = new FlowQuery([$element]);
                     foreach ($parentsQuery->parents([])->get() as $parent) {
                         /** @var TraversableNodeInterface $parent */
