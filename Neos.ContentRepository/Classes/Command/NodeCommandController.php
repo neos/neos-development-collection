@@ -78,7 +78,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      * @param boolean $cleanup If false, cleanup tasks are skipped
      * @param string $skip Skip the given check or checks (comma separated)
      * @param string $only Only execute the given check or checks (comma separated)
-     * @return boolean
+     * @return void
      */
     public function repairCommand($nodeType = null, $workspace = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
