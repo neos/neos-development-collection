@@ -40,6 +40,7 @@ comes with a number of filters:
 - ``IsRemoved``
 - ``NodeName``
 - ``NodeType``
+- ``NodePath``
 - ``PropertyNotEmpty``
 - ``Workspace``
 
@@ -316,6 +317,16 @@ Options Reference:
   Note: This can only be used with node types still available in the system!
 ``exclude`` (boolean)
   Whether the filter should exclude the given NodeType instead of including only this node type.
+
+NodePath
+~~~~~~~~
+
+Selects nodes by node path.
+
+Options Reference:
+
+``nodePath`` (string)
+  The node corresponding node path starting with /sites/...
 
 PropertyNotEmpty
 ~~~~~~~~~~~~~~~~
