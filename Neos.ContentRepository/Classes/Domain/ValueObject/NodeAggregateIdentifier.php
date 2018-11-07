@@ -109,12 +109,4 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
     {
         return $this->identifier;
     }
-
-    /**
-     * @return bool
-     */
-    public function isRoot(): bool
-    {
-        return $this === RootNodeIdentifiers::rootNodeAggregateIdentifier();
-    }
 }
