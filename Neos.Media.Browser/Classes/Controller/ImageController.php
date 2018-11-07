@@ -13,8 +13,10 @@ namespace Neos\Media\Browser\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
 use Neos\Media\Domain\Model\ImportedAsset;
+use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\ImageRepository;
 
 /**
@@ -33,6 +35,28 @@ class ImageController extends AssetController
      * @var \Neos\Media\Domain\Repository\ImportedAssetRepository
      */
     protected $importedAssetRepository;
+
+    /**
+     * List existing immages
+     *
+     * @param string $view
+     * @param string $sortBy
+     * @param string $sortDirection
+     * @param string $filter
+     * @param int $tagMode
+     * @param Tag $tag
+     * @param string $searchTerm
+     * @param int $collectionMode
+     * @param AssetCollection $assetCollection
+     * @param string $assetSourceIdentifier
+     * @return void
+     * @throws \Neos\Utility\Exception\FilesException
+     */
+    public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null, $assetSourceIdentifier = null)
+    {
+        $this->view->assign('disableFilter', true);
+        parent::indexAction($view, $sortBy, $sortDirection, 'Image', $tagMode, $tag, $searchTerm, $collectionMode, $assetCollection, $assetSourceIdentifier);
+    }
 
     /**
      * @param string $assetSourceIdentifier
