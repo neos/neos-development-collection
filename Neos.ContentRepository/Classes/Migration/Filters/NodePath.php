@@ -28,7 +28,7 @@ class NodePath implements FilterInterface
     protected $nodePath;
 
     /**
-     * Sets the node path starting with /sites/...
+     * Sets the node path starting with /sites/{nodePath}
      *
      * @param $nodePath
      * @return void

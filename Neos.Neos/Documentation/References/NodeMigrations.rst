@@ -321,12 +321,12 @@ Options Reference:
 NodePath
 ~~~~~~~~
 
-Selects nodes by node path.
+Selects nodes by site node path.
 
 Options Reference:
 
 ``nodePath`` (string)
-  The node corresponding node path starting with /sites/...
+  The node corresponding node path starting with /sites/{nodePath}
 
 PropertyNotEmpty
 ~~~~~~~~~~~~~~~~
