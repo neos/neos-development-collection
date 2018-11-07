@@ -15,6 +15,6 @@ use Neos\Flow\Exception;
 /**
  * The legacy Node API does not support the full TraversableNode API.
  */
-class UnsupportedNodeMethodException extends Exception
+class NodeMethodIsUnsupported extends Exception
 {
 }

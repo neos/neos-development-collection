@@ -929,7 +929,7 @@ class NodeDataRepository extends Repository
      * @param string $parentPath Absolute path of the parent node
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Context $context The containing context
-     * @return NodeData The node found or NULL
+     * @return NodeInterface The node found or NULL
      */
     public function findFirstByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, Context $context)
     {
