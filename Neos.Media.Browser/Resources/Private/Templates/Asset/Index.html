@@ -14,30 +14,34 @@
         </f:if>
     </div>
     <div class="neos-view-options">
-        <div class="neos-dropdown" id="neos-filter-menu">
-            <span title="{neos:backend.translate(id: 'filterOptions', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">
-                <a class="dropdown-toggle{f:if(condition: '{filter} != \'All\'', then: ' neos-active')}" href="#" data-neos-toggle="dropdown" data-target="#neos-filter-menu">
-                    <i class="fas fa-filter"></i>
-                </a>
-            </span>
-            <ul class="neos-dropdown-menu neos-pull-right" role="menu">
-                <li>
-                    <f:link.action action="index" title="{neos:backend.translate(id: 'filter.title.all', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{filter: 'All'}" addQueryString="TRUE" class="{f:if(condition: '{filter} === \'All\'', then: 'neos-active')}"><i class="fas fa-filter"></i> {neos:backend.translate(id: 'filter.all', package: 'Neos.Media.Browser')}</f:link.action>
-                </li>
-                <li>
-                    <f:link.action action="index" title="{neos:backend.translate(id: 'filter.title.images', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{filter: 'Image'}" addQueryString="TRUE" class="{f:if(condition: '{filter} === \'Image\'', then: 'neos-active')}"><i class="fas fa-image"></i> {neos:backend.translate(id: 'filter.images', package: 'Neos.Media.Browser')}</f:link.action>
-                </li>
-                <li>
-                    <f:link.action action="index" title="{neos:backend.translate(id: 'filter.title.documents', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{filter: 'Document'}" addQueryString="TRUE" class="{f:if(condition: '{filter} === \'Document\'', then: 'neos-active')}"><i class="fas fa-file-alt"></i> {neos:backend.translate(id: 'filter.documents', package: 'Neos.Media.Browser')}</f:link.action>
-                </li>
-                <li>
-                    <f:link.action action="index" title="{neos:backend.translate(id: 'filter.title.video', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{filter: 'Video'}" addQueryString="TRUE" class="{f:if(condition: '{filter} === \'Video\'', then: 'neos-active')}"><i class="fas fa-film"></i> {neos:backend.translate(id: 'filter.video', package: 'Neos.Media.Browser')}</f:link.action>
-                </li>
-                <li>
-                    <f:link.action action="index" title="{neos:backend.translate(id: 'filter.title.audio', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{filter: 'Audio'}" addQueryString="TRUE" class="{f:if(condition: '{filter} === \'Audio\'', then: 'neos-active')}"><i class="fas fa-music"></i> {neos:backend.translate(id: 'filter.audio', package: 'Neos.Media.Browser')}</f:link.action>
-                </li>
-            </ul>
-        </div>
+        <f:if condition="{disableFilter}">
+            <f:else>
+                <div class="neos-dropdown" id="neos-filter-menu">
+                <span title="{neos:backend.translate(id: 'filterOptions', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">
+                    <a class="dropdown-toggle{f:if(condition: '{filter} != \'All\'', then: ' neos-active')}" href="#" data-neos-toggle="dropdown" data-target="#neos-filter-menu">
+                        <i class="fas fa-filter"></i>
+                    </a>
+                </span>
+                    <ul class="neos-dropdown-menu neos-pull-right" role="menu">
+                        <li>
+                            <f:link.action action="index" title="{neos:backend.translate(id: 'filter.title.all', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{filter: 'All'}" addQueryString="TRUE" class="{f:if(condition: '{filter} === \'All\'', then: 'neos-active')}"><i class="fas fa-filter"></i> {neos:backend.translate(id: 'filter.all', package: 'Neos.Media.Browser')}</f:link.action>
+                        </li>
+                        <li>
+                            <f:link.action action="index" title="{neos:backend.translate(id: 'filter.title.images', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{filter: 'Image'}" addQueryString="TRUE" class="{f:if(condition: '{filter} === \'Image\'', then: 'neos-active')}"><i class="fas fa-image"></i> {neos:backend.translate(id: 'filter.images', package: 'Neos.Media.Browser')}</f:link.action>
+                        </li>
+                        <li>
+                            <f:link.action action="index" title="{neos:backend.translate(id: 'filter.title.documents', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{filter: 'Document'}" addQueryString="TRUE" class="{f:if(condition: '{filter} === \'Document\'', then: 'neos-active')}"><i class="fas fa-file-alt"></i> {neos:backend.translate(id: 'filter.documents', package: 'Neos.Media.Browser')}</f:link.action>
+                        </li>
+                        <li>
+                            <f:link.action action="index" title="{neos:backend.translate(id: 'filter.title.video', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{filter: 'Video'}" addQueryString="TRUE" class="{f:if(condition: '{filter} === \'Video\'', then: 'neos-active')}"><i class="fas fa-film"></i> {neos:backend.translate(id: 'filter.video', package: 'Neos.Media.Browser')}</f:link.action>
+                        </li>
+                        <li>
+                            <f:link.action action="index" title="{neos:backend.translate(id: 'filter.title.audio', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{filter: 'Audio'}" addQueryString="TRUE" class="{f:if(condition: '{filter} === \'Audio\'', then: 'neos-active')}"><i class="fas fa-music"></i> {neos:backend.translate(id: 'filter.audio', package: 'Neos.Media.Browser')}</f:link.action>
+                        </li>
+                    </ul>
+                </div>
+            </f:else>
+        </f:if>
         <f:if condition="{activeAssetSourceSupportsSorting}">
             <f:then>
         <div class="neos-dropdown" id="neos-sort-menu">
@@ -333,7 +337,7 @@
         <f:form.hidden name="asset[__identity]" id="link-asset-to-assetcollection-form-asset" />
         <f:form.hidden name="assetCollection[__identity]" id="link-asset-to-assetcollection-form-assetcollection" />
     </f:form>
-    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'Libraries/plupload/plupload.full.min.js')}"></script>
+    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'Libraries/plupload/plupload.full.js')}"></script>
     <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/upload.js')}"></script>
     <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/collections-and-tagging.js')}"></script>
     </f:if>
