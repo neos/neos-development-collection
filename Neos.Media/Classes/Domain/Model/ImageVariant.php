@@ -168,6 +168,14 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
     }
 
     /**
+     * @return string
+     */
+    public function getCopyrightNotice(): string
+    {
+        return $this->originalAsset->getCopyrightNotice();
+    }
+
+    /**
      * Sets a name which can be used for identifying this variant
      *
      * @param string $name
