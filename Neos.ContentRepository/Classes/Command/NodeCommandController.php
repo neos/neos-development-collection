@@ -113,8 +113,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
             $plugin = $pluginConfiguration['object'];
             $this->outputLine('<b>' . $plugin->getSubCommandShortDescription('repair') . '</b>');
             $this->outputLine();
-            $hasError = $plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun, $cleanup, $skip, $only);
-            if ($hasError === true) {
+            if ($plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun, $cleanup, $skip, $only) === true) {
                 $hasErrors = true;
             }
             $this->outputLine();

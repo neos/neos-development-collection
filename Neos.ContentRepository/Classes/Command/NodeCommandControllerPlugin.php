@@ -230,7 +230,7 @@ HELPTEXT;
      * @param string $only Only execute the given check or checks (comma separated)
      * @return boolean
      */
-    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null): boolean
+    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
         $this->output = $output;
         $commandMethods = [
