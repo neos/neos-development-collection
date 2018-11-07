@@ -228,7 +228,7 @@ HELPTEXT;
      * @param boolean $cleanup If false, cleanup tasks are skipped
      * @param string $skip Skip the given check or checks (comma separated)
      * @param string $only Only execute the given check or checks (comma separated)
-     * @return boolean
+     * @return void
      */
     public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
