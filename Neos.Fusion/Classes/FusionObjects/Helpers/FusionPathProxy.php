@@ -57,12 +57,6 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     protected $partialFusionTree;
 
     /**
-     * @Flow\Inject
-     * @var \Neos\Flow\Log\SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
      * Constructor.
      *
      * @param TemplateImplementation $templateImplementation

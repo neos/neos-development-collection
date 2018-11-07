@@ -11,7 +11,8 @@ namespace Neos\Fusion\Core\ExceptionHandlers;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Creates xml comments from exceptions
@@ -19,10 +20,30 @@ use Neos\Flow\Annotations as Flow;
 class XmlCommentHandler extends AbstractRenderingExceptionHandler
 {
     /**
-     * @Flow\Inject
-     * @var \Neos\Flow\Log\SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * Provides an XML comment containing the exception
@@ -34,7 +55,8 @@ class XmlCommentHandler extends AbstractRenderingExceptionHandler
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
-        $this->systemLogger->logException($exception);
+        $logMessage = $this->throwableStorage->logThrowable($exception);
+        $this->logger->error($logMessage);
         if (isset($referenceCode)) {
             return sprintf(
                 '<!-- Exception while rendering %s: %s (%s) -->',

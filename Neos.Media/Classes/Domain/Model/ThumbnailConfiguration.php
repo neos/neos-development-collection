@@ -60,12 +60,6 @@ class ThumbnailConfiguration
     protected $async;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $logger;
-
-    /**
      * @var boolean
      */
     protected static $loggedDeprecation = false;
