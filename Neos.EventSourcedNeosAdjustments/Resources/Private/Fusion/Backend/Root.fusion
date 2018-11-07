@@ -7,6 +7,6 @@ include: resource://Neos.Neos.Ui/Private/Fusion/Prototypes/AppendAllToCollection
 
 prototype(Neos.Neos:NodeUri) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\NodeUriImplementation'
-    subgraph = ${site.subgraph}
+    subgraph = ${subgraph}
 }
 
