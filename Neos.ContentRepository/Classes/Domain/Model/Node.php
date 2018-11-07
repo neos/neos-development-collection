@@ -24,6 +24,7 @@ use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Exception\NodeMethodIsUnsupported;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -2008,11 +2009,22 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return array<TraversableNodeInterface>|TraversableNodeInterface[] An array of nodes or an empty array if no child nodes matched
      * @api
      */
-    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null)
+    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
     {
         $filter = $nodeTypeConstraints !== null ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : null;
         // It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time.
         return $this->getChildNodes($filter, $limit, $offset);
+    }
+
+    /**
+     * Returns the number of direct child nodes of this node from its subgraph.
+     *
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @return int
+     */
+    public function countChildNodes(NodeTypeConstraints $nodeTypeConstraints = null): int
+    {
+        return count($this->getChildNodes($nodeTypeConstraints));
     }
 
     /**
@@ -2068,6 +2080,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         throw new NodeMethodIsUnsupported('findSucceedingSiblingNodes is unsupported in the legacy Node API.');
     }
 
+
     /**
      * Retrieves and returns all nodes referenced by this node from its subgraph.
      * If node type constraints are specified, only nodes of that type are returned.
@@ -2100,16 +2113,16 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     /**
      * Retrieves and returns nodes referenced by this node by name from its subgraph.
      *
-     * @param NodeName $nodeName
+     * @param PropertyName $edgeName
      * @return array|TraversableNodeInterface[]
      * @throws NodeException
      * @throws NodeTypeNotFoundException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function findNamedReferencedNodes(NodeName $nodeName): array
+    public function findNamedReferencedNodes(PropertyName $edgeName): array
     {
-        $propertyName = (string) $nodeName;
+        $propertyName = (string) $edgeName;
         $propertyType = $this->getNodeType()->getPropertyType($propertyName);
         if ($propertyType === 'reference' && $this->getProperty($propertyName) instanceof TraversableNodeInterface) {
             return [$this->getProperty($propertyName)];
@@ -2135,11 +2148,11 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     /**
      * Retrieves and returns nodes referencing this node by name from its subgraph.
      *
-     * @param NodeName $nodeName
+     * @param PropertyName $edgeName
      * @return array|TraversableNodeInterface[]
      * @throws NodeMethodIsUnsupported
      */
-    public function findNamedReferencingNodes(NodeName $nodeName): array
+    public function findNamedReferencingNodes(PropertyName $edgeName): array
     {
         throw new NodeMethodIsUnsupported('findNamedReferencingNodes is unsupported in the legacy Node API.');
     }

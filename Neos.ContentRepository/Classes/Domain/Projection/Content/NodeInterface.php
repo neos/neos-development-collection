@@ -80,7 +80,7 @@ interface NodeInterface extends CacheAwareInterface
     /**
      * Returns all properties of this node. References are NOT part of this API; there you need to check getReference() and getReferences()
      *
-     * @return array Property values, indexed by their name
+     * @return PropertyCollectionInterface Property values, indexed by their name
      * @api
      */
     public function getProperties(): PropertyCollectionInterface;
