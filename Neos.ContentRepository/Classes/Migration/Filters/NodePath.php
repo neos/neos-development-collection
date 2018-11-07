@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 
 /**
- * Filter nodes by node type.
+ * Filter nodes by node node path.
  */
 class NodePath implements FilterInterface
 {
