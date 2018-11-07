@@ -12,7 +12,7 @@ namespace Neos\Neos\Service\Mapping;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\Exception as PropertyException;
 use Neos\Flow\Property\PropertyMapper;
@@ -22,6 +22,7 @@ use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Psr\Log\LoggerInterface;
 
 /**
  * Creates PropertyMappingConfigurations to map NodeType properties for the Neos interface.
@@ -55,10 +56,30 @@ class NodePropertyConverterService
     protected $generatedPropertyMappingConfigurations = [];
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * Get a single property reduced to a simple type (no objects) representation
@@ -79,7 +100,8 @@ class NodePropertyConverterService
         try {
             $convertedValue = $this->convertValue($propertyValue, $dataType);
         } catch (PropertyException $exception) {
-            $this->systemLogger->logException($exception);
+            $logMessage = $this->throwableStorage->logThrowable($exception);
+            $this->logger->error($logMessage);
             $convertedValue = null;
         }
 
@@ -89,7 +111,8 @@ class NodePropertyConverterService
                 try {
                     $convertedValue = $this->convertValue($convertedValue, $dataType);
                 } catch (PropertyException $exception) {
-                    $this->systemLogger->logException($exception);
+                    $logMessage = $this->throwableStorage->logThrowable($exception);
+                    $this->logger->error($logMessage);
                     $convertedValue = null;
                 }
             }

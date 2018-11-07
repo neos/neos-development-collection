@@ -14,15 +14,16 @@ namespace Neos\Neos\ViewHelpers\Backend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\I18n\Service;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Files;
 use Neos\Utility\PositionalArraySorter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Utility\BackendAssetsUtility;
+use Psr\Log\LoggerInterface;
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -54,12 +55,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
-     * @Flow\Inject
      * @var Service
      */
     protected $i18nService;
@@ -81,6 +76,27 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      * @var DomainRepository
      */
     protected $domainRepository;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * @param array $settings
@@ -141,7 +157,8 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
                 return $this->resourceManager->getPublicPackageResourceUri($packageKey, $path);
             }
         } catch (\Exception $exception) {
-            $this->systemLogger->logException($exception);
+            $logMessage = $this->throwableStorage->logThrowable($exception);
+            $this->logger->error($logMessage);
         }
         return '';
     }

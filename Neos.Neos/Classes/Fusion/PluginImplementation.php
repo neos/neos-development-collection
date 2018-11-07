@@ -48,12 +48,6 @@ class PluginImplementation extends AbstractArrayFusionObject
     protected $documentNode;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
      * @return string
      */
     public function getPackage()

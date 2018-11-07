@@ -17,8 +17,9 @@ use Neos\Eel\CompilingEvaluator;
 use Neos\Eel\Exception;
 use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Neos\EventLog\Domain\Model\Event;
+use Psr\Log\LoggerInterface;
 
 /**
  * Monitors entity changes
@@ -46,12 +47,6 @@ class EntityIntegrationService extends AbstractIntegrationService
      * @var array
      */
     protected $monitorEntitiesSetting;
-
-    /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $logger;
 
     /**
      * Dummy method which is called in a prePersist signal. If we remove that, this object is never instantiated and thus

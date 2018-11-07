@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Domain\Service\ImportExport;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -22,6 +22,7 @@ use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\ExportException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Service for exporting content repository nodes as an XML structure
@@ -39,10 +40,14 @@ class NodeExportService
     const SUPPORTED_FORMAT_VERSION = '2.0';
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
 
     /**
      * @Flow\Inject
@@ -107,6 +112,22 @@ class NodeExportService
      * @var array Node paths that have been exported, this is used for consistency checks of broken node rootlines
      */
     protected $exportedNodePaths;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * Exports the node data of all nodes in the given sub-tree
@@ -398,7 +419,8 @@ class NodeExportService
             } catch (\Exception $exception) {
                 $this->xmlWriter->writeComment(sprintf('Could not convert property "%s" to string.', $propertyName));
                 $this->xmlWriter->writeComment($exception->getMessage());
-                $this->systemLogger->logException($exception);
+                $logMessage = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error($logMessage);
                 $this->exceptionsDuringExport[] = $exception;
             }
 
