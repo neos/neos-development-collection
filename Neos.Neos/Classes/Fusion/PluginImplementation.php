@@ -12,7 +12,6 @@ namespace Neos\Neos\Fusion;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\Dispatcher;

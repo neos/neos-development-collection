@@ -11,7 +11,6 @@ namespace Neos\Fusion\FusionObjects\Helpers;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
 use Neos\Fusion\Exception\UnsupportedProxyMethodException;
 use Neos\Fusion\FusionObjects\TemplateImplementation;

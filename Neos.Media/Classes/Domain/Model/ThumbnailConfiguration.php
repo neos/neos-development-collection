@@ -11,9 +11,6 @@ namespace Neos\Media\Domain\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
-
 /**
  * Thumbnail configuration value object
  */
