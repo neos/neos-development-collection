@@ -1,5 +1,11 @@
-
 Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
   className: Neos\EventSourcedNeosAdjustments\EventSourcedRouting\EventSourcedFrontendNodeRoutePartHandler
 'Neos\ContentRepository\Domain\Projection\Content\NodeInterface':
   className: Neos\EventSourcedContentRepository\Domain\Projection\Content\Node
+
+Neos\EventSourcedNeosAdjustments\Ui\View\BackendFusionView:
+  properties:
+    typoScriptParser:
+      object: Neos\Fusion\Core\Parser
+    fallbackView:
+      object: Neos\FluidAdaptor\View\TemplateView

@@ -1,12 +1,8 @@
-include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-include: resource://Neos.Neos/Private/Fusion/Prototypes/NodeUri.fusion
-include: resource://Neos.Neos.Ui/Private/Fusion/Prototypes/RenderConfiguration.fusion
-include: resource://Neos.Neos.Ui/Private/Fusion/Prototypes/ArrayCollection.fusion
-include: resource://Neos.Neos.Ui/Private/Fusion/Prototypes/AppendAllToCollection.fusion
-
-
 prototype(Neos.Neos:NodeUri) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\NodeUriImplementation'
     subgraph = ${subgraph}
 }
 
+backend.initialState.context {
+    subgraph = ${subgraph}
+}

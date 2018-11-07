@@ -73,6 +73,9 @@ prototype(Neos.Neos:Page) {
         javascriptBackendInformation {
             @if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
             @cache.entryIdentifier.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}
+            context {
+                subgraph = ${subgraph}
+            }
         }
         guestFrameApplication {
             @if.inBackend = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(documentNode)}

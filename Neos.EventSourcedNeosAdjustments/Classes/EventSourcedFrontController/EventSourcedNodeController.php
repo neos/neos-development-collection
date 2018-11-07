@@ -123,7 +123,6 @@ class EventSourcedNodeController extends ActionController
      *
      * @param NodeAddress $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
-     * @throws UnresolvableShortcutException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
