@@ -33,7 +33,6 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\NodeService;
-use Psr\Log\LoggerInterface;
 
 /**
  * The Neos Sites Management module controller

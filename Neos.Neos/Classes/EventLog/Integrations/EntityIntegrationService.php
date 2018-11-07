@@ -17,9 +17,7 @@ use Neos\Eel\CompilingEvaluator;
 use Neos\Eel\Exception;
 use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Neos\EventLog\Domain\Model\Event;
-use Psr\Log\LoggerInterface;
 
 /**
  * Monitors entity changes
