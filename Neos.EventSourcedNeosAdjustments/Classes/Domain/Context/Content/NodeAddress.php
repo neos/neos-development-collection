@@ -92,6 +92,15 @@ final class NodeAddress
     }
 
     /**
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return NodeAddress
+     */
+    public function setNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAddress
+    {
+        return new NodeAddress($this->contentStreamIdentifier, $this->dimensionSpacePoint, $nodeAggregateIdentifier, $this->workspaceName);
+    }
+
+    /**
      * @return WorkspaceName
      */
     public function getWorkspaceName(): WorkspaceName

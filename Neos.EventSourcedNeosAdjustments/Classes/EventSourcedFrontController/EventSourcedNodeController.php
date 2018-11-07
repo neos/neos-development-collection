@@ -25,6 +25,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFind
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
+use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
 use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -33,7 +34,6 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
-use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Flow\Security\Context as SecurityContext;
 
 /**
@@ -41,8 +41,6 @@ use Neos\Flow\Security\Context as SecurityContext;
  */
 class EventSourcedNodeController extends ActionController
 {
-
-
     /**
      * @Flow\Inject
      * @var ContentGraphInterface
@@ -126,6 +124,9 @@ class EventSourcedNodeController extends ActionController
      * @param NodeAddress $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
      * @throws UnresolvableShortcutException
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
+     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
      * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
@@ -155,7 +156,7 @@ class EventSourcedNodeController extends ActionController
         }
 
         if ($node->getNodeType()->isOfType('Neos.Neos:Shortcut') && !$inBackend) {
-            $this->handleShortcutNode($node);
+            $this->handleShortcutNode($subgraph, $node, $nodeAddress);
         }
 
         $traversableNode = new TraversableNode($node, $subgraph, $contextParameters);
@@ -222,25 +223,22 @@ class EventSourcedNodeController extends ActionController
     /**
      * Handles redirects to shortcut targets in live rendering.
      *
+     * @param ContentSubgraphInterface $subgraph
      * @param NodeInterface $node
+     * @param NodeAddress $nodeAddress
      * @return void
-     * @throws NodeNotFoundException|UnresolvableShortcutException
+     * @throws NodeNotFoundException
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
+     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
-    protected function handleShortcutNode(NodeInterface $node)
+    protected function handleShortcutNode(ContentSubgraphInterface $subgraph, NodeInterface $node, NodeAddress $nodeAddress): void
     {
-        throw new \Exception('FIXME');
-        $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node);
-        if ($resolvedNode === null) {
-            throw new NodeNotFoundException(sprintf('The shortcut node target of node "%s" could not be resolved', $node->getPath()), 1430218730);
-        } elseif (is_string($resolvedNode)) {
-            $this->redirectToUri($resolvedNode);
-        } elseif ($resolvedNode instanceof NodeInterface && $resolvedNode === $node) {
-            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1502793585);
-        } elseif ($resolvedNode instanceof NodeInterface) {
-            $this->redirect('show', null, null, ['node' => $resolvedNode]);
+        $resolvedUri = $this->nodeShortcutResolver->resolveShortcutTarget($subgraph, $node, $nodeAddress, $this->uriBuilder, $this->request->getFormat());
+        if (!is_null($resolvedUri)) {
+            $this->redirectToUri($resolvedUri);
         } else {
-            throw new UnresolvableShortcutException(sprintf('The shortcut node target of node "%s" resolves to an unsupported type "%s"', $node->getPath(),
-                is_object($resolvedNode) ? get_class($resolvedNode) : gettype($resolvedNode)), 1430218738);
+            throw new NodeNotFoundException(sprintf('The shortcut node target of node "%s" could not be resolved', $node->getNodeAggregateIdentifier()), 1430218730);
         }
     }
 
