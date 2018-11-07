@@ -115,8 +115,7 @@ class ContentElementWrappingService
      */
     public function wrapContentObject(TraversableNodeInterface $node, $content, $fusionPath): string
     {
-        $subgraph = $node->getSubgraph();
-        if ($this->isContentStreamOfLiveWorkspace($subgraph->getContentStreamIdentifier())) {
+        if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
             return $content;
         }
 
@@ -158,7 +157,7 @@ class ContentElementWrappingService
      */
     protected function appendNonRenderedContentNodeMetadata(TraversableNodeInterface $documentNode)
     {
-        if ($this->isContentStreamOfLiveWorkspace($documentNode->getSubgraph()->getContentStreamIdentifier())) {
+        if ($this->isContentStreamOfLiveWorkspace($documentNode->getContentStreamIdentifier())) {
             return '';
         }
 
@@ -174,7 +173,7 @@ class ContentElementWrappingService
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
             }
 
-            if ($subgraph->countChildNodes($node->getNodeIdentifier()) > 0) {
+            if ($documentNode->countChildNodes() > 0) {
                 $this->nonRenderedContentNodeMetadata .= $this->appendNonRenderedContentNodeMetadata($node);
             }
         }

@@ -64,7 +64,7 @@ class ContentElementEditableService
 
     public function wrapContentProperty(TraversableNodeInterface $node, $property, $content)
     {
-        if ($this->isContentStreamOfLiveWorkspace($node->getSubgraph()->getContentStreamIdentifier())) {
+        if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
             return $content;
         }
 

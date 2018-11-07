@@ -87,12 +87,13 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     }
 
     /**
+     * @param SqlQueryBuilder $query
      * @param NodeTypeConstraints $nodeTypeConstraints
-     * @param $query
+     * @param string|null $markerToReplaceInQuery
      */
     protected static function addNodeTypeConstraintsToQuery(
-        NodeTypeConstraints $nodeTypeConstraints = null,
         SqlQueryBuilder $query,
+        NodeTypeConstraints $nodeTypeConstraints = null,
         string $markerToReplaceInQuery = null
     ): void {
         if ($nodeTypeConstraints) {
@@ -207,7 +208,7 @@ SELECT c.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
-        self::addNodeTypeConstraintsToQuery($nodeTypeConstraints, $query);
+        self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints);
         $query->addToQuery('ORDER BY h.position ASC');
 
         $result = [];
@@ -276,7 +277,7 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
         if ($nodeTypeConstraints) {
-            self::addNodeTypeConstraintsToQuery($nodeTypeConstraints, $query);
+            self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints);
         }
 
         return $query->execute($this->getDatabaseConnection())->rowCount();
@@ -603,65 +604,139 @@ ORDER BY hc.position LIMIT 1',
         return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData) : null;
     }
 
-
     /**
-     * @param NodeIdentifier $sibling
-     * @return ContentRepository\Model\NodeInterface|null
-     * @throws \Exception
-     */
-    public function findSucceedingSibling(NodeIdentifier $sibling): ?NodeInterface
-    {
-        $nodeRow = $this->getDatabaseConnection()->executeQuery($this->getSiblingBaseQuery() . '
-  AND h.position > (
-      SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
-      INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
-      WHERE sib.nodeidentifier = :siblingNodeIdentifier
-      AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
-  )
-  ORDER BY h.position ASC
-  LIMIT 1',
-            [
-                'contentStreamIdentifier' => $this->getContentStreamIdentifier(),
-                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                'siblingNodeIdentifier' => (string)$sibling
-            ]
-        )->fetch();
-
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
-    }
-
-    /**
-     * @param NodeIdentifier $sibling
-     * @return NodeInterface|null
+     * @param NodeAggregateIdentifier $sibling
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findPrecedingSibling(NodeIdentifier $sibling): ?NodeInterface
+    public function findSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
     {
-        $nodeRow = $this->getDatabaseConnection()->executeQuery($this->getSiblingBaseQuery() . '
-  AND h.position < (
-      SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
-      INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
-      WHERE sib.nodeidentifier = :siblingNodeIdentifier
-      AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
-  )
-  ORDER BY h.position DESC
-  LIMIT 1',
-            [
-                'contentStreamIdentifier' => $this->getContentStreamIdentifier(),
-                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                'siblingNodeIdentifier' => (string)$sibling
-            ]
-        )->fetch();
+        $query = new SqlQueryBuilder();
+        $query->addToQuery($this->getSiblingBaseQuery() . '
+            AND n.nodeaggregateidentier != :siblingNodeAggregateIdentifier')
+            ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
+            ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
+        if ($nodeTypeConstraints) {
+            self::addNodeTypeConstraintsToQuery($query);
+        }
+        $query->addToQuery(' ORDER BY h.position');
+        if ($limit) {
+            $query->addToQuery(' LIMIT ' . $limit);
+        }
+        if ($offset) {
+            $query->addToQuery(' OFFSET ' . $offset);
+        }
+
+        $result = [];
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
+        }
+
+        return $result;
     }
 
     /**
-     * @return string
+     * @param NodeAggregateIdentifier $sibling
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array|NodeInterface[]
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
      */
+    public function findPrecedingSiblings(
+        NodeAggregateIdentifier $sibling,
+        NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): array {
+        $query = new SqlQueryBuilder();
+        $query->addToQuery($this->getSiblingBaseQuery() . '
+            AND n.nodeaggregateidentier != :siblingNodeAggregateIdentifier')
+            ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
+            ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+        $query->addToQuery('
+    AND h.position < (
+        SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
+        INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
+        WHERE sib.nodeaggregateidentifier = :siblingNodeAggregateIdentifier
+        AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
+    )');
+
+        if ($nodeTypeConstraints) {
+            self::addNodeTypeConstraintsToQuery($query);
+        }
+        $query->addToQuery(' ORDER BY h.position DESC');
+        if ($limit) {
+            $query->addToQuery(' LIMIT ' . $limit);
+        }
+        if ($offset) {
+            $query->addToQuery(' OFFSET ' . $offset);
+        }
+
+        $result = [];
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param NodeAggregateIdentifier $sibling
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array|NodeInterface[]
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     */
+    public function findSucceedingSiblings(
+        NodeAggregateIdentifier $sibling,
+        NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): array {
+        $query = new SqlQueryBuilder();
+        $query->addToQuery($this->getSiblingBaseQuery() . '
+            AND n.nodeaggregateidentier != :siblingNodeAggregateIdentifier')
+            ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
+            ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+        $query->addToQuery('
+    AND h.position > (
+        SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
+        INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
+        WHERE sib.nodeaggregateidentifier = :siblingNodeAggregateIdentifier
+        AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
+    )');
+
+        if ($nodeTypeConstraints) {
+            self::addNodeTypeConstraintsToQuery($query);
+        }
+        $query->addToQuery(' ORDER BY h.position ASC');
+        if ($limit) {
+            $query->addToQuery(' LIMIT ' . $limit);
+        }
+        if ($offset) {
+            $query->addToQuery(' OFFSET ' . $offset);
+        }
+
+        $result = [];
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
+        }
+
+        return $result;
+    }
+
     protected function getSiblingBaseQuery(): string
     {
         return '
@@ -671,7 +746,7 @@ ORDER BY hc.position LIMIT 1',
   AND h.parentnodeanchor = (
       SELECT sibh.parentnodeanchor FROM neos_contentgraph_hierarchyrelation sibh
       INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
-      WHERE sib.nodeidentifier = :siblingNodeIdentifier
+      WHERE sib.nodeaggregateidentifier = :siblingNodeAggregateIdentifier
       AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
   )';
     }
@@ -889,7 +964,7 @@ order by level asc, position asc;')
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash())
             ->parameter('maximumLevels', $maximumLevels);
 
-        self::addNodeTypeConstraintsToQuery($nodeTypeConstraints, $query, '###NODE_TYPE_CONSTRAINTS###');
+        self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints, '###NODE_TYPE_CONSTRAINTS###');
 
         $result = $query->execute($this->getDatabaseConnection())->fetchAll();
 
