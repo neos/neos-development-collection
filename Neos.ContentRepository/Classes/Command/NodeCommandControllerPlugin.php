@@ -1333,7 +1333,7 @@ HELPTEXT;
             $fixedShadowNodes !== 1 ? 's' : ''
         ]);
 
-        if (fixedShadowNodes>0) {
+        if (fixedShadowNodes > 0) {
             $this->hasError = true;
         }
 
