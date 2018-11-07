@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 /**
  * A convenience wrapper.
@@ -57,7 +58,15 @@ interface TraversableNodeInterface extends NodeInterface
      * @return TraversableNodeInterface[]|array<TraversableNodeInterface> An array of nodes or an empty array if no child nodes matched
      * @api
      */
-    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null);
+    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+
+    /**
+     * Returns the number of direct child nodes of this node from its subgraph.
+     *
+     * @param NodeTypeConstraints|null $nodeTypeConstraints If specified, only nodes with that node type are considered
+     * @return int
+     */
+    public function countChildNodes(NodeTypeConstraints $nodeTypeConstraints = null): int;
 
     /**
      * Retrieves and returns all sibling nodes of this node from its subgraph.
@@ -103,10 +112,10 @@ interface TraversableNodeInterface extends NodeInterface
     /**
      * Retrieves and returns nodes referenced by this node by name from its subgraph.
      *
-     * @param NodeName $nodeName
+     * @param PropertyName $edgeName
      * @return array<TraversableNodeInterface>|TraversableNodeInterface[]
      */
-    public function findNamedReferencedNodes(NodeName $nodeName): array;
+    public function findNamedReferencedNodes(PropertyName $edgeName): array;
 
     /**
      * Retrieves and returns nodes referencing this node from its subgraph.
@@ -118,8 +127,8 @@ interface TraversableNodeInterface extends NodeInterface
     /**
      * Retrieves and returns nodes referencing this node by name from its subgraph.
      *
-     * @param NodeName $nodeName
+     * @param PropertyName $nodeName
      * @return array<TraversableNodeInterface>|TraversableNodeInterface[]
      */
-    public function findNamedReferencingNodes(NodeName $nodeName): array;
+    public function findNamedReferencingNodes(PropertyName $nodeName): array;
 }
