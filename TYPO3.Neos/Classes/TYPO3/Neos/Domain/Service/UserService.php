@@ -31,6 +31,7 @@ use TYPO3\Neos\Domain\Exception;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Repository\UserRepository;
 use TYPO3\Neos\Service\PublishingService;
+use TYPO3\Party\Domain\Model\AbstractParty;
 use TYPO3\Party\Domain\Model\PersonName;
 use TYPO3\Party\Domain\Repository\PartyRepository;
 use TYPO3\Party\Domain\Service\PartyService;
@@ -168,19 +169,23 @@ class UserService
         $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
         $cacheIdentifier = $authenticationProviderName . '~' . $username;
 
-        if (!array_key_exists($cacheIdentifier, $this->runtimeUserCache)) {
-            $user = $this->findUserForAccount($username, $authenticationProviderName);
-            $this->runtimeUserCache[$cacheIdentifier] = $user === null ? null : $this->persistenceManager->getIdentifierByObject($user);
-            return $user;
+        if (array_key_exists($cacheIdentifier, $this->runtimeUserCache)) {
+            $userIdentifier = $this->runtimeUserCache[$cacheIdentifier];
+            return $this->partyRepository->findByIdentifier($userIdentifier);
         }
 
-        $userIdentifier = $this->runtimeUserCache[$cacheIdentifier];
-        if ($userIdentifier === null) {
-            return null;
+        $user = $this->findUserForAccount($username, $authenticationProviderName);
+
+        if ($user instanceof AbstractParty) {
+            $userIdentifier = $this->persistenceManager->getIdentifierByObject($user);
         }
 
-        $user = $this->partyRepository->findByIdentifier($userIdentifier);
-        return $user;
+        if (isset($userIdentifier) && (string)$userIdentifier !== '') {
+            $this->runtimeUserCache[$cacheIdentifier] = $userIdentifier;
+            return $this->partyRepository->findByIdentifier($userIdentifier);
+        }
+
+        return null;
     }
 
     /**
