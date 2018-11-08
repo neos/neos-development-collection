@@ -30,10 +30,10 @@ class NodePath implements FilterInterface
     /**
      * Sets the node path starting with /sites/{nodePath}
      *
-     * @param $nodePath
+     * @param string $nodePath
      * @return void
      */
-    public function setPath($nodePath)
+    public function setPath(string $nodePath) : void
     {
         $this->nodePath = $nodePath;
     }
