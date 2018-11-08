@@ -602,6 +602,83 @@ EOF;
 
     /**
      * @test
+     */
+    public function spreadsAreEvaluatedForFusionObjectTags()
+    {
+        $afxCode = '<Vendor.Site:Prototype {...spreadExpression} />';
+
+        $expectedFusion = <<<'EOF'
+Vendor.Site:Prototype {
+    @apply.spread_1 = ${spreadExpression}
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function spreadsCanMixWithPropsForFusionObjectTags()
+    {
+        $afxCode = '<Vendor.Site:Prototype stringBefore="string" expressionBefore={expression} {...spreadExpression} stringAfter="string" expressionAfter={expression} />';
+
+        $expectedFusion = <<<'EOF'
+Vendor.Site:Prototype {
+    stringBefore = 'string'
+    expressionBefore = ${expression}
+    @apply.spread_1 = ${spreadExpression}
+    @apply.spread_2 = Neos.Fusion:RawArray {
+        stringAfter = 'string'
+        expressionAfter = ${expression}
+    }
+}
+EOF;
+
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function spreadsAreEvaluetedForHtmlTags()
+    {
+        $afxCode = '<h1 {...spreadExpression} />';
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    selfClosingTag = true
+    attributes.@apply.spread_1 = ${spreadExpression}
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function spreadsCanMixWithPropsForHtmlTags()
+    {
+        $afxCode = '<h1 stringBefore="string" expressionBefore={expression} {...spreadExpression} stringAfter="string" expressionAfter={expression} />';
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    selfClosingTag = true
+    attributes.stringBefore = 'string'
+    attributes.expressionBefore = ${expression}
+    attributes.@apply.spread_1 = ${spreadExpression}
+    attributes.@apply.spread_2 = Neos.Fusion:RawArray {
+        stringAfter = 'string'
+        expressionAfter = ${expression}
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
      * @expectedException \PackageFactory\Afx\Exception
      */
     public function unclosedTagsRaisesException()
@@ -627,6 +704,16 @@ EOF;
     public function unclosedExpressionRaisesException()
     {
         $afxCode = '<h1 foo={"123" />';
+        AfxService::convertAfxToFusion($afxCode);
+    }
+
+    /**
+     * @test
+     * @expectedException \PackageFactory\Afx\Exception
+     */
+    public function unclosedSpreadRaisesException()
+    {
+        $afxCode = '<h1 {...expression />';
         AfxService::convertAfxToFusion($afxCode);
     }
 
@@ -659,6 +746,4 @@ EOF;
         $afxCode = '<div @children={expression} ><span/></div>';
         AfxService::convertAfxToFusion($afxCode);
     }
-
-
 }

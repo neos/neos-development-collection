@@ -120,6 +120,49 @@ Vendor.Site:Prototype {
 }
 ```
 
+### Spread Syntax
+
+To apply multiple properties to a fusion prototype with a single expression
+afx supports the spread syntax from ES6:
+
+```
+<Vendor.Site:Component {...expression} />
+```
+Is transpiled as:
+```
+Vendor.Site:Component {
+    @apply.spread_1 = ${expression}
+}
+```
+
+Spreads can be combined with props and the order of the definition is
+of props and spreads is preserved, spreads will override previously
+defined props but are overwritten again by later props.
+
+The order preserving combination of spreads and properties works by
+only rendering the properties before the first spread as classic
+fusion properties. Spreads and the following props are transpiled to
+fusion `@apply` statements and are thus able to override all props but
+and are evaluated in the order of definition.
+
+```
+<Vendor.Site:Component title="example" {...data} description="description" {...moreData} />
+```
+Is transpiled as:
+```
+Vendor.Site:Component {
+    title = 'example'
+    @apply.spread_1 = ${data}
+    @apply.spread_2 = Neos.Fusion:RawArray {
+        description = 'description'
+    }
+    @apply.spread_3 = ${moreData}
+
+}
+```
+
+**This feature is based on the `@apply`-syntax of fusion and thus will only work in Neos > 4.2.**
+
 ### Tag-Children
 
 The handling of child-nodes below an afx-node is differs based on the number of childNodes that are found.
@@ -251,7 +294,7 @@ Neos.Fusion:Tag {
 	tagName = 'h1'
 	contents = Neos.Fusion:Array {
 		item_1 = ${'eelExpression 1'}
-		item_2 = ${'eelExpression 2'}   
+		item_2 = ${'eelExpression 2'}
 	}
 }
 ```
@@ -291,8 +334,10 @@ prototype(Vendor.Site:IterationExample) < prototype(Neos.Fusion:Component) {
     
     renderer = afx`
         <ul @if.has={props.items ? true : false}>
-        <Neos.Fusion:Collection collection={props.items} itemName="item" @children="itemRenderer">
-            <li><a href={item.href}>{item.title}</a></li>
+        <Neos.Fusion:Collection collection={props.items} itemName="item">
+            <li @path='itemRenderer'>
+                <Vendor.Site:LinkExample {...item} />
+            </li>
         </Neos.Fusion:Collection>
         </ul>
     `
@@ -312,7 +357,7 @@ prototype(PackageFactory.AtomicFusion.AFX:SliderExample) < prototype(Packagefact
      <div class="slider">
         <Neos.Fusion:Collection collection={props.images} itemName="image" iterationName="iteration" @children="itemRenderer">
             <Neos.Fusion:Augmenter class="slider__slide" data-index={iteration.index}>
-                <Vendor.Site:ImageExample image={image} /> 
+                <Vendor.Site:ImageExample {...image} />
             </Neos.Fusion:Augmenter>
         </Neos.Fusion:Collection>  
      </div>
