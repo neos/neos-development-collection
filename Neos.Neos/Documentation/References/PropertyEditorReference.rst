@@ -241,42 +241,18 @@ See :ref:`data-sources` for more details on implementing a *data source* based o
 data source to populate SelectBoxEditor instances it has to be matching the ``values`` option. Make sure you sort by
 group first, if using the grouping option.
 
+If you use the ``dataSourceUri`` option to connect to an arbitrary service, make sure the output of the data source
+is a JSON formatted array matching the following structure.
+
 Example for returning compatible data:
 
 .. code-block:: php
 
-  return array(
-      array('value' => 'key', 'label' => 'Foo', 'group' => 'A', 'icon' => 'icon-key'),
-      array('value' => 'fire', 'label' => 'Fire', 'group' => 'A', 'icon' => 'icon-fire'),
-      array('value' => 'legal', 'label' => 'Legal', 'group' => 'B', 'icon' => 'icon-legal')
-  );
-
-If you use the ``dataSourceUri`` option to connect to an arbitrary service, make sure the output of the data source
-is a JSON formatted array matching the following structure. Make sure you sort by group first, if using the grouping
-option.
-
-Example for compatible data:
-
-.. code-block:: json
-
-  [{
-    "value": "key",
-    "label": "Key",
-    "group": "A",
-    "icon": "icon-key"
-  },
-  {
-    "value": "fire",
-    "label": "Fire",
-    "group": "A",
-    "icon": "icon-fire"
-  },
-  {
-    "value": "legal",
-    "label": "Legal",
-    "group": "B",
-    "icon": "icon-legal"
-  }]
+  return [
+    ['value' => 'key', 'label' => 'Foo', 'group' => 'A', 'icon' => 'icon-key'],
+    ['value' => 'fire', 'label' => 'Fire', 'group' => 'A', 'icon' => 'icon-fire]',
+    ['value' => 'legal', 'label' => 'Legal', 'group' => 'B', 'icon' => 'icon-legal']
+  ];
 
 Options Reference:
 
