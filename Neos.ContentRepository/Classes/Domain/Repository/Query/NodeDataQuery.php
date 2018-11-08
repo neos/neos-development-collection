@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\Repository\Query;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Utility\NodeDataUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -79,12 +80,12 @@ class NodeDataQuery
 
     protected function collectBaseWorkspaces(): void
     {
-        $this->workspaces = $this->nodeDataRepository->collectWorkspaceAndAllBaseWorkspaces($this->workspace);
+        $this->workspaces = NodeDataUtility::collectWorkspaceAndAllBaseWorkspaces($this->workspace);
     }
 
     protected function addDimensionJoinConstraints(QueryBuilder $queryBuilder): void
     {
-        $this->nodeDataRepository->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $this->dimensions);
+        NodeDataUtility::addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $this->dimensions);
     }
 
     /**
@@ -109,7 +110,7 @@ class NodeDataQuery
      */
     protected function withoutRemovedNodes(array $nodes): array
     {
-        return $this->nodeDataRepository->withoutRemovedNodes($nodes);
+        return NodeDataUtility::withoutRemovedNodes($nodes);
     }
 
     /**
@@ -119,7 +120,7 @@ class NodeDataQuery
      */
     protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes): array
     {
-        return $this->nodeDataRepository->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $this->workspaces, $this->dimensions);
+        return NodeDataUtility::reduceNodeVariantsByWorkspacesAndDimensions($nodes, $this->workspaces, $this->dimensions);
     }
 
     /**
