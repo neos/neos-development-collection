@@ -18,6 +18,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * Node command controller for the Neos.ContentRepository package
@@ -116,6 +117,90 @@ class NodeCommandController extends CommandController implements DescriptionAwar
         }
 
         $this->outputLine('Node repair finished.');
+    }
+
+    /**
+     * Run a status report of nodes
+     *
+     * {pluginDescriptions}
+     * <b>Examples:</b>
+     *
+     * ./flow node:status
+     *
+     * ./flow node:status --node-type Neos.NodeTypes:Page
+     *
+     * ./flow node:status --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions
+     *
+     * ./flow node:status --skip removeUndefinedProperties
+     *
+     * @param string $nodeType Node type name, if empty update all declared node types
+     * @param string $workspace Workspace name, default is 'live'
+     * @param boolean $dryRun Don't do anything, but report actions
+     * @param boolean $cleanup If false, cleanup tasks are skipped
+     * @param string $skip Skip the given check or checks (comma separated)
+     * @param string $only Only execute the given check or checks (comma separated)
+     * @return void
+     */
+    public function statusCommand($nodeType = null, $workspace = 'live', $cleanup = true, $skip = null, $only = null)
+    {
+        $dryRun = true;
+        $summary = true;
+
+        $this->outputLine('Run status report..');
+
+        $this->pluginConfigurations = self::detectPlugins($this->objectManager);
+
+        if ($this->workspaceRepository->countByName($workspace) === 0) {
+            $this->outputLine('Workspace "%s" does not exist', [$workspace]);
+            exit(1);
+        }
+
+        if ($nodeType !== null) {
+            if ($this->nodeTypeManager->hasNodeType($nodeType)) {
+                $nodeType = $this->nodeTypeManager->getNodeType($nodeType);
+            } else {
+                $this->outputLine('Node type "%s" does not exist', [$nodeType]);
+                exit(1);
+            }
+        }
+
+        if (!$cleanup) {
+            $this->outputLine('Omitting cleanup tasks.');
+        }
+
+        $originalOutput = $this->output->getOutput();
+        $this->output->setOutput(new NullOutput());
+
+        $totalErrors = [];
+        foreach ($this->pluginConfigurations as $pluginConfiguration) {
+            /** @var NodeCommandControllerPluginInterface $plugin */
+            $plugin = $pluginConfiguration['object'];
+            $this->outputLine('<b>' . $plugin->getSubCommandShortDescription('repair') . '</b>');
+            $this->outputLine();
+            $errorCounts = $plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun, $cleanup, $skip, $only, $summary);
+            if ($errorCounts !== null) {
+                $totalErrors = array_merge($totalErrors, $errorCounts);
+            }
+            $this->outputLine();
+        }
+
+        $this->output->setOutput($originalOutput);
+
+        $totalErrorCounts = 0;
+        $tableData = [];
+        foreach ($totalErrors as $totalErrorName => $totalErrorCount) {
+            $totalErrorCounts += $totalErrorCount;
+            $tableData[] = [$totalErrorName, $totalErrorCount];
+        }
+        $this->output->outputTable($tableData);
+
+        $this->outputLine('Status report finished.');
+
+        if ($totalErrorCounts > 0) {
+            exit(1);
+        }
+
+        exit(0);
     }
 
     /**

@@ -44,7 +44,8 @@ interface NodeCommandControllerPluginInterface
      * @param string $workspaceName Only handle this workspace (if specified)
      * @param boolean $dryRun If true, don't do any changes, just simulate what you would do
      * @param boolean $cleanup If false, cleanup tasks are skipped
+     * @param boolean $summary If true, only a summary messages are displayed
      * @return void
      */
-    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true);
+    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $summary = false);
 }
