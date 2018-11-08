@@ -31,6 +31,7 @@ use TYPO3\Neos\Domain\Exception;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Repository\UserRepository;
 use TYPO3\Neos\Service\PublishingService;
+use TYPO3\Party\Domain\Model\AbstractParty;
 use TYPO3\Party\Domain\Model\PersonName;
 use TYPO3\Party\Domain\Repository\PartyRepository;
 use TYPO3\Party\Domain\Service\PartyService;
@@ -175,11 +176,11 @@ class UserService
 
         $user = $this->findUserForAccount($username, $authenticationProviderName);
 
-        if (isset($user)) {
+        if ($user instanceof AbstractParty) {
             $userIdentifier = $this->persistenceManager->getIdentifierByObject($user);
         }
 
-        if (isset($userIdentifier)) {
+        if (isset($userIdentifier) && (string)$userIdentifier !== '') {
             $this->runtimeUserCache[$cacheIdentifier] = $userIdentifier;
             return $this->partyRepository->findByIdentifier($userIdentifier);
         }
