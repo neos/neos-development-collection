@@ -197,7 +197,7 @@ class UserServiceTest extends UnitTestCase
         $this->assertSame($mockUser, $this->userDomainService->getUser('test-user'));
     }
 
-    public function setUpGetUser($mockUser)
+    protected function setUpGetUser($mockUser)
     {
         $this->mockPartyService->expects(self::atLeastOnce())
             ->method('getAssignedPartyOfAccount')
