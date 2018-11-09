@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,15 +14,16 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Migration\Filters\NodeName;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Root node was created event
+ * A root node aggregate and its node were created
  */
-final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
+final class RootNodeAggregateWithNodeWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -40,7 +41,7 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     protected $nodeTypeName;
 
     /**
-     * the root node is by definition visible in *all* dimension space points; so we need to include the full list here.
+     * Root nodes are by definition visible in *all* dimension space points; so we need to include the full list here.
      *
      * @var DimensionSpacePointSet
      */
@@ -52,78 +53,65 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     private $initiatingUserIdentifier;
 
     /**
-     * RootNodeWasCreated constructor.
-     *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
-     * @param UserIdentifier $initiatingUserIdentifier
+     * @var NodeName
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, DimensionSpacePointSet $visibleInDimensionSpacePoints, UserIdentifier $initiatingUserIdentifier)
-    {
+    private $nodeName;
+
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeIdentifier,
+        NodeTypeName $nodeTypeName,
+        DimensionSpacePointSet $visibleInDimensionSpacePoints,
+        UserIdentifier $initiatingUserIdentifier,
+        NodeName $nodeName = null
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->nodeName = $nodeName;
     }
 
-
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNodeAggregateIdentifier(): NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * Getter for NodeTypeName
-     *
-     * @return NodeTypeName
-     */
     public function getNodeTypeName(): NodeTypeName
     {
         return $this->nodeTypeName;
     }
 
-    /**
-     * @return DimensionSpacePointSet
-     */
     public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
     {
         return $this->visibleInDimensionSpacePoints;
     }
 
-    /**
-     * @return UserIdentifier
-     */
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
     }
 
-    /**
-     * @param ContentStreamIdentifier $targetContentStream
-     * @return RootNodeWasCreated
-     */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function getNodeName(): ?NodeName
     {
-        return new RootNodeWasCreated(
+        return $this->nodeName;
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): RootNodeAggregateWithNodeWasCreated
+    {
+        return new RootNodeAggregateWithNodeWasCreated(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->visibleInDimensionSpacePoints,
-            $this->initiatingUserIdentifier
+            $this->initiatingUserIdentifier,
+            $this->nodeName
         );
     }
 }

@@ -11,10 +11,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Exception;
 
 /**
- * The exception to be thrown if a given node type was not found
+ * The exception to be thrown if a node name is already occupied by a node in a node aggregate but is supposed not to be
  */
-final class NodeTypeNotFound extends \OutOfBoundsException
+class NodeNameIsAlreadyOccupied extends Exception
 {
 }

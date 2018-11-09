@@ -49,10 +49,9 @@ final class ContentStream
      *
      * Serves as a means to preserve object identity.
      *
-     * @var array|NodeAggregate\NodeAggregate[]
+     * @var array|NodeAggregate[]
      */
     protected $nodeAggregates;
-
 
     public function __construct(ContentStreamIdentifier $identifier, EventStore\EventStoreManager $eventStoreManager, NodeEventPublisher $nodeEventPublisher)
     {
@@ -61,7 +60,6 @@ final class ContentStream
         $this->eventStore = $this->eventStoreManager->getEventStoreForStreamName($this->getStreamName());
         $this->nodeEventPublisher = $nodeEventPublisher;
     }
-
 
     public function getNodeAggregate(NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate
     {
@@ -73,7 +71,6 @@ final class ContentStream
 
         return $this->nodeAggregates[(string)$nodeAggregateIdentifier];
     }
-
 
     public function getStreamName(): string
     {

@@ -13,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a given node type was not found
+ * The exception to be thrown if a requested node aggregate does already exist
  */
-final class NodeTypeNotFound extends \OutOfBoundsException
+final class NodeAggregateCurrentlyExists extends \DomainException
 {
 }
