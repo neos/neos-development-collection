@@ -17,12 +17,17 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
  *
  * E.g.: {[language => es, country => ar], [language => es, country => es]}
  */
-final class DimensionSpacePointSet implements \JsonSerializable, \Iterator, \Countable
+final class DimensionSpacePointSet implements \JsonSerializable, \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**
      * @var array|DimensionSpacePoint[]
      */
     private $points;
+
+    /**
+     * @var \ArrayIterator
+     */
+    private $iterator;
 
     /**
      * @param array|DimensionSpacePoint[] $points Array of dimension space points
@@ -36,10 +41,11 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Iterator, \Cou
             }
             $this->points[$point->getHash()] = $point;
         }
+        $this->iterator = new \ArrayIterator($this->points);
     }
 
     /**
-     * @return DimensionSpacePoint[]
+     * @return array|DimensionSpacePoint[]
      */
     public function getPoints(): array
     {
@@ -56,43 +62,48 @@ final class DimensionSpacePointSet implements \JsonSerializable, \Iterator, \Cou
         return isset($this->points[$point->getHash()]);
     }
 
+    public function __toString(): string
+    {
+        return json_encode($this);
+    }
+
     public function jsonSerialize(): array
     {
         return array_values($this->points);
     }
 
-    public function current(): ?DimensionSpacePoint
-    {
-        return current($this->points);
-    }
-
-    public function key(): string
-    {
-        return key($this->points);
-    }
-
-    public function next(): void
-    {
-        next($this->points);
-    }
-
-    public function rewind(): ?DimensionSpacePoint
-    {
-        return reset($this->points);
-    }
-
-    public function valid(): bool
-    {
-        return key($this->points) !== null;
-    }
-
-    public function __toString(): string
-    {
-        return 'dimension space points:[' . implode(',', $this->points) . ']';
-    }
-
     public function count(): int
     {
         return count($this->points);
+    }
+
+    public function getIterator(): \ArrayIterator
+    {
+        return $this->iterator;
+    }
+
+    public function offsetExists($dimensionSpacePointHash): bool
+    {
+        return isset($this->points[$dimensionSpacePointHash]);
+    }
+
+    public function offsetGet($dimensionSpacePointHash): ?DimensionSpacePoint
+    {
+        return $this->points[$dimensionSpacePointHash] ?? null;
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        // not going to happen
+    }
+
+    public function offsetUnset($offset)
+    {
+        // not going to happen
+    }
+
+    public function intersect(DimensionSpacePointSet $other): DimensionSpacePointSet
+    {
+        return new DimensionSpacePointSet(array_intersect_key($this->points, $other->getPoints()));
     }
 }
