@@ -18,6 +18,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Context;
@@ -94,6 +95,12 @@ class WorkspacesController extends AbstractModuleController
      * @var Translator
      */
     protected $translator;
+
+    /**
+     * @var PackageManager
+     * @Flow\Inject
+     */
+    protected $packageManager;
 
     /**
      * @var ContentDimensionPresetSourceInterface
@@ -335,6 +342,11 @@ class WorkspacesController extends AbstractModuleController
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
         /** @var ActionRequest $mainRequest */
         $this->uriBuilder->setRequest($mainRequest);
+
+        if ($this->packageManager->isPackageAvailable('Neos.Neos.Ui')) {
+            $this->redirect('index', 'Backend', 'Neos.Neos.Ui', ['node' => $context->getNode($targetNode->getPath())]);
+        }
+
         $this->redirect('show', 'Frontend\\Node', 'Neos.Neos', ['node' => $context->getNode($targetNode->getPath())]);
     }
 
