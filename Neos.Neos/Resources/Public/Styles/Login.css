@@ -6433,7 +6433,7 @@ html,
 .neos .neos-login-box .neos-actions {
   bottom: 0;
   width: 100%;
-  height: 40px;
+  min-height: 40px;
 }
 .neos .neos-login-box .neos-actions button, .neos .neos-login-box .neos-actions .btn {
   text-align: center;

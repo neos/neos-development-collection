@@ -156,12 +156,34 @@ class NodeTypeTest extends UnitTestCase
     {
         $baseType = new NodeType('Neos.ContentRepository:Base', [], []);
 
-        $folderType = new NodeType('Neos.ContentRepository.Testing:Document', [$baseType], []);
+        $timeableNodeType = new NodeType('Neos.ContentRepository.Testing:TimeableContent', [], []);
+        $documentType = new NodeType(
+            'Neos.ContentRepository.Testing:Document',
+            [
+                'Neos.ContentRepository:Base' => $baseType,
+                'Neos.ContentRepository.Testing:TimeableContent' => $timeableNodeType,
+            ],
+            []
+        );
 
         $hideableNodeType = new NodeType('Neos.ContentRepository.Testing:HideableContent', [], []);
-        $pageType = new NodeType('Neos.ContentRepository.Testing:Page', [$folderType, $hideableNodeType], []);
+        $pageType = new NodeType(
+            'Neos.ContentRepository.Testing:Page',
+            [
+                'Neos.ContentRepository.Testing:Document' => $documentType,
+                'Neos.ContentRepository.Testing:HideableContent' => $hideableNodeType,
+                'Neos.ContentRepository.Testing:TimeableContent' => null,
+            ],
+            []
+        );
 
-        $this->assertEquals([$folderType, $hideableNodeType], $pageType->getDeclaredSuperTypes());
+        $this->assertEquals(
+            [
+                'Neos.ContentRepository.Testing:Document' => $documentType,
+                'Neos.ContentRepository.Testing:HideableContent' => $hideableNodeType,
+            ],
+            $pageType->getDeclaredSuperTypes()
+        );
 
         $this->assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:Page'));
         $this->assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:HideableContent'));
@@ -169,6 +191,7 @@ class NodeTypeTest extends UnitTestCase
         $this->assertTrue($pageType->isOfType('Neos.ContentRepository:Base'));
 
         $this->assertFalse($pageType->isOfType('Neos.ContentRepository:Exotic'));
+        $this->assertFalse($pageType->isOfType('Neos.ContentRepository.Testing:TimeableContent'));
     }
 
     /**
