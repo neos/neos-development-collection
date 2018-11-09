@@ -57,7 +57,7 @@ class XmlCommentHandler extends AbstractRenderingExceptionHandler
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
         $logMessage = $this->throwableStorage->logThrowable($exception);
-                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
+        $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
         if (isset($referenceCode)) {
             return sprintf(
                 '<!-- Exception while rendering %s: %s (%s) -->',

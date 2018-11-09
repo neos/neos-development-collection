@@ -102,7 +102,7 @@ class NodePropertyConverterService
             $convertedValue = $this->convertValue($propertyValue, $dataType);
         } catch (PropertyException $exception) {
             $logMessage = $this->throwableStorage->logThrowable($exception);
-                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
+            $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
             $convertedValue = null;
         }
 
@@ -113,7 +113,7 @@ class NodePropertyConverterService
                     $convertedValue = $this->convertValue($convertedValue, $dataType);
                 } catch (PropertyException $exception) {
                     $logMessage = $this->throwableStorage->logThrowable($exception);
-                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
+                    $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                     $convertedValue = null;
                 }
             }

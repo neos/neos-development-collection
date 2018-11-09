@@ -168,7 +168,7 @@ class NodeUriImplementation extends AbstractFusionObject
         } catch (NeosException $exception) {
             // TODO: Revisit if we actually need to store a stack trace.
             $logMessage = $this->throwableStorage->logThrowable($exception);
-                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
+            $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
             return '';
         }
     }
