@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Security\Context;
@@ -158,7 +159,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             }
         } catch (\Exception $exception) {
             $logMessage = $this->throwableStorage->logThrowable($exception);
-            $this->logger->error($logMessage);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
         }
         return '';
     }

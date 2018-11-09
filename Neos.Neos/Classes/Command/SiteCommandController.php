@@ -14,6 +14,7 @@ namespace Neos\Neos\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -222,7 +223,7 @@ class SiteCommandController extends CommandController
                 $site = $this->siteImportService->importFromFile($filename);
             } catch (\Exception $exception) {
                 $logMessage = $this->throwableStorage->logThrowable($exception);
-                $this->logger->error($logMessage);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 $this->outputLine('<error>During the import of the file "%s" an exception occurred: %s, see log for further information.</error>', [$filename, $exception->getMessage()]);
                 $this->quit(1);
             }
@@ -231,7 +232,7 @@ class SiteCommandController extends CommandController
                 $site = $this->siteImportService->importFromPackage($packageKey);
             } catch (\Exception $exception) {
                 $logMessage = $this->throwableStorage->logThrowable($exception);
-                $this->logger->error($logMessage);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 $this->outputLine('<error>During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', [$packageKey, $exception->getMessage()]);
                 $this->quit(1);
             }

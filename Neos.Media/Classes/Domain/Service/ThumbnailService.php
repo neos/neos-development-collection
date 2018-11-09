@@ -13,6 +13,7 @@ namespace Neos\Media\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -157,7 +158,7 @@ class ThumbnailService
                 $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
             } catch (NoThumbnailAvailableException $exception) {
                 $logMessage = $this->throwableStorage->logThrowable($exception);
-                $this->logger->error($logMessage);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 return null;
             }
             $this->persistenceManager->whiteListObject($thumbnail);
@@ -167,7 +168,7 @@ class ThumbnailService
                 $this->refreshThumbnail($thumbnail);
             } catch (NoThumbnailAvailableException $exception) {
                 $logMessage = $this->throwableStorage->logThrowable($exception);
-                $this->logger->error($logMessage);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 return null;
             }
         }
