@@ -11,18 +11,18 @@ namespace Neos\Neos\Tests\Unit\Service;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Reflection\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService as UserDomainService;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Service\UserService;
-use TYPO3\Party\Domain\Repository\PartyRepository;
+use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use TYPO3\Flow\Security\AccountRepository;
-use TYPO3\Party\Domain\Service\PartyService;
-use TYPO3\Flow\Security\Account;
+use Neos\Flow\Security\AccountRepository;
+use Neos\Party\Domain\Service\PartyService;
+use Neos\Flow\Security\Account;
 
 /**
  * Test case for the UserService
