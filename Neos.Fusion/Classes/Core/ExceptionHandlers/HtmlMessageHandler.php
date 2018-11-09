@@ -12,6 +12,7 @@ namespace Neos\Fusion\Core\ExceptionHandlers;
  */
 
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -87,7 +88,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
         );
 
         $logMessage = $this->throwableStorage->logThrowable($exception);
-        $this->logger->error($logMessage);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
         return $message;
     }
 

@@ -13,6 +13,7 @@ namespace Neos\Neos\Fusion;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Neos\Service\LinkingService;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Neos\Exception as NeosException;
@@ -167,7 +168,7 @@ class NodeUriImplementation extends AbstractFusionObject
         } catch (NeosException $exception) {
             // TODO: Revisit if we actually need to store a stack trace.
             $logMessage = $this->throwableStorage->logThrowable($exception);
-            $this->logger->error($logMessage);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
             return '';
         }
     }

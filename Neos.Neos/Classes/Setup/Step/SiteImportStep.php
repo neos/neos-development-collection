@@ -13,6 +13,7 @@ namespace Neos\Neos\Setup\Step;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\FlashMessageContainer;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageInterface;
@@ -254,7 +255,7 @@ class SiteImportStep extends AbstractStep
             } catch (\Exception $exception) {
                 $finisherContext->cancel();
                 $logMessage = $this->throwableStorage->logThrowable($exception);
-                $this->logger->error($logMessage);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 throw new SetupException(sprintf('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', $packageKey, $exception->getMessage()), 1351000864);
             }
         }

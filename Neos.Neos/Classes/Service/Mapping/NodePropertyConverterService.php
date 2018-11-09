@@ -13,6 +13,7 @@ namespace Neos\Neos\Service\Mapping;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\Exception as PropertyException;
 use Neos\Flow\Property\PropertyMapper;
@@ -101,7 +102,7 @@ class NodePropertyConverterService
             $convertedValue = $this->convertValue($propertyValue, $dataType);
         } catch (PropertyException $exception) {
             $logMessage = $this->throwableStorage->logThrowable($exception);
-            $this->logger->error($logMessage);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
             $convertedValue = null;
         }
 
@@ -112,7 +113,7 @@ class NodePropertyConverterService
                     $convertedValue = $this->convertValue($convertedValue, $dataType);
                 } catch (PropertyException $exception) {
                     $logMessage = $this->throwableStorage->logThrowable($exception);
-                    $this->logger->error($logMessage);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                     $convertedValue = null;
                 }
             }

@@ -12,6 +12,7 @@ namespace Neos\Fusion\Core\ExceptionHandlers;
  */
 
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -56,7 +57,7 @@ class XmlCommentHandler extends AbstractRenderingExceptionHandler
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
         $logMessage = $this->throwableStorage->logThrowable($exception);
-        $this->logger->error($logMessage);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
         if (isset($referenceCode)) {
             return sprintf(
                 '<!-- Exception while rendering %s: %s (%s) -->',
