@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
 
@@ -86,6 +87,16 @@ interface ContentGraphInterface
      * @return array|NodeAggregate[]
      */
     public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeName $nodeName
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param DimensionSpacePoint $parentNodeOriginDimensionSpacePoints
+     * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
+     * @return DimensionSpacePointSet
+     */
+    public function getDimensionSpacePointsOccupiedByChildNodeName(ContentStreamIdentifier $contentStreamIdentifier, NodeName $nodeName, NodeAggregateIdentifier $parentNodeAggregateIdentifier, DimensionSpacePoint $parentNodeOriginDimensionSpacePoints, DimensionSpacePointSet $dimensionSpacePointsToCheck);
 
     /**
      * @param Domain\Context\Node\ReadOnlyNodeInterface $node

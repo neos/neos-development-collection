@@ -142,7 +142,7 @@ final class NodeCommandHandler
 
         $dimensionSpacePoint = $command->getDimensionSpacePoint();
         $contentStreamIdentifier = $command->getContentStreamIdentifier();
-        $parentNodeIdentifier = $command->getParentNodeIdentifier();
+        $parentNodeIdentifier = $command->getParentNodeAggregateIdentifier();
         $nodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
 
         if ($checkParent) {
