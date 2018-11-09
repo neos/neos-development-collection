@@ -133,7 +133,7 @@ class NodeConverter extends AbstractTypeConverter
      * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported or could not be converted for other reasons
      * @throws NodeException
      */
-    public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
         if (is_string($source)) {
             $source = array('__contextNodePath' => $source);
