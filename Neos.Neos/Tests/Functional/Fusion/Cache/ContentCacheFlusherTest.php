@@ -75,6 +75,9 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
     }
 
+    /**
+     * @test
+     */
     public function flushingANodeWillResolveAllWorkspacesToFlush()
     {
         // Add more workspaces
@@ -121,6 +124,51 @@ class ContentCacheFlusherTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function flushingANodeWithAnAdditionalTargetWorkspaceWillAlsoResolveThatWorkspace()
+    {
+        // Add more workspaces
+        $workspaceFirstLevel = new Workspace('first-level');
+        $workspaceSecondLevel = new Workspace('second-level');
+        $workspaceAlsoOnSecondLevel = new Workspace('also-second-level');
+        $workspaceThirdLevel = new Workspace('third-level');
+        $workspaceAlsoFirstLevel = new Workspace('also-first-level');
+
+        // And build up a chain
+        $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
+        $workspaceThirdLevel->setBaseWorkspace($workspaceSecondLevel);
+        $workspaceSecondLevel->setBaseWorkspace($workspaceFirstLevel);
+        $workspaceAlsoOnSecondLevel->setBaseWorkspace($workspaceFirstLevel);
+        $workspaceFirstLevel->setBaseWorkspace($liveWorkspace);
+        $workspaceAlsoFirstLevel->setBaseWorkspace($liveWorkspace);
+
+        $this->workspaceRepository->add($workspaceFirstLevel);
+        $this->workspaceRepository->add($workspaceSecondLevel);
+        $this->workspaceRepository->add($workspaceAlsoOnSecondLevel);
+        $this->workspaceRepository->add($workspaceThirdLevel);
+        $this->workspaceRepository->add($workspaceAlsoFirstLevel);
+
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        // Make sure that we do have multiple workspaces set up in our database
+        $this->assertEquals(6, $this->workspaceRepository->countAll());
+
+        // Create/Fetch a node in workspace "first-level"
+        $fistLevelContext = $this->contextFactory->create(['workspaceName' => $workspaceFirstLevel->getName()]);
+        $nodeInFirstLevelWorkspace = $fistLevelContext->getRootNode();
+
+        // When the node is flushed we expect three workspaces to be flushed
+        $this->contentCacheFlusher->registerNodeChange($nodeInFirstLevelWorkspace, $workspaceAlsoFirstLevel);
+
+        $workspacesToFlush = ObjectAccess::getProperty($this->contentCacheFlusher, 'workspacesToFlush', true);
+
+        $this->assertArrayHasKey('also-first-level', $workspacesToFlush);
+        $this->assertArrayHasKey('first-level', $workspacesToFlush);
+    }
+
+    /**
+     * @test
+     */
     public function aNodeChangeWillRegisterNodeIdentifierTagsForAllWorkspaces()
     {
         $workspaceFirstLevel = new Workspace('first-level');
@@ -144,6 +192,10 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest = [];
         $workspacesToTest[$liveWorkspace->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($liveWorkspace->getName());
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
+
+        // Check for legacy tags wich are still supported
+        $this->assertArrayHasKey('Node_'.$nodeIdentifier, $tagsToFlush);
+        $this->assertArrayHasKey('DescendantOf_'.$nodeIdentifier, $tagsToFlush);
 
         foreach ($workspacesToTest as $name => $workspaceHash) {
             $this->assertArrayHasKey('Node_'.$workspaceHash.'_'.$nodeIdentifier, $tagsToFlush, 'on workspace ' . $name);
@@ -178,6 +230,12 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest[$liveWorkspace->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($liveWorkspace->getName());
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
 
+        // Check for legacy tags wich are still supported
+        $this->assertArrayHasKey('NodeType_Neos.Neos:Content', $tagsToFlush);
+        $this->assertArrayHasKey('NodeType_Neos.Neos:Node', $tagsToFlush);
+        $this->assertArrayHasKey('NodeType_Neos.NodeTypes:Text', $tagsToFlush);
+
+        // Check for tags that respect the workspace hash
         foreach ($workspacesToTest as $name => $workspaceHash) {
             $this->assertArrayHasKey('NodeType_'.$workspaceHash.'_Neos.Neos:Content', $tagsToFlush, 'on workspace ' . $name);
             $this->assertArrayHasKey('NodeType_'.$workspaceHash.'_Neos.Neos:Node', $tagsToFlush, 'on workspace ' . $name);
@@ -211,6 +269,11 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest = [];
         $workspacesToTest[$liveWorkspace->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($liveWorkspace->getName());
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
+
+        // Check for legacy tags wich are still supported
+        $this->assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115addd', $tagsToFlush);
+        $this->assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115adde', $tagsToFlush);
+        $this->assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115addf', $tagsToFlush);
 
         foreach ($workspacesToTest as $name => $workspaceHash) {
             $this->assertArrayHasKey('DescendantOf_'.$workspaceHash.'_c381f64d-4269-429a-9c21-6d846115addd', $tagsToFlush, 'on workspace ' . $name);

@@ -97,6 +97,12 @@ class WorkspacesController extends AbstractModuleController
     protected $translator;
 
     /**
+     * @var PackageManager
+     * @Flow\Inject
+     */
+    protected $packageManager;
+
+    /**
      * @var ContentDimensionPresetSourceInterface
      * @Flow\Inject
      */
