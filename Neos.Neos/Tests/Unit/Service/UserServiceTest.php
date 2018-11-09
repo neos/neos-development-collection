@@ -11,7 +11,6 @@ namespace Neos\Neos\Tests\Unit\Service;
  * source code.
  */
 
-use Neos\Flow\Reflection\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService as UserDomainService;
