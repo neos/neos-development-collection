@@ -257,7 +257,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
 
             $this->assertEquals(
                 $expectedIndexedSpecializations,
-                $this->subject->getIndexedSpecializations($generalization)
+                $this->subject->getIndexedSpecializations($generalization)->getPoints()
             );
 
             $this->assertEquals(
@@ -425,7 +425,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
 
             $this->assertEquals(
                 $expectedIndexedGeneralizations,
-                $this->subject->getIndexedGeneralizations($specializedDimensionSpacePoint)
+                $this->subject->getIndexedGeneralizations($specializedDimensionSpacePoint)->getPoints()
             );
 
             $this->assertEquals(
