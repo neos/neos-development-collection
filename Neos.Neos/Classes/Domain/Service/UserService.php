@@ -31,6 +31,7 @@ use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\UserRepository;
 use Neos\Neos\Service\PublishingService;
+use Neos\Party\Domain\Model\AbstractParty;
 use Neos\Party\Domain\Model\PersonName;
 use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\Party\Domain\Service\PartyService;
@@ -168,19 +169,23 @@ class UserService
         $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
         $cacheIdentifier = $authenticationProviderName . '~' . $username;
 
-        if (!array_key_exists($cacheIdentifier, $this->runtimeUserCache)) {
-            $user = $this->findUserForAccount($username, $authenticationProviderName);
-            $this->runtimeUserCache[$cacheIdentifier] = $user === null ? null : $this->persistenceManager->getIdentifierByObject($user);
-            return $user;
+        if (array_key_exists($cacheIdentifier, $this->runtimeUserCache)) {
+            $userIdentifier = $this->runtimeUserCache[$cacheIdentifier];
+            return $this->partyRepository->findByIdentifier($userIdentifier);
         }
 
-        $userIdentifier = $this->runtimeUserCache[$cacheIdentifier];
-        if ($userIdentifier === null) {
-            return null;
+        $user = $this->findUserForAccount($username, $authenticationProviderName);
+
+        if ($user instanceof AbstractParty) {
+            $userIdentifier = $this->persistenceManager->getIdentifierByObject($user);
         }
 
-        $user = $this->partyRepository->findByIdentifier($userIdentifier);
-        return $user;
+        if (isset($userIdentifier) && (string)$userIdentifier !== '') {
+            $this->runtimeUserCache[$cacheIdentifier] = $userIdentifier;
+            return $this->partyRepository->findByIdentifier($userIdentifier);
+        }
+
+        return null;
     }
 
     /**
