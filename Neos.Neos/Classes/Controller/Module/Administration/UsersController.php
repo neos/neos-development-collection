@@ -11,10 +11,9 @@ namespace Neos\Neos\Controller\Module\Administration;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;

@@ -14,7 +14,6 @@ namespace Neos\Neos\Security;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Neos\Service\ImpersonateService;
 
