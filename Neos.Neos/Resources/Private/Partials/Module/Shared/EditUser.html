@@ -73,6 +73,17 @@
 						<td><span title="{account.authenticationProviderName}"><neos:backend.authenticationProviderLabel identifier="{account.authenticationProviderName}"/></span></td>
 						<td class="neos-action">
 							<div class="neos-pull-right">
+                <f:if condition="{currentUser} === {user}">
+                  <f:then>
+                    <button class="neos-button neos-button-warning neos-disabled" title="{neos:backend.translate(id: 'users.tooltip.cannotImpersonateYourself', source: 'Modules', package: 'Neos.Neos')}" data-neos-toggle="tooltip"><i class="fas fa-sign-in-alt icon-white"></i></button>
+                  </f:then>
+                  <f:else>
+                    <f:link.action action="impersonate" arguments="{account: account}" class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'users.tooltip.impersonate', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+                      <i class="fas fa-sign-in-alt icon-white"></i>
+                    </f:link.action>
+                  </f:else>
+                </f:if>
+
 								<f:link.action action="editAccount" arguments="{account: account}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="fas fa-pencil-alt icon-white"></i></f:link.action>
 							</div>
 						</td>

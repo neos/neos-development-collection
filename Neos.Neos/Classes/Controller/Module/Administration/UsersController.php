@@ -14,6 +14,7 @@ namespace Neos\Neos\Controller\Module\Administration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
@@ -23,6 +24,7 @@ use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\Service\ImpersonateService;
 use Neos\Party\Domain\Model\ElectronicAddress;
 
 /**
@@ -58,6 +60,12 @@ class UsersController extends AbstractModuleController
      * @var AuthenticationManagerInterface
      */
     protected $authenticationManager;
+
+    /**
+     * @var ImpersonateService
+     * @Flow\Inject
+     */
+    protected $impersonateService;
 
     /**
      * @return void
@@ -282,6 +290,15 @@ class UsersController extends AbstractModuleController
 
         $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($user->getName())], 1412374678);
         $this->redirect('edit', null, null, ['user' => $user]);
+    }
+
+    /**
+     * @param Account $account
+     */
+    public function impersonateAction(Account $account)
+    {
+        $this->impersonateService->impersonate($account);
+        $this->redirectWithParentRequest('index', 'Backend\Backend', 'Neos.Neos');
     }
 
     /**

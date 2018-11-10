@@ -87,6 +87,12 @@ privilegeTargets:
     'Neos.Neos:Backend.EditUserPreferences':
       matcher: 'method(Neos\Neos\Service\Controller\UserPreferenceController->(index|update|error)Action())'
 
+    'Neos.Neos:Backend.ImpersonateApi':
+      matcher: 'method(Neos\Neos\Controller\Backend\ImpersonateController->(enable|reset)Action())'
+
+    'Neos.Neos:Backend.Impersonate':
+      matcher: 'method(Neos\Neos\Controller\Module\Administration\UsersController->impersonateAction())'
+
     #
     # Miscellaneous services
     #
@@ -252,6 +258,14 @@ roles:
   'Neos.Neos:Administrator':
     parentRoles: ['Neos.Neos:Editor']
     privileges:
+      -
+        privilegeTarget: 'Neos.Neos:Backend.Impersonate'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Neos:Backend.ImpersonateApi'
+        permission: GRANT
+
       -
         privilegeTarget: 'Neos.Neos:Backend.Module.Administration'
         permission: GRANT
