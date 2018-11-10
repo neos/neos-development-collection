@@ -228,28 +228,28 @@
 			<target xml:lang="it" state="translated">Non sono ancora stati registrati eventi che potrebbero essere visualizzati in questa cronologia.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} creato il {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} rimosso il {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target xml:lang="it" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} creata la variante {1} delle {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} modificato il {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} spostato il {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} copiato il {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target xml:lang="it" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} rinominati {1} "{2}" a "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} modificato il contenuto su {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="it" state="needs-translation">{0} created a new user "{1}" for {2}.</target></trans-unit>
