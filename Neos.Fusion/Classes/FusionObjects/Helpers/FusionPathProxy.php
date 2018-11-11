@@ -11,7 +11,6 @@ namespace Neos\Fusion\FusionObjects\Helpers;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
 use Neos\Fusion\Exception\UnsupportedProxyMethodException;
 use Neos\Fusion\FusionObjects\TemplateImplementation;
@@ -55,12 +54,6 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
      * @var array
      */
     protected $partialFusionTree;
-
-    /**
-     * @Flow\Inject
-     * @var \Neos\Flow\Log\SystemLoggerInterface
-     */
-    protected $systemLogger;
 
     /**
      * Constructor.

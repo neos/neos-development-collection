@@ -13,7 +13,8 @@ namespace Neos\Neos\Controller\Module\Administration;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Session\SessionInterface;
@@ -107,15 +108,22 @@ class SitesController extends AbstractModuleController
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
-     * @Flow\Inject
      * @var SessionInterface
      */
     protected $session;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * @return void
@@ -257,7 +265,8 @@ class SitesController extends AbstractModuleController
             $this->siteImportService->importFromPackage($packageKey);
             $this->addFlashMessage('The site has been imported.', '', null, [], 1412372266);
         } catch (\Exception $exception) {
-            $this->systemLogger->logException($exception);
+            $logMessage = $this->throwableStorage->logThrowable($exception);
+            $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
             $this->addFlashMessage('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', 'Import error', Message::SEVERITY_ERROR, [htmlspecialchars($packageKey), htmlspecialchars($exception->getMessage())], 1412372375);
         }
         $this->unsetLastVisitedNodeAndRedirect('index');
