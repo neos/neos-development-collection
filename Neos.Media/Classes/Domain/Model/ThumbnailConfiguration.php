@@ -11,9 +11,6 @@ namespace Neos\Media\Domain\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
-
 /**
  * Thumbnail configuration value object
  */
@@ -58,12 +55,6 @@ class ThumbnailConfiguration
      * @var boolean
      */
     protected $async;
-
-    /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $logger;
 
     /**
      * @var boolean

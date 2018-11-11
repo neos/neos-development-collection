@@ -12,7 +12,8 @@ namespace Neos\Media\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -22,6 +23,7 @@ use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
 use Neos\Media\Exception\NoThumbnailAvailableException;
 use Neos\Media\Exception\ThumbnailServiceException;
+use Psr\Log\LoggerInterface;
 
 /**
  * An internal thumbnail service.
@@ -57,12 +59,6 @@ class ThumbnailService
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
      * @Flow\InjectConfiguration("thumbnailPresets")
      * @var boolean
      */
@@ -72,6 +68,32 @@ class ThumbnailService
      * @var array
      */
     protected $thumbnailCache = [];
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * Returns a thumbnail of the given asset
@@ -135,7 +157,8 @@ class ThumbnailService
                 $this->persistenceManager->whiteListObject($thumbnail);
                 $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
             } catch (NoThumbnailAvailableException $exception) {
-                $this->systemLogger->logException($exception);
+                $logMessage = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 return null;
             }
             $this->persistenceManager->whiteListObject($thumbnail);
@@ -144,7 +167,8 @@ class ThumbnailService
             try {
                 $this->refreshThumbnail($thumbnail);
             } catch (NoThumbnailAvailableException $exception) {
-                $this->systemLogger->logException($exception);
+                $logMessage = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 return null;
             }
         }
