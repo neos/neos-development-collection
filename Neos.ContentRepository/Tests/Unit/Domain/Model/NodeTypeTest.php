@@ -154,36 +154,14 @@ class NodeTypeTest extends UnitTestCase
      */
     public function nodeTypesCanHaveAnyNumberOfSuperTypes()
     {
-        $baseType = new NodeType('Neos.ContentRepository:Base', [], []);
+        $baseType = new NodeType('Neos.ContentRepository:Base', array(), array());
 
-        $timeableNodeType = new NodeType('Neos.ContentRepository.Testing:TimeableContent', [], []);
-        $documentType = new NodeType(
-            'Neos.ContentRepository.Testing:Document',
-            [
-                'Neos.ContentRepository:Base' => $baseType,
-                'Neos.ContentRepository.Testing:TimeableContent' => $timeableNodeType,
-            ],
-            []
-        );
+        $folderType = new NodeType('Neos.ContentRepository.Testing:Document', array($baseType), array());
 
-        $hideableNodeType = new NodeType('Neos.ContentRepository.Testing:HideableContent', [], []);
-        $pageType = new NodeType(
-            'Neos.ContentRepository.Testing:Page',
-            [
-                'Neos.ContentRepository.Testing:Document' => $documentType,
-                'Neos.ContentRepository.Testing:HideableContent' => $hideableNodeType,
-                'Neos.ContentRepository.Testing:TimeableContent' => null,
-            ],
-            []
-        );
+        $hideableNodeType = new NodeType('Neos.ContentRepository.Testing:HideableContent', array(), array());
+        $pageType = new NodeType('Neos.ContentRepository.Testing:Page', array($folderType, $hideableNodeType), array());
 
-        $this->assertEquals(
-            [
-                'Neos.ContentRepository.Testing:Document' => $documentType,
-                'Neos.ContentRepository.Testing:HideableContent' => $hideableNodeType,
-            ],
-            $pageType->getDeclaredSuperTypes()
-        );
+        $this->assertEquals(array($folderType, $hideableNodeType), $pageType->getDeclaredSuperTypes());
 
         $this->assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:Page'));
         $this->assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:HideableContent'));
@@ -191,7 +169,6 @@ class NodeTypeTest extends UnitTestCase
         $this->assertTrue($pageType->isOfType('Neos.ContentRepository:Base'));
 
         $this->assertFalse($pageType->isOfType('Neos.ContentRepository:Exotic'));
-        $this->assertFalse($pageType->isOfType('Neos.ContentRepository.Testing:TimeableContent'));
     }
 
     /**
