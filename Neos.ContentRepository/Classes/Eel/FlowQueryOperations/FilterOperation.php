@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Annotations as Flow;
 use Neos\Utility\ObjectAccess;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -30,6 +29,17 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
  * will in fact use `isOfType()` on the `NodeType` of context elements to
  * filter. This filter allow also to filter the current context by a given
  * node. Anything else remains unchanged.
+ *
+ * Note: A supertype that is set to false after having been assigned, is still
+ * returning true here. Fixing that potentially breaks sites in non-obvious ways,
+ * so we did not fix that. See these links for details:
+ *
+ * - https://github.com/neos/neos-development-collection/issues/1983
+ * - https://github.com/neos/neos-development-collection/pull/2139
+ * - https://github.com/neos/neos-development-collection/pull/2145
+ * - https://github.com/neos/neos-development-collection/pull/2217
+ * - https://github.com/neos/neos-development-collection/pull/2265
+ * - https://discuss.neos.io/t/breaking-bugfixes/3882
  */
 class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperation
 {
