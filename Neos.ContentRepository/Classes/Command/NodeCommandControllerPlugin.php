@@ -1351,16 +1351,16 @@ HELPTEXT;
                     $childNode = $node->getNode($childNodeName);
                     if ($childNode) {
                         if ($childNodeBefore) {
-                                if ($childNodeBefore->getIndex() >= $childNode->getIndex()) {
-                                    $errorCount++;
+                            if ($childNodeBefore->getIndex() >= $childNode->getIndex()) {
+                                $errorCount++;
 
-                                    if ($dryRun === false) {
-                                        $childNode->moveAfter($childNodeBefore);
-                                        $this->output->outputLine('Moved node named "%s" after node named "%s" in "%s"', [$childNodeName, $childNodeBefore->getName(), $node->getPath()]);
-                                    } else {
-                                        $this->output->outputLine('Should move node named "%s" after node named "%s" in "%s"', [$childNodeName, $childNodeBefore->getName(), $node->getPath()]);
-                                    }
+                                if ($dryRun === false) {
+                                    $childNode->moveAfter($childNodeBefore);
+                                    $this->output->outputLine('Moved node named "%s" after node named "%s" in "%s"', [$childNodeName, $childNodeBefore->getName(), $node->getPath()]);
+                                } else {
+                                    $this->output->outputLine('Should move node named "%s" after node named "%s" in "%s"', [$childNodeName, $childNodeBefore->getName(), $node->getPath()]);
                                 }
+                            }
                         }
                     } else {
                         $this->output->outputLine('Missing child node named "%s" in "%s".', [$childNodeName, $node->getPath()]);
