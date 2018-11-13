@@ -75,6 +75,13 @@ class NodeType
     protected $declaredSuperTypes;
 
     /**
+     * Node types this node type actually inherits from (includes inherited super types)
+     *
+     * @var array<\Neos\ContentRepository\Domain\Model\NodeType>|null
+     */
+    protected $applicableSuperTypes;
+
+    /**
      * @Flow\Inject
      * @var ObjectManagerInterface
      */
@@ -158,8 +165,8 @@ class NodeType
     protected function buildFullConfiguration()
     {
         $mergedConfiguration = [];
-        $applicableSuperTypes = $this->buildInheritanceChain();
-        foreach ($applicableSuperTypes as $key => $superType) {
+        $this->buildInheritanceChain();
+        foreach ($this->applicableSuperTypes as $key => $superType) {
             $mergedConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
         }
         $this->fullConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
@@ -173,25 +180,28 @@ class NodeType
     /**
      * Returns a flat list of super types to inherit from.
      *
-     * @return array
+     * @return void
      */
     protected function buildInheritanceChain()
     {
-        $superTypes = [];
+        if ($this->applicableSuperTypes !== null) {
+            return;
+        }
+        $this->applicableSuperTypes = [];
         foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
             if ($superType !== null) {
-                $this->addInheritedSuperTypes($superTypes, $superType);
-                $superTypes[$superTypeName] = $superType;
+                $this->addInheritedSuperTypes($this->applicableSuperTypes, $superType);
+                $this->applicableSuperTypes[$superTypeName] = $superType;
             }
         }
 
         foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
             if ($superType === null) {
-                unset($superTypes[$superTypeName]);
+                unset($this->applicableSuperTypes[$superTypeName]);
             }
         }
 
-        return array_unique($superTypes);
+        $this->applicableSuperTypes = array_unique($this->applicableSuperTypes);
     }
 
     /**
@@ -319,15 +329,8 @@ class NodeType
         if ($nodeType === $this->name) {
             return true;
         }
-        if (array_key_exists($nodeType, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeType] === null) {
-            return false;
-        }
-        foreach ($this->declaredSuperTypes as $superType) {
-            if ($superType !== null && $superType->isOfType($nodeType) === true) {
-                return true;
-            }
-        }
-        return false;
+        $this->buildInheritanceChain();
+        return isset($this->applicableSuperTypes[$nodeType]);
     }
 
     /**
