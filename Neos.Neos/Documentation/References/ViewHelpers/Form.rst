@@ -3,7 +3,7 @@
 Form ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2018-10-02
+This reference was automatically generated from code on 2018-11-13
 
 
 .. _`Form ViewHelper Reference: neos.form:form`:
@@ -27,7 +27,7 @@ Arguments
 
 * ``enctype`` (string, *optional*): MIME type with which the form is submitted
 
-* ``method`` (string, *optional*): Transfer type (GET or POST)
+* ``method`` (string, *optional*): Transfer type (GET or POST or dialog)
 
 * ``name`` (string, *optional*): Name of form
 
