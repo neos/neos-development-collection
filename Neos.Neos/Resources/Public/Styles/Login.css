@@ -5703,7 +5703,7 @@ html,
 }
 .neos .neos-row-fluid .neos-offset10:first-child {
   margin-left: 85.10638%;
-  *margin-left: 85%;
+  *margin-left: 85.0%;
 }
 .neos .neos-row-fluid .neos-offset11 {
   margin-left: 95.74468%;
