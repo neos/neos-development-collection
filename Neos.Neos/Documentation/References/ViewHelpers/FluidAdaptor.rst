@@ -3,7 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2018-10-02
+This reference was automatically generated from code on 2018-11-13
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:debug`:
@@ -169,7 +169,7 @@ Arguments
 
 * ``enctype`` (string, *optional*): MIME type with which the form is submitted
 
-* ``method`` (string, *optional*): Transfer type (GET or POST)
+* ``method`` (string, *optional*): Transfer type (GET or POST or dialog)
 
 * ``name`` (string, *optional*): Name of form
 
@@ -980,6 +980,8 @@ Arguments
 * ``placeholder`` (string, *optional*): The placeholder of the textarea
 
 * ``autofocus`` (string, *optional*): Specifies that a text area should automatically get focus when the page loads
+
+* ``maxlength`` (int, *optional*): The maxlength attribute of the textarea (will not be validated)
 
 * ``errorClass`` (string, *optional*): CSS class to set if there are errors for this view helper
 
