@@ -659,6 +659,4 @@ EOF;
         $afxCode = '<div @children={expression} ><span/></div>';
         AfxService::convertAfxToFusion($afxCode);
     }
-
-
 }
