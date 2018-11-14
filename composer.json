@@ -10,12 +10,6 @@
     "neos/fusion": "^4.2.0 || dev-master",
     "packagefactory/afx": "^3.0.0"
   },
-  "repositories": {
-    "mficzel-afx": {
-      "type": "vcs",
-      "url": "https://github.com/mficzel/afx.git"
-    }
-  },
   "require-dev": {
     "phpunit/phpunit": "~6.0.0"
   },
