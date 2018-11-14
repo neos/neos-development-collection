@@ -12,7 +12,7 @@ prototype(Neos.Neos:ImageUri) {
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
-# ImageTag object works exactly the same way as image ViewHelper in the TYPO3.Media package
+# ImageTag object works exactly the same way as image ViewHelper in the Neos.Media package
 prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
 	asset = 'pass-the-media-asset'
 	maximumWidth = 2560
