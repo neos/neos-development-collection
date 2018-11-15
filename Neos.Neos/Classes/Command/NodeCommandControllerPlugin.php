@@ -11,10 +11,15 @@ namespace Neos\Neos\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\ContentRepository\Exception\NodeExistsException;
+use Neos\Eel\Exception as EelException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Exception as NeosException;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
@@ -97,6 +102,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             case 'repair':
                 return 'Run integrity checks related to Neos features';
         }
+        return '';
     }
 
     /**
@@ -129,6 +135,7 @@ Removes content dimensions from the root and sites nodes
 
 HELPTEXT;
         }
+        return '';
     }
 
     /**
@@ -179,6 +186,8 @@ HELPTEXT;
      * @param string $workspaceName Name of the workspace to consider (unused)
      * @param boolean $dryRun Simulate?
      * @return void
+     * @throws NodeExistsException
+     * @throws IllegalObjectTypeException
      */
     protected function createMissingSitesNode($workspaceName, $dryRun)
     {
@@ -210,6 +219,9 @@ HELPTEXT;
      * @param string $workspaceName
      * @param boolean $dryRun
      * @return void
+     * @throws EelException
+     * @throws NodeException
+     * @throws NeosException
      */
     public function generateUriPathSegments($workspaceName, $dryRun)
     {
@@ -227,6 +239,7 @@ HELPTEXT;
 
         foreach ($this->dimensionCombinator->getAllAllowedCombinations() as $dimensionCombination) {
             $flowQuery = new FlowQuery($baseContextSiteNodes);
+            /** @noinspection PhpUndefinedMethodInspection */
             $siteNodes = $flowQuery->context(['dimensions' => $dimensionCombination, 'targetDimensions' => []])->get();
             if (count($siteNodes) > 0) {
                 $this->output->outputLine('Checking for nodes with missing URI path segment in dimension "%s"', [trim(NodePaths::generateContextPath('', '', $dimensionCombination), '@;')]);
@@ -246,6 +259,8 @@ HELPTEXT;
      * @param NodeInterface $node The node where the traversal starts
      * @param boolean $dryRun
      * @return void
+     * @throws NodeException
+     * @throws NeosException
      */
     protected function generateUriPathSegmentsForNode(NodeInterface $node, $dryRun)
     {
@@ -273,11 +288,14 @@ HELPTEXT;
      * @param string $workspaceName
      * @param boolean $dryRun
      * @return void
+     * @throws IllegalObjectTypeException
      */
     public function removeContentDimensionsFromRootAndSitesNode($workspaceName, $dryRun)
     {
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
+        /** @noinspection PhpUndefinedMethodInspection */
         $rootNodes = $this->nodeDataRepository->findByPath('/', $workspace);
+        /** @noinspection PhpUndefinedMethodInspection */
         $sitesNodes = $this->nodeDataRepository->findByPath('/sites', $workspace);
         $this->output->outputLine('Checking for root and site nodes with content dimensions set ...');
         /** @var \Neos\ContentRepository\Domain\Model\NodeData $rootNode */
