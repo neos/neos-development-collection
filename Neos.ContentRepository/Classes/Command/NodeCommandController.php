@@ -11,9 +11,11 @@ namespace Neos\ContentRepository\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\DescriptionAwareCommandControllerInterface;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
@@ -79,22 +81,25 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      * @param string $skip Skip the given check or checks (comma separated)
      * @param string $only Only execute the given check or checks (comma separated)
      * @return void
+     * @throws StopActionException
      */
     public function repairCommand($nodeType = null, $workspace = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
         $this->pluginConfigurations = self::detectPlugins($this->objectManager);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         if ($this->workspaceRepository->countByName($workspace) === 0) {
             $this->outputLine('Workspace "%s" does not exist', [$workspace]);
             exit(1);
         }
 
         if ($nodeType !== null) {
-            if ($this->nodeTypeManager->hasNodeType($nodeType)) {
+            try {
                 $nodeType = $this->nodeTypeManager->getNodeType($nodeType);
-            } else {
-                $this->outputLine('Node type "%s" does not exist', [$nodeType]);
-                exit(1);
+            } catch (NodeTypeNotFoundException $e) {
+                $this->outputLine('<error>Node type "%s" does not exist</error>', [$nodeType]);
+                $this->quit(1);
+                return;
             }
         }
 
@@ -144,6 +149,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
         $pluginConfigurations = self::detectPlugins($objectManager);
         $pluginDescriptions = '';
         foreach ($pluginConfigurations as $className => $configuration) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $pluginDescriptions .= $className::getSubCommandDescription($controllerCommandName) . PHP_EOL;
         }
         return str_replace('{pluginDescriptions}', $pluginDescriptions, $description);

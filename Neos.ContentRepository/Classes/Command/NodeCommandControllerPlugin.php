@@ -11,11 +11,11 @@ namespace Neos\ContentRepository\Command;
  * source code.
  */
 
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\QueryBuilder;
+use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -119,6 +119,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             case 'repair':
                 return 'Run checks for basic node integrity in the content repository';
         }
+        return '';
     }
 
     /**
@@ -210,6 +211,7 @@ value.
 
 HELPTEXT;
         }
+        return '';
     }
 
     /**
@@ -293,6 +295,8 @@ HELPTEXT;
      * @param boolean $dryRun Simulate?
      * @param NodeType $nodeType Only for this node type, if specified
      * @return void
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
      */
     protected function createMissingChildNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
@@ -320,6 +324,8 @@ HELPTEXT;
      * @param string $workspaceName
      * @param boolean $dryRun
      * @return void
+     * @throws NodeTypeNotFoundException
+     * @throws NodeConfigurationException
      */
     protected function createChildNodesByNodeType(NodeType $nodeType, $workspaceName, $dryRun)
     {
@@ -438,6 +444,8 @@ HELPTEXT;
      * @param boolean $dryRun Simulate?
      * @param NodeType $nodeType Only for this node type, if specified
      * @return void
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
      */
     public function addMissingDefaultValues($workspaceName, $dryRun, NodeType $nodeType = null)
     {
@@ -463,8 +471,10 @@ HELPTEXT;
      * @param string $workspaceName
      * @param boolean $dryRun
      * @return void
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
      */
-    public function addMissingDefaultValuesByNodeType(NodeType $nodeType = null, $workspaceName, $dryRun)
+    public function addMissingDefaultValuesByNodeType(NodeType $nodeType, $workspaceName, $dryRun)
     {
         $addedMissingDefaultValuesCount = 0;
 
@@ -600,9 +610,6 @@ HELPTEXT;
     {
         $this->output->outputLine('Checking for disallowed child nodes ...');
 
-        /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-
         /** @var \Neos\ContentRepository\Domain\Model\Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
 
@@ -734,6 +741,7 @@ HELPTEXT;
      * @param boolean $dryRun Simulate?
      * @param NodeType $nodeType Only for this node type, if specified
      * @return void
+     * @throws NodeConfigurationException
      */
     public function removeUndefinedProperties($workspaceName, $dryRun, NodeType $nodeType = null)
     {
@@ -765,7 +773,7 @@ HELPTEXT;
                         $this->output->outputLine('Found undefined property named "%s" in "%s" (%s)', [$undefinedProperty, $node->getPath(), $node->getNodeType()->getName()]);
                     }
                 }
-            } catch (NodeTypeNotFoundException $exception) {
+            } /** @noinspection PhpRedundantCatchClauseInspection */ catch (NodeTypeNotFoundException $exception) {
                 $this->output->outputLine('Skipped undefined node type in "%s"', [$nodeData->getPath()]);
             }
         }
@@ -1321,7 +1329,7 @@ HELPTEXT;
      * @param Workspace $workspace
      * @param boolean $dryRun
      * @param NodeType $nodeType
-     * @return array
+     * @return int
      */
     protected function fixShadowNodesInWorkspace(Workspace $workspace, $dryRun, NodeType $nodeType = null)
     {
