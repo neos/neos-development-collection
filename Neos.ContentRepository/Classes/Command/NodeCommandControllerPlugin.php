@@ -1312,7 +1312,7 @@ HELPTEXT;
         }
 
         $this->output->outputLine('Checking for nodes with missing shadow nodes ...');
-        $fixedShadowNodes = $this->fixShadowNodesInWorkspace($workspace, $nodeType);
+        $fixedShadowNodes = $this->fixShadowNodesInWorkspace($workspace, $dryRun, $nodeType);
 
         $this->output->outputLine('%s %s node%s with missing shadow nodes.', [
             $dryRun ? 'Would repair' : 'Repaired',
