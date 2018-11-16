@@ -206,7 +206,7 @@ HELPTEXT;
         $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
         if ($sitesNode === null) {
             $taskDescription = sprintf('Create missing site node "<i>%s</i>"', SiteService::SITES_ROOT_PATH);
-            $taskClosure = function() use ($rootNode) {
+            $taskClosure = function () use ($rootNode) {
                 $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
                 $this->persistenceManager->persistAll();
             };
@@ -272,7 +272,7 @@ HELPTEXT;
             $name = $node->getLabel() ?: $node->getName();
             $uriPathSegment = $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node);
             $taskDescription = sprintf('Add missing URI path segment for "<i>%s</i>" (<i>%s</i>) => <i>%s</i>', $node->getPath(), $name, $uriPathSegment);
-            $taskClosure = function() use ($node, $uriPathSegment) {
+            $taskClosure = function () use ($node, $uriPathSegment) {
                 $node->setProperty('uriPathSegment', $uriPathSegment);
             };
             $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
@@ -303,7 +303,7 @@ HELPTEXT;
         foreach ($rootNodes as $rootNode) {
             if ($rootNode->getDimensionValues() !== []) {
                 $taskDescription = 'Remove content dimensions from root node';
-                $taskClosure = function() use ($rootNode) {
+                $taskClosure = function () use ($rootNode) {
                     $rootNode->setDimensions([]);
                     $this->nodeDataRepository->update($rootNode);
                 };
@@ -314,7 +314,7 @@ HELPTEXT;
         foreach ($sitesNodes as $sitesNode) {
             if ($sitesNode->getDimensionValues() !== []) {
                 $taskDescription = 'Remove content dimensions from node "/sites"';
-                $taskClosure = function() use ($sitesNode) {
+                $taskClosure = function () use ($sitesNode) {
                     $sitesNode->setDimensions([]);
                     $this->nodeDataRepository->update($sitesNode);
                 };
