@@ -35,12 +35,36 @@ class ComponentImplementation extends ArrayImplementation
      * Evaluate the fusion-keys and transfer the result into the context as ``props``
      * afterwards evaluate the ``renderer`` with this context
      *
-     * @return void|string
+     * @return mixed
      */
     public function evaluate()
     {
-        $sortedChildFusionKeys = $this->sortNestedFusionKeys();
+        $context = $this->runtime->getCurrentContext();
+        $renderContext = $this->prepare($context);
+        $result = $this->render($renderContext);
+        return $result;
+    }
 
+    /**
+     * Prepare the context for the renderer
+     *
+     * @param array $context
+     * @return array
+     */
+    protected function prepare($context)
+    {
+        $context['props'] = $this->getProps();
+        return $context;
+    }
+
+    /**
+     * Calculate the component props
+     *
+     * @return array
+     */
+    protected function getProps()
+    {
+        $sortedChildFusionKeys = $this->sortNestedFusionKeys();
         $props = [];
         foreach ($sortedChildFusionKeys as $key) {
             try {
@@ -49,13 +73,19 @@ class ComponentImplementation extends ArrayImplementation
                 $props[$key] = $this->runtime->handleRenderingException($this->path . '/' . $key, $e);
             }
         }
-
-        $context = $this->runtime->getCurrentContext();
-        $context['props'] = $props;
+        return $props;
+    }
+    /**
+     * Evaluate the renderer with the give context and return
+     *
+     * @param $context
+     * @return mixed
+     */
+    protected function render($context)
+    {
         $this->runtime->pushContextArray($context);
         $result = $this->runtime->render($this->path . '/renderer');
         $this->runtime->popContext();
-
         return $result;
     }
 }
