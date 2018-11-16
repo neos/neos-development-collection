@@ -116,11 +116,57 @@ class NodeCommandController extends CommandController implements DescriptionAwar
             $plugin = $pluginConfiguration['object'];
             $this->outputLine('<b>' . $plugin->getSubCommandShortDescription('repair') . '</b>');
             $this->outputLine();
+            if ($plugin instanceof EventDispatchingNodeCommandControllerPluginInterface) {
+                $this->attachPluginEventHandlers($plugin, $dryRun);
+            }
+            /** @noinspection PhpMethodParametersCountMismatchInspection */
             $plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun, $cleanup, $skip, $only);
             $this->outputLine();
         }
 
-        $this->outputLine('Node repair finished.');
+        if ($dryRun) {
+            $this->outputLine('Node repair dry run finished.');
+        } else {
+            $this->outputLine('<success>Node repair finished.</success>');
+        }
+    }
+
+    /**
+     * @param EventDispatchingNodeCommandControllerPluginInterface $plugin
+     * @param bool $dryRun
+     * @return void
+     */
+    private function attachPluginEventHandlers(EventDispatchingNodeCommandControllerPluginInterface $plugin, bool $dryRun)
+    {
+        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_NOTICE, function(string $text) {
+            $this->outputLine($text);
+        });
+        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_TASK, function(string $description, \Closure $task, bool $requiresConfirmation = false) use ($dryRun) {
+            $text = sprintf(' <b>❱ %s</b> ', $description);
+
+            if (!$dryRun && $requiresConfirmation) {
+                $proceed = $this->output->askConfirmation($text . '- <comment>Proceed? (y/n)</comment>', false);
+                if (!$proceed) {
+                    $this->outputLine('    <comment>skipped ✖</comment>');
+                    return;
+                }
+            } else {
+                $this->outputLine($text);
+            }
+            if ($dryRun) {
+                $this->outputLine('    skipped (dry run)');
+            } else {
+                $task();
+                $this->outputLine('    <success>applied ✔</success>');
+            }
+        });
+        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_WARNING, function(string $text) {
+            $this->outputLine('<comment>WARNING: %s</comment>', [$text]);
+        });
+        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_ERROR, function($text) {
+            $this->outputLine('<error>%s</error>', [$text]);
+            $this->quit(1);
+        });
     }
 
     /**
