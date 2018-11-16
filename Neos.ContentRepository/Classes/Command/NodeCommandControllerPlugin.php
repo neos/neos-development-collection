@@ -16,10 +16,13 @@ use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\QueryBuilder;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Property\Exception as PropertyException;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Utility\Arrays;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\Node;
@@ -41,7 +44,7 @@ use Neos\ContentRepository\Utility;
  *
  * @Flow\Scope("singleton")
  */
-class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterface
+class NodeCommandControllerPlugin implements EventDispatchingNodeCommandControllerPluginInterface
 {
     /**
      * @Flow\Inject
@@ -69,6 +72,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
     /**
      * @var ConsoleOutput
+     * @deprecated It's discouraged to interact with the console output directly. Instead use the event dispatching. @see dispatch()
      */
     protected $output;
 
@@ -106,6 +110,14 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * Callbacks to be invoked when an event is triggered
+     *
+     * @see dispatch()
+     * @var array
+     */
+    protected $eventCallbacks;
 
     /**
      * Returns a short description
@@ -218,7 +230,7 @@ HELPTEXT;
      * A method which runs the task implemented by the plugin for the given command
      *
      * @param string $controllerCommandName Name of the command in question, for example "repair"
-     * @param ConsoleOutput $output An instance of ConsoleOutput which can be used for output or dialogues
+     * @param ConsoleOutput $output (unused)
      * @param NodeType $nodeType Only handle this node type (if specified)
      * @param string $workspaceName Only handle this workspace (if specified)
      * @param boolean $dryRun If true, don't do any changes, just simulate what you would do
@@ -229,6 +241,7 @@ HELPTEXT;
      */
     public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
+        /** @noinspection PhpDeprecationInspection This is only set for backwards compatibility */
         $this->output = $output;
         $commandMethods = [
             'removeAbstractAndUndefinedNodes' => [ 'cleanup' => true ],
@@ -265,29 +278,6 @@ HELPTEXT;
     }
 
     /**
-     * @param string $question
-     * @param \Closure $task
-     * @return void
-     */
-    protected function askBeforeExecutingTask($question, \Closure $task)
-    {
-        $response = null;
-        while (!in_array($response, ['y', 'n'])) {
-            $response = strtolower($this->output->ask('<comment>' . $question . ' (y/n)</comment>'));
-        }
-        $this->output->outputLine();
-
-        switch ($response) {
-            case 'y':
-                $task();
-                break;
-            case 'n':
-                $this->output->outputLine('Skipping.');
-                break;
-        }
-    }
-
-    /**
      * Performs checks for missing child nodes according to the node's auto-create configuration and creates
      * them if necessary.
      *
@@ -301,10 +291,10 @@ HELPTEXT;
     protected function createMissingChildNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
-            $this->output->outputLine('Checking nodes of type "%s" for missing child nodes ...', [$nodeType->getName()]);
+            $this->dispatch(self::EVENT_NOTICE, sprintf('Checking nodes of type "<i>%s</i>" for missing child nodes ...', $nodeType->getName()));
             $this->createChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
         } else {
-            $this->output->outputLine('Checking for missing child nodes ...');
+            $this->dispatch(self::EVENT_NOTICE, 'Checking for missing child nodes ...');
             foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
                 /** @var NodeType $nodeType */
                 if ($nodeType->isAbstract()) {
@@ -343,8 +333,8 @@ HELPTEXT;
             $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeType);
             $nodeTypeNames[$nodeType->getName()] = $nodeType;
         } else {
-            $this->output->outputLine('Node type "%s" does not exist', [(string)$nodeType]);
-            exit(1);
+            $this->dispatch(self::EVENT_ERROR, sprintf('Node type "<i>%s</i>" does not exist', (string)$nodeType));
+            return;
         }
 
         /** @var $nodeType NodeType */
@@ -357,81 +347,78 @@ HELPTEXT;
                     continue;
                 }
                 foreach ($childNodes as $childNodeName => $childNodeType) {
-                    try {
-                        $childNode = $node->getNode($childNodeName);
-                        $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $node->getIdentifier());
-                        if ($childNode === null || $childNode->isRemoved() === true) {
-                            if ($dryRun === false) {
-                                if ($childNode === null) {
-                                    $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
-                                } else {
-                                    $node->setRemoved(false);
-                                }
-                                $this->output->outputLine('Auto created node named "%s" in "%s"', [$childNodeName, $node->getPath()]);
-                            } else {
-                                $this->output->outputLine('Missing node named "%s" in "%s"', [$childNodeName, $node->getPath()]);
+                    $childNode = $node->getNode($childNodeName);
+                    $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $node->getIdentifier());
+                    if ($childNode === null) {
+                        $taskDescription = sprintf('Add node <i>%s</i> named "<i>%s</i>" in "<i>%s</i>"', $childNodeIdentifier, $childNodeName, $node->getPath());
+                        $taskClosure = function() use ($node, $childNodeName, $childNodeType, $childNodeIdentifier, &$nodeCreationExceptions) {
+                            try {
+                                $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
+                            } catch (\Exception $exception) {
+                                $this->dispatch(self::EVENT_WARNING, sprintf('Could not create node named "<i>%s</i>" in "<i>%s</i>" (<i>%s</i>)', $childNodeName, $node->getPath(), $exception->getMessage()));
+                                $nodeCreationExceptions++;
                             }
-                            $createdNodesCount++;
-                        } elseif ($childNode->getIdentifier() !== $childNodeIdentifier) {
-                            $nodeIdentifiersWhichNeedUpdate[$childNode->getIdentifier()] = $childNodeIdentifier;
-                        } elseif ($childNode->getNodeType() !== $childNodeType) {
-                            $incorrectNodeTypeCount++;
-                            if ($dryRun === false) {
-                                $childNode->setNodeType($childNodeType);
-                            }
-                        }
-                    } catch (\Exception $exception) {
-                        $this->output->outputLine('Could not create node named "%s" in "%s" (%s)', [$childNodeName, $node->getPath(), $exception->getMessage()]);
-                        $nodeCreationExceptions++;
+                        };
+                        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+                        $createdNodesCount++;
+                    } elseif ($childNode->isRemoved() === true) {
+                        $taskDescription = sprintf('Undelete node <i>%s</i> named "<i>%s</i>" in "<i>%s</i>"', $childNodeIdentifier, $childNodeName, $node->getPath());
+                        $taskClosure = function() use ($node) {
+                            $node->setRemoved(false);
+                        };
+                        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+                        $createdNodesCount++;
+                    } elseif ($childNode->getIdentifier() !== $childNodeIdentifier) {
+                        $nodeIdentifiersWhichNeedUpdate[$childNode->getIdentifier()] = $childNodeIdentifier;
+                    } elseif ($childNode->getNodeType() !== $childNodeType) {
+                        $taskDescription = sprintf('Set node type of node <i>%s</i>: <i>%s</i> => <i>%s</i>', $childNodeIdentifier, $childNode->getNodeType(), $childNodeType);
+                        $taskClosure = function() use ($childNode, $childNodeType) {
+                            $childNode->setNodeType($childNodeType);
+                        };
+                        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+                        $incorrectNodeTypeCount++;
                     }
                 }
             }
         }
-
-        if (count($nodeIdentifiersWhichNeedUpdate) > 0) {
-            if ($dryRun === false) {
-                foreach ($nodeIdentifiersWhichNeedUpdate as $oldNodeIdentifier => $newNodeIdentifier) {
-                    $queryBuilder = $this->entityManager->createQueryBuilder();
-                    $queryBuilder->update(NodeData::class, 'n')
-                        ->set('n.identifier', $queryBuilder->expr()->literal($newNodeIdentifier))
-                        ->where('n.identifier = :oldNodeIdentifier')
-                        ->setParameter('oldNodeIdentifier', $oldNodeIdentifier);
-                    $queryBuilder->getQuery()->getResult();
-                    $updatedNodesCount++;
-                    $this->output->outputLine('Updated node identifier from %s to %s because it was not a "stable" identifier', [ $oldNodeIdentifier, $newNodeIdentifier ]);
-                }
-            } else {
-                foreach ($nodeIdentifiersWhichNeedUpdate as $oldNodeIdentifier => $newNodeIdentifier) {
-                    $this->output->outputLine('Child nodes with identifier "%s" need to change their identifier to "%s"', [ $oldNodeIdentifier, $newNodeIdentifier ]);
-                    $updatedNodesCount++;
-                }
-            }
+        foreach ($nodeIdentifiersWhichNeedUpdate as $oldNodeIdentifier => $newNodeIdentifier) {
+            $taskDescription = sprintf('Update node identifier from <i>%s</i> to <i>%s</i> because it is not a "stable" identifier', $oldNodeIdentifier, $newNodeIdentifier);
+            $taskClosure = function() use ($oldNodeIdentifier, $newNodeIdentifier) {
+                $queryBuilder = $this->entityManager->createQueryBuilder();
+                $queryBuilder->update(NodeData::class, 'n')
+                    ->set('n.identifier', $queryBuilder->expr()->literal($newNodeIdentifier))
+                    ->where('n.identifier = :oldNodeIdentifier')
+                    ->setParameter('oldNodeIdentifier', $oldNodeIdentifier);
+                $queryBuilder->getQuery()->getResult();
+            };
+            $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+            $updatedNodesCount++;
         }
 
         if ($createdNodesCount !== 0 || $nodeCreationExceptions !== 0 || $updatedNodesCount !== 0 || $incorrectNodeTypeCount !== 0) {
             if ($dryRun === false) {
                 if ($createdNodesCount > 0) {
-                    $this->output->outputLine('Created %s new child nodes', [$createdNodesCount]);
+                    $this->dispatch(self::EVENT_NOTICE, sprintf('Created <i>%d</i> new child nodes', $createdNodesCount));
                 }
                 if ($updatedNodesCount > 0) {
-                    $this->output->outputLine('Updated identifier of %s child nodes', [$updatedNodesCount]);
+                    $this->dispatch(self::EVENT_NOTICE, sprintf('Updated identifier of <i>%d</i> child nodes', $updatedNodesCount));
                 }
                 if ($incorrectNodeTypeCount > 0) {
-                    $this->output->outputLine('Changed node type of %s child nodes', [$incorrectNodeTypeCount]);
+                    $this->dispatch(self::EVENT_NOTICE, sprintf('Changed node type of <i>%d</i> child nodes', $incorrectNodeTypeCount));
                 }
                 if ($nodeCreationExceptions > 0) {
-                    $this->output->outputLine('%s Errors occurred during child node creation', [$nodeCreationExceptions]);
+                    $this->dispatch(self::EVENT_NOTICE, sprintf('<i>%d</i> Errors occurred during child node creation', $nodeCreationExceptions));
                 }
                 $this->persistenceManager->persistAll();
             } else {
                 if ($createdNodesCount > 0) {
-                    $this->output->outputLine('%s missing child nodes need to be created', [$createdNodesCount]);
+                    $this->dispatch(self::EVENT_NOTICE, sprintf('<i>%d</i> missing child nodes need to be created', $createdNodesCount));
                 }
                 if ($updatedNodesCount > 0) {
-                    $this->output->outputLine('%s identifiers of child nodes need to be updated', [$updatedNodesCount]);
+                    $this->dispatch(self::EVENT_NOTICE, sprintf('<i>%d</i> identifiers of child nodes need to be updated', $updatedNodesCount));
                 }
                 if ($incorrectNodeTypeCount > 0) {
-                    $this->output->outputLine('%s child nodes have incorrect node type', [$incorrectNodeTypeCount]);
+                    $this->dispatch(self::EVENT_NOTICE, sprintf('<i>%d</i> child nodes have incorrect node type', $incorrectNodeTypeCount));
                 }
             }
         }
@@ -450,10 +437,10 @@ HELPTEXT;
     public function addMissingDefaultValues($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
-            $this->output->outputLine('Checking nodes of type "%s" for missing default values ...', [$nodeType->getName()]);
+            $this->dispatch(self::EVENT_NOTICE, sprintf('Checking nodes of type <i>%s</i> for missing default values ...', $nodeType));
             $this->addMissingDefaultValuesByNodeType($nodeType, $workspaceName, $dryRun);
         } else {
-            $this->output->outputLine('Checking for missing default values ...');
+            $this->dispatch(self::EVENT_NOTICE, 'Checking for missing default values ...');
             foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
                 /** @var NodeType $nodeType */
                 if ($nodeType->isAbstract()) {
@@ -485,8 +472,8 @@ HELPTEXT;
             $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeType);
             $nodeTypeNames[$nodeType->getName()] = $nodeType;
         } else {
-            $this->output->outputLine('Node type "%s" does not exist', [(string)$nodeType]);
-            exit(1);
+            $this->dispatch(self::EVENT_ERROR, sprintf('Node type <i>%s</i> does not exist', $nodeType));
+            return;
         }
 
         /** @var $nodeType NodeType */
@@ -501,27 +488,24 @@ HELPTEXT;
                 }
                 if ($node instanceof Node && !$node->dimensionsAreMatchingTargetDimensionValues()) {
                     if ($node->getNodeData()->getDimensionValues() === []) {
-                        $this->output->outputLine('Skipping node %s because it has no dimension values set', [$node->getPath()]);
+                        $this->dispatch(self::EVENT_NOTICE, sprintf('Skipping node <i>%s</i> because it has no dimension values set', $node->getPath()));
                     } else {
-                        $this->output->outputLine('Skipping node %s because it has invalid dimension values: %s', [$node->getPath(), json_encode($node->getNodeData()->getDimensionValues())]);
+                        $this->dispatch(self::EVENT_NOTICE, sprintf('Skipping node <i>%s</i> because it has invalid dimension values: %s', $node->getPath(), json_encode($node->getNodeData()->getDimensionValues())));
                     }
                     continue;
                 }
 
                 foreach ($defaultValues as $propertyName => $defaultValue) {
-                    if ($propertyName[0] === '_') {
+                    if ($propertyName[0] === '_' || $node->hasProperty($propertyName)) {
                         continue;
                     }
 
-                    if (!$node->hasProperty($propertyName)) {
-                        $addedMissingDefaultValuesCount++;
-                        if (!$dryRun) {
-                            $node->setProperty($propertyName, $defaultValue);
-                            $this->output->outputLine('Set default value for property named "%s" in "%s" (%s)', [$propertyName, $node->getPath(), $node->getNodeType()->getName()]);
-                        } else {
-                            $this->output->outputLine('Found missing default value for property named "%s" in "%s" (%s)', [$propertyName, $node->getPath(), $node->getNodeType()->getName()]);
-                        }
-                    }
+                    $taskDescription = sprintf('Set default value for property named "<i>%s</i>" in "<i>%s</i>" (<i>%s</i>)', $propertyName, $node->getPath(), $node->getNodeType()->getName());
+                    $taskClosure = function() use ($node, $propertyName ,$defaultValue) {
+                        $node->setProperty($propertyName, $defaultValue);
+                    };
+                    $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+                    $addedMissingDefaultValuesCount++;
                 }
             }
         }
@@ -529,9 +513,9 @@ HELPTEXT;
         if ($addedMissingDefaultValuesCount !== 0) {
             if ($dryRun === false) {
                 $this->persistenceManager->persistAll();
-                $this->output->outputLine('Added %s new default values', [$addedMissingDefaultValuesCount]);
+                $this->dispatch(self::EVENT_NOTICE, sprintf('Added <i>%d</i> new default values', $addedMissingDefaultValuesCount));
             } else {
-                $this->output->outputLine('%s missing default values need to be set', [$addedMissingDefaultValuesCount]);
+                $this->dispatch(self::EVENT_NOTICE, sprintf('<i>%d</i> missing default values need to be set', $addedMissingDefaultValuesCount));
             }
         }
     }
@@ -540,12 +524,11 @@ HELPTEXT;
      * Performs checks for nodes with abstract or undefined node types and removes them if found.
      *
      * @param string $workspaceName
-     * @param boolean $dryRun Simulate?
      * @return void
      */
-    protected function removeAbstractAndUndefinedNodes($workspaceName, $dryRun)
+    protected function removeAbstractAndUndefinedNodes($workspaceName)
     {
-        $this->output->outputLine('Checking for nodes with abstract or undefined node types ...');
+        $this->dispatch(self::EVENT_NOTICE, 'Checking for nodes with abstract or undefined node types ...');
 
         $abstractNodeTypes = [];
         $nonAbstractNodeTypes = [];
@@ -580,22 +563,15 @@ HELPTEXT;
         foreach ($nodes as $node) {
             $name = $node['path'] === '/' ? '' : substr($node['path'], strrpos($node['path'], '/') + 1);
             $type = in_array($node['nodeType'], $abstractNodeTypes) ? 'abstract' : 'undefined';
-            $this->output->outputLine('Found node with %s node type named "%s" (%s) in "%s"', [$type, $name, $node['nodeType'], $node['path']]);
+            $this->dispatch(self::EVENT_NOTICE, sprintf('Found node with %s node type named "<i>%s</i>" (<i>%s</i>) in "<i>%s</i>"', $type, $name, $node['nodeType'], $node['path']));
         }
-
-        $this->output->outputLine();
-        if (!$dryRun) {
-            $self = $this;
-            $this->askBeforeExecutingTask('Abstract or undefined node types found, do you want to remove them?', function () use ($self, $nodes, $removableNodesCount) {
-                foreach ($nodes as $node) {
-                    $self->removeNode($node['identifier'], $node['dimensionsHash']);
-                }
-                $self->output->outputLine('Removed %s node%s with abstract or undefined node types.', [$removableNodesCount, $removableNodesCount > 1 ? 's' : '']);
-            });
-        } else {
-            $this->output->outputLine('Found %s node%s with abstract or undefined node types to be removed.', [$removableNodesCount, $removableNodesCount > 1 ? 's' : '']);
-        }
-        $this->output->outputLine();
+        $taskDescription = sprintf('Remove <i>%d</i> node%s with abstract or undefined node types', $removableNodesCount, $removableNodesCount > 1 ? 's' : '');
+        $taskClosure = function() use ($nodes) {
+            foreach ($nodes as $node) {
+                $this->removeNode($node['identifier'], $node['dimensionsHash']);
+            }
+        };
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
     }
 
     /**
@@ -603,12 +579,11 @@ HELPTEXT;
      * and removes them if found.
      *
      * @param string $workspaceName
-     * @param boolean $dryRun Simulate?
      * @return void
      */
-    protected function removeDisallowedChildNodes($workspaceName, $dryRun)
+    protected function removeDisallowedChildNodes($workspaceName)
     {
-        $this->output->outputLine('Checking for disallowed child nodes ...');
+        $this->dispatch(self::EVENT_NOTICE, 'Checking for disallowed child nodes ...');
 
         /** @var \Neos\ContentRepository\Domain\Model\Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
@@ -622,12 +597,13 @@ HELPTEXT;
                     if (!$childNode->isAutoCreated() && !$node->isNodeTypeAllowedAsChildNode($childNode->getNodeType())) {
                         $nodes[] = $childNode;
                         $parent = $node->isAutoCreated() ? $node->getParent() : $node;
-                        $this->output->outputLine('Found disallowed node named "%s" (%s) in "%s", child of node "%s" (%s)', [$childNode->getName(), $childNode->getNodeType()->getName(), $childNode->getPath(), $parent->getName(), $parent->getNodeType()->getName()]);
+                        $this->dispatch(self::EVENT_NOTICE, sprintf('Found disallowed node named "<i>%s</i>" (<i>%s</i>) in "<i>%s</i>", child of node "<i>%s</i>" (<i>%s</i>)', $childNode->getName(), $childNode->getNodeType()->getName(), $childNode->getPath(), $parent->getName(), $parent->getNodeType()->getName()));
                     } else {
                         $removeDisallowedChildNodes($childNode);
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception $exception) {
+                $this->dispatch(self::EVENT_WARNING, sprintf('Error while traversing child nodes of node <i>%s</i>: %s (%s)', $node->getIdentifier(), $exception->getMessage(), $exception->getCode()));
                 $nodeExceptionCount++;
             }
         };
@@ -642,24 +618,17 @@ HELPTEXT;
 
         $disallowedChildNodesCount = count($nodes);
         if ($disallowedChildNodesCount > 0) {
-            $this->output->outputLine();
-            if (!$dryRun) {
-                $self = $this;
-                $this->askBeforeExecutingTask('Do you want to remove all disallowed child nodes?', function () use ($self, $nodes, $disallowedChildNodesCount, $workspaceName) {
-                    foreach ($nodes as $node) {
-                        $self->removeNodeAndChildNodesInWorkspaceByPath($node->getPath(), $workspaceName);
-                    }
-                    $self->output->outputLine('Removed %s disallowed node%s.', [$disallowedChildNodesCount, $disallowedChildNodesCount > 1 ? 's' : '']);
-                });
-            } else {
-                $this->output->outputLine('Found %s disallowed node%s to be removed.', [$disallowedChildNodesCount, $disallowedChildNodesCount > 1 ? 's' : '']);
-            }
+            $taskDescription = sprintf('Remove <i>%d</i> disallowed node%s.', $disallowedChildNodesCount, $disallowedChildNodesCount > 1 ? 's' : '');
+            $taskClosure = function() use ($nodes, $workspaceName) {
+                foreach ($nodes as $node) {
+                    $this->removeNodeAndChildNodesInWorkspaceByPath($node->getPath(), $workspaceName);
+                }
+            };
+            $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
 
             if ($nodeExceptionCount > 0) {
-                $this->output->outputLine();
-                $this->output->outputLine('%s error%s occurred during child node traversing.', [$nodeExceptionCount, $nodeExceptionCount > 1 ? 's' : '']);
+                $this->dispatch(self::EVENT_NOTICE, '<i>%d</i> error%s occurred during child node traversing.', $nodeExceptionCount, $nodeExceptionCount > 1 ? 's' : '');
             }
-            $this->output->outputLine();
         }
     }
 
@@ -667,13 +636,13 @@ HELPTEXT;
      * Performs checks for orphan nodes removes them if found.
      *
      * @param string $workspaceName
-     * @param boolean $dryRun Simulate?
+     * @param boolean $dryRun (unused)
      * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    protected function removeOrphanNodes($workspaceName, $dryRun, NodeType $nodeType = null)
+    protected function removeOrphanNodes($workspaceName, /** @noinspection PhpUnusedParameterInspection */$dryRun, NodeType $nodeType = null)
     {
-        $this->output->outputLine('Checking for orphan nodes ...');
+        $this->dispatch(self::EVENT_NOTICE, 'Checking for orphan nodes ...');
 
         /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -716,36 +685,30 @@ HELPTEXT;
 
         foreach ($nodes as $node) {
             $name = $node['path'] === '/' ? '' : substr($node['path'], strrpos($node['path'], '/') + 1);
-            $this->output->outputLine('Found orphan node named "%s" (%s) in "%s"', [$name, $node['nodeType'], $node['path']]);
+            $this->dispatch(self::EVENT_NOTICE, sprintf('Found orphan node named "<i>%s</i>" (<i>%s</i>) in "<i>%s</i>"', $name, $node['nodeType'], $node['path']));
         }
 
-        $this->output->outputLine();
-        if (!$dryRun) {
-            $self = $this;
-            $this->askBeforeExecutingTask('Do you want to remove all orphan nodes?', function () use ($self, $nodes, $workspaceName, $nodesToBeRemoved) {
-                foreach ($nodes as $node) {
-                    $self->removeNodeAndChildNodesInWorkspaceByPath($node['path'], $workspaceName);
-                }
-                $self->output->outputLine('Removed %s orphan node%s.', [$nodesToBeRemoved, count($nodes) > 1 ? 's' : '']);
-            });
-        } else {
-            $this->output->outputLine('Found %s orphan node%s to be removed.', [$nodesToBeRemoved, count($nodes) > 1 ? 's' : '']);
-        }
-        $this->output->outputLine();
+        $taskDescription = sprintf('Remove <i>%d</i> orphan node%s', $nodesToBeRemoved, $nodesToBeRemoved > 1 ? 's' : '');
+        $taskClosure = function() use ($nodes, $workspaceName) {
+            foreach ($nodes as $node) {
+                $this->removeNodeAndChildNodesInWorkspaceByPath($node['path'], $workspaceName);
+            }
+        };
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
     }
 
     /**
      * Performs checks for orphan nodes removes them if found.
      *
      * @param string $workspaceName
-     * @param boolean $dryRun Simulate?
+     * @param boolean $dryRun (unused)
      * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      * @throws NodeConfigurationException
      */
-    public function removeUndefinedProperties($workspaceName, $dryRun, NodeType $nodeType = null)
+    public function removeUndefinedProperties($workspaceName, /** @noinspection PhpUnusedParameterInspection */$dryRun, NodeType $nodeType = null)
     {
-        $this->output->outputLine('Checking for undefined properties ...');
+        $this->dispatch(self::EVENT_NOTICE, 'Checking for undefined properties ...');
 
         /** @var \Neos\ContentRepository\Domain\Model\Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
@@ -770,34 +733,28 @@ HELPTEXT;
                     $nodesWithUndefinedPropertiesNodes[$node->getIdentifier()] = ['node' => $node, 'undefinedProperties' => $undefinedProperties];
                     foreach ($undefinedProperties as $undefinedProperty) {
                         $undefinedPropertiesCount++;
-                        $this->output->outputLine('Found undefined property named "%s" in "%s" (%s)', [$undefinedProperty, $node->getPath(), $node->getNodeType()->getName()]);
+                        $this->dispatch(self::EVENT_NOTICE, sprintf('Found undefined property named "<i>%s</i>" in "<i>%s</i>" (<i>%s</i>)', $undefinedProperty, $node->getPath(), $node->getNodeType()->getName()));
                     }
                 }
             } /** @noinspection PhpRedundantCatchClauseInspection */ catch (NodeTypeNotFoundException $exception) {
-                $this->output->outputLine('Skipped undefined node type in "%s"', [$nodeData->getPath()]);
+                $this->dispatch(self::EVENT_NOTICE, sprintf('Skipped undefined node type in "%s"', $nodeData->getPath()));
             }
         }
 
         if ($undefinedPropertiesCount > 0) {
-            $this->output->outputLine();
-            if (!$dryRun) {
-                $self = $this;
-                $this->askBeforeExecutingTask('Do you want to remove undefined node properties?', function () use ($self, $nodesWithUndefinedPropertiesNodes, $undefinedPropertiesCount) {
-                    foreach ($nodesWithUndefinedPropertiesNodes as $nodesWithUndefinedPropertiesNode) {
-                        /** @var NodeInterface $node */
-                        $node = $nodesWithUndefinedPropertiesNode['node'];
-                        foreach ($nodesWithUndefinedPropertiesNode['undefinedProperties'] as $undefinedProperty) {
-                            if ($node->hasProperty($undefinedProperty)) {
-                                $node->removeProperty($undefinedProperty);
-                            }
+            $taskDescription = sprintf('Remove <i>%d</i> undefined propert%s.', $undefinedPropertiesCount, $undefinedPropertiesCount > 1 ? 'ies' : 'y');
+            $taskClosure = function() use ($nodesWithUndefinedPropertiesNodes) {
+                foreach ($nodesWithUndefinedPropertiesNodes as $nodesWithUndefinedPropertiesNode) {
+                    /** @var NodeInterface $node */
+                    $node = $nodesWithUndefinedPropertiesNode['node'];
+                    foreach ($nodesWithUndefinedPropertiesNode['undefinedProperties'] as $undefinedProperty) {
+                        if ($node->hasProperty($undefinedProperty)) {
+                            $node->removeProperty($undefinedProperty);
                         }
                     }
-                    $self->output->outputLine('Removed %s undefined propert%s.', [$undefinedPropertiesCount, $undefinedPropertiesCount > 1 ? 'ies' : 'y']);
-                });
-            } else {
-                $this->output->outputLine('Found %s undefined propert%s to be removed.', [$undefinedPropertiesCount, $undefinedPropertiesCount > 1 ? 'ies' : 'y']);
-            }
-            $this->output->outputLine();
+                }
+            };
+            $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
         }
 
         $this->persistenceManager->persistAll();
@@ -809,12 +766,14 @@ HELPTEXT;
      * This removes references from nodes to entities which don't exist anymore.
      *
      * @param string $workspaceName
-     * @param boolean $dryRun
      * @return void
+     * @throws NodeException
+     * @throws PropertyException
+     * @throws SecurityException
      */
-    public function removeBrokenEntityReferences($workspaceName, $dryRun)
+    public function removeBrokenEntityReferences($workspaceName)
     {
-        $this->output->outputLine('Checking for broken entity references ...');
+        $this->dispatch(self::EVENT_NOTICE, 'Checking for broken entity references ...');
 
         /** @var \Neos\ContentRepository\Domain\Model\Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
@@ -850,16 +809,16 @@ HELPTEXT;
                         $convertedProperty = $this->propertyMapper->convert($propertyValue, $propertyType);
                         if ($convertedProperty === null) {
                             $nodesWithBrokenEntityReferences[$nodeData->getIdentifier()][$propertyName] = $nodeData;
-                            $this->output->outputLine('Broken reference in "%s", property "%s" (%s) referring to %s.', [$nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue]);
+                            $this->dispatch(self::EVENT_NOTICE, sprintf('Broken reference in "<i>%s</i>", property "<i>%s</i>" (<i>%s</i>) referring to <i>%s</i>.', $nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue));
                             $brokenReferencesCount ++;
                         }
                     }
                     if ($convertedProperty instanceof Proxy) {
                         try {
                             $convertedProperty->__load();
-                        } catch (EntityNotFoundException $e) {
+                        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (EntityNotFoundException $e) {
                             $nodesWithBrokenEntityReferences[$nodeData->getIdentifier()][$propertyName] = $nodeData;
-                            $this->output->outputLine('Broken reference in "%s", property "%s" (%s) referring to %s.', [$nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue]);
+                            $this->dispatch(self::EVENT_NOTICE, sprintf('Broken reference in "<i>%s</i>", property "<i>%s</i>" (<i>%s</i>) referring to <i>%s</i>.', $nodeData->getPath(), $nodeData->getIdentifier(), $propertyName, $propertyType, $propertyValue));
                             $brokenReferencesCount ++;
                         }
                     }
@@ -867,26 +826,20 @@ HELPTEXT;
             }
         }
 
-        if ($brokenReferencesCount > 0) {
-            $this->output->outputLine();
-            if (!$dryRun) {
-                $self = $this;
-                $this->askBeforeExecutingTask('Do you want to remove the broken entity references?', function () use ($self, $nodesWithBrokenEntityReferences, $brokenReferencesCount) {
-                    foreach ($nodesWithBrokenEntityReferences as $nodeIdentifier => $properties) {
-                        foreach ($properties as $propertyName => $nodeData) {
-                            /** @var NodeData $nodeData */
-                            $nodeData->setProperty($propertyName, null);
-                        }
-                    }
-                    $self->output->outputLine('Removed %s broken entity reference%s.', [$brokenReferencesCount, $brokenReferencesCount > 1 ? 's' : '']);
-                });
-            } else {
-                $this->output->outputLine('Found %s broken entity reference%s to be removed.', [$brokenReferencesCount, $brokenReferencesCount > 1 ? 's' : '']);
-            }
-            $this->output->outputLine();
-
-            $this->persistenceManager->persistAll();
+        if ($brokenReferencesCount === 0) {
+            return;
         }
+        $taskDescription = sprintf('Remove <i>%d</i> broken entity reference%s.', $brokenReferencesCount, $brokenReferencesCount > 1 ? 's' : '');
+        $taskClosure = function() use ($nodesWithBrokenEntityReferences) {
+            foreach ($nodesWithBrokenEntityReferences as $nodeIdentifier => $properties) {
+                foreach ($properties as $propertyName => $nodeData) {
+                    /** @var NodeData $nodeData */
+                    $nodeData->setProperty($propertyName, null);
+                }
+            }
+            $this->persistenceManager->persistAll();
+        };
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
     }
 
     /**
@@ -982,33 +935,25 @@ HELPTEXT;
      * This removes nodes which have dimension values not fitting to the current dimension configuration
      *
      * @param string $workspaceName Name of the workspace to consider
-     * @param boolean $dryRun Simulate?
      * @return void
      */
-    public function removeNodesWithInvalidDimensions($workspaceName, $dryRun)
+    public function removeNodesWithInvalidDimensions($workspaceName)
     {
-        $this->output->outputLine('Checking for nodes with invalid dimensions ...');
+        $this->dispatch(self::EVENT_NOTICE, 'Checking for nodes with invalid dimensions ...');
 
         $allowedDimensionCombinations = $this->contentDimensionCombinator->getAllAllowedCombinations();
         $nodesArray = $this->collectNodesWithInvalidDimensions($workspaceName, $allowedDimensionCombinations);
         if ($nodesArray === []) {
             return;
         }
-
-        if (!$dryRun) {
-            $self = $this;
-            $this->output->outputLine();
-            $this->output->outputLine('Nodes with invalid dimension values found.' . PHP_EOL . 'You might solve this by migrating them to your current dimension configuration or by removing them.');
-            $this->askBeforeExecutingTask(sprintf('Do you want to remove %s node%s with invalid dimensions now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray) {
-                foreach ($nodesArray as $nodeArray) {
-                    $self->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
-                }
-                $self->output->outputLine('Removed %s node%s with invalid dimension values.', [count($nodesArray), count($nodesArray) > 1 ? 's' : '']);
-            });
-        } else {
-            $this->output->outputLine('Found %s node%s with invalid dimension values to be removed.', [count($nodesArray), count($nodesArray) > 1 ? 's' : '']);
-        }
-        $this->output->outputLine();
+        $numberOfNodes = count($nodesArray);
+        $taskDescription = sprintf('Remove <i>%d</i> node%s with invalid dimension values', $numberOfNodes, $numberOfNodes > 1 ? 's' : '');
+        $taskClosure = function() use ($nodesArray) {
+            foreach ($nodesArray as $nodeArray) {
+                $this->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
+            }
+        };
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
     }
 
     /**
@@ -1052,7 +997,7 @@ HELPTEXT;
             }
 
             if (!$foundValidDimensionValues) {
-                $this->output->outputLine('Node %s has invalid dimension values: %s', [$nodeDataArray['path'], json_encode($nodeDataArray['dimensionValues'])]);
+                $this->dispatch(self::EVENT_NOTICE, sprintf('Node <i>%s</i> has invalid dimension values: %s', $nodeDataArray['path'], json_encode($nodeDataArray['dimensionValues'])));
                 $nodes[] = $nodeDataArray;
             }
         }
@@ -1064,33 +1009,24 @@ HELPTEXT;
      *
      * This removes nodes which refer to a workspace which does not exist.
      *
-     * @param string $workspaceName This argument will be ignored
-     * @param boolean $dryRun Simulate?
      * @return void
      */
-    public function removeNodesWithInvalidWorkspace($workspaceName, $dryRun)
+    public function removeNodesWithInvalidWorkspace()
     {
-        $this->output->outputLine('Checking for nodes with invalid workspace ...');
+        $this->dispatch(self::EVENT_NOTICE, 'Checking for nodes with invalid workspace ...');
 
         $nodesArray = $this->collectNodesWithInvalidWorkspace();
         if ($nodesArray === []) {
             return;
         }
-
-        if (!$dryRun) {
-            $self = $this;
-            $this->output->outputLine();
-            $this->output->outputLine('Nodes with invalid workspace found.');
-            $this->askBeforeExecutingTask(sprintf('Do you want to remove %s node%s with invalid workspaces now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray) {
-                foreach ($nodesArray as $nodeArray) {
-                    $self->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
-                }
-                $self->output->outputLine('Removed %s node%s referring to an invalid workspace.', [count($nodesArray), count($nodesArray) > 1 ? 's' : '']);
-            });
-        } else {
-            $this->output->outputLine('Found %s node%s referring to an invalid workspace to be removed.', [count($nodesArray), count($nodesArray) > 1 ? 's' : '']);
-        }
-        $this->output->outputLine();
+        $numberOfNodes = count($nodesArray);
+        $taskDescription = sprintf('Remove <i>%d</i> node%s referring to an invalid workspace.', $numberOfNodes, $numberOfNodes > 1 ? 's' : '');
+        $taskClosure = function() use ($nodesArray) {
+            foreach ($nodesArray as $nodeArray) {
+                $this->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
+            }
+        };
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
     }
 
     /**
@@ -1124,7 +1060,7 @@ HELPTEXT;
             );
 
         foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
-            $this->output->outputLine('Node %s (identifier: %s) refers to an invalid workspace: %s', [$nodeDataArray['path'], $nodeDataArray['identifier'], (isset($nodeDataArray['workspace']) ? $nodeDataArray['workspace'] : 'null')]);
+            $this->dispatch(self::EVENT_NOTICE, sprintf('Node <i>%s</i> (identifier: <i>%s</i>) refers to an invalid workspace: <i>%s</i>', $nodeDataArray['path'], $nodeDataArray['identifier'], (isset($nodeDataArray['workspace']) ? $nodeDataArray['workspace'] : 'null')));
             $nodes[] = $nodeDataArray;
         }
         return $nodes;
@@ -1134,13 +1070,11 @@ HELPTEXT;
      * Detect and fix nodes in non-live workspaces whose identifier does not match their corresponding node in the
      * live workspace.
      *
-     * @param string $workspaceName This argument will be ignored
-     * @param boolean $dryRun Simulate?
      * @return void
      */
-    public function fixNodesWithInconsistentIdentifier($workspaceName, $dryRun)
+    public function fixNodesWithInconsistentIdentifier()
     {
-        $this->output->outputLine('Checking for nodes with inconsistent identifier ...');
+        $this->dispatch(self::EVENT_NOTICE, 'Checking for nodes with inconsistent identifier ...');
 
         $nodesArray = [];
         $liveWorkspaceNames = [];
@@ -1167,7 +1101,7 @@ HELPTEXT;
             ;
 
             foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
-                $this->output->outputLine('Node %s in workspace %s has identifier %s but live node has identifier %s.', [$nodeDataArray['path'], $workspaceName, $nodeDataArray['identifier'], $nodeDataArray['liveIdentifier']]);
+                $this->dispatch(self::EVENT_NOTICE, sprintf('Node <i>%s</i> in workspace <i>%s</i> has identifier <i>%s</i> but live node has identifier <i>%s</i>.', $nodeDataArray['path'], $workspaceName, $nodeDataArray['identifier'], $nodeDataArray['liveIdentifier']));
                 $nodesArray[] = $nodeDataArray;
             }
         }
@@ -1176,32 +1110,28 @@ HELPTEXT;
             return;
         }
 
-        if (!$dryRun) {
-            $self = $this;
-            $this->output->outputLine();
-            $this->output->outputLine('Nodes with inconsistent identifiers found.');
-            $this->askBeforeExecutingTask(sprintf('Do you want to fix the identifiers of %s node%s now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray) {
-                foreach ($nodesArray as $nodeArray) {
-                    /** @var QueryBuilder $queryBuilder */
-                    $queryBuilder = $this->entityManager->createQueryBuilder();
-                    $queryBuilder->update(NodeData::class, 'nonlive')
-                        ->set('nonlive.identifier', $queryBuilder->expr()->literal($nodeArray['liveIdentifier']))
-                        ->where('nonlive.Persistence_Object_Identifier = ?1')
-                        ->setParameter(1, $nodeArray['Persistence_Object_Identifier']);
-                    $result = $queryBuilder->getQuery()->getResult();
-                    if ($result !== 1) {
-                        $self->output->outputLine('<error>Error:</error> The update query returned an unexpected result!');
-                        $self->output->outputLine('<b>Query:</b> ' . $queryBuilder->getQuery()->getSQL());
-                        $self->output->outputLine('<b>Result:</b> %s', [ var_export($result, true)]);
-                        exit(1);
-                    }
+        $numberOfNodes = count($nodesArray);
+        $taskDescription = sprintf('Fix identifier%s of %s node%s', $numberOfNodes > 1 ? 's' : '', $numberOfNodes, $numberOfNodes > 1 ? 's' : '');
+        $taskClosure = function() use ($nodesArray) {
+            foreach ($nodesArray as $nodeArray) {
+                /** @var QueryBuilder $queryBuilder */
+                $queryBuilder = $this->entityManager->createQueryBuilder();
+                $queryBuilder->update(NodeData::class, 'nonlive')
+                    ->set('nonlive.identifier', $queryBuilder->expr()->literal($nodeArray['liveIdentifier']))
+                    ->where('nonlive.Persistence_Object_Identifier = ?1')
+                    ->setParameter(1, $nodeArray['Persistence_Object_Identifier']);
+                $result = $queryBuilder->getQuery()->getResult();
+                if ($result !== 1) {
+                    $errorMessage = 'The update query returned an unexpected result!' . PHP_EOL;
+                    $errorMessage .= sprintf('<b>Query:</b> %s', $queryBuilder->getQuery()->getSQL()) . PHP_EOL;
+                    $errorMessage .= sprintf('<b>Result:</b> %s', var_export($result, true));
+                    $this->dispatch(self::EVENT_ERROR, $errorMessage);
+                    return;
                 }
-                $self->output->outputLine('Fixed inconsistent identifiers.');
-            });
-        } else {
-            $this->output->outputLine('Found %s node%s with inconsistent identifiers which need to be fixed.', [count($nodesArray), count($nodesArray) > 1 ? 's' : '']);
-        }
-        $this->output->outputLine();
+            }
+        };
+        $taskRequiresConfirmation = true;
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure, $taskRequiresConfirmation);
     }
 
     /**
@@ -1211,14 +1141,16 @@ HELPTEXT;
      * @param boolean $dryRun Simulate?
      * @param NodeType $nodeType Only for this node type, if specified
      * @return void
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
      */
     protected function reorderChildNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
-            $this->output->outputLine('Checking nodes of type "%s" for child nodes that need reordering ...', [$nodeType->getName()]);
+            $this->dispatch(self::EVENT_NOTICE, sprintf('Checking nodes of type "<i>%s</i>" for child nodes that need reordering ...', $nodeType));
             $this->reorderChildNodesByNodeType($workspaceName, $dryRun, $nodeType);
         } else {
-            $this->output->outputLine('Checking for child nodes that need reordering ...');
+            $this->dispatch(self::EVENT_NOTICE, 'Checking for child nodes that need reordering ...');
             foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
                 /** @var NodeType $nodeType */
                 if ($nodeType->isAbstract()) {
@@ -1235,11 +1167,13 @@ HELPTEXT;
      * Reorder child nodes for the given node type
      *
      * @param string $workspaceName
-     * @param boolean $dryRun
+     * @param boolean $dryRun (unused)
      * @param NodeType $nodeType
      * @return void
+     * @throws NodeTypeNotFoundException
+     * @throws NodeConfigurationException
      */
-    protected function reorderChildNodesByNodeType($workspaceName, $dryRun, NodeType $nodeType)
+    protected function reorderChildNodesByNodeType($workspaceName, /** @noinspection PhpUnusedParameterInspection */$dryRun, NodeType $nodeType)
     {
         $nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), false);
         $nodeTypes[$nodeType->getName()] = $nodeType;
@@ -1248,8 +1182,8 @@ HELPTEXT;
             $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeType);
             $nodeTypeNames[$nodeType->getName()] = $nodeType;
         } else {
-            $this->output->outputLine('Node type "%s" does not exist', [(string)$nodeType]);
-            exit(1);
+            $this->dispatch(self::EVENT_ERROR, sprintf('Node type "<i>%s</i>" does not exist', $nodeType));
+            return;
         }
 
         /** @var $nodeType NodeType */
@@ -1270,18 +1204,15 @@ HELPTEXT;
                 foreach ($childNodes as $childNodeName => $childNodeType) {
                     $childNode = $node->getNode($childNodeName);
                     if ($childNode) {
-                        if ($childNodeBefore) {
-                            if ($dryRun === false) {
-                                if ($childNodeBefore->getIndex() >= $childNode->getIndex()) {
-                                    $childNode->moveAfter($childNodeBefore);
-                                    $this->output->outputLine('Moved node named "%s" after node named "%s" in "%s"', [$childNodeName, $childNodeBefore->getName(), $node->getPath()]);
-                                }
-                            } else {
-                                $this->output->outputLine('Should move node named "%s" after node named "%s" in "%s"', [$childNodeName, $childNodeBefore->getName(), $node->getPath()]);
-                            }
+                        if ($childNodeBefore && $childNodeBefore->getIndex() >= $childNode->getIndex()) {
+                            $taskDescription = sprintf('Move node named "<i>%s</i>" after node named "<i>%s</i>" in "<i>%s</i>"', $childNodeName, $childNodeBefore->getName(), $node->getPath());
+                            $taskClosure = function() use ($childNode, $childNodeBefore) {
+                                $childNode->moveAfter($childNodeBefore);
+                            };
+                            $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
                         }
                     } else {
-                        $this->output->outputLine('Missing child node named "%s" in "%s".', [$childNodeName, $node->getPath()]);
+                        $this->dispatch(self::EVENT_NOTICE, sprintf('Missing child node named "<i>%s</i>" in "<i>%s</i>".', $childNodeName, $node->getPath()));
                     }
 
                     $childNodeBefore = $childNode;
@@ -1297,45 +1228,49 @@ HELPTEXT;
      * have different node paths, but don't have a corresponding shadow node with a "movedto" value.
      *
      * @param string $workspaceName Currently ignored
-     * @param boolean $dryRun Simulate?
+     * @param boolean $dryRun (unused)
      * @param NodeType $nodeType This argument will be ignored
      * @return void
      */
-    protected function repairShadowNodes($workspaceName, $dryRun, NodeType $nodeType = null)
+    protected function repairShadowNodes($workspaceName, /** @noinspection PhpUnusedParameterInspection */$dryRun, NodeType $nodeType = null)
     {
         /** @var Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
         if ($workspace->getBaseWorkspace() === null) {
-            $this->output->outputLine('Repairing base workspace "%s", therefore skipping check for shadow nodes.', [$workspaceName]);
-            $this->output->outputLine();
+            $this->dispatch(self::EVENT_NOTICE, sprintf('Repairing base workspace "<i>%s</i>", therefore skipping check for shadow nodes.', $workspaceName));
             return;
         }
 
-        $this->output->outputLine('Checking for nodes with missing shadow nodes ...');
-        $fixedShadowNodes = $this->fixShadowNodesInWorkspace($workspace, $dryRun, $nodeType);
+        $this->dispatch(self::EVENT_NOTICE, 'Checking for nodes with missing shadow nodes ...');
+        $newShadowNodes = $this->findMissingShadowNodesInWorkspace($workspace, $nodeType);
+        if ($newShadowNodes === []) {
+            return;
+        }
+        $numberOfNewShadowNodes = count($newShadowNodes);
 
-        $this->output->outputLine('%s %s node%s with missing shadow nodes.', [
-            $dryRun ? 'Would repair' : 'Repaired',
-            $fixedShadowNodes,
-            $fixedShadowNodes !== 1 ? 's' : ''
-        ]);
-
-        $this->output->outputLine();
+        $taskDescription = sprintf('Add <i>%d</i> missing shadow node%s', $numberOfNewShadowNodes, $numberOfNewShadowNodes > 1 ? 's' : '');
+        $taskClosure = function() use ($newShadowNodes) {
+            /** @var NodeData $nodeData */
+            foreach ($newShadowNodes as list('nodeData' => $nodeData, 'shadowPath' => $shadowPath)) {
+                $nodeData->createShadow($shadowPath);
+            }
+            $this->persistenceManager->persistAll();
+        };
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
     }
 
     /**
      * Collects all nodes with missing shadow nodes
      *
      * @param Workspace $workspace
-     * @param boolean $dryRun
      * @param NodeType $nodeType
-     * @return int
+     * @return array in the form [['nodeData' => <nodeDataInstance>, 'shadowPath' => '<shadowPath>'], ...]
      */
-    protected function fixShadowNodesInWorkspace(Workspace $workspace, $dryRun, NodeType $nodeType = null)
+    protected function findMissingShadowNodesInWorkspace(Workspace $workspace, NodeType $nodeType = null)
     {
         $workspaces = array_merge([$workspace], $workspace->getBaseWorkspaces());
 
-        $fixedShadowNodes = 0;
+        $newShadowNodes = [];
         foreach ($workspaces as $workspace) {
             /** @var Workspace $workspace */
             if ($workspace->getBaseWorkspace() === null) {
@@ -1370,14 +1305,40 @@ HELPTEXT;
                 if ($nodeDataOnSamePath !== null) {
                     continue;
                 }
-
-                if (!$dryRun) {
-                    $nodeData->createShadow($nodeDataSeenFromParentWorkspace->getPath());
-                }
-                $fixedShadowNodes++;
+                $newShadowNodes[] = ['nodeData' => $nodeData, 'shadowPath' => $nodeDataSeenFromParentWorkspace->getPath()];
             }
         }
 
-        return $fixedShadowNodes;
+        return $newShadowNodes;
+    }
+
+    /**
+     * Attaches a new event handler
+     *
+     * @param string $eventIdentifier one of the EVENT_* constants
+     * @param \Closure $callback a closure to be invoked when the corresponding event was triggered
+     * @return void
+     */
+    public function on($eventIdentifier, \Closure $callback)
+    {
+        $this->eventCallbacks[$eventIdentifier][] = $callback;
+    }
+
+    /**
+     * Trigger a custom event
+     *
+     * @param string $eventIdentifier one of the EVENT_* constants
+     * @param array $eventPayload optional arguments to be passed to the handler closure
+     * @return void
+     */
+    protected function dispatch($eventIdentifier, ...$eventPayload)
+    {
+        if (!isset($this->eventCallbacks[$eventIdentifier])) {
+            return null;
+        }
+        /** @var \Closure $callback */
+        foreach ($this->eventCallbacks[$eventIdentifier] as $callback) {
+            call_user_func_array($callback, $eventPayload);
+        }
     }
 }
