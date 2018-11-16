@@ -571,7 +571,8 @@ HELPTEXT;
                 $this->removeNode($node['identifier'], $node['dimensionsHash']);
             }
         };
-        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+        $taskRequiresConfirmation = true;
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure, $taskRequiresConfirmation);
     }
 
     /**
@@ -624,7 +625,8 @@ HELPTEXT;
                     $this->removeNodeAndChildNodesInWorkspaceByPath($node->getPath(), $workspaceName);
                 }
             };
-            $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+            $taskRequiresConfirmation = true;
+            $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure, $taskRequiresConfirmation);
 
             if ($nodeExceptionCount > 0) {
                 $this->dispatch(self::EVENT_NOTICE, '<i>%d</i> error%s occurred during child node traversing.', $nodeExceptionCount, $nodeExceptionCount > 1 ? 's' : '');
@@ -694,7 +696,8 @@ HELPTEXT;
                 $this->removeNodeAndChildNodesInWorkspaceByPath($node['path'], $workspaceName);
             }
         };
-        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+        $taskRequiresConfirmation = true;
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure, $taskRequiresConfirmation);
     }
 
     /**
@@ -754,7 +757,8 @@ HELPTEXT;
                     }
                 }
             };
-            $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+            $taskRequiresConfirmation = true;
+            $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure, $taskRequiresConfirmation);
         }
 
         $this->persistenceManager->persistAll();
@@ -839,7 +843,8 @@ HELPTEXT;
             }
             $this->persistenceManager->persistAll();
         };
-        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+        $taskRequiresConfirmation = true;
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure, $taskRequiresConfirmation);
     }
 
     /**
@@ -953,7 +958,8 @@ HELPTEXT;
                 $this->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
             }
         };
-        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+        $taskRequiresConfirmation = true;
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure, $taskRequiresConfirmation);
     }
 
     /**
@@ -1026,7 +1032,8 @@ HELPTEXT;
                 $this->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
             }
         };
-        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
+        $taskRequiresConfirmation = true;
+        $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure, $taskRequiresConfirmation);
     }
 
     /**
