@@ -351,7 +351,7 @@ HELPTEXT;
                     $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $node->getIdentifier());
                     if ($childNode === null) {
                         $taskDescription = sprintf('Add node <i>%s</i> named "<i>%s</i>" in "<i>%s</i>"', $childNodeIdentifier, $childNodeName, $node->getPath());
-                        $taskClosure = function() use ($node, $childNodeName, $childNodeType, $childNodeIdentifier, &$nodeCreationExceptions) {
+                        $taskClosure = function () use ($node, $childNodeName, $childNodeType, $childNodeIdentifier, &$nodeCreationExceptions) {
                             try {
                                 $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
                             } catch (\Exception $exception) {
@@ -363,7 +363,7 @@ HELPTEXT;
                         $createdNodesCount++;
                     } elseif ($childNode->isRemoved() === true) {
                         $taskDescription = sprintf('Undelete node <i>%s</i> named "<i>%s</i>" in "<i>%s</i>"', $childNodeIdentifier, $childNodeName, $node->getPath());
-                        $taskClosure = function() use ($node) {
+                        $taskClosure = function () use ($node) {
                             $node->setRemoved(false);
                         };
                         $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
@@ -372,7 +372,7 @@ HELPTEXT;
                         $nodeIdentifiersWhichNeedUpdate[$childNode->getIdentifier()] = $childNodeIdentifier;
                     } elseif ($childNode->getNodeType() !== $childNodeType) {
                         $taskDescription = sprintf('Set node type of node <i>%s</i>: <i>%s</i> => <i>%s</i>', $childNodeIdentifier, $childNode->getNodeType(), $childNodeType);
-                        $taskClosure = function() use ($childNode, $childNodeType) {
+                        $taskClosure = function () use ($childNode, $childNodeType) {
                             $childNode->setNodeType($childNodeType);
                         };
                         $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
@@ -383,7 +383,7 @@ HELPTEXT;
         }
         foreach ($nodeIdentifiersWhichNeedUpdate as $oldNodeIdentifier => $newNodeIdentifier) {
             $taskDescription = sprintf('Update node identifier from <i>%s</i> to <i>%s</i> because it is not a "stable" identifier', $oldNodeIdentifier, $newNodeIdentifier);
-            $taskClosure = function() use ($oldNodeIdentifier, $newNodeIdentifier) {
+            $taskClosure = function () use ($oldNodeIdentifier, $newNodeIdentifier) {
                 $queryBuilder = $this->entityManager->createQueryBuilder();
                 $queryBuilder->update(NodeData::class, 'n')
                     ->set('n.identifier', $queryBuilder->expr()->literal($newNodeIdentifier))
@@ -501,7 +501,7 @@ HELPTEXT;
                     }
 
                     $taskDescription = sprintf('Set default value for property named "<i>%s</i>" in "<i>%s</i>" (<i>%s</i>)', $propertyName, $node->getPath(), $node->getNodeType()->getName());
-                    $taskClosure = function() use ($node, $propertyName ,$defaultValue) {
+                    $taskClosure = function () use ($node, $propertyName ,$defaultValue) {
                         $node->setProperty($propertyName, $defaultValue);
                     };
                     $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
@@ -566,7 +566,7 @@ HELPTEXT;
             $this->dispatch(self::EVENT_NOTICE, sprintf('Found node with %s node type named "<i>%s</i>" (<i>%s</i>) in "<i>%s</i>"', $type, $name, $node['nodeType'], $node['path']));
         }
         $taskDescription = sprintf('Remove <i>%d</i> node%s with abstract or undefined node types', $removableNodesCount, $removableNodesCount > 1 ? 's' : '');
-        $taskClosure = function() use ($nodes) {
+        $taskClosure = function () use ($nodes) {
             foreach ($nodes as $node) {
                 $this->removeNode($node['identifier'], $node['dimensionsHash']);
             }
@@ -619,7 +619,7 @@ HELPTEXT;
         $disallowedChildNodesCount = count($nodes);
         if ($disallowedChildNodesCount > 0) {
             $taskDescription = sprintf('Remove <i>%d</i> disallowed node%s.', $disallowedChildNodesCount, $disallowedChildNodesCount > 1 ? 's' : '');
-            $taskClosure = function() use ($nodes, $workspaceName) {
+            $taskClosure = function () use ($nodes, $workspaceName) {
                 foreach ($nodes as $node) {
                     $this->removeNodeAndChildNodesInWorkspaceByPath($node->getPath(), $workspaceName);
                 }
@@ -689,7 +689,7 @@ HELPTEXT;
         }
 
         $taskDescription = sprintf('Remove <i>%d</i> orphan node%s', $nodesToBeRemoved, $nodesToBeRemoved > 1 ? 's' : '');
-        $taskClosure = function() use ($nodes, $workspaceName) {
+        $taskClosure = function () use ($nodes, $workspaceName) {
             foreach ($nodes as $node) {
                 $this->removeNodeAndChildNodesInWorkspaceByPath($node['path'], $workspaceName);
             }
@@ -743,7 +743,7 @@ HELPTEXT;
 
         if ($undefinedPropertiesCount > 0) {
             $taskDescription = sprintf('Remove <i>%d</i> undefined propert%s.', $undefinedPropertiesCount, $undefinedPropertiesCount > 1 ? 'ies' : 'y');
-            $taskClosure = function() use ($nodesWithUndefinedPropertiesNodes) {
+            $taskClosure = function () use ($nodesWithUndefinedPropertiesNodes) {
                 foreach ($nodesWithUndefinedPropertiesNodes as $nodesWithUndefinedPropertiesNode) {
                     /** @var NodeInterface $node */
                     $node = $nodesWithUndefinedPropertiesNode['node'];
@@ -830,7 +830,7 @@ HELPTEXT;
             return;
         }
         $taskDescription = sprintf('Remove <i>%d</i> broken entity reference%s.', $brokenReferencesCount, $brokenReferencesCount > 1 ? 's' : '');
-        $taskClosure = function() use ($nodesWithBrokenEntityReferences) {
+        $taskClosure = function () use ($nodesWithBrokenEntityReferences) {
             foreach ($nodesWithBrokenEntityReferences as $nodeIdentifier => $properties) {
                 foreach ($properties as $propertyName => $nodeData) {
                     /** @var NodeData $nodeData */
@@ -948,7 +948,7 @@ HELPTEXT;
         }
         $numberOfNodes = count($nodesArray);
         $taskDescription = sprintf('Remove <i>%d</i> node%s with invalid dimension values', $numberOfNodes, $numberOfNodes > 1 ? 's' : '');
-        $taskClosure = function() use ($nodesArray) {
+        $taskClosure = function () use ($nodesArray) {
             foreach ($nodesArray as $nodeArray) {
                 $this->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
             }
@@ -1021,7 +1021,7 @@ HELPTEXT;
         }
         $numberOfNodes = count($nodesArray);
         $taskDescription = sprintf('Remove <i>%d</i> node%s referring to an invalid workspace.', $numberOfNodes, $numberOfNodes > 1 ? 's' : '');
-        $taskClosure = function() use ($nodesArray) {
+        $taskClosure = function () use ($nodesArray) {
             foreach ($nodesArray as $nodeArray) {
                 $this->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
             }
@@ -1112,7 +1112,7 @@ HELPTEXT;
 
         $numberOfNodes = count($nodesArray);
         $taskDescription = sprintf('Fix identifier%s of %s node%s', $numberOfNodes > 1 ? 's' : '', $numberOfNodes, $numberOfNodes > 1 ? 's' : '');
-        $taskClosure = function() use ($nodesArray) {
+        $taskClosure = function () use ($nodesArray) {
             foreach ($nodesArray as $nodeArray) {
                 /** @var QueryBuilder $queryBuilder */
                 $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -1206,7 +1206,7 @@ HELPTEXT;
                     if ($childNode) {
                         if ($childNodeBefore && $childNodeBefore->getIndex() >= $childNode->getIndex()) {
                             $taskDescription = sprintf('Move node named "<i>%s</i>" after node named "<i>%s</i>" in "<i>%s</i>"', $childNodeName, $childNodeBefore->getName(), $node->getPath());
-                            $taskClosure = function() use ($childNode, $childNodeBefore) {
+                            $taskClosure = function () use ($childNode, $childNodeBefore) {
                                 $childNode->moveAfter($childNodeBefore);
                             };
                             $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
@@ -1249,7 +1249,7 @@ HELPTEXT;
         $numberOfNewShadowNodes = count($newShadowNodes);
 
         $taskDescription = sprintf('Add <i>%d</i> missing shadow node%s', $numberOfNewShadowNodes, $numberOfNewShadowNodes > 1 ? 's' : '');
-        $taskClosure = function() use ($newShadowNodes) {
+        $taskClosure = function () use ($newShadowNodes) {
             /** @var NodeData $nodeData */
             foreach ($newShadowNodes as list('nodeData' => $nodeData, 'shadowPath' => $shadowPath)) {
                 $nodeData->createShadow($shadowPath);

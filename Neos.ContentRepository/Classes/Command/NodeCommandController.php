@@ -138,10 +138,10 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      */
     private function attachPluginEventHandlers(EventDispatchingNodeCommandControllerPluginInterface $plugin, bool $dryRun)
     {
-        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_NOTICE, function(string $text) {
+        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_NOTICE, function (string $text) {
             $this->outputLine($text);
         });
-        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_TASK, function(string $description, \Closure $task, bool $requiresConfirmation = false) use ($dryRun) {
+        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_TASK, function (string $description, \Closure $task, bool $requiresConfirmation = false) use ($dryRun) {
             $text = sprintf(' <b>❱ %s</b> ', $description);
 
             if (!$dryRun && $requiresConfirmation) {
@@ -160,10 +160,10 @@ class NodeCommandController extends CommandController implements DescriptionAwar
                 $this->outputLine('    <success>applied ✔</success>');
             }
         });
-        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_WARNING, function(string $text) {
+        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_WARNING, function (string $text) {
             $this->outputLine('<comment>WARNING: %s</comment>', [$text]);
         });
-        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_ERROR, function($text) {
+        $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_ERROR, function (string $text) {
             $this->outputLine('<error>%s</error>', [$text]);
             $this->quit(1);
         });
