@@ -177,8 +177,7 @@ class GraphProjector implements ProjectorInterface
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
         array $propertyDefaultValuesAndTypes,
         NodeName $nodeName
-    )
-    {
+    ) {
         $nodeRelationAnchorPoint = new NodeRelationAnchorPoint();
         $node = new Node(
             $nodeRelationAnchorPoint,
@@ -254,8 +253,7 @@ class GraphProjector implements ProjectorInterface
         NodeName $relationName = null,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet
-    ): void
-    {
+    ): void {
         foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
             $position = $this->getRelationPosition(
                 $parentNodeAnchorPoint,
@@ -294,8 +292,7 @@ class GraphProjector implements ProjectorInterface
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int
-    {
+    ): int {
         $position = $this->projectionContentGraph->determineHierarchyRelationPosition($parentAnchorPoint, $childAnchorPoint, $succeedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
 
         if ($position % 2 !== 0) {
@@ -320,8 +317,7 @@ class GraphProjector implements ProjectorInterface
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int
-    {
+    ): int {
         if (!$childAnchorPoint && !$parentAnchorPoint) {
             throw new \InvalidArgumentException('You must either specify a parent or child node anchor to get relation positions after recalculation.', 1519847858);
         }
@@ -769,5 +765,4 @@ class GraphProjector implements ProjectorInterface
     {
         return $this->client->getConnection();
     }
-
 }

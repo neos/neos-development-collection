@@ -11,7 +11,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The hierarchy traversal direction value object

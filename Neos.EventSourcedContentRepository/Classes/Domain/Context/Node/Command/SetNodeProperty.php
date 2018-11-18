@@ -105,5 +105,4 @@ final class SetNodeProperty
     {
         return $this->value;
     }
-
 }

@@ -11,19 +11,10 @@ namespace Neos\EventSourcedNeosAdjustments\View;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Response;
 use Neos\Flow\I18n\Locale;
-use Neos\Flow\I18n\Service;
-use Neos\Flow\Mvc\View\AbstractView;
-use Neos\Neos\Domain\Service\FusionService;
-use Neos\Neos\Exception;
 use Neos\ContentRepository\Domain\Model\NodeInterface as LegacyNodeInterface;
-use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
-use Neos\Flow\Security\Context;
 
 /**
  * A Fusion view for Neos
@@ -45,22 +36,22 @@ class FusionView extends \Neos\Neos\View\FusionView
 
         if ($currentNode instanceof LegacyNodeInterface) {
             $dimensions = $currentNode->getContext()->getDimensions();
-            if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
+            if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
                 $currentLocale = new Locale($dimensions['language'][0]);
                 $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-                $this->i18nService->getConfiguration()->setFallbackRule(array('strict' => false, 'order' => array_reverse($dimensions['language'])));
+                $this->i18nService->getConfiguration()->setFallbackRule(['strict' => false, 'order' => array_reverse($dimensions['language'])]);
             }
         } else {
             // TODO: special case for Language DimensionSpacePoint!
         }
 
-        $fusionRuntime->pushContextArray(array(
+        $fusionRuntime->pushContextArray([
             'node' => $currentNode,
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSiteNode,
             'subgraph' => $this->getCurrentSubgraph(),
             'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
-        ));
+        ]);
         try {
             $output = $fusionRuntime->render($this->fusionPath);
             $output = $this->mergeHttpResponseFromOutput($output, $fusionRuntime);

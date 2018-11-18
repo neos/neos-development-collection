@@ -76,7 +76,8 @@ final class CreateWorkspace
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->contentStreamIdentifier = $contentStreamIdentifier ?: new ContentStreamIdentifier();;
+        $this->contentStreamIdentifier = $contentStreamIdentifier ?: new ContentStreamIdentifier();
+        ;
         $this->workspaceOwner = $workspaceOwner;
     }
 

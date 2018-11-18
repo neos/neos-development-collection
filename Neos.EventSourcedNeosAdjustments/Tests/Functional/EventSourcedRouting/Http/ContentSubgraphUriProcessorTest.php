@@ -29,7 +29,6 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUri
 use Neos\Utility\Exception\PropertyNotAccessibleException;
 use Neos\Utility\ObjectAccess;
 
-
 class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 {
     public function setUp()

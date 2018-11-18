@@ -23,7 +23,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The interface to be implemented by content subgraphs

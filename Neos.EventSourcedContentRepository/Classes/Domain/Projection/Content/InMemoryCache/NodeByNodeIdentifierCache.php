@@ -15,7 +15,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 
-
 /**
  * NodeIdentifier -> Node cache
  *
@@ -23,7 +22,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
  */
 final class NodeByNodeIdentifierCache
 {
-
     protected $nodes = [];
     protected $nonExistingNodeIdentifiers = [];
 

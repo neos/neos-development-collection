@@ -16,7 +16,6 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
-
 /**
  * Parent Node Identifier + Node Name => Child Node
  */
@@ -45,6 +44,4 @@ final class NamedChildNodeByNodeIdentifierCache
     {
         return $this->nodes[(string)$parentNodeIdentifier][(string)$nodeName] ?? null;
     }
-
-
 }

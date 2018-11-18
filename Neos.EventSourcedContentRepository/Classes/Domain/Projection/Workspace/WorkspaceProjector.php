@@ -11,7 +11,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
 use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
@@ -24,7 +23,6 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
  */
 final class WorkspaceProjector implements ProjectorInterface
 {
-
     private const TABLE_NAME = 'neos_contentrepository_projection_workspace_v1';
 
     /**
@@ -69,7 +67,7 @@ final class WorkspaceProjector implements ProjectorInterface
      */
     public function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event)
     {
-       $this->dbal->insert(self::TABLE_NAME, [
+        $this->dbal->insert(self::TABLE_NAME, [
             'workspaceName' => $event->getWorkspaceName(),
             'workspaceTitle' => $event->getWorkspaceTitle(),
             'workspaceDescription' => $event->getWorkspaceDescription(),
@@ -91,7 +89,7 @@ final class WorkspaceProjector implements ProjectorInterface
 
     public function reset(): void
     {
-        $this->dbal->transactional(function() {
+        $this->dbal->transactional(function () {
             $this->dbal->exec('TRUNCATE ' . self::TABLE_NAME);
         });
     }

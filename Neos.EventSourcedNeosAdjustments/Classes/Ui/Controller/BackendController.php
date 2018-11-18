@@ -200,7 +200,8 @@ class BackendController extends ActionController
      */
     protected $contentDimensionSource;
 
-    protected function findDefaultDimensionSpacePoint(): DimensionSpacePoint {
+    protected function findDefaultDimensionSpacePoint(): DimensionSpacePoint
+    {
         $coordinates = [];
         foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $dimension) {
             $coordinates[(string)$dimension->getIdentifier()] = (string)$dimension->getDefaultValue();

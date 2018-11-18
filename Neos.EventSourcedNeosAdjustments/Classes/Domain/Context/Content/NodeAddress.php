@@ -12,12 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A persistent, external "address" of a node; used to link to it.
@@ -118,7 +116,8 @@ final class NodeAddress
         return $this->workspaceName->jsonSerialize() . '__' . $this->dimensionSpacePoint->serializeForUri() . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
     }
 
-    public function isInLiveWorkspace(): bool {
+    public function isInLiveWorkspace(): bool
+    {
         return $this->workspaceName != null && $this->workspaceName->isLive();
     }
 

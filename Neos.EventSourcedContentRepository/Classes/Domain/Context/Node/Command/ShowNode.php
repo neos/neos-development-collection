@@ -56,5 +56,4 @@ final class ShowNode
     {
         return $this->nodeIdentifier;
     }
-
 }

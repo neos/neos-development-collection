@@ -983,7 +983,6 @@ order by level asc, position asc;')
         }
 
         return $subtreesByNodeIdentifier['ROOT'];
-
     }
 
     public function getInMemoryCache(): InMemoryCache

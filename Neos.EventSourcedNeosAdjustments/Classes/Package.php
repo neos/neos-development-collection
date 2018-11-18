@@ -32,6 +32,3 @@ class Package extends BasePackage
         $dispatcher->connect(AuthenticationProviderManager::class, 'authenticatedToken', EditorContentStreamZookeeper::class, 'relayEditorAuthentication');
     }
 }
-
-
-

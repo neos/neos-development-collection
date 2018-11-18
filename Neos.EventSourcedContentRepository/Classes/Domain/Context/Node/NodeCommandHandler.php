@@ -848,5 +848,4 @@ final class NodeCommandHandler
             $occupiedDimensionSpacePoints
         );
     }
-
 }

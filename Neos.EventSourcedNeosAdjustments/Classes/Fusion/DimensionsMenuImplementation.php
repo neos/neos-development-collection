@@ -107,7 +107,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
 
         if ($this->getContentDimensionIdentifierToLimitTo() && $this->getValuesToRestrictTo()) {
             $order = array_flip($this->getValuesToRestrictTo());
-            usort($menuItems, function(array $menuItemA, array $menuItemB) use ($order) {
+            usort($menuItems, function (array $menuItemA, array $menuItemB) use ($order) {
                 return $order[$menuItemA['subgraph']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())]
                     <=> $order[$menuItemB['subgraph']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())];
             });

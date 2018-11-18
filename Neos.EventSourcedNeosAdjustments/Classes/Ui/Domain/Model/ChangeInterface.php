@@ -13,7 +13,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
-
 /**
  * An interface to describe a change
  */

@@ -164,5 +164,4 @@ class HierarchyRelation
             'dimensionspacepointhash' => $this->dimensionSpacePointHash
         ];
     }
-
 }

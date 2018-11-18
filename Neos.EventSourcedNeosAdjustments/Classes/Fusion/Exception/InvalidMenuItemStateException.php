@@ -1,7 +1,6 @@
 <?php
 namespace Neos\EventSourcedNeosAdjustments\Fusion\Exception;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 
 /**

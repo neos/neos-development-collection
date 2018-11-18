@@ -410,7 +410,6 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      */
     public function uri(NodeAddress $nodeAddress, ControllerContext $controllerContext)
     {
-
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
@@ -418,9 +417,8 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             ->reset()
             ->setFormat('html')
             ->setCreateAbsoluteUri(true)
-            ->uriFor('show', array('node' => $nodeAddress), 'Frontend\Node', 'Neos.Neos');
+            ->uriFor('show', ['node' => $nodeAddress], 'Frontend\Node', 'Neos.Neos');
         return $uri;
-
     }
 
     /**

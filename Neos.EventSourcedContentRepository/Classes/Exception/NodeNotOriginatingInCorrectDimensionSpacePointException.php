@@ -13,7 +13,6 @@ namespace Neos\EventSourcedContentRepository\Exception;
 
 use Neos\Flow\Exception;
 
-
 class NodeNotOriginatingInCorrectDimensionSpacePointException extends Exception
 {
 }

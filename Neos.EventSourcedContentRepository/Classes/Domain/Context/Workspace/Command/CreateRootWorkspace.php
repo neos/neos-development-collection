@@ -137,5 +137,4 @@ final class CreateRootWorkspace
     {
         return $this->rootNodeTypeName;
     }
-
 }

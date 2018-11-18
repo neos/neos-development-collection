@@ -27,7 +27,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 
-
 /**
  * Implementation detail of ContentGraph and ContentSubgraph
  *

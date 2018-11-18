@@ -12,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui;
  * source code.
  */
 
-use Neos\EventSourcedNeosAdjustments\Ui\Controller\BackendController;
 use Neos\EventSourcedNeosAdjustments\Ui\Controller\BackendServiceController;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;

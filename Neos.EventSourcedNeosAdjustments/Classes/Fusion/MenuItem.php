@@ -2,7 +2,6 @@
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A menu item

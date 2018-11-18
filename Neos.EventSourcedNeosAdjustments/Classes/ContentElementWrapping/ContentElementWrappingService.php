@@ -220,4 +220,3 @@ class ContentElementWrappingService
         return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)->getWorkspaceName()->isLive();
     }
 }
-

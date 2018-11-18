@@ -173,8 +173,6 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             if (!$parentOfMatchingNodeIsSitesNode) {
                 return false;
             }
-
-
         }
 
 
@@ -360,7 +358,6 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             } else {
                 throw new \Exception("TODO: Workspace not found for CS " . $nodeAddress->getContentStreamIdentifier());
             }
-
         }
         $uriConstraints = $this->contentSubgraphUriProcessor->resolveDimensionUriConstraints($nodeAddress, $isSiteNode);
 

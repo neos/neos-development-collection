@@ -176,13 +176,10 @@ class ContentRepositoryExportService
             $this->exportNodeData($nodeData, null, $nodeDatasToExportAtNextIteration);
         }
         var_dump("NODE DATAS IN NEXT ITER: " . count($nodeDatasToExportAtNextIteration));
-
-
     }
 
     protected function exportNodeData(NodeData $nodeData, DimensionSpacePoint $dimensionRestriction = null, &$nodeDatasToExportAtNextIteration)
     {
-
         $nodePath = new NodePath($nodeData->getPath());
 
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($nodeData->getDimensionValues());
@@ -230,8 +227,7 @@ class ContentRepositoryExportService
         array $propertyValues,
         array $propertyReferences,
         NodePath $nodePath
-    )
-    {
+    ) {
         $visibleInDimensionSpacePoints = $this->interDimensionalFallbackGraph->getSpecializationSet($dimensionSpacePoint, true, $excludedSet);
         $this->recordNodeIdentifier($nodePath, $dimensionSpacePoint, $nodeIdentifier);
 
@@ -272,7 +268,6 @@ class ContentRepositoryExportService
                 new PropertyName($propertyName),
                 $references
             ));
-
         }
 
         $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = true;
@@ -334,10 +329,12 @@ class ContentRepositoryExportService
         foreach ($nodeData->getProperties() as $propertyName => $propertyValue) {
             $type = $nodeData->getNodeType()->getPropertyType($propertyName);
             if ($type == 'reference') {
-               $references[$propertyName] = [new NodeAggregateIdentifier($propertyValue)];
+                $references[$propertyName] = [new NodeAggregateIdentifier($propertyValue)];
             }
             if ($type == 'references' && is_array($propertyValue)) {
-               $references[$propertyName] = array_map(function($identifier) { return new NodeAggregateIdentifier($identifier); }, $propertyValue);
+                $references[$propertyName] = array_map(function ($identifier) {
+                    return new NodeAggregateIdentifier($identifier);
+                }, $propertyValue);
             }
         }
         return $references;
@@ -434,6 +431,5 @@ class ContentRepositoryExportService
             new NodeTypeName('Neos.Neos:Sites'),
             UserIdentifier::forSystemUser()
         ));
-
     }
 }

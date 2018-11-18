@@ -11,7 +11,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodePropertyCollection;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -19,21 +18,12 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\EventSourcing\Event\Decorator\EventWithMetadata;
-use Neos\EventSourcing\Event\EventInterface;
-use Neos\EventSourcing\Event\EventPublisher;
-use Neos\EventSourcing\EventStore\ExpectedVersion;
-use Neos\EventSourcing\TypeConverter\EventToArrayConverter;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Property\PropertyMappingConfiguration;
 
 /**
  * The "new" Event-Sourced NodeInterface. Supersedes the old Neos\EventSourcedContentRepository\Domain\Model\NodeInterface.
  */
 interface ReadOnlyNodeInterface
 {
-
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
 
     public function getNodeIdentifier(): NodeIdentifier;
