@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
+namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,91 +14,82 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
 /**
- * A node aggregate with its initial node was created
+ * Node aggregate with node was created event
  */
 final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
+
     /**
-     * The content stream identifier the node aggregate and its node were created in
-     *
      * @var ContentStreamIdentifier
      */
     private $contentStreamIdentifier;
 
     /**
-     * The origin dimension space point the node aggregate and its node were created in
+     * @var NodeAggregateIdentifier
+     */
+    private $nodeAggregateIdentifier;
+
+    /**
+     * @var NodeTypeName
+     */
+    private $nodeTypeName;
+
+    /**
+     * Location of the node in the dimension space
      *
      * @var DimensionSpacePoint
      */
     private $dimensionSpacePoint;
 
     /**
-     * The dimension space points the node aggregate and its node are visible in
+     * Visibility of node in the dimension space
      *
      * @var DimensionSpacePointSet
      */
     private $visibleInDimensionSpacePoints;
 
     /**
-     * The node aggregate's identifier
-     *
-     * @var NodeAggregateIdentifier
+     * @var NodeIdentifier
      */
-    private $nodeAggregateIdentifier;
+    private $nodeIdentifier;
 
     /**
-     * The node aggregate type's name
-     *
-     * @var NodeTypeName
+     * @var NodeIdentifier
      */
-    private $nodeTypeName;
+    private $parentNodeIdentifier;
 
     /**
-     * The parent node aggregate's identifier
-     *
-     * @var NodeAggregateIdentifier
-     */
-    private $parentNodeAggregateIdentifier;
-
-    /**
-     * The node aggregate's name
-     *
      * @var NodeName
      */
     private $nodeName;
 
     /**
-     * The node's initial property values
+     * (property name => PropertyValue)
      *
-     * @var PropertyValues
+     * @var array<PropertyValue>
      */
-    private $initialPropertyValues;
+    private $propertyDefaultValuesAndTypes;
 
     /**
-     * The node's succeeding sibling's node aggregate identifier
+     * NodeAggregateWithNodeWasCreated constructor.
      *
-     * @var NodeAggregateIdentifier
-     */
-    private $succeedingNodeAggregateIdentifier;
-
-    /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeName $nodeTypeName
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeIdentifier $parentNodeIdentifier
      * @param NodeName $nodeName
-     * @param PropertyValues $propertyDefaultValues
-     * @param NodeAggregateIdentifier|null $succeedingNodeAggregateIdentifier
+     * @param array<Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue> $propertyDefaultValuesAndTypes
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -106,68 +97,100 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
         NodeTypeName $nodeTypeName,
         DimensionSpacePoint $dimensionSpacePoint,
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeIdentifier $nodeIdentifier,
+        NodeIdentifier $parentNodeIdentifier,
         NodeName $nodeName,
-        PropertyValues $propertyDefaultValues,
-        NodeAggregateIdentifier $succeedingNodeAggregateIdentifier = null
+        array $propertyDefaultValuesAndTypes
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
-        $this->parentNodeAggregateIdentifier = $parentNodeAggregateIdentifier;
+        $this->nodeIdentifier = $nodeIdentifier;
+        $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeName = $nodeName;
-        $this->initialPropertyValues = $propertyDefaultValues;
-        $this->succeedingNodeAggregateIdentifier = $succeedingNodeAggregateIdentifier;
+        $this->propertyDefaultValuesAndTypes = $propertyDefaultValuesAndTypes;
+        foreach ($propertyDefaultValuesAndTypes as $propertyName => $property) {
+            if (!$property instanceof PropertyValue) {
+                throw new \InvalidArgumentException(sprintf('Property %s was not of type PropertyValue', $propertyName));
+            }
+        }
     }
 
+    /**
+     * @return ContentStreamIdentifier
+     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
+    /**
+     * @return NodeAggregateIdentifier
+     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
+    /**
+     * @return NodeTypeName
+     */
     public function getNodeTypeName(): NodeTypeName
     {
         return $this->nodeTypeName;
     }
 
+    /**
+     * @return DimensionSpacePoint
+     */
     public function getDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->dimensionSpacePoint;
     }
 
+    /**
+     * @return DimensionSpacePointSet
+     */
     public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
     {
         return $this->visibleInDimensionSpacePoints;
     }
 
-    public function getParentNodeAggregateIdentifier(): NodeAggregateIdentifier
+    /**
+     * @return NodeIdentifier
+     */
+    public function getNodeIdentifier(): NodeIdentifier
     {
-        return $this->parentNodeAggregateIdentifier;
+        return $this->nodeIdentifier;
     }
 
+    /**
+     * @return NodeIdentifier
+     */
+    public function getParentNodeIdentifier(): NodeIdentifier
+    {
+        return $this->parentNodeIdentifier;
+    }
+
+    /**
+     * @return NodeName
+     */
     public function getNodeName(): NodeName
     {
         return $this->nodeName;
     }
 
-    public function getInitialPropertyValues(): PropertyValues
+    /**
+     * @return array
+     */
+    public function getPropertyDefaultValuesAndTypes(): array
     {
-        return $this->initialPropertyValues;
+        return $this->propertyDefaultValuesAndTypes;
     }
 
-    public function getSucceedingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
-    {
-        return $this->succeedingNodeAggregateIdentifier;
-    }
-
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeAggregateWithNodeWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
         return new NodeAggregateWithNodeWasCreated(
             $targetContentStream,
@@ -175,10 +198,10 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
             $this->nodeTypeName,
             $this->dimensionSpacePoint,
             $this->visibleInDimensionSpacePoints,
-            $this->parentNodeAggregateIdentifier,
+            $this->nodeIdentifier,
+            $this->parentNodeIdentifier,
             $this->nodeName,
-            $this->initialPropertyValues,
-            $this->succeedingNodeAggregateIdentifier
+            $this->propertyDefaultValuesAndTypes
         );
     }
 }

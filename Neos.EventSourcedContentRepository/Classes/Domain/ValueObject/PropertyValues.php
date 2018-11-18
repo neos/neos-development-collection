@@ -11,58 +11,27 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
-final class PropertyValues implements \JsonSerializable, \IteratorAggregate
+final class PropertyValues implements \JsonSerializable
 {
+
     /**
-     * @var array|PropertyValue[]
+     * @var PropertyValue[]
      */
     private $values;
 
     /**
-     * @var \ArrayIterator
-     */
-    protected $iterator;
-
-    /**
-     * @param array|PropertyValue[] $values
+     * @param array $values
      */
     public function __construct(array $values)
     {
-        foreach ($values as $propertyName => $propertyValue) {
-            $propertyName = new PropertyName($propertyName);
-            if (!$propertyValue instanceof PropertyValue) {
-                throw new \InvalidArgumentException('PropertyValues objects can only be composed of PropertyValue objects.');
-            }
-            $this->values[(string) $propertyName] = $propertyValue;
-        }
-        $this->iterator = new \ArrayIterator($this->values);
+        // TODO
+        $this->values = $values;
     }
 
-    public static function jsonUnserialize(array $jsonArray): PropertyValues
+    public function jsonSerialize()
     {
-        return new PropertyValues($jsonArray);
-    }
-
-    public function merge(PropertyValues $other): PropertyValues
-    {
-        return new PropertyValues(array_merge($this->values, $other->getValues()));
-    }
-
-    /**
-     * @return array|PropertyValue[]
-     */
-    public function getValues(): array
-    {
-        return $this->values;
-    }
-
-    public function jsonSerialize(): array
-    {
-        return $this->values;
-    }
-
-    public function getIterator(): \ArrayIterator
-    {
-        return $this->iterator;
+        return [
+            'values' => $this->values,
+        ];
     }
 }

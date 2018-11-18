@@ -11,19 +11,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasMoved;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStream;
 use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
@@ -56,14 +48,10 @@ final class NodeAggregate
     protected $streamName;
 
     /**
-     * @var EventStream
-     */
-    protected $eventStream;
-
-    /**
      * @var NodeEventPublisher
      */
     protected $nodeEventPublisher;
+
 
     public function __construct(NodeAggregateIdentifier $identifier, EventStore $eventStore, string $streamName, NodeEventPublisher $nodeEventPublisher)
     {
@@ -72,6 +60,7 @@ final class NodeAggregate
         $this->streamName = $streamName;
         $this->nodeEventPublisher = $nodeEventPublisher;
     }
+
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
@@ -93,143 +82,6 @@ final class NodeAggregate
         if ($this->isDimensionSpacePointOccupied($dimensionSpacePoint)) {
             throw new DimensionSpacePointIsAlreadyOccupied('The target dimension space point "' . $dimensionSpacePoint . '" is already occupied', 1521314881);
         }
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
-     * @param UserIdentifier $initiatingUserIdentifier
-     * @param NodeName|null $nodeName
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     */
-    public function createRootWithNode(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeTypeName $nodeTypeName,
-        DimensionSpacePointSet $visibleDimensionSpacePoints,
-        UserIdentifier $initiatingUserIdentifier,
-        NodeName $nodeName = null
-    ): void {
-        if ($this->existsCurrently()) {
-            throw new NodeAggregateCurrentlyExists('Root node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541781941);
-        }
-
-        $this->nodeEventPublisher->publish(
-            $this->getStreamName(),
-            new RootNodeAggregateWithNodeWasCreated(
-                $contentStreamIdentifier,
-                $this->identifier,
-                $nodeTypeName,
-                $visibleDimensionSpacePoints,
-                $initiatingUserIdentifier,
-                $nodeName
-            )
-        );
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeName $nodeName
-     * @param PropertyValues $initialPropertyValues
-     * @param NodeAggregateIdentifier|null $precedingNodeAggregateIdentifier
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     * @throw NodeAggregateCurrentlyExists
-     */
-    public function createWithNode(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeTypeName $nodeTypeName,
-        DimensionSpacePoint $originDimensionSpacePoint,
-        DimensionSpacePointSet $visibleDimensionSpacePoints,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        NodeName $nodeName,
-        PropertyValues $initialPropertyValues,
-        NodeAggregateIdentifier $precedingNodeAggregateIdentifier = null
-    ): void {
-        if ($this->existsCurrently()) {
-            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541679244);
-        }
-
-        $this->nodeEventPublisher->publish(
-            $this->getStreamName(),
-            new NodeAggregateWithNodeWasCreated(
-                $contentStreamIdentifier,
-                $this->identifier,
-                $nodeTypeName,
-                $originDimensionSpacePoint,
-                $visibleDimensionSpacePoints,
-                $parentNodeAggregateIdentifier,
-                $nodeName,
-                $initialPropertyValues,
-                $precedingNodeAggregateIdentifier
-            )
-        );
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeName $nodeName
-     * @param PropertyValues $initialPropertyValues
-     * @param NodeAggregateIdentifier|null $precedingNodeAggregateIdentifier
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     * @throw NodeAggregateCurrentlyExists
-     */
-    public function autoCreateWithNode(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeTypeName $nodeTypeName,
-        DimensionSpacePoint $originDimensionSpacePoint,
-        DimensionSpacePointSet $visibleDimensionSpacePoints,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        NodeName $nodeName,
-        PropertyValues $initialPropertyValues,
-        NodeAggregateIdentifier $precedingNodeAggregateIdentifier = null
-    ): void {
-        if ($this->existsCurrently()) {
-            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541755683);
-        }
-
-        $this->nodeEventPublisher->publish(
-            $this->getStreamName(),
-            new NodeAggregateWithNodeWasCreated(
-                $contentStreamIdentifier,
-                $this->identifier,
-                $nodeTypeName,
-                $originDimensionSpacePoint,
-                $visibleDimensionSpacePoints,
-                $parentNodeAggregateIdentifier,
-                $nodeName,
-                $initialPropertyValues,
-                $precedingNodeAggregateIdentifier
-            )
-        );
-    }
-
-    public function existsCurrently(): bool
-    {
-        $existsCurrently = false;
-
-        $this->traverseEventStream(function(EventInterface $event) use(&$existsCurrently) {
-            switch (get_class($event)) {
-                case NodeAggregateWithNodeWasCreated::class:
-                    $existsCurrently = true;
-                    break;
-                // @todo handle NodeWasDeleted for toggling to false
-                default:
-                    continue;
-            }
-        });
-
-        return $existsCurrently;
     }
 
     public function getOccupiedDimensionSpacePoints(): DimensionSpacePointSet
@@ -327,68 +179,6 @@ final class NodeAggregate
         return $dimensionSpacePointOccupied;
     }
 
-    /**
-     * @return array|NodeAggregateIdentifier[]
-     */
-    public function getParentIdentifiers(): array
-    {
-        $parentIdentifiers = [];
-        $this->traverseEventStream(function(EventInterface $event) use(&$parentIdentifiers) {
-            switch (get_class($event)) {
-                case NodeAggregateWithNodeWasCreated::class:
-                    /** @var NodeAggregateWithNodeWasCreated $event */
-                    foreach ($event->getVisibleInDimensionSpacePoints() as $dimensionSpacePoint) {
-                        $parentIdentifiers[(string) $dimensionSpacePoint] = $event->getParentNodeAggregateIdentifier();
-                    }
-                    break;
-                case NodeWasMoved::class:
-                    // @todo implement me
-                default:
-                    continue;
-            }
-        });
-
-        return $parentIdentifiers;
-    }
-
-    public function getNodeTypeName(): ?NodeTypeName
-    {
-        $nodeTypeName = null;
-        $this->traverseEventStream(function(EventInterface $event) use(&$nodeTypeName) {
-            switch (get_class($event)) {
-                case NodeAggregateWithNodeWasCreated::class:
-                    /** @var NodeAggregateWithNodeWasCreated $event */
-                    $nodeTypeName = $event->getNodeTypeName();
-                    break;
-                // @todo handle NodeAggregateTypeWasChanged
-                // @todo handle NodeWasDeleted for nulling
-                default:
-                    continue;
-            }
-        });
-
-        return $nodeTypeName;
-    }
-
-    public function getNodeName(): ?NodeName
-    {
-        $nodeName = null;
-        $this->traverseEventStream(function(EventInterface $event) use(&$nodeName) {
-            switch (get_class($event)) {
-                case NodeAggregateWithNodeWasCreated::class:
-                    /** @var NodeAggregateWithNodeWasCreated $event */
-                    $nodeName = $event->getNodeName();
-                    break;
-                // @todo handle NodeAggregateNameWasChanged
-                // @todo handle NodeWasDeleted for nulling
-                default:
-                    continue;
-            }
-        });
-
-        return $nodeName;
-    }
-
     public function getIdentifier(): NodeAggregateIdentifier
     {
         return $this->identifier;
@@ -399,24 +189,12 @@ final class NodeAggregate
         return $this->streamName;
     }
 
-    protected function traverseEventStream(callable $callback): void
+    protected function getEventStream(): ?EventStream
     {
-        foreach ($this->getEventStream() as $eventAndRawEvent) {
-            $event = $eventAndRawEvent->getEvent();
-            $callback($event);
+        try {
+            return $this->eventStore->get(new StreamNameFilter($this->streamName));
+        } catch (EventStreamNotFoundException $eventStreamNotFound) {
+            return null;
         }
-    }
-
-    protected function getEventStream(): EventStream
-    {
-        if (is_null($this->eventStream)) {
-            try {
-                $this->eventStream = $this->eventStore->get(new StreamNameFilter($this->streamName));
-            } catch (EventStreamNotFoundException $eventStreamNotFound) {
-                $this->eventStream = new EventStream(new \ArrayIterator());
-            }
-        }
-
-        return $this->eventStream;
     }
 }

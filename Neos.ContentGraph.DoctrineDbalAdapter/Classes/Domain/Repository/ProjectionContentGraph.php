@@ -14,7 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeAggregate;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
@@ -57,10 +57,10 @@ class ProjectionContentGraph
     /**
      * @param NodeIdentifier $nodeIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @return NodeRecord|null
+     * @return Node|null
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function getNode(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier): ?NodeRecord
+    public function getNode(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier): ?Node
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.*, h.name FROM neos_contentgraph_node n
@@ -85,20 +85,20 @@ class ProjectionContentGraph
             )->fetch();
 
             // We always allow root nodes
-            return $nodeRow && empty($nodeRow['dimensionspacepointhash']) ? NodeRecord::fromDatabaseRow($nodeRow) : null;
+            return $nodeRow && empty($nodeRow['dimensionspacepointhash']) ? Node::fromDatabaseRow($nodeRow) : null;
         }
 
-        return NodeRecord::fromDatabaseRow($nodeRow);
+        return Node::fromDatabaseRow($nodeRow);
     }
 
     /**
      * @param NodeIdentifier $childNodeIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return NodeRecord|null
+     * @return Node|null
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function findParentNode(NodeIdentifier $childNodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): ?NodeRecord
+    public function findParentNode(NodeIdentifier $childNodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): ?Node
     {
         $params = [
             'childNodeIdentifier' => (string)$childNodeIdentifier,
@@ -118,18 +118,17 @@ class ProjectionContentGraph
             $params
         )->fetch();
 
-        return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
+        return $nodeRow ? Node::fromDatabaseRow($nodeRow) : null;
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return NodeRecord|null
+     * @return Node|null
      * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
      */
-    public function getNodeInAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $dimensionSpacePoint): ?NodeRecord
+    public function getNodeInAggregate(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): ?Node
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.*, h.name FROM neos_contentgraph_node n
@@ -138,22 +137,22 @@ class ProjectionContentGraph
  AND h.contentstreamidentifier = :contentStreamIdentifier
  AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
             ]
         )->fetch();
 
-        return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
+        return $nodeRow ? Node::fromDatabaseRow($nodeRow) : null;
     }
 
     /**
      * @param NodeIdentifier $nodeIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @return NodeRecord|null
+     * @return Node|null
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function getNodeByNodeIdentifierAndContentStream(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier): ?NodeRecord
+    public function getNodeByNodeIdentifierAndContentStream(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier): ?Node
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.*, h.name FROM neos_contentgraph_node n
@@ -166,7 +165,7 @@ class ProjectionContentGraph
             ]
         )->fetch();
 
-        return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
+        return $nodeRow ? Node::fromDatabaseRow($nodeRow) : null;
     }
 
 
@@ -237,10 +236,10 @@ class ProjectionContentGraph
 
     /**
      * @param NodeRelationAnchorPoint $nodeRelationAnchorPoint
-     * @return NodeRecord|null
+     * @return Node|null
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function getNodeByAnchorPoint(NodeRelationAnchorPoint $nodeRelationAnchorPoint): ?NodeRecord
+    public function getNodeByAnchorPoint(NodeRelationAnchorPoint $nodeRelationAnchorPoint): ?Node
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM neos_contentgraph_node n
@@ -250,7 +249,7 @@ class ProjectionContentGraph
             ]
         )->fetch();
 
-        return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
+        return $nodeRow ? Node::fromDatabaseRow($nodeRow) : null;
     }
 
     /**

@@ -13,7 +13,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -30,9 +29,9 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeIdentifier
      */
-    private $nodeAggregateIdentifier;
+    private $nodeIdentifier;
 
     /**
      * @var NodeTypeName
@@ -63,7 +62,7 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, DimensionSpacePointSet $visibleInDimensionSpacePoints, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeIdentifier;
+        $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
@@ -81,9 +80,9 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     /**
      * @return NodeIdentifier
      */
-    public function getNodeAggregateIdentifier(): NodeIdentifier
+    public function getNodeIdentifier(): NodeIdentifier
     {
-        return $this->nodeAggregateIdentifier;
+        return $this->nodeIdentifier;
     }
 
     /**
@@ -120,7 +119,7 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     {
         return new RootNodeWasCreated(
             $targetContentStream,
-            $this->nodeAggregateIdentifier,
+            $this->nodeIdentifier,
             $this->nodeTypeName,
             $this->visibleInDimensionSpacePoints,
             $this->initiatingUserIdentifier

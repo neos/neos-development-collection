@@ -16,6 +16,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 final class PropertyValue implements \JsonSerializable
 {
+
     /**
      * @var mixed
      */

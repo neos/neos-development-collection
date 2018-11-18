@@ -360,48 +360,6 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeName $nodeName
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param DimensionSpacePoint $parentNodeDimensionSpacePoint
-     * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
-     * @return DimensionSpacePointSet
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function getDimensionSpacePointsOccupiedByChildNodeName(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeName $nodeName,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        DimensionSpacePoint $parentNodeDimensionSpacePoint,
-        DimensionSpacePointSet $dimensionSpacePointsToCheck
-    ) {
-        $connection = $this->client->getConnection();
-
-        $query = 'SELECT h.dimensionspacepoint, h.dimensionspacepointhash FROM neos_contentgraph_hierarchyrelation h
-                      INNER JOIN neos_contentgraph_node n ON h.parentnodeanchor = n.relationanchorpoint
-                      INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = n.relationanchorpoint
-                      WHERE n.nodeaggregateidentifier = :parentNodeAggregateIdentifier
-                      AND n.dimensionspacepointhash = :parentNodeDimensionSpacePoint
-                      AND ph.contentstreamidentifier = :contentStreamIdentifier
-                      AND h.contentstreamidentifier = :contentStreamIdentifier
-                      AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)
-                      AND h.name = :nodeName';
-        $parameters = [
-            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
-            'parentNodeDimensionSpacePoint' => $parentNodeDimensionSpacePoint->getHash(),
-            'contentStreamIdentifier' => (string) $contentStreamIdentifier,
-            'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
-            'nodeName' => (string) $nodeName
-        ];
-        $dimensionSpacePoints = [];
-        foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $hierarchyRelationData) {
-            $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['dimensionspacepoint'], true));
-        }
-
-        return new DimensionSpacePointSet($dimensionSpacePoints);
-    }
-
-    /**
      * @param Domain\Context\Node\ReadOnlyNodeInterface $node
      * @return DimensionSpacePointSet
      * @throws \Doctrine\DBAL\DBALException

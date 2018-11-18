@@ -12,7 +12,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\ReferencePosition;
 use Neos\EventSourcing\Event\EventInterface;
@@ -31,7 +30,7 @@ final class NodeWasMoved implements EventInterface, CopyableAcrossContentStreams
     /**
      * @var NodeIdentifier
      */
-    private $nodeAggregateIdentifier;
+    private $nodeIdentifier;
 
     /**
      * @var ReferencePosition
@@ -39,9 +38,9 @@ final class NodeWasMoved implements EventInterface, CopyableAcrossContentStreams
     private $referencePosition;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeIdentifier
      */
-    private $referenceNodeAggregateIdentifier;
+    private $referenceNodeIdentifier;
 
     /**
      * NodeWasMoved constructor.
@@ -49,18 +48,18 @@ final class NodeWasMoved implements EventInterface, CopyableAcrossContentStreams
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
      * @param ReferencePosition $referencePosition
-     * @param NodeAggregateIdentifier $referenceNodeIdentifier
+     * @param NodeIdentifier $referenceNodeIdentifier
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeIdentifier $nodeIdentifier,
         ReferencePosition $referencePosition,
-        NodeAggregateIdentifier $referenceNodeIdentifier
+        NodeIdentifier $referenceNodeIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeIdentifier;
+        $this->nodeIdentifier = $nodeIdentifier;
         $this->referencePosition = $referencePosition;
-        $this->referenceNodeAggregateIdentifier = $referenceNodeIdentifier;
+        $this->referenceNodeIdentifier = $referenceNodeIdentifier;
     }
 
     /**
@@ -76,7 +75,7 @@ final class NodeWasMoved implements EventInterface, CopyableAcrossContentStreams
      */
     public function getNodeIdentifier(): NodeIdentifier
     {
-        return $this->nodeAggregateIdentifier;
+        return $this->nodeIdentifier;
     }
 
     /**
@@ -88,11 +87,11 @@ final class NodeWasMoved implements EventInterface, CopyableAcrossContentStreams
     }
 
     /**
-     * @return NodeAggregateIdentifier
+     * @return NodeIdentifier
      */
-    public function getReferenceNodeAggregateIdentifier(): NodeAggregateIdentifier
+    public function getReferenceNodeIdentifier(): NodeIdentifier
     {
-        return $this->referenceNodeAggregateIdentifier;
+        return $this->referenceNodeIdentifier;
     }
 
     /**
@@ -103,9 +102,9 @@ final class NodeWasMoved implements EventInterface, CopyableAcrossContentStreams
     {
         return new NodeWasMoved(
             $targetContentStream,
-            $this->nodeAggregateIdentifier,
+            $this->nodeIdentifier,
             $this->referencePosition,
-            $this->referenceNodeAggregateIdentifier
+            $this->referenceNodeIdentifier
         );
     }
 }

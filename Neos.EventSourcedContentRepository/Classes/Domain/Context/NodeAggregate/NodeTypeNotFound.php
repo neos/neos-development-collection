@@ -11,10 +11,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Exception;
 
 /**
  * The exception to be thrown if a given node type was not found
  */
-final class NodeTypeNotFound extends \OutOfBoundsException
+class NodeTypeNotFound extends Exception
 {
 }
