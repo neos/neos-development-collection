@@ -1,5 +1,7 @@
 # Event Sourced Content Repository Collection
 
+[![StyleCI](https://github.styleci.io/repos/151722585/shield?branch=master)](https://github.styleci.io/repos/151722585)
+
 This is the package bundle you can install alongside a plain Neos to play around with the event-sourced CR.
 
 ## Feature comparison
