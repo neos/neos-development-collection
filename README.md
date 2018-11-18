@@ -37,7 +37,16 @@ This is the package bundle you can install alongside a plain Neos to play around
 
 ## Getting Started / Installation
 
-1. In your distribution's `composer.json`, add this repository to the `repositories` section:
+1. Get started by cloning the [master branch of the neos-development-distribution](https://github.com/neos/neos-development-distribution/).
+
+2. Install Neos as usual:
+   - define a database in `Configuration/Settings.yaml`
+   - run `./flow doctrine:migrate`
+   - import the demo site using `./flow site:import --package-key=Neos.NeosDemo`
+   - create a backend user using `./flow user:create --roles Administrator admin password My Admin`
+   - ensure that when running `./flow server:run`, you get frontend output; and you can log into the backend.
+
+3. In your distribution's `composer.json`, add this repository to the `repositories` section:
 
     ```json
     {
@@ -54,7 +63,7 @@ This is the package bundle you can install alongside a plain Neos to play around
     }
     ```
 
-2. Adjust the distribution `composer.json` as follows:
+4. Adjust the distribution `composer.json` as follows:
 
     ```
     {
@@ -70,9 +79,9 @@ This is the package bundle you can install alongside a plain Neos to play around
     }
     ```
 
-3. Then, run `composer update`.
+5. Then, run `composer update`.
 
-4. If using dimensions, the dimension configuration has changed. Use the following configuration in `Settings.yaml` for the Demo site (Adjust as needed):
+6. If using dimensions, the dimension configuration has changed. Use the following configuration in `Settings.yaml` for the Demo site (Adjust as needed):
 
     ```yaml
     Neos:
@@ -118,11 +127,14 @@ This is the package bundle you can install alongside a plain Neos to play around
 
     ```
 
-4. create necessary tables using `./flow doctrine:migrate`
+7. create necessary tables using `./flow doctrine:migrate`
 
-5. create events from your (legacy) NodeData by running `./flow contentrepositorymigrate:run` - this also populates the projection
+8. create events from your (legacy) NodeData by running `./flow contentrepositorymigrate:run` - this also populates the projection.
 
-6. Do a manual UI rebuild due to https://github.com/neos/neos-ui/pull/2178 currently needed:
+   NOTE: The output of this command is still a little weird; showing lots of var_dumps. When this command does
+         not show a fatal error, it ran through successfully.
+
+9. Do a manual UI rebuild due to https://github.com/neos/neos-ui/pull/2178 currently needed:
 
     ```
     cd Packages/Application/Neos.Neos.Ui
@@ -130,7 +142,7 @@ This is the package bundle you can install alongside a plain Neos to play around
     make build
     ```
 
-7. Enable FrontendDevelopmentMode in `Settings.yaml`:
+10. Enable FrontendDevelopmentMode in `Settings.yaml`:
 
     ```
     Neos:
@@ -138,6 +150,13 @@ This is the package bundle you can install alongside a plain Neos to play around
         Ui:
           frontendDevelopmentMode: true
     ```
+
+11. The frontend should now work as expected. Test that the frontend rendering works.
+
+12. After logging into the backend, you will still see a fatal error. Manually remove the URL parameter, so that
+    the URL is like `` *without any URL parameters*  
+
+13. In case you want to start with clean events and a clean projection (after you did some changes), re-run `./flow contentrepositorymigrate:run`
 
 ## Road to first running alpha
 
