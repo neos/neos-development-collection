@@ -13,7 +13,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  */
 
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The node relation anchor value object

@@ -56,5 +56,4 @@ final class HideNode
     {
         return $this->nodeIdentifier;
     }
-
 }

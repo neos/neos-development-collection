@@ -18,7 +18,6 @@ class Version20180226165300 extends AbstractMigration
             'Migration can only be executed safely on "mysql".');
 
         $this->addSql('ALTER TABLE neos_contentgraph_node ADD `hidden` tinyint(1) NOT NULL');
-
     }
 
     public function down(Schema $schema)

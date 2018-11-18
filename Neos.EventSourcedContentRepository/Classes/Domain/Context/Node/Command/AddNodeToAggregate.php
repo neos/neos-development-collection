@@ -130,5 +130,4 @@ final class AddNodeToAggregate
     {
         return $this->nodeName;
     }
-
 }

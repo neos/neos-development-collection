@@ -16,7 +16,6 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The active record for reading and writing hierarchy relations from and to the database

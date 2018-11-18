@@ -11,10 +11,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A read model to read node aggregates from the projection

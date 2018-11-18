@@ -97,13 +97,13 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         string $markerToReplaceInQuery = null
     ): void {
         if ($nodeTypeConstraints) {
-            if (!empty ($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames())) {
+            if (!empty($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames())) {
                 $allowanceQueryPart = 'c.nodetypename IN (:explicitlyAllowedNodeTypeNames)';
                 $query->parameter('explicitlyAllowedNodeTypeNames', $nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames(), Connection::PARAM_STR_ARRAY);
             } else {
                 $allowanceQueryPart = '';
             }
-            if (!empty ($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
+            if (!empty($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
                 $disAllowanceQueryPart = 'c.nodetypename NOT IN (:explicitlyDisallowedNodeTypeNames)';
                 $query->parameter('explicitlyDisallowedNodeTypeNames', $nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames(), Connection::PARAM_STR_ARRAY);
             } else {
