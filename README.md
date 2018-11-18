@@ -139,7 +139,6 @@ This is the package bundle you can install alongside a plain Neos to play around
     ```
     cd Packages/Application/Neos.Neos.Ui
     make setup
-    make build
     ```
 
 10. Enable FrontendDevelopmentMode in `Settings.yaml`:
@@ -157,6 +156,34 @@ This is the package bundle you can install alongside a plain Neos to play around
     the URL is like `` *without any URL parameters*  
 
 13. In case you want to start with clean events and a clean projection (after you did some changes), re-run `./flow contentrepositorymigrate:run`
+
+14. To set up Behavioral tests, do the following:
+
+    - install Behat: `composer require --dev --prefer-source --no-interaction flowpack/behat dev-master`
+    - clear the cache: `rm -Rf Data/Temporary; rm -Rf Build/Behat`
+    - set up behat: `./flow behat:setup`
+    - Create a new database for behat
+    - create `Configuration/Testing/Behat/Settings.yaml` with the following contents:
+    
+        ```yaml
+        Neos:
+          Flow:
+            persistence:
+              backendOptions:
+                driver: pdo_mysql
+                dbname: 'YOUR-DB-NAME-HERE'
+                user: 'root'
+                password: ''
+        ```
+        
+        Important: the driver must be set to pdo_mysql; and the DB name and user need to be specified.
+
+15. To run the behavioral tests, do:
+
+    ```bash
+    bin/behat -c Packages/CR/Neos.EventSourcedContentRepository/Tests/Behavior/behat.yml.dist
+    ```
+    
 
 ## Road to first running alpha
 
