@@ -94,7 +94,7 @@ class NodeCommandControllerPlugin implements EventDispatchingNodeCommandControll
      * Callbacks to be invoked when an event is triggered
      *
      * @see dispatch()
-     * @var array
+     * @var \Closure[]
      */
     protected $eventCallbacks;
 
@@ -349,7 +349,7 @@ HELPTEXT;
      * @param \Closure $callback a closure to be invoked when the corresponding event was triggered
      * @return void
      */
-    public function on($eventIdentifier, \Closure $callback)
+    public function on(string $eventIdentifier, \Closure $callback): void
     {
         $this->eventCallbacks[$eventIdentifier][] = $callback;
     }
@@ -361,10 +361,10 @@ HELPTEXT;
      * @param array $eventPayload optional arguments to be passed to the handler closure
      * @return void
      */
-    protected function dispatch($eventIdentifier, ...$eventPayload)
+    protected function dispatch(string $eventIdentifier, ...$eventPayload): void
     {
         if (!isset($this->eventCallbacks[$eventIdentifier])) {
-            return null;
+            return;
         }
         /** @var \Closure $callback */
         foreach ($this->eventCallbacks[$eventIdentifier] as $callback) {
