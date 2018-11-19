@@ -39,95 +39,137 @@ This is the package bundle you can install alongside a plain Neos to play around
 
 ## Getting Started / Installation
 
-1. Get started by cloning the [master branch of the neos-development-distribution](https://github.com/neos/neos-development-distribution/).
+1. Get started by cloning the master branch of the [neos-development-distribution](https://github.com/neos/neos-development-distribution/).
+Assuming you want to install to a directory named `neos-es`
+```bash
+git clone https://github.com/neos/neos-development-distribution.git neos-es
+cd neos-es
+composer install
+```
 
-2. Install Neos as usual:
+2. Install Neos as usual, via the browser or manually:
    - define a database in `Configuration/Settings.yaml`
    - run `./flow doctrine:migrate`
-   - import the demo site using `./flow site:import --package-key=Neos.NeosDemo`
+   - import the demo site using `./flow site:import --package-key=Neos.Demo`
    - create a backend user using `./flow user:create --roles Administrator admin password My Admin`
    - ensure that when running `./flow server:run`, you get frontend output; and you can log into the backend.
 
-3. In your distribution's `composer.json`, add this repository to the `repositories` section:
+3. Adjust the distribution's `composer.json`
 
-    ```json
-    {
-        "repositories": [
-            {
-                "type": "git",
-                "url": "https://github.com/neos/contentrepository-development-collection.git"
-            },
-            {
-                "type": "git",
-                "url": "https://github.com/neos/content-repository-dimensionspace.git"
-            }
-        ]
-    }
-    ```
+Add `neos/contentrepository-development-collection` and `neos/content-repository-dimensionspace` dependencies (they need custom `repositories` settings as they are not yet published to packagist.org).
+Furthermore the `minimum-stability` has to be adjusted.
 
-4. Adjust the distribution `composer.json` as follows:
-
-    ```
-    {
-        "require": {
-            "neos/neos-development-collection": "dev-event-sourced-patch as dev-master",
-            "neos/flow-development-collection": "@dev",
-
-            "neos/contentrepository-development-collection": "@dev",
-            "neos/event-sourcing": "dev-master",
-            "neos/neos-ui": "dev-event-sourced-patch as dev-master",
-            ...
+The resulting `composer.json` file should look something like this:
+```yaml
+{
+    "name": "neos/neos-development-distribution",
+    "description" : "Neos Development Distribution",
+    "license": "GPL-3.0-or-later",
+    "support": {
+        "email": "hello@neos.io",
+        "slack": "http://slack.neos.io/",
+        "forum": "https://discuss.neos.io/",
+        "wiki": "https://discuss.neos.io/c/the-neos-project/project-documentation",
+        "issues": "https://github.com/neos/neos-development-collection/issues",
+        "docs": "http://neos.readthedocs.io/",
+        "source": "https://github.com/neos/neos-development-distribution"
+    },
+    "config": {
+        "vendor-dir": "Packages/Libraries",
+        "bin-dir": "bin"
+    },
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/neos/contentrepository-development-collection.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/neos/content-repository-dimensionspace.git"
         }
+    ],
+    "require": {
+        "neos/neos-development-collection": "dev-event-sourced-patch as dev-master",
+        "neos/flow-development-collection": "@dev",
+        "neos/demo": "@dev",
+
+        "neos/contentrepository-development-collection": "@dev",
+        "neos/event-sourcing": "dev-master",
+        "neos/neos-ui": "dev-event-sourced-patch as dev-master",
+        "neos/neos-ui-compiled": "@dev",
+
+        "neos/party": "@dev",
+        "neos/seo": "@dev",
+        "neos/imagine": "@dev",
+        "neos/twitter-bootstrap": "@dev",
+        "neos/form": "@dev",
+        "neos/setup": "@dev",
+        "flowpack/neos-frontendlogin": "@dev",
+        "neos/buildessentials": "@dev",
+        "mikey179/vfsstream": "~1.6",
+        "phpunit/phpunit": "~7.1.0",
+        "symfony/css-selector": "~2.0",
+        "neos/behat": "dev-master"
+    },
+    "suggest": {
+        "ext-pdo_sqlite": "For running functional tests out-of-the-box this is required"
+    },
+    "scripts": {
+        "post-update-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
+        "post-install-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
+        "post-package-update": "Neos\\Flow\\Composer\\InstallerScripts::postPackageUpdateAndInstall",
+        "post-package-install": "Neos\\Flow\\Composer\\InstallerScripts::postPackageUpdateAndInstall"
     }
-    ```
+}
+```
 
 5. Then, run `composer update`.
 
 6. If using dimensions, the dimension configuration has changed. Use the following configuration in `Settings.yaml` for the Demo site (Adjust as needed):
 
-    ```yaml
-    Neos:
-      EventSourcedContentRepository:
-        contentDimensions:
-          language:
-            label: 'Neos.Demo:Main:contentDimensions.language'
-            icon: icon-language
-            defaultValue: en_US
+```yaml
+Neos:
+  EventSourcedContentRepository:
+    contentDimensions:
+      language:
+        label: 'Neos.Demo:Main:contentDimensions.language'
+        icon: icon-language
+        defaultValue: en_US
+        resolution:
+          mode: 'uriPathSegment'
+        values:
+          en_US:
+            label: 'English (US)'
             resolution:
-              mode: 'uriPathSegment'
-            values:
-              en_US:
-                label: 'English (US)'
+              value: us
+            specializations:
+              en_UK:
+                label: 'English (UK)'
                 resolution:
-                  value: us
-                specializations:
-                  en_UK:
-                    label: 'English (UK)'
-                    resolution:
-                      value: uk
-              de:
-                label: German
+                  value: uk
+          de:
+            label: German
+            resolution:
+              value: de
+            specializations:
+              nl:
+                label: Dutch
                 resolution:
-                  value: de
-                specializations:
-                  nl:
-                    label: Dutch
-                    resolution:
-                      value: nl
-              fr:
-                label: French
-                resolution:
-                  value: fr
-              da:
-                label: Danish
-                resolution:
-                  value: da
-              lv:
-                label: Latvian
-                resolution:
-                  value: lv
-
-    ```
+                  value: nl
+          fr:
+            label: French
+            resolution:
+              value: fr
+          da:
+            label: Danish
+            resolution:
+              value: da
+          lv:
+            label: Latvian
+            resolution:
+              value: lv
+```
 
 7. create necessary tables using `./flow doctrine:migrate`
 
@@ -138,24 +180,23 @@ This is the package bundle you can install alongside a plain Neos to play around
 
 9. Do a manual UI rebuild due to https://github.com/neos/neos-ui/pull/2178 currently needed:
 
-    ```
-    cd Packages/Application/Neos.Neos.Ui
-    make setup
-    ```
+```
+cd Packages/Application/Neos.Neos.Ui
+make setup
+```
 
 10. Enable FrontendDevelopmentMode in `Settings.yaml`:
 
-    ```
-    Neos:
-      Neos:
-        Ui:
-          frontendDevelopmentMode: true
-    ```
+```yaml
+Neos:
+  Neos:
+    Ui:
+      frontendDevelopmentMode: true
+```
 
 11. The frontend should now work as expected. Test that the frontend rendering works.
 
-12. After logging into the backend, you will still see a fatal error. Manually remove the URL parameter, so that
-    the URL is like `` *without any URL parameters*  
+12. After logging into the backend, you might still see a fatal error. In that case manually remove the URL query parameters so that the URL is only `/neos/content`
 
 13. In case you want to start with clean events and a clean projection (after you did some changes), re-run `./flow contentrepositorymigrate:run`
 
