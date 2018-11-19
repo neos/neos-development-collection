@@ -136,7 +136,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      * @param bool $dryRun
      * @return void
      */
-    private function attachPluginEventHandlers(EventDispatchingNodeCommandControllerPluginInterface $plugin, bool $dryRun)
+    private function attachPluginEventHandlers(EventDispatchingNodeCommandControllerPluginInterface $plugin, bool $dryRun): void
     {
         $plugin->on(EventDispatchingNodeCommandControllerPluginInterface::EVENT_NOTICE, function (string $text) {
             $this->outputLine($text);

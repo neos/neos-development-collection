@@ -44,5 +44,5 @@ interface EventDispatchingNodeCommandControllerPluginInterface extends NodeComma
      * @param \Closure $callback a closure to be invoked when the corresponding event was triggered
      * @return void
      */
-    public function on($eventIdentifier, \Closure $callback);
+    public function on(string $eventIdentifier, \Closure $callback): void;
 }
