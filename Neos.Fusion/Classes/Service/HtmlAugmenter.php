@@ -71,7 +71,7 @@ class HtmlAugmenter
         $useInternalErrorsBackup = libxml_use_internal_errors(true);
         $domDocument->loadHTML($html);
         $xPath = new \DOMXPath($domDocument);
-        $rootElement = $xPath->query('//html/body/*');
+        $rootElement = $xPath->query('//html/body/*[not(self::script)]');
         if ($useInternalErrorsBackup !== true) {
             libxml_use_internal_errors($useInternalErrorsBackup);
         }
