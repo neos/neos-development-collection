@@ -57,7 +57,7 @@ composer install
 3. Adjust the distribution's `composer.json`
 
 Add `neos/contentrepository-development-collection` and `neos/content-repository-dimensionspace` dependencies (they need custom `repositories` settings as they are not yet published to packagist.org).
-Furthermore the `minimum-stability` has to be adjusted.
+Furthermore the `minimum-stability` has to be adjusted (with `prefer-stable`):
 
 The resulting `composer.json` file should look something like this:
 ```yaml
@@ -79,6 +79,7 @@ The resulting `composer.json` file should look something like this:
         "bin-dir": "bin"
     },
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "repositories": [
         {
             "type": "git",
