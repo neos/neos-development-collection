@@ -62,18 +62,6 @@ Furthermore the `minimum-stability` has to be adjusted (with `prefer-stable`):
 The resulting `composer.json` file should look something like this:
 ```yaml
 {
-    "name": "neos/neos-development-distribution",
-    "description" : "Neos Development Distribution",
-    "license": "GPL-3.0-or-later",
-    "support": {
-        "email": "hello@neos.io",
-        "slack": "http://slack.neos.io/",
-        "forum": "https://discuss.neos.io/",
-        "wiki": "https://discuss.neos.io/c/the-neos-project/project-documentation",
-        "issues": "https://github.com/neos/neos-development-collection/issues",
-        "docs": "http://neos.readthedocs.io/",
-        "source": "https://github.com/neos/neos-development-distribution"
-    },
     "config": {
         "vendor-dir": "Packages/Libraries",
         "bin-dir": "bin"
@@ -96,6 +84,7 @@ The resulting `composer.json` file should look something like this:
         "neos/demo": "@dev",
 
         "neos/contentrepository-development-collection": "@dev",
+        "neos/content-repository-dimensionspace": "dev-master",
         "neos/event-sourcing": "dev-master",
         "neos/neos-ui": "dev-event-sourced-patch as dev-master",
         "neos/neos-ui-compiled": "@dev",
@@ -112,9 +101,6 @@ The resulting `composer.json` file should look something like this:
         "phpunit/phpunit": "~7.1.0",
         "symfony/css-selector": "~2.0",
         "neos/behat": "dev-master"
-    },
-    "suggest": {
-        "ext-pdo_sqlite": "For running functional tests out-of-the-box this is required"
     },
     "scripts": {
         "post-update-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
