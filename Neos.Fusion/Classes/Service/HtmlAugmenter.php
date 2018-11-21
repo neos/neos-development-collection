@@ -71,7 +71,7 @@ class HtmlAugmenter
         $useInternalErrorsBackup = libxml_use_internal_errors(true);
         $domDocument->loadHTML($html);
         $xPath = new \DOMXPath($domDocument);
-        $rootElement = $xPath->query('//html/body/*[not(self::script)]');
+        $rootElement = $xPath->query('//html/body/*[not(self::script and @data-neos-nodedata)]');
         if ($useInternalErrorsBackup !== true) {
             libxml_use_internal_errors($useInternalErrorsBackup);
         }
