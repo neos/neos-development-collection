@@ -417,11 +417,12 @@ class GraphProjector implements ProjectorInterface
      */
     public function whenNodeWasHidden(NodeWasHidden $event)
     {
-        $this->transactional(function () use ($event) {
+        // TODO re-enabled
+        /*$this->transactional(function () use ($event) {
             $this->updateNodeWithCopyOnWrite($event, function (Node $node) use ($event) {
                 $node->hidden = true;
             });
-        });
+        });*/
     }
 
     /**

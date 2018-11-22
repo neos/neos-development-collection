@@ -336,7 +336,7 @@ final class NodeCommandHandler
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node exists
-            $this->getNodeWithOriginDimensionSpacePoint($contentStreamIdentifier, $command->getNodeAggregateIdentifier(), $command->getOriginDimensionSpacePoint());
+            $this->assertNodeWithOriginDimensionSpacePointExists($contentStreamIdentifier, $command->getNodeAggregateIdentifier(), $command->getOriginDimensionSpacePoint());
 
             $event = new NodePropertyWasSet(
                 $contentStreamIdentifier,
@@ -394,12 +394,16 @@ final class NodeCommandHandler
         $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
-            // Check if node exists
-            $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+            // Soft constraint check: Check if node exists in *all* given DimensionSpacePoints
+            foreach ($command->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
+                $this->assertNodeWithOriginDimensionSpacePointExists($contentStreamIdentifier, $command->getNodeAggregateIdentifier(), $dimensionSpacePoint);
+            }
+
 
             $event = new NodeWasHidden(
                 $contentStreamIdentifier,
-                $command->getNodeIdentifier()
+                $command->getNodeAggregateIdentifier(),
+                $command->getAffectedDimensionSpacePoints()
             );
 
             $this->nodeEventPublisher->publish(
@@ -800,7 +804,7 @@ final class NodeCommandHandler
         return $node;
     }
 
-    private function getNodeWithOriginDimensionSpacePoint(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint): NodeInterface
+    private function assertNodeWithOriginDimensionSpacePointExists(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint): NodeInterface
     {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $originDimensionSpacePoint);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
