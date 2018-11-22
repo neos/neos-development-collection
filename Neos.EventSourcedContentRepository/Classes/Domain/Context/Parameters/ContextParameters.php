@@ -15,6 +15,8 @@ use Neos\Flow\Security\Policy\Role;
 
 /**
  * The context parameters value object
+ *
+ * TODO find better name!!! Restriction.....
  */
 final class ContextParameters
 {
