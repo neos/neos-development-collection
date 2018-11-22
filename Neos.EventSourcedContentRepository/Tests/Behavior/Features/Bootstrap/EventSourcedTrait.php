@@ -1088,4 +1088,13 @@ trait EventSourcedTrait
             ->findNodeByPath($nodePath, $this->rootNodeIdentifier);
         Assert::assertNull($node, 'Did find node at path "' . $nodePath . '"');
     }
+
+    /**
+     * @When /^ContextParameters are set to:$/
+     */
+    public function contextparametersAreSetTo(TableNode $table)
+    {
+        throw new PendingException();
+    }
+
 }
