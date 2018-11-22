@@ -44,8 +44,8 @@ Feature: Single Node operations on live workspace
       | nodeAggregateIdentifier      | na-identifier | Uuid |
       | affectedDimensionSpacePoints | [{}]          | json |
 
-    Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:[cs-identifier]"
-    And event at index 3 is of type "Neos.EventSourcedContentRepository:NodeWasHidden" with payload:
+    Then I expect exactly 5 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:[cs-identifier]"
+    And event at index 4 is of type "Neos.EventSourcedContentRepository:NodeWasHidden" with payload:
       | Key                          | Expected      | Type | AssertionType |
       | contentStreamIdentifier      | cs-identifier | Uuid |               |
       | nodeAggregateIdentifier      | na-identifier | Uuid |               |

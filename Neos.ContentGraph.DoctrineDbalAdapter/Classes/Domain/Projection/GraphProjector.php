@@ -422,51 +422,52 @@ class GraphProjector implements ProjectorInterface
             // we
             $this->getDatabaseConnection()->executeUpdate('
 -- GraphProjector::whenNodeWasHidden
-
--- we build a set of recursive trees, ready to be rendered e.g. in a menu. Because the menu supports starting at multiple nodes, we also support starting at multiple nodes at once.
-with recursive tree as (
-     -- --------------------------------
-     -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
-     -- --------------------------------
-     select
-        n.relationanchorpoint,
-     	n.nodeaggregateidentifier,
-     	h.dimensionspacepointhash
-     from
-        neos_contentgraph_node n
-     -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
-     inner join neos_contentgraph_hierarchyrelation h
-        on h.childnodeanchor = n.relationanchorpoint
-     where
-        n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
-        and h.contentstreamidentifier = :contentStreamIdentifier
-        and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
-union
-     -- --------------------------------
-     -- RECURSIVE query: do one "child" query step
-     -- --------------------------------
-     select
-        c.relationanchorpoint,
-        c.nodeaggregateidentifier,
-        h.dimensionspacepointhash
-     from
-        tree p
-	 inner join neos_contentgraph_hierarchyrelation h
-        on h.parentnodeanchor = p.relationanchorpoint
-	 inner join neos_contentgraph_node c
-	    on h.childnodeanchor = c.relationanchorpoint
-	 where
-	 	h.contentstreamidentifier = :contentStreamIdentifier
-		and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
-)
-
 insert into neos_contentgraph_restrictionedge
-select
-    "' . (string)$event->getContentStreamIdentifier() . '" as contentstreamidentifier,
-    dimensionspacepointhash,
-    "' . (string)$event->getNodeAggregateIdentifier() . '" as originnodeidentifier,
-    nodeaggregateidentifier as affectednodeaggregateidentifier
-from tree
+(
+    -- we build a set of recursive trees, ready to be rendered e.g. in a menu. Because the menu supports starting at multiple nodes, we also support starting at multiple nodes at once.
+    with recursive tree as (
+         -- --------------------------------
+         -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
+         -- --------------------------------
+         select
+            n.relationanchorpoint,
+            n.nodeaggregateidentifier,
+            h.dimensionspacepointhash
+         from
+            neos_contentgraph_node n
+         -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
+         inner join neos_contentgraph_hierarchyrelation h
+            on h.childnodeanchor = n.relationanchorpoint
+         where
+            n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
+            and h.contentstreamidentifier = :contentStreamIdentifier
+            and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+    union
+         -- --------------------------------
+         -- RECURSIVE query: do one "child" query step
+         -- --------------------------------
+         select
+            c.relationanchorpoint,
+            c.nodeaggregateidentifier,
+            h.dimensionspacepointhash
+         from
+            tree p
+         inner join neos_contentgraph_hierarchyrelation h
+            on h.parentnodeanchor = p.relationanchorpoint
+         inner join neos_contentgraph_node c
+            on h.childnodeanchor = c.relationanchorpoint
+         where
+            h.contentstreamidentifier = :contentStreamIdentifier
+            and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+    )
+
+    select
+        "' . (string)$event->getContentStreamIdentifier() . '" as contentstreamidentifier,
+        dimensionspacepointhash,
+        "' . (string)$event->getNodeAggregateIdentifier() . '" as originnodeidentifier,
+        nodeaggregateidentifier as affectednodeaggregateidentifier
+    from tree
+)
             ',
                 [
                     'entryNodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
