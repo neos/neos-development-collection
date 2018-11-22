@@ -78,11 +78,16 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      */
     protected $dimensionSpacePoint;
 
+    /**
+     * @var ContentRepository\Context\Parameters\VisibilityConstraints
+     */
+    protected $visibilityConstraints;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->visibilityConstraints = $visibilityConstraints;
         $this->inMemoryCache = new InMemoryCache();
     }
 
@@ -144,18 +149,22 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         if ($cache->knowsAbout($nodeIdentifier)) {
             return $cache->get($nodeIdentifier);
         } else {
-            $nodeRow = $this->getDatabaseConnection()->executeQuery(
-                'SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
- WHERE n.nodeidentifier = :nodeIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier       
- AND h.dimensionspacepointhash = :dimensionSpacePointHash',
-                [
-                    'nodeIdentifier' => (string)$nodeIdentifier,
-                    'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                    'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
-                ]
-            )->fetch();
+            $query = new SqlQueryBuilder();
+            $query->addToQuery('
+-- ContentSubgraph::findNodeByIdentifier
+SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
+    INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+    WHERE n.nodeidentifier = :nodeIdentifier
+    AND h.contentstreamidentifier = :contentStreamIdentifier       
+    AND h.dimensionspacepointhash = :dimensionSpacePointHash
+')
+                ->parameter('nodeIdentifier', (string)$nodeIdentifier)
+                ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+                ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+
+            self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints);
+
+            $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
 
             if (is_array($nodeRow)) {
                 $node = $this->nodeFactory->mapNodeRowToNode($nodeRow);
@@ -233,22 +242,23 @@ SELECT c.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
         if ($cache->knowsAbout($nodeAggregateIdentifier)) {
             return $cache->get($nodeAggregateIdentifier);
         } else {
-            $query = '
+            $query = new SqlQueryBuilder();
+            $query->addToQuery('
 -- ContentSubgraph::findNodeByNodeAggregateIdentifier
 SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ 
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash = :dimensionSpacePointHash';
-            $parameters = [
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
-            ];
-            $nodeRow = $this->getDatabaseConnection()->executeQuery(
-                $query,
-                $parameters
-            )->fetch();
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash
+ ')
+                ->parameter('nodeAggregateIdentifier', (string)$nodeAggregateIdentifier)
+                ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+                ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+
+            $query = self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints);
+
+            $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
             if ($nodeRow === false) {
                 $cache->rememberNonExistingNodeAggregateIdentifier($nodeAggregateIdentifier);
                 return null;
@@ -260,6 +270,26 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
             return $node;
         }
     }
+
+    private static function addRestrictionEdgeConstraintsToQuery(SqlQueryBuilder $query, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints): SqlQueryBuilder {
+        // TODO: make QueryBuilder immutable
+        if (!$visibilityConstraints->isInvisibleContentShown()) {
+            $query->addToQuery('
+                and not exists (
+                    select
+                        1 
+                    from
+                        neos_contentgraph_restrictionedge r
+                    where
+                        r.contentstreamidentifier = h.contentstreamidentifier 
+                        and r.dimensionspacepointhash = h.dimensionspacepointhash
+                        and r.affectednodeaggregateidentifier = n.nodeaggregateidentifier
+                )');
+        }
+
+        return $query;
+    }
+
 
     public function countChildNodes(
         NodeIdentifier $parentNodeIdentifier,
@@ -886,14 +916,13 @@ SELECT n.*, h.name, h.position, h.dimensionspacepoint FROM neos_contentgraph_nod
     /**
      * @param array $menuLevelNodeIdentifiers
      * @param int $maximumLevels
-     * @param ContentRepository\Context\Parameters\ContextParameters $contextParameters
+     * @param ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @return mixed|void
      */
     public function findSubtrees(
         array $entryNodeAggregateIdentifiers,
         int $maximumLevels,
-        ContentRepository\Context\Parameters\ContextParameters $contextParameters,
         NodeTypeConstraints $nodeTypeConstraints
     ): SubtreeInterface {
         // TODO: evaluate ContextParameters
@@ -965,6 +994,8 @@ order by level asc, position asc;')
             ->parameter('maximumLevels', $maximumLevels);
 
         self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints, '###NODE_TYPE_CONSTRAINTS###');
+
+        // TODO: VISIBILITY CONSTRAINTS
 
         $result = $query->execute($this->getDatabaseConnection())->fetchAll();
 

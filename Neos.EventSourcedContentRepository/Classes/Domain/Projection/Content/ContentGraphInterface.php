@@ -28,17 +28,14 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
      * @return ContentSubgraphInterface|null
      */
     public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint
+        DimensionSpacePoint $dimensionSpacePoint,
+        Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
     ): ?ContentSubgraphInterface;
-
-    /**
-     * @return array|ContentSubgraphInterface[]
-     */
-    public function getSubgraphs(): array;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier

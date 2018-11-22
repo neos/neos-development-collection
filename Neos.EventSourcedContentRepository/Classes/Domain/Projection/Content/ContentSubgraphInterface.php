@@ -170,11 +170,10 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * @param NodeAggregateIdentifier[] $entryNodeAggregateIdentifiers
      * @param int $maximumLevels
-     * @param Domain\Context\Parameters\ContextParameters $contextParameters
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @return mixed
      */
-    public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, Domain\Context\Parameters\ContextParameters $contextParameters, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
+    public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
 
     public function getInMemoryCache(): InMemoryCache;
 }

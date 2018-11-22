@@ -62,22 +62,15 @@ final class ContentGraph implements ContentGraphInterface
      */
     final public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint
+        DimensionSpacePoint $dimensionSpacePoint,
+        Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
     ): ?ContentSubgraphInterface {
-        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash();
+        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash() . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
-            $this->subgraphs[$index] = new ContentSubgraph($contentStreamIdentifier, $dimensionSpacePoint);
+            $this->subgraphs[$index] = new ContentSubgraph($contentStreamIdentifier, $dimensionSpacePoint, $visibilityConstraints);
         }
 
         return $this->subgraphs[$index];
-    }
-
-    /**
-     * @return array|ContentSubgraphInterface[]
-     */
-    final public function getSubgraphs(): array
-    {
-        return $this->subgraphs;
     }
 
     /**

@@ -11,6 +11,7 @@ namespace Neos\EventSourcedContentRepository\TypeConverter;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
@@ -62,7 +63,8 @@ class ContentSubgraphConverter extends AbstractTypeConverter
 
         return $this->contentGraph->getSubgraphByIdentifier(
             new ContentStreamIdentifier($sourceArray['contentStreamIdentifier']),
-            new DimensionSpacePoint($sourceArray['dimensionSpacePoint']['coordinates'])
+            new DimensionSpacePoint($sourceArray['dimensionSpacePoint']['coordinates']),
+            VisibilityConstraints::withoutRestrictions()
         );
     }
 }

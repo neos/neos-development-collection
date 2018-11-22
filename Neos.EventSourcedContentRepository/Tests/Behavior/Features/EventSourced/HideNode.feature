@@ -54,11 +54,11 @@ Feature: Single Node operations on live workspace
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "[na-identifier]" not to exist in the subgraph
     Then I expect a node "[node-identifier]" not to exist in the graph projection
 
-    When ContextParameters are set to:
-      | Key                   | Value |
-      | invisibleContentShown | true  |
+    When VisibilityConstraints are set to "withoutRestrictions"
+    Then I expect a node identified by aggregate identifier "[na-identifier]" to exist in the subgraph
     Then I expect a node "[node-identifier]" to exist in the graph projection
 
   Scenario: Hide a non-existing node should throw an exception
