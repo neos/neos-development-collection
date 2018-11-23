@@ -11,6 +11,7 @@ namespace Neos\Neos\Routing\Aspects;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security\Context;
@@ -61,20 +62,23 @@ class RouteCacheAspect
                 'invisibleContentShown' => true
             ]);
 
+            /** @var NodeInterface $node */
             $node = $context->getNode($contextPathPieces['nodePath']);
             if (!$node instanceof NodeInterface) {
                 return;
             }
 
             $values['node-identifier'] = $node->getIdentifier();
-            $node = $node->getParent();
 
-            $values['node-parent-identifier'] = array();
-            while ($node !== null) {
+            $values['node-parent-identifier'] = [];
+            do {
+                try {
+                    $node = $node->getParent();
+                } catch (NodeException $exception) {
+                    break;
+                }
                 $values['node-parent-identifier'][] = $node->getIdentifier();
-                $node = $node->getParent();
-            }
-
+            } while (true);
             $joinPoint->setMethodArgument('values', $values);
         });
     }

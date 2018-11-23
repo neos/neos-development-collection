@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 /**
@@ -29,9 +30,10 @@ interface TraversableNodeInterface extends NodeInterface
      * Retrieves and returns the parent node from the node's subgraph.
      * Returns null if this is a root node.
      *
-     * @return TraversableNodeInterface|null
+     * @return TraversableNodeInterface
+     * @throws NodeException If this node has no parent
      */
-    public function findParentNode(): ?TraversableNodeInterface;
+    public function findParentNode(): TraversableNodeInterface;
 
     /**
      * Retrieves and returns the node's path to its root node.
@@ -44,9 +46,10 @@ interface TraversableNodeInterface extends NodeInterface
      * Retrieves and returns a child node by name from the node's subgraph.
      *
      * @param NodeName $nodeName The name
-     * @return TraversableNodeInterface|null
+     * @return TraversableNodeInterface
+     * @throws NodeException If no child node with the given $nodeName can be found
      */
-    public function findNamedChildNode(NodeName $nodeName): ?TraversableNodeInterface;
+    public function findNamedChildNode(NodeName $nodeName): TraversableNodeInterface;
 
     /**
      * Retrieves and returns all direct child nodes of this node from its subgraph.
@@ -55,10 +58,10 @@ interface TraversableNodeInterface extends NodeInterface
      * @param NodeTypeConstraints $nodeTypeConstraints If specified, only nodes with that node type are considered
      * @param int $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
      * @param int $offset An optional offset for the query
-     * @return TraversableNodeInterface[]|array<TraversableNodeInterface> An array of nodes or an empty array if no child nodes matched
+     * @return TraversableNodes Traversable nodes that matched the given constraints
      * @api
      */
-    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes;
 
     /**
      * Returns the number of direct child nodes of this node from its subgraph.
@@ -75,9 +78,9 @@ interface TraversableNodeInterface extends NodeInterface
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array<TraversableNodeInterface>|TraversableNodeInterface[]
+     * @return TraversableNodes
      */
-    public function findSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes;
 
     /**
      * Retrieves and returns all preceding sibling nodes of this node from its subgraph.
@@ -86,9 +89,9 @@ interface TraversableNodeInterface extends NodeInterface
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array
+     * @return TraversableNodes
      */
-    public function findPrecedingSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findPrecedingSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes;
 
     /**
      * Retrieves and returns all succeeding sibling nodes of this node from its subgraph.
@@ -97,38 +100,38 @@ interface TraversableNodeInterface extends NodeInterface
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array
+     * @return TraversableNodes
      */
-    public function findSucceedingSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findSucceedingSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes;
 
     /**
      * Retrieves and returns all nodes referenced by this node from its subgraph.
      * If node type constraints are specified, only nodes of that type are returned.
      *
-     * @return array<TraversableNodeInterface>|TraversableNodeInterface[]
+     * @return TraversableNodes
      */
-    public function findReferencedNodes(): array;
+    public function findReferencedNodes(): TraversableNodes;
 
     /**
      * Retrieves and returns nodes referenced by this node by name from its subgraph.
      *
      * @param PropertyName $edgeName
-     * @return array<TraversableNodeInterface>|TraversableNodeInterface[]
+     * @return TraversableNodes
      */
-    public function findNamedReferencedNodes(PropertyName $edgeName): array;
+    public function findNamedReferencedNodes(PropertyName $edgeName): TraversableNodes;
 
     /**
      * Retrieves and returns nodes referencing this node from its subgraph.
      *
-     * @return array<TraversableNodeInterface>|TraversableNodeInterface[]
+     * @return TraversableNodes
      */
-    public function findReferencingNodes(): array;
+    public function findReferencingNodes(): TraversableNodes;
 
     /**
      * Retrieves and returns nodes referencing this node by name from its subgraph.
      *
      * @param PropertyName $nodeName
-     * @return array<TraversableNodeInterface>|TraversableNodeInterface[]
+     * @return TraversableNodes
      */
-    public function findNamedReferencingNodes(PropertyName $nodeName): array;
+    public function findNamedReferencingNodes(PropertyName $nodeName): TraversableNodes;
 }

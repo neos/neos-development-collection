@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
@@ -93,13 +94,17 @@ class ParentsUntilOperation extends AbstractOperation
      */
     protected function getParents(TraversableNodeInterface $contextNode)
     {
-        $parents = [];
-        $node = $contextNode->findParentNode();
-        while ($node !== null) {
-            $parents[] = $node;
-            $node = $contextNode->findParentNode();
-        }
-        return $parents;
+        $ancestors = [];
+        $node = $contextNode;
+        do {
+            try {
+                $node = $node->findParentNode();
+            } catch (NodeException $exception) {
+                break;
+            }
+            $ancestors[] = $node;
+        } while (true);
+        return $ancestors;
     }
 
     /**

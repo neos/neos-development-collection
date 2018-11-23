@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
@@ -122,7 +123,11 @@ class PrevUntilOperationTest extends AbstractNodeTest
                 }
             }
             foreach ($unexpectedNodePaths as $unexpectedNodePath) {
-                $unexpectedNode = $rootNode->getNode($unexpectedNodePath);
+                try {
+                    $unexpectedNode = $rootNode->getNode($unexpectedNodePath);
+                } catch (NodeException $e) {
+                    $unexpectedNode = null;
+                }
                 if (in_array($unexpectedNode, $result)) {
                     $this->fail(sprintf('Expected result not to contain node "%s"', $unexpectedNodePath));
                 }

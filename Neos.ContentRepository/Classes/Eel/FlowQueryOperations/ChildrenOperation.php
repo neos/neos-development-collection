@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
 use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
@@ -136,7 +137,11 @@ class ChildrenOperation extends AbstractOperation
                         $currentPathSegments = $nodePathSegments;
                         $resolvedNode = $contextNode;
                         while (($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
-                            $resolvedNode = $resolvedNode->findNamedChildNode(new NodeName($nodePathSegment));
+                            try {
+                                $resolvedNode = $resolvedNode->findNamedChildNode(new NodeName($nodePathSegment));
+                            } catch (NodeException $exception) {
+                                $resolvedNode = null;
+                            }
                         }
 
                         if (!is_null($resolvedNode) && !isset($filteredOutputNodeIdentifiers[(string)$resolvedNode->getNodeAggregateIdentifier()])) {
