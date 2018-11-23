@@ -340,6 +340,9 @@ HELPTEXT;
         /** @var $nodeType NodeType */
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             $childNodes = $nodeType->getAutoCreatedChildNodes();
+            if (count($childNodes) === 0) {
+                continue;
+            }
             foreach ($this->getNodeDataByNodeTypeAndWorkspace($nodeTypeName, $workspaceName) as $nodeData) {
                 $context = $this->nodeFactory->createContextMatchingNodeData($nodeData);
                 $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
