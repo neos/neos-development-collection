@@ -12,6 +12,7 @@ namespace Neos\Neos\Eel\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Neos\Domain\Service\SiteService;
@@ -58,20 +59,25 @@ class ParentsOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $ancestors = [];
+        $parents = [];
+        /* @var TraversableNodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            /** @var TraversableNodeInterface $contextNode */
-            $ancestor = $contextNode->findParentNode();
-            while (
-                $ancestor !== null // stop at root
-                && $ancestor->findNodePath() !== SiteService::SITES_ROOT_PATH // stop at sites
-            ) {
-                $ancestors[] = $ancestor;
-                $ancestor = $ancestor->findParentNode();
-            }
+            $node = $contextNode;
+            do {
+                try {
+                    $node = $node->findParentNode();
+                } catch (NodeException $exception) {
+                    break;
+                }
+                // stop at sites
+                if ($node->findNodePath() === SiteService::SITES_ROOT_PATH) {
+                    continue;
+                }
+                $parents[] = $node;
+            } while (true);
         }
 
-        $flowQuery->setContext($ancestors);
+        $flowQuery->setContext($parents);
 
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $flowQuery->pushOperation('filter', $arguments);

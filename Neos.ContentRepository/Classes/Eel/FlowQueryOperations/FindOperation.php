@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -145,10 +146,12 @@ class FindOperation extends AbstractOperation
                     $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
                     foreach ($context as $contextNode) {
                         /** @var NodeInterface $contextNode */
-                        $node = $contextNode->getNode($nodePath);
-                        if ($node !== null) {
-                            array_push($filterResults, $node);
+                        try {
+                            $node = $contextNode->getNode($nodePath);
+                        } catch (NodeException $exception) {
+                            continue;
                         }
+                        array_push($filterResults, $node);
                     }
                     $generatedNodes = true;
                 }

@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
@@ -56,21 +57,26 @@ class ParentsOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = [];
-        $outputNodeAggregateIdentifiers = [];
+        $parents = [];
+        $parentNodeAggregateIdentifiers = [];
+        /* @var TraversableNodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            /* @var TraversableNodeInterface $contextNode */
-            $parentNode = $contextNode->findParentNode();
-            while ($parentNode) {
-                if (!isset($outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()])) {
-                    $output[] = $parentNode;
-                    $outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()] = true;
+            $node = $contextNode;
+            do {
+                try {
+                    $node = $node->findParentNode();
+                } catch (NodeException $exception) {
+                    break;
                 }
-                $parentNode = $parentNode->findParentNode();
-            }
+                if (isset($parentNodeAggregateIdentifiers[(string)$node->getNodeAggregateIdentifier()])) {
+                    continue;
+                }
+                $parents[] = $node;
+                $parentNodeAggregateIdentifiers[(string)$node->getNodeAggregateIdentifier()] = true;
+            } while (true);
         }
 
-        $flowQuery->setContext($output);
+        $flowQuery->setContext($parents);
 
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $flowQuery->pushOperation('filter', $arguments);
