@@ -13,26 +13,25 @@ namespace Neos\Neos\Controller\Backend;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\ContentStream;
+use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Session\SessionInterface;
-use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Service\ImpersonateService;
+use Neos\Party\Domain\Service\PartyService;
 
 /**
- * The Neos Workspaces module controller
+ * The Neos Impersonate controller
  *
  * @Flow\Scope("singleton")
  */
-class ImpersonateController extends AbstractModuleController
+class ImpersonateController extends ActionController
 {
-    /**
-     * @var AccountRepository
-     * @Flow\Inject
-     */
-    protected $accountRepository;
-
     /**
      * @var ImpersonateService
      * @Flow\Inject
@@ -40,33 +39,57 @@ class ImpersonateController extends AbstractModuleController
     protected $impersonateService;
 
     /**
-     * @var SessionInterface
+     * @var PartyService
      * @Flow\Inject
      */
-    protected $session;
+    protected $partyService;
 
     /**
-     * @var PersistenceManagerInterface
-     * @Flow\Inject
+     * @var string
      */
-    protected $persistenceManager;
+    protected $defaultViewImplementation = JsonView::class;
 
     /**
-     * @param Account $account
+     * @var JsonView
+     */
+    protected $view = null;
+
+    /**
+     * @var array
+     */
+    protected $supportedMediaTypes = ['application/json'];
+
+    /**
      * @return void
      */
-    public function enableAction(Account $account)
+    public function statusAction()
     {
-        $this->impersonateService->impersonate($account);
-        $this->redirect('index');
+        $this->response = $this->response->withAddedHeader('Content-Type', 'application/json');
+
+        if ($this->impersonateService->isActive()) {
+            $this->response = $this->response->withStatus(200);
+
+            $currrentImpersonation = $this->impersonateService->getImpersonation();
+            /** @var User $user */
+            $user = $this->partyService->getAssignedPartyOfAccount($currrentImpersonation);
+
+            $this->view->setVariablesToRender(['accountIdentifier', 'fullName']);
+
+            $this->view
+                ->assign('accountIdentifier', $currrentImpersonation->getAccountIdentifier())
+                ->assign('fullName', $user->getName()->getFullName());
+        } else {
+            $this->response = $this->response->withStatus(404);
+        }
     }
 
     /**
      * @return void
+     * @throws StopActionException
      */
-    public function resetAction()
+    public function undoAction()
     {
         $this->impersonateService->undoImpersonate();
-        $this->redirect('index');
+        $this->redirect('index', 'Backend\Backend', 'Neos.Neos', null, 0, 303, 'html');
     }
 }

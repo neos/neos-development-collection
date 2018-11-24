@@ -127,3 +127,12 @@
     '@controller': 'Backend\Backend'
     '@action': 'xliffAsJson'
   appendExceedingArguments: true
+
+-
+  name: 'Backend Impersonate Status'
+  uriPattern: 'impersonate/{@action}'
+  defaults:
+    '@package': 'Neos.Neos'
+    '@controller': 'Backend\Impersonate'
+    '@format': 'json'
+  httpMethods: ['GET']

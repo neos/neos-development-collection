@@ -58,10 +58,7 @@ class ImpersonateService
     {
         $this->session->putData('OriginalIdentity', $this->persistenceManager->getIdentifierByObject($this->securityContext->getAccount()));
 
-        $tokens = $this->securityContext->getAuthenticationTokens();
-        foreach ($tokens as $token) {
-            $token->setAccount($account);
-        }
+        $this->refreshTokens($account);
 
         $this->session->putData('Impersonate', $this->persistenceManager->getIdentifierByObject($account));
     }
@@ -69,6 +66,9 @@ class ImpersonateService
     public function undoImpersonate(): void
     {
         $this->session->putData('Impersonate', null);
+
+        $account = $this->getOriginalIdentity();
+        $this->refreshTokens($account);
     }
 
     public function getImpersonation(): ?Account
@@ -108,5 +108,17 @@ class ImpersonateService
             }
         }
         return $roles;
+    }
+
+    protected function refreshTokens(Account $account = null)
+    {
+        if ($account === null) {
+            return;
+        }
+
+        $tokens = $this->securityContext->getAuthenticationTokens();
+        foreach ($tokens as $token) {
+            $token->setAccount($account);
+        }
     }
 }

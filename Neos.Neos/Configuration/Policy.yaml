@@ -88,7 +88,7 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Service\Controller\UserPreferenceController->(index|update|error)Action())'
 
     'Neos.Neos:Backend.ImpersonateApi':
-      matcher: 'method(Neos\Neos\Controller\Backend\ImpersonateController->(enable|reset)Action())'
+      matcher: 'method(Neos\Neos\Controller\Backend\ImpersonateController->(status|undo)Action())'
 
     'Neos.Neos:Backend.Impersonate':
       matcher: 'method(Neos\Neos\Controller\Module\Administration\UsersController->impersonateAction())'
@@ -173,6 +173,10 @@ roles:
     abstract: true
     parentRoles: ['Neos.ContentRepository:Administrator']
     privileges:
+      -
+        privilegeTarget: 'Neos.Neos:Backend.ImpersonateApi'
+        permission: GRANT
+
       -
         privilegeTarget: 'Neos.Neos:Backend.GeneralAccess'
         permission: GRANT
@@ -260,10 +264,6 @@ roles:
     privileges:
       -
         privilegeTarget: 'Neos.Neos:Backend.Impersonate'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'Neos.Neos:Backend.ImpersonateApi'
         permission: GRANT
 
       -
