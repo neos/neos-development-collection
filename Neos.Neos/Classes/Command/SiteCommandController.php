@@ -13,7 +13,8 @@ namespace Neos\Neos\Command;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -25,6 +26,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\NodeService;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Psr\Log\LoggerInterface;
 
 /**
  * The Site Command Controller
@@ -65,12 +67,6 @@ class SiteCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
-     * @Flow\Inject
      * @var ContextFactoryInterface
      */
     protected $nodeContextFactory;
@@ -92,6 +88,32 @@ class SiteCommandController extends CommandController
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * Create a new site
@@ -200,7 +222,8 @@ class SiteCommandController extends CommandController
             try {
                 $site = $this->siteImportService->importFromFile($filename);
             } catch (\Exception $exception) {
-                $this->systemLogger->logException($exception);
+                $logMessage = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 $this->outputLine('<error>During the import of the file "%s" an exception occurred: %s, see log for further information.</error>', [$filename, $exception->getMessage()]);
                 $this->quit(1);
             }
@@ -208,7 +231,8 @@ class SiteCommandController extends CommandController
             try {
                 $site = $this->siteImportService->importFromPackage($packageKey);
             } catch (\Exception $exception) {
-                $this->systemLogger->logException($exception);
+                $logMessage = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
                 $this->outputLine('<error>During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', [$packageKey, $exception->getMessage()]);
                 $this->quit(1);
             }

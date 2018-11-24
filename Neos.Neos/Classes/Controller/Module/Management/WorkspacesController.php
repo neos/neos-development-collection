@@ -109,12 +109,6 @@ class WorkspacesController extends AbstractModuleController
     protected $contentDimensionPresetSource;
 
     /**
-     * @var PackageManager
-     * @Flow\Inject
-     */
-    protected $packageManager;
-
-    /**
      * @return void
      */
     protected function initializeAction()
