@@ -639,9 +639,9 @@
 				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
 Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
 Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
-			<target xml:lang="it" state="needs-translation">The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
-Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
-Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
+			<target xml:lang="it" state="translated">L'interdimensionale grafico a fallback mostra tutti i possibili fallback (mostrati come limiti) tra sottografici (combinazioni di valore dimensione contenito, mostrato come nodi).
+I fallback primari sono marcati in blu e sempre visibili, mentre fallback di minor priorità sono mostrati al passaggio del mouse. Maggiore è la priorità, maggiore è l'opacità.
+Clicca su uno dei nodi per vedere solo i suoi fallback e varianti. Clicca di nuovo per rimuovere il filtro.</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
 				<source>Intra dimensional fallback graph</source>
 			<target xml:lang="it" state="translated">Grafico fallback intra dimensionale</target></trans-unit>
@@ -650,7 +650,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target xml:lang="it" state="translated">Intra dimensionale</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
 				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
-			<target xml:lang="it" state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
+			<target xml:lang="it" state="translated">Il grafico del fallback intradimensionale mostra i fallback entro ogni dimensione contenuto.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>
