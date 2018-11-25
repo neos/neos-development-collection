@@ -1,6 +1,6 @@
-=========================
-Using CKEditor 5 with neos
-=========================
+==========================
+Using CKEditor 5 with Neos
+==========================
 CKEditor 5 is delivered with neos-ui 1.3. Until neos-ui 2.0,
 CKEditor 4 will stay as the default editor. That means, CKEditor 5 must be activated
 manually. Tho activate CKEditor 5, default inline editor must be set up
