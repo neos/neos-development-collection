@@ -152,7 +152,7 @@ class MediaCommandController extends CommandController
      * @param int $limit Limit the result of unused assets displayed and removed for this run.
      * @return void
      */
-    public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '', int $limit = 0)
+    public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '', int $limit = null)
     {
         $iterator = $this->assetRepository->findAllIterator();
         $assetCount = $this->assetRepository->countAll();
@@ -163,7 +163,7 @@ class MediaCommandController extends CommandController
 
         $filterByAssetSourceIdentifier = $assetSource;
         if ($filterByAssetSourceIdentifier === '') {
-            !$quiet && $this->outputLine('<b>Searching for unused assets:</b>');
+            !$quiet && $this->outputLine('<b>Searching for unused assets in all asset sources:</b>');
         } else {
             !$quiet && $this->outputLine('<b>Searching for unused assets of asset source "%s":</b>', [$filterByAssetSourceIdentifier]);
         }
@@ -183,7 +183,7 @@ class MediaCommandController extends CommandController
         foreach ($this->assetRepository->iterate($iterator) as $asset) {
             !$quiet && $this->output->progressAdvance(1);
 
-            if ($unusedAssetCount === $limit) {
+            if ($limit !== null && $unusedAssetCount === $limit) {
                 break;
             }
 
