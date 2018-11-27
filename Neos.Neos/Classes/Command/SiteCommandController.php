@@ -306,6 +306,10 @@ class SiteCommandController extends CommandController
         $sites = $this->findSitesByNodeNamePattern($siteNode);
         if (empty($sites)) {
             $this->outputLine('<error>No Site found for pattern "%s".</error>', [$siteNode]);
+            // Help the user a little about what he needs to provide as a parameter here
+            $this->outputLine('To find out which sites you have, use the <b>site:list</b> command.');
+            $this->outputLine('The site:prune command expects the "Node name" from the site list as a parameter.');
+            $this->outputLine('If you want to delete all sites, you can run <b>site:prune \'*\'</b>.');
             $this->quit(1);
         }
         foreach ($sites as $site) {
