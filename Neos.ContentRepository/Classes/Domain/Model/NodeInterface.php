@@ -74,7 +74,7 @@ interface NodeInterface
      * @throws \InvalidArgumentException if $newName is invalid
      * @api
      */
-    public function setName(string $newName): void;
+    public function setName($newName);
 
     /**
      * Returns the name of this node
@@ -82,7 +82,7 @@ interface NodeInterface
      * @return string
      * @api
      */
-    public function getName(): string;
+    public function getName();
 
     /**
      * Returns a full length plain text label of this node
@@ -90,7 +90,7 @@ interface NodeInterface
      * @return string
      * @api
      */
-    public function getLabel(): string;
+    public function getLabel();
 
     /**
      * Sets the specified property.
@@ -103,7 +103,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function setProperty(string $propertyName, $value): void;
+    public function setProperty($propertyName, $value);
 
     /**
      * If this node has a property with the given name.
@@ -115,7 +115,7 @@ interface NodeInterface
      * @return boolean
      * @api
      */
-    public function hasProperty(string $propertyName): bool;
+    public function hasProperty($propertyName);
 
     /**
      * Returns the specified property.
@@ -128,7 +128,7 @@ interface NodeInterface
      * @throws NodeException if the node does not contain the specified property
      * @api
      */
-    public function getProperty(string $propertyName);
+    public function getProperty($propertyName);
 
     /**
      * Removes the specified property.
@@ -141,7 +141,7 @@ interface NodeInterface
      * @throws NodeException if the node does not contain the specified property
      * @api
      */
-    public function removeProperty(string $propertyName): void;
+    public function removeProperty($propertyName);
 
     /**
      * Returns all properties of this node.
@@ -152,7 +152,7 @@ interface NodeInterface
      * @return PropertyCollectionInterface Property values
      * @api
      */
-    public function getProperties(): PropertyCollectionInterface;
+    public function getProperties();
 
     /**
      * Returns the names of all properties of this node.
@@ -160,7 +160,7 @@ interface NodeInterface
      * @return string[] Property names
      * @api
      */
-    public function getPropertyNames(): array;
+    public function getPropertyNames();
 
     /**
      * Sets a content object for this node.
@@ -170,7 +170,7 @@ interface NodeInterface
      * @throws \InvalidArgumentException if the given contentObject is no object.
      * @api
      */
-    public function setContentObject($contentObject): void;
+    public function setContentObject($contentObject);
 
     /**
      * Returns the content object of this node (if any).
@@ -186,7 +186,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function unsetContentObject(): void;
+    public function unsetContentObject();
 
     /**
      * Sets the node type of this node.
@@ -195,7 +195,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function setNodeType(NodeType $nodeType): void;
+    public function setNodeType(NodeType $nodeType);
 
     /**
      * Returns the node type of this node.
@@ -212,7 +212,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function setHidden(bool $hidden): void;
+    public function setHidden($hidden);
 
     /**
      * Returns the current state of the hidden flag
@@ -220,7 +220,7 @@ interface NodeInterface
      * @return boolean
      * @api
      */
-    public function isHidden(): bool;
+    public function isHidden();
 
     /**
      * Sets the date and time when this node becomes potentially visible.
@@ -229,7 +229,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function setHiddenBeforeDateTime(\DateTimeInterface $dateTime = null): void;
+    public function setHiddenBeforeDateTime(\DateTimeInterface $dateTime = null);
 
     /**
      * Returns the date and time before which this node will be automatically hidden.
@@ -237,7 +237,7 @@ interface NodeInterface
      * @return \DateTimeInterface|null Date before this node will be hidden - or null if no hidden before date is set
      * @api
      */
-    public function getHiddenBeforeDateTime(): ?\DateTimeInterface;
+    public function getHiddenBeforeDateTime();
 
     /**
      * Sets the date and time when this node should be automatically hidden
@@ -246,7 +246,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function setHiddenAfterDateTime(\DateTimeInterface $dateTime = null): void;
+    public function setHiddenAfterDateTime(\DateTimeInterface $dateTime = null);
 
     /**
      * Returns the date and time after which this node will be automatically hidden.
@@ -254,7 +254,7 @@ interface NodeInterface
      * @return \DateTimeInterface|null Date after which this node will be hidden - or null if no hidden after date is set
      * @api
      */
-    public function getHiddenAfterDateTime(): ?\DateTimeInterface;
+    public function getHiddenAfterDateTime();
 
     /**
      * Sets if this node should be hidden in indexes, such as a site navigation.
@@ -263,7 +263,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function setHiddenInIndex(bool $hidden): void;
+    public function setHiddenInIndex($hidden);
 
     /**
      * If this node should be hidden in indexes
@@ -271,7 +271,7 @@ interface NodeInterface
      * @return boolean
      * @api
      */
-    public function isHiddenInIndex(): bool;
+    public function isHiddenInIndex();
 
     /**
      * Sets the roles which are required to access this node
@@ -280,7 +280,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function setAccessRoles(array $accessRoles): void;
+    public function setAccessRoles(array $accessRoles);
 
     /**
      * Returns the names of defined access roles
@@ -288,7 +288,7 @@ interface NodeInterface
      * @return array
      * @api
      */
-    public function getAccessRoles(): array;
+    public function getAccessRoles();
 
     /**
      * Returns the path of this node
@@ -298,7 +298,7 @@ interface NodeInterface
      * @return string The absolute node path
      * @api
      */
-    public function getPath(): string;
+    public function getPath();
 
     /**
      * Returns the absolute path of this node with additional context information (such as the workspace name).
@@ -308,7 +308,7 @@ interface NodeInterface
      * @return string Node path with context information
      * @api
      */
-    public function getContextPath(): string;
+    public function getContextPath();
 
     /**
      * Returns the level at which this node is located.
@@ -317,7 +317,7 @@ interface NodeInterface
      * @return integer
      * @api
      */
-    public function getDepth(): int;
+    public function getDepth();
 
     /**
      * Sets the workspace of this node.
@@ -328,7 +328,7 @@ interface NodeInterface
      * @param Workspace $workspace
      * @return void
      */
-    public function setWorkspace(Workspace $workspace): void;
+    public function setWorkspace(Workspace $workspace);
 
     /**
      * Returns the workspace this node is contained in
@@ -336,7 +336,7 @@ interface NodeInterface
      * @return Workspace
      * @api
      */
-    public function getWorkspace(): Workspace;
+    public function getWorkspace();
 
     /**
      * Returns the identifier of this node.
@@ -352,7 +352,7 @@ interface NodeInterface
      * @return string the node's UUID
      * @api
      */
-    public function getIdentifier(): string;
+    public function getIdentifier();
 
     /**
      * Sets the index of this node
@@ -362,7 +362,7 @@ interface NodeInterface
      * @param integer $index The new index
      * @return void
      */
-    public function setIndex(int $index): void;
+    public function setIndex($index);
 
     /**
      * Returns the index of this node which determines the order among siblings
@@ -370,7 +370,7 @@ interface NodeInterface
      *
      * @return integer
      */
-    public function getIndex(): int;
+    public function getIndex();
 
     /**
      * Returns the parent node of this node
@@ -379,7 +379,7 @@ interface NodeInterface
      * @api
      * @throws NodeException if no node has no parent (= is root node)
      */
-    public function getParent(): NodeInterface;
+    public function getParent();
 
     /**
      * Returns the parent node path
@@ -387,7 +387,7 @@ interface NodeInterface
      * @return string Absolute node path of the parent node
      * @api
      */
-    public function getParentPath(): string;
+    public function getParentPath();
 
     /**
      * Creates, adds and returns a child node of this node. Also sets default
@@ -401,7 +401,7 @@ interface NodeInterface
      * @throws NodeExistsException if a node with this path already exists.
      * @api
      */
-    public function createNode(string $name, NodeType $nodeType = null, string $identifier = null): NodeInterface;
+    public function createNode($name, NodeType $nodeType = null, $identifier = null);
 
     /**
      * Creates, adds and returns a child node of this node, without setting default
@@ -416,7 +416,7 @@ interface NodeInterface
      * @throws \InvalidArgumentException if the node name is not accepted.
      * @throws NodeExistsException if a node with this path already exists.
      */
-    public function createSingleNode(string $name, NodeType $nodeType = null, string $identifier = null): NodeInterface;
+    public function createSingleNode($name, NodeType $nodeType = null, $identifier = null);
 
     /**
      * Creates and persists a node from the given $nodeTemplate as child node
@@ -426,7 +426,7 @@ interface NodeInterface
      * @return NodeInterface the freshly generated node
      * @api
      */
-    public function createNodeFromTemplate(NodeTemplate $nodeTemplate, string $nodeName = null): NodeInterface;
+    public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = null);
 
     /**
      * Returns a node specified by the given relative path.
@@ -436,7 +436,7 @@ interface NodeInterface
      * @api
      * @throws NodeException if no node with the given $path was found
      */
-    public function getNode(string $path): NodeInterface;
+    public function getNode($path);
 
     /**
      * Returns the primary child node of this node.
@@ -448,7 +448,7 @@ interface NodeInterface
      * @api
      * @throws NodeException if no primary child node exists
      */
-    public function getPrimaryChildNode(): NodeInterface;
+    public function getPrimaryChildNode();
 
     /**
      * Returns all direct child nodes of this node.
@@ -460,7 +460,7 @@ interface NodeInterface
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
      * @api
      */
-    public function getChildNodes(string $nodeTypeFilter = null, int $limit = null, int $offset = null): array;
+    public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null);
 
     /**
      * Checks if this node has any child nodes.
@@ -469,7 +469,7 @@ interface NodeInterface
      * @return boolean true if this node has child nodes, otherwise false
      * @api
      */
-    public function hasChildNodes(string $nodeTypeFilter = null): bool;
+    public function hasChildNodes($nodeTypeFilter = null);
 
     /**
      * Removes this node and all its child nodes. This is an alias for setRemoved(true)
@@ -477,7 +477,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function remove(): void;
+    public function remove();
 
     /**
      * Removes this node and all its child nodes or sets ONLY this node to not being removed.
@@ -486,7 +486,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function setRemoved(bool $removed): void;
+    public function setRemoved($removed);
 
     /**
      * If this node is a removed node.
@@ -494,7 +494,7 @@ interface NodeInterface
      * @return boolean
      * @api
      */
-    public function isRemoved(): bool;
+    public function isRemoved();
 
     /**
      * Tells if this node is "visible".
@@ -504,7 +504,7 @@ interface NodeInterface
      * @return boolean
      * @api
      */
-    public function isVisible(): bool;
+    public function isVisible();
 
     /**
      * Tells if this node may be accessed according to the current security context.
@@ -512,7 +512,7 @@ interface NodeInterface
      * @return boolean
      * @api
      */
-    public function isAccessible(): bool;
+    public function isAccessible();
 
     /**
      * Tells if a node, in general,  has access restrictions, independent of the
@@ -521,7 +521,7 @@ interface NodeInterface
      * @return boolean
      * @api
      */
-    public function hasAccessRestrictions(): bool;
+    public function hasAccessRestrictions();
 
     /**
      * Checks if the given $nodeType would be allowed as a child node of this node according to the configured constraints.
@@ -529,7 +529,7 @@ interface NodeInterface
      * @param NodeType $nodeType
      * @return boolean true if the passed $nodeType is allowed as child node
      */
-    public function isNodeTypeAllowedAsChildNode(NodeType $nodeType): bool;
+    public function isNodeTypeAllowedAsChildNode(NodeType $nodeType);
 
     /**
      * Moves this node before the given node
@@ -538,7 +538,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function moveBefore(NodeInterface $referenceNode): void;
+    public function moveBefore(NodeInterface $referenceNode);
 
     /**
      * Moves this node after the given node
@@ -547,7 +547,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function moveAfter(NodeInterface $referenceNode): void;
+    public function moveAfter(NodeInterface $referenceNode);
 
     /**
      * Moves this node into the given node
@@ -556,7 +556,7 @@ interface NodeInterface
      * @return void
      * @api
      */
-    public function moveInto(NodeInterface $referenceNode): void;
+    public function moveInto(NodeInterface $referenceNode);
 
     /**
      * Copies this node before the given node
@@ -567,7 +567,7 @@ interface NodeInterface
      * @throws NodeExistsException
      * @api
      */
-    public function copyBefore(NodeInterface $referenceNode, string $nodeName): NodeInterface;
+    public function copyBefore(NodeInterface $referenceNode, $nodeName);
 
     /**
      * Copies this node after the given node
@@ -578,7 +578,7 @@ interface NodeInterface
      * @throws NodeExistsException
      * @api
      */
-    public function copyAfter(NodeInterface $referenceNode, string $nodeName): NodeInterface;
+    public function copyAfter(NodeInterface $referenceNode, $nodeName);
 
     /**
      * Copies this node to below the given node. The new node will be added behind
@@ -590,28 +590,28 @@ interface NodeInterface
      * @throws NodeExistsException
      * @api
      */
-    public function copyInto(NodeInterface $referenceNode, string $nodeName): NodeInterface;
+    public function copyInto(NodeInterface $referenceNode, $nodeName);
 
     /**
      * Return the NodeData representation of the node.
      *
      * @return NodeData
      */
-    public function getNodeData(): NodeData;
+    public function getNodeData();
 
     /**
      * Return the context of the node
      *
      * @return Context
      */
-    public function getContext(): Context;
+    public function getContext();
 
     /**
      * Return the assigned content dimensions of the node.
      *
      * @return array An array of dimensions to array of dimension values
      */
-    public function getDimensions(): array;
+    public function getDimensions();
 
     /**
      * Given a context a new node is returned that is like this node, but
@@ -620,7 +620,7 @@ interface NodeInterface
      * @param Context $context
      * @return NodeInterface
      */
-    public function createVariantForContext(Context $context): NodeInterface;
+    public function createVariantForContext($context);
 
     /**
      * Determine if this node is configured as auto-created childNode of the parent node. If that is the case, it
@@ -628,7 +628,7 @@ interface NodeInterface
      *
      * @return boolean true if this node is auto-created by the parent.
      */
-    public function isAutoCreated(): bool;
+    public function isAutoCreated();
 
     /**
      * Get other variants of this node (with different dimension values)
@@ -638,5 +638,5 @@ interface NodeInterface
      *
      * @return array<NodeInterface> All node variants of this node (excluding the current node)
      */
-    public function getOtherNodeVariants(): array;
+    public function getOtherNodeVariants();
 }
