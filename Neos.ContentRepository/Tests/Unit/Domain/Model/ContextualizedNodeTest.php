@@ -20,6 +20,7 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Cache\FirstLevelNodeCache;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\NodeService;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for the "Node" domain model
@@ -390,7 +391,8 @@ class ContextualizedNodeTest extends UnitTestCase
         $context->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array()));
         $context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
-        $node = $this->getMockBuilder(Node::class)->setMethods(array_merge(array('materializeNodeData', 'materializeNodeDataAsNeeded'), $configurableMethods))->setConstructorArgs(array($nodeData, $context))->getMock();
+        /** @var Node|MockObject $node */
+        $node = $this->getMockBuilder(Node::class)->setMethods(array_merge(array('materializeNodeData', 'materializeNodeDataAsNeeded', 'getNodeType'), $configurableMethods))->setConstructorArgs(array($nodeData, $context))->getMock();
         return $node;
     }
 

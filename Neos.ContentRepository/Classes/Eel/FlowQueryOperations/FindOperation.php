@@ -146,12 +146,10 @@ class FindOperation extends AbstractOperation
                     $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
                     foreach ($context as $contextNode) {
                         /** @var NodeInterface $contextNode */
-                        try {
-                            $node = $contextNode->getNode($nodePath);
-                        } catch (NodeException $exception) {
-                            continue;
+                        $node = $contextNode->getNode($nodePath);
+                        if ($node !== null) {
+                            array_push($filterResults, $node);
                         }
-                        array_push($filterResults, $node);
                     }
                     $generatedNodes = true;
                 }

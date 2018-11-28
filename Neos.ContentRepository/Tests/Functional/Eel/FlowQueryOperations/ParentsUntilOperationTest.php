@@ -144,11 +144,7 @@ class ParentsUntilOperationTest extends AbstractNodeTest
                 }
             }
             foreach ($unexpectedNodePaths as $unexpectedNodePath) {
-                try {
-                    $unexpectedNode = $rootNode->getNode($unexpectedNodePath);
-                } catch (NodeException $e) {
-                    $unexpectedNode = null;
-                }
+                $unexpectedNode = $rootNode->getNode($unexpectedNodePath);
                 if (in_array($unexpectedNode, $result)) {
                     $this->fail(sprintf('Expected result not to contain node "%s"', $unexpectedNodePath));
                 }

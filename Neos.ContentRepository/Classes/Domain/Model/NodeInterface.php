@@ -375,9 +375,8 @@ interface NodeInterface
     /**
      * Returns the parent node of this node
      *
-     * @return NodeInterface The parent node
+     * @return NodeInterface The parent node or NULL if this is the root node
      * @api
-     * @throws NodeException if no node has no parent (= is root node)
      */
     public function getParent();
 
@@ -434,19 +433,17 @@ interface NodeInterface
      * @param string $path Path specifying the node, relative to this node
      * @return NodeInterface The specified node or NULL if no such node exists
      * @api
-     * @throws NodeException if no node with the given $path was found
      */
     public function getNode($path);
 
     /**
      * Returns the primary child node of this node.
      *
-     * Which node acts as a primary child node will in the future depend on the
+     * Which node acts as a primary child node will in the future depend on theLayeredWorkspacesTest
      * node type. For now it is just the first child node.
      *
-     * @return NodeInterface The primary child node
+     * @return NodeInterface The primary child node or NULL if no such node exists
      * @api
-     * @throws NodeException if no primary child node exists
      */
     public function getPrimaryChildNode();
 
