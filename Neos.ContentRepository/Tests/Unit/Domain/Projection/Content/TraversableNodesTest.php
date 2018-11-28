@@ -268,6 +268,4 @@ class TraversableNodesTest extends UnitTestCase
 
         $this->assertSame($expectedResult, $result->toArray());
     }
-
-
 }

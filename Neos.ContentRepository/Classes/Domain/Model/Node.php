@@ -649,7 +649,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         $referenceParentNode = $referenceNode->getParent();
 
         if ($referenceParentNode !== $this->getParent() && $referenceParentNode->getNode($name) !== null) {
-            throw new NodeExistsException(sprintf('Node with path "%s" already exists.', $name),  1292503469);
+            throw new NodeExistsException(sprintf('Node with path "%s" already exists.', $name), 1292503469);
         }
 
         if (($referenceParentNode instanceof Node && !$referenceParentNode->willChildNodeBeAutoCreated($name)) && !$referenceParentNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
