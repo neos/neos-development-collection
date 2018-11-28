@@ -532,7 +532,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound
+     * @expectedException \Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFoundException
      */
     public function getSpecializationSetThrowsExceptionForDimensionSpacePointOutsideTheAllowedSubspace()
     {

@@ -15,8 +15,8 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception;
  */
 
 /**
- * The exception to be thrown if a dimension space point is tried to be used as a generalization of another one but isn't
+ * A dimension space point was not found exception
  */
-class DimensionSpacePointIsNoGeneralization extends \DomainException
+class DimensionSpacePointNotFoundException extends \DomainException
 {
 }

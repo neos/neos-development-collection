@@ -15,8 +15,8 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception;
  */
 
 /**
- * A dimension space point was not found exception
+ * The exception to be thrown if two content subgraph variation weights are to be compared that cannot, e.g. if they compose of different dimension combinations
  */
-class DimensionSpacePointNotFound extends \DomainException
+class ContentSubgraphVariationWeightsAreIncomparableException extends \DomainException
 {
 }
