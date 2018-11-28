@@ -567,7 +567,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      *
      * @return bool
      */
-    private function isRoot(): bool
+    public function isRoot(): bool
     {
         return $this->getPath() === '/';
     }

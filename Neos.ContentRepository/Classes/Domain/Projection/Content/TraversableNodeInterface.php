@@ -27,11 +27,18 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 interface TraversableNodeInterface extends NodeInterface
 {
     /**
+     * Whether or not this node is the root of the graph, i.e. has no parent node
+     *
+     * @return bool
+     */
+    public function isRoot(): bool;
+
+    /**
      * Retrieves and returns the parent node from the node's subgraph.
      * Returns null if this is a root node.
      *
      * @return TraversableNodeInterface
-     * @throws NodeException If this node has no parent
+     * @throws NodeException If this node has no parent (i.e. is the root)
      */
     public function findParentNode(): TraversableNodeInterface;
 

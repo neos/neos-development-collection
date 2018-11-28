@@ -54,6 +54,7 @@ class ParentsOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws NodeException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -62,18 +63,14 @@ class ParentsOperation extends AbstractOperation
         /* @var TraversableNodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $node = $contextNode;
-            do {
-                try {
-                    $node = $node->findParentNode();
-                } catch (NodeException $exception) {
-                    break;
-                }
+            while (!$node->isRoot()) {
+                $node = $node->findParentNode();
                 if (isset($parentNodeAggregateIdentifiers[(string)$node->getNodeAggregateIdentifier()])) {
                     continue;
                 }
                 $parents[] = $node;
                 $parentNodeAggregateIdentifiers[(string)$node->getNodeAggregateIdentifier()] = true;
-            } while (true);
+            }
         }
 
         $flowQuery->setContext($parents);
