@@ -95,7 +95,7 @@ interface NodeInterface extends CacheAwareInterface
      * @return mixed value of the property
      * @api
      */
-    public function getProperty(string $propertyName);
+    public function getProperty($propertyName);
 
     /**
      * If this node has a property with the given name. Does NOT check the NodeType; but checks
@@ -105,7 +105,7 @@ interface NodeInterface extends CacheAwareInterface
      * @return boolean
      * @api
      */
-    public function hasProperty(string $propertyName): bool;
+    public function hasProperty($propertyName): bool;
 
     /**
      * Returns the current state of the hidden flag
