@@ -118,7 +118,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return string Node path with context information
      * @api
      */
-    public function getContextPath(): string
+    public function getContextPath()
     {
         return NodePaths::generateContextPath($this->getPath(), $this->context->getWorkspaceName(), $this->context->getDimensions());
     }
@@ -264,10 +264,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @param string $originalPath
      * @param string $destinationPath
      * @param boolean $recursiveCall
-     * @return array
+     * @return array|null
      * @throws NodeConfigurationException
      */
-    protected function moveNodeData(NodeData $nodeData, string $originalPath, string $destinationPath, bool $recursiveCall): array
+    protected function moveNodeData(NodeData $nodeData, string $originalPath, string $destinationPath, bool $recursiveCall)
     {
         $recursiveCall = $recursiveCall || ($this->nodeData !== $nodeData);
         $nodeVariant = null;
@@ -292,7 +292,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
             $nodeVariant = $this->createNodeForVariant($nodeData);
         }
 
-        $moveVariantResult = $nodeVariant === null ? [] : $this->moveVariantOrChild($originalPath, $destinationPath, $nodeVariant);
+        $moveVariantResult = $nodeVariant === null ? null : $this->moveVariantOrChild($originalPath, $destinationPath, $nodeVariant);
         if ($moveVariantResult !== null) {
             array_push($moveVariantResult, $recursiveCall);
         }
@@ -408,7 +408,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return string
      * @api
      */
-    public function getPath(): string
+    public function getPath()
     {
         return $this->nodeData->getPath();
     }
@@ -420,7 +420,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return integer
      * @api
      */
-    public function getDepth(): int
+    public function getDepth()
     {
         return $this->nodeData->getDepth();
     }
@@ -431,7 +431,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return string
      * @api
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->nodeData->getName();
     }
@@ -477,7 +477,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return Workspace
      * @api
      */
-    public function getWorkspace(): Workspace
+    public function getWorkspace()
     {
         return $this->nodeData->getWorkspace();
     }
@@ -488,7 +488,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return string the node's UUID (unique within the workspace)
      * @api
      */
-    public function getIdentifier(): string
+    public function getIdentifier()
     {
         return $this->nodeData->getIdentifier();
     }
@@ -522,7 +522,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      *
      * @return integer
      */
-    public function getIndex(): int
+    public function getIndex()
     {
         return $this->nodeData->getIndex();
     }
@@ -532,12 +532,11 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      *
      * @return NodeInterface The parent node or NULL if this is the root node
      * @api
-     * @throws NodeException
      */
-    public function getParent(): NodeInterface
+    public function getParent()
     {
         if ($this->isRoot()) {
-            throw new NodeException('The root node has no parent.', 1542898131);
+            return null;
         }
 
         $parentPath = $this->getParentPath();
@@ -546,9 +545,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
             return $node;
         }
         $node = $this->nodeDataRepository->findOneByPathInContext($parentPath, $this->context);
-        if ($node === null) {
-            throw new NodeException('Parent node not found', 1542983610);
-        }
         $this->context->getFirstLevelNodeCache()->setByPath($parentPath, $node);
 
         return $node;
@@ -1001,7 +997,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return string[] Property names
      * @api
      */
-    public function getPropertyNames(): array
+    public function getPropertyNames()
     {
         return $this->nodeData->getPropertyNames();
     }
@@ -1123,9 +1119,8 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
 
             foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
                 $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $newNode->getIdentifier());
-                try {
-                    $newNode->getNode($childNodeName);
-                } catch (NodeException $exception) {
+                $alreadyPresentChildNode = $newNode->getNode($childNodeName);
+                if ($alreadyPresentChildNode === null) {
                     $newNode->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
                 }
             }
@@ -1210,11 +1205,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns a node specified by the given relative path.
      *
      * @param string $path Path specifying the node, relative to this node
-     * @return NodeInterface The specified node or NULL if no such node exists
+     * @return NodeInterface|null The specified node or NULL if no such node exists
      * @api
-     * @throws NodeException
      */
-    public function getNode($path): NodeInterface
+    public function getNode($path): ?NodeInterface
     {
         $absolutePath = $this->nodeService->normalizePath($path, $this->getPath());
         $node = $this->context->getFirstLevelNodeCache()->getByPath($absolutePath);
@@ -1222,9 +1216,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
             return $node;
         }
         $node = $this->nodeDataRepository->findOneByPathInContext($absolutePath, $this->context);
-        if ($node === null) {
-            throw new NodeException(sprintf('Node with path "%s" does not exist in this context', $path), 1542981693);
-        }
         $this->context->getFirstLevelNodeCache()->setByPath($absolutePath, $node);
         return $node;
     }
@@ -1235,17 +1226,12 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Which node acts as a primary child node will in the future depend on the
      * node type. For now it is just the first child node.
      *
-     * @return NodeInterface The primary child node or NULL if no such node exists
+     * @return NodeInterface|null The primary child node or NULL if no such node exists
      * @api
-     * @throws NodeException
      */
-    public function getPrimaryChildNode(): NodeInterface
+    public function getPrimaryChildNode(): ?NodeInterface
     {
-        $node = $this->nodeDataRepository->findFirstByParentAndNodeTypeInContext($this->getPath(), null, $this->context);
-        if ($node === null) {
-            throw new NodeException('No primary child node found', 1542983517);
-        }
-        return $node;
+        return $this->nodeDataRepository->findFirstByParentAndNodeTypeInContext($this->getPath(), null, $this->context);
     }
 
     /**
@@ -1772,7 +1758,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @param Context $context
      * @return NodeInterface
      * @throws NodeConfigurationException
-     * @throws NodeException
      * @throws NodeTypeNotFoundException
      */
     public function createVariantForContext($context): NodeInterface
@@ -1868,7 +1853,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @param NodeType $nodeType
      * @return boolean true if the passed $nodeType is allowed as child node
      * @throws NodeTypeNotFoundException
-     * @throws NodeException
      */
     public function isNodeTypeAllowedAsChildNode(NodeType $nodeType): bool
     {
@@ -1884,14 +1868,13 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * should not be deleted.
      *
      * @return boolean true if this node is auto-created by the parent.
-     * @throws NodeException
      */
     public function isAutoCreated(): bool
     {
-        if ($this->isRoot()) {
+        $parent = $this->getParent();
+        if ($parent === null) {
             return false;
         }
-        $parent = $this->getParent();
         if (array_key_exists($this->getName(), $parent->getNodeType()->getAutoCreatedChildNodes())) {
             return true;
         }
@@ -1976,12 +1959,15 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
 
     /**
      * @return TraversableNodeInterface
-     * @throws NodeException
+     * @throws NodeException if no parent node was found (= this is the root node)
      */
     public function findParentNode(): TraversableNodeInterface
     {
         /** @var TraversableNodeInterface $parentNode It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time. */
         $parentNode = $this->getParent();
+        if ($parentNode === null) {
+            throw new NodeException('Parent node not found', 1542983610);
+        }
         return $parentNode;
     }
 
@@ -1999,6 +1985,9 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     {
         /** @var TraversableNodeInterface $childNode It's safe to return the old NodeInterface as TraversableNodeInterface; as the base implementation "Node" (this class) implements both interfaces at the same time. */
         $childNode = $this->getNode((string)$nodeName);
+        if ($childNode === null) {
+            throw new NodeException(sprintf('Child node named "%s" not found', $nodeName), 1543406006);
+        }
         return $childNode;
     }
 
