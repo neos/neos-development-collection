@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 /*
@@ -36,10 +38,10 @@ final class ContentDimensionValue
 
     /**
      * General configuration like UI, detection etc.
+     *
      * @var array
      */
     protected $configuration;
-
 
     /**
      * @param string $value

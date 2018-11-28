@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 /*
@@ -164,8 +166,9 @@ final class ContentDimension
     /**
      * @param ContentDimensionValue $dimensionValue
      * @param callable $callback
+     * @return void
      */
-    public function traverseGeneralizations(ContentDimensionValue $dimensionValue, callable $callback)
+    public function traverseGeneralizations(ContentDimensionValue $dimensionValue, callable $callback): void
     {
         $callback($dimensionValue);
         if ($this->getGeneralization($dimensionValue)) {

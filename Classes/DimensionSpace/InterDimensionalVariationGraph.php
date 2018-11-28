@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
 
 /*
@@ -69,12 +72,19 @@ class InterDimensionalVariationGraph
      */
     protected $weightNormalizationBase;
 
+    /**
+     * @param Dimension\ContentDimensionSourceInterface $contentDimensionSource
+     * @param ContentDimensionZookeeper $contentDimensionZookeeper
+     */
     public function __construct(Dimension\ContentDimensionSourceInterface $contentDimensionSource, ContentDimensionZookeeper $contentDimensionZookeeper)
     {
         $this->contentDimensionSource = $contentDimensionSource;
         $this->contentDimensionZookeeper = $contentDimensionZookeeper;
     }
 
+    /**
+     * @return void
+     */
     protected function initializeWeightedDimensionSpacePoints(): void
     {
         $this->weightedDimensionSpacePoints = [];
@@ -154,7 +164,7 @@ class InterDimensionalVariationGraph
     /**
      * @return void
      */
-    protected function initializeVariations()
+    protected function initializeVariations(): void
     {
         $normalizedVariationWeights = [];
         $lowestVariationWeights = [];
@@ -207,13 +217,14 @@ class InterDimensionalVariationGraph
      * @param array $normalizedVariationWeights
      * @param array $indexedGeneralizations
      * @param array $indexedSpecializations
+     * @return void
      */
     protected function initializeVariationsForDimensionSpacePointPair(
         WeightedDimensionSpacePoint $specialization,
         WeightedDimensionSpacePoint $generalization,
         array $normalizedVariationWeights,
         array &$indexedGeneralizations,
-        array &$indexedSpecializations)
+        array &$indexedSpecializations): void
     {
         /** @var array|WeightedDimensionSpacePoint[] $generalizationsToProcess */
         $generalizationsToProcess = [$generalization->getIdentityHash() => $generalization];

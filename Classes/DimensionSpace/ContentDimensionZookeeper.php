@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
 
 /*
@@ -29,6 +31,9 @@ final class ContentDimensionZookeeper
      */
     protected $allowedCombinations;
 
+    /**
+     * @param Dimension\ContentDimensionSourceInterface $contentDimensionSource
+     */
     public function __construct(Dimension\ContentDimensionSourceInterface $contentDimensionSource)
     {
         $this->contentDimensionSource = $contentDimensionSource;
@@ -37,7 +42,7 @@ final class ContentDimensionZookeeper
     /**
      * @return void
      */
-    protected function initializeAllowedCombinations()
+    protected function initializeAllowedCombinations(): void
     {
         if (!empty($this->contentDimensionSource->getContentDimensionsOrderedByPriority())) {
             /** @var Dimension\ContentDimensionValue[][] $dimensionCombinations */

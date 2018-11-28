@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
 
 /*
@@ -190,6 +193,10 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
         return base64_encode(json_encode($this->coordinates));
     }
 
+    /**
+     * @param string $encoded
+     * @return DimensionSpacePoint
+     */
     public static function fromUriRepresentation(string $encoded): DimensionSpacePoint
     {
         return new DimensionSpacePoint(json_decode(base64_decode($encoded), true));

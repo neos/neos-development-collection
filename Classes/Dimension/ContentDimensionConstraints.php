@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 /*
@@ -20,6 +22,7 @@ final class ContentDimensionConstraints
     /**
      * if TRUE, the logic is "all allowed, except..." (blacklist approach).
      * if FALSE, the logic is "nothing allowed, except..." (whitelist approach).
+     *
      * @var bool
      */
     protected $wildcardAllowed;

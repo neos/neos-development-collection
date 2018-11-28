@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\DimensionSpace\Dimension;
 
 /*
@@ -29,6 +31,9 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
      */
     protected $contentDimensions;
 
+    /**
+     * @param array $dimensionConfiguration
+     */
     public function __construct(array $dimensionConfiguration)
     {
         $this->dimensionConfiguration = $dimensionConfiguration;
@@ -42,7 +47,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
      * @throws Exception\ContentDimensionValuesAreMissing
      * @throws Exception\ContentDimensionDefaultValueIsMissing
      */
-    protected function initializeDimensions()
+    protected function initializeDimensions(): void
     {
         if (!empty($this->dimensionConfiguration)) {
             foreach ($this->dimensionConfiguration as $rawDimensionIdentifier => $dimensionConfiguration) {
@@ -85,6 +90,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
      * @param array $configuration
      * @param ContentDimensionValue|null $generalization
      * @param ContentDimensionValueSpecializationDepth $specializationDepth
+     * @return void
      * @throws Exception\ContentDimensionValueIsInvalid
      */
     protected function extractDimensionValuesAndVariations(
@@ -94,7 +100,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
         array $configuration,
         ?ContentDimensionValue $generalization,
         ContentDimensionValueSpecializationDepth $specializationDepth
-    ) {
+    ): void {
         $constraints = [];
         $additionalConfiguration = $configuration;
         if (isset($configuration['constraints'])) {

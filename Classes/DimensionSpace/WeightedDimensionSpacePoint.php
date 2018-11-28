@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
 
 /*
@@ -33,7 +35,6 @@ final class WeightedDimensionSpacePoint
      * @var ContentSubgraphVariationWeight
      */
     protected $weight;
-
 
     /**
      * @param array|Dimension\ContentDimensionValue[] $dimensionValues

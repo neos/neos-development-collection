@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\DimensionSpace\TypeConverter;
 
 /*
@@ -18,12 +21,28 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 class DimensionSpacePointConverter extends AbstractTypeConverter
 {
-
+    /**
+     * @var array
+     */
     protected $sourceTypes = ['array'];
+
+    /**
+     * @var string
+     */
     protected $targetType = DimensionSpacePoint::class;
+
+    /**
+     * @var int
+     */
     protected $priority = 10;
 
-
+    /**
+     * @param mixed $source
+     * @param string $targetType
+     * @param array $convertedChildProperties
+     * @param PropertyMappingConfigurationInterface|null $configuration
+     * @return mixed|DimensionSpacePoint|\Neos\Error\Messages\Error
+     */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         return new DimensionSpacePoint($source);
