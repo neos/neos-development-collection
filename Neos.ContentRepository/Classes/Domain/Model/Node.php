@@ -133,7 +133,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeTypeNotFoundException
      * @api
      */
-    public function setName(string $newName): void
+    public function setName($newName): void
     {
         if ($this->getName() === $newName) {
             return;
@@ -503,7 +503,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeException
      * @throws NodeTypeNotFoundException
      */
-    public function setIndex(int $index): void
+    public function setIndex($index): void
     {
         if ($this->getIndex() === $index) {
             return;
@@ -725,7 +725,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeTypeNotFoundException
      * @api
      */
-    public function copyBefore(NodeInterface $referenceNode, string $nodeName): NodeInterface
+    public function copyBefore(NodeInterface $referenceNode, $nodeName): NodeInterface
     {
         if ($referenceNode->getParent()->getNode($nodeName) !== null) {
             throw new NodeExistsException(sprintf('Node with path "%s/%s" already exists.', $referenceNode->getParent()->getPath(), $nodeName), 1292503465);
@@ -758,7 +758,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeTypeNotFoundException
      * @api
      */
-    public function copyAfter(NodeInterface $referenceNode, string $nodeName): NodeInterface
+    public function copyAfter(NodeInterface $referenceNode, $nodeName): NodeInterface
     {
         if ($referenceNode->getParent()->getNode($nodeName) !== null) {
             throw new NodeExistsException(sprintf('Node with path "%s/%s" already exists.', $referenceNode->getParent()->getPath(), $nodeName), 1292503466);
@@ -791,7 +791,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeTypeNotFoundException
      * @api
      */
-    public function copyInto(NodeInterface $referenceNode, string $nodeName): NodeInterface
+    public function copyInto(NodeInterface $referenceNode, $nodeName): NodeInterface
     {
         $this->emitBeforeNodeCopy($this, $referenceNode);
         $copiedNode = $this->copyIntoInternal($referenceNode, $nodeName, $this->getNodeType()->isAggregate());
@@ -850,7 +850,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws \Neos\Flow\Security\Exception
      * @api
      */
-    public function setProperty(string $propertyName, $value): void
+    public function setProperty($propertyName, $value): void
     {
         $this->materializeNodeDataAsNeeded();
         // Arrays could potentially contain entities and objects could be entities. In that case even if the object is the same it needs to be persisted in NodeData.
@@ -876,7 +876,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return boolean
      * @api
      */
-    public function hasProperty(string $propertyName): bool
+    public function hasProperty($propertyName): bool
     {
         return $this->nodeData->hasProperty($propertyName);
     }
@@ -896,7 +896,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeTypeNotFoundException
      * @api
      */
-    public function getProperty(string $propertyName, bool $returnNodesAsIdentifiers = false)
+    public function getProperty($propertyName, bool $returnNodesAsIdentifiers = false)
     {
         $value = $this->nodeData->getProperty($propertyName);
         $nodeType = $this->getNodeType();
@@ -959,7 +959,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeException if the node does not contain the specified property
      * @throws NodeTypeNotFoundException
      */
-    public function removeProperty(string $propertyName): void
+    public function removeProperty($propertyName): void
     {
         if (!$this->hasProperty($propertyName)) {
             return;
@@ -1108,7 +1108,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeTypeNotFoundException
      * @api
      */
-    public function createNode(string $name, NodeType $nodeType = null, string $identifier = null): NodeInterface
+    public function createNode($name, NodeType $nodeType = null, $identifier = null): NodeInterface
     {
         $this->emitBeforeNodeCreate($this, $name, $nodeType, $identifier);
         $newNode = $this->createSingleNode($name, $nodeType, $identifier);
@@ -1155,7 +1155,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeExistsException
      * @throws NodeTypeNotFoundException
      */
-    public function createSingleNode(string $name, NodeType $nodeType = null, string $identifier = null): NodeInterface
+    public function createSingleNode($name, NodeType $nodeType = null, $identifier = null): NodeInterface
     {
         if ($nodeType !== null && !$this->willChildNodeBeAutoCreated($name) && !$this->isNodeTypeAllowedAsChildNode($nodeType)) {
             throw new NodeConstraintException('Cannot create new node "' . $name . '" of Type "' . $nodeType->getName() . '" in ' . $this->__toString(), 1400782413);
@@ -1195,7 +1195,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @api
      * @throws NodeConfigurationException
      */
-    public function createNodeFromTemplate(NodeTemplate $nodeTemplate, string $nodeName = null): NodeInterface
+    public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = null): NodeInterface
     {
         $nodeData = $this->nodeData->createNodeDataFromTemplate($nodeTemplate, $nodeName, $this->context->getWorkspace(), $this->context->getDimensions());
         $node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
@@ -1214,7 +1214,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @api
      * @throws NodeException
      */
-    public function getNode(string $path): NodeInterface
+    public function getNode($path): NodeInterface
     {
         $absolutePath = $this->nodeService->normalizePath($path, $this->getPath());
         $node = $this->context->getFirstLevelNodeCache()->getByPath($absolutePath);
@@ -1258,7 +1258,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
      * @api
      */
-    public function getChildNodes(string $nodeTypeFilter = null, int $limit = null, int $offset = null): array
+    public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null): array
     {
         $nodes = $this->context->getFirstLevelNodeCache()->getChildNodesByPathAndNodeTypeFilter($this->getPath(), $nodeTypeFilter);
         if ($nodes === false) {
@@ -1294,7 +1294,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return boolean true if this node has child nodes, otherwise false
      * @api
      */
-    public function hasChildNodes(string $nodeTypeFilter = null): bool
+    public function hasChildNodes($nodeTypeFilter = null): bool
     {
         return ($this->getNumberOfChildNodes($nodeTypeFilter) > 0);
     }
@@ -1321,7 +1321,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeTypeNotFoundException
      * @api
      */
-    public function setRemoved(bool $removed): void
+    public function setRemoved($removed): void
     {
         if (!$this->isNodeDataMatchingContext()) {
             $this->materializeNodeData();
@@ -1363,7 +1363,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeTypeNotFoundException
      * @throws NodeException
      */
-    public function setHidden(bool $hidden): void
+    public function setHidden($hidden): void
     {
         if ($this->isHidden() === $hidden) {
             return;
@@ -1459,7 +1459,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeTypeNotFoundException
      * @throws NodeException
      */
-    public function setHiddenInIndex(bool $hidden): void
+    public function setHiddenInIndex($hidden): void
     {
         if ($this->isHiddenInIndex() === $hidden) {
             return;
@@ -1775,7 +1775,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @throws NodeException
      * @throws NodeTypeNotFoundException
      */
-    public function createVariantForContext(Context $context): NodeInterface
+    public function createVariantForContext($context): NodeInterface
     {
         $autoCreatedChildNodes = [];
         $nodeType = $this->getNodeType();
@@ -1907,7 +1907,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @param boolean $status
      * @return void
      */
-    public function setNodeDataIsMatchingContext(bool $status): void
+    public function setNodeDataIsMatchingContext(bool $status = null): void
     {
         $this->nodeDataIsMatchingContext = $status;
     }
