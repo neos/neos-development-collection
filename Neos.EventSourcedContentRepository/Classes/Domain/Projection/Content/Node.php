@@ -213,8 +213,8 @@ class Node implements NodeInterface
     }
 
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
-        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
+        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this) ?? '';
     }
 }

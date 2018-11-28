@@ -15,6 +15,7 @@ use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping\NodePropertyConverterService;
@@ -250,22 +251,23 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      * @param TraversableNodeInterface $node
      * @param string $nodeTypeFilterString
      * @return array
+     * @throws NodeAddressCannotBeSerializedException
      */
     protected function renderChildrenInformation(TraversableNodeInterface $node, string $nodeTypeFilterString): array
     {
         $documentChildNodes = $node->findChildNodes($this->nodeTypeConstraintFactory->parseFilterString($nodeTypeFilterString));
         // child nodes for content tree, must not include those nodes filtered out by `baseNodeType`
         $contentChildNodes = $node->findChildNodes($this->nodeTypeConstraintFactory->parseFilterString($this->buildContentChildNodeFilterString()));
-        $childNodes = array_merge($documentChildNodes, $contentChildNodes);
+        $childNodes = $documentChildNodes->merge($contentChildNodes);
 
-        $mapper = function (TraversableNodeInterface $childNode) {
-            return [
+        $infos = [];
+        foreach ($childNodes as $childNode) {
+            $infos[] = [
                 'contextPath' => $this->nodeAddressFactory->createFromNode($childNode)->serializeForUri(),
                 'nodeType' => $childNode->getNodeType()->getName() // TODO: DUPLICATED; should NOT be needed!!!
             ];
         };
-
-        return array_map($mapper, $childNodes);
+        return $infos;
     }
 
     /**
