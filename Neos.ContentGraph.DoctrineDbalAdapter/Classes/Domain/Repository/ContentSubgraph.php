@@ -281,7 +281,7 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
         }
     }
 
-    private static function addRestrictionEdgeConstraintsToQuery(SqlQueryBuilder $query, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints, string $aliasOfNodeInQuery = 'n'): SqlQueryBuilder {
+    private static function addRestrictionEdgeConstraintsToQuery(SqlQueryBuilder $query, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints, string $aliasOfNodeInQuery = 'n', string $aliasOfHierarchyEdgeInQuery = 'h'): SqlQueryBuilder {
         // TODO: make QueryBuilder immutable
         if (!$visibilityConstraints->isInvisibleContentShown()) {
             $query->addToQuery('
@@ -291,8 +291,8 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
                     from
                         neos_contentgraph_restrictionedge r
                     where
-                        r.contentstreamidentifier = h.contentstreamidentifier 
-                        and r.dimensionspacepointhash = h.dimensionspacepointhash
+                        r.contentstreamidentifier = ' . $aliasOfHierarchyEdgeInQuery . '.contentstreamidentifier 
+                        and r.dimensionspacepointhash = ' . $aliasOfHierarchyEdgeInQuery . '.dimensionspacepointhash
                         and r.affectednodeaggregateidentifier = ' . $aliasOfNodeInQuery . '.nodeaggregateidentifier
                 )');
         }
@@ -334,14 +334,9 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
      */
     public function findReferencedNodes(NodeIdentifier $nodeIdentifier, PropertyName $name = null): array
     {
-        $params = [
-            'nodeIdentifier' => (string)$nodeIdentifier,
-            'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-            'dimensionSpacePointHash' => (string)$this->getDimensionSpacePoint()->getHash(),
-            'name' => (string)$name
-        ];
 
-        $query = '
+        $query = new SqlQueryBuilder();
+        $query->addToQuery('
 -- ContentSubgraph::findReferencedNodes
 SELECT d.*, dh.contentstreamidentifier, dh.name, dh.dimensionspacepoint FROM neos_contentgraph_hierarchyrelation sh
  INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint 
@@ -353,19 +348,28 @@ SELECT d.*, dh.contentstreamidentifier, dh.name, dh.dimensionspacepoint FROM neo
  AND sh.dimensionspacepointhash = :dimensionSpacePointHash
  AND dh.contentstreamidentifier = :contentStreamIdentifier
  AND sh.contentstreamidentifier = :contentStreamIdentifier
-';
+'
+        )
+            ->parameter('nodeIdentifier', (string)$nodeIdentifier)
+            ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+            ->parameter('dimensionSpacePointHash', (string)$this->getDimensionSpacePoint()->getHash())
+            ->parameter('name', (string)$name);
+
+        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 'd', 'dh');
 
         if ($name) {
-            $query .= '
+            $query->addToQuery('
  AND r.name = :name
- ORDER BY r.position';
+ ORDER BY r.position'
+            );
         } else {
-            $query .= '
- ORDER BY r.name, r.position';
+            $query->addToQuery('
+ ORDER BY r.name, r.position'
+            );
         }
 
         $result = [];
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $params)->fetchAll() as $nodeData) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData);
         }
 
@@ -381,14 +385,9 @@ SELECT d.*, dh.contentstreamidentifier, dh.name, dh.dimensionspacepoint FROM neo
     {
         $node = $this->findNodeByIdentifier($nodeIdentifier);
 
-        $params = [
-            'destinationnodeaggregateidentifier' => (string)$node->getNodeAggregateIdentifier(),
-            'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-            'dimensionSpacePointHash' => (string)$this->getDimensionSpacePoint()->getHash(),
-            'name' => (string)$name
-        ];
-
-        $query = '
+        $query = new SqlQueryBuilder();
+        $query->addToQuery(
+            '
 -- ContentSubgraph::findReferencingNodes
 SELECT s.*, sh.contentstreamidentifier, sh.name, sh.dimensionspacepoint FROM neos_contentgraph_hierarchyrelation sh
  INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint 
@@ -400,15 +399,21 @@ SELECT s.*, sh.contentstreamidentifier, sh.name, sh.dimensionspacepoint FROM neo
  AND sh.dimensionspacepointhash = :dimensionSpacePointHash
  AND dh.contentstreamidentifier = :contentStreamIdentifier
  AND sh.contentstreamidentifier = :contentStreamIdentifier
-';
+'
+        )
+            ->parameter('destinationnodeaggregateidentifier', (string)$node->getNodeAggregateIdentifier())
+            ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+            ->parameter('dimensionSpacePointHash', (string)$this->getDimensionSpacePoint()->getHash())
+            ->parameter('name', (string)$name);
 
         if ($name) {
-            $query .= '
- AND r.name = :name';
+            $query->addToQuery('AND r.name = :name');
         }
 
+        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 's', 'sh');
+
         $result = [];
-        foreach ($this->getDatabaseConnection()->executeQuery($query, $params)->fetchAll() as $nodeData) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData);
         }
 

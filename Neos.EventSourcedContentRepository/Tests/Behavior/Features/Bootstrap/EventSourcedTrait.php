@@ -920,8 +920,8 @@ trait EventSourcedTrait
         Assert::assertEquals(count($expectedChildNodesTable->getHash()), $numberOfChildNodes, 'ContentSubgraph::countChildNodes returned a wrong value');
         Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'ContentSubgraph::findChildNodes: Child Node Count does not match');
         foreach ($expectedChildNodesTable->getHash() as $index => $row) {
-            Assert::assertEquals($row['Name'], (string)$nodes[$index]->getNodeName(), 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeTypeName());
-            Assert::assertEquals($row['NodeIdentifier'], (string)$nodes[$index]->getNodeIdentifier(), 'ContentSubgraph::findChildNodes: Node identifier in index ' . $index . ' does not match.');
+            Assert::assertEquals($row['Name'], (string)$nodes[$index]->getNodeName(), 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeName());
+            Assert::assertEquals($this->replaceUuidIdentifiers($row['NodeIdentifier']), (string)$nodes[$index]->getNodeIdentifier(), 'ContentSubgraph::findChildNodes: Node identifier in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeIdentifier() . ' Expected: ' . $this->replaceUuidIdentifiers($row['NodeIdentifier']));
         }
     }
 
@@ -1111,6 +1111,15 @@ trait EventSourcedTrait
         } else {
             Assert::assertTrue(true);
         }
+    }
+
+    /**
+     * @Then /^I find a node with node aggregate "([^"]*)"$/
+     */
+    public function currentNodeAggregateShouldBe($nodeAggregateIdentifier)
+    {
+        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
+        Assert::assertEquals($nodeAggregateIdentifier, (string)$this->currentNode->getNodeAggregateIdentifier());
     }
 
     /**
