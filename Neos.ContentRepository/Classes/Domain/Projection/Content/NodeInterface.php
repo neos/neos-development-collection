@@ -31,6 +31,13 @@ use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 interface NodeInterface extends CacheAwareInterface
 {
     /**
+     * Whether or not this node is the root of the graph, i.e. has no parent node
+     *
+     * @return bool
+     */
+    public function isRoot(): bool;
+
+    /**
      * @return ContentStreamIdentifier
      */
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
