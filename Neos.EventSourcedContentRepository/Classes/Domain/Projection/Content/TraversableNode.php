@@ -48,16 +48,6 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         $this->contextParameters = $contextParameters;
     }
 
-    /**
-     * Whether or not this node is the root of the graph, i.e. has no parent node
-     *
-     * @return bool
-     */
-    public function isRoot(): bool
-    {
-        return $this->subgraph->findParentNode($this->node->getNodeIdentifier()) === null;
-    }
-
     public function findParentNode(): TraversableNodeInterface
     {
         $node = $this->subgraph->findParentNode($this->node->getNodeIdentifier());

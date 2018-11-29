@@ -104,4 +104,9 @@ trait NodeInterfaceProxy
     {
         return $this->node->getLabel();
     }
+
+    public function isRoot(): bool
+    {
+        return $this->node->isRoot();
+    }
 }
