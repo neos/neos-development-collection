@@ -123,12 +123,15 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
             } else {
                 $disAllowanceQueryPart = '';
             }
+
             if ($allowanceQueryPart && $disAllowanceQueryPart) {
                 $query->addToQuery(' AND (' . $allowanceQueryPart . ($nodeTypeConstraints->isWildcardAllowed() ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')', $markerToReplaceInQuery);
             } elseif ($allowanceQueryPart && !$nodeTypeConstraints->isWildcardAllowed()) {
                 $query->addToQuery(' AND ' . $allowanceQueryPart, $markerToReplaceInQuery);
             } elseif ($disAllowanceQueryPart) {
                 $query->addToQuery(' AND ' . $disAllowanceQueryPart, $markerToReplaceInQuery);
+            } else {
+                $query->addToQuery('', $markerToReplaceInQuery);
             }
         }
     }
@@ -281,7 +284,7 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
         }
     }
 
-    private static function addRestrictionEdgeConstraintsToQuery(SqlQueryBuilder $query, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints, string $aliasOfNodeInQuery = 'n', string $aliasOfHierarchyEdgeInQuery = 'h'): SqlQueryBuilder {
+    private static function addRestrictionEdgeConstraintsToQuery(SqlQueryBuilder $query, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints, string $aliasOfNodeInQuery = 'n', string $aliasOfHierarchyEdgeInQuery = 'h', $markerToReplaceInQuery = null): SqlQueryBuilder {
         // TODO: make QueryBuilder immutable
         if (!$visibilityConstraints->isInvisibleContentShown()) {
             $query->addToQuery('
@@ -294,12 +297,13 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
                         r.contentstreamidentifier = ' . $aliasOfHierarchyEdgeInQuery . '.contentstreamidentifier 
                         and r.dimensionspacepointhash = ' . $aliasOfHierarchyEdgeInQuery . '.dimensionspacepointhash
                         and r.affectednodeaggregateidentifier = ' . $aliasOfNodeInQuery . '.nodeaggregateidentifier
-                )');
+                )', $markerToReplaceInQuery);
+        } else {
+            $query->addToQuery('', $markerToReplaceInQuery);
         }
 
         return $query;
     }
-
 
     public function countChildNodes(
         NodeIdentifier $parentNodeIdentifier,
@@ -924,9 +928,9 @@ with recursive tree as (
         on h.childnodeanchor = n.relationanchorpoint
      where
         n.nodeaggregateidentifier in (:entryNodeAggregateIdentifiers)
-        and n.hidden = false             -- TODO - add ContextParameters query part
         and h.contentstreamidentifier = :contentStreamIdentifier
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
+		###VISIBILITY_CONSTRAINTS_INITIAL###
 union
      -- --------------------------------
      -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
@@ -950,8 +954,8 @@ union
 	 	h.contentstreamidentifier = :contentStreamIdentifier
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
 		and p.level + 1 <= :maximumLevels
-	    and c.hidden = false -- TODO - add ContextParameters query part
         ###NODE_TYPE_CONSTRAINTS###
+        ###VISIBILITY_CONSTRAINTS_RECURSION###
 
    -- select relationanchorpoint from neos_contentgraph_node
 )
@@ -966,7 +970,8 @@ order by level asc, position asc;')
 
         self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints, '###NODE_TYPE_CONSTRAINTS###');
 
-        // TODO: VISIBILITY CONSTRAINTS
+        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 'n', 'h', '###VISIBILITY_CONSTRAINTS_INITIAL###');
+        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 'c', 'h', '###VISIBILITY_CONSTRAINTS_RECURSION###');
 
         $result = $query->execute($this->getDatabaseConnection())->fetchAll();
 

@@ -4,9 +4,9 @@ Feature: Hide Node
   Hiding a node works.
   Node structure is as follows:
   - [root node]
-  - text1 (hidden)
-  - text2
-  - ref (a node with a reference to text2)
+    - text1 (hidden)
+      - text2
+      - ref (a node with a reference to text2)
 
 
   Background:
@@ -69,8 +69,8 @@ Feature: Hide Node
       | nodeAggregateIdentifier      | na-identifier | Uuid |
       | affectedDimensionSpacePoints | [{}]          | json |
 
-    Then I expect exactly 6 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:[cs-identifier]"
-    And event at index 5 is of type "Neos.EventSourcedContentRepository:NodeWasHidden" with payload:
+    Then I expect exactly 7 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:[cs-identifier]"
+    And event at index 6 is of type "Neos.EventSourcedContentRepository:NodeWasHidden" with payload:
       | Key                          | Expected      | Type | AssertionType |
       | contentStreamIdentifier      | cs-identifier | Uuid |               |
       | nodeAggregateIdentifier      | na-identifier | Uuid |               |
@@ -110,6 +110,10 @@ Feature: Hide Node
     Then I expect the Node "[refnode-identifier]" to have the references:
       | Key | Value | Type   |
       | ref |       | Uuid[] |
+    # findSubtree
+    Then the subtree for node aggregate "[na-identifier]" with node types "" and 5 levels deep should be:
+      | Level | NodeAggregateIdentifier |
+      | 0     | ROOT                    |
 
     ######################################################
     # Second part of Scenario: No visibility restrictions
@@ -140,11 +144,15 @@ Feature: Hide Node
     Then I expect the Node "[refnode-identifier]" to have the references:
       | Key | Value          | Type   |
       | ref | cna-identifier | Uuid[] |
-
-
+    # findSubtree
+    Then the subtree for node aggregate "[na-identifier]" with node types "" and 5 levels deep should be:
+      | Level | NodeAggregateIdentifier |
+      | 0     | ROOT                    |
+      | 0     | [na-identifier]         |
+      | 1     | [cna-identifier]        |
+      | 1     | [refna-identifier]      |
 
     # TODO: findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName
-    # TODO: findSubtrees
 
     # TODO: findSiblings
     # TODO: findSucceedingSiblings

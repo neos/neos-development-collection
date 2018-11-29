@@ -11,8 +11,7 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralization;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
+use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
@@ -29,6 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied;
@@ -93,6 +93,11 @@ trait EventSourcedTrait
      * @var WorkspaceFinder
      */
     private $workspaceFinder;
+
+    /**
+     * @var NodeTypeConstraintFactory
+     */
+    private $nodeTypeConstraintFactory;
 
     /**
      * @var array
@@ -1155,4 +1160,41 @@ trait EventSourcedTrait
         }
     }
 
+
+    /**
+     * @Then /^the subtree for node aggregate "([^"]*)" with node types "([^"]*)" and (\d+) levels deep should be:$/
+     */
+    public function theSubtreeForNodeAggregateWithNodeTypesAndLevelsDeepShouldBe($nodeAggregateIdentifier, $nodeTypeConstraints, $maximumLevels, TableNode $table)
+    {
+        $expectedRows = $table->getHash();
+        $nodeAggregateIdentifier = new NodeAggregateIdentifier($this->replaceUuidIdentifiers($nodeAggregateIdentifier));
+        $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeConstraints);
+
+        $subtree = $this->contentGraphInterface
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findSubtrees([$nodeAggregateIdentifier], $maximumLevels, $nodeTypeConstraints);
+
+        /** @var SubtreeInterface[] $flattenedSubtree */
+        $flattenedSubtree = [];
+        self::flattenSubtreeForComparison($subtree, $flattenedSubtree);
+
+        Assert::assertEquals(count($expectedRows), count($flattenedSubtree), 'number of expected subtrees do not match');
+
+        foreach ($expectedRows as $i => $expectedRow) {
+            Assert::assertEquals($expectedRow['Level'], $flattenedSubtree[$i]->getLevel(), 'Level does not match in index ' . $i);
+            if ($expectedRow['NodeAggregateIdentifier'] === 'ROOT') {
+                Assert::assertNull($flattenedSubtree[$i]->getNode(), 'ROOT node was not correct at index ' . $i);
+            } else {
+                Assert::assertEquals($this->replaceUuidIdentifiers($expectedRow['NodeAggregateIdentifier']), (string)$flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier(), 'NodeAggregateIdentifier does not match in index ' . $i);
+            }
+        }
+    }
+
+    private static function flattenSubtreeForComparison(SubtreeInterface $subtree, array &$result)
+    {
+        $result[] = $subtree;
+        foreach ($subtree->getChildren() as $childSubtree) {
+            self::flattenSubtreeForComparison($childSubtree, $result);
+        }
+    }
 }
