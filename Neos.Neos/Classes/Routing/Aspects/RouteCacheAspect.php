@@ -71,14 +71,9 @@ class RouteCacheAspect
             $values['node-identifier'] = $node->getIdentifier();
 
             $values['node-parent-identifier'] = [];
-            do {
-                try {
-                    $node = $node->getParent();
-                } catch (NodeException $exception) {
-                    break;
-                }
+            while ($node = $node->getParent()) {
                 $values['node-parent-identifier'][] = $node->getIdentifier();
-            } while (true);
+            }
             $joinPoint->setMethodArgument('values', $values);
         });
     }
