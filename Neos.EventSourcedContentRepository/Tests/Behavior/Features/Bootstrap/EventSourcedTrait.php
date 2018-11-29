@@ -11,6 +11,8 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralizationException;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecializationException;
 use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
@@ -583,7 +585,7 @@ trait EventSourcedTrait
 
                 return;
             case 'DimensionSpacePointIsNoSpecialization':
-                Assert::assertInstanceOf(DimensionSpacePointIsNoSpecialization::class, $this->lastCommandException);
+                Assert::assertInstanceOf(DimensionSpacePointIsNoSpecializationException::class, $this->lastCommandException);
 
                 return;
             case 'DimensionSpacePointIsAlreadyOccupied':
@@ -595,7 +597,7 @@ trait EventSourcedTrait
 
                 return;
             case 'DimensionSpacePointIsNoGeneralization':
-                Assert::assertInstanceOf(DimensionSpacePointIsNoGeneralization::class, $this->lastCommandException);
+                Assert::assertInstanceOf(DimensionSpacePointIsNoGeneralizationException::class, $this->lastCommandException);
 
                 return;
             case 'NodeTypeNotFound':
