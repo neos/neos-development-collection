@@ -659,6 +659,12 @@ trait EventSourcedTrait
                     NodeCommandHandler::class,
                     'handleCreateRootNode'
                 ];
+            case 'AddNodeToAggregate':
+                return [
+                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate::class,
+                    NodeCommandHandler::class,
+                    'handleAddNodeToAggregate'
+                ];
             case 'CreateNodeAggregateWithNode':
                 return [
                     \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode::class,

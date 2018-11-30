@@ -34,7 +34,7 @@ Feature: Creation of nodes underneath hidden nodes
       | nodeAggregateIdentifier      | na-identifier | Uuid |
       | affectedDimensionSpacePoints | [{}]          | json |
 
-  Scenario: on ForkContentStream, the hidden nodes in the target content stream should still be invisible.
+  Scenario: When a new node is created underneath a hidden node, this one should be hidden as well
     When the Event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                     | Value                                  | Type |
       | contentStreamIdentifier | cs-identifier                          | Uuid |

@@ -257,8 +257,8 @@ final class NodeCommandHandler
             $parentNode = $contentSubgraph->findNodeByIdentifier($parentNodeIdentifier);
             if ($parentNode === null) {
                 throw new NodeNotFoundException(sprintf('Parent node %s not found for content stream %s, %s',
-                    $parentNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint),
-                    1506440451, $parentNodeIdentifier);
+                    (string)$parentNodeIdentifier, (string)$contentStreamIdentifier, (string)$dimensionSpacePoint),
+                    1506440451);
             }
         }
 

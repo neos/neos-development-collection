@@ -193,6 +193,13 @@ class GraphProjector implements ProjectorInterface
                 $event->getPropertyDefaultValuesAndTypes(),
                 $event->getNodeName()
             );
+
+            $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
+                $event->getContentStreamIdentifier(),
+                $event->getParentNodeIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getVisibleInDimensionSpacePoints()
+            );
         });
     }
 
