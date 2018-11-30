@@ -47,7 +47,7 @@ class DomainCommandController extends CommandController
     /**
      * Add a domain record
      *
-     * @param string $siteNodeName The nodeName of the site rootNode, e.g. "neostypo3org"
+     * @param string $siteNodeName The nodeName of the site rootNode, e.g. "flowneosio"
      * @param string $hostname The hostname to match on, e.g. "flow.neos.io"
      * @param string $scheme The scheme for linking (http/https)
      * @param integer $port The port for linking (0-49151)
