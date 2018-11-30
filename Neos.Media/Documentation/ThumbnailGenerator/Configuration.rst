@@ -15,7 +15,7 @@ Change the priority of an existing Generator
 
 You can change the priority (higher is better) for an existing Generator, by editing you ``Settings.yaml``::
 
-    TYPO3:
+    Neos:
       Media:
         thumbnailGenerators:
           'Neos\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator':
@@ -26,7 +26,7 @@ Disabling an existing Generator
 
 To disable an existing Generator use the ``disable`` configuration option for the desired Generator::
 
-    TYPO3:
+    Neos:
       Media:
         thumbnailGenerators:
           'Neos\Media\Domain\Model\ThumbnailGenerator\IconThumbnailGenerator':
