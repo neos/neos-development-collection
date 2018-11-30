@@ -326,4 +326,50 @@ class WorkspacesTest extends FunctionalTestCase
 
         $this->assertTrue($liveHomepageNode === null, 'A removed node should be removed after publishing, but it was still found');
     }
+
+    /**
+     * We set up the following node structure:
+     *
+     * rootNode
+     *   parent-node-a
+     *   parent-node-b
+     *     child-node
+     *
+     * We then move parent-node-b underneath parent-node-a where it is renamed and then move it back
+     * before parent-node-a where it is published. We then check that the child node is still present
+     * below parentNode-b
+     *
+     * This simulates an accidental move into a subfolder instead of reordering
+     *
+     * @test
+     */
+    public function nodesWhichAreMovedAcrossLevelsRenamedAndAreMovedBackToOriginalLocationKeepTheirChildren()
+    {
+        // setup structure
+        $this->rootNode->createNode('parent-node-a');
+        $this->rootNode->createNode('parent-node-b')->createNode('child-node');
+        $this->persistenceManager->persistAll();
+        $this->rootNode->getWorkspace()->publish($this->liveWorkspace);
+
+        $this->saveNodesAndTearDownRootNodeAndRepository();
+        $this->setUpRootNodeAndRepository();
+
+        // move b below a, rename, move back and publish
+        $parentNodeA = $this->rootNode->getNode('parent-node-a');
+        $parentNodeB = $this->rootNode->getNode('parent-node-b');
+        $parentNodeB->moveInto($parentNodeA);
+        $parentNodeB->setName('parent-node-b-renamed');
+        $parentNodeB->moveAfter($parentNodeA);
+        $this->persistenceManager->persistAll();
+        $this->rootNode->getWorkspace()->publish($this->liveWorkspace);
+
+        $this->saveNodesAndTearDownRootNodeAndRepository();
+        $this->setUpRootNodeAndRepository();
+
+        // check that the child is still there
+        $parentNodeB = $this->rootNode->getNode('parent-node-b-renamed');
+        $childNode = $parentNodeB->getNode('child-node');
+        $this->assertNotNull($childNode, 'Child node must be there');
+        $this->assertEquals('/parent-node-b-renamed/child-node', $childNode->getPath());
+    }
 }
