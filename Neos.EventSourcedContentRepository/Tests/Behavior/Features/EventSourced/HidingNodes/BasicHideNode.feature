@@ -200,3 +200,21 @@ Feature: Hide Node
       | nodeAggregateIdentifier      | na-identifier        | Uuid |
       | affectedDimensionSpacePoints | [{"language": "de"}] | json |
     Then the last command should have thrown an exception of type "NodeNotFoundException"
+
+  Scenario: Showing a previously-hidden node works
+    When the command "HideNode" is executed with payload:
+      | Key                          | Value         | Type |
+      | contentStreamIdentifier      | cs-identifier | Uuid |
+      | nodeAggregateIdentifier      | na-identifier | Uuid |
+      | affectedDimensionSpacePoints | [{}]          | json |
+
+    When the command "ShowNode" is executed with payload:
+      | Key                          | Value         | Type |
+      | contentStreamIdentifier      | cs-identifier | Uuid |
+      | nodeAggregateIdentifier      | na-identifier | Uuid |
+      | affectedDimensionSpacePoints | [{}]          | json |
+
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "[na-identifier]" to exist in the subgraph

@@ -493,9 +493,7 @@ class GraphProjector implements ProjectorInterface
      */
     public function whenNodeWasHidden(NodeWasHidden $event)
     {
-        // TODO re-enabled
         $this->transactional(function () use ($event) {
-            // we
             $this->getDatabaseConnection()->executeUpdate('
 -- GraphProjector::whenNodeWasHidden
 insert into neos_contentgraph_restrictionedge
@@ -553,9 +551,6 @@ insert into neos_contentgraph_restrictionedge
             [
                 'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
             ]);
-            /*$this->updateNodeWithCopyOnWrite($event, function (Node $node) use ($event) {
-                $node->hidden = true;
-            });*/
         });
     }
 
@@ -566,9 +561,23 @@ insert into neos_contentgraph_restrictionedge
     public function whenNodeWasShown(NodeWasShown $event)
     {
         $this->transactional(function () use ($event) {
-            $this->updateNodeWithCopyOnWrite($event, function (Node $node) {
-                $node->hidden = false;
-            });
+            $this->getDatabaseConnection()->executeUpdate('
+                -- GraphProjector::whenNodeWasShown
+                delete from
+                    neos_contentgraph_restrictionedge
+                where
+                    contentstreamidentifier = :contentStreamIdentifier
+                    and dimensionspacepointhash in (:dimensionSpacePointHashes)
+                    and originnodeaggregateidentifier = :originNodeAggregateIdentifier
+            ',
+                [
+                    'originNodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
+                    'dimensionSpacePointHashes' => $event->getAffectedDimensionSpacePoints()->getPointHashes()
+                ],
+                [
+                    'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+                ]);
         });
     }
 

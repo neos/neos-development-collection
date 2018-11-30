@@ -422,12 +422,15 @@ final class NodeCommandHandler
         $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
-            // Check if node exists
-            $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+            // Soft constraint check: Check if node exists in *all* given DimensionSpacePoints
+            foreach ($command->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
+                $this->assertNodeWithOriginDimensionSpacePointExists($contentStreamIdentifier, $command->getNodeAggregateIdentifier(), $dimensionSpacePoint);
+            }
 
             $event = new NodeWasShown(
                 $contentStreamIdentifier,
-                $command->getNodeIdentifier()
+                $command->getNodeAggregateIdentifier(),
+                $command->getAffectedDimensionSpacePoints()
             );
 
             $this->nodeEventPublisher->publish(
