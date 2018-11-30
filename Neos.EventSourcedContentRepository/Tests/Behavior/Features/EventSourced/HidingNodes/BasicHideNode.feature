@@ -63,7 +63,7 @@ Feature: Hide Node
       | destinationNodeAggregateIdentifiers | cna-identifier     | Uuid[] |
 
   Scenario: Hide a node generates the correct events
-    Given the command "HideNode" is executed with payload:
+    When the command "HideNode" is executed with payload:
       | Key                          | Value         | Type |
       | contentStreamIdentifier      | cs-identifier | Uuid |
       | nodeAggregateIdentifier      | na-identifier | Uuid |
@@ -77,7 +77,7 @@ Feature: Hide Node
       | affectedDimensionSpacePoints | [{}]          |      | json          |
 
   Scenario: Hiding a node means it is invisible with the various traversal methods
-    Given the command "HideNode" is executed with payload:
+    When the command "HideNode" is executed with payload:
       | Key                          | Value         | Type |
       | contentStreamIdentifier      | cs-identifier | Uuid |
       | nodeAggregateIdentifier      | na-identifier | Uuid |
@@ -159,7 +159,7 @@ Feature: Hide Node
     # TODO: findPrecedingSiblings
 
   Scenario: Hiding a node means it is invisible with the various traversal methods (findReferencingNodes)
-    Given the command "HideNode" is executed with payload:
+    When the command "HideNode" is executed with payload:
       | Key                          | Value            | Type |
       | contentStreamIdentifier      | cs-identifier    | Uuid |
       | nodeAggregateIdentifier      | refna-identifier | Uuid |
@@ -186,7 +186,7 @@ Feature: Hide Node
 
 
   Scenario: Hide a non-existing node should throw an exception
-    Given the command "HideNode" is executed with payload and exceptions are caught:
+    When the command "HideNode" is executed with payload and exceptions are caught:
       | Key                          | Value              | Type |
       | contentStreamIdentifier      | cs-identifier      | Uuid |
       | nodeAggregateIdentifier      | unknown-identifier | Uuid |
@@ -194,7 +194,7 @@ Feature: Hide Node
     Then the last command should have thrown an exception of type "NodeNotFoundException"
 
   Scenario: Hide a non-existing node in a certain dimension should throw an exception
-    Given the command "HideNode" is executed with payload and exceptions are caught:
+    When the command "HideNode" is executed with payload and exceptions are caught:
       | Key                          | Value                | Type |
       | contentStreamIdentifier      | cs-identifier        | Uuid |
       | nodeAggregateIdentifier      | na-identifier        | Uuid |

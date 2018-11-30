@@ -907,7 +907,7 @@ trait EventSourcedTrait
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
-        Assert::assertNull($node, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
+        Assert::assertTrue($node === null, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was found in the current Content Stream / Dimension Space Point, but it SHOULD NOT BE FOUND.');
     }
 
     /**

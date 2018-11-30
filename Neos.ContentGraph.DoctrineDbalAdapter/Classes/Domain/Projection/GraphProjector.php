@@ -346,6 +346,10 @@ class GraphProjector implements ProjectorInterface
     public function whenContentStreamWasForked(ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event)
     {
         $this->transactional(function () use ($event) {
+
+            //
+            // 1) Copy HIERARCHY RELATIONS (this is the MAIN OPERATION here)
+            //
             $this->getDatabaseConnection()->executeUpdate('
                 INSERT INTO neos_contentgraph_hierarchyrelation (
                   parentnodeanchor,
@@ -367,6 +371,28 @@ class GraphProjector implements ProjectorInterface
                 FROM
                     neos_contentgraph_hierarchyrelation h
                     WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
+            ', [
+                'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
+            ]);
+
+            //
+            // 2) copy Hidden Node information to second content stream
+            //
+            $this->getDatabaseConnection()->executeUpdate('
+                INSERT INTO neos_contentgraph_restrictionedge (
+                  contentstreamidentifier,
+                  dimensionspacepointhash,
+                  originnodeaggregateidentifier,
+                  affectednodeaggregateidentifier
+                )
+                SELECT
+                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier,
+                  r.dimensionspacepointhash,
+                  r.originnodeaggregateidentifier,
+                  r.affectednodeaggregateidentifier 
+                FROM
+                    neos_contentgraph_restrictionedge r
+                    WHERE r.contentstreamidentifier = :sourceContentStreamIdentifier
             ', [
                 'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
             ]);
