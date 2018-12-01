@@ -287,7 +287,7 @@ class ProjectionContentGraph
 
             $succeedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanhor') . ' = :parentOrChildAnchorPoint
+                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanchor') . ' = :parentOrChildAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
                           AND h.`position` > :position',
@@ -307,7 +307,7 @@ class ProjectionContentGraph
         } else {
             $rightmostSucceedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MAX(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanhor') . ' = :parentOrChildAnchorPoint
+                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanchor') . ' = :parentOrChildAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
                           ORDER BY h.`position` DESC',

@@ -18,7 +18,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode\NodeInterfaceProxy;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
@@ -34,28 +33,22 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      */
     protected $subgraph;
 
-    /**
-     * @var ContextParameters
-     */
-    protected $contextParameters;
-
-    public function __construct(NodeInterface $node, ContentSubgraphInterface $subgraph, ContextParameters $contextParameters)
+    public function __construct(NodeInterface $node, ContentSubgraphInterface $subgraph)
     {
         $this->node = $node;
         $this->subgraph = $subgraph;
-        $this->contextParameters = $contextParameters;
     }
 
     public function findParentNode(): ?TraversableNodeInterface
     {
         $node = $this->subgraph->findParentNode($this->node->getNodeIdentifier());
-        return $node ? new TraversableNode($node, $this->subgraph, $this->contextParameters) : null;
+        return $node ? new TraversableNode($node, $this->subgraph) : null;
     }
 
     public function findNamedChildNode(NodeName $nodeName): ?TraversableNodeInterface
     {
         $node = $this->subgraph->findChildNodeConnectedThroughEdgeName($this->node->getNodeIdentifier(), $nodeName);
-        return $node ? new TraversableNode($node, $this->subgraph, $this->contextParameters) : null;
+        return $node ? new TraversableNode($node, $this->subgraph) : null;
     }
 
     /**
@@ -70,7 +63,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
         $traversableChildNodes = [];
         foreach ($childNodes as $node) {
-            $traversableChildNodes[] = new TraversableNode($node, $this->subgraph, $this->contextParameters);
+            $traversableChildNodes[] = new TraversableNode($node, $this->subgraph);
         }
         return $traversableChildNodes;
     }
@@ -94,7 +87,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph, $this->contextParameters);
+            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
         }
         return $traversableNodes;
     }
@@ -111,7 +104,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph, $this->contextParameters);
+            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
         }
         return $traversableNodes;
     }
@@ -134,7 +127,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph, $this->contextParameters);
+            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
         }
         return $traversableNodes;
     }
@@ -157,7 +150,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph, $this->contextParameters);
+            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
         }
         return $traversableNodes;
     }
@@ -180,7 +173,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph, $this->contextParameters);
+            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
         }
         return $traversableNodes;
     }
@@ -197,7 +190,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph, $this->contextParameters);
+            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
         }
         return $traversableNodes;
     }
@@ -214,7 +207,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph, $this->contextParameters);
+            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
         }
         return $traversableNodes;
     }

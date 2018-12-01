@@ -11,6 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
@@ -245,7 +246,8 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
 
         return $this->contentGraph->getSubgraphByIdentifier(
             $workspace->getCurrentContentStreamIdentifier(),
-            $this->getDimensionSpacePointFromParameters()
+            $this->getDimensionSpacePointFromParameters(),
+            VisibilityConstraints::withoutRestrictions()
         );
     }
 
@@ -335,7 +337,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             }
         }
         /** @var NodeAddress $nodeAddress */
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint());
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
         if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {

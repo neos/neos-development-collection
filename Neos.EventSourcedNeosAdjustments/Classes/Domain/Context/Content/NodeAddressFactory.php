@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -73,7 +74,7 @@ class NodeAddressFactory
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($pathValues['dimensions']);
         $nodePath = \mb_strpos($pathValues['nodePath'], '/sites') === 0 ? \mb_substr($pathValues['nodePath'], 6) : $pathValues['nodePath'];
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint);
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
         $node = $subgraph->findNodeByPath($nodePath, $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'))->getNodeIdentifier());
 
         return new NodeAddress($contentStreamIdentifier, $dimensionSpacePoint, $node->getNodeAggregateIdentifier(), $workspace->getWorkspaceName());

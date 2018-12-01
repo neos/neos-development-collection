@@ -12,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
@@ -39,7 +40,8 @@ class NodeSiteResolvingService
     {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $nodeAddress->getContentStreamIdentifier(),
-            $nodeAddress->getDimensionSpacePoint()
+            $nodeAddress->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
         );
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
         $previousNode = null;

@@ -19,8 +19,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
@@ -92,12 +90,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findParentNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface;
 
     /**
-     * @param NodeIdentifier $parentIdentifier
-     * @return NodeInterface|null
-     */
-    public function findFirstChildNode(NodeIdentifier $parentIdentifier): ?NodeInterface;
-
-    /**
      * @param string $path
      * @param NodeIdentifier $startingNodeIdentifier
      * @return NodeInterface|null
@@ -146,12 +138,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findPrecedingSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
 
     /**
-     * @param NodeTypeName $nodeTypeName
-     * @return array|NodeInterface[]
-     */
-    public function findNodesByType(NodeTypeName $nodeTypeName): array;
-
-    /**
      * @param NodeIdentifier $nodeIdentifier
      * @return NodePath
      */
@@ -170,11 +156,10 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * @param NodeAggregateIdentifier[] $entryNodeAggregateIdentifiers
      * @param int $maximumLevels
-     * @param Domain\Context\Parameters\ContextParameters $contextParameters
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @return mixed
      */
-    public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, Domain\Context\Parameters\ContextParameters $contextParameters, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
+    public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
 
     public function getInMemoryCache(): InMemoryCache;
 }
