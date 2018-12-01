@@ -55,18 +55,18 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findChildNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
 
     /**
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateAggregateIdentifier
      * @param PropertyName|null $name
      * @return NodeInterface[]
      */
-    public function findReferencedNodes(NodeIdentifier $nodeIdentifier, PropertyName $name = null): array;
+    public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateAggregateIdentifier, PropertyName $name = null): array;
 
     /**
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param PropertyName $name
      * @return NodeInterface[]
      */
-    public function findReferencingNodes(NodeIdentifier $nodeIdentifier, PropertyName $name = null): array;
+    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): array;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier

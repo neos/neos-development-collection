@@ -994,18 +994,18 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the Node "([^"]*)" to have the references:$/
+     * @Then /^I expect the Node aggregate "([^"]*)" to have the references:$/
      */
-    public function iExpectTheNodeToHaveTheReferences($nodeIdentifier, TableNode $expectedReferences)
+    public function iExpectTheNodeToHaveTheReferences($nodeAggregateIdentifier, TableNode $expectedReferences)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $expectedReferences = $this->readPayloadTable($expectedReferences);
 
         /** @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface $subgraph */
         $subgraph = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
-            $destinationNodes = $subgraph->findReferencedNodes(new NodeIdentifier($nodeIdentifier), new PropertyName($propertyName));
+            $destinationNodes = $subgraph->findReferencedNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier), new PropertyName($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
                     if ($item instanceof NodeInterface) {
@@ -1021,18 +1021,18 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the Node "([^"]*)" to be referenced by:$/
+     * @Then /^I expect the Node aggregate "([^"]*)" to be referenced by:$/
      */
-    public function iExpectTheNodeToBeReferencedBy($nodeIdentifier, TableNode $expectedReferences)
+    public function iExpectTheNodeToBeReferencedBy($nodeAggregateIdentifier, TableNode $expectedReferences)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $expectedReferences = $this->readPayloadTable($expectedReferences);
 
         /** @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface $subgraph */
         $subgraph = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
-            $destinationNodes = $subgraph->findReferencingNodes(new NodeIdentifier($nodeIdentifier), new PropertyName($propertyName));
+            $destinationNodes = $subgraph->findReferencingNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier), new PropertyName($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
                     if ($item instanceof NodeInterface) {

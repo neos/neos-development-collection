@@ -75,11 +75,11 @@ Feature: Node References without Dimensions
     And the graph projection is fully up to date
     And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
-    Then I expect the Node "[source-node-identifier]" to have the references:
+    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
       | Key               | Value                     | Type   |
       | referenceProperty | dest-1-nodeAgg-identifier | Uuid[] |
 
-    And I expect the Node "[dest-1-node-identifier]" to be referenced by:
+    And I expect the Node aggregate "[dest-1-nodeAgg-identifier]" to be referenced by:
       | Key               | Value                     | Type   |
       | referenceProperty | source-nodeAgg-identifier | Uuid[] |
 
@@ -95,15 +95,15 @@ Feature: Node References without Dimensions
     And the graph projection is fully up to date
     And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
-    Then I expect the Node "[source-node-identifier]" to have the references:
+    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
       | Key                | Value                                               | Type   |
       | referencesProperty | dest-2-nodeAgg-identifier,dest-3-nodeAgg-identifier | Uuid[] |
 
-    And I expect the Node "[dest-2-node-identifier]" to be referenced by:
+    And I expect the Node aggregate "[dest-2-nodeAgg-identifier]" to be referenced by:
       | Key                | Value                     | Type   |
       | referencesProperty | source-nodeAgg-identifier | Uuid[] |
 
-    And I expect the Node "[dest-3-node-identifier]" to be referenced by:
+    And I expect the Node aggregate "[dest-3-nodeAgg-identifier]" to be referenced by:
       | Key                | Value                     | Type   |
       | referencesProperty | source-nodeAgg-identifier | Uuid[] |
 
@@ -119,7 +119,7 @@ Feature: Node References without Dimensions
     And the graph projection is fully up to date
     And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
-    Then I expect the Node "[source-node-identifier]" to have the references:
+    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
       | Key                | Value                                               | Type   |
       | referencesProperty | dest-2-nodeAgg-identifier,dest-3-nodeAgg-identifier | Uuid[] |
 
@@ -133,7 +133,7 @@ Feature: Node References without Dimensions
     And the graph projection is fully up to date
     And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
-    Then I expect the Node "[source-node-identifier]" to have the references:
+    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
       | Key                | Value                     | Type   |
       | referencesProperty | dest-1-nodeAgg-identifier | Uuid[] |
 
@@ -149,7 +149,7 @@ Feature: Node References without Dimensions
     And the graph projection is fully up to date
     And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
-    Then I expect the Node "[source-node-identifier]" to have the references:
+    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
       | Key                | Value                                               | Type   |
       | referencesProperty | dest-2-nodeAgg-identifier,dest-3-nodeAgg-identifier | Uuid[] |
 
@@ -163,7 +163,7 @@ Feature: Node References without Dimensions
     And the graph projection is fully up to date
     And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
-    Then I expect the Node "[source-node-identifier]" to have the references:
+    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
       | Key                | Value                                               | Type   |
       | referencesProperty | dest-3-nodeAgg-identifier,dest-2-nodeAgg-identifier | Uuid[] |
 
@@ -179,7 +179,7 @@ Feature: Node References without Dimensions
     And the graph projection is fully up to date
     And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
-    Then I expect the Node "[source-node-identifier]" to have the references:
+    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
       | Key                | Value                                               | Type   |
       | referencesProperty | dest-2-nodeAgg-identifier,dest-3-nodeAgg-identifier | Uuid[] |
 
@@ -193,7 +193,7 @@ Feature: Node References without Dimensions
     And the graph projection is fully up to date
     And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
-    Then I expect the Node "[source-node-identifier]" to have the references:
+    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
       | Key                | Value | Type   |
       | referencesProperty |       | Uuid[] |
 
@@ -217,7 +217,7 @@ Feature: Node References without Dimensions
 
     And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
-    Then I expect the Node "[dest-1-node-identifier]" to be referenced by:
+    And I expect the Node aggregate "[dest-1-nodeAgg-identifier]" to be referenced by:
       | Key               | Value                                               | Type   |
       | referenceProperty | source-nodeAgg-identifier,dest-2-nodeAgg-identifier | Uuid[] |
 

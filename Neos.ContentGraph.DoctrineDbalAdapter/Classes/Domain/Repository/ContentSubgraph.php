@@ -332,11 +332,12 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
     }
 
     /**
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param PropertyName $name
      * @return NodeInterface[]
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function findReferencedNodes(NodeIdentifier $nodeIdentifier, PropertyName $name = null): array
+    public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): array
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery('
@@ -346,14 +347,14 @@ SELECT d.*, dh.contentstreamidentifier, dh.name, dh.dimensionspacepoint FROM neo
  INNER JOIN neos_contentgraph_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
  INNER JOIN neos_contentgraph_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
  INNER JOIN neos_contentgraph_hierarchyrelation dh ON dh.childnodeanchor = d.relationanchorpoint  
- WHERE s.nodeidentifier = :nodeIdentifier
+ WHERE s.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND dh.dimensionspacepointhash = :dimensionSpacePointHash
  AND sh.dimensionspacepointhash = :dimensionSpacePointHash
  AND dh.contentstreamidentifier = :contentStreamIdentifier
  AND sh.contentstreamidentifier = :contentStreamIdentifier
 '
         )
-            ->parameter('nodeIdentifier', (string)$nodeIdentifier)
+            ->parameter('nodeAggregateIdentifier', (string)$nodeAggregateIdentifier)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', (string)$this->getDimensionSpacePoint()->getHash())
             ->parameter('name', (string)$name);
@@ -380,14 +381,13 @@ SELECT d.*, dh.contentstreamidentifier, dh.name, dh.dimensionspacepoint FROM neo
     }
 
     /**
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param PropertyName $name
      * @return NodeInterface[]
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function findReferencingNodes(NodeIdentifier $nodeIdentifier, PropertyName $name = null) :array
+    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null) :array
     {
-        $node = $this->findNodeByIdentifier($nodeIdentifier);
-
         $query = new SqlQueryBuilder();
         $query->addToQuery(
             '
@@ -404,7 +404,7 @@ SELECT s.*, sh.contentstreamidentifier, sh.name, sh.dimensionspacepoint FROM neo
  AND sh.contentstreamidentifier = :contentStreamIdentifier
 '
         )
-            ->parameter('destinationnodeaggregateidentifier', (string)$node->getNodeAggregateIdentifier())
+            ->parameter('destinationnodeaggregateidentifier', (string)$nodeAggregateIdentifier)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', (string)$this->getDimensionSpacePoint()->getHash())
             ->parameter('name', (string)$name);

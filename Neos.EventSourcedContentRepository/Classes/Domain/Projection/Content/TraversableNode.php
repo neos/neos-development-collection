@@ -83,7 +83,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      */
     public function findReferencingNodes(): array
     {
-        $nodes = $this->subgraph->findReferencingNodes($this->node->getNodeIdentifier());
+        $nodes = $this->subgraph->findReferencingNodes($this->node->getNodeAggregateIdentifier());
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
@@ -100,7 +100,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      */
     public function findNamedReferencingNodes(PropertyName $edgeName): array
     {
-        $nodes = $this->subgraph->findReferencingNodes($this->node->getNodeIdentifier(), $edgeName);
+        $nodes = $this->subgraph->findReferencingNodes($this->node->getNodeAggregateIdentifier(), $edgeName);
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
@@ -186,7 +186,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      */
     public function findReferencedNodes(): array
     {
-        $nodes = $this->subgraph->findReferencedNodes($this->node->getNodeIdentifier());
+        $nodes = $this->subgraph->findReferencedNodes($this->node->getNodeAggregateIdentifier());
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
@@ -203,7 +203,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      */
     public function findNamedReferencedNodes(PropertyName $edgeName): array
     {
-        $nodes = $this->subgraph->findReferencedNodes($this->node->getNodeIdentifier(), $edgeName);
+        $nodes = $this->subgraph->findReferencedNodes($this->node->getNodeAggregateIdentifier(), $edgeName);
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
