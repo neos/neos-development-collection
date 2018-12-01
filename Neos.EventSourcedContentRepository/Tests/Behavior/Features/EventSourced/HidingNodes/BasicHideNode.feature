@@ -91,11 +91,11 @@ Feature: Hide Node
     Then I expect a node "[node-identifier]" not to exist in the graph projection
     # findChildNodes
     # countChildNodes
-    Then I expect the node "[rn-identifier]" to have the following child nodes:
+    Then I expect the node aggregate "[ROOT]" to have the following child nodes:
       | Name | NodeIdentifier |
       # no child nodes as they are hidden
     # findParentNode
-    When I go to the parent node of node "[cnode-identifier]"
+    When I go to the parent node of node aggregate "[cna-identifier]"
     Then I do not find any node
     # traverseHierarchy is covered by "findChildNodes" and "findParentNode"
     # findParentNodeByNodeAggregateIdentifier
@@ -125,11 +125,11 @@ Feature: Hide Node
     Then I expect a node "[node-identifier]" to exist in the graph projection
     # findChildNodes
     # countChildNodes
-    Then I expect the node "[rn-identifier]" to have the following child nodes:
+    Then I expect the node aggregate "[ROOT]" to have the following child nodes:
       | Name  | NodeIdentifier    |
       | text1 | [node-identifier] |
     # findParentNode
-    When I go to the parent node of node "[cnode-identifier]"
+    When I go to the parent node of node aggregate "[cna-identifier]"
     Then I find a node with node aggregate "[na-identifier]"
     # traverseHierarchy is covered by "findChildNodes" and "findParentNode"
     # findParentNodeByNodeAggregateIdentifier

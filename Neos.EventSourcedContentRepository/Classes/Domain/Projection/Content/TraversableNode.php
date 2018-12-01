@@ -41,13 +41,13 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
     public function findParentNode(): ?TraversableNodeInterface
     {
-        $node = $this->subgraph->findParentNode($this->node->getNodeIdentifier());
+        $node = $this->subgraph->findParentNode($this->node->getNodeAggregateIdentifier());
         return $node ? new TraversableNode($node, $this->subgraph) : null;
     }
 
     public function findNamedChildNode(NodeName $nodeName): ?TraversableNodeInterface
     {
-        $node = $this->subgraph->findChildNodeConnectedThroughEdgeName($this->node->getNodeIdentifier(), $nodeName);
+        $node = $this->subgraph->findChildNodeConnectedThroughEdgeName($this->node->getNodeAggregateIdentifier(), $nodeName);
         return $node ? new TraversableNode($node, $this->subgraph) : null;
     }
 
@@ -59,7 +59,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      */
     public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
     {
-        $childNodes = $this->subgraph->findChildNodes($this->node->getNodeIdentifier(), $nodeTypeConstraints, $limit, $offset);
+        $childNodes = $this->subgraph->findChildNodes($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
 
         $traversableChildNodes = [];
         foreach ($childNodes as $node) {

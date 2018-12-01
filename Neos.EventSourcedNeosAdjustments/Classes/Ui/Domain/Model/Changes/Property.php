@@ -229,7 +229,7 @@ class Property extends AbstractChange
             $reloadIfChangedConfigurationPath = sprintf('properties.%s.ui.reloadIfChanged', $propertyName);
             if (!$this->getIsInline() && $node->getNodeType()->getConfiguration($reloadIfChangedConfigurationPath)) {
                 $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $subgraph->findParentNode($node->getNodeIdentifier())->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
+                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $subgraph->findParentNode($node->getNodeAggregateIdentifier())->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
                     $reloadContentOutOfBand = new ReloadContentOutOfBand();
                     $reloadContentOutOfBand->setNode($node);
                     $reloadContentOutOfBand->setNodeDomAddress($this->getNodeDomAddress());

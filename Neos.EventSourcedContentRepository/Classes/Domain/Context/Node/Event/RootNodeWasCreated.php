@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -34,6 +35,11 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     private $nodeIdentifier;
 
     /**
+     * @var NodeAggregateIdentifier
+     */
+    private $nodeAggregateIdentifier;
+
+    /**
      * @var NodeTypeName
      */
     protected $nodeTypeName;
@@ -52,22 +58,22 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
 
     /**
      * RootNodeWasCreated constructor.
-     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeName $nodeTypeName
      * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
      * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, DimensionSpacePointSet $visibleInDimensionSpacePoints, UserIdentifier $initiatingUserIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, DimensionSpacePointSet $visibleInDimensionSpacePoints, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
-
 
     /**
      * @return ContentStreamIdentifier
@@ -83,6 +89,14 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     public function getNodeIdentifier(): NodeIdentifier
     {
         return $this->nodeIdentifier;
+    }
+
+    /**
+     * @return NodeAggregateIdentifier
+     */
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    {
+        return $this->nodeAggregateIdentifier;
     }
 
     /**
@@ -120,6 +134,7 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
         return new RootNodeWasCreated(
             $targetContentStream,
             $this->nodeIdentifier,
+            $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->visibleInDimensionSpacePoints,
             $this->initiatingUserIdentifier

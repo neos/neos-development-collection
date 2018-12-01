@@ -305,6 +305,9 @@ trait EventSourcedTrait
         return preg_replace_callback(
             '#\[[0-9a-zA-Z\-]+\]#',
             function ($matches) {
+                if ($matches[0] === '[ROOT]') {
+                    return \Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers::rootNodeAggregateIdentifier();
+                }
                 return (string)Uuid::uuid5('00000000-0000-0000-0000-000000000000', $matches[0]);
             },
             $identifierString
@@ -917,18 +920,18 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the node "([^"]*)" to have the following child nodes:$/
+     * @Then /^I expect the node aggregate "([^"]*)" to have the following child nodes:$/
      */
-    public function iExpectTheNodeToHaveTheFollowingChildNodes($nodeIdentifier, TableNode $expectedChildNodesTable)
+    public function iExpectTheNodeToHaveTheFollowingChildNodes($nodeAggregateIdentifier, TableNode $expectedChildNodesTable)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $nodes = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findChildNodes(new NodeIdentifier($nodeIdentifier));
+            ->findChildNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier));
 
         $numberOfChildNodes = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->countChildNodes(new NodeIdentifier($nodeIdentifier));
+            ->countChildNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier));
 
         Assert::assertEquals(count($expectedChildNodesTable->getHash()), $numberOfChildNodes, 'ContentSubgraph::countChildNodes returned a wrong value');
         Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'ContentSubgraph::findChildNodes: Child Node Count does not match');
@@ -1093,25 +1096,14 @@ trait EventSourcedTrait
     }
 
     /**
-     * @When /^I go to the parent node of node "([^"]*)"$/
-     */
-    public function iGoToTheParentNodeOfNode($nodeIdentifier)
-    {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
-        $this->currentNode = $this->contentGraphInterface
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findParentNode(new NodeIdentifier($nodeIdentifier));
-    }
-
-    /**
      * @When /^I go to the parent node of node aggregate "([^"]*)"$/
      */
-    public function iGoToTheParentNodeOfNodeAggregate($nodeAggregateIdentifier)
+    public function iGoToTheParentNodeOfNode($nodeAggregateIdentifier)
     {
         $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findParentNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+            ->findParentNode(new NodeAggregateIdentifier($nodeAggregateIdentifier));
     }
 
     /**

@@ -144,7 +144,7 @@ class UpdateNodeInfo extends AbstractFeedback
         ];
 
         if ($this->isRecursive === true) {
-            foreach ($subgraph->findChildNodes($node->getNodeIdentifier()) as $childNode) {
+            foreach ($subgraph->findChildNodes($node->getNodeAggregateIdentifier()) as $childNode) {
                 $result = array_merge($result, $this->serializeNodeRecursively($childNode, $controllerContext));
             }
         }

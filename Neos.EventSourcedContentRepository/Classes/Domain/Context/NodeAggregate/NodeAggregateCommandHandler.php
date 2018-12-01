@@ -288,7 +288,7 @@ final class NodeAggregateCommandHandler
         DimensionSpacePoint $dimensionSpacePoint
     ) {
         $sourceSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $sourceDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
-        $sourceParentNode = $sourceSubgraph->findParentNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+        $sourceParentNode = $sourceSubgraph->findParentNode($nodeAggregateIdentifier);
         if (!$sourceParentNode // the root node is visible in all dimension space points
             || $this->contentGraph->findVisibleDimensionSpacePointsOfNodeAggregate($contentStreamIdentifier, $sourceParentNode->getNodeAggregateIdentifier())
                 ->contains($dimensionSpacePoint)) {
