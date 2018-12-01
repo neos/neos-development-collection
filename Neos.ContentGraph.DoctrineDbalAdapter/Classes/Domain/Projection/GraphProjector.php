@@ -824,12 +824,27 @@ insert into neos_contentgraph_restrictionedge
     {
         $this->transactional(function () use ($event) {
             foreach ($event->getNodeMoveMappings() as $moveNodeMapping) {
+                /* @var $moveNodeMapping Event\NodeMoveMapping */
                 $nodeToBeMoved = $this->projectionContentGraph->getNode($moveNodeMapping->getNodeIdentifier(), $event->getContentStreamIdentifier());
                 $newSucceedingSibling = $moveNodeMapping->getNewSucceedingSiblingIdentifier()
                     ? $this->projectionContentGraph->getNode($moveNodeMapping->getNewSucceedingSiblingIdentifier(), $event->getContentStreamIdentifier())
                     : null;
                 $inboundHierarchyRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNode($nodeToBeMoved->relationAnchorPoint, $event->getContentStreamIdentifier());
                 if ($moveNodeMapping->getNewParentNodeIdentifier()) {
+                    //
+                    // 1. PRE-MOVE HOUSEKEEPING
+                    // - of the to-be moved nodes, remove all restriction edges
+                    // - TODO: this means that when moving a HIDDEN node itself (and none of its children), it will LOOSE its hidden state. TODO FIX!!!
+                    //
+                    $this->removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints(
+                        $event->getContentStreamIdentifier(),
+                        $nodeToBeMoved->nodeAggregateIdentifier,
+                        $moveNodeMapping->getDimensionSpacePointSet()
+                    );
+
+                    //
+                    // 2. do the MOVE ITSELF
+                    //
                     $newParentNode = $this->projectionContentGraph->getNode($moveNodeMapping->getNewParentNodeIdentifier(), $event->getContentStreamIdentifier());
                     foreach ($moveNodeMapping->getDimensionSpacePointSet()->getPoints() as $dimensionSpacePoint) {
                         $newPosition = $this->getRelationPosition(
@@ -841,6 +856,17 @@ insert into neos_contentgraph_restrictionedge
                         );
                         $this->assignHierarchyRelationToNewParent($inboundHierarchyRelations[$dimensionSpacePoint->getHash()], $newParentNode->nodeIdentifier, $event->getContentStreamIdentifier(), $newPosition);
                     }
+
+                    //
+                    // 3. POST-MOVE HOUSEKEEPING
+                    // - if parent node is hidden, hide the moved-to target as well.
+                    //
+                    $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
+                        $event->getContentStreamIdentifier(),
+                        $newParentNode->nodeIdentifier,
+                        $nodeToBeMoved->nodeAggregateIdentifier,
+                        $moveNodeMapping->getDimensionSpacePointSet()
+                    );
                 } else {
                     foreach ($moveNodeMapping->getDimensionSpacePointSet()->getPoints() as $dimensionSpacePoint) {
                         $newPosition = $this->getRelationPosition(
