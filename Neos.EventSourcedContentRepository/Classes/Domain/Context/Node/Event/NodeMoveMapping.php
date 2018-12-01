@@ -57,7 +57,7 @@ final class NodeMoveMapping
     /**
      * @return NodeIdentifier
      */
-    public function getNewParentNodeIdentifier(): NodeIdentifier
+    public function getNewParentNodeIdentifier(): ?NodeIdentifier
     {
         return $this->newParentNodeIdentifier;
     }
@@ -65,7 +65,7 @@ final class NodeMoveMapping
     /**
      * @return NodeIdentifier
      */
-    public function getNewSucceedingSiblingIdentifier(): NodeIdentifier
+    public function getNewSucceedingSiblingIdentifier(): ?NodeIdentifier
     {
         return $this->newSucceedingSiblingIdentifier;
     }

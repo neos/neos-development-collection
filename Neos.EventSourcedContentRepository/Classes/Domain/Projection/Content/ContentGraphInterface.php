@@ -85,10 +85,10 @@ interface ContentGraphInterface
     public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
 
     /**
-     * @param Domain\Context\Node\ReadOnlyNodeInterface $node
+     * @param NodeInterface $node
      * @return DimensionSpacePointSet
      */
-    public function findVisibleDimensionSpacePointsOfNode(Domain\Context\Node\ReadOnlyNodeInterface $node): DimensionSpacePointSet;
+    public function findVisibleDimensionSpacePointsOfNode(NodeInterface $node): DimensionSpacePointSet;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier

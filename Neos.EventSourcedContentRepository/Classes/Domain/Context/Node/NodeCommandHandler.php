@@ -536,11 +536,11 @@ final class NodeCommandHandler
     }
 
     /**
-     * @param ReadOnlyNodeInterface $node
+     * @param NodeInterface $node
      * @param MoveNode $command
      * @return array|NodeMoveMapping[]
      */
-    protected function getMoveNodeMappings(ReadOnlyNodeInterface $node, MoveNode $command): array
+    protected function getMoveNodeMappings(NodeInterface $node, MoveNode $command): array
     {
         $nodeMoveMappings = [];
         $visibleInDimensionSpacePoints = $this->contentGraph->findVisibleDimensionSpacePointsOfNode($node);

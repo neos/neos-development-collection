@@ -327,7 +327,7 @@ final class ContentGraph implements ContentGraphInterface
         $nodesByAggregate = [];
         foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $nodeRow) {
             $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
-            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['nodeidentifier']] = $this->nodeFactory->mapNodeRowToNode($nodeRow, null);
+            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['nodeidentifier']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
             if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
@@ -352,11 +352,11 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param Domain\Context\Node\ReadOnlyNodeInterface $node
+     * @param NodeInterface $node
      * @return DimensionSpacePointSet
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function findVisibleDimensionSpacePointsOfNode(Domain\Context\Node\ReadOnlyNodeInterface $node): DimensionSpacePointSet
+    public function findVisibleDimensionSpacePointsOfNode(NodeInterface $node): DimensionSpacePointSet
     {
         $connection = $this->client->getConnection();
 
