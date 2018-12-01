@@ -3,11 +3,10 @@ Feature: Hide Node
 
   Hiding a node works.
   Node structure is as follows:
-  - [root node]
-    - text1 (hidden)
-      - text2
-      - ref (a node with a reference to text2)
-
+  - rn-identifier (root node)
+  -- na-identifier (name=text1) <== HIDDEN!
+  --- cna-identifier (name=text2)
+  --- refna-identifier (name=ref) <== a Reference node with a reference to "cna-identifier"
 
   Background:
     Given I have no content dimensions
@@ -218,3 +217,34 @@ Feature: Hide Node
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "[na-identifier]" to exist in the subgraph
+
+
+  Scenario: Removing a previously-hidden node clears the hidden restriction
+    When the command "HideNode" is executed with payload:
+      | Key                          | Value         | Type |
+      | contentStreamIdentifier      | cs-identifier | Uuid |
+      | nodeAggregateIdentifier      | na-identifier | Uuid |
+      | affectedDimensionSpacePoints | [{}]          | json |
+
+    And the command RemoveNodeAggregate was published with payload:
+      | Key                     | Value         | Type |
+      | contentStreamIdentifier | cs-identifier | Uuid |
+      | nodeAggregateIdentifier | na-identifier | Uuid |
+
+  # TODO: Creating, Removing, Creating a NodeAggregate should actually WORK and not throw an error!!!
+
+#    # we recreate the node again; and it should not be hidden now.
+#    When the command "CreateNodeAggregateWithNode" is executed with payload:
+#      | Key                     | Value                                  | Type                |
+#      | contentStreamIdentifier | cs-identifier                          | Uuid                |
+#      | nodeAggregateIdentifier | na-identifier                          | Uuid                |
+#      | dimensionSpacePoint     | {}                                     | DimensionSpacePoint |
+#      | nodeTypeName            | Neos.ContentRepository.Testing:Content |                     |
+#      | nodeIdentifier          | node-identifier                        | Uuid                |
+#      | parentNodeIdentifier    | rn-identifier                          | Uuid                |
+#      | nodeName                | text1                                  |                     |
+#
+#    And the graph projection is fully up to date
+#
+#    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+#    Then I expect a node identified by aggregate identifier "[na-identifier]" to exist in the subgraph

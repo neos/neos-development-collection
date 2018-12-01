@@ -498,7 +498,7 @@ class GraphProjector implements ProjectorInterface
 -- GraphProjector::whenNodeWasHidden
 insert into neos_contentgraph_restrictionedge
 (
-    -- we build a set of recursive trees, ready to be rendered e.g. in a menu. Because the menu supports starting at multiple nodes, we also support starting at multiple nodes at once.
+    -- we build a recursive tree
     with recursive tree as (
          -- --------------------------------
          -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
@@ -561,24 +561,132 @@ insert into neos_contentgraph_restrictionedge
     public function whenNodeWasShown(NodeWasShown $event)
     {
         $this->transactional(function () use ($event) {
-            $this->getDatabaseConnection()->executeUpdate('
-                -- GraphProjector::whenNodeWasShown
-                delete from
-                    neos_contentgraph_restrictionedge
-                where
-                    contentstreamidentifier = :contentStreamIdentifier
-                    and dimensionspacepointhash in (:dimensionSpacePointHashes)
-                    and originnodeaggregateidentifier = :originNodeAggregateIdentifier
-            ',
-                [
-                    'originNodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
-                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
-                    'dimensionSpacePointHashes' => $event->getAffectedDimensionSpacePoints()->getPointHashes()
-                ],
-                [
-                    'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-                ]);
+            $this->removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getAffectedDimensionSpacePoints());
         });
+    }
+
+    private function removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
+    {
+        $this->getDatabaseConnection()->executeUpdate('
+                -- GraphProjector::removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints
+ 
+                delete r.* from
+                    neos_contentgraph_restrictionedge r
+                    join 
+                     (
+                        -- we build a recursive tree
+                        with recursive tree as (
+                             -- --------------------------------
+                             -- INITIAL query: select the root nodes of the tree
+                             -- --------------------------------
+                             select
+                                n.relationanchorpoint,
+                                n.nodeaggregateidentifier,
+                                h.dimensionspacepointhash
+                             from
+                                neos_contentgraph_node n
+                             -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
+                             inner join neos_contentgraph_hierarchyrelation h
+                                on h.childnodeanchor = n.relationanchorpoint
+                             where
+                                n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
+                                and h.contentstreamidentifier = :contentStreamIdentifier
+                                and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+                        union
+                             -- --------------------------------
+                             -- RECURSIVE query: do one "child" query step
+                             -- --------------------------------
+                             select
+                                c.relationanchorpoint,
+                                c.nodeaggregateidentifier,
+                                h.dimensionspacepointhash
+                             from
+                                tree p
+                             inner join neos_contentgraph_hierarchyrelation h
+                                on h.parentnodeanchor = p.relationanchorpoint
+                             inner join neos_contentgraph_node c
+                                on h.childnodeanchor = c.relationanchorpoint
+                             where
+                                h.contentstreamidentifier = :contentStreamIdentifier
+                                and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+                        )
+                        select * from tree
+                     ) as tree
+
+                -- the "tree" CTE now contains a list of tuples (nodeAggregateIdentifier,dimensionSpacePointHash)
+                -- which are *descendants* of the starting NodeAggregateIdentifier (in the given DimensionSpacePointHashes).
+                where
+                    r.contentstreamidentifier = :contentStreamIdentifier
+                    and r.dimensionspacepointhash = tree.dimensionspacepointhash
+                    and r.affectednodeaggregateidentifier = tree.nodeaggregateidentifier
+            ',
+            [
+                'entryNodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
+            ],
+            [
+                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+            ]);
+    }
+
+    private function removeAllRestrictionEdgesUnderneathNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
+    {
+        $this->getDatabaseConnection()->executeUpdate('
+                -- GraphProjector::removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints
+ 
+                delete r.* from
+                    neos_contentgraph_restrictionedge r
+                    join 
+                     (
+                        -- we build a recursive tree
+                        with recursive tree as (
+                             -- --------------------------------
+                             -- INITIAL query: select the root nodes of the tree
+                             -- --------------------------------
+                             select
+                                n.relationanchorpoint,
+                                n.nodeaggregateidentifier,
+                                h.dimensionspacepointhash
+                             from
+                                neos_contentgraph_node n
+                             -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
+                             inner join neos_contentgraph_hierarchyrelation h
+                                on h.childnodeanchor = n.relationanchorpoint
+                             where
+                                n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
+                                and h.contentstreamidentifier = :contentStreamIdentifier
+                        union
+                             -- --------------------------------
+                             -- RECURSIVE query: do one "child" query step
+                             -- --------------------------------
+                             select
+                                c.relationanchorpoint,
+                                c.nodeaggregateidentifier,
+                                h.dimensionspacepointhash
+                             from
+                                tree p
+                             inner join neos_contentgraph_hierarchyrelation h
+                                on h.parentnodeanchor = p.relationanchorpoint
+                             inner join neos_contentgraph_node c
+                                on h.childnodeanchor = c.relationanchorpoint
+                             where
+                                h.contentstreamidentifier = :contentStreamIdentifier
+                        )
+                        select * from tree
+                     ) as tree
+
+                -- the "tree" CTE now contains a list of tuples (nodeAggregateIdentifier,dimensionSpacePointHash)
+                -- which are *descendants* of the starting NodeAggregateIdentifier in ALL DimensionSpacePointHashes
+                where
+                    r.contentstreamidentifier = :contentStreamIdentifier
+                    and r.dimensionspacepointhash = tree.dimensionspacepointhash
+                    and r.affectednodeaggregateidentifier = tree.nodeaggregateidentifier
+            ',
+            [
+                'entryNodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            ]);
     }
 
     /**
@@ -758,6 +866,7 @@ insert into neos_contentgraph_restrictionedge
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
+            $this->removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
             $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
             foreach ($inboundRelations as $inboundRelation) {
                 $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($inboundRelation);
@@ -774,6 +883,8 @@ insert into neos_contentgraph_restrictionedge
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
+            $this->removeAllRestrictionEdgesUnderneathNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
+
             $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
             foreach ($inboundRelations as $inboundRelation) {
                 $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($inboundRelation);
