@@ -283,8 +283,6 @@ class GraphProjector implements ProjectorInterface
         }
 
         $node->addToDatabase($this->getDatabaseConnection());
-
-
     }
 
     /**

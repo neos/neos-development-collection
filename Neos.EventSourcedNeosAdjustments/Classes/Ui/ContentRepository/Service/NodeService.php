@@ -78,7 +78,6 @@ class NodeService
         $subgraph = $this->contentGraph
             ->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
-        // TODO: Context Parameter Handling
-        return new TraversableNode($node, $subgraph,VisibilityConstraints::withoutRestrictions());
+        return new TraversableNode($node, $subgraph, VisibilityConstraints::withoutRestrictions());
     }
 }

@@ -284,7 +284,8 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
         }
     }
 
-    private static function addRestrictionEdgeConstraintsToQuery(SqlQueryBuilder $query, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints, string $aliasOfNodeInQuery = 'n', string $aliasOfHierarchyEdgeInQuery = 'h', $markerToReplaceInQuery = null): SqlQueryBuilder {
+    private static function addRestrictionEdgeConstraintsToQuery(SqlQueryBuilder $query, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints, string $aliasOfNodeInQuery = 'n', string $aliasOfHierarchyEdgeInQuery = 'h', $markerToReplaceInQuery = null): SqlQueryBuilder
+    {
         // TODO: make QueryBuilder immutable
         if (!$visibilityConstraints->isInvisibleContentShown()) {
             $query->addToQuery('
@@ -328,7 +329,6 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
 
         $res = $query->execute($this->getDatabaseConnection())->fetchColumn(0);
         return $res;
-
     }
 
     /**
@@ -338,7 +338,6 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
      */
     public function findReferencedNodes(NodeIdentifier $nodeIdentifier, PropertyName $name = null): array
     {
-
         $query = new SqlQueryBuilder();
         $query->addToQuery('
 -- ContentSubgraph::findReferencedNodes
@@ -900,8 +899,6 @@ WHERE
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
     ): SubtreeInterface {
-        // TODO: evaluate ContextParameters
-
         $query = new SqlQueryBuilder();
         $query->addToQuery('
 -- ContentSubgraph::findSubtrees

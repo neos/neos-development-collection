@@ -11,7 +11,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Parameters;
  * source code.
  */
 
-use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Annotations as Flow;
 
 /**
