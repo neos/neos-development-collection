@@ -89,10 +89,10 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * @param string $path
-     * @param NodeIdentifier $startingNodeIdentifier
+     * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
      * @return NodeInterface|null
      */
-    public function findNodeByPath(string $path, NodeIdentifier $startingNodeIdentifier): ?NodeInterface;
+    public function findNodeByPath(string $path, NodeAggregateIdentifier $startingNodeAggregateIdentifier): ?NodeInterface;
 
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
@@ -136,10 +136,10 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findPrecedingSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
 
     /**
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodePath
      */
-    public function findNodePath(NodeIdentifier $nodeIdentifier): NodePath;
+    public function findNodePath(NodeAggregateIdentifier $nodeAggregateIdentifier): NodePath;
 
     /**
      * @return ContentStreamIdentifier

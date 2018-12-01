@@ -253,7 +253,7 @@ class EventSourcedNodeController extends ActionController
         $nodePathCache = $subgraph->getInMemoryCache()->getNodePathCache();
 
         $currentDocumentNode = $subtree->getNode();
-        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->getNodeIdentifier());
+        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->getNodeAggregateIdentifier());
 
         $nodeByNodeIdentifierCache->add($currentDocumentNode->getNodeIdentifier(), $currentDocumentNode);
         $nodePathCache->add($currentDocumentNode->getNodeIdentifier(), $nodePathOfDocumentNode);

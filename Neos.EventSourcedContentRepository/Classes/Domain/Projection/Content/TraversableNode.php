@@ -70,12 +70,12 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
     public function countChildNodes(NodeTypeConstraints $nodeTypeConstraints = null): int
     {
-        return $this->subgraph->countChildNodes($this->node->getNodeIdentifier(), $nodeTypeConstraints);
+        return $this->subgraph->countChildNodes($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints);
     }
 
     public function findNodePath(): NodePath
     {
-        return $this->subgraph->findNodePath($this->node->getNodeIdentifier());
+        return $this->subgraph->findNodePath($this->node->getNodeAggregateIdentifier());
     }
 
     /**

@@ -483,14 +483,15 @@ SELECT p.*, h.contentstreamidentifier, hp.name, hp.dimensionspacepoint FROM neos
 
     /**
      * @param string $path
-     * @param NodeIdentifier $startingNodeIdentifier
+     * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
      * @return NodeInterface|null
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function findNodeByPath(string $path, NodeIdentifier $startingNodeIdentifier): ?NodeInterface
+    public function findNodeByPath(string $path, NodeAggregateIdentifier $startingNodeAggregateIdentifier): ?NodeInterface
     {
-        $currentNode = $this->findNodeByIdentifier($startingNodeIdentifier);
+        $currentNode = $this->findNodeByNodeAggregateIdentifier($startingNodeAggregateIdentifier);
         if (!$currentNode) {
-            throw new \RuntimeException('Starting Node (identified by ' . $startingNodeIdentifier . ') does not exist.');
+            throw new \RuntimeException('Starting Node (identified by ' . $startingNodeAggregateIdentifier . ') does not exist.');
         }
         $edgeNames = explode('/', trim($path, '/'));
         if ($edgeNames !== [""]) {
@@ -789,11 +790,11 @@ WHERE
     }
 
 
-    public function findNodePath(NodeIdentifier $nodeIdentifier): NodePath
+    public function findNodePath(NodeAggregateIdentifier $nodeAggregateIdentifier): NodePath
     {
         $cache = $this->inMemoryCache->getNodePathCache();
 
-        if (!$cache->contains($nodeIdentifier)) {
+        if (!$cache->contains($nodeAggregateIdentifier)) {
             $result = $this->getDatabaseConnection()->executeQuery(
                 '
                 -- ContentSubgraph::findNodePath
@@ -802,7 +803,7 @@ WHERE
                      INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                      AND h.contentstreamidentifier = :contentStreamIdentifier
                      AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                     AND n.nodeidentifier = :nodeIdentifier
+                     AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
  
                 UNION
                 
@@ -817,7 +818,7 @@ WHERE
                 [
                     'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
                     'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                    'nodeIdentifier' => (string)$nodeIdentifier
+                    'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
                 ]
             )->fetchAll();
 
@@ -829,10 +830,10 @@ WHERE
 
             $nodePath = array_reverse($nodePath);
             $nodePath = new NodePath('/' . implode('/', $nodePath));
-            $cache->add($nodeIdentifier, $nodePath);
+            $cache->add($nodeAggregateIdentifier, $nodePath);
         }
 
-        return $cache->get($nodeIdentifier);
+        return $cache->get($nodeAggregateIdentifier);
     }
 
     public function jsonSerialize(): array

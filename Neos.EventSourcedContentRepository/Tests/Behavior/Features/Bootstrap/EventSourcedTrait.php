@@ -18,6 +18,7 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
@@ -306,7 +307,7 @@ trait EventSourcedTrait
             '#\[[0-9a-zA-Z\-]+\]#',
             function ($matches) {
                 if ($matches[0] === '[ROOT]') {
-                    return \Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers::rootNodeAggregateIdentifier();
+                    return RootNodeIdentifiers::rootNodeAggregateIdentifier();
                 }
                 return (string)Uuid::uuid5('00000000-0000-0000-0000-000000000000', $matches[0]);
             },
@@ -1090,7 +1091,7 @@ trait EventSourcedTrait
         }
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath($nodePath, $this->rootNodeIdentifier);
+            ->findNodeByPath($nodePath, RootNodeIdentifiers::rootNodeAggregateIdentifier());
         Assert::assertNotNull($this->currentNode, 'Did not find node at path "' . $nodePath . '"');
         Assert::assertEquals($nodeIdentifier, (string)$this->currentNode->getNodeIdentifier(), 'Node identifier does not match.');
     }
@@ -1138,7 +1139,7 @@ trait EventSourcedTrait
         }
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath($nodePath, $this->rootNodeIdentifier);
+            ->findNodeByPath($nodePath, RootNodeIdentifiers::rootNodeAggregateIdentifier());
         Assert::assertNull($node, 'Did find node at path "' . $nodePath . '"');
     }
 
