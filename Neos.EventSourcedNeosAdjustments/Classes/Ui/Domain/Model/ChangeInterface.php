@@ -11,7 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 
 /**
  * An interface to describe a change
@@ -22,15 +22,15 @@ interface ChangeInterface
     /**
      * Set the subject
      *
-     * @param NodeInterface $subject
+     * @param TraversableNodeInterface $subject
      * @return void
      */
-    public function setSubject(NodeInterface $subject);
+    public function setSubject(TraversableNodeInterface $subject);
 
     /**
      * Get the subject
      *
-     * @return NodeInterface
+     * @return TraversableNodeInterface
      */
     public function getSubject();
 

@@ -12,19 +12,17 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
+use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePropertyConversionService;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
 use Neos\Utility\ObjectAccess;
 
@@ -85,12 +83,6 @@ class Property extends AbstractChange
      * @var NodeCommandHandler
      */
     protected $nodeCommandHandler;
-
-    /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
 
     /**
      * Set the property name
@@ -228,8 +220,8 @@ class Property extends AbstractChange
 
             $reloadIfChangedConfigurationPath = sprintf('properties.%s.ui.reloadIfChanged', $propertyName);
             if (!$this->getIsInline() && $node->getNodeType()->getConfiguration($reloadIfChangedConfigurationPath)) {
-                $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $subgraph->findParentNode($node->getNodeAggregateIdentifier())->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
+
+                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $node->findParentNode()->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
                     $reloadContentOutOfBand = new ReloadContentOutOfBand();
                     $reloadContentOutOfBand->setNode($node);
                     $reloadContentOutOfBand->setNodeDomAddress($this->getNodeDomAddress());
@@ -252,11 +244,11 @@ class Property extends AbstractChange
     }
 
     /**
-     * @param NodeInterface $node
+     * @param TraversableNodeInterface $node
      * @param NodeType $nodeType
-     * @return NodeInterface
+     * @return TraversableNodeInterface
      */
-    protected function changeNodeType(NodeInterface $node, NodeType $nodeType)
+    protected function changeNodeType(TraversableNodeInterface $node, NodeType $nodeType)
     {
         $oldNodeType = $node->getNodeType();
         ObjectAccess::setProperty($node, 'nodeType', $nodeType);

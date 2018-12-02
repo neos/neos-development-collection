@@ -70,7 +70,7 @@ class NodeService
      * Converts a given context path to a node object
      *
      * @param string $contextPath
-     * @return NodeInterface|Error
+     * @return TraversableNode|Error
      */
     public function getNodeFromContextPath($contextPath)
     {

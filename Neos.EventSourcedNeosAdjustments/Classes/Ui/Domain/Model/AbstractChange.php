@@ -12,19 +12,19 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\NodeCreated;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Ui\Domain\Model\Feedback\Operations\NodeCreated;
 use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 
 abstract class AbstractChange implements ChangeInterface
 {
     /**
-     * @var NodeInterface
+     * @var TraversableNodeInterface
      */
     protected $subject;
 
@@ -44,10 +44,10 @@ abstract class AbstractChange implements ChangeInterface
     /**
      * Set the subject
      *
-     * @param NodeInterface $subject
+     * @param TraversableNodeInterface $subject
      * @return void
      */
-    public function setSubject(NodeInterface $subject)
+    public function setSubject(TraversableNodeInterface $subject)
     {
         $this->subject = $subject;
     }
@@ -55,7 +55,7 @@ abstract class AbstractChange implements ChangeInterface
     /**
      * Get the subject
      *
-     * @return NodeInterface
+     * @return TraversableNodeInterface
      */
     public function getSubject()
     {
@@ -83,7 +83,7 @@ abstract class AbstractChange implements ChangeInterface
      *
      * This method will be triggered if [nodeType].properties.[propertyName].ui.reloadIfChanged is TRUE.
      *
-     * @param NodeInterface $node
+     * @param TraversableNodeInterface $node
      * @return void
      */
     protected function reloadDocument($node = null)
@@ -99,7 +99,7 @@ abstract class AbstractChange implements ChangeInterface
     /**
      * Inform the client that a node has been created, the client decides if and which tree should react to this change.
      *
-     * @param NodeInterface $subject
+     * @param TraversableNodeInterface $subject
      * @return void
      */
     protected function addNodeCreatedFeedback($subject = null)

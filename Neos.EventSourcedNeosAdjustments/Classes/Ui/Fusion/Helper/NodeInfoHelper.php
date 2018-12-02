@@ -12,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
  */
 
 use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
@@ -241,6 +242,15 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             }
         }
         return false;
+    }
+
+    public static function isNodeTypeAllowedAsChildNode(TraversableNodeInterface $node, NodeType $nodeType)
+    {
+        if (self::isAutoCreated($node)) {
+            return $node->findParentNode()->getNodeType()->allowsGrandchildNodeType((string)$node->getNodeName(), $nodeType);
+        } else {
+            return $node->getNodeType()->allowsChildNodeType($nodeType);
+        }
     }
 
 

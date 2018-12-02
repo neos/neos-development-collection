@@ -11,9 +11,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
@@ -24,7 +23,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 class UpdateNodeInfo extends AbstractFeedback
 {
     /**
-     * @var NodeInterface
+     * @var TraversableNodeInterface
      */
     protected $node;
 
@@ -33,13 +32,6 @@ class UpdateNodeInfo extends AbstractFeedback
      * @var NodeInfoHelper
      */
     protected $nodeInfoHelper;
-
-    /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
-
 
     /**
      * @Flow\Inject
@@ -52,10 +44,10 @@ class UpdateNodeInfo extends AbstractFeedback
     /**
      * Set the node
      *
-     * @param NodeInterface $node
+     * @param TraversableNodeInterface $node
      * @return void
      */
-    public function setNode(NodeInterface $node)
+    public function setNode(TraversableNodeInterface $node)
     {
         $this->node = $node;
     }
@@ -73,7 +65,7 @@ class UpdateNodeInfo extends AbstractFeedback
     /**
      * Get the node
      *
-     * @return NodeInterface
+     * @return TraversableNodeInterface
      */
     public function getNode()
     {
@@ -131,20 +123,18 @@ class UpdateNodeInfo extends AbstractFeedback
     /**
      * Serialize node and all child nodes
      *
-     * @param NodeInterface $node
+     * @param TraversableNodeInterface $node
      * @param ControllerContext $controllerContext
      * @return array
      */
-    public function serializeNodeRecursively(NodeInterface $node, ControllerContext $controllerContext)
+    public function serializeNodeRecursively(TraversableNodeInterface $node, ControllerContext $controllerContext)
     {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-
         $result = [
             $this->nodeAddressFactory->createFromNode($node)->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)
         ];
 
         if ($this->isRecursive === true) {
-            foreach ($subgraph->findChildNodes($node->getNodeAggregateIdentifier()) as $childNode) {
+            foreach ($node->findChildNodes() as $childNode) {
                 $result = array_merge($result, $this->serializeNodeRecursively($childNode, $controllerContext));
             }
         }

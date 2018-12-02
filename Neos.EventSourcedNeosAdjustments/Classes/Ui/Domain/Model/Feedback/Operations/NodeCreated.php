@@ -11,16 +11,15 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Neos\Service\LinkingService;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 
-class ReloadDocument extends AbstractFeedback
+class NodeCreated extends AbstractFeedback
 {
     /**
      * @var TraversableNodeInterface
@@ -29,25 +28,9 @@ class ReloadDocument extends AbstractFeedback
 
     /**
      * @Flow\Inject
-     * @var LinkingService
+     * @var NodeAddressFactory
      */
-    protected $linkingService;
-
-    /**
-     * @Flow\Inject
-     * @var NodeService
-     */
-    protected $nodeService;
-
-    /**
-     * Get the type identifier
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return 'Neos.Neos.Ui:ReloadDocument';
-    }
+    protected $nodeAddressFactory;
 
     /**
      * Set the node
@@ -71,13 +54,23 @@ class ReloadDocument extends AbstractFeedback
     }
 
     /**
+     * Get the type identifier
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return 'Neos.Neos.Ui:NodeCreated';
+    }
+
+    /**
      * Get the description
      *
      * @return string
      */
     public function getDescription()
     {
-        return sprintf('Reload of current document required.');
+        return sprintf('Document Node "%s" created.', (string)$this->getNode()->getNodeAggregateIdentifier());
     }
 
     /**
@@ -88,11 +81,15 @@ class ReloadDocument extends AbstractFeedback
      */
     public function isSimilarTo(FeedbackInterface $feedback)
     {
-        if (!$feedback instanceof ReloadDocument) {
+        if (!$feedback instanceof NodeCreated) {
             return false;
         }
 
-        return true;
+        return (
+            (string)$this->getNode()->getContentStreamIdentifier() === (string)$feedback->getNode()->getContentStreamIdentifier() &&
+            $this->getNode()->getDimensionSpacePoint()->getHash() === $feedback->getNode()->getDimensionSpacePoint()->getHash() &&
+            (string)$this->getNode()->getNodeAggregateIdentifier() === (string)$feedback->getNode()->getNodeAggregateIdentifier()
+        );
     }
 
     /**
@@ -103,17 +100,13 @@ class ReloadDocument extends AbstractFeedback
      */
     public function serializePayload(ControllerContext $controllerContext)
     {
-        if (!$this->node) {
-            return [];
-        }
-        $nodeInfoHelper = new NodeInfoHelper();
+        $nodeService = new NodeService();
+        $node = $this->getNode();
 
-        if ($documentNode = $this->nodeService->getClosestDocument($this->node)) {
-            return [
-                'uri' => $nodeInfoHelper->createRedirectToNode($controllerContext, $documentNode)
-            ];
-        }
-
-        return [];
+        return [
+            'contextPath' => $this->nodeAddressFactory->createFromNode($this->getNode())->serializeForUri(),
+            'identifier' => (string)$node->getNodeAggregateIdentifier(),
+            'isDocument' => $nodeService->isDocument($node)
+        ];
     }
 }
