@@ -11,12 +11,14 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
+use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePolicyService;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeCollection;
 use Neos\Flow\Mvc\View\JsonView;
@@ -41,7 +43,6 @@ use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\Neos\Ui\Domain\Service\NodeTreeBuilder;
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Neos\Ui\Service\NodePolicyService;
 
 class BackendServiceController extends ActionController
 {
@@ -395,9 +396,13 @@ class BackendServiceController extends ActionController
     public function getPolicyInformationAction(array $nodes)
     {
         $result = [];
-        /** @var NodeAddress $node */
-        foreach ($nodes as $node) {
-            $result[$node->serializeForUri()] = ['policy' => $this->nodePolicyService->getNodePolicyInformation($node)];
+        /** @var NodeAddress $nodeAddress */
+        foreach ($nodes as $nodeAddress) {
+            $subgraph = $this->contentGraph
+                ->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+            $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+
+            $result[$nodeAddress->serializeForUri()] = ['policy' => $this->nodePolicyService->getNodePolicyInformation($node)];
         }
 
         $this->view->assign('value', $result);
