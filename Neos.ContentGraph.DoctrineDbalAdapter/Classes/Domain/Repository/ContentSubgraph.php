@@ -767,13 +767,13 @@ WHERE
         $continueTraversal = $callback($startNode);
         if ($continueTraversal) {
             if ($direction->isUp()) {
-                $parentNode = $this->findParentNode($startNode->getNodeIdentifier());
+                $parentNode = $this->findParentNode($startNode->getNodeAggregateIdentifier());
                 if ($parentNode && ($nodeTypeConstraints === null || $nodeTypeConstraints->matches($parentNode->getNodeTypeName()))) {
                     $this->traverseHierarchy($parentNode, $direction, $nodeTypeConstraints, $callback);
                 }
             } elseif ($direction->isDown()) {
                 foreach ($this->findChildNodes(
-                    $startNode->getNodeIdentifier(),
+                    $startNode->getNodeAggregateIdentifier(),
                     $nodeTypeConstraints,
                     null,
                     null

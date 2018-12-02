@@ -260,8 +260,6 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      */
     protected function fetchSiteFromRequest(NodeInterface $rootNode, ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
     {
-        /** @var Node $site */
-        /** @var Node $rootNode */
         $domain = $this->domainRepository->findOneByActiveRequest();
         if ($domain) {
             $site = $contentSubgraph->findChildNodeConnectedThroughEdgeName(
@@ -407,7 +405,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
                             $node->getNodeIdentifier()), 1415020326);
                     }
 
-                    $parentNode = $contentSubgraph->findParentNode($node->getNodeIdentifier());
+                    $parentNode = $contentSubgraph->findParentNode($node->getNodeAggregateIdentifier());
                     if ($parentNode->getNodeType()->isOfType('Neos.Neos:Sites')) {
                         // do not traverse further up than the Site node (which is one level beneath the "Sites" node.
                         return false;
