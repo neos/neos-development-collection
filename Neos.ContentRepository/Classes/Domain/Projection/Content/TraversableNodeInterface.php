@@ -69,39 +69,6 @@ interface TraversableNodeInterface extends NodeInterface
     public function countChildNodes(NodeTypeConstraints $nodeTypeConstraints = null): int;
 
     /**
-     * Retrieves and returns all sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array<TraversableNodeInterface>|TraversableNodeInterface[]
-     */
-    public function findSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
-
-    /**
-     * Retrieves and returns all preceding sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array
-     */
-    public function findPrecedingSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
-
-    /**
-     * Retrieves and returns all succeeding sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array
-     */
-    public function findSucceedingSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
-
-    /**
      * Retrieves and returns all nodes referenced by this node from its subgraph.
      * If node type constraints are specified, only nodes of that type are returned.
      *

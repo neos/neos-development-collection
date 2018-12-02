@@ -2027,59 +2027,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         return count($this->getChildNodes($nodeTypeConstraints));
     }
 
-    /**
-     * Retrieves and returns all sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array
-     */
-    public function findSiblingNodes(
-        NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
-    ): array {
-        return $this->findParentNode()->findChildNodes($nodeTypeConstraints, $limit, $offset);
-    }
-
-    /**
-     * Retrieves and returns all preceding sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array|TraversableNodeInterface[]
-     * @throws NodeMethodIsUnsupported
-     */
-    public function findPrecedingSiblingNodes(
-        NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
-    ): array {
-        throw new NodeMethodIsUnsupported('findPrecedingSiblingNodes is unsupported in the legacy Node API.');
-    }
-
-    /**
-     * Retrieves and returns all succeeding sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array|TraversableNodeInterface[]
-     * @throws NodeMethodIsUnsupported
-     */
-    public function findSucceedingSiblingNodes(
-        NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
-    ): array {
-        throw new NodeMethodIsUnsupported('findSucceedingSiblingNodes is unsupported in the legacy Node API.');
-    }
-
 
     /**
      * Retrieves and returns all nodes referenced by this node from its subgraph.
