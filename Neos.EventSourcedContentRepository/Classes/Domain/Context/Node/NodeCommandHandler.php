@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
@@ -316,6 +317,7 @@ final class NodeCommandHandler
             $event = new RootNodeWasCreated(
                 $contentStreamIdentifier,
                 $command->getNodeIdentifier(),
+                RootNodeIdentifiers::rootNodeAggregateIdentifier(),
                 $command->getNodeTypeName(),
                 $dimensionSpacePointSet,
                 $command->getInitiatingUserIdentifier()
@@ -704,7 +706,7 @@ final class NodeCommandHandler
 
         $sourceContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $sourceNode->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
         /** @var Node $sourceParentNode */
-        $sourceParentNode = $sourceContentSubgraph->findParentNode($sourceNodeIdentifier);
+        $sourceParentNode = $sourceContentSubgraph->findParentNode($sourceNode->getNodeAggregateIdentifier());
         if ($sourceParentNode === null) {
             throw new NodeException(sprintf('Parent node for %s in %s not found',
                 $sourceNodeIdentifier, $sourceNode->getDimensionSpacePoint()), 1506354274);
@@ -737,7 +739,7 @@ final class NodeCommandHandler
 
         // TODO Add a recursive flag and translate _all_ child nodes in this case
         foreach ($sourceNode->getNodeType()->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
-            $childNode = $sourceContentSubgraph->findChildNodeConnectedThroughEdgeName($sourceNodeIdentifier, new NodeName($childNodeNameStr));
+            $childNode = $sourceContentSubgraph->findChildNodeConnectedThroughEdgeName($sourceNode->getNodeAggregateIdentifier(), new NodeName($childNodeNameStr));
             if ($childNode === null) {
                 throw new NodeException(sprintf('Could not find auto-created child node with name %s for %s in %s',
                     $childNodeNameStr, $sourceNodeIdentifier, $sourceNode->getDimensionSpacePoint()), 1506506170);

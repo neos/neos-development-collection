@@ -253,10 +253,10 @@ class EventSourcedNodeController extends ActionController
         $nodePathCache = $subgraph->getInMemoryCache()->getNodePathCache();
 
         $currentDocumentNode = $subtree->getNode();
-        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->getNodeIdentifier());
+        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->getNodeAggregateIdentifier());
 
         $nodeByNodeIdentifierCache->add($currentDocumentNode->getNodeIdentifier(), $currentDocumentNode);
-        $nodePathCache->add($currentDocumentNode->getNodeIdentifier(), $nodePathOfDocumentNode);
+        $nodePathCache->add($currentDocumentNode->getNodeAggregateIdentifier(), $nodePathOfDocumentNode);
 
         foreach ($subtree->getChildren() as $childSubtree) {
             self::fillCacheInternal($childSubtree, $currentDocumentNode, $nodePathOfDocumentNode, $subgraph->getInMemoryCache());
@@ -274,10 +274,10 @@ class EventSourcedNodeController extends ActionController
         $node = $subtree->getNode();
         $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
 
-        $parentNodeIdentifierByChildNodeIdentifierCache->add($node->getNodeIdentifier(), $parentNode->getNodeIdentifier());
+        $parentNodeIdentifierByChildNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier());
         $nodeByNodeIdentifierCache->add($node->getNodeIdentifier(), $node);
-        $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeIdentifier(), $node->getNodeName(), $node);
-        $nodePathCache->add($node->getNodeIdentifier(), $nodePath);
+        $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeAggregateIdentifier(), $node->getNodeName(), $node);
+        $nodePathCache->add($node->getNodeAggregateIdentifier(), $nodePath);
 
         $allChildNodes = [];
         foreach ($subtree->getChildren() as $childSubtree) {
@@ -286,6 +286,6 @@ class EventSourcedNodeController extends ActionController
         }
 
         // TODO Explain why this is safe (Content can not contain other documents)
-        $allChildNodesByNodeIdentifierCache->add($node->getNodeIdentifier(), $allChildNodes);
+        $allChildNodesByNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $allChildNodes);
     }
 }

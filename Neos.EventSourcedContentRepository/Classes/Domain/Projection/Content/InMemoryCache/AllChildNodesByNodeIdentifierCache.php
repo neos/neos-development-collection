@@ -13,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 
 /**
@@ -23,21 +23,21 @@ final class AllChildNodesByNodeIdentifierCache
 {
     protected $childNodes = [];
 
-    public function add(NodeIdentifier $parentNodeIdentifier, array $allChildNodes)
+    public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, array $allChildNodes)
     {
-        $key = (string)$parentNodeIdentifier;
+        $key = (string)$parentNodeAggregateIdentifier;
         $this->childNodes[$key] = $allChildNodes;
     }
 
-    public function contains(NodeIdentifier $parentNodeIdentifier)
+    public function contains(NodeAggregateIdentifier $parentNodeAggregateIdentifier)
     {
-        $key = (string)$parentNodeIdentifier;
+        $key = (string)$parentNodeAggregateIdentifier;
         return isset($this->childNodes[$key]);
     }
 
-    public function findChildNodes(NodeIdentifier $parentNodeIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
+    public function findChildNodes(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
     {
-        $key = (string)$parentNodeIdentifier;
+        $key = (string)$parentNodeAggregateIdentifier;
         $result = [];
 
         if (isset($this->childNodes[$key])) {

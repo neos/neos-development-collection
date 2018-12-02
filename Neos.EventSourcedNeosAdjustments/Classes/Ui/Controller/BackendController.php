@@ -15,6 +15,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -157,7 +158,7 @@ class BackendController extends ActionController
         $workspaceName = $this->userService->getPersonalWorkspaceName();
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspaceName));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeIdentifier(), new NodeName($this->siteRepository->findDefault()->getNodeName()));
+        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeAggregateIdentifier(), new NodeName($this->siteRepository->findDefault()->getNodeName()));
         $siteNode = new TraversableNode($siteNode, $subgraph);
 
         if (!$nodeAddress) {
@@ -210,12 +211,11 @@ class BackendController extends ActionController
     }
 
     /**
-     * @return \Neos\ContentRepository\Domain\ValueObject\NodeIdentifier
+     * @return NodeAggregateIdentifier
      * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
      */
-    protected function getRootNodeIdentifier(): \Neos\ContentRepository\Domain\ValueObject\NodeIdentifier
+    protected function getRootNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'))->getNodeIdentifier();
+        return $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'))->getNodeAggregateIdentifier();
     }
 }

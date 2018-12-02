@@ -90,7 +90,7 @@ class GraphProjector implements ProjectorInterface
         $node = new Node(
             $nodeRelationAnchorPoint,
             $event->getNodeIdentifier(),
-            RootNodeIdentifiers::rootNodeAggregateIdentifier(),
+            $event->getNodeAggregateIdentifier(),
             RootNodeIdentifiers::rootDimensionSpacePoint()->getCoordinates(),
             RootNodeIdentifiers::rootDimensionSpacePoint()->getHash(),
             [],

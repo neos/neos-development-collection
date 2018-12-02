@@ -13,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
 /**
@@ -30,18 +30,18 @@ final class NamedChildNodeByNodeIdentifierCache
      */
     protected $nodes = [];
 
-    public function add(NodeIdentifier $parentNodeIdentifier, NodeName $nodeName, NodeInterface $node): void
+    public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $nodeName, NodeInterface $node): void
     {
-        $this->nodes[(string)$parentNodeIdentifier][(string)$nodeName] = $node;
+        $this->nodes[(string)$parentNodeAggregateIdentifier][(string)$nodeName] = $node;
     }
 
-    public function contains(NodeIdentifier $parentNodeIdentifier, NodeName $nodeName): bool
+    public function contains(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $nodeName): bool
     {
-        return isset($this->nodes[(string)$parentNodeIdentifier][(string)$nodeName]);
+        return isset($this->nodes[(string)$parentNodeAggregateIdentifier][(string)$nodeName]);
     }
 
-    public function get(NodeIdentifier $parentNodeIdentifier, NodeName $nodeName): ?NodeInterface
+    public function get(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $nodeName): ?NodeInterface
     {
-        return $this->nodes[(string)$parentNodeIdentifier][(string)$nodeName] ?? null;
+        return $this->nodes[(string)$parentNodeAggregateIdentifier][(string)$nodeName] ?? null;
     }
 }

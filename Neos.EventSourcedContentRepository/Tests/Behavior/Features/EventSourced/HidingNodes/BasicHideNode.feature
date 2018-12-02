@@ -91,11 +91,11 @@ Feature: Hide Node
     Then I expect a node "[node-identifier]" not to exist in the graph projection
     # findChildNodes
     # countChildNodes
-    Then I expect the node "[rn-identifier]" to have the following child nodes:
+    Then I expect the node aggregate "[ROOT]" to have the following child nodes:
       | Name | NodeIdentifier |
       # no child nodes as they are hidden
     # findParentNode
-    When I go to the parent node of node "[cnode-identifier]"
+    When I go to the parent node of node aggregate "[cna-identifier]"
     Then I do not find any node
     # traverseHierarchy is covered by "findChildNodes" and "findParentNode"
     # findParentNodeByNodeAggregateIdentifier
@@ -106,7 +106,7 @@ Feature: Hide Node
     Then I expect the path "/text1" to lead to no node
     Then I expect the path "/text1/text2" to lead to no node
     # findReferencedNodes
-    Then I expect the Node "[refnode-identifier]" to have the references:
+    Then I expect the Node aggregate "[refna-identifier]" to have the references:
       | Key | Value | Type   |
       | ref |       | Uuid[] |
     # findSubtree
@@ -125,11 +125,11 @@ Feature: Hide Node
     Then I expect a node "[node-identifier]" to exist in the graph projection
     # findChildNodes
     # countChildNodes
-    Then I expect the node "[rn-identifier]" to have the following child nodes:
+    Then I expect the node aggregate "[ROOT]" to have the following child nodes:
       | Name  | NodeIdentifier    |
       | text1 | [node-identifier] |
     # findParentNode
-    When I go to the parent node of node "[cnode-identifier]"
+    When I go to the parent node of node aggregate "[cna-identifier]"
     Then I find a node with node aggregate "[na-identifier]"
     # traverseHierarchy is covered by "findChildNodes" and "findParentNode"
     # findParentNodeByNodeAggregateIdentifier
@@ -140,7 +140,7 @@ Feature: Hide Node
     Then I expect the path "/text1" to lead to the node "[node-identifier]"
     Then I expect the path "/text1/text2" to lead to the node "[cnode-identifier]"
     # findReferencedNodes
-    Then I expect the Node "[refnode-identifier]" to have the references:
+    Then I expect the Node aggregate "[refna-identifier]" to have the references:
       | Key | Value          | Type   |
       | ref | cna-identifier | Uuid[] |
     # findSubtree
@@ -169,7 +169,7 @@ Feature: Hide Node
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
 
     # findReferencingNodes
-    Then I expect the Node "[cnode-identifier]" to be referenced by:
+    Then I expect the Node aggregate "[cna-identifier]" to be referenced by:
       | Key | Value | Type   |
       | ref |       | Uuid[] |
 
@@ -179,7 +179,7 @@ Feature: Hide Node
     When VisibilityConstraints are set to "withoutRestrictions"
 
     # findReferencingNodes
-    Then I expect the Node "[cnode-identifier]" to be referenced by:
+    Then I expect the Node aggregate "[cna-identifier]" to be referenced by:
       | Key | Value            | Type   |
       | ref | refna-identifier | Uuid[] |
 

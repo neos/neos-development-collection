@@ -51,7 +51,7 @@ class NodeSiteResolvingService
                 return $previousNode;
             }
             $previousNode = $node;
-        } while ($node = $subgraph->findParentNode($node->getNodeIdentifier()));
+        } while ($node = $subgraph->findParentNode($node->getNodeAggregateIdentifier()));
 
         // no Site node found at rootline
         return null;

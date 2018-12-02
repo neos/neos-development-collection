@@ -18,6 +18,7 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
@@ -305,6 +306,9 @@ trait EventSourcedTrait
         return preg_replace_callback(
             '#\[[0-9a-zA-Z\-]+\]#',
             function ($matches) {
+                if ($matches[0] === '[ROOT]') {
+                    return RootNodeIdentifiers::rootNodeAggregateIdentifier();
+                }
                 return (string)Uuid::uuid5('00000000-0000-0000-0000-000000000000', $matches[0]);
             },
             $identifierString
@@ -917,18 +921,18 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the node "([^"]*)" to have the following child nodes:$/
+     * @Then /^I expect the node aggregate "([^"]*)" to have the following child nodes:$/
      */
-    public function iExpectTheNodeToHaveTheFollowingChildNodes($nodeIdentifier, TableNode $expectedChildNodesTable)
+    public function iExpectTheNodeToHaveTheFollowingChildNodes($nodeAggregateIdentifier, TableNode $expectedChildNodesTable)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $nodes = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findChildNodes(new NodeIdentifier($nodeIdentifier));
+            ->findChildNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier));
 
         $numberOfChildNodes = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->countChildNodes(new NodeIdentifier($nodeIdentifier));
+            ->countChildNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier));
 
         Assert::assertEquals(count($expectedChildNodesTable->getHash()), $numberOfChildNodes, 'ContentSubgraph::countChildNodes returned a wrong value');
         Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'ContentSubgraph::findChildNodes: Child Node Count does not match');
@@ -991,18 +995,18 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the Node "([^"]*)" to have the references:$/
+     * @Then /^I expect the Node aggregate "([^"]*)" to have the references:$/
      */
-    public function iExpectTheNodeToHaveTheReferences($nodeIdentifier, TableNode $expectedReferences)
+    public function iExpectTheNodeToHaveTheReferences($nodeAggregateIdentifier, TableNode $expectedReferences)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $expectedReferences = $this->readPayloadTable($expectedReferences);
 
         /** @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface $subgraph */
         $subgraph = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
-            $destinationNodes = $subgraph->findReferencedNodes(new NodeIdentifier($nodeIdentifier), new PropertyName($propertyName));
+            $destinationNodes = $subgraph->findReferencedNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier), new PropertyName($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
                     if ($item instanceof NodeInterface) {
@@ -1018,18 +1022,18 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the Node "([^"]*)" to be referenced by:$/
+     * @Then /^I expect the Node aggregate "([^"]*)" to be referenced by:$/
      */
-    public function iExpectTheNodeToBeReferencedBy($nodeIdentifier, TableNode $expectedReferences)
+    public function iExpectTheNodeToBeReferencedBy($nodeAggregateIdentifier, TableNode $expectedReferences)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $expectedReferences = $this->readPayloadTable($expectedReferences);
 
         /** @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface $subgraph */
         $subgraph = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
-            $destinationNodes = $subgraph->findReferencingNodes(new NodeIdentifier($nodeIdentifier), new PropertyName($propertyName));
+            $destinationNodes = $subgraph->findReferencingNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier), new PropertyName($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
                     if ($item instanceof NodeInterface) {
@@ -1087,31 +1091,20 @@ trait EventSourcedTrait
         }
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath($nodePath, $this->rootNodeIdentifier);
+            ->findNodeByPath($nodePath, RootNodeIdentifiers::rootNodeAggregateIdentifier());
         Assert::assertNotNull($this->currentNode, 'Did not find node at path "' . $nodePath . '"');
         Assert::assertEquals($nodeIdentifier, (string)$this->currentNode->getNodeIdentifier(), 'Node identifier does not match.');
     }
 
     /**
-     * @When /^I go to the parent node of node "([^"]*)"$/
-     */
-    public function iGoToTheParentNodeOfNode($nodeIdentifier)
-    {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
-        $this->currentNode = $this->contentGraphInterface
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findParentNode(new NodeIdentifier($nodeIdentifier));
-    }
-
-    /**
      * @When /^I go to the parent node of node aggregate "([^"]*)"$/
      */
-    public function iGoToTheParentNodeOfNodeAggregate($nodeAggregateIdentifier)
+    public function iGoToTheParentNodeOfNode($nodeAggregateIdentifier)
     {
         $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findParentNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+            ->findParentNode(new NodeAggregateIdentifier($nodeAggregateIdentifier));
     }
 
     /**
@@ -1146,7 +1139,7 @@ trait EventSourcedTrait
         }
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath($nodePath, $this->rootNodeIdentifier);
+            ->findNodeByPath($nodePath, RootNodeIdentifiers::rootNodeAggregateIdentifier());
         Assert::assertNull($node, 'Did find node at path "' . $nodePath . '"');
     }
 
