@@ -1,0 +1,36 @@
+language: php
+matrix:
+  include:
+    - php: 7.2
+
+sudo: false
+before_install:
+  - export NEOS_TARGET_VERSION=4.1
+  - cd ..
+  - git clone https://github.com/neos/neos-development-distribution.git -b ${NEOS_TARGET_VERSION}
+  - cd neos-development-distribution
+  - composer config repositories.contentrepository-development-collection git https://github.com/neos/contentrepository-development-collection.git
+  - composer config repositories.content-repository-dimensionspace git https://github.com/neos/content-repository-dimensionspace
+  - composer config minimum-stability dev
+  - composer config prefer-stable true
+  - composer require --no-update --no-interaction neos/event-sourcing:dev-master
+  - composer require --no-update --no-interaction neos/flow-development-collection:"dev-event-sourced as dev-master"
+  - composer require --no-update --no-interaction neos/neos-development-collection:"dev-event-sourced-patch as dev-master"
+  - composer require --no-update --no-interaction neos/neos-ui:"dev-event-sourced-patch as dev-master"
+  - composer require --no-update --no-interaction neos/demo:"dev-event-sourced as dev-master"
+  - composer require --no-update --no-interaction neos/neos:dev-master
+  - composer require --no-update --no-interaction neos/nodetypes:dev-master
+  - composer require --no-update --no-interaction neos/site-kickstarter:dev-master
+  - composer require --no-update --no-interaction neos/content-repository:dev-master
+  - composer require --no-update --no-interaction neos/diff:dev-master
+  - composer require --no-update --no-interaction neos/fusion:dev-master
+  - composer require --no-update --no-interaction neos/media:dev-master
+  - composer require --no-update --no-interaction neos/media-browser:dev-master
+  - composer require --no-update --dev --no-interaction neos/behat:dev-master
+  - composer require --no-update --dev --prefer-source --no-interaction flowpack/behat:dev-master
+install:
+  - composer update --no-progress --no-interaction
+  - cd ..
+  - rm -rf neos-development-distribution/Packages/CR
+  - mv contentrepository-development-collection neos-development-distribution/Packasges/CR
+  - cd neos-development-distribution
