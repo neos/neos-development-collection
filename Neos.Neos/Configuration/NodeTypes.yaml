@@ -240,6 +240,7 @@
         label: i18n
         reloadPageIfChanged: true
         inspector:
+          hidden: 'ClientEval:node.properties.targetMode === "selectedTarget" ? false : true'
           group: 'document'
           editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
           editorListeners:
