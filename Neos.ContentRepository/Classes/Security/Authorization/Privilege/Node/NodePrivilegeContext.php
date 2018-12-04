@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
+use Neos\ContentRepository\Service\Utility\UnvalidatedNodeCache;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Validation\Validator\UuidValidator;
@@ -25,9 +26,10 @@ class NodePrivilegeContext
 {
 
     /**
-     * @var NodeInterface[]
+     * @Flow\Inject
+     * @var UnvalidatedNodeCache
      */
-    protected static $nodes = [];
+    protected $nodeCache;
 
     /**
      * @Flow\Inject
@@ -230,21 +232,14 @@ class NodePrivilegeContext
      */
     protected function getNodeByIdentifier($nodeIdentifier)
     {
-        if (array_key_exists($nodeIdentifier, static::$nodes)) {
-            return static::$nodes[$nodeIdentifier];
-        }
-
-        $context = $this->contextFactory->create();
-        $node = null;
-        $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
-            $node = $context->getNodeByIdentifier($nodeIdentifier);
+        return $this->nodeCache->cache($nodeIdentifier, function () use ($nodeIdentifier) {
+            $context = $this->contextFactory->create();
+            $node = null;
+            $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
+                $node = $context->getNodeByIdentifier($nodeIdentifier);
+            });
+            $context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, null);
+            return $node;
         });
-        $context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, null);
-
-        if ($node) {
-            static::$nodes[$nodeIdentifier] = $node;
-        }
-
-        return $node;
     }
 }
