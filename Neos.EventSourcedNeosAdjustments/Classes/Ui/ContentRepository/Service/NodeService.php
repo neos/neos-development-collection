@@ -11,7 +11,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Error\Messages\Error;
@@ -70,7 +69,7 @@ class NodeService
      * Converts a given context path to a node object
      *
      * @param string $contextPath
-     * @return NodeInterface|Error
+     * @return TraversableNode|Error
      */
     public function getNodeFromContextPath($contextPath)
     {
