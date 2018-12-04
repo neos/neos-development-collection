@@ -6,6 +6,9 @@ Property Editor Reference
 For each property which is defined in ``NodeTypes.yaml``, the editor inside the Neos inspector can be customized
 using various options. Here follows the reference for each property type.
 
+.. note:: All NodeType inspector configuration values are dynamically evaluated on the client-side, see
+   :ref:`dynamic-configuration-processing` for more details.
+
 Property Type: boolean ``BooleanEditor`` -- Checkbox editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -21,7 +24,7 @@ A ``boolean`` value is rendered using a checkbox in the inspector::
 Options Reference:
 
 ``disabled`` (boolean)
-	HTML ``disabled`` property. If ``TRUE``, disable this checkbox.
+	HTML ``disabled`` property. If ``true``, disable this checkbox.
 
 Property Type: string ``TextFieldEditor`` -- Single-line Text Editor (default)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -46,13 +49,13 @@ Options Reference:
 	HTML5 ``placeholder`` property, which is shown if the text field is empty.
 
 ``disabled`` (boolean)
-	HTML ``disabled`` property. If ``TRUE``, disable this textfield.
+	HTML ``disabled`` property. If ``true``, disable this textfield.
 
 ``maxlength`` (integer)
 	HTML ``maxlength`` property. Maximum number of characters allowed to be entered.
 
 ``readonly`` (boolean)
-	HTML ``readonly`` property. If ``TRUE``, this field is cannot be written to.
+	HTML ``readonly`` property. If ``true``, this field is cannot be written to.
 
 ``form`` (optional)
 	HTML5 ``form`` property.
@@ -64,7 +67,7 @@ Options Reference:
 	HTML5 ``spellcheck`` property.
 
 ``required`` (boolean)
-	HTML5 ``required`` property. If ``TRUE``, input is required.
+	HTML5 ``required`` property. If ``true``, input is required.
 
 ``title`` (boolean)
 	HTML ``title`` property.
@@ -136,6 +139,9 @@ Options Reference:
 	``text/plain``, ``text/xml``, ``text/html``, ``text/css``, ``text/javascript``. If other highlighting modes shall be
 	used, they must be loaded beforehand using custom JS code. Default ``text/html``.
 
+``disabled`` (boolean)
+	If ``true``, disables the CodeEditor.
+
 .. _property-editor-reference-selectboxeditor:
 
 Property Type: string / array<string> ``SelectBoxEditor`` -- Dropdown Select Editor
@@ -187,8 +193,8 @@ If the selection list should be grouped, this can be done by setting the ``group
                 label: 'Germany'
                 group: 'Central Europe'
 
-Furthermore, multiple selection is also possible, by setting ``multiple`` to ``TRUE``, which is automatically set
-for properties of type ``array``. If an empty value is allowed as well, ``allowEmpty`` should be set to ``TRUE`` and
+Furthermore, multiple selection is also possible, by setting ``multiple`` to ``true``, which is automatically set
+for properties of type ``array``. If an empty value is allowed as well, ``allowEmpty`` should be set to ``true`` and
 ``placeholder`` should be set to a helpful text::
 
     styleOptions:
@@ -201,9 +207,9 @@ for properties of type ``array``. If an empty value is allowed as well, ``allowE
           editorOptions:
 
             # The next line is set automatically for type array
-            # multiple: TRUE
+            # multiple: true
 
-            allowEmpty: TRUE
+            allowEmpty: true
             placeholder: 'Select Styling Options'
 
             values:
@@ -289,14 +295,14 @@ Options Reference:
 			CSS icon class for this value.
 
 ``allowEmpty`` (boolean)
-	if TRUE, it is allowed to choose an empty value.
+	if true, it is allowed to choose an empty value.
 
 ``placeholder`` (string)
 	placeholder text which is shown if nothing is selected. Only works if
-	``allowEmpty`` is ``TRUE``. Default ``Choose``.
+	``allowEmpty`` is ``true``. Default ``Choose``.
 
 ``multiple`` (boolean)
-	If ``TRUE``, multi-selection is allowed. Default ``FALSE``.
+	If ``true``, multi-selection is allowed. Default ``FALSE``.
 
 ``minimumResultsForSearch`` (integer)
 	The minimum amount of items in the select before showing a search box,
@@ -311,6 +317,10 @@ Options Reference:
 
 ``dataSourceAdditionalData`` (array)
 	Key/value pairs that will be sent to the server-side data source with every request.
+
+``disabled`` (boolean)
+	If ``true``, disables the SelectBoxEditor.
+
 
 Property Type: string ``LinkEditor`` -- Link Editor for internal, external and asset links
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -348,6 +358,11 @@ Furthermore, the placeholder text can be customized by setting the ``placeholder
             assets: FALSE
             nodeTypes: ['Neos.Neos:Shortcut']
             placeholder: 'Paste a link, or type to search for nodes'
+
+Options Reference:
+
+``disabled`` (boolean)
+	If ``true``, disables the LinkEditor.
 
 Property Type: integer ``TextFieldEditor``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -399,6 +414,38 @@ Options Reference:
 
 ``threshold`` (number)
 	Minimum amount of characters which trigger a search. Default is set to 2.
+
+``createNew`` (array)
+    It is also possible to create new selectable nodes directly from the reference editor.
+    This can come in handy for example if you reference tag nodes and want to add new tags on the fly.
+
+    The given string is passed to the title property of the new node.
+
+    ``path`` (string)
+        The path to the node in which the new nodes should be created.
+
+    ``type`` (string)
+        The type of the nodes to be created.
+
+    .. code-block:: yaml
+
+        tags:
+          type: references
+          ui:
+            label: 'Tags'
+            inspector:
+              group: document
+              editorOptions:
+                nodeTypes: ['My.Website:Tag']
+                createNew:
+                  path: /sites/yoursite/tags
+                  type: 'My.Website:Tag'
+
+``disabled`` (boolean)
+	If ``true``, disables the Reference(s)Editor.
+
+
+
 
 Property Type: DateTime ``DateTimeEditor`` -- Date & Time Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -472,12 +519,16 @@ For the date format, these are the available placeholders:
 * second
 	* ``s``: seconds, 2 digits with leading zeros - 00 through 59
 
+``disabled`` (boolean)
+	If ``true``, disables the DateTimeEditor.
+
+
 
 Property Type: image (Neos\\Media\\Domain\\Model\\ImageInterface) ``ImageEditor`` -- Image Selection/Upload Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For properties of type ``Neos\Media\Domain\Model\ImageInterface``, an image editor is rendered. If you want cropping
-and resizing functionality, you need to set ``features.crop`` and ``features.resize`` to ``TRUE``, as in the following
+and resizing functionality, you need to set ``features.crop`` and ``features.resize`` to ``true``, as in the following
 example::
 
     'teaserImage'
@@ -488,8 +539,8 @@ example::
           group: 'document'
           editorOptions:
             features:
-              crop: TRUE
-              resize: TRUE
+              crop: true
+              resize: true
 
 If cropping is enabled, you might want to enforce a certain aspect ratio, which can be done by setting
 ``crop.aspectRatio.locked.width`` and ``crop.aspectRatio.locked.height``. In the following example, the
@@ -502,8 +553,9 @@ image format must be ``16:9``::
         inspector:
           group: 'document'
           editorOptions:
+            accept: 'image/png'
             features:
-              crop: TRUE
+              crop: true
             crop:
               aspectRatio:
                 locked:
@@ -512,8 +564,8 @@ image format must be ``16:9``::
 
 If not locking the cropping to a specific ratio, a set of predefined ratios can be chosen by the user. Elements can be
 added or removed from this list underneath ``crop.aspectRatio.options``. If the aspect ratio of the original image
-shall be added to the list, ``crop.aspectRatio.enableOriginal`` must be set to ``TRUE``. If the user should be allowed
-to choose a custom aspect ratio, set ``crop.aspectRatio.allowCustom`` to ``TRUE``::
+shall be added to the list, ``crop.aspectRatio.enableOriginal`` must be set to ``true``. If the user should be allowed
+to choose a custom aspect ratio, set ``crop.aspectRatio.allowCustom`` to ``true``::
 
     'teaserImage'
       type: 'Neos\Media\Domain\Model\ImageInterface'
@@ -522,8 +574,9 @@ to choose a custom aspect ratio, set ``crop.aspectRatio.allowCustom`` to ``TRUE`
         inspector:
           group: 'document'
           editorOptions:
+            accept: 'image/png'
             features:
-              crop: TRUE
+              crop: true
             crop:
               aspectRatio:
                 options:
@@ -536,8 +589,8 @@ to choose a custom aspect ratio, set ``crop.aspectRatio.allowCustom`` to ``TRUE`
                     height: 5
                   # disable this ratio (if it was defined in a supertype)
                   fiveSeven: ~
-                enableOriginal: TRUE
-                allowCustom: TRUE
+                enableOriginal: true
+                allowCustom: true
 
 Options Reference:
 
@@ -546,13 +599,22 @@ Options Reference:
 	Accepts numeric or formatted string values, e.g. "204800" or "204800b" or "2kb".
 	Defaults to the maximum allowed upload size configured in php.ini
 
+``accept`` (string)
+  Set the accepted mime type for this editor. If non is given it falls back to ``image/*``.
+
 ``features``
 
 	``crop`` (boolean)
-		If ``TRUE``, enable image cropping. Default ``TRUE``.
+		If ``true``, enable image cropping. Default ``true``.
+
+	``upload`` (boolean)
+		If ``true``, enable Upload button, allowing new files to be uploaded directly in the editor. Default ``true``.
+
+	``mediaBrowser`` (boolean)
+		If ``true``, enable Media Browser button. Default ``true``.
 
 	``resize`` (boolean)
-		If ``TRUE``, enable image resizing. Default ``FALSE``.
+		If ``true``, enable image resizing. Default ``FALSE``.
 
 ``crop``
 	crop-related options. Only relevant if ``features.crop`` is enabled.
@@ -583,15 +645,18 @@ Options Reference:
 						a human-readable name of the aspect ratio preset
 
 			``enableOriginal`` (boolean)
-				If ``TRUE``, the image ratio of the original image can be chosen in the selector.
-				Only effective if ``locked`` is not set. Default ``TRUE``.
+				If ``true``, the image ratio of the original image can be chosen in the selector.
+				Only effective if ``locked`` is not set. Default ``true``.
 
 			``allowCustom`` (boolean)
-				If ``TRUE``, a completely custom image ratio can be chosen. Only effective if ``locked``
-				is not set. Default ``TRUE``.
+				If ``true``, a completely custom image ratio can be chosen. Only effective if ``locked``
+				is not set. Default ``true``.
 
 			``defaultOption`` (string)
 				default aspect ratio option to be chosen if no cropping has been applied already.
+
+``disabled`` (boolean)
+	If ``true``, disables the ImageEditor.
 
 Property Type: asset (Neos\\Media\\Domain\\Model\\Asset / array<Neos\\Media\\Domain\\Model\\Asset>) ``AssetEditor`` -- File Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -617,7 +682,19 @@ Conversely, if multiple assets shall be uploaded, use ``array<Neos\Media\Domain\
 
 Options Reference:
 
-(no options)
+``accept``
+  Set the accepted mime type for this editor. If non is given all files are allowed.
+
+``features``
+
+	``upload`` (boolean)
+		If ``true``, enable Upload button, allowing new files to be uploaded directly in the editor. Default ``true``.
+
+	``mediaBrowser`` (boolean)
+		If ``true``, enable Media Browser button. Default ``true``.
+
+``disabled`` (boolean)
+	If ``true``, disables the AssetEditor.
 
 Property Validation
 -------------------

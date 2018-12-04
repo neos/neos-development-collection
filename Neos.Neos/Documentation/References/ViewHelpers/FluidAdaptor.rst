@@ -3,7 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2017-03-30
+This reference was automatically generated from code on 2018-08-10
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:base`:
@@ -478,12 +478,12 @@ Expected result::
 
 **Bind to object property**::
 
-	<f:form.checkbox property="interests" value="Neos" />
+	<f:form.checkbox property="interests" value="TYPO3" />
 
 
 Expected result::
 
-	<input type="checkbox" name="user[interests][]" value="Neos" checked="checked" />
+	<input type="checkbox" name="user[interests][]" value="TYPO3" checked="checked" />
 	(depending on property "interests")
 
 
@@ -1273,10 +1273,6 @@ Arguments
 
 * ``value`` (string, *optional*): string to format
 
-* ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
-
-* ``encoding`` (string, *optional*)
-
 
 
 
@@ -1568,7 +1564,7 @@ Arguments
 
 * ``format`` (string, *optional*): Format String which is taken to format the Date/Time if none of the locale options are set.
 
-* ``localeFormatType`` (string, *optional*): Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
+* ``localeFormatType`` (string, *optional*): Whether to format (according to locale set in $forceLocale) date, time or dateTime. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
 
 * ``localeFormatLength`` (string, *optional*): Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
 
@@ -2561,13 +2557,13 @@ A view helper for creating URIs to resources.
 Arguments
 *********
 
-* ``path`` (string, *optional*): The location of the resource, can be either a path relative to the Public resource directory of the package or a resource://... URI
+* ``path`` (string, *optional*): Location of the resource, can be either a path relative to the Public resource directory of the package or a resource://... URI
 
 * ``package`` (string, *optional*): Target package key. If not set, the current package key will be used
 
 * ``resource`` (Neos\Flow\ResourceManagement\PersistentResource, *optional*): If specified, this resource object is used instead of the path and package information
 
-* ``localize`` (boolean, *optional*): Whether resource localization should be attempted or not
+* ``localize`` (bool, *optional*): Whether resource localization should be attempted or not.
 
 
 

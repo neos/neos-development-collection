@@ -1,0 +1,29 @@
+'Neos.NodeTypes.ColumnLayouts:TwoColumn':
+  superTypes:
+    'Neos.NodeTypes.ColumnLayouts:Column': true
+  ui:
+    label: i18n
+    position: 200
+  childNodes:
+    column0:
+      type: 'Neos.Neos:ContentCollection'
+    column1:
+      type: 'Neos.Neos:ContentCollection'
+  properties:
+    layout:
+      defaultValue: '50-50'
+      ui:
+        reloadIfChanged: true
+        inspector:
+          editorOptions:
+            values:
+              '50-50':
+                label: '50% / 50%'
+              '75-25':
+                label: '75% / 25%'
+              '25-75':
+                label: '25% / 75%'
+              '66-33':
+                label: '66% / 33%'
+              '33-66':
+                label: '33% / 66%'

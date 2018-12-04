@@ -61,8 +61,6 @@
       type: 'array<Neos\Flow\Tests\Functional\Persistence\Fixtures\Image>'
 
 'Neos.ContentRepository.Testing:HappyTestingNode':
-  supertypes:
-    'Neos.ContentRepository:TestingNodeType': TRUE
   class: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\HappyNode'
 
 # Constraint behat test nodetypes

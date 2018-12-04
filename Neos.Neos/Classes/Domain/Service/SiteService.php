@@ -11,8 +11,11 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -63,6 +66,12 @@ class SiteService
     protected $persistenceManager;
 
     /**
+     * @Flow\Inject
+     * @var AssetCollectionRepository
+     */
+    protected $assetCollectionRepository;
+
+    /**
      * Remove given site all nodes for that site and all domains associated.
      *
      * @param Site $site
@@ -101,6 +110,33 @@ class SiteService
         foreach ($this->siteRepository->findAll() as $site) {
             $this->pruneSite($site);
         }
+    }
+
+    /**
+     * Adds an asset to the asset collection of the site it has been uploaded to
+     * Note: This is usually triggered by the ContentController::assetUploaded signal
+     *
+     * @param Asset $asset
+     * @param NodeInterface $node
+     * @param string $propertyName
+     * @return void
+     */
+    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeInterface $node, string $propertyName)
+    {
+        $contentContext = $node->getContext();
+        if (!$contentContext instanceof ContentContext) {
+            return;
+        }
+        $site = $contentContext->getCurrentSite();
+        if ($site === null) {
+            return;
+        }
+        $assetCollection = $site->getAssetCollection();
+        if ($assetCollection === null) {
+            return;
+        }
+        $assetCollection->addAsset($asset);
+        $this->assetCollectionRepository->update($assetCollection);
     }
 
     /**

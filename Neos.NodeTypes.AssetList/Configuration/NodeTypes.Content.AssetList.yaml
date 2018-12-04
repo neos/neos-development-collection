@@ -1,0 +1,21 @@
+'Neos.NodeTypes.AssetList:AssetList':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: i18n
+    icon: 'icon-files-o'
+    position: 700
+    inspector:
+      groups:
+        resources:
+          label: i18n
+          position: 5
+          icon: 'icon-files-o'
+  properties:
+    assets:
+      type: array<Neos\Media\Domain\Model\Asset>
+      ui:
+        inspector:
+          group: 'resources'
+        label: i18n
+        reloadIfChanged: true

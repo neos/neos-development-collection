@@ -1,0 +1,11 @@
+
+Neos:
+  Neos:
+    fusion:
+      autoInclude:
+        Neos.NodeTypes.Navigation: true
+    userInterface:
+      translation:
+        autoInclude:
+          Neos.NodeTypes.Navigation:
+            - 'NodeTypes/*'

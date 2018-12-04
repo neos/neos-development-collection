@@ -381,10 +381,11 @@
 
 -
   name: 'Services - ContentDimensionController->show()'
-  uriPattern: 'content-dimensions/{dimensionName}'
+  uriPattern: 'content-dimensions/{dimensionName}(.{@format})'
   defaults:
     '@package':    'Neos.Neos'
     '@controller': 'Service\ContentDimensions'
     '@action':     'show'
+    '@format':     'html'
   appendExceedingArguments: TRUE
   httpMethods: ['GET']

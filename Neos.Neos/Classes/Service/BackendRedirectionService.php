@@ -87,6 +87,12 @@ class BackendRedirectionService
     protected $propertyMapper;
 
     /**
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.routeAfterLogin.values")
+     * @var bool
+     */
+    protected $routingValuesAfterLogin;
+
+    /**
      * Returns a specific URI string to redirect to after the login; or NULL if there is none.
      *
      * @param ActionRequest $actionRequest
@@ -107,13 +113,14 @@ class BackendRedirectionService
         $uriBuilder->setFormat('html');
         $uriBuilder->setCreateAbsoluteUri(true);
 
-        $contentContext = $this->createContext($workspaceName);
-        $lastVisitedNode = $this->getLastVisitedNode($workspaceName);
-        if ($lastVisitedNode !== null) {
-            return $uriBuilder->uriFor('show', array('node' => $lastVisitedNode), 'Frontend\\Node', 'Neos.Neos');
+        $nodeToEdit = $this->getLastVisitedNode($workspaceName);
+        if ($nodeToEdit === null) {
+            $contentContext = $this->createContext($workspaceName);
+            $nodeToEdit = $contentContext->getCurrentSiteNode();
         }
 
-        return $uriBuilder->uriFor('show', array('node' => $contentContext->getCurrentSiteNode()), 'Frontend\\Node', 'Neos.Neos');
+        $arguments = array_merge(['node' => $nodeToEdit], $this->routingValuesAfterLogin);
+        return $uriBuilder->uriFor($this->routingValuesAfterLogin['@action'], $arguments, $this->routingValuesAfterLogin['@controller'], $this->routingValuesAfterLogin['@package']);
     }
 
     /**

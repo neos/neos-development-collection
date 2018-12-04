@@ -1,0 +1,9 @@
+'Neos.NodeTypes:TextWithImage':
+  superTypes:
+    'Neos.Neos:Content': true
+    'Neos.NodeTypes:TextMixin': true
+    'Neos.NodeTypes:ContentImageMixin': true
+  ui:
+    label: i18n
+    icon: 'icon-picture'
+    position: 400

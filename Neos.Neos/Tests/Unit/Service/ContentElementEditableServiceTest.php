@@ -13,7 +13,7 @@ namespace Neos\Neos\Tests\Unit\Service;
 
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Neos\Service\HtmlAugmenter;
+use Neos\Fusion\Service\HtmlAugmenter;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;

@@ -1,0 +1,11 @@
+'Neos.NodeTypes.BaseMixins:LinkMixin':
+  abstract: true
+  properties:
+    link:
+      type: string
+      ui:
+        label: i18n
+        reloadIfChanged: true
+        inspector:
+          position: 300
+          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'

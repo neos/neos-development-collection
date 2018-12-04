@@ -27,8 +27,8 @@ class DomainTest extends UnitTestCase
     public function setHostPatternAllowsForSettingTheHostPatternOfTheDomain()
     {
         $domain = new Domain();
-        $domain->setHostname('typo3.com');
-        $this->assertSame('typo3.com', $domain->getHostname());
+        $domain->setHostname('neos.io');
+        $this->assertSame('neos.io', $domain->getHostname());
     }
 
     /**

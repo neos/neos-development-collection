@@ -1,0 +1,40 @@
+# Navigation Fusion Object - extends Neos.Neos:Menu and is rendering menus inserted as content elements
+prototype(Neos.NodeTypes.Navigation:Navigation) < prototype(Neos.Neos:Content) {
+  @class = 'Neos\\Neos\\Fusion\\MenuImplementation'
+  templatePath = 'resource://Neos.NodeTypes.Navigation/Private/Templates/NodeTypes/Navigation.html'
+
+  startingPoint = ${q(node).property('startingPoint') ? q(node).property('startingPoint') : documentNode}
+
+  itemCollection = ${Array.isEmpty(q(node).property('selection') ? q(node).property('selection') : {}) ? null : q(node).property('selection')}
+
+  entryLevel = ${q(node).property('startLevel')}
+  entryLevel.@process.1 = ${String.toInteger(value)}
+
+  maximumLevels = ${q(node).property('maximumLevels')}
+  maximumLevels.@process.1 = ${String.toInteger(value)}
+
+  active.attributes = Neos.Fusion:Attributes {
+    class = 'active'
+  }
+  current.attributes = Neos.Fusion:Attributes {
+    class = 'current'
+  }
+  normal.attributes = Neos.Fusion:Attributes {
+    class = 'normal'
+  }
+
+  node = ${node}
+  items = ${this.items}
+
+  @cache {
+    mode = 'cached'
+    entryIdentifier {
+      documentNode = ${documentNode}
+      node = ${node}
+    }
+    entryTags {
+      1 = 'NodeType_Neos.Neos:Document'
+      2 = ${'Node_' + node.identifier}
+    }
+  }
+}

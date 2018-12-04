@@ -18,6 +18,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Context;
@@ -94,6 +95,12 @@ class WorkspacesController extends AbstractModuleController
      * @var Translator
      */
     protected $translator;
+
+    /**
+     * @var PackageManager
+     * @Flow\Inject
+     */
+    protected $packageManager;
 
     /**
      * @var ContentDimensionPresetSourceInterface
@@ -335,6 +342,11 @@ class WorkspacesController extends AbstractModuleController
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
         /** @var ActionRequest $mainRequest */
         $this->uriBuilder->setRequest($mainRequest);
+
+        if ($this->packageManager->isPackageAvailable('Neos.Neos.Ui')) {
+            $this->redirect('index', 'Backend', 'Neos.Neos.Ui', ['node' => $context->getNode($targetNode->getPath())]);
+        }
+
         $this->redirect('show', 'Frontend\\Node', 'Neos.Neos', ['node' => $context->getNode($targetNode->getPath())]);
     }
 
@@ -577,7 +589,12 @@ class WorkspacesController extends AbstractModuleController
                         'diff' => $diffArray
                     ];
                 }
-            } elseif ($originalPropertyValue instanceof ImageInterface || $changedPropertyValue instanceof ImageInterface) {
+                // The && in belows condition is on purpose as creating a thumbnail for comparison only works if actually
+                // BOTH are ImageInterface (or NULL).
+            } elseif (
+                ($originalPropertyValue instanceof ImageInterface || $originalPropertyValue === null)
+                && ($changedPropertyValue instanceof ImageInterface || $changedPropertyValue === null)
+            ) {
                 $contentChanges[$propertyName] = [
                     'type' => 'image',
                     'propertyLabel' => $this->getPropertyLabel($propertyName, $changedNode),

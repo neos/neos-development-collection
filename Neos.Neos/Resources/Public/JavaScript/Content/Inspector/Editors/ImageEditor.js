@@ -49,10 +49,12 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		allowedFileTypes: 'jpg,jpeg,png,gif,svg',
 
 		/**
-		 * Feature flags for this editor. Currently we have cropping and resize which can be enabled/disabled via NodeTypes editorOptions.
+		 * Feature flags for this editor. Currently we have cropping, media browser and resize which can be enabled/disabled via NodeTypes editorOptions.
 		 */
 		features: {
 			crop: true,
+			upload: true,
+			mediaBrowser: true,
 			resize: false
 		},
 
@@ -389,6 +391,13 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 			};
 		},
 
+		/**
+		 * Computed property to decide if the Media Browser button should be displayed in the editor
+		 */
+		shouldRenderMediaBrowser: function () {
+			return (this.get('features.mediaBrowser'));
+		}.property('features.mediaBrowser'),
+
 		/****************************************
 		 * IMAGE REMOVE
 		 ***************************************/
@@ -428,6 +437,13 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				this.upload();
 			}
 		},
+
+		/**
+		 * Computed property to decide if the Upload button should be displayed in the editor
+		 */
+		shouldRenderUpload: function () {
+			return (this.get('features.upload'));
+		}.property('features.upload'),
 
 		/**
 		 * Callback after file upload is complete

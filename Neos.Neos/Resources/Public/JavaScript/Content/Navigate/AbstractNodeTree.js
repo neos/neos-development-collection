@@ -261,7 +261,6 @@ define(
 					 */
 					onDragStart: function(node) {
 						var parent = node.tree.options.parent;
-						$('a[title]', parent.$nodeTree).tooltip('hide').tooltip('disable');
 						// the root node should not be draggable
 						if (node.data.key !== parent.get('siteNodeContextPath')) {
 							parent.set('dragInProgress', true);
@@ -276,7 +275,6 @@ define(
 					},
 
 					onDragStop: function(node) {
-						$('a[title]', parent.$nodeTree).tooltip('enable');
 						node.tree.options.parent.set('dragInProgress', false);
 						Mousetrap.unbind('esc');
 					},
@@ -324,7 +322,6 @@ define(
 					 */
 					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
 						var parent = node.tree.options.parent;
-						$('a[title]', parent.$nodeTree).tooltip('destroy');
 						parent.move(sourceNode, node, hitMode === 'over' ? 'into' : hitMode);
 					}
 				},
@@ -358,6 +355,7 @@ define(
 					node.data.tooltip = tooltip;
 					return null;
 				}
+
 			},
 
 			/**

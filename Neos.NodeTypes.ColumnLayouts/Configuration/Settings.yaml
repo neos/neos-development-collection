@@ -1,0 +1,11 @@
+
+Neos:
+  Neos:
+    fusion:
+      autoInclude:
+        Neos.NodeTypes.ColumnLayouts: true
+    userInterface:
+      translation:
+        autoInclude:
+          Neos.NodeTypes.ColumnLayouts:
+            - 'NodeTypes/*'

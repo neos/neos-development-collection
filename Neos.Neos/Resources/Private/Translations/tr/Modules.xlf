@@ -2,18 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="tr">
     <body>
-      <trans-unit id="clickToEdit" xml:space="preserve">
-				<source>Click to edit</source>
-			<target xml:lang="tr" state="translated">Düzenlemek için tıkla</target></trans-unit>
-      <trans-unit id="clickToDelete" xml:space="preserve">
-				<source>Click to delete</source>
-			<target xml:lang="tr" state="translated">Silmek için tıklayın</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
-				<source>Cancel</source>
-			<target xml:lang="tr" state="translated">İptal et</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="tr" state="translated">Geri</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="tr" state="translated">İptal et</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -323,6 +317,12 @@
       <trans-unit id="users.new.userData.roles" xml:space="preserve">
 				<source>Role(s)</source>
 			<target xml:lang="tr" state="translated">Roller</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve">
+				<source>Authentication Provider</source>
+			<target xml:lang="tr" state="translated">Kimlik Doğrulama Sağlayıcı</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve">
+				<source>Use system default</source>
+			<target xml:lang="tr" state="translated">Sistem varsayılanını kullan</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="tr" state="translated">Kişisel bilgi</target></trans-unit>
@@ -536,18 +536,121 @@
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="tr" state="translated">Siteler Yönetimi modülü, tüm sitelere genel bir bakış sağlar. Siteleriniz hakkında yeni bir etki alanı ekleme gibi bilgileri düzenleyebilir, ekleyebilir ve silebilirsiniz.</target></trans-unit>
+      <trans-unit id="sites.add" xml:space="preserve">
+				<source>Add new site</source>
+			<target xml:lang="tr" state="translated">Yeni bir site ekle</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="tr" state="translated">Site oluştur</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
 			<target xml:lang="tr" state="translated">Yeni site oluştur</target></trans-unit>
+      <trans-unit id="sites.rootNodeName" xml:space="preserve">
+				<source>Root node name</source>
+			<target xml:lang="tr" state="translated">Kök düğüm adı</target></trans-unit>
+      <trans-unit id="sites.domains" xml:space="preserve">
+				<source>Domains</source>
+			<target xml:lang="tr" state="translated">Alan adları</target></trans-unit>
+      <trans-unit id="sites" xml:space="preserve">
+				<source>Site</source>
+			<target xml:lang="tr" state="translated">Site</target></trans-unit>
+      <trans-unit id="site.name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="tr" state="translated">İsim</target></trans-unit>
+      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
+				<source>Default asset collection</source>
+			<target xml:lang="tr" state="translated">Varsayılan varlık koleksiyonu</target></trans-unit>
+      <trans-unit id="sites.sitePackage" xml:space="preserve">
+				<source>Site package</source>
+			<target xml:lang="tr" state="translated">Site paketi</target></trans-unit>
+      <trans-unit id="sites.delete" xml:space="preserve">
+				<source>Delete this site</source>
+			<target xml:lang="tr" state="translated">Bu siteyi sil</target></trans-unit>
+      <trans-unit id="sites.deactivate" xml:space="preserve">
+				<source>Deactivate site</source>
+			<target xml:lang="tr" state="translated">Siteyi devre dışı bırak</target></trans-unit>
+      <trans-unit id="sites.activate" xml:space="preserve">
+				<source>Activate site</source>
+			<target xml:lang="tr" state="translated">Siteyi aktif hale getir</target></trans-unit>
+      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="tr" state="translated">Bu {0} gönderiyi gerçekten kaldırmak istiyor musun? Bu eylem geri alınamaz.</target></trans-unit>
+      <trans-unit id="sites.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the site</source>
+			<target xml:lang="tr" state="translated">Evet, siteyi sil</target></trans-unit>
+      <trans-unit id="sites.import" xml:space="preserve">
+				<source>Import a site</source>
+			<target xml:lang="tr" state="translated">Bir siteyi içe aktar</target></trans-unit>
+      <trans-unit id="sites.select" xml:space="preserve">
+				<source>Select a site package</source>
+			<target xml:lang="tr" state="translated">Bir site paketi seçin</target></trans-unit>
+      <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+				<source>No site packages are available. Make sure you have an active site package.</source>
+			<target xml:lang="tr" state="translated">Mevcut site paketi yok. Aktif bir site paketiniz olduğundan emin olun.</target></trans-unit>
+      <trans-unit id="sites.createBlank" xml:space="preserve">
+				<source>Create a blank site</source>
+			<target xml:lang="tr" state="translated">Boş bir site oluştur</target></trans-unit>
+      <trans-unit id="sites.documentType" xml:space="preserve">
+				<source>Select a document nodeType</source>
+			<target xml:lang="tr" state="translated">Bir döküman seçin</target></trans-unit>
+      <trans-unit id="sites.name" xml:space="preserve">
+				<source>Site name</source>
+			<target xml:lang="tr" state="translated">Site adı</target></trans-unit>
+      <trans-unit id="sites.createNode" xml:space="preserve">
+				<source>Create empty site</source>
+			<target xml:lang="tr" state="translated">Boş bir site oluştur</target></trans-unit>
+      <trans-unit id="sites.createPackage" xml:space="preserve">
+				<source>Create a new site package</source>
+			<target xml:lang="tr" state="translated">Yeni bir site paketi oluştur</target></trans-unit>
+      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+				<source>VendorName.MyPackageKey</source>
+			<target xml:lang="tr" state="translated">VendorName.MyPackageKey</target></trans-unit>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+			<target xml:lang="tr" state="translated">&lt;em&gt;Neos Kickstarter&lt;/em&gt;paketi yüklenmedi, başlatmak için yeni siteleri yükleyin.</target></trans-unit>
+      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="tr" state="translated">Bu {0} gönderiyi gerçekten kaldırmak istiyor musun? Bu eylem geri alınamaz.</target></trans-unit>
+      <trans-unit id="domain.new" xml:space="preserve">
+				<source>New domain</source>
+			<target xml:lang="tr" state="translated">Yeni alan adı</target></trans-unit>
+      <trans-unit id="domain.edit" xml:space="preserve">
+				<source>Edit domain</source>
+			<target xml:lang="tr" state="translated">Alan adını düzenle</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="tr" state="translated">Yapılandırma</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target xml:lang="tr" state="translated">Yapılandırma modülü, tüm yapılandırma türlerine genel bir bakış sağlar.</target></trans-unit>
+      <trans-unit id="dimensions.label" xml:space="preserve">
+				<source>Dimensions</source>
+			<target xml:lang="tr" state="translated">Boyutlar</target></trans-unit>
+      <trans-unit id="dimensions.description" xml:space="preserve">
+				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
+			<target xml:lang="tr" state="translated">Her içerik boyutu ve içerik boyutları arasında yapılandırılan geri dönüşleri üzerinde grafiksel bir genel bakış verir.</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
+				<source>Inter dimensional fallback graph</source>
+			<target xml:lang="tr" state="translated">Boyutlararası düşüş grafiği</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
+				<source>Inter dimensional</source>
+			<target xml:lang="tr" state="translated">Boyutlararası</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
+				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
+			<target xml:lang="tr" state="translated">Boyutlararası geri dönüş grafiği, alt grafikler (düğüm olarak görüntülenen içerik boyutu değeri kombinasyonları) arasında olası tüm geri dönüşleri (kenar olarak görüntülenir) görüntüler.
+Birincil yedekler mavi olarak işaretlenir ve her zaman görünür olurken, daha düşük önceliğe sahip yedekler fareyle üzerine gelinir. Öncelikle ne kadar yüksek olursa opaklık o kadar yüksek olur.
+Yalnızca geri dönüşünü ve değişkenlerini görmek için düğümlerden birini tıklayın. Filtreyi kaldırmak için tekrar tıklayın.</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
+				<source>Intra dimensional fallback graph</source>
+			<target xml:lang="tr" state="translated">Boyutlararası düşüş grafiği</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
+				<source>Intra dimensional</source>
+			<target xml:lang="tr" state="translated">Boyutlararası</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
+				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
+			<target xml:lang="tr" state="translated">İç boyutsal geri dönüşüm grafiği her içerik boyutu içinde geri düşümü görüntüler.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>

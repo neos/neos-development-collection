@@ -12,10 +12,10 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\Flow\Annotations as Flow;
-use PHPUnit_Framework_Assert as Assert;
-use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Exception\AccessDeniedException;
+use PHPUnit\Framework\Assert as Assert;
 
 /**
  * A trait with shared step definitions for common use by other contexts

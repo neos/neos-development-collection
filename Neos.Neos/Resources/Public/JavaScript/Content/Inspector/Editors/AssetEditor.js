@@ -26,6 +26,14 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		 */
 		multiple: false,
 
+		/**
+		 * Feature flags for this editor
+		 */
+		features: {
+			upload: true,
+			mediaBrowser: true
+		},
+
 		_assetMetadataEndpointUri: null,
 
 		_showLoadingIndicator: false,
@@ -175,6 +183,13 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 			};
 		},
 
+		/**
+		 * Computed property to decide if the Media Browser button should be displayed in the editor
+		 */
+		shouldRenderMediaBrowser: function () {
+			return (this.get('features.mediaBrowser'));
+		}.property('features.mediaBrowser'),
+
 		/****************************************
 		 * FILE REMOVE
 		 ***************************************/
@@ -229,6 +244,13 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 			this._uploader.bind('BeforeUpload', function(uploader, file) {
 				uploader.settings.multipart_params['metadata'] = 'Asset';
 			});
-		}
+		},
+
+		/**
+		 * Computed property to decide if the Upload button should be displayed in the editor
+		 */
+		shouldRenderUpload: function () {
+			return (this.get('features.upload'));
+		}.property('features.upload')
 	});
 });

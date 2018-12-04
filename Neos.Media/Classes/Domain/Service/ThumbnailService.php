@@ -94,7 +94,11 @@ class ThumbnailService
             }
             $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
             $maximumHeight = ($configuration->getMaximumHeight() > $asset->getHeight()) ? $asset->getHeight() : $configuration->getMaximumHeight();
-            if ($configuration->isUpScalingAllowed() === false && $maximumWidth === $asset->getWidth() && $maximumHeight === $asset->getHeight()) {
+            if ($configuration->isUpScalingAllowed() === false
+                && $configuration->getQuality() !== null
+                && $maximumWidth === $asset->getWidth()
+                && $maximumHeight === $asset->getHeight()
+            ) {
                 return $asset;
             }
         }
@@ -175,7 +179,8 @@ class ThumbnailService
             isset($presetConfiguration['maximumHeight']) ? $presetConfiguration['maximumHeight'] : null,
             isset($presetConfiguration['allowCropping']) ? $presetConfiguration['allowCropping'] : false,
             isset($presetConfiguration['allowUpScaling']) ? $presetConfiguration['allowUpScaling'] : false,
-            $async
+            $async,
+            isset($presetConfiguration['quality']) ? $presetConfiguration['quality'] : null
         );
         return $thumbnailConfiguration;
     }

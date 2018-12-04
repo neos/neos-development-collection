@@ -30,6 +30,10 @@ Edit/preview modes are added to the Neos-Backend via *Settings.yaml*.
             fusionRenderingPath: 'print'
             # show after the existing modes
             position: 200
+            # sets the width of the iframe (React UI only)
+            width: 800
+            # sets the height of the iframe (React UI only)
+            height: 600
 
 The settings ``isEditingMode`` and ``isPreviewMode`` are controlling whether the mode will show up in the section "Edit"
 or "Preview" of the Neos-Backend. The major difference between both sections is that inside "Preview" section the inline

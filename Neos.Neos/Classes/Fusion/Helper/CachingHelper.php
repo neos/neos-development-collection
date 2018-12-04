@@ -44,7 +44,7 @@ class CachingHelper implements ProtectedContextAwareInterface
             throw new Exception(sprintf('FlowQuery result, Array or Traversable expected by this helper, given: "%s".', gettype($nodes)), 1437169992);
         }
 
-        $prefixedNodeIdentifiers = array();
+        $prefixedNodeIdentifiers = [];
         foreach ($nodes as $node) {
             if (!$node instanceof NodeInterface) {
                 throw new Exception(sprintf('One of the elements in array passed to this helper was not a Node, but of type: "%s".', gettype($node)), 1437169991);
@@ -70,15 +70,45 @@ class CachingHelper implements ProtectedContextAwareInterface
     /**
      * Generate an `@cache` entry tag for a node type
      * A cache entry with this tag will be flushed whenever a node
-     * (for any variant) that is of the given node type (including inheritance)
-     * is updated.
+     * (for any variant) that is of the given node type(s)
+     * (including inheritance) is updated.
      *
-     * @param NodeType $nodeType
+     * @param string|NodeType|string[]|NodeType[] $nodeType
+     * @return string|string[]
+     */
+    public function nodeTypeTag($nodeType)
+    {
+        if (!is_array($nodeType) && !($nodeType instanceof \Traversable)) {
+            return $this->getNodeTypeTagFor($nodeType);
+        }
+
+        $result = [];
+        foreach ($nodeType as $singleNodeType) {
+            $result[] = $this->getNodeTypeTagFor($singleNodeType);
+        }
+
+        return array_filter($result);
+    }
+
+    /**
+     * @param string|NodeType $nodeType
      * @return string
      */
-    public function nodeTypeTag(NodeType $nodeType)
+    protected function getNodeTypeTagFor($nodeType)
     {
-        return 'NodeType_' . $nodeType->getName();
+        $nodeTypeName = '';
+        if (is_string($nodeType)) {
+            $nodeTypeName = $nodeType;
+        }
+        if ($nodeType instanceof NodeType) {
+            $nodeTypeName = $nodeType->getName();
+        }
+
+        if ($nodeTypeName === '') {
+            return '';
+        }
+
+        return 'NodeType_' . $nodeTypeName;
     }
 
     /**
