@@ -23,6 +23,12 @@ use Neos\ContentRepository\Domain\Service\ContextFactory;
  */
 class NodePrivilegeContext
 {
+
+    /**
+     * @var NodeInterface[]
+     */
+    protected static $nodes = [];
+
     /**
      * @Flow\Inject
      * @var ContextFactory
@@ -224,12 +230,21 @@ class NodePrivilegeContext
      */
     protected function getNodeByIdentifier($nodeIdentifier)
     {
+        if (array_key_exists($nodeIdentifier, static::$nodes)) {
+            return static::$nodes[$nodeIdentifier];
+        }
+
         $context = $this->contextFactory->create();
         $node = null;
         $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
             $node = $context->getNodeByIdentifier($nodeIdentifier);
         });
         $context->getFirstLevelNodeCache()->setByIdentifier($nodeIdentifier, null);
+
+        if ($node) {
+            static::$nodes[$nodeIdentifier] = $node;
+        }
+
         return $node;
     }
 }
