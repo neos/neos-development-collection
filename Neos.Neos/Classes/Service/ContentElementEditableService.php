@@ -16,6 +16,7 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
+use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
 /**
  * The content element editable service adds the necessary markup around
@@ -41,7 +42,7 @@ class ContentElementEditableService
 
     /**
      * @Flow\Inject
-     * @var HtmlAugmenter
+     * @var FusionHtmlAugmenter
      */
     protected $htmlAugmenter;
 

@@ -920,9 +920,9 @@ class ParserTest extends UnitTestCase
      *
      * @test
      */
-    public function parserCorrectlyParsesFixture24()
+    public function parserCorrectlyLongStrings()
     {
-        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture24');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixtureLongString');
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertArrayHasKey('longString', $actualParseTree);
     }
@@ -938,6 +938,40 @@ class ParserTest extends UnitTestCase
         $expected = array(); // Fixture contains only comments, so expect empty parse tree
         $actualParseTree = $this->parser->parse($sourceCode);
         $this->assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestFusionComments01.fusion`');
+    }
+
+    /**
+     * Checks if dsl value is handed over to the invokeAndParseDsl method
+     *
+     * @test
+     */
+    public function parserInvokesFusionDslParsingIfADslPatternIsDetected()
+    {
+        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->setMethods(array('invokeAndParseDsl'))->getMock();
+
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture24');
+
+        $parser
+            ->expects($this->exactly(2))
+            ->method('invokeAndParseDsl')
+            ->withConsecutive(
+                ['dsl1', 'example value' ],
+                ['dsl2', 'another' . chr(10) . 'multiline' . chr(10) . 'value' ]
+            );
+
+        $parser->parse($sourceCode);
+    }
+
+    /**
+     * Checks unclosed dsl-expressions are
+     *
+     * @test
+     * @expectedException \Neos\Fusion\Exception
+     * @expectedExceptionCode 1490714685
+     */
+    public function parserThrowsFusionExceptionIfUnfinishedDslIsDetected()
+    {
+        $this->parser->parse('dslValue1 = dsl1`unclosed dsl expression');
     }
 
     /**

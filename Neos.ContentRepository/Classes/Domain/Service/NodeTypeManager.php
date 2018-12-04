@@ -36,7 +36,7 @@ class NodeTypeManager
     protected $cachedNodeTypes = array();
 
     /**
-     * Node types, indexed by supertype
+     * Node types, indexed by supertype (also including abstract node types)
      *
      * @var array
      */
@@ -103,21 +103,22 @@ class NodeTypeManager
             $this->loadNodeTypes();
         }
 
-        if (isset($this->cachedSubNodeTypes[$superTypeName])) {
-            return $this->cachedSubNodeTypes[$superTypeName];
+        if (!isset($this->cachedSubNodeTypes[$superTypeName])) {
+            $filteredNodeTypes = [];
+            /** @var NodeType $nodeType */
+            foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
+                if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
+                    $filteredNodeTypes[$nodeTypeName] = $nodeType;
+                }
+            }
+            $this->cachedSubNodeTypes[$superTypeName] = $filteredNodeTypes;
         }
 
-        $filteredNodeTypes = [];
-        /** @var NodeType $nodeType */
-        foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
-            if ($includeAbstractNodeTypes === false && $nodeType->isAbstract()) {
-                continue;
-            }
-            if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
-                $filteredNodeTypes[$nodeTypeName] = $nodeType;
-            }
+        if ($includeAbstractNodeTypes === false) {
+            return array_filter($this->cachedSubNodeTypes[$superTypeName], function (NodeType $nodeType) {
+                return !$nodeType->isAbstract();
+            });
         }
-        $this->cachedSubNodeTypes[$superTypeName] = $filteredNodeTypes;
 
         return $this->cachedSubNodeTypes[$superTypeName];
     }

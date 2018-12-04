@@ -3,7 +3,7 @@
 Fusion ViewHelper Reference
 ===========================
 
-This reference was automatically generated from code on 2017-03-30
+This reference was automatically generated from code on 2018-08-10
 
 
 .. _`Fusion ViewHelper Reference: fusion:render`:
@@ -26,9 +26,13 @@ Arguments
 
 * ``context`` (array, *optional*): Additional context variables to be set.
 
-* ``typoScriptPackageKey`` (string, *optional*): The key of the package to load Fusion from, if not from the current context.
+* ``typoScriptPackageKey`` (string, *optional*): The key of the package to load Fusion from, if not from the current context. Deprecated, use fusionFilePathPattern instead.
 
-* ``typoScriptFilePathPattern`` (string, *optional*): Resource pattern to load Fusion from. Defaults to: resource://@package/Private/Fusion/
+* ``fusionPackageKey`` (string, *optional*): The key of the package to load Fusion from, if not from the current context.
+
+* ``typoScriptFilePathPattern`` (string, *optional*): Resource pattern to load Fusion from. Defaults to: resource://@package/Private/Fusion/. Deprecated, use fusionFilePathPattern instead.
+
+* ``fusionFilePathPattern`` (string, *optional*): Resource pattern to load Fusion from. Defaults to: resource://@package/Private/Fusion/
 
 
 

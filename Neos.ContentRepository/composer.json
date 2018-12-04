@@ -4,8 +4,15 @@
     "description": "Content repository based on Flow, specifically made for Neos.",
     "license": ["GPL-3.0-or-later"],
     "require": {
-        "neos/flow": "~4.0.0",
-        "neos/fluid-adaptor": "~4.0.0",
+        "neos/flow": "*",
+        "neos/cache": "*",
+        "neos/eel": "*",
+        "neos/fluid-adaptor": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-files": "*",
+        "neos/utility-arrays": "*",
+
+        "doctrine/orm": "~2.5.0",
         "gedmo/doctrine-extensions": "~2.3.0",
         "behat/transliterator": "~1.0"
     },
@@ -21,6 +28,9 @@
         "psr-4": {
             "Neos\\ContentRepository\\Tests\\": "Tests"
         }
+    },
+    "suggest": {
+        "neos/utility-schema": "Validate NodeType schema."
     },
     "extra": {
         "applied-flow-migrations": [

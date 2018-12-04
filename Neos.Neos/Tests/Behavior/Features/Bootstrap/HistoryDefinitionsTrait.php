@@ -2,15 +2,15 @@
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
-use PHPUnit_Framework_Assert as Assert;
-use Symfony\Component\Yaml\Yaml;
-use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\EventLog\Domain\Model\Event;
 use Neos\Neos\EventLog\Domain\Model\NodeEvent;
 use Neos\Neos\EventLog\Domain\Repository\EventRepository;
-use Neos\Neos\EventLog\Integrations\EntityIntegrationService;
 use Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService;
+use Neos\Neos\EventLog\Integrations\EntityIntegrationService;
+use Neos\Utility\Arrays;
+use PHPUnit\Framework\Assert as Assert;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -61,7 +61,7 @@ trait HistoryDefinitionsTrait
                         $this->checkSingleEvent($row, $event, $eventsByInternalId, $unmatchedParentEvents);
                         // no exception thrown so far, so that means there is an $event which fits to the current expectation row $i. Thus, we continue in the next iteration.
                         continue 2;
-                    } catch (PHPUnit_Framework_ExpectationFailedException $assertionFailed) {
+                    } catch (\PHPUnit\Framework\ExpectationFailedException $assertionFailed) {
                         // do nothing, we just retry the row on the next event.
                     }
                 }

@@ -1,6 +1,7 @@
 include: Prototypes/ContentCase.fusion
 include: Prototypes/Document.fusion
 include: Prototypes/Content.fusion
+include: Prototypes/ContentComponent.fusion
 include: Prototypes/PrimaryContent.fusion
 include: Prototypes/ContentCollection.fusion
 include: Prototypes/Page.fusion
@@ -13,6 +14,7 @@ include: Prototypes/PluginView.fusion
 include: Prototypes/ConvertUris.fusion
 include: Prototypes/ConvertNodeUris.fusion
 include: Prototypes/DocumentMetadata.fusion
+include: Prototypes/Editable.fusion
 include: Prototypes/ContentElementWrapping.fusion
 include: Prototypes/ContentElementEditable.fusion
 include: Prototypes/NodeUri.fusion

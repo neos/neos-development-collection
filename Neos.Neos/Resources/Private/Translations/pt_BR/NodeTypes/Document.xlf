@@ -14,6 +14,9 @@
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
 			<target xml:lang="pt-BR" state="translated">Esconder em menus</target></trans-unit>
+      <trans-unit id="creationDialog.title" xml:space="preserve">
+				<source>Title</source>
+			<target xml:lang="pt-BR" state="translated">Título</target></trans-unit>
     </body>
   </file>
 </xliff>

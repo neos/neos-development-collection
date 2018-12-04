@@ -344,6 +344,62 @@ class PatternTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function testSCAN_PATTERN_DSL_EXPRESSION_START()
+    {
+        $pattern = Parser::SCAN_PATTERN_DSL_EXPRESSION_START;
+        $this->assertEquals(preg_match($pattern, 'dsl`value`'), 1, 'The SCAN_PATTERN_DSL_EXPRESSION_START match a single line dsl-expression.');
+        $this->assertEquals(preg_match($pattern, 'dsl`line 1' . chr(10) . 'line 2' .chr(10) . 'line 3`'), 1, 'The SCAN_PATTERN_DSL_EXPRESSION_START match a multiline dsl-expression.');
+        $this->assertEquals(preg_match($pattern, 'true'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match a boolean assignment.');
+        $this->assertEquals(preg_match($pattern, '1234'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match a integer assignment.');
+        $this->assertEquals(preg_match($pattern, '\'string\''), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match a string assignment.');
+        $this->assertEquals(preg_match($pattern, '${Math.random()}'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match an eel assignment.');
+        $this->assertEquals(preg_match($pattern, 'Neos.Fusion:Value'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match an object assignment.');
+        $this->assertEquals(preg_match($pattern, 'Neos.Fusion:Value {'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match an object assignment.');
+    }
+
+    public function SPLIT_PATTERN_DSL_EXPRESSIONdataProvider()
+    {
+        return [
+            'singleLineDsl' => [
+                'expression' => 'testDsl`testDslExpression`',
+                'dslIdentifier' => 'testDsl',
+                '$dslCode' => 'testDslExpression'
+            ],
+            'multilineDsl' => [
+                'expression' => 'testDsl`line 1' . chr(10) . 'line 2' . chr(10) . 'line 3`',
+                'dslIdentifier' => 'testDsl',
+                '$dslCode' => 'line 1' . chr(10) . 'line 2' . chr(10) . 'line 3'
+            ],
+            'dslWithSpecialCharacters' => [
+                'expression' => 'testDsl`${}()[]@<>/123456789abdefg`',
+                'dslIdentifier' => 'testDsl',
+                '$dslCode' => '${}()[]@<>/123456789abdefg'
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider SPLIT_PATTERN_DSL_EXPRESSIONdataProvider
+     * @parameter $markdownMessage
+     * @parameter $renderedMessage
+     */
+    public function testSPLIT_PATTERN_DSL_EXPRESSION($expression, $dslIdentidier, $dslCode)
+    {
+        $pattern = Parser::SPLIT_PATTERN_DSL_EXPRESSION;
+        $expected = array(
+            0 => $expression,
+            'identifier' => $dslIdentidier,
+            1  => $dslIdentidier,
+            'code' => $dslCode,
+            2 => $dslCode
+        );
+        $this->assertRegexMatches($expression, $pattern, $expected, 'It did not match dsl-parts as expected.');
+    }
+
+    /**
      * Custom assertion for matching regexes
      *
      * @param $testString

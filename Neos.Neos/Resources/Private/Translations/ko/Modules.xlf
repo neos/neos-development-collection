@@ -2,18 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="ko">
     <body>
-      <trans-unit id="clickToEdit" xml:space="preserve">
-				<source>Click to edit</source>
-			<target xml:lang="ko" state="needs-translation">Click to edit</target></trans-unit>
-      <trans-unit id="clickToDelete" xml:space="preserve">
-				<source>Click to delete</source>
-			<target xml:lang="ko" state="needs-translation">Click to delete</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
-				<source>Cancel</source>
-			<target xml:lang="ko" state="needs-translation">Cancel</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="ko" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="ko" state="translated">뒤로</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="ko" state="translated">취소</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -23,13 +17,13 @@
 			<target xml:lang="ko" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="ko" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="ko" state="translated">작업 공간</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
 				<source>Details for "{0}"</source>
 			<target xml:lang="ko" state="needs-translation">Details for "{0}"</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
-			<target xml:lang="ko" state="needs-translation">Create new workspace</target></trans-unit>
+			<target xml:lang="ko" state="translated">새 작업영역을 만듭니다.</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
 				<source>Create workspace</source>
 			<target xml:lang="ko" state="needs-translation">Create workspace</target></trans-unit>
@@ -131,7 +125,7 @@
 			<target xml:lang="ko" state="needs-translation">Publish selected changes</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="ko" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="ko" state="translated">모든 변경사항을 취소</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
 			<target xml:lang="ko" state="needs-translation">Publish all changes</target></trans-unit>
@@ -143,13 +137,13 @@
 			<target xml:lang="ko" state="needs-translation">Changed Content</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
-			<target xml:lang="ko" state="needs-translation">deleted</target></trans-unit>
+			<target xml:lang="ko" state="translated">삭제됨</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
 				<source>created</source>
 			<target xml:lang="ko" state="needs-translation">created</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
 				<source>moved</source>
-			<target xml:lang="ko" state="needs-translation">moved</target></trans-unit>
+			<target xml:lang="ko" state="translated">이동 완료</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>hidden</source>
 			<target xml:lang="ko" state="needs-translation">hidden</target></trans-unit>
@@ -218,7 +212,7 @@
       </trans-unit>
       <trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
-			<target xml:lang="ko" state="needs-translation">History</target></trans-unit>
+			<target xml:lang="ko" state="translated">최근 기록</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
 			<target xml:lang="ko" state="needs-translation">This module provides an overview of all relevant events affecting this Neos installation.</target></trans-unit>
@@ -288,7 +282,7 @@
 			<target xml:lang="ko" state="needs-translation">New</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ko" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="ko" state="needs-translation">Edit account</target></trans-unit>
@@ -309,16 +303,22 @@
 			<target xml:lang="ko" state="needs-translation">User Data</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="ko" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="ko" state="translated">비밀 번호</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="ko" state="needs-translation">Repeat password</target></trans-unit>
       <trans-unit id="users.new.userData.roles" xml:space="preserve">
 				<source>Role(s)</source>
 			<target xml:lang="ko" state="needs-translation">Role(s)</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve">
+				<source>Authentication Provider</source>
+			<target xml:lang="ko" state="needs-translation">Authentication Provider</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve">
+				<source>Use system default</source>
+			<target xml:lang="ko" state="needs-translation">Use system default</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="ko" state="needs-translation">Personal Data</target></trans-unit>
@@ -363,7 +363,7 @@
 			<target xml:lang="ko" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ko" state="needs-translation">Roles</target></trans-unit>
@@ -408,7 +408,7 @@
 			<target xml:lang="ko" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="ko" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
@@ -532,18 +532,121 @@
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="ko" state="needs-translation">The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</target></trans-unit>
+      <trans-unit id="sites.add" xml:space="preserve">
+				<source>Add new site</source>
+			<target xml:lang="ko" state="needs-translation">Add new site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="ko" state="needs-translation">Create site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
 			<target xml:lang="ko" state="needs-translation">Create a new site</target></trans-unit>
+      <trans-unit id="sites.rootNodeName" xml:space="preserve">
+				<source>Root node name</source>
+			<target xml:lang="ko" state="needs-translation">Root node name</target></trans-unit>
+      <trans-unit id="sites.domains" xml:space="preserve">
+				<source>Domains</source>
+			<target xml:lang="ko" state="needs-translation">Domains</target></trans-unit>
+      <trans-unit id="sites" xml:space="preserve">
+				<source>Site</source>
+			<target xml:lang="ko" state="needs-translation">Site</target></trans-unit>
+      <trans-unit id="site.name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="ko" state="needs-translation">Name</target></trans-unit>
+      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
+				<source>Default asset collection</source>
+			<target xml:lang="ko" state="needs-translation">Default asset collection</target></trans-unit>
+      <trans-unit id="sites.sitePackage" xml:space="preserve">
+				<source>Site package</source>
+			<target xml:lang="ko" state="needs-translation">Site package</target></trans-unit>
+      <trans-unit id="sites.delete" xml:space="preserve">
+				<source>Delete this site</source>
+			<target xml:lang="ko" state="needs-translation">Delete this site</target></trans-unit>
+      <trans-unit id="sites.deactivate" xml:space="preserve">
+				<source>Deactivate site</source>
+			<target xml:lang="ko" state="needs-translation">Deactivate site</target></trans-unit>
+      <trans-unit id="sites.activate" xml:space="preserve">
+				<source>Activate site</source>
+			<target xml:lang="ko" state="needs-translation">Activate site</target></trans-unit>
+      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="ko" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+      <trans-unit id="sites.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the site</source>
+			<target xml:lang="ko" state="needs-translation">Yes, delete the site</target></trans-unit>
+      <trans-unit id="sites.import" xml:space="preserve">
+				<source>Import a site</source>
+			<target xml:lang="ko" state="needs-translation">Import a site</target></trans-unit>
+      <trans-unit id="sites.select" xml:space="preserve">
+				<source>Select a site package</source>
+			<target xml:lang="ko" state="needs-translation">Select a site package</target></trans-unit>
+      <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+				<source>No site packages are available. Make sure you have an active site package.</source>
+			<target xml:lang="ko" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+      <trans-unit id="sites.createBlank" xml:space="preserve">
+				<source>Create a blank site</source>
+			<target xml:lang="ko" state="needs-translation">Create a blank site</target></trans-unit>
+      <trans-unit id="sites.documentType" xml:space="preserve">
+				<source>Select a document nodeType</source>
+			<target xml:lang="ko" state="needs-translation">Select a document nodeType</target></trans-unit>
+      <trans-unit id="sites.name" xml:space="preserve">
+				<source>Site name</source>
+			<target xml:lang="ko" state="needs-translation">Site name</target></trans-unit>
+      <trans-unit id="sites.createNode" xml:space="preserve">
+				<source>Create empty site</source>
+			<target xml:lang="ko" state="needs-translation">Create empty site</target></trans-unit>
+      <trans-unit id="sites.createPackage" xml:space="preserve">
+				<source>Create a new site package</source>
+			<target xml:lang="ko" state="needs-translation">Create a new site package</target></trans-unit>
+      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+				<source>VendorName.MyPackageKey</source>
+			<target xml:lang="ko" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+			<target xml:lang="ko" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="ko" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+      <trans-unit id="domain.new" xml:space="preserve">
+				<source>New domain</source>
+			<target xml:lang="ko" state="needs-translation">New domain</target></trans-unit>
+      <trans-unit id="domain.edit" xml:space="preserve">
+				<source>Edit domain</source>
+			<target xml:lang="ko" state="needs-translation">Edit domain</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="ko" state="needs-translation">Configuration</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target xml:lang="ko" state="needs-translation">The Configuration module provides you with an overview of all configuration types.</target></trans-unit>
+      <trans-unit id="dimensions.label" xml:space="preserve">
+				<source>Dimensions</source>
+			<target xml:lang="ko" state="needs-translation">Dimensions</target></trans-unit>
+      <trans-unit id="dimensions.description" xml:space="preserve">
+				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
+			<target xml:lang="ko" state="needs-translation">Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
+				<source>Inter dimensional fallback graph</source>
+			<target xml:lang="ko" state="needs-translation">Inter dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
+				<source>Inter dimensional</source>
+			<target xml:lang="ko" state="needs-translation">Inter dimensional</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
+				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
+			<target xml:lang="ko" state="needs-translation">The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
+				<source>Intra dimensional fallback graph</source>
+			<target xml:lang="ko" state="needs-translation">Intra dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
+				<source>Intra dimensional</source>
+			<target xml:lang="ko" state="needs-translation">Intra dimensional</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
+				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
+			<target xml:lang="ko" state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>
@@ -556,10 +659,10 @@
 			<target xml:lang="ko" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ko" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ko" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ko" state="translated">편집</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="ko" state="needs-translation">New electronic address</target></trans-unit>
@@ -589,7 +692,7 @@
 			<target xml:lang="ko" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ko" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ko" state="translated">사용자명</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ko" state="needs-translation">Roles</target></trans-unit>
@@ -601,7 +704,7 @@
 			<target xml:lang="ko" state="needs-translation">Electronic addresses</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="ko" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="ko" state="translated">정말로 삭제 하시겠습니까?</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
 				<source>Yes, delete electronic address</source>
 			<target xml:lang="ko" state="needs-translation">Yes, delete electronic address</target></trans-unit>

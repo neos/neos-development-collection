@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Utility\Files;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
+use Neos\ContentRepository\Utility;
 
 /**
  * Service to generate site packages
@@ -52,6 +53,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
                 "neos/seo" => "*"
             ]
         ]);
+
         $this->generateSitesXml($packageKey, $siteName);
         $this->generateSitesFusion($packageKey, $siteName);
         $this->generateDefaultTemplate($packageKey, $siteName);
@@ -72,12 +74,12 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
     {
         $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Content/Sites.xml';
 
-        $contextVariables = array();
-        $contextVariables['packageKey'] = $packageKey;
-        $contextVariables['siteName'] = htmlspecialchars($siteName);
-        $packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
-        $contextVariables['siteNodeName'] = strtolower($packageKeyDomainPart);
-        $contextVariables['dimensions'] = $this->contentDimensionRepository->findAll();
+        $contextVariables = [
+            'packageKey' => $packageKey,
+            'siteName' => htmlspecialchars($siteName),
+            'siteNodeName' => $this->generateSiteNodeName($packageKey),
+            'dimensions' => $this->contentDimensionRepository->findAll()
+        ];
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
@@ -96,11 +98,11 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
     {
         $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Fusion/Root.fusion';
 
-        $contextVariables = array();
-        $contextVariables['packageKey'] = $packageKey;
-        $contextVariables['siteName'] = $siteName;
-        $packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
-        $contextVariables['siteNodeName'] = $packageKeyDomainPart;
+        $contextVariables = [
+            'packageKey' => $packageKey,
+            'siteName' => $siteName,
+            'siteNodeName' => $this->generateSiteNodeName($packageKey)
+        ];
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
@@ -119,17 +121,28 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
     {
         $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Template/SiteTemplate.html';
 
-        $contextVariables = array();
-        $contextVariables['siteName'] = $siteName;
-        $contextVariables['neosViewHelper'] = '{namespace neos=Neos\Neos\ViewHelpers}';
-        $contextVariables['fusionViewHelper'] = '{namespace fusion=Neos\Fusion\ViewHelpers}';
-        $packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
-        $contextVariables['siteNodeName'] = lcfirst($packageKeyDomainPart);
+        $contextVariables = [
+            'siteName' => $siteName,
+            'neosViewHelper' => '{namespace neos=Neos\Neos\ViewHelpers}',
+            'fusionViewHelper' => '{namespace fusion=Neos\Fusion\ViewHelpers}',
+            'siteNodeName' => $this->generateSiteNodeName($packageKey)
+        ];
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
         $defaultTemplatePathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Templates/Page/Default.html';
         $this->generateFile($defaultTemplatePathAndFilename, $fileContent);
+    }
+
+    /**
+     * Generate site node name based on the given package key
+     *
+     * @param string $packageKey
+     * @return string
+     */
+    protected function generateSiteNodeName($packageKey)
+    {
+        return Utility::renderValidNodeName($packageKey);
     }
 
     /**
@@ -157,6 +170,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
     {
         $resourcesPath = $this->packageManager->getPackage($packageKey)->getResourcesPath();
         $publicResourcesPath = Files::concatenatePaths(array($resourcesPath, 'Public'));
+
         foreach (array('Images', 'JavaScript', 'Styles') as $publicResourceFolder) {
             Files::createDirectoryRecursively(Files::concatenatePaths(array($publicResourcesPath, $publicResourceFolder)));
         }

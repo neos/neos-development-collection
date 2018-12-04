@@ -11,13 +11,13 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Utility\Arrays;
-use PHPUnit_Framework_Assert as Assert;
-use Symfony\Component\Yaml\Yaml;
-use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Utility\Arrays;
+use PHPUnit\Framework\Assert as Assert;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * A trait with shared step definitions for common use by other contexts

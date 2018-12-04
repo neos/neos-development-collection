@@ -83,6 +83,12 @@ class AssetService
     protected $packageManager;
 
     /**
+     * @Flow\Inject
+     * @var ImageService
+     */
+    protected $imageService;
+    
+    /**
      * Returns the repository for an asset
      *
      * @param AssetInterface $asset
@@ -266,7 +272,7 @@ class AssetService
 
                 if (method_exists($variant, 'getAdjustments')) {
                     foreach ($variant->getAdjustments() as $adjustment) {
-                        if (method_exists($adjustment, 'refit')) {
+                        if (method_exists($adjustment, 'refit') && $this->imageService->getImageSize($originalAssetResource) !== $this->imageService->getImageSize($resource)) {
                             $adjustment->refit($asset);
                         }
                     }

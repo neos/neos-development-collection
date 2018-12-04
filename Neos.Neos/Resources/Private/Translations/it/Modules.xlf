@@ -2,18 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="it">
     <body>
-      <trans-unit id="clickToEdit" xml:space="preserve">
-				<source>Click to edit</source>
-			<target xml:lang="it" state="needs-translation">Click to edit</target></trans-unit>
-      <trans-unit id="clickToDelete" xml:space="preserve">
-				<source>Click to delete</source>
-			<target xml:lang="it" state="needs-translation">Click to delete</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
-				<source>Cancel</source>
-			<target xml:lang="it" state="translated">Annulla</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="it" state="needs-translation">Back</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="it" state="translated">Annulla</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -234,28 +228,28 @@
 			<target xml:lang="it" state="translated">Non sono ancora stati registrati eventi che potrebbero essere visualizzati in questa cronologia.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} creato il {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} rimosso il {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target xml:lang="it" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} creata la variante {1} delle {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} modificato il {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} spostato il {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} copiato il {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target xml:lang="it" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} rinominati {1} "{2}" a "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target xml:lang="it" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target xml:lang="it" state="translated">{0} modificato il contenuto su {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="it" state="needs-translation">{0} created a new user "{1}" for {2}.</target></trans-unit>
@@ -323,6 +317,12 @@
       <trans-unit id="users.new.userData.roles" xml:space="preserve">
 				<source>Role(s)</source>
 			<target xml:lang="it" state="needs-translation">Role(s)</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve">
+				<source>Authentication Provider</source>
+			<target xml:lang="it" state="needs-translation">Authentication Provider</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve">
+				<source>Use system default</source>
+			<target xml:lang="it" state="needs-translation">Use system default</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="it" state="needs-translation">Personal Data</target></trans-unit>
@@ -536,18 +536,121 @@
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="it" state="translated">Il modulo di Gestione Siti fornisce una panoramica di tutti i siti. È possibile modificare, aggiungere e cancellare le informazioni sui vostri siti, ad esempio aggiungendo un nuovo dominio.</target></trans-unit>
+      <trans-unit id="sites.add" xml:space="preserve">
+				<source>Add new site</source>
+			<target xml:lang="it" state="translated">Aggiungi nuovo sito</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="it" state="needs-translation">Create site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
 			<target xml:lang="it" state="needs-translation">Create a new site</target></trans-unit>
+      <trans-unit id="sites.rootNodeName" xml:space="preserve">
+				<source>Root node name</source>
+			<target xml:lang="it" state="translated">Nome Cartella Madre</target></trans-unit>
+      <trans-unit id="sites.domains" xml:space="preserve">
+				<source>Domains</source>
+			<target xml:lang="it" state="translated">Domini</target></trans-unit>
+      <trans-unit id="sites" xml:space="preserve">
+				<source>Site</source>
+			<target xml:lang="it" state="needs-translation">Site</target></trans-unit>
+      <trans-unit id="site.name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="it" state="needs-translation">Name</target></trans-unit>
+      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
+				<source>Default asset collection</source>
+			<target xml:lang="it" state="translated">Raccolta asset default</target></trans-unit>
+      <trans-unit id="sites.sitePackage" xml:space="preserve">
+				<source>Site package</source>
+			<target xml:lang="it" state="translated">Pacchetto di siti</target></trans-unit>
+      <trans-unit id="sites.delete" xml:space="preserve">
+				<source>Delete this site</source>
+			<target xml:lang="it" state="translated">Cancella questo sito web</target></trans-unit>
+      <trans-unit id="sites.deactivate" xml:space="preserve">
+				<source>Deactivate site</source>
+			<target xml:lang="it" state="translated">Disattivare il sito</target></trans-unit>
+      <trans-unit id="sites.activate" xml:space="preserve">
+				<source>Activate site</source>
+			<target xml:lang="it" state="translated">Attivare il sito</target></trans-unit>
+      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="it" state="translated">Vuoi veramente cancellare "{0}"? Questa azione non può essere annullata.</target></trans-unit>
+      <trans-unit id="sites.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the site</source>
+			<target xml:lang="it" state="translated">Sì, eliminare il sito</target></trans-unit>
+      <trans-unit id="sites.import" xml:space="preserve">
+				<source>Import a site</source>
+			<target xml:lang="it" state="translated">Importare una pagina</target></trans-unit>
+      <trans-unit id="sites.select" xml:space="preserve">
+				<source>Select a site package</source>
+			<target xml:lang="it" state="translated">Seleziona pacchetti offline</target></trans-unit>
+      <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+				<source>No site packages are available. Make sure you have an active site package.</source>
+			<target xml:lang="it" state="translated">Non ci sono pacchetti offline disponibili. Assicurati di avere un pacchetto offline attivo.</target></trans-unit>
+      <trans-unit id="sites.createBlank" xml:space="preserve">
+				<source>Create a blank site</source>
+			<target xml:lang="it" state="translated">Creare un sito vuoto</target></trans-unit>
+      <trans-unit id="sites.documentType" xml:space="preserve">
+				<source>Select a document nodeType</source>
+			<target xml:lang="it" state="translated">Selezionare un documento nodeType</target></trans-unit>
+      <trans-unit id="sites.name" xml:space="preserve">
+				<source>Site name</source>
+			<target xml:lang="it" state="translated">Nome Sito</target></trans-unit>
+      <trans-unit id="sites.createNode" xml:space="preserve">
+				<source>Create empty site</source>
+			<target xml:lang="it" state="translated">Creare sito vuoto</target></trans-unit>
+      <trans-unit id="sites.createPackage" xml:space="preserve">
+				<source>Create a new site package</source>
+			<target xml:lang="it" state="translated">Creare un nuovo pacchetto di siti</target></trans-unit>
+      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+				<source>VendorName.MyPackageKey</source>
+			<target xml:lang="it" state="translated">VendorName.MyPackageKey</target></trans-unit>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+			<target xml:lang="it" state="translated">Non è installato il pacchetto di &lt;em&gt;Neos Kickstarter&lt;/em&gt;, installarlo per fare il kickstart di nuovi siti.</target></trans-unit>
+      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="it" state="translated">Vuoi veramente cancellare "{0}"? Questa azione non può essere annullata.</target></trans-unit>
+      <trans-unit id="domain.new" xml:space="preserve">
+				<source>New domain</source>
+			<target xml:lang="it" state="translated">Nuovo dominio</target></trans-unit>
+      <trans-unit id="domain.edit" xml:space="preserve">
+				<source>Edit domain</source>
+			<target xml:lang="it" state="translated">Modifica dominio</target><alt-trans><target xml:lang="it">Modifica domini</target></alt-trans></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="it" state="needs-translation">Configuration</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target xml:lang="it" state="needs-translation">The Configuration module provides you with an overview of all configuration types.</target></trans-unit>
+      <trans-unit id="dimensions.label" xml:space="preserve">
+				<source>Dimensions</source>
+			<target xml:lang="it" state="needs-translation">Dimensions</target></trans-unit>
+      <trans-unit id="dimensions.description" xml:space="preserve">
+				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
+			<target xml:lang="it" state="translated">Concede una panoramica grafica del fallback configurato all'interno di ogni dimensione di contenuto e attraverso dimensioni di contenuti.</target><alt-trans><target xml:lang="it">Concede una panoramica grafica sopra il fallback configurato all'interno di ogni dimensione contenuto e attraverso dimensioni contenuti.</target></alt-trans></trans-unit>
+      <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
+				<source>Inter dimensional fallback graph</source>
+			<target xml:lang="it" state="translated">Grafico fallback inter dimensionale</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
+				<source>Inter dimensional</source>
+			<target xml:lang="it" state="translated">Inter dimensionale</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
+				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
+			<target xml:lang="it" state="translated">L'interdimensionale grafico a fallback mostra tutti i possibili fallback (mostrati come limiti) tra sottografici (combinazioni di valore dimensione contenito, mostrato come nodi).
+I fallback primari sono marcati in blu e sempre visibili, mentre fallback di minor priorità sono mostrati al passaggio del mouse. Maggiore è la priorità, maggiore è l'opacità.
+Clicca su uno dei nodi per vedere solo i suoi fallback e varianti. Clicca di nuovo per rimuovere il filtro.</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
+				<source>Intra dimensional fallback graph</source>
+			<target xml:lang="it" state="translated">Grafico fallback intra dimensionale</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
+				<source>Intra dimensional</source>
+			<target xml:lang="it" state="translated">Intra dimensionale</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
+				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
+			<target xml:lang="it" state="translated">Il grafico del fallback intradimensionale mostra i fallback entro ogni dimensione contenuto.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>

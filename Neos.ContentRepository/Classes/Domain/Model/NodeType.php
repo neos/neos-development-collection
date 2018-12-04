@@ -310,6 +310,17 @@ class NodeType
      * If this node type or any of the direct or indirect super types
      * has the given name.
      *
+     * Note: A supertype that is set to false after having been assigned, is still
+     * returning true here. Fixing that potentially breaks sites in non-obvious ways,
+     * so we did not fix that. See these links for details:
+     *
+     * - https://github.com/neos/neos-development-collection/issues/1983
+     * - https://github.com/neos/neos-development-collection/pull/2139
+     * - https://github.com/neos/neos-development-collection/pull/2145
+     * - https://github.com/neos/neos-development-collection/pull/2217
+     * - https://github.com/neos/neos-development-collection/pull/2265
+     * - https://discuss.neos.io/t/breaking-bugfixes/3882
+     *
      * @param string $nodeType
      * @return boolean TRUE if this node type is of the given kind, otherwise FALSE
      * @api

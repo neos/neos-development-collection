@@ -1,0 +1,93 @@
+'Neos.NodeTypes.Navigation:Navigation':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: i18n
+    group: 'structure'
+    icon: 'icon-sitemap'
+    position: 100
+    inspector:
+      groups:
+        options:
+          label: i18n #'Options'
+          position: 30
+          icon: 'icon-sliders'
+  properties:
+    startLevel:
+      type: string
+      defaultValue: '0'
+      ui:
+        reloadIfChanged: true
+        label: i18n
+        inspector:
+          group: 'options'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            values:
+              '-4':
+                label: i18n
+              '-3':
+                label: i18n
+              '-2':
+                label: i18n
+              '-1':
+                label: i18n
+              '0':
+                label: i18n
+              '1':
+                label: i18n
+              '2':
+                label: i18n
+              '3':
+                label: i18n
+              '4':
+                label: i18n
+              '5':
+                label: i18n
+              '6':
+                label: i18n
+    selection:
+      type: 'references'
+      ui:
+        reloadIfChanged: true
+        label: i18n
+        inspector:
+          group: 'options'
+    startingPoint:
+      type: 'reference'
+      ui:
+        reloadIfChanged: true
+        label: i18n
+        inspector:
+          group: 'options'
+    maximumLevels:
+      type: string
+      defaultValue: '1'
+      ui:
+        reloadIfChanged: true
+        label: i18n
+        inspector:
+          group: 'options'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            values:
+              '1':
+                label: '1'
+              '2':
+                label: '2'
+              '3':
+                label: '3'
+              '4':
+                label: '4'
+              '5':
+                label: '5'
+              '6':
+                label: '6'
+              '7':
+                label: '7'
+              '8':
+                label: '8'
+              '9':
+                label: '9'
+              '10':
+                label: '10'

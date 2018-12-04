@@ -14,6 +14,9 @@
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
 			<target xml:lang="no" state="translated">Skjul i menyer</target><alt-trans><target xml:lang="no">Skjule menyer</target></alt-trans></trans-unit>
+      <trans-unit id="creationDialog.title" xml:space="preserve">
+				<source>Title</source>
+			<target xml:lang="no" state="translated">Tittel</target></trans-unit>
     </body>
   </file>
 </xliff>

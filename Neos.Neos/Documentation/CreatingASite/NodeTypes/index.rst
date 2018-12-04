@@ -9,5 +9,8 @@ These are the development guidelines of Neos.
 	ContentStructure
 	NodeTypeDefinition
 	NodeConstraints
+	NodeCreationDialog
 	TranslateNodeTypes
+	DynamicConfigurationProcessing
 	DependingProperties
+	DisableNodeTypes

@@ -1,0 +1,33 @@
+# Basic implementation of a flexible MultiColumn element, not exposed directly but inherited by all specific MultiColumn content elements
+prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn) < prototype(Neos.Neos:Content) {
+    templatePath = 'resource://Neos.NodeTypes.ColumnLayouts/Private/Templates/NodeTypes/MultiColumn.html'
+    layout = ${q(node).property('layout')}
+    attributes.class = ${'container columns-' + q(node).property('layout')}
+    columns = Neos.Fusion:Collection {
+        @context.columnLayout = ${q(node).property('layout')}
+        collection = ${q(node).children('[instanceof Neos.Neos:ContentCollection]')}
+        itemRenderer = Neos.NodeTypes.ColumnLayouts:MultiColumnItem
+        itemName = 'node'
+        iterationName = 'columnIteration'
+    }
+}
+
+# Abstract render definition for a single content column in a multi column element
+prototype(Neos.NodeTypes.ColumnLayouts:MultiColumnItem) < prototype(Neos.Neos:ContentCollection) {
+    nodePath = '.'
+    attributes = Neos.Fusion:Attributes {
+        class = 'column'
+    }
+}
+
+# Two Column TS Object
+prototype(Neos.NodeTypes.ColumnLayouts:TwoColumn) >
+prototype(Neos.NodeTypes.ColumnLayouts:TwoColumn) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn)
+
+# Three Column TS Object
+prototype(Neos.NodeTypes.ColumnLayouts:ThreeColumn) >
+prototype(Neos.NodeTypes.ColumnLayouts:ThreeColumn) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn)
+
+# Four Column TS Object
+prototype(Neos.NodeTypes.ColumnLayouts:FourColumn) >
+prototype(Neos.NodeTypes.ColumnLayouts:FourColumn) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn)

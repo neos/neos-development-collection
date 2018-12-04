@@ -117,14 +117,15 @@ class ThumbnailViewHelper extends AbstractTagBasedViewHelper
      * @param boolean $allowUpScaling Whether the resulting thumbnail size might exceed the size of the original asset
      * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
      * @param string $preset Preset used to determine image configuration
+     * @param integer $quality Quality of the image
      * @return string an <img...> html tag
      */
-    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
+    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null, $quality = null)
     {
         if ($preset) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
         } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async);
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async, $quality);
         }
         $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $this->controllerContext->getRequest());
 

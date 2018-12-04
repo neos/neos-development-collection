@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="uk" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+			<target xml:lang="uk" state="translated">Перетягніть вкладення на колекцію/теґ щоб додати.</target></trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
-			<target xml:lang="uk" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
+			<target xml:lang="uk" state="translated">Залишити назву файла "{0}"</target></trans-unit>
       <trans-unit id="module.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="uk" state="translated">Медіа</target></trans-unit>
@@ -25,10 +25,10 @@
 			<target xml:lang="uk" state="needs-translation">Label</target></trans-unit>
       <trans-unit id="field.caption" xml:space="preserve">
 				<source>Caption</source>
-			<target xml:lang="uk" state="needs-translation">Caption</target></trans-unit>
+			<target xml:lang="uk" state="translated">Заголовок</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve">
 				<source>Last modified</source>
-			<target xml:lang="uk" state="needs-translation">Last modified</target></trans-unit>
+			<target xml:lang="uk" state="translated">Змінено</target></trans-unit>
       <trans-unit id="field.fileSize" xml:space="preserve">
 				<source>File size</source>
 			<target xml:lang="uk" state="translated">Розмір файлу</target></trans-unit>
@@ -37,25 +37,25 @@
 			<target xml:lang="uk" state="translated">Тип</target></trans-unit>
       <trans-unit id="field.tags" xml:space="preserve">
 				<source>Tags</source>
-			<target xml:lang="uk" state="needs-translation">Tags</target></trans-unit>
+			<target xml:lang="uk" state="translated">Теґи</target></trans-unit>
       <trans-unit id="sortByName" xml:space="preserve">
 				<source>Sort by name</source>
-			<target xml:lang="uk" state="needs-translation">Sort by name</target></trans-unit>
+			<target xml:lang="uk" state="translated">Сортувати за назвою</target></trans-unit>
       <trans-unit id="sortByLastModified" xml:space="preserve">
 				<source>Sort by last modified</source>
-			<target xml:lang="uk" state="needs-translation">Sort by last modified</target></trans-unit>
+			<target xml:lang="uk" state="translated">Сортувати за датою</target></trans-unit>
       <trans-unit id="sortby" xml:space="preserve">
 				<source>Sort by</source>
-			<target xml:lang="uk" state="needs-translation">Sort by</target></trans-unit>
+			<target xml:lang="uk" state="translated">Сортувати за</target></trans-unit>
       <trans-unit id="sortDirection" xml:space="preserve">
 				<source>Sort direction</source>
-			<target xml:lang="uk" state="needs-translation">Sort direction</target></trans-unit>
+			<target xml:lang="uk" state="translated">Порядок сортування</target></trans-unit>
       <trans-unit id="sortDirection.asc" xml:space="preserve">
 				<source>Ascending</source>
-			<target xml:lang="uk" state="needs-translation">Ascending</target></trans-unit>
+			<target xml:lang="uk" state="translated">За зростанням</target></trans-unit>
       <trans-unit id="sortDirection.desc" xml:space="preserve">
 				<source>Descending</source>
-			<target xml:lang="uk" state="needs-translation">Descending</target></trans-unit>
+			<target xml:lang="uk" state="translated">За спаданням</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
 			<target xml:lang="uk" state="needs-translation">Sort direction Ascending</target></trans-unit>
@@ -64,13 +64,13 @@
 			<target xml:lang="uk" state="needs-translation">Sort direction Descending</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
-			<target xml:lang="uk" state="needs-translation">Drag and drop on tag or collection</target></trans-unit>
+			<target xml:lang="uk" state="translated">Перетягнути теґ або колекцію</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
-			<target xml:lang="uk" state="needs-translation">Edit asset</target></trans-unit>
+			<target xml:lang="uk" state="translated">Зміна вкладень</target></trans-unit>
       <trans-unit id="deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
-			<target xml:lang="uk" state="needs-translation">Delete asset</target></trans-unit>
+			<target xml:lang="uk" state="translated">Видалити вкладення</target></trans-unit>
       <trans-unit id="message.reallyDeleteAsset" xml:space="preserve">
 				<source>Do you really want to delete asset "{0}"?</source>
 			<target xml:lang="uk" state="needs-translation">Do you really want to delete asset "{0}"?</target></trans-unit>
@@ -97,7 +97,7 @@
 			<target xml:lang="uk" state="translated">Відмінити</target><alt-trans><target xml:lang="uk">Скасувати</target></alt-trans></trans-unit>
       <trans-unit id="replace" xml:space="preserve">
 				<source>Replace</source>
-			<target xml:lang="uk" state="needs-translation">Replace</target></trans-unit>
+			<target xml:lang="uk" state="translated">Замінити</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
 			<target xml:lang="uk" state="needs-translation">Replace asset resource</target></trans-unit>
@@ -196,7 +196,7 @@
 			<target xml:lang="uk" state="needs-translation">All collections</target></trans-unit>
       <trans-unit id="tags" xml:space="preserve">
 				<source>Tags</source>
-			<target xml:lang="uk" state="needs-translation">Tags</target></trans-unit>
+			<target xml:lang="uk" state="translated">Теґи</target></trans-unit>
       <trans-unit id="editTags" xml:space="preserve">
 				<source>Edit tags</source>
 			<target xml:lang="uk" state="needs-translation">Edit tags</target></trans-unit>
@@ -286,70 +286,70 @@
 			<target xml:lang="uk" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
       <trans-unit id="forTheFile" xml:space="preserve">
 				<source>for the file</source>
-			<target xml:lang="uk" state="needs-translation">for the file</target></trans-unit>
+			<target xml:lang="uk" state="translated">для файлу</target></trans-unit>
       <trans-unit id="onlySomeFilesWereUploaded" xml:space="preserve">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="uk" state="needs-translation">Only some of the files were successfully uploaded. Refresh the page to see the those.</target></trans-unit>
+			<target xml:lang="uk" state="translated">Лише деякі файли були успішно завантажено. Оновіть сторінку для повного перегляду.</target></trans-unit>
       <trans-unit id="taggingAssetsFailed" xml:space="preserve">
 				<source>Tagging the asset failed.</source>
-			<target xml:lang="uk" state="needs-translation">Tagging the asset failed.</target></trans-unit>
+			<target xml:lang="uk" state="translated">Не вдалося позначити теґом вкладення.</target></trans-unit>
       <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve">
 				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="uk" state="needs-translation">Adding the asset to the collection failed.</target></trans-unit>
+			<target xml:lang="uk" state="translated">Вкладення не вдалося ввести в колекцію.</target></trans-unit>
       <trans-unit id="creating" xml:space="preserve">
 				<source>Creating</source>
 			<target xml:lang="uk" state="translated">Створення</target></trans-unit>
       <trans-unit id="deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="uk" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
+			<target xml:lang="uk" state="translated">Інші вузли досі використовують вкладення. Видалення неможливе</target></trans-unit>
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="uk" state="needs-translation">{0} usages</target>
+          <target xml:lang="uk" state="translated">{0} вокристано</target>
         </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="uk" state="needs-translation">{0} usages</target>
+          <target xml:lang="uk" state="translated">{0} вокристано</target>
         </trans-unit>
         <trans-unit id="relatedNodes[2]">
           <source>{0} usages</source>
-          <target xml:lang="uk" state="needs-translation">{0} usages</target>
+          <target xml:lang="uk" state="translated">{0} вокристано</target>
         </trans-unit>
         <trans-unit id="relatedNodes[3]">
           <source>{0} usages</source>
-          <target xml:lang="uk" state="needs-translation">{0} usages</target>
+          <target xml:lang="uk" state="translated">{0} вокристано</target>
         </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
-			<target xml:lang="uk" state="needs-translation">References to "{asset}"</target></trans-unit>
+			<target xml:lang="uk" state="translated">Посилання до "{asset}"</target></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="uk" state="needs-translation">Replace "{filename}"</target></trans-unit>
+			<target xml:lang="uk" state="translated">Замінити "{filename}"</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-			<target xml:lang="uk" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+			<target xml:lang="uk" state="translated">Ви можете замінити це вкладення, завантаживши новий файл. Після замінення, нове вкладення буде використане скрізь, де воно вже є на Вашому веб-сайті.</target></trans-unit>
       <trans-unit id="replaceAsset.note" xml:space="preserve">
 				<source>Note</source>
-			<target xml:lang="uk" state="needs-translation">Note</target></trans-unit>
+			<target xml:lang="uk" state="translated">Замітка</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
 				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-			<target xml:lang="uk" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+			<target xml:lang="uk" state="translated">Ця операція замінить вкладення в усих опублікованих/неопублікованих робочих середовищах, включаючи живий (безпосередній) веб-сайт.</target></trans-unit>
       <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
 				<source>Choose a new file</source>
-			<target xml:lang="uk" state="needs-translation">Choose a new file</target></trans-unit>
+			<target xml:lang="uk" state="translated">Оберіть новий файл</target></trans-unit>
       <trans-unit id="replace.usageCount" xml:space="preserve">
 				<source>Currently the asset is used {usageCount} times.</source>
-			<target xml:lang="uk" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+			<target xml:lang="uk" state="translated">Наразі вкладення використано {usageCount} разів.</target></trans-unit>
       <trans-unit id="replace.allUsages" xml:space="preserve">
 				<source>Show all usages</source>
-			<target xml:lang="uk" state="needs-translation">Show all usages</target></trans-unit>
+			<target xml:lang="uk" state="translated">Відобразити використання</target></trans-unit>
       <trans-unit id="replace.notUsed" xml:space="preserve">
 				<source>Currently the asset is not in used anywhere on the website.</source>
-			<target xml:lang="uk" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+			<target xml:lang="uk" state="translated">Наразі вкладення не використовується на веб-сайті.</target></trans-unit>
       <trans-unit id="replace.previewFile" xml:space="preserve">
 				<source>Preview current file</source>
-			<target xml:lang="uk" state="needs-translation">Preview current file</target></trans-unit>
+			<target xml:lang="uk" state="translated">Попередній перегляд поточного файлу</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
 			<target xml:lang="uk" state="needs-translation">Could not replace asset</target></trans-unit>

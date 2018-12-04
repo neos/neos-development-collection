@@ -26,6 +26,21 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
     protected $systemLogger;
 
     /**
+     * Whether or not to render technical details (i.e. the Fusion stacktrace) in the exception message
+     *
+     * @var bool
+     */
+    private $renderTechnicalDetails;
+
+    /**
+     * @param bool $renderTechnicalDetails whether or not to render technical details (i.e. the Fusion stacktrace) in the exception message
+     */
+    public function __construct(bool $renderTechnicalDetails = true)
+    {
+        $this->renderTechnicalDetails = $renderTechnicalDetails;
+    }
+
+    /**
      * Renders the exception in HTML for display
      *
      * @param string $fusionPath path causing the exception
@@ -35,27 +50,20 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
-        $messageArray = array(
-            'header' => 'An exception was thrown while Neos tried to render your page',
-            'content' => htmlspecialchars($exception->getMessage()),
-            'stacktrace' => $this->formatFusionPath($fusionPath),
-            'referenceCode' => $this->formatErrorCodeMessage($referenceCode)
-        );
+        $messageBody = sprintf('<p class="neos-message-content">%s</p>', htmlspecialchars($exception->getMessage()));
 
-        $messageBody = sprintf(
-            '<p class="neos-message-content">%s</p>' .
-            '<p class="neos-message-stacktrace"><code>%s</code></p>',
-            $messageArray['content'], $messageArray['stacktrace']
-        );
+        if ($this->renderTechnicalDetails) {
+            $messageBody .= sprintf('<p class="neos-message-stacktrace"><code>%s</code></p>', $this->formatFusionPath($fusionPath));
+        }
 
         if ($referenceCode) {
-            $messageBody = sprintf('%s<p class="neos-reference-code">%s</p>', $messageBody, $messageArray['referenceCode']);
+            $messageBody .= sprintf('<p class="neos-reference-code">%s</p>', $this->formatErrorCodeMessage($referenceCode));
         }
 
         $message = sprintf(
-            '<div class="neos-message-header"><div class="neos-message-icon"><i class="icon-warning-sign"></i></div><h1>%s</h1></div>' .
+            '<div class="neos-message-header"><div class="neos-message-icon"><i class="icon-warning-sign"></i></div><h1>An exception was thrown while Neos tried to render your page</h1></div>' .
             '<div class="neos-message-wrapper">%s</div>',
-            $messageArray['header'], $messageBody
+            $messageBody
         );
 
         $this->systemLogger->logException($exception);

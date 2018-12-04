@@ -1,0 +1,34 @@
+type: dictionary
+properties:
+  Neos:
+    type: dictionary
+    properties:
+      Fusion:
+        type: dictionary
+        additionalProperties: FALSE
+        properties:
+          rendering:
+            type: dictionary
+            additionalProperties: FALSE
+            properties:
+              exceptionHandler:
+                type: string
+                format: class-name
+              innerExceptionHandler:
+                type: string
+                format: class-name
+          debugMode:
+            type: boolean
+          enableContentCache:
+            type: boolean
+          defaultContext:
+            type: dictionary
+            additionalProperties:
+              type: string
+              format: class-name
+          dsl:
+            type: dictionary
+            additionalProperties:
+              type: string
+              format: class-name
+

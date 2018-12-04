@@ -2,18 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="zh-TW">
     <body>
-      <trans-unit id="clickToEdit" xml:space="preserve">
-				<source>Click to edit</source>
-			<target xml:lang="zh-TW" state="translated">點此編輯</target></trans-unit>
-      <trans-unit id="clickToDelete" xml:space="preserve">
-				<source>Click to delete</source>
-			<target xml:lang="zh-TW" state="needs-translation">Click to delete</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
-				<source>Cancel</source>
-			<target xml:lang="zh-TW" state="translated">取消</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="zh-TW" state="translated">返回</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="zh-TW" state="translated">取消</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -319,6 +313,12 @@
       <trans-unit id="users.new.userData.roles" xml:space="preserve">
 				<source>Role(s)</source>
 			<target xml:lang="zh-TW" state="translated">角色</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve">
+				<source>Authentication Provider</source>
+			<target xml:lang="zh-TW" state="translated">驗證提供者</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve">
+				<source>Use system default</source>
+			<target xml:lang="zh-TW" state="translated">使用系統預設值</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="zh-TW" state="translated">個人資料</target></trans-unit>
@@ -532,18 +532,121 @@
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="zh-TW" state="needs-translation">The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</target></trans-unit>
+      <trans-unit id="sites.add" xml:space="preserve">
+				<source>Add new site</source>
+			<target xml:lang="zh-TW" state="translated">新增網站</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="zh-TW" state="translated">建立網站</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
 			<target xml:lang="zh-TW" state="translated">建立新網站</target></trans-unit>
+      <trans-unit id="sites.rootNodeName" xml:space="preserve">
+				<source>Root node name</source>
+			<target xml:lang="zh-TW" state="translated">根節點名稱</target></trans-unit>
+      <trans-unit id="sites.domains" xml:space="preserve">
+				<source>Domains</source>
+			<target xml:lang="zh-TW" state="translated">網域名稱</target></trans-unit>
+      <trans-unit id="sites" xml:space="preserve">
+				<source>Site</source>
+			<target xml:lang="zh-TW" state="translated">網站</target></trans-unit>
+      <trans-unit id="site.name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="zh-TW" state="translated">名稱</target></trans-unit>
+      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
+				<source>Default asset collection</source>
+			<target xml:lang="zh-TW" state="translated">預設素材集</target></trans-unit>
+      <trans-unit id="sites.sitePackage" xml:space="preserve">
+				<source>Site package</source>
+			<target xml:lang="zh-TW" state="translated">網站套件</target></trans-unit>
+      <trans-unit id="sites.delete" xml:space="preserve">
+				<source>Delete this site</source>
+			<target xml:lang="zh-TW" state="translated">刪除此網站</target></trans-unit>
+      <trans-unit id="sites.deactivate" xml:space="preserve">
+				<source>Deactivate site</source>
+			<target xml:lang="zh-TW" state="translated">停用網站</target></trans-unit>
+      <trans-unit id="sites.activate" xml:space="preserve">
+				<source>Activate site</source>
+			<target xml:lang="zh-TW" state="translated">啟動網站</target></trans-unit>
+      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="zh-TW" state="translated">你確定要刪除「{0}」嗎？這個動作無法被復原。</target></trans-unit>
+      <trans-unit id="sites.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the site</source>
+			<target xml:lang="zh-TW" state="translated">是的，刪除此網站</target></trans-unit>
+      <trans-unit id="sites.import" xml:space="preserve">
+				<source>Import a site</source>
+			<target xml:lang="zh-TW" state="translated">匯入網站</target></trans-unit>
+      <trans-unit id="sites.select" xml:space="preserve">
+				<source>Select a site package</source>
+			<target xml:lang="zh-TW" state="translated">選擇網站套件</target></trans-unit>
+      <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+				<source>No site packages are available. Make sure you have an active site package.</source>
+			<target xml:lang="zh-TW" state="translated">沒有可用的網站套件，請確認已經啟動網站套件。</target></trans-unit>
+      <trans-unit id="sites.createBlank" xml:space="preserve">
+				<source>Create a blank site</source>
+			<target xml:lang="zh-TW" state="translated">建立空白網站</target></trans-unit>
+      <trans-unit id="sites.documentType" xml:space="preserve">
+				<source>Select a document nodeType</source>
+			<target xml:lang="zh-TW" state="translated">選擇文件節點類型</target></trans-unit>
+      <trans-unit id="sites.name" xml:space="preserve">
+				<source>Site name</source>
+			<target xml:lang="zh-TW" state="translated">網站名稱</target></trans-unit>
+      <trans-unit id="sites.createNode" xml:space="preserve">
+				<source>Create empty site</source>
+			<target xml:lang="zh-TW" state="translated">建立空的網站</target></trans-unit>
+      <trans-unit id="sites.createPackage" xml:space="preserve">
+				<source>Create a new site package</source>
+			<target xml:lang="zh-TW" state="translated">建立新網站套件</target></trans-unit>
+      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+				<source>VendorName.MyPackageKey</source>
+			<target xml:lang="zh-TW" state="translated">VendorName.MyPackageKey</target></trans-unit>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+			<target xml:lang="zh-TW" state="translated">未安裝&lt;em&gt;Neos Kickstarter&lt;/em&gt;套件，立即安裝開始一個新的網站。</target></trans-unit>
+      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="zh-TW" state="translated">你確定要刪除「{0}」嗎？這個動作無法被復原。</target></trans-unit>
+      <trans-unit id="domain.new" xml:space="preserve">
+				<source>New domain</source>
+			<target xml:lang="zh-TW" state="translated">新網域名稱</target></trans-unit>
+      <trans-unit id="domain.edit" xml:space="preserve">
+				<source>Edit domain</source>
+			<target xml:lang="zh-TW" state="translated">編輯網域名稱</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="zh-TW" state="translated">設定</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target xml:lang="zh-TW" state="needs-translation">The Configuration module provides you with an overview of all configuration types.</target></trans-unit>
+      <trans-unit id="dimensions.label" xml:space="preserve">
+				<source>Dimensions</source>
+			<target xml:lang="zh-TW" state="needs-translation">Dimensions</target></trans-unit>
+      <trans-unit id="dimensions.description" xml:space="preserve">
+				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
+			<target xml:lang="zh-TW" state="needs-translation">Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
+				<source>Inter dimensional fallback graph</source>
+			<target xml:lang="zh-TW" state="needs-translation">Inter dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
+				<source>Inter dimensional</source>
+			<target xml:lang="zh-TW" state="needs-translation">Inter dimensional</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
+				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
+			<target xml:lang="zh-TW" state="needs-translation">The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
+				<source>Intra dimensional fallback graph</source>
+			<target xml:lang="zh-TW" state="needs-translation">Intra dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
+				<source>Intra dimensional</source>
+			<target xml:lang="zh-TW" state="needs-translation">Intra dimensional</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
+				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
+			<target xml:lang="zh-TW" state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>

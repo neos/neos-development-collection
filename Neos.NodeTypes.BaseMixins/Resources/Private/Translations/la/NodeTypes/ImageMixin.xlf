@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes.BaseMixins" source-language="en" datatype="plaintext" target-language="la-LA">
+    <body>
+      <trans-unit id="groups.image" xml:space="preserve">
+				<source>Image</source>
+			<target xml:lang="la-LA">crwdns6281:0crwdne6281:0</target></trans-unit>
+      <trans-unit id="properties.image" xml:space="preserve">
+				<source>Image</source>
+			<target xml:lang="la-LA">crwdns6282:0crwdne6282:0</target></trans-unit>
+      <trans-unit id="properties.alternativeText" xml:space="preserve">
+				<source>Alternative text</source>
+			<target xml:lang="la-LA">crwdns6283:0crwdne6283:0</target></trans-unit>
+      <trans-unit id="properties.title" xml:space="preserve">
+				<source>Title</source>
+			<target xml:lang="la-LA">crwdns6284:0crwdne6284:0</target></trans-unit>
+    </body>
+  </file>
+</xliff>

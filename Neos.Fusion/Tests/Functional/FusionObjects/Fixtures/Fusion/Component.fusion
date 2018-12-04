@@ -1,0 +1,42 @@
+prototype(Neos.Fusion:Component).@class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
+prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+
+prototype(Neos.Fusion:Sandbox) < prototype(Neos.Fusion:Component) {
+  hello = null
+  world = null
+
+  renderer = ${props.hello + ' ' + props.world}
+}
+
+component.basicRenderer = Neos.Fusion:Component {
+  hello = 'Hello'
+  world = 'World'
+
+  renderer = ${props.hello + ' ' + props.world}
+}
+
+component.nestedRenderer = Neos.Fusion:Component {
+  hello = 'Hello'
+  world = 'World'
+
+  renderer = Neos.Fusion:Value {
+    value = ${props.hello + ' ' + props.world}
+  }
+}
+
+component.staticRenderer = Neos.Fusion:Component {
+  renderer = 'Hello World'
+}
+
+component.sandboxRenderer = Neos.Fusion:Component {
+  hello = 'Hello'
+  world = 'World'
+
+  renderer = Neos.Fusion:Value {
+    value = Neos.Fusion:Sandbox {
+      hello = ${props.hello}
+    }
+  }
+}

@@ -1,0 +1,12 @@
+'Neos.NodeTypes.BaseMixins:ContentImageMixin':
+  abstract: true
+  superTypes:
+    'Neos.NodeTypes.BaseMixins:ImageMixin': true
+    'Neos.NodeTypes.BaseMixins:LinkMixin': true
+    'Neos.NodeTypes.BaseMixins:ImageCaptionMixin': true
+    'Neos.NodeTypes.BaseMixins:ImageAlignmentMixin': true
+  properties:
+    link:
+      ui:
+        inspector:
+          group: 'image'

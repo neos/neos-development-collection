@@ -879,12 +879,16 @@ class NodesTest extends FunctionalTestCase
         $childNodeA = $parentNode->createNode('child-node-a');
         $childNodeB = $parentNode->createNode('child-node-b');
         $childNodeB1 = $childNodeB->createNode('child-node-b1');
+        $childNodeB2 = $childNodeB->createNode('child-node-not-unique');
+        $childNodeC = $parentNode->createNode('child-node-not-unique');
         $this->persistenceManager->persistAll();
         $childNodeB->moveInto($childNodeA, 'renamed-child-node-b');
+        $childNodeC->moveInto($childNodeB, 'child-node-now-unique');
         $this->persistenceManager->persistAll();
         $this->assertNull($parentNode->getNode('child-node-b'));
         $this->assertSame($childNodeB, $childNodeA->getNode('renamed-child-node-b'));
         $this->assertSame($childNodeB1, $childNodeA->getNode('renamed-child-node-b')->getNode('child-node-b1'));
+        $this->assertSame($childNodeC, $childNodeB->getNode('child-node-now-unique'));
     }
 
     /**

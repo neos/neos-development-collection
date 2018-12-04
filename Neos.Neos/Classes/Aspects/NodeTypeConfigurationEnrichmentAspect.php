@@ -158,6 +158,10 @@ class NodeTypeConfigurationEnrichmentAspect
                 $propertyConfiguration['ui']['aloha']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'aloha.placeholder');
             }
 
+            if (isset($propertyConfiguration['ui']['inline']['editorOptions']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['inline']['editorOptions'], 'placeholder')) {
+                $propertyConfiguration['ui']['inline']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'ui.inline.editorOptions.placeholder');
+            }
+
             if (isset($propertyConfiguration['ui']['help']['message']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['help'], 'message')) {
                 $propertyConfiguration['ui']['help']['message'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'ui.help.message');
             }
@@ -269,6 +273,16 @@ class NodeTypeConfigurationEnrichmentAspect
                     $translationLabelId = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, $elementTypeName, $elementName);
                     $configuration['ui']['inspector'][$elementTypeName][$elementName]['label'] = $translationLabelId;
                 }
+            }
+        }
+
+        $creationDialogConfiguration = Arrays::getValueByPath($configuration, 'ui.creationDialog.elements');
+        if (is_array($creationDialogConfiguration)) {
+            foreach ($creationDialogConfiguration as $elementName => $elementConfiguration) {
+                if (!is_array($elementConfiguration) || !$this->shouldFetchTranslation($elementConfiguration['ui'])) {
+                    continue;
+                }
+                $configuration['ui']['creationDialog']['elements'][$elementName]['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'creationDialog', $elementName);
             }
         }
     }

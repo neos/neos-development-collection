@@ -45,16 +45,6 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * Additional arguments to be passed to the UriBuilder (for example pagination parameters)
-     *
-     * @return array
-     */
-    public function getArguments()
-    {
-        return $this->fusionValue('arguments');
-    }
-
-    /**
      * The requested format, for example "html"
      *
      * @return string
