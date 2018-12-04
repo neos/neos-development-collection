@@ -11,7 +11,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Error\Messages\Error;
