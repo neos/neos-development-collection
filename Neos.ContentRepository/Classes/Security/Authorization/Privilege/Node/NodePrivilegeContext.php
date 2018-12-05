@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\Service\Utility\UnvalidatedNodeCache;
+use Neos\ContentRepository\Service\Utility\TransientNodeCache;
 use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
@@ -27,9 +27,9 @@ class NodePrivilegeContext
 
     /**
      * @Flow\Inject
-     * @var UnvalidatedNodeCache
+     * @var TransientNodeCache
      */
-    protected $nodeCache;
+    protected $transientNodeCache;
 
     /**
      * @Flow\Inject
@@ -232,7 +232,7 @@ class NodePrivilegeContext
      */
     protected function getNodeByIdentifier($nodeIdentifier)
     {
-        return $this->nodeCache->cache($nodeIdentifier, function () use ($nodeIdentifier) {
+        return $this->transientNodeCache->cache($nodeIdentifier, function () use ($nodeIdentifier) {
             $context = $this->contextFactory->create();
             $node = null;
             $this->securityContext->withoutAuthorizationChecks(function () use ($nodeIdentifier, $context, &$node) {
