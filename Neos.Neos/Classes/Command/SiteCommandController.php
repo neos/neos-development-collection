@@ -124,10 +124,10 @@ class SiteCommandController extends CommandController
      * If no ``nodeType`` option is specified the command will use `Neos.NodeTypes:Page` as fallback. The node type
      * must already exists and have the superType ``Neos.Neos:Document``.
      *
-     * If no ``nodeName` option is specified the command will create a unique node-name from the name of the site.
+     * If no ``nodeName`` option is specified the command will create a unique node-name from the name of the site.
      * If a node name is given it has to be unique for the setup.
      *
-     * If the flag ``activate` is set to false new site will not be activated.
+     * If the flag ``activate`` is set to false new site will not be activated.
      *
      * @param string $name The name of the site
      * @param string $packageKey The site package
