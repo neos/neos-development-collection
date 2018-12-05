@@ -124,10 +124,10 @@ class SiteCommandController extends CommandController
      * If no ``nodeType`` option is specified the command will use `Neos.NodeTypes:Page` as fallback. The node type
      * must already exists and have the superType ``Neos.Neos:Document``.
      *
-     * If no ``nodeName` option is specified the command will create a unique node-name from the name of the site.
+     * If no ``nodeName`` option is specified the command will create a unique node-name from the name of the site.
      * If a node name is given it has to be unique for the setup.
      *
-     * If the flag ``activate` is set to false new site will not be activated.
+     * If the flag ``activate`` is set to false new site will not be activated.
      *
      * @param string $name The name of the site
      * @param string $packageKey The site package
@@ -217,6 +217,17 @@ class SiteCommandController extends CommandController
             $this->outputLine('You have to specify either "--package-key" or "--filename"');
             $this->quit(1);
         }
+
+        // Since this command uses a lot of memory when large sites are imported, we warn the user to watch for
+        // the confirmation of a successful import.
+        $this->outputLine('<b>This command can use a lot of memory when importing sites with many resources.</b>');
+        $this->outputLine('If the import is successful, you will see a message saying "Import of site ... finished".');
+        $this->outputLine('If you do not see this message, the import failed, most likely due to insufficient memory.');
+        $this->outputLine('Increase the <b>memory_limit</b> configuration parameter of your php CLI to attempt to fix this.');
+        $this->outputLine('Starting import...');
+        $this->outputLine('---');
+
+
         $site = null;
         if ($filename !== null) {
             try {
@@ -306,6 +317,10 @@ class SiteCommandController extends CommandController
         $sites = $this->findSitesByNodeNamePattern($siteNode);
         if (empty($sites)) {
             $this->outputLine('<error>No Site found for pattern "%s".</error>', [$siteNode]);
+            // Help the user a little about what he needs to provide as a parameter here
+            $this->outputLine('To find out which sites you have, use the <b>site:list</b> command.');
+            $this->outputLine('The site:prune command expects the "Node name" from the site list as a parameter.');
+            $this->outputLine('If you want to delete all sites, you can run <b>site:prune \'*\'</b>.');
             $this->quit(1);
         }
         foreach ($sites as $site) {
