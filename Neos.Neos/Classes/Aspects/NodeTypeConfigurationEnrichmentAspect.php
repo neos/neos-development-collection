@@ -182,8 +182,11 @@ class NodeTypeConfigurationEnrichmentAspect
                 $propertyConfiguration['ui']['label'] = $this->getPropertyLabelTranslationId($nodeTypeLabelIdPrefix, $propertyName);
             }
 
-            if (isset($propertyConfiguration['ui']['inspector']['editor'])) {
-                $this->applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $propertyConfiguration);
+            if (isset($propertyConfiguration['ui']['inspector']['editor']) && isset($propertyConfiguration['ui']['inspector']['editorOptions'])) {
+                $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $propertyName) {
+                    return $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, $path);
+                };
+                $this->applyEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $propertyConfiguration['ui']['inspector']['editor'], $propertyConfiguration['ui']['inspector']['editorOptions'], $translationIdGenerator);
             }
 
             if (isset($propertyConfiguration['ui']['aloha']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['aloha'], 'placeholder')) {
@@ -232,39 +235,39 @@ class NodeTypeConfigurationEnrichmentAspect
     /**
      * @param string $nodeTypeLabelIdPrefix
      * @param string $propertyName
-     * @param array $propertyConfiguration
+     * @param string $editorName
+     * @param array $editorOptions
+     * @param callable $translationIdGenerator
      * @return void
      */
-    protected function applyInspectorEditorLabels($nodeTypeLabelIdPrefix, $propertyName, array &$propertyConfiguration)
+    protected function applyEditorLabels($nodeTypeLabelIdPrefix, $propertyName, $editorName, array &$editorOptions, $translationIdGenerator)
     {
-        $editorName = $propertyConfiguration['ui']['inspector']['editor'];
-
         switch ($editorName) {
             case 'Neos.Neos/Inspector/Editors/SelectBoxEditor':
-                if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
-                    $propertyConfiguration['ui']['inspector']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'selectBoxEditor.placeholder');
+                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                    $editorOptions['placeholder'] = $translationIdGenerator('selectBoxEditor.placeholder');
                 }
 
-                if (!isset($propertyConfiguration['ui']['inspector']['editorOptions']['values']) || !is_array($propertyConfiguration['ui']['inspector']['editorOptions']['values'])) {
+                if (!isset($editorOptions['values']) || !is_array($editorOptions['values'])) {
                     break;
                 }
-                foreach ($propertyConfiguration['ui']['inspector']['editorOptions']['values'] as $value => &$optionConfiguration) {
+                foreach ($editorOptions['values'] as $value => &$optionConfiguration) {
                     if ($optionConfiguration === null) {
                         continue;
                     }
                     if ($this->shouldFetchTranslation($optionConfiguration)) {
-                        $optionConfiguration['label'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'selectBoxEditor.values.' . $value);
+                        $optionConfiguration['label'] = $translationIdGenerator('selectBoxEditor.values.' . $value);
                     }
                 }
                 break;
             case 'Neos.Neos/Inspector/Editors/CodeEditor':
-                if ($this->shouldFetchTranslation($propertyConfiguration['ui']['inspector']['editorOptions'], 'buttonLabel')) {
-                    $propertyConfiguration['ui']['inspector']['editorOptions']['buttonLabel'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'codeEditor.buttonLabel');
+                if ($this->shouldFetchTranslation($editorOptions, 'buttonLabel')) {
+                    $editorOptions['buttonLabel'] = $translationIdGenerator('codeEditor.buttonLabel');
                 }
                 break;
             case 'Neos.Neos/Inspector/Editors/TextFieldEditor':
-                if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
-                    $propertyConfiguration['ui']['inspector']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'textFieldEditor.placeholder');
+                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                    $editorOptions['placeholder'] = $translationIdGenerator('textFieldEditor.placeholder');
                 }
                 break;
         }
@@ -310,11 +313,18 @@ class NodeTypeConfigurationEnrichmentAspect
 
         $creationDialogConfiguration = Arrays::getValueByPath($configuration, 'ui.creationDialog.elements');
         if (is_array($creationDialogConfiguration)) {
-            foreach ($creationDialogConfiguration as $elementName => $elementConfiguration) {
+            $creationDialogConfiguration = &$configuration['ui']['creationDialog']['elements'];
+            foreach ($creationDialogConfiguration as $elementName => &$elementConfiguration) {
+                if (isset($elementConfiguration['ui']['editor']) && isset($elementConfiguration['ui']['editorOptions'])) {
+                    $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $elementName) {
+                        return $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'creationDialog', $elementName . '.' . $path);
+                    };
+                    $this->applyEditorLabels($nodeTypeLabelIdPrefix, $elementName, $elementConfiguration['ui']['editor'], $elementConfiguration['ui']['editorOptions'], $translationIdGenerator);
+                }
                 if (!is_array($elementConfiguration) || !$this->shouldFetchTranslation($elementConfiguration['ui'])) {
                     continue;
                 }
-                $configuration['ui']['creationDialog']['elements'][$elementName]['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'creationDialog', $elementName);
+                $elementConfiguration['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'creationDialog', $elementName);
             }
         }
     }

@@ -10,7 +10,6 @@ This version of the documentation covering Neos |release| has been rendered at: 
 
    GettingStarted/index
    TechnicalPrinciples/index
-   UserGuide/index
    CreatingASite/index
    ExtendingNeos/index
    InsideOfNeos/index
