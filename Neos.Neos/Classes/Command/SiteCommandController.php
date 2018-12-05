@@ -217,6 +217,17 @@ class SiteCommandController extends CommandController
             $this->outputLine('You have to specify either "--package-key" or "--filename"');
             $this->quit(1);
         }
+
+        // Since this command uses a lot of memory when large sites are imported, we warn the user to watch for
+        // the confirmation of a successful import.
+        $this->outputLine('<b>This command can use a lot of memory when importing sites with many resources.</b>');
+        $this->outputLine('If the import is successful, you will see a message saying "Import of site ... finished".');
+        $this->outputLine('If you do not see this message, the import failed, most likely due to insufficient memory.');
+        $this->outputLine('Increase the <b>memory_limit</b> configuration parameter of your php CLI to attempt to fix this.');
+        $this->outputLine('Starting import...');
+        $this->outputLine('---');
+
+
         $site = null;
         if ($filename !== null) {
             try {
