@@ -53,6 +53,8 @@ Exchanged the login wallpaper with the one for 3.3. Cause of the uniform white a
 Add adjustment for the image quality that can be used to override the global configuration.
 Sometimes you might want to add a preview image with lower quality as a thumbnail, but you couldn't. I added the quality property to Neos:ImageUri to make this possible.
 
+.. code-block:: text
+
     previewImageUri = Neos.Neos:ImageUri {
         asset = ${q(node).property('image')}
         maximumWidth = 2560
@@ -75,21 +77,19 @@ This allows the asset to be tagged or added to collections
 based on the node type or path etc.
 
 For example, the following slot would assign assets of an
-`Employee` node type to the corresponding tag:
+`Employee` node type to the corresponding tag::
 
-```php
-public function theSlot(Asset $asset, NodeInterface $node, string $propertyName, string $siteNodeName)
-{
-    if (!$node->getNodeType()->isOfType('Some.Package:Employee') || $propertyName !== 'image') {
-        return;
-    }
-    $tag = $this->tagRepository->findOneByLabel('Employee');
-    if ($tag === null) {
-        return;
-    }
-    $asset->addTag($tag);
-}
-```
+  public function theSlot(Asset $asset, NodeInterface $node, string $propertyName, string $siteNodeName)
+  {
+      if (!$node->getNodeType()->isOfType('Some.Package:Employee') || $propertyName !== 'image') {
+          return;
+      }
+      $tag = $this->tagRepository->findOneByLabel('Employee');
+      if ($tag === null) {
+          return;
+      }
+      $asset->addTag($tag);
+  }
 
 Resolves: #893
 
@@ -132,26 +132,26 @@ editors.
 
 Usage:
 
-```yaml
-'Some.Node:Type':
-  properties:
-    'someImageProperty':
-      type: Neos\\Media\\Domain\\Model\\ImageInterface
-      ui:
-        inspector:
-          editorOptions:
-            features:
-              # disable uploads through the editor directly
-              upload: false
-    'someAssetProperty':
-      type: Neos\\Media\\Domain\\Model\\Asset
-      ui:
-        inspector:
-          editorOptions:
-            features:
-              # allow assets only to be uploaded through the editor
-              mediaBrowser: false
-```
+.. code-block:: yaml
+
+  'Some.Node:Type':
+    properties:
+      'someImageProperty':
+        type: Neos\\Media\\Domain\\Model\\ImageInterface
+        ui:
+          inspector:
+            editorOptions:
+              features:
+                # disable uploads through the editor directly
+                upload: false
+      'someAssetProperty':
+        type: Neos\\Media\\Domain\\Model\\Asset
+        ui:
+          inspector:
+            editorOptions:
+              features:
+                # allow assets only to be uploaded through the editor
+                mediaBrowser: false
 
 Background:
 
@@ -233,25 +233,23 @@ This command iterates over all existing assets, checks their usage count
 and lists the assets which are not reported as used by any AssetUsageStrategies.
 The unused assets can than be removed.
 
-### Example command output (with unused assets): 
-```
-Searching for unused assets:
- 12/12 [============================] 100%
-Found the following unused assets:
-- 2a2952ce-ba38-45bc-9b88-03d013831fd6 (Bildschirmfoto 2016-11-01 um 14.14.15.png)
-- 5279fcc0-4557-4033-be66-5fbe766aa2e2 (Bildschirmfoto 2016-11-01 um 14.11.43.png)
-- 5890c270-9f35-4327-8876-46388403bacf (Bildschirmfoto 2016-11-01 um 14.14.57.png)
-Do you want to remove 3 unused assets?y
- 3/3 [============================] 100%
-```
+### Example command output (with unused assets)::
 
-### Example command output (without unused assets):
-```
-./flow media:removeunused
-Searching for unused assets:
- 9/9 [============================] 100%
-No unused assets found.
-```
+  Searching for unused assets:
+   12/12 [============================] 100%
+  Found the following unused assets:
+  - 2a2952ce-ba38-45bc-9b88-03d013831fd6 (Bildschirmfoto 2016-11-01 um 14.14.15.png)
+  - 5279fcc0-4557-4033-be66-5fbe766aa2e2 (Bildschirmfoto 2016-11-01 um 14.11.43.png)
+  - 5890c270-9f35-4327-8876-46388403bacf (Bildschirmfoto 2016-11-01 um 14.14.57.png)
+  Do you want to remove 3 unused assets?y
+   3/3 [============================] 100%
+
+### Example command output (without unused assets)::
+
+  ./flow media:removeunused
+  Searching for unused assets:
+   9/9 [============================] 100%
+  No unused assets found.
 
 * Packages: ``Media``
 
