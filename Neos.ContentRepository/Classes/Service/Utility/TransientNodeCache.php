@@ -6,12 +6,13 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Simple cache for nodes that is intended to be used in `NodePrivilegeContext`.
+ *
  * WARNING: This cache may contain nodes that should not be visible to the current user.
  *          Only use this cache in `NodePrivilegeContext`.
  *
  * @Flow\Scope("singleton")
  */
-class UnvalidatedNodeCache
+class TransientNodeCache
 {
     private $nodes = [];
 
@@ -19,7 +20,7 @@ class UnvalidatedNodeCache
      * @param string $nodeIdentifier
      * @return bool
      */
-    public function has($nodeIdentifier)
+    private function has($nodeIdentifier)
     {
         return array_key_exists($nodeIdentifier, $this->nodes);
     }
@@ -28,7 +29,7 @@ class UnvalidatedNodeCache
      * @param string $nodeIdentifier
      * @return NodeInterface
      */
-    public function get($nodeIdentifier)
+    private function get($nodeIdentifier)
     {
         return $this->nodes[$nodeIdentifier];
     }
@@ -37,7 +38,7 @@ class UnvalidatedNodeCache
      * @param string $nodeIdentifier
      * @param NodeInterface $node
      */
-    public function put($nodeIdentifier, NodeInterface $node)
+    private function put($nodeIdentifier, NodeInterface $node)
     {
         $this->nodes[$nodeIdentifier] = $node;
     }
