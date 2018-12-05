@@ -39,7 +39,7 @@ prototype(Neos.Neos:History.NodeEventRenderer) < prototype(Array) {
 		itemRenderer = Case {
 			default {
 				condition = true
-				type = ${'Neos.Neos:History.PublishedNode.' + eventsOfMatchedType[0].eventType}
+				type = ${'Neos.Neos:History.PublishedNode.' + Array.first(eventsOfMatchedType).eventType}
 			}
 		}
 	}
@@ -54,57 +54,59 @@ prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) < prototype(Template
 	templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/Index.html'
 	sectionName = 'eventElement'
 
-	subEventType = ${eventsOfMatchedType[0].eventType}
+	subEventType = ${Array.first(eventsOfMatchedType).eventType}
 	event = ${event}
 	linkedNode = Template {
 		templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/NodeLink.html'
 		event = ${event}
+		@process.trim = ${String.trim(value)}
 	}
 	user = Template {
 		templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/User.html'
 		event = ${event}
+		@process.trim = ${String.trim(value)}
 	}
 
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Adopt) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.adopted'
-	descriptionTranslationArguments = ${[this.user, Neos.Rendering.renderDimensions(eventsOfMatchedType[0].data.targetDimensions), I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, Neos.Rendering.renderDimensions(Array.first(eventsOfMatchedType).data.targetDimensions), I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.LabelChanged) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.renamed'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), eventsOfMatchedType[0].data.oldLabel, this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), Array.first(eventsOfMatchedType).data.oldLabel, this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Added) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.added'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Removed) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.removed'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Copy) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.copied'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Move) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.moved'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.Node.Updated) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.changed'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.ContentChanged) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.changedContent'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.nodeType)), this.linkedNode]}
 }
 
 prototype(Neos.Neos:History.PublishedNode.MissingEvent) < prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) {

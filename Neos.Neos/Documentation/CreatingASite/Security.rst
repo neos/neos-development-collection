@@ -576,9 +576,8 @@ Usage example:
       'Some.Package:ReadConfidentialTags':
         matcher: 'hasId("961c3c03-da50-4a77-a5b4-11d2bbab7197")'
 
-.. note::
-  You can find out more about the Asset Privileges in the `Neos Media documentation
-   <http://neos-media.readthedocs.io/en/stable/>`_
+.. note:: You can find out more about the Asset Privileges in the
+  `Neos Media documentation <http://neos-media.readthedocs.io/en/stable/>`_
 
 Restricting Access to Backend Modules
 =====================================
