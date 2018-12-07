@@ -152,11 +152,10 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
             $tagArray[] = (string)$matchingSite->getNodeIdentifier();
 
-            if (strpos($requestPath, '/') === false) {
-                // if the request path does not contain path segments (i.e. no slashes), we *know* that we found the
-                // site node. Note it is not enough to check for empty string here, as the requestPath might contain
-                // a workspace name and/or dimension information like @user-admin;language=en_US. We do not need to
-                // process this information here, as it has been already extracted beforehand and is part of $matchingSubgraph
+            if ($requestPath === '' || substr($requestPath, 0, 1) === '@') {
+                // if the request path is:
+                // - "" (empty string): we are at the homepage in the live WS
+                // - "@...": we are at the homepage in a user workspace
                 $matchingNode = $matchingSite;
                 return;
             }
@@ -218,6 +217,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
                     array_shift($remainingUriPathSegments);
                     if (empty($remainingUriPathSegments)) {
                         $matchingNode = $node;
+                        $continueTraversal = false;
                     } else {
                         $continueTraversal = true;
                     }
