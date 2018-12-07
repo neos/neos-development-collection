@@ -178,7 +178,7 @@ abstract class NodePaths
         foreach ($pathSegments as $pathSegment) {
             switch ($pathSegment) {
                 case '.':
-                    continue;
+                    break;
                 break;
                 case '..':
                     $absolutePath = NodePaths::getParentPath($absolutePath);
