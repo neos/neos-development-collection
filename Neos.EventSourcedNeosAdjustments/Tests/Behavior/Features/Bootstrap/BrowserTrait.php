@@ -20,7 +20,11 @@ use PHPUnit\Framework\Assert;
 trait BrowserTrait
 {
 
-    abstract function getObjectManager(): \Neos\Flow\ObjectManagement\ObjectManagerInterface;
+    /**
+     * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
+     */
+    abstract protected function getObjectManager();
+    abstract function getCurrentNodeAddress(): \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
     /**
      * @var \Neos\Flow\Http\Client\Browser
@@ -46,11 +50,21 @@ trait BrowserTrait
     protected $currentResponse;
 
     /**
+     * @var Request
+     */
+    protected $currentRequest;
+
+    /**
      * @When /^I visit "([^"]*)"$/
      */
     public function iVisit($uriPath)
     {
+        if (strpos($uriPath, 'CURRENT_NODE_ADDRESS') !== false) {
+            $uriPath = str_replace('CURRENT_NODE_ADDRESS', $this->getCurrentNodeAddress()->serializeForUri(), $uriPath);
+            var_dump($uriPath);
+        }
         $this->currentResponse = $this->browser->request(new \Neos\Flow\Http\Uri('http://localhost' . $uriPath));
+        $this->currentRequest = $this->browser->getLastRequest();
     }
 
     /**
@@ -61,5 +75,37 @@ trait BrowserTrait
         Assert::assertContains($expectedString, $this->currentResponse->getBody()->getContents());
     }
 
+    /**
+     * @Then /^the URL path is "([^"]*)"$/
+     */
+    public function theUrlIs($expectedUrlPath)
+    {
+        $actual = $this->currentRequest->getUri()->getPath();
+        Assert::assertEquals($expectedUrlPath, $actual, 'URL Paths do not match. Expected: ' . $expectedUrlPath . '; Actual: ' . $actual);
+    }
 
+    /**
+     * @Given /^I am logged in as "([^"]*)" "([^"]*)"$/
+     */
+    public function iShouldBeLoggedInAs($user, $password)
+    {
+        $this->browser->request(new \Neos\Flow\Http\Uri('http://localhost/neos/login'), 'POST', [
+            '__authentication' => [
+                'Neos' => [
+                    'Flow' => [
+                        'Security' => [
+                            'Authentication' => [
+                                'Token' => [
+                                    'UsernamePassword' => [
+                                        'username' => $user,
+                                        'password' => $password
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+    }
 }

@@ -15,15 +15,18 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecializationException;
 use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeExistsException;
+use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregateNotFound;
@@ -51,6 +54,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\Event\EventTypeResolver;
@@ -67,10 +71,6 @@ use Ramsey\Uuid\Uuid;
  */
 trait EventSourcedTrait
 {
-    /**
-     * @var \Neos\Flow\ObjectManagement\ObjectManager
-     */
-    private $objectManager;
 
     /**
      * @var EventTypeResolver
@@ -129,7 +129,27 @@ trait EventSourcedTrait
     protected $visibilityConstraints;
 
     /**
-     * @BeforeScenario @fixtures
+     * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
+     */
+    abstract protected function getObjectManager();
+
+    protected function setupEventSourcedTrait() {
+        $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
+        $this->nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
+        $this->eventTypeResolver = $this->getObjectManager()->get(EventTypeResolver::class);
+        $this->propertyMapper = $this->getObjectManager()->get(PropertyMapper::class);
+        $this->eventPublisher = $this->getObjectManager()->get(EventPublisher::class);
+        $this->eventStoreManager = $this->getObjectManager()->get(EventStoreManager::class);
+        $this->contentGraphInterface = $this->getObjectManager()->get(ContentGraphInterface::class);
+        $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
+        $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
+
+        $contentStreamRepository = $this->getObjectManager()->get(ContentStreamRepository::class);
+        \Neos\Utility\ObjectAccess::setProperty($contentStreamRepository, 'contentStreams', [], true);
+    }
+
+    /**
+     * @BeforeScenario
      * @return void
      * @throws \Exception
      */
@@ -329,7 +349,7 @@ trait EventSourcedTrait
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
         $command = $this->propertyMapper->convert($commandArguments, \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeSpecialization::class, $configuration);
         /** @var NodeAggregateCommandHandler $commandHandler */
-        $commandHandler = $this->objectManager->get(NodeAggregateCommandHandler::class);
+        $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
         $commandHandler->handleCreateNodeSpecialization($command);
     }
@@ -376,7 +396,7 @@ trait EventSourcedTrait
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
         $command = $this->propertyMapper->convert($commandArguments, RemoveNodeAggregate::class, $configuration);
         /** @var NodeCommandHandler $commandHandler */
-        $commandHandler = $this->objectManager->get(NodeCommandHandler::class);
+        $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
         $commandHandler->handleRemoveNodeAggregate($command);
     }
@@ -410,7 +430,7 @@ trait EventSourcedTrait
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
         $command = $this->propertyMapper->convert($commandArguments, RemoveNodesFromAggregate::class, $configuration);
         /** @var NodeCommandHandler $commandHandler */
-        $commandHandler = $this->objectManager->get(NodeCommandHandler::class);
+        $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
         $commandHandler->handleRemoveNodesFromAggregate($command);
     }
@@ -430,7 +450,7 @@ trait EventSourcedTrait
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
         $command = $this->propertyMapper->convert($commandArguments, CreateNodeGeneralization::class, $configuration);
         /** @var NodeAggregateCommandHandler $commandHandler */
-        $commandHandler = $this->objectManager->get(NodeAggregateCommandHandler::class);
+        $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
         $commandHandler->handleCreateNodeGeneralization($command);
     }
@@ -465,7 +485,7 @@ trait EventSourcedTrait
             $commandArguments['strategy'] ? new NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy($commandArguments['strategy']) : null
         );
         /** @var NodeAggregateCommandHandler $commandHandler */
-        $commandHandler = $this->objectManager->get(NodeAggregateCommandHandler::class);
+        $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
         $commandHandler->handleChangeNodeAggregateType($command);
     }
@@ -512,7 +532,7 @@ trait EventSourcedTrait
                 $command = $this->propertyMapper->convert($commandArguments, $commandClassName, $configuration);
         }
 
-        $commandHandler = $this->objectManager->get($commandHandlerClassName);
+        $commandHandler = $this->getObjectManager()->get($commandHandlerClassName);
 
         $commandHandler->$commandHandlerMethod($command);
 
@@ -1197,5 +1217,33 @@ trait EventSourcedTrait
         foreach ($subtree->getChildren() as $childSubtree) {
             self::flattenSubtreeForComparison($childSubtree, $result);
         }
+    }
+
+    /**
+     * @var \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress
+     */
+    private $currentNodeAddress;
+
+    /**
+     * @return \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress
+     */
+    protected function getCurrentNodeAddress(): \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress
+    {
+        return $this->currentNodeAddress;
+    }
+
+    /**
+     * @Given /^I get the node address for node aggregate "([^"]*)"$/
+     */
+    public function iGetTheNodeAddressForNodeAggregate($nodeAggregateIdentifier)
+    {
+        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
+        $node = $this->contentGraphInterface
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+
+        /* @var $nodeAddressFactory NodeAddressFactory */
+        $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
+        $this->currentNodeAddress = $nodeAddressFactory->createFromNode($node);
     }
 }

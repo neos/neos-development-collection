@@ -46,6 +46,11 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
     use EventSourcedTrait;
 
     /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+    /**
      * @var string
      */
     protected $behatTestHelperObjectName = \Neos\EventSourcedContentRepository\Tests\Functional\Command\BehatTestHelper::class;
@@ -61,20 +66,9 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
         /** @var FlowContext $flowContext */
         $flowContext = $this->getSubcontext('flow');
         $this->objectManager = $flowContext->getObjectManager();
-        $this->environment = $this->objectManager->get(Environment::class);
-        $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
-        $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $this->eventTypeResolver = $this->objectManager->get(EventTypeResolver::class);
-        $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
-        $this->eventPublisher = $this->objectManager->get(EventPublisher::class);
-        $this->eventStoreManager = $this->objectManager->get(EventStoreManager::class);
-        $this->contentGraphInterface = $this->objectManager->get(ContentGraphInterface::class);
-        $this->workspaceFinder = $this->objectManager->get(WorkspaceFinder::class);
-        $this->nodeTypeConstraintFactory = $this->objectManager->get(NodeTypeConstraintFactory::class);
 
-        $contentStreamRepository = $this->objectManager->get(ContentStreamRepository::class);
-        \Neos\Utility\ObjectAccess::setProperty($contentStreamRepository, 'contentStreams', [], true);
         $this->setupSecurity();
+        $this->setupEventSourcedTrait();
     }
 
     /**

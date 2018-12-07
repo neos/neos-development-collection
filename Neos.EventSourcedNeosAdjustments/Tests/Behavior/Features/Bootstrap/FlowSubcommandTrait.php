@@ -10,6 +10,7 @@
  * source code.
  */
 
+use Behat\Behat\Event\StepEvent;
 use Behat\Gherkin\Node\TableNode;
 use PHPUnit\Framework\Assert;
 
@@ -19,21 +20,58 @@ use PHPUnit\Framework\Assert;
 trait FlowSubcommandTrait
 {
 
-    abstract function getObjectManager(): \Neos\Flow\ObjectManagement\ObjectManagerInterface;
+    private static $onlyOnceRanStepsWhichShouldBeSkipped = [];
+
+    /**
+     * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
+     */
+    abstract protected function getObjectManager();
 
     protected function setupFlowSubcommandTrait()
     {
     }
 
-    protected function getConfigurationManager(): \Neos\Flow\Configuration\ConfigurationManager {
+    /**
+     * @BeforeFeature
+     */
+    static public function onlyOncePerFeatureReset() {
+        self::$onlyOnceRanStepsWhichShouldBeSkipped = [];
+    }
+
+    /**
+     * @Given /^I start with a clean database only once per feature$/
+     */
+    public function onlyOnce()
+    {
+        if (isset(self::$onlyOnceRanStepsWhichShouldBeSkipped['CLEAN_DATABASE'])) {
+            // already executed, skipping
+            return;
+        }
+        self::$onlyOnceRanStepsWhichShouldBeSkipped['CLEAN_DATABASE'] = true;
+
+        /* @var $flow \Neos\Behat\Tests\Behat\FlowContext */
+        $flow = $this->getSubcontext('flow');
+        $flow->resetTestFixtures(null);
+    }
+
+    protected function getConfigurationManager(): \Neos\Flow\Configuration\ConfigurationManager
+    {
         return $this->getObjectManager()->get(\Neos\Flow\Configuration\ConfigurationManager::class);
     }
 
     /**
-     * @Given /^I execute the flow command "([^"]*)"(?: with the following arguments:)?$/
+     * @Given /^I execute the flow command "([^"]*)"(?: with the following arguments)?( only once per feature)?:?$/
      */
-    public function iExecuteTheFlowCommandWithTheFollowingArguments($flowCommandName, TableNode $arguments = null)
+    public function iExecuteTheFlowCommandWithTheFollowingArguments($flowCommandName, $onlyOncePerFeature, TableNode $arguments = null)
     {
+        if ($onlyOncePerFeature) {
+            if (isset(self::$onlyOnceRanStepsWhichShouldBeSkipped[$flowCommandName])) {
+                // already executed, skipping
+                return;
+            }
+            self::$onlyOnceRanStepsWhichShouldBeSkipped[$flowCommandName] = true;
+        }
+
         $preparedCommandArguments = [];
 
         if ($arguments !== null) {

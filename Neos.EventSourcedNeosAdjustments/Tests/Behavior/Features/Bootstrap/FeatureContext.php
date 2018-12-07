@@ -13,6 +13,7 @@
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContext.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 require_once(__DIR__ . '/BrowserTrait.php');
 require_once(__DIR__ . '/FlowSubcommandTrait.php');
 use Neos\Behat\Tests\Behat\FlowContext;
@@ -31,6 +32,7 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
 
     use FlowSubcommandTrait;
     use BrowserTrait;
+    use EventSourcedTrait;
 
     /**
      * Initializes the context
@@ -46,6 +48,7 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
 
         $this->setupFlowSubcommandTrait();
         $this->setupBrowserTrait();
+        $this->setupEventSourcedTrait();
     }
 
     /**
