@@ -66,5 +66,4 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
     {
         return $this->objectManager->get(Environment::class);
     }
-
 }

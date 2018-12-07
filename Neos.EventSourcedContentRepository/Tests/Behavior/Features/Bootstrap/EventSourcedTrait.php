@@ -133,7 +133,8 @@ trait EventSourcedTrait
      */
     abstract protected function getObjectManager();
 
-    protected function setupEventSourcedTrait() {
+    protected function setupEventSourcedTrait()
+    {
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
         $this->nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
         $this->eventTypeResolver = $this->getObjectManager()->get(EventTypeResolver::class);

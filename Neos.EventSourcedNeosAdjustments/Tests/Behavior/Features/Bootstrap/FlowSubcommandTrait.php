@@ -10,7 +10,6 @@
  * source code.
  */
 
-use Behat\Behat\Event\StepEvent;
 use Behat\Gherkin\Node\TableNode;
 use PHPUnit\Framework\Assert;
 
@@ -19,7 +18,6 @@ use PHPUnit\Framework\Assert;
  */
 trait FlowSubcommandTrait
 {
-
     private static $onlyOnceRanStepsWhichShouldBeSkipped = [];
 
     /**
@@ -34,7 +32,8 @@ trait FlowSubcommandTrait
     /**
      * @BeforeFeature
      */
-    static public function onlyOncePerFeatureReset() {
+    public static function onlyOncePerFeatureReset()
+    {
         self::$onlyOnceRanStepsWhichShouldBeSkipped = [];
     }
 
