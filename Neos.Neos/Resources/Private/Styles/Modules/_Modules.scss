@@ -256,7 +256,7 @@
 		}
 
 		&:after {
-			@include fa-icon();
+			@extend .fas;
 			content: fa-content($fa-var-caret-down);
 			display: block;
 			position: absolute;

@@ -58,7 +58,7 @@
 				}
 
 				&::after {
-					@include fa-icon();
+					@extend .fas;
 					content: fa-content($fa-var-times);
 					margin-left: -2px;
 				}
