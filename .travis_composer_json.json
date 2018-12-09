@@ -38,9 +38,7 @@
       "mikey179/vfsstream": "~1.6",
       "phpunit/phpunit": "~7.1.0",
       "symfony/css-selector": "~2.0",
-      "neos/behat": "dev-master",
-      "sandstorm/plumber": "dev-master",
-      "sandstorm/phpprofiler": "dev-master"
+      "neos/behat": "dev-master"
   },
   "scripts": {
       "post-update-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
