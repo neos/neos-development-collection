@@ -145,6 +145,7 @@
 			}
 
 			.aloha-icon {
+				@extend .fas;
 				background: none;
 				-webkit-font-smoothing: antialiased;
 				font-size: 14px;
@@ -156,7 +157,6 @@
 				margin: 0px;
 				padding: 0px;
 				text-indent: 0px;
-				@include fa-icon();
 			}
 
 			&.ui-state-hover,
