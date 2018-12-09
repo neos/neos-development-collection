@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2018-11-13
+This reference was automatically generated from code on 2018-12-09
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -31,6 +31,37 @@ Concatenate arrays or values to a new array
 
 **Return** (array) The array with concatenated arrays or values
 
+Array.every(array, callback)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Check if all elements in an array pass a test given by the calback,
+passing each element and key as arguments
+
+Example::
+
+    Array.every([1, 2, 3, 4], x => x % 2 == 0) // == false
+    Array.every([2, 4, 6, 8], x => x % 2) // == true
+
+* ``array`` (array) Array of elements to test
+* ``callback`` (callable) Callback for testing elements, current value and key will be passed as arguments
+
+**Return** (bool) True if all elements passed the test
+
+Array.filter(array, callback)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Filter an array by a test given as the callback, passing each element and key as arguments
+
+Examples:
+
+    Array.filter([1, 2, 3, 4], x => x % 2 == 0) // == [2, 4]
+    Array.filter(['foo', 'bar', 'baz'], (x, index) => index < 2) // == ['foo', 'bar']
+
+* ``array`` (array) Array of elements to filter
+* ``callback`` (callable, *optional*) Callback for testing if an element should be included in the result, current value and key will be passed as arguments
+
+**Return** (array) The array with elements where callback returned true
+
 Array.first(array)
 ^^^^^^^^^^^^^^^^^^
 
@@ -45,7 +76,7 @@ Array.flip(array)
 
 Exchanges all keys with their associated values in an array
 
-Note that the values of array need to be valid keys, i.e. they need to be either integer or string.
+Note that the values of array need to be valid keys, i.e. they need to be either int or string.
 If a value has several occurrences, the latest key will be used as its value, and all others will be lost.
 
 * ``array`` (array)
@@ -71,7 +102,7 @@ Check if an array is empty
 
 * ``array`` (array) The array
 
-**Return** (boolean) true if the array is empty
+**Return** (bool) true if the array is empty
 
 Array.join(array, separator)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -108,7 +139,22 @@ Get the length of an array
 
 * ``array`` (array) The array
 
-**Return** (integer)
+**Return** (int)
+
+Array.map(array, callback)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Apply the callback to each element of the array, passing each element and key as arguments
+
+Examples::
+
+    Array.map([1, 2, 3, 4], x => x * x)
+    Array.map([1, 2, 3, 4], (x, index) => x * index)
+
+* ``array`` (array) Array of elements to map
+* ``callback`` (callable) Callback to apply for each element, current value and key will be passed as arguments
+
+**Return** (array) The array with callback applied, keys will be preserved
 
 Array.pop(array)
 ^^^^^^^^^^^^^^^^
@@ -144,7 +190,7 @@ Picks a random element from the array
 
 * ``array`` (array)
 
-**Return** (mixed) A random entry or NULL if the array is empty
+**Return** (mixed) A random entry or null if the array is empty
 
 Array.range(start, end, step)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -156,9 +202,25 @@ step should be given as a positive number. If not specified, step will default t
 
 * ``start`` (mixed) First value of the sequence.
 * ``end`` (mixed) The sequence is ended upon reaching the end value.
-* ``step`` (integer, *optional*) The increment between items, will default to 1.
+* ``step`` (int, *optional*) The increment between items, will default to 1.
 
 **Return** (array) Array of elements from start to end, inclusive.
+
+Array.reduce(array, callback, initialValue)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Apply the callback to each element of the array and accumulate a single value
+
+Examples::
+
+    Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue) // == 10
+    Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue, 1) // == 11
+
+* ``array`` (array) Array of elements to reduce to a value
+* ``callback`` (callable) Callback for accumulating values, accumulator, current value and key will be passed as arguments
+* ``initialValue`` (mixed, *optional*) Initial value, defaults to first item in array and callback starts with second entry
+
+**Return** (mixed)
 
 Array.reverse(array)
 ^^^^^^^^^^^^^^^^^^^^
@@ -168,6 +230,17 @@ Returns an array in reverse order
 * ``array`` (array) The array
 
 **Return** (array)
+
+Array.set(array, key, value)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Set the specified key in the the array
+
+* ``array`` (array)
+* ``key`` (string|integer) the key that should be set
+* ``value`` (mixed) the value to assign to the key
+
+**Return** (array) The modified array.
 
 Array.shift(array)
 ^^^^^^^^^^^^^^^^^^
@@ -191,7 +264,7 @@ Randomizes entries an array with the option to preserve the existing keys.
 When this option is set to false, all keys will be replaced
 
 * ``array`` (array)
-* ``preserveKeys`` (boolean, *optional*) Wether to preserve the keys when shuffling the array
+* ``preserveKeys`` (bool, *optional*) Wether to preserve the keys when shuffling the array
 
 **Return** (array) The shuffled array
 
@@ -201,10 +274,26 @@ Array.slice(array, begin, end)
 Extract a portion of an indexed array
 
 * ``array`` (array) The array (with numeric indices)
-* ``begin`` (string)
-* ``end`` (string, *optional*)
+* ``begin`` (int)
+* ``end`` (int, *optional*)
 
 **Return** (array)
+
+Array.some(array, callback)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Check if at least one element in an array passes a test given by the calback,
+passing each element and key as arguments
+
+Example::
+
+    Array.some([1, 2, 3, 4], x => x % 2 == 0) // == true
+    Array.some([1, 2, 3, 4], x => x > 4) // == false
+
+* ``array`` (array) Array of elements to test
+* ``callback`` (callable) Callback for testing elements, current value and key will be passed as arguments
+
+**Return** (bool) True if at least one element passed the test
 
 Array.sort(array)
 ^^^^^^^^^^^^^^^^^
@@ -230,8 +319,8 @@ Allows to give multiple replacements at once::
     Array.splice(array, 3, 2, 'a', 'b')
 
 * ``array`` (array)
-* ``offset`` (integer) Index of the first element to remove
-* ``length`` (integer, *optional*) Number of elements to remove
+* ``offset`` (int) Index of the first element to remove
+* ``length`` (int, *optional*) Number of elements to remove
 * ``replacements`` (mixed, *optional*) Elements to insert instead of the removed range
 
 **Return** (array) The array with removed and replaced elements
@@ -1441,6 +1530,21 @@ Example::
 
 **Return** (string) The character at the given index
 
+String.chr(value)
+^^^^^^^^^^^^^^^^^
+
+Generate a single-byte string from a number
+
+Example::
+
+    String.chr(65) == "A"
+
+This is a wrapper for the chr() PHP function.
+
+* ``value`` (int) An integer between 0 and 255
+
+**Return** (string) A single-character string containing the specified byte
+
 String.crop(string, maximumCharacters, suffix)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1585,9 +1689,43 @@ String.md5(string)
 
 Calculate the MD5 checksum of the given string
 
+Example::
+
+    String.md5("joh316") == "bacb98acf97e0b6112b1d1b650b84971"
+
 * ``string`` (string) The string to hash
 
 **Return** (string) The MD5 hash of ``string``
+
+String.nl2br(string)
+^^^^^^^^^^^^^^^^^^^^
+
+Insert HTML line breaks before all newlines in a string
+
+Example::
+
+    String.nl2br(someStingWithLinebreaks) == 'line1<br />line2'
+
+This is a wrapper for the nl2br() PHP function.
+
+* ``string`` (string) The input string
+
+**Return** (string) The string with new lines replaced
+
+String.ord(string)
+^^^^^^^^^^^^^^^^^^
+
+Convert the first byte of a string to a value between 0 and 255
+
+Example::
+
+    String.ord('A') == 65
+
+This is a wrapper for the ord() PHP function.
+
+* ``string`` (string) A character
+
+**Return** (int) An integer between 0 and 255
 
 String.pregMatch(string, pattern)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1685,6 +1823,19 @@ Note: this method does not perform regular expression matching, @see pregReplace
 * ``replace`` (string) A replacement string
 
 **Return** (string) The string with all occurrences replaced
+
+String.sha1(string)
+^^^^^^^^^^^^^^^^^^^
+
+Calculate the SHA1 checksum of the given string
+
+Example::
+
+    String.sha1("joh316") == "063b3d108bed9f88fa618c6046de0dccadcf3158"
+
+* ``string`` (string) The string to hash
+
+**Return** (string) The SHA1 hash of ``string``
 
 String.split(string, separator, limit)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
