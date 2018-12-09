@@ -5,8 +5,8 @@
   "license": "GPL-3.0+",
   "require": {
     "neos/event-sourced-content-repository": "*",
-    "doctrine/dbal": "~2.8.0",
-    "doctrine/migrations": "~1.8.1"
+    "doctrine/dbal": "~2.7.0",
+    "doctrine/migrations": "~1.8.0"
   },
   "autoload": {
     "psr-4": {
