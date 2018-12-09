@@ -23,7 +23,7 @@
 	}
 
 	&::after {
-		@include fa-icon();
+		@extend .fas;
 		position: absolute;
 		font-size: 14px;
 		color: $blue;
