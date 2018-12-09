@@ -32,12 +32,49 @@
  */
 .fa,
 .fas,
+.neos button[class^="fa-"],
+.neos button[class*=" fa-"],
+.neos .neos-button[class^="fa-"],
+.neos .neos-button[class*=" fa-"],
+.neos .neos-modal .neos-modal-header .neos-close,
+.neos .neos-modal-content .neos-modal-header .neos-close,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span:after,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove::after,
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-active:before,
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover:before,
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div:after,
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input + span::before,
+.neos #neos-inspector .neos-inspector-form .neos-radio input + span::before,
+.neos .neos-secondary-inspector .neos-close,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span::before,
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle::before,
+.neos #neos-context-bar .chosen-container .chosen-single div:after,
+.neos #neos-context-bar .chosen-container .chosen-single abbr::after,
+.neos #neos-context-bar .chosen-container .chosen-drop .chosen-search,
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary::before,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr::after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search,
+.neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon,
+.neos.neos-module .neos-select:after,
+.neos.neos-module .neos-checkbox input + span::before,
+.neos.neos-module .neos-radio input + span::before,
 .neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button,
+.neos .neos-position-selector::after,
+.aloha-block-draghandle,
+.neos-backend .ui-dialog .ui-widget-header .ui-button,
+.neos-select2-container .neos-select2-choice > .neos-select2-arrow:after,
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-field:after,
+.neos-select2-with-searchbox .neos-select2-search:after,
 .far,
 .fal,
 .fab {
@@ -142,8 +179,45 @@
 
 .fa.fa-pull-left,
 .fas.fa-pull-left,
+.neos button.fa-pull-left[class^="fa-"],
+.neos button.fa-pull-left[class*=" fa-"],
+.neos .fa-pull-left.neos-button[class^="fa-"],
+.neos .fa-pull-left.neos-button[class*=" fa-"],
+.neos .neos-modal .neos-modal-header .fa-pull-left.neos-close,
+.neos .neos-modal-content .neos-modal-header .fa-pull-left.neos-close,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span.fa-pull-left:after,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span.fa-pull-left:after,
 .neos ul.neos-dynatree-container .neos-dynatree-node .fa-pull-left.neos-dynatree-expander,
+.neos #neos-inspector .neos-inspector-file ul li .fa-pull-left.neos-asset-editor-remove::after,
+.neos #neos-inspector .neos-inspector-image .fa-pull-left.typo3-fileupload-dropzone.typo3-fileupload-dropzone-active:before,
+.neos #neos-inspector .neos-inspector-image .fa-pull-left.typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover:before,
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div.fa-pull-left:after,
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input + span.fa-pull-left::before,
+.neos #neos-inspector .neos-inspector-form .neos-radio input + span.fa-pull-left::before,
+.neos .neos-secondary-inspector .fa-pull-left.neos-close,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-left::before,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span.fa-pull-left::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span.fa-pull-left::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span.fa-pull-left::before,
+.neos #neos-publish-menu.neos-button-group .fa-pull-left.neos-dropdown-toggle::before,
+.neos #neos-context-bar .chosen-container .chosen-single div.fa-pull-left:after,
+.neos #neos-context-bar .chosen-container .chosen-single abbr.fa-pull-left::after,
+.neos #neos-context-bar .chosen-container .chosen-drop .fa-pull-left.chosen-search,
+.neos #neos-context-bar .neos-content-dimension-selector .fa-pull-left.neos-content-dimension-selector-summary::before,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div.fa-pull-left:after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr.fa-pull-left::after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .fa-pull-left.chosen-search,
+.neos #neos-aloha-topmenu .aloha .ui-button .fa-pull-left.aloha-icon,
+.neos.neos-module .fa-pull-left.neos-select:after,
+.neos.neos-module .neos-checkbox input + span.fa-pull-left::before,
+.neos.neos-module .neos-radio input + span.fa-pull-left::before,
 .neos #neos-notification-container.neos-notification-top > .neos-notification i.fa-pull-left.neos-close-button,
+.neos .fa-pull-left.neos-position-selector::after,
+.fa-pull-left.aloha-block-draghandle,
+.neos-backend .ui-dialog .ui-widget-header .fa-pull-left.ui-button,
+.neos-select2-container .neos-select2-choice > .fa-pull-left.neos-select2-arrow:after,
+.neos-select2-container-multi .neos-select2-choices .fa-pull-left.neos-select2-search-field:after,
+.neos-select2-with-searchbox .fa-pull-left.neos-select2-search:after,
 .far.fa-pull-left,
 .fal.fa-pull-left,
 .fab.fa-pull-left {
@@ -151,8 +225,45 @@
 }
 .fa.fa-pull-right,
 .fas.fa-pull-right,
+.neos button.fa-pull-right[class^="fa-"],
+.neos button.fa-pull-right[class*=" fa-"],
+.neos .fa-pull-right.neos-button[class^="fa-"],
+.neos .fa-pull-right.neos-button[class*=" fa-"],
+.neos .neos-modal .neos-modal-header .fa-pull-right.neos-close,
+.neos .neos-modal-content .neos-modal-header .fa-pull-right.neos-close,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span.fa-pull-right:after,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span.fa-pull-right:after,
 .neos ul.neos-dynatree-container .neos-dynatree-node .fa-pull-right.neos-dynatree-expander,
+.neos #neos-inspector .neos-inspector-file ul li .fa-pull-right.neos-asset-editor-remove::after,
+.neos #neos-inspector .neos-inspector-image .fa-pull-right.typo3-fileupload-dropzone.typo3-fileupload-dropzone-active:before,
+.neos #neos-inspector .neos-inspector-image .fa-pull-right.typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover:before,
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div.fa-pull-right:after,
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input + span.fa-pull-right::before,
+.neos #neos-inspector .neos-inspector-form .neos-radio input + span.fa-pull-right::before,
+.neos .neos-secondary-inspector .fa-pull-right.neos-close,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-right::before,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span.fa-pull-right::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span.fa-pull-right::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span.fa-pull-right::before,
+.neos #neos-publish-menu.neos-button-group .fa-pull-right.neos-dropdown-toggle::before,
+.neos #neos-context-bar .chosen-container .chosen-single div.fa-pull-right:after,
+.neos #neos-context-bar .chosen-container .chosen-single abbr.fa-pull-right::after,
+.neos #neos-context-bar .chosen-container .chosen-drop .fa-pull-right.chosen-search,
+.neos #neos-context-bar .neos-content-dimension-selector .fa-pull-right.neos-content-dimension-selector-summary::before,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div.fa-pull-right:after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr.fa-pull-right::after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .fa-pull-right.chosen-search,
+.neos #neos-aloha-topmenu .aloha .ui-button .fa-pull-right.aloha-icon,
+.neos.neos-module .fa-pull-right.neos-select:after,
+.neos.neos-module .neos-checkbox input + span.fa-pull-right::before,
+.neos.neos-module .neos-radio input + span.fa-pull-right::before,
 .neos #neos-notification-container.neos-notification-top > .neos-notification i.fa-pull-right.neos-close-button,
+.neos .fa-pull-right.neos-position-selector::after,
+.fa-pull-right.aloha-block-draghandle,
+.neos-backend .ui-dialog .ui-widget-header .fa-pull-right.ui-button,
+.neos-select2-container .neos-select2-choice > .fa-pull-right.neos-select2-arrow:after,
+.neos-select2-container-multi .neos-select2-choices .fa-pull-right.neos-select2-search-field:after,
+.neos-select2-with-searchbox .fa-pull-right.neos-select2-search:after,
 .far.fa-pull-right,
 .fal.fa-pull-right,
 .fab.fa-pull-right {
@@ -5346,12 +5457,49 @@ readers do not read off random characters that represent icons */
 }
 .fa,
 .fas,
+.neos button[class^="fa-"],
+.neos button[class*=" fa-"],
+.neos .neos-button[class^="fa-"],
+.neos .neos-button[class*=" fa-"],
+.neos .neos-modal .neos-modal-header .neos-close,
+.neos .neos-modal-content .neos-modal-header .neos-close,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span:after,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
-.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button {
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove::after,
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-active:before,
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover:before,
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div:after,
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input + span::before,
+.neos #neos-inspector .neos-inspector-form .neos-radio input + span::before,
+.neos .neos-secondary-inspector .neos-close,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span::before,
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle::before,
+.neos #neos-context-bar .chosen-container .chosen-single div:after,
+.neos #neos-context-bar .chosen-container .chosen-single abbr::after,
+.neos #neos-context-bar .chosen-container .chosen-drop .chosen-search,
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary::before,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr::after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search,
+.neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon,
+.neos.neos-module .neos-select:after,
+.neos.neos-module .neos-checkbox input + span::before,
+.neos.neos-module .neos-radio input + span::before,
+.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button,
+.neos .neos-position-selector::after,
+.aloha-block-draghandle,
+.neos-backend .ui-dialog .ui-widget-header .ui-button,
+.neos-select2-container .neos-select2-choice > .neos-select2-arrow:after,
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-field:after,
+.neos-select2-with-searchbox .neos-select2-search:after {
   font-family: 'FontAwesome';
   font-weight: 900;
 }
@@ -7408,11 +7556,6 @@ readers do not read off random characters that represent icons */
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=65);
   opacity: 0.65;
 }
-.neos button[class^="fa-"], .neos button[class*=" fa-"],
-.neos .neos-button[class^="fa-"],
-.neos .neos-button[class*=" fa-"] {
-  font-family: FontAwesome;
-}
 .neos button.neos-button-primary,
 .neos .neos-button.neos-button-primary {
   background-color: #00b5ff;
@@ -7738,14 +7881,6 @@ readers do not read off random characters that represent icons */
   text-shadow: none;
   filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -9097,14 +9232,6 @@ readers do not read off random characters that represent icons */
   border-left: 3px solid transparent;
 }
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f057";
   position: absolute;
   left: 12px;
@@ -9121,14 +9248,6 @@ readers do not read off random characters that represent icons */
   border-radius: 10px;
 }
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f017";
   font-weight: 400;
   position: absolute;
@@ -9725,14 +9844,6 @@ readers do not read off random characters that represent icons */
   background-color: #00b5ff;
 }
 .neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove::after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f00d";
   margin-left: -2px;
 }
@@ -9993,14 +10104,6 @@ readers do not read off random characters that represent icons */
 }
 .neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-active:before, .neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover:before {
   color: #fff;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f063";
   position: absolute;
   top: 50%;
@@ -10230,14 +10333,6 @@ readers do not read off random characters that represent icons */
   opacity: .15;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   display: block;
   position: absolute;
@@ -10643,14 +10738,6 @@ readers do not read off random characters that represent icons */
   border: 1px solid #adadad;
   color: #5b5b5b;
   cursor: pointer;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f00c";
   line-height: 20px;
   text-align: center;
@@ -11579,14 +11666,6 @@ readers do not read off random characters that represent icons */
   z-index: 10015;
   filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   -moz-transition-property: top, right;
   -o-transition-property: top, right;
   -webkit-transition-property: top, right;
@@ -11804,14 +11883,6 @@ readers do not read off random characters that represent icons */
   border: 1px solid #adadad;
   color: #5b5b5b;
   cursor: pointer;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f00c";
   line-height: 20px;
   text-align: center;
@@ -12013,14 +12084,6 @@ readers do not read off random characters that represent icons */
   margin-left: 0;
 }
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle::before {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   position: relative;
   top: 0;
@@ -12364,14 +12427,6 @@ readers do not read off random characters that represent icons */
   opacity: .15;
 }
 .neos #neos-context-bar .chosen-container .chosen-single div:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   display: block;
   position: absolute;
@@ -12394,14 +12449,6 @@ readers do not read off random characters that represent icons */
   color: #00b5ff;
 }
 .neos #neos-context-bar .chosen-container .chosen-single abbr::after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f057";
 }
 .neos #neos-context-bar .chosen-container .chosen-drop {
@@ -12420,14 +12467,6 @@ readers do not read off random characters that represent icons */
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-search {
   padding: 0;
   color: #000;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   font-size: 0;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-search input {
@@ -12569,14 +12608,6 @@ readers do not read off random characters that represent icons */
   clear: both;
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary::before {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   font-size: 14px;
   position: absolute;
@@ -13048,14 +13079,6 @@ readers do not read off random characters that represent icons */
   opacity: .15;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   display: block;
   position: absolute;
@@ -13078,14 +13101,6 @@ readers do not read off random characters that represent icons */
   color: #00b5ff;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr::after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f057";
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop {
@@ -13104,14 +13119,6 @@ readers do not read off random characters that represent icons */
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search {
   padding: 0;
   color: #000;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   font-size: 0;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search input {
@@ -13561,14 +13568,6 @@ readers do not read off random characters that represent icons */
   margin: 0px;
   padding: 0px;
   text-indent: 0px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
 }
 .neos #neos-aloha-topmenu .aloha .ui-button.ui-state-hover .aloha-icon, .neos #neos-aloha-topmenu .aloha .ui-button.aloha-button-active .aloha-icon {
   color: #00b5ff;
@@ -14224,14 +14223,6 @@ readers do not read off random characters that represent icons */
   opacity: .15;
 }
 .neos.neos-module .neos-select:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   display: block;
   position: absolute;
@@ -14369,14 +14360,6 @@ readers do not read off random characters that represent icons */
   border: 1px solid #adadad;
   color: #5b5b5b;
   cursor: pointer;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f00c";
   line-height: 20px;
   text-align: center;
@@ -15219,14 +15202,6 @@ readers do not read off random characters that represent icons */
   font-size: 14px;
 }
 .neos .neos-position-selector::after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   position: absolute;
   font-size: 14px;
   color: #00b5ff;
@@ -15903,14 +15878,6 @@ td.aloha-table-selectrow {
   overflow: hidden;
   display: hidden;
   line-height: 1em;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   font-size: 16px;
   cursor: pointer;
   color: #fff;
@@ -16005,14 +15972,6 @@ td.aloha-table-selectrow {
   text-shadow: none;
   filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -16916,14 +16875,6 @@ disabled look for disabled choices in the results dropdown
   opacity: .15;
 }
 .neos-select2-container .neos-select2-choice > .neos-select2-arrow:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   display: block;
   position: absolute;
@@ -16971,14 +16922,6 @@ disabled look for disabled choices in the results dropdown
   content: "\f002";
   line-height: 100%;
   font-size: 14px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   cursor: pointer;
 }
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice {
@@ -17052,14 +16995,6 @@ disabled look for disabled choices in the results dropdown
   content: "\f002";
   line-height: 100%;
   font-size: 14px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   cursor: pointer;
 }
 .neos-select2-with-searchbox .neos-select2-search input {
