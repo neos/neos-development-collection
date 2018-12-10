@@ -3,5 +3,5 @@
 TYPO3 Fluid ViewHelper Reference
 ================================
 
-This reference was automatically generated from code on 2018-11-13
+This reference was automatically generated from code on 2018-12-09
 

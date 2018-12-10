@@ -66,7 +66,7 @@ button,
 
 	&[class^="fa-"],
 	&[class*=" fa-"] {
-		font-family: FontAwesome;
+		@extend .fas;
 	}
 
 	&.neos-button-primary {
