@@ -47,7 +47,7 @@
 			}
 
 			&:after {
-				@include fa-icon();
+				@extend .fas;
 				content: fa-content($fa-var-caret-down);
 				display: block;
 				position: absolute;
@@ -74,7 +74,7 @@
 			}
 
 			&::after {
-				@include fa-icon();
+				@extend .fas;
 				content: fa-content($fa-var-times-circle);
 			}
 		}
@@ -90,9 +90,9 @@
 		margin-top: 0;
 
 		.chosen-search {
+			@extend .fas;
 			padding: 0;
 			color: $black;
-			@include fa-icon();
 			font-size: 0;
 
 			input {
