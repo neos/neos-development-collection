@@ -240,16 +240,16 @@
 			<target xml:lang="tr" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
-			<target xml:lang="tr" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+			<target xml:lang="tr" state="translated">{0}, {1} "{2}" taşıdı.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied the {1} "{2}".</source>
-			<target xml:lang="tr" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
+			<target xml:lang="tr" state="translated">{0}, {1} "{2}" kopyaladı.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target xml:lang="tr" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+			<target xml:lang="tr" state="translated">{0}, {1} "{2}" dan "{3}" olarak yeniden adlandırıldı.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target xml:lang="tr" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target xml:lang="tr" state="translated">{0}, {1} "{2}" içeriği değiştirdi.</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="tr" state="translated">{0}, {2} için "{1}" adlı yeni bir kullanıcı yarattı.</target></trans-unit>
