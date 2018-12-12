@@ -55,11 +55,14 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\EventStore\EventAndRawEvent;
 use Neos\EventSourcing\EventStore\EventStoreManager;
+use Neos\EventSourcing\EventStore\StreamName;
 use Neos\EventSourcing\EventStore\StreamNameFilter;
 use Neos\EventSourcing\EventStore\StreamNamePrefixFilter;
 use Neos\Flow\Property\PropertyMapper;
@@ -81,11 +84,6 @@ trait EventSourcedTrait
      * @var PropertyMapper
      */
     private $propertyMapper;
-
-    /**
-     * @var EventPublisher
-     */
-    private $eventPublisher;
 
     /**
      * @var EventStoreManager
@@ -139,7 +137,6 @@ trait EventSourcedTrait
         $this->nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
         $this->eventTypeResolver = $this->getObjectManager()->get(EventTypeResolver::class);
         $this->propertyMapper = $this->getObjectManager()->get(PropertyMapper::class);
-        $this->eventPublisher = $this->getObjectManager()->get(EventPublisher::class);
         $this->eventStoreManager = $this->getObjectManager()->get(EventStoreManager::class);
         $this->contentGraphInterface = $this->getObjectManager()->get(ContentGraphInterface::class);
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
@@ -169,7 +166,7 @@ trait EventSourcedTrait
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
-        $this->publishEvent('Neos.EventSourcedContentRepository:RootNodeWasCreated', $streamName, $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:RootNodeWasCreated', StreamName::fromString($streamName), $eventPayload);
         $this->rootNodeIdentifier = new NodeIdentifier($eventPayload['nodeIdentifier']);
     }
 
@@ -193,7 +190,7 @@ trait EventSourcedTrait
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated', $streamName, $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated', StreamName::fromString($streamName), $eventPayload);
     }
 
     /**
@@ -206,7 +203,7 @@ trait EventSourcedTrait
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeSpecializationWasCreated', $streamName, $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeSpecializationWasCreated', StreamName::fromString($streamName), $eventPayload);
     }
 
     /**
@@ -219,7 +216,7 @@ trait EventSourcedTrait
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
         $streamName = $this->replaceUuidIdentifiers($streamName);
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeGeneralizationWasCreated', $streamName, $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeGeneralizationWasCreated', StreamName::fromString($streamName), $eventPayload);
     }
 
     /**
@@ -231,31 +228,31 @@ trait EventSourcedTrait
         $streamName = $this->replaceUuidIdentifiers($streamName);
 
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $this->publishEvent($eventType, $streamName, $eventPayload);
+        $this->publishEvent($eventType, StreamName::fromString($streamName), $eventPayload);
     }
 
     /**
      * @param $eventType
-     * @param $streamName
+     * @param StreamName $streamName
      * @param $eventPayload
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    protected function publishEvent($eventType, $streamName, $eventPayload)
+    protected function publishEvent($eventType, StreamName $streamName, $eventPayload)
     {
         $eventClassName = $this->eventTypeResolver->getEventClassNameByType($eventType);
 
-        /** @var EventInterface $event */
+        /** @var DomainEventInterface $event */
         switch ($eventClassName) {
             case \Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereMoved::class:
                 \Neos\Flow\var_dump($eventPayload, 'hello from publishEvent');
                 exit();
             default:
-                $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-                $event = $this->propertyMapper->convert($eventPayload, $eventClassName, $configuration);
+                $event = $this->propertyMapper->convert($eventPayload, $eventClassName);
         }
 
-        $this->eventPublisher->publish($streamName, $event);
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
 
@@ -347,8 +344,7 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeSpecialization::class, $configuration);
+        $command = $this->propertyMapper->convert($commandArguments, \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeSpecialization::class);
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
@@ -394,8 +390,7 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, RemoveNodeAggregate::class, $configuration);
+        $command = $this->propertyMapper->convert($commandArguments, RemoveNodeAggregate::class);
         /** @var NodeCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
@@ -428,8 +423,7 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, RemoveNodesFromAggregate::class, $configuration);
+        $command = $this->propertyMapper->convert($commandArguments, RemoveNodesFromAggregate::class);
         /** @var NodeCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
@@ -448,8 +442,7 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, CreateNodeGeneralization::class, $configuration);
+        $command = $this->propertyMapper->convert($commandArguments, CreateNodeGeneralization::class);
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
@@ -529,8 +522,7 @@ trait EventSourcedTrait
                 );
                 break;
             default:
-                $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-                $command = $this->propertyMapper->convert($commandArguments, $commandClassName, $configuration);
+                $command = $this->propertyMapper->convert($commandArguments, $commandClassName);
         }
 
         $commandHandler = $this->getObjectManager()->get($commandHandlerClassName);

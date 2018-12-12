@@ -13,10 +13,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcing\Event\Decorator\EventWithMetadata;
-use Neos\EventSourcing\Event\EventInterface;
-use Neos\EventSourcing\Event\EventPublisher;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\EventSourcing\Event\DomainEvents;
+use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
-use Neos\EventSourcing\TypeConverter\EventToArrayConverter;
+use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
@@ -35,9 +36,9 @@ final class NodeEventPublisher
 
     /**
      * @Flow\Inject
-     * @var EventPublisher
+     * @var EventStoreManager
      */
-    protected $eventPublisher;
+    protected $eventStoreManager;
 
     /**
      * @Flow\Inject
@@ -85,40 +86,37 @@ final class NodeEventPublisher
     }
 
     /**
-     * @param string $streamName
-     * @param EventInterface $event
+     * @param StreamName $streamName
+     * @param DomainEventInterface $event
      * @param int $expectedVersion
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function publish(string $streamName, EventInterface $event, int $expectedVersion = ExpectedVersion::ANY)
+    public function publish(StreamName $streamName, DomainEventInterface $event, int $expectedVersion = ExpectedVersion::ANY): void
     {
-        $this->publishMany($streamName, [$event], $expectedVersion);
+        $this->publishMany($streamName, DomainEvents::withSingleEvent($event), $expectedVersion);
     }
 
     /**
-     * @param string $streamName
-     * @param array $events
+     * @param StreamName $streamName
+     * @param DomainEvents $events
      * @param int $expectedVersion
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function publishMany(string $streamName, array $events, int $expectedVersion = ExpectedVersion::ANY)
+    public function publishMany(StreamName $streamName, DomainEvents $events, int $expectedVersion = ExpectedVersion::ANY): void
     {
         if (count($events) === 0) {
             throw new \RuntimeException('TODO: publishMany() must be called with at least one event');
         }
-        $processedEvents = [];
+        $processedEvents = DomainEvents::createEmpty();
         foreach ($events as $event) {
             if (!($event instanceof CopyableAcrossContentStreamsInterface)) {
                 throw new \RuntimeException(sprintf('TODO: Event %s has to implement CopyableAcrossContentStreamsInterface', get_class($event)));
             }
 
             if ($this->command) {
-                $c = new PropertyMappingConfiguration();
-                $c->setTypeConverter(new EventToArrayConverter());
-
-                $commandPayload = $this->propertyMapper->convert($this->command, 'array', $c);
+                $commandPayload = $this->propertyMapper->convert($this->command, 'array');
 
                 if (!isset($commandPayload['contentStreamIdentifier'])) {
                     throw new \RuntimeException(sprintf('TODO: Command %s does not have a property "contentStreamIdentifier" (which is required).', get_class($this->command)));
@@ -130,10 +128,10 @@ final class NodeEventPublisher
                 $event = new EventWithMetadata($event, $metadata);
                 $this->command = null;
             }
-
-            $processedEvents[] = $event;
+            $processedEvents = $processedEvents->appendEvent($event);
         }
 
-        $this->eventPublisher->publishMany($streamName, $processedEvents, $expectedVersion);
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $eventStore->commit($streamName, $processedEvents, $expectedVersion);
     }
 }

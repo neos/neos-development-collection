@@ -13,9 +13,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
-class WorkspaceWasRebased implements EventInterface
+/**
+ * @Flow\Proxy(false)
+ */
+class WorkspaceWasRebased implements DomainEventInterface
 {
     /**
      * @var WorkspaceName

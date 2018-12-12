@@ -14,12 +14,15 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Node was removed event
+ *
+ * @Flow\Proxy(false)
  */
-final class NodesWereRemovedFromAggregate implements EventInterface, CopyableAcrossContentStreamsInterface
+final class NodesWereRemovedFromAggregate implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**

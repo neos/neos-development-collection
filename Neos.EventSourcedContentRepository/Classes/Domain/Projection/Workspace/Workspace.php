@@ -14,14 +14,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcing\Annotations as CQRS;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * Workspace Read Model
  *
  * @Flow\Entity
- * @CQRS\ReadModel
  * @ORM\Table(name="neos_contentrepository_projection_workspace_v1")
  */
 final class Workspace

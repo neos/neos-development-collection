@@ -66,9 +66,9 @@ final class ContentStream
     public function getNodeAggregate(NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate
     {
         if (!isset($this->nodeAggregates[(string)$nodeAggregateIdentifier])) {
-            $nodeAggregateStreamName = $this->getStreamName() . ':NodeAggregate:' . $nodeAggregateIdentifier;
+            $nodeAggregateStreamName = EventStore\StreamName::fromString($this->getStreamName() . ':NodeAggregate:' . $nodeAggregateIdentifier);
             $eventStore = $this->eventStoreManager->getEventStoreForStreamName($nodeAggregateStreamName);
-            $this->nodeAggregates[(string)$nodeAggregateIdentifier] = new NodeAggregate($nodeAggregateIdentifier, $eventStore, $nodeAggregateStreamName, $this->nodeEventPublisher);
+            $this->nodeAggregates[(string)$nodeAggregateIdentifier] = new NodeAggregate($nodeAggregateIdentifier, $eventStore, $nodeAggregateStreamName);
         }
 
         return $this->nodeAggregates[(string)$nodeAggregateIdentifier];

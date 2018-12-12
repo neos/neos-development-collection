@@ -37,7 +37,9 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
-use Neos\EventSourcing\Event\EventPublisher;
+use Neos\EventSourcing\Event\DomainEvents;
+use Neos\EventSourcing\EventStore\EventStoreManager;
+use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
@@ -84,9 +86,9 @@ class ContentRepositoryExportService
 
     /**
      * @Flow\Inject
-     * @var EventPublisher
+     * @var EventStoreManager
      */
-    protected $eventPublisher;
+    protected $eventStoreManager;
 
     /**
      * @var NodeIdentifier
@@ -141,10 +143,13 @@ class ContentRepositoryExportService
         $this->sitesRootNodeIdentifier = new NodeIdentifier();
         $this->nodeAggregateIdentifierForSitesNode = new NodeAggregateIdentifier();
 
-        $this->eventPublisher->publish($this->contentStreamName(), new ContentStreamWasCreated(
+        $streamName = $this->contentStreamName();
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $event = new ContentStreamWasCreated(
             $this->contentStreamIdentifier,
             UserIdentifier::forSystemUser()
-        ));
+        );
+        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
 
         $this->createWorkspaceAndRootNode();
 
@@ -230,10 +235,12 @@ class ContentRepositoryExportService
     ) {
         $visibleInDimensionSpacePoints = $this->interDimensionalFallbackGraph->getSpecializationSet($dimensionSpacePoint, true, $excludedSet);
         $this->recordNodeIdentifier($nodePath, $dimensionSpacePoint, $nodeIdentifier);
+        $streamName = StreamName::fromString('NodeAggregate:' . $nodeIdentifier);
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
 
         if (isset($this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier])) {
             // a Node of this NodeAggregate already exists; we create a Node
-            $this->eventPublisher->publish($this->contentStreamName('NodeAggregate:' . $nodeIdentifier), new NodeWasAddedToAggregate(
+            $event = new NodeWasAddedToAggregate(
                 $this->contentStreamIdentifier,
                 $nodeAggregateIdentifier,
                 $nodeTypeName,
@@ -243,10 +250,10 @@ class ContentRepositoryExportService
                 $parentNodeIdentifier,
                 $nodeName,
                 $propertyValues
-            ));
+            );
         } else {
             // first time a Node of this NodeAggregate is created
-            $this->eventPublisher->publish($this->contentStreamName('NodeAggregate:' . $nodeIdentifier), new NodeAggregateWithNodeWasCreated(
+            $event = new NodeAggregateWithNodeWasCreated(
                 $this->contentStreamIdentifier,
                 $nodeAggregateIdentifier,
                 $nodeTypeName,
@@ -256,26 +263,30 @@ class ContentRepositoryExportService
                 $parentNodeIdentifier,
                 $nodeName,
                 $propertyValues
-            ));
+            );
         }
+        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
 
         // publish reference edges
         foreach ($propertyReferences as $propertyName => $references) {
-            $this->eventPublisher->publish($this->contentStreamName('NodeAggregate:' . $nodeIdentifier), new NodeReferencesWereSet(
+            $streamName = $this->contentStreamName('NodeAggregate:' . $nodeIdentifier);
+            $event = new NodeReferencesWereSet(
                 $this->contentStreamIdentifier,
                 $visibleInDimensionSpacePoints,
                 new NodeIdentifier($nodeIdentifier),
                 new PropertyName($propertyName),
                 $references
-            ));
+            );
+            $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+            $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
         }
 
         $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = true;
     }
 
-    protected function contentStreamName($suffix = null)
+    protected function contentStreamName($suffix = null): StreamName
     {
-        return 'Neos.ContentRepository:ContentStream:' . $this->contentStreamIdentifier . ($suffix ? ':' . $suffix : '');
+        return StreamName::fromString('Neos.ContentRepository:ContentStream:' . $this->contentStreamIdentifier . ($suffix ? ':' . $suffix : ''));
     }
 
     private function processPropertyValues(NodeData $nodeData)
@@ -415,13 +426,16 @@ class ContentRepositoryExportService
 
     private function createWorkspaceAndRootNode()
     {
-        $this->eventPublisher->publish('Neos.ContentRepository:Workspace:live', new RootWorkspaceWasCreated(
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:live');
+        $event = new RootWorkspaceWasCreated(
             new WorkspaceName('live'),
             new WorkspaceTitle('Live'),
             new WorkspaceDescription(''),
             UserIdentifier::forSystemUser(),
             $this->contentStreamIdentifier
-        ));
+        );
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
 
         // we use the *command handler* instead of directly generating events here for CreateRootNode, because
         // the root node also contains dimension information (which is resolved in the command handler).

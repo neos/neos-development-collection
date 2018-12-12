@@ -12,7 +12,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\EventSourcing\Event\EventPublisher;
+use Neos\EventSourcing\Event\DomainEvents;
+use Neos\EventSourcing\EventStore\EventStoreManager;
 
 /**
  * ContentStreamCommandHandler
@@ -25,15 +26,15 @@ final class ContentStreamCommandHandler
     protected $contentStreamRepository;
 
     /**
-     * @var EventPublisher
+     * @var EventStoreManager
      */
-    protected $eventPublisher;
+    protected $eventStoreManager;
 
 
-    public function __construct(ContentStreamRepository $contentStreamRepository, EventPublisher $eventPublisher)
+    public function __construct(ContentStreamRepository $contentStreamRepository, EventStoreManager $eventStoreManager)
     {
         $this->contentStreamRepository = $contentStreamRepository;
-        $this->eventPublisher = $eventPublisher;
+        $this->eventStoreManager = $eventStoreManager;
     }
 
 
@@ -44,14 +45,13 @@ final class ContentStreamCommandHandler
     public function handleCreateContentStream(Command\CreateContentStream $command)
     {
         $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
-
-        $this->eventPublisher->publish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier()),
-            new Event\ContentStreamWasCreated(
-                $command->getContentStreamIdentifier(),
-                $command->getInitiatingUserIdentifier()
-            )
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName();
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $event = new Event\ContentStreamWasCreated(
+            $command->getContentStreamIdentifier(),
+            $command->getInitiatingUserIdentifier()
         );
+        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
     /**
@@ -65,15 +65,18 @@ final class ContentStreamCommandHandler
         $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
 
         $sourceContentStream = $this->contentStreamRepository->findContentStream($command->getSourceContentStreamIdentifier());
+        $sourceContentStreamVersion = $sourceContentStream !== null ? $sourceContentStream->getVersion() : -1;
 
-        $this->eventPublisher->publish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier()),
-            new Event\ContentStreamWasForked(
-                $command->getContentStreamIdentifier(),
-                $command->getSourceContentStreamIdentifier(),
-                $sourceContentStream->getVersion()
-            )
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName();
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+
+        $event = new Event\ContentStreamWasForked(
+            $command->getContentStreamIdentifier(),
+            $command->getSourceContentStreamIdentifier(),
+            $sourceContentStreamVersion
         );
+
+       $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
 

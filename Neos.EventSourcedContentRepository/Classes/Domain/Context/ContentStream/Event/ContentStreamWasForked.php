@@ -12,9 +12,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
-final class ContentStreamWasForked implements EventInterface
+/**
+ * @Flow\Proxy(false)
+ */
+final class ContentStreamWasForked implements DomainEventInterface
 {
 
     /**

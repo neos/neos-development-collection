@@ -15,12 +15,15 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Node property was set event
+ *
+ * @Flow\Proxy(false)
  */
-final class NodePropertyWasSet implements EventInterface, CopyableAcrossContentStreamsInterface
+final class NodePropertyWasSet implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**

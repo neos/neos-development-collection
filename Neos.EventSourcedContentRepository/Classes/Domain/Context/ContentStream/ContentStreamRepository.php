@@ -54,10 +54,10 @@ final class ContentStreamRepository
     public function findContentStream(ContentStreamIdentifier $contentStreamIdentifier): ?ContentStream
     {
         if (!isset($this->contentStreams[(string)$contentStreamIdentifier])) {
-            $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
+            $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName();
             $eventStore = $this->eventStoreManager->getEventStoreForStreamName($eventStreamName);
             try {
-                $eventStream = $eventStore->get(new StreamNameFilter($eventStreamName));
+                $eventStream = $eventStore->load($eventStreamName);
                 $eventStream->rewind();
                 if (!$eventStream->current()) {
                     // a content stream without events in its event stream does not exist yet

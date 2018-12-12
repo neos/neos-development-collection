@@ -40,12 +40,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\Worksp
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\EventSourcing\Event\EventPublisher;
-use Neos\EventSourcing\EventStore\EventAndRawEvent;
+use Neos\EventSourcing\Event\DomainEvents;
+use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
-use Neos\EventSourcing\EventStore\StreamNameFilter;
-use Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration;
+use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
 
@@ -71,12 +70,6 @@ final class WorkspaceCommandHandler
      * @var ContentStreamCommandHandler
      */
     protected $contentStreamCommandHandler;
-
-    /**
-     * @Flow\Inject
-     * @var EventPublisher
-     */
-    protected $eventPublisher;
 
     /**
      * @Flow\Inject
@@ -117,18 +110,18 @@ final class WorkspaceCommandHandler
             )
         );
 
-        $this->eventPublisher->publish(
-            'Neos.ContentRepository:Workspace:' . $command->getWorkspaceName(),
-            new WorkspaceWasCreated(
-                $command->getWorkspaceName(),
-                $command->getBaseWorkspaceName(),
-                $command->getWorkspaceTitle(),
-                $command->getWorkspaceDescription(),
-                $command->getInitiatingUserIdentifier(),
-                $command->getContentStreamIdentifier(),
-                $command->getWorkspaceOwner()
-            )
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $event = new WorkspaceWasCreated(
+            $command->getWorkspaceName(),
+            $command->getBaseWorkspaceName(),
+            $command->getWorkspaceTitle(),
+            $command->getWorkspaceDescription(),
+            $command->getInitiatingUserIdentifier(),
+            $command->getContentStreamIdentifier(),
+            $command->getWorkspaceOwner()
         );
+        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
     /**
@@ -150,17 +143,16 @@ final class WorkspaceCommandHandler
             )
         );
 
-
-        $this->eventPublisher->publish(
-            'Neos.ContentRepository:Workspace:' . $command->getWorkspaceName(),
-            new RootWorkspaceWasCreated(
-                $command->getWorkspaceName(),
-                $command->getWorkspaceTitle(),
-                $command->getWorkspaceDescription(),
-                $command->getInitiatingUserIdentifier(),
-                $contentStreamIdentifier
-            )
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $event = new RootWorkspaceWasCreated(
+            $command->getWorkspaceName(),
+            $command->getWorkspaceTitle(),
+            $command->getWorkspaceDescription(),
+            $command->getInitiatingUserIdentifier(),
+            $contentStreamIdentifier
         );
+        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
 
         $this->nodeCommandHandler->handleCreateRootNode(
             new CreateRootNode(
@@ -188,7 +180,7 @@ final class WorkspaceCommandHandler
         $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
 
         if ($baseWorkspace === null) {
-            throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $command->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513924882);
+            throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $workspace->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513924882);
         }
 
 
@@ -196,15 +188,15 @@ final class WorkspaceCommandHandler
         // - copy all events from the "user" content stream which implement "CopyableAcrossContentStreamsInterface"
         // - extract the initial ContentStreamWasForked event, to read the version of the source content stream when the fork occurred
         // - ensure that no other changes have been done in the meantime in the base content stream
-        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier())->getEventStreamName();
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
 
-        /* @var $workspaceContentStream EventAndRawEvent[] */
-        $workspaceContentStream = iterator_to_array($eventStore->get(new StreamNameFilter($workspaceContentStreamName)));
+        /* @var $workspaceContentStream EventEnvelope[] */
+        $workspaceContentStream = iterator_to_array($eventStore->load($workspaceContentStreamName));
 
         $events = [];
-        foreach ($workspaceContentStream as $eventAndRawEvent) {
-            $event = $eventAndRawEvent->getEvent();
+        foreach ($workspaceContentStream as $eventEnvelope) {
+            $event = $eventEnvelope->getDomainEvent();
             if ($event instanceof CopyableAcrossContentStreamsInterface) {
                 $events[] = $event->createCopyForContentStream($baseWorkspace->getCurrentContentStreamIdentifier());
             }
@@ -212,10 +204,11 @@ final class WorkspaceCommandHandler
 
         // TODO: maybe we should also emit a "WorkspaceWasPublished" event? But on which content stream?
 
-        $contentStreamWasForked = $this->extractSingleForkedContentStreamEvent($workspaceContentStream);
+        $contentStreamWasForked = self::extractSingleForkedContentStreamEvent($workspaceContentStream);
         try {
-            $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($baseWorkspace->getCurrentContentStreamIdentifier());
-            $this->eventPublisher->publishMany($baseWorkspaceContentStreamName, $events, $contentStreamWasForked->getVersionOfSourceContentStream());
+            $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($baseWorkspace->getCurrentContentStreamIdentifier())->getEventStreamName();
+            $eventStore = $this->eventStoreManager->getEventStoreForStreamName($baseWorkspaceContentStreamName);
+            $eventStore->commit($baseWorkspaceContentStreamName, DomainEvents::fromArray($events), $contentStreamWasForked->getVersionOfSourceContentStream());
         } catch (ConcurrencyException $e) {
             throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf('The base workspace has been modified in the meantime; please rebase. Expected version %d of source content stream %s', $contentStreamWasForked->getVersionOfSourceContentStream(), $baseWorkspace->getCurrentContentStreamIdentifier()));
         }
@@ -226,21 +219,21 @@ final class WorkspaceCommandHandler
      * @return ContentStreamWasForked
      * @throws \Exception
      */
-    protected static function extractSingleForkedContentStreamEvent(array $stream) : ContentStreamWasForked
+    private static function extractSingleForkedContentStreamEvent(array $stream) : ContentStreamWasForked
     {
-        $contentStreamWasForkedEvents = array_filter($stream, function (EventAndRawEvent $eventAndRawEvent) {
-            return $eventAndRawEvent->getEvent() instanceof ContentStreamWasForked;
+        $contentStreamWasForkedEvents = array_filter($stream, function (EventEnvelope $eventEnvelope) {
+            return $eventEnvelope->getDomainEvent() instanceof ContentStreamWasForked;
         });
 
         if (count($contentStreamWasForkedEvents) !== 1) {
             throw new \Exception(sprintf('TODO: only can publish a content stream which has exactly one ContentStreamWasForked; we found %d', count($contentStreamWasForkedEvents)));
         }
 
-        if (reset($contentStreamWasForkedEvents)->getEvent() !== reset($stream)->getEvent()) {
-            throw new \Exception(sprintf('TODO: stream has to start with a single ContentStreamWasForked event, found %s', get_class(reset($stream)->getEvent())));
+        if (reset($contentStreamWasForkedEvents)->getDomainEvent() !== reset($stream)->getDomainEvent()) {
+            throw new \Exception(sprintf('TODO: stream has to start with a single ContentStreamWasForked event, found %s', get_class(reset($stream)->getDomainEvent())));
         }
 
-        return reset($contentStreamWasForkedEvents)->getEvent();
+        return reset($contentStreamWasForkedEvents)->getDomainEvent();
     }
 
     /**
@@ -278,10 +271,10 @@ final class WorkspaceCommandHandler
             )
         );
 
-        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier())->getEventStreamName();
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
 
-        $workspaceContentStream = $eventStore->get(new StreamNameFilter($workspaceContentStreamName));
+        $workspaceContentStream = $eventStore->load($workspaceContentStreamName);
         foreach ($workspaceContentStream as $eventAndRawEvent) {
             $metadata = $eventAndRawEvent->getRawEvent()->getMetadata();
             if (isset($metadata['commandClass'])) {
@@ -291,7 +284,7 @@ final class WorkspaceCommandHandler
                 // try to apply the command on the rebased content stream
                 $commandToRebasePayload['contentStreamIdentifier'] = (string)$rebasedContentStream;
 
-                $commandToRebase = $this->propertyMapper->convert($commandToRebasePayload, $commandToRebaseClass, new AllowAllPropertiesPropertyMappingConfiguration());
+                $commandToRebase = $this->propertyMapper->convert($commandToRebasePayload, $commandToRebaseClass);
 
                 // TODO: use a more clever dispatching mechanism than the hard coded switch!!
                 switch (get_class($commandToRebase)) {
@@ -328,13 +321,13 @@ final class WorkspaceCommandHandler
             }
         }
 
-        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $this->eventPublisher->publish(
-            'Neos.ContentRepository:Workspace:' . $command->getWorkspaceName(),
-            new WorkspaceWasRebased(
-                $command->getWorkspaceName(),
-                $rebasedContentStream
-            )
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $event = new WorkspaceWasRebased(
+            $command->getWorkspaceName(),
+            $rebasedContentStream
         );
+        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
+        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 }

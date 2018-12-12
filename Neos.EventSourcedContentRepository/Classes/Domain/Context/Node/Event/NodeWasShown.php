@@ -14,12 +14,15 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Node was shown
+ *
+ * @Flow\Proxy(false)
  */
-final class NodeWasShown implements EventInterface, CopyableAcrossContentStreamsInterface
+final class NodeWasShown implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**

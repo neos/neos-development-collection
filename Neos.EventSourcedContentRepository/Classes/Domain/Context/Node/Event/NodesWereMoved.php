@@ -3,12 +3,15 @@
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Nodes were moved in a content stream as defined in the node move mappings
+ *
+ * @Flow\Proxy(false)
  */
-final class NodesWereMoved implements EventInterface, CopyableAcrossContentStreamsInterface
+final class NodesWereMoved implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
