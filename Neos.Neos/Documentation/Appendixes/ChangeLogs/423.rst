@@ -1,0 +1,29 @@
+`4.2.3 (2018-12-12) <https://github.com/neos/neos-development-collection/releases/tag/4.2.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix wrong Neos.Fusion:Map prototype name <https://github.com/neos/neos-development-collection/pull/2315>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This changes the wrong prototype name from `Neos.Fusion:Maping` to `Neos.Fusion:Map`
+
+Fixes #2313
+
+* Packages: ``Fusion`` ``Neos``
+
+`BUGFIX: Continue in switch targets surrounding foreach <https://github.com/neos/neos-development-collection/pull/2309>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Return complete Neos.Fusion:Debug / DebugDump <https://github.com/neos/neos-development-collection/pull/2253>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Solves #2176 
+
+* Packages: ``Fusion`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.2.2...4.2.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
