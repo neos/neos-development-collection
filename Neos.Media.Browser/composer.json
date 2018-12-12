@@ -14,8 +14,8 @@
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
-        "doctrine/common": "~2.7",
-        "doctrine/orm": "~2.6.0"
+        "doctrine/common": "^2.7",
+        "doctrine/orm": "^2.6"
     },
     "autoload": {
         "psr-4": {
