@@ -36,7 +36,7 @@ prototype(Neos.Fusion:Loop) {
   itemKey = 'itemKey'
   iterationName = 'iterator'
 }
-prototype(Neos.Fusion:Maping) {
+prototype(Neos.Fusion:Map) {
   @class = 'Neos\\Fusion\\FusionObjects\\MapImplementation'
   itemName = 'item'
   itemKey = 'itemKey'
