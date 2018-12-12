@@ -18,7 +18,7 @@ use Neos\Flow\Annotations\Identity;
 /**
  * @Entity
  */
-final class ImportedAsset
+class ImportedAsset
 {
     /**
      * @Identity()
