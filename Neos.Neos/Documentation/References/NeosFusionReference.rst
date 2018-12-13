@@ -171,7 +171,7 @@ Render each item in ``items`` using ``itemRenderer``.
 
 Example using an object ``itemRenderer``::
 
-	myCollection = Neos.Fusion:Collection {
+	myLoop = Neos.Fusion:Loop {
 		items = ${[1, 2, 3]}
 		itemName = 'element'
 		itemRenderer = Neos.Fusion:Template {
@@ -183,7 +183,7 @@ Example using an object ``itemRenderer``::
 
 Example using an expression ``itemRenderer``::
 
-	myCollection = Neos.Fusion:Collection {
+	myLoop = Neos.Fusion:Loop {
 		items = ${[1, 2, 3]}
 		itemName = 'element'
 		itemRenderer = ${element * 2}
