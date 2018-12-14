@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 /**
@@ -25,6 +26,9 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
  */
 interface TraversableNodeInterface extends NodeInterface
 {
+
+    public function getSubgraph(): ContentSubgraphInterface;
+
     /**
      * Retrieves and returns the parent node from the node's subgraph.
      * Returns null if this is a root node.

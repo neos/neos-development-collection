@@ -39,6 +39,7 @@ use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\ContentRepository\Utility;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 
 /**
  * This is the main API for storing and retrieving content in the system.
@@ -107,6 +108,11 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     {
         $this->nodeData = $nodeData;
         $this->context = $context;
+    }
+
+    public function getSubgraph(): ContentSubgraphInterface
+    {
+        throw new \RuntimeException('Not implemented!');
     }
 
     /**
