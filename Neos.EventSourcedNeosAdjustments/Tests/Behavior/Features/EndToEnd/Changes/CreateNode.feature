@@ -6,7 +6,7 @@ Feature: Nodes can be created
 
   for
   - Document Nodes
-  - TODO: Content Nodes
+  - Content Nodes
 
   Background:
     Given I start with a clean database only once per feature
@@ -24,11 +24,12 @@ Feature: Nodes can be created
     And I am logged in as "admin" "password"
     Given I am in the active content stream of workspace "user-admin" and Dimension Space Point {"language": "en_US"}
     And I get the node address for the node at path "/neosdemo", remembering it as "HOMEPAGE"
+    And I get the node address for the node at path "/neosdemo/main", remembering it as "MAIN"
 
   Scenario: CreateInto on Document Nodes
     When I send the following changes:
     # TODO: create a separate testcase with server-generated name (i.e. without "title" property)
-      | Type                    | Subject Node Address | Payload                                                                                                                                                                                                                                                      |
+      | Type                    | Subject Node Address | Payload                                                                                                                                                                                                                                                     |
       | Neos.Neos.Ui:CreateInto | HOMEPAGE             | {"nodeType":"Neos.NodeTypes:Page", "data": {"title":"newnode"}, "parentContextPath": "HOMEPAGE", "parentDomAddress": {"contextPath": "HOMEPAGE", "fusionPath": "landingPage<Neos.NodeTypes:Page>/body<Neos.Fusion:Template>/footer/__meta/context/node<>"}} |
     Then the feedback contains "Neos.Neos.Ui:UpdateWorkspaceInfo"
     Then the feedback contains "Neos.Neos.Ui:UpdateNodeInfo"
@@ -40,3 +41,12 @@ Feature: Nodes can be created
     #  | Key            | Value   |
     #  | title          | newnode |
     #  | urlPathSegment | newnode |
+
+  Scenario: CreateInto on Content Nodes
+    When I send the following changes:
+      | Type                    | Subject Node Address | Payload                                                                                                                                                                                                                                                                                                 |
+      | Neos.Neos.Ui:CreateInto | MAIN                 | {"nodeType":"Neos.NodeTypes:Headline", "data": {"title":"newnode"}, "parentContextPath": "MAIN", "parentDomAddress": {"contextPath": "MAIN", "fusionPath": "landingPage<Neos.NodeTypes:Page>/body<Neos.Fusion:Template>/content/main<Neos.Neos:PrimaryContent>/default<Neos.Fusion:Matcher>/renderer"}} |
+    Then the feedback contains "Neos.Neos.Ui:UpdateWorkspaceInfo"
+    Then the feedback contains "Neos.Neos.Ui:UpdateNodeInfo"
+    Then the feedback contains "Neos.Neos.Ui:RenderContentOutOfBand"
+    Then the feedback contains "Neos.Neos.Ui:NodeCreated"

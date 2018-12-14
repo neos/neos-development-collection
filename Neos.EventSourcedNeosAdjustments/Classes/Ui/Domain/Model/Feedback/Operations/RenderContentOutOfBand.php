@@ -13,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Fusion\Core\Cache\ContentCache;
@@ -20,7 +21,6 @@ use Neos\Fusion\Exception as FusionException;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
-use Neos\Neos\View\FusionView as FusionView;
 
 class RenderContentOutOfBand extends AbstractFeedback
 {
@@ -217,6 +217,7 @@ class RenderContentOutOfBand extends AbstractFeedback
         $fusionView->setControllerContext($controllerContext);
 
         $fusionView->assign('value', $this->getNode()->findParentNode());
+        $fusionView->assign('subgraph', $this->getNode()->getSubgraph());
         $fusionView->setFusionPath($parentDomAddress->getFusionPath());
 
         return $fusionView->render();
