@@ -25,6 +25,9 @@ Feature: Nodes can be created
     Given I am in the active content stream of workspace "user-admin" and Dimension Space Point {"language": "en_US"}
     And I get the node address for the node at path "/neosdemo", remembering it as "HOMEPAGE"
     And I get the node address for the node at path "/neosdemo/main", remembering it as "MAIN"
+    And I get the node address for the node at path "/neosdemo/teaser", remembering it as "TEASER_COLLECTION"
+    # Teaser text in /neosdemo/teaser
+    And I get the node address for node aggregate "d17caff2-f50c-d30b-b735-9b9216de02e9", remembering it as "TEASERTEXT"
 
   Scenario: CreateInto on Document Nodes
     When I send the following changes:
@@ -45,7 +48,17 @@ Feature: Nodes can be created
   Scenario: CreateInto on Content Nodes
     When I send the following changes:
       | Type                    | Subject Node Address | Payload                                                                                                                                                                                                                                                                                                 |
-      | Neos.Neos.Ui:CreateInto | MAIN                 | {"nodeType":"Neos.NodeTypes:Headline", "data": {"title":"newnode"}, "parentContextPath": "MAIN", "parentDomAddress": {"contextPath": "MAIN", "fusionPath": "landingPage<Neos.NodeTypes:Page>/body<Neos.Fusion:Template>/content/main<Neos.Neos:PrimaryContent>/default<Neos.Fusion:Matcher>/renderer"}} |
+      | Neos.Neos.Ui:CreateInto | MAIN                 | {"nodeType":"Neos.NodeTypes:Headline", "parentContextPath": "MAIN", "parentDomAddress": {"contextPath": "MAIN", "fusionPath": "landingPage<Neos.NodeTypes:Page>/body<Neos.Fusion:Template>/content/main<Neos.Neos:PrimaryContent>/default<Neos.Fusion:Matcher>/renderer"}} |
+    Then the feedback contains "Neos.Neos.Ui:UpdateWorkspaceInfo"
+    Then the feedback contains "Neos.Neos.Ui:UpdateNodeInfo"
+    Then the feedback contains "Neos.Neos.Ui:RenderContentOutOfBand"
+    Then the feedback contains "Neos.Neos.Ui:NodeCreated"
+
+
+  Scenario: CreateAfter on Content Nodes
+    When I send the following changes:
+      | Type                     | Subject Node Address | Payload                                                                                                                                                                                                                                         |
+      | Neos.Neos.Ui:CreateAfter | TEASERTEXT           | {"nodeType":"Neos.NodeTypes:Headline", "siblingDomAddress": {"contextPath": "TEASERTEXT"}, "parentDomAddress": {"contextPath": "TEASER_COLLECTION", "fusionPath": "landingPage<Neos.NodeTypes:Page>/body<Neos.Fusion:Template>/content/teaser"}} |
     Then the feedback contains "Neos.Neos.Ui:UpdateWorkspaceInfo"
     Then the feedback contains "Neos.Neos.Ui:UpdateNodeInfo"
     Then the feedback contains "Neos.Neos.Ui:RenderContentOutOfBand"

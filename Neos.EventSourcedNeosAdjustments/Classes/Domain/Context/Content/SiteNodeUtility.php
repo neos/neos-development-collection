@@ -20,8 +20,7 @@ use Neos\Flow\Annotations as Flow;
  */
 class SiteNodeUtility
 {
-
-    static public function findSiteNode(TraversableNodeInterface $node): TraversableNodeInterface
+    public static function findSiteNode(TraversableNodeInterface $node): TraversableNodeInterface
     {
         $previousNode = null;
         do {
