@@ -922,10 +922,10 @@ trait EventSourcedTrait
     public function iExpectANodeIdentifiedByAggregateIdentifierToExistInTheSubgraph(string $nodeAggregateIdentifier)
     {
         $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
-        $node = $this->contentGraphInterface
+        $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
-        Assert::assertNotNull($node, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
+        Assert::assertNotNull($this->currentNode, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
     }
 
     /**
@@ -1221,30 +1221,69 @@ trait EventSourcedTrait
     }
 
     /**
-     * @var \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress
+     * @var \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress[]
      */
-    private $currentNodeAddress;
+    private $currentNodeAddresses;
 
     /**
      * @return \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress
      */
-    protected function getCurrentNodeAddress(): \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress
+    protected function getCurrentNodeAddress(string $alias = null): \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress
     {
-        return $this->currentNodeAddress;
+        if ($alias === null) {
+            $alias = 'DEFAULT';
+        }
+        return $this->currentNodeAddresses[$alias];
     }
 
     /**
-     * @Given /^I get the node address for node aggregate "([^"]*)"$/
+     * @return \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress[]
      */
-    public function iGetTheNodeAddressForNodeAggregate($nodeAggregateIdentifier)
+    public function getCurrentNodeAddresses(): array
+    {
+        return $this->currentNodeAddresses;
+    }
+
+    /**
+     * @Given /^I get the node address for node aggregate "([^"]*)"(?:, remembering it as "([^"]*)")?$/
+     */
+    public function iGetTheNodeAddressForNodeAggregate($nodeAggregateIdentifier, $alias = 'DEFAULT')
     {
         $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+        Assert::assertNotNull($node, 'Did find node with aggregate identifier "' . $nodeAggregateIdentifier . '"');
 
         /* @var $nodeAddressFactory NodeAddressFactory */
         $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
-        $this->currentNodeAddress = $nodeAddressFactory->createFromNode($node);
+        $this->currentNodeAddresses[$alias] = $nodeAddressFactory->createFromNode($node);
+    }
+
+    /**
+     * @Then /^I get the node address for the node at path "([^"]*)"(?:, remembering it as "([^"]*)")?$/
+     * @throws Exception
+     */
+    public function iGetTheNodeAddressForTheNodeAtPath($nodePath, $alias = 'DEFAULT')
+    {
+        $node = $this->contentGraphInterface
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByPath($nodePath, RootNodeIdentifiers::rootNodeAggregateIdentifier());
+        Assert::assertNotNull($node, 'Did find node at path "' . $nodePath . '"');
+
+        /* @var $nodeAddressFactory NodeAddressFactory */
+        $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
+        $this->currentNodeAddresses[$alias] = $nodeAddressFactory->createFromNode($node);
+    }
+
+    /**
+     * @Then /^I get the node at path "([^"]*)"$/
+     * @throws Exception
+     */
+    public function iGetTheNodeAtPath($nodePath)
+    {
+        $this->currentNode = $this->contentGraphInterface
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByPath($nodePath, RootNodeIdentifiers::rootNodeAggregateIdentifier());
     }
 }

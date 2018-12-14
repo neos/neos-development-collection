@@ -13,7 +13,7 @@ Feature: The demo site is rendered when we log into the system.
       | Name       | Value     |
       | packageKey | Neos.Demo |
     And I execute the flow command "contentrepositorymigrate:run" only once per feature
-  And I am logged in as "admin" "password"
+    And I am logged in as "admin" "password"
 
   Scenario: rendering the homepage in backend works
     When I visit "/@user-admin;language=en_US"
@@ -30,3 +30,4 @@ Feature: The demo site is rendered when we log into the system.
     And I get the node address for node aggregate "a3474e1d-dd60-4a84-82b1-18d2f21891a3"
     When I visit "/neos/redirect?node=CURRENT_NODE_ADDRESS"
     Then the URL path is "/features@user-admin;language=en_US.html"
+    And the content of the page contains "Built for Extensibility"
