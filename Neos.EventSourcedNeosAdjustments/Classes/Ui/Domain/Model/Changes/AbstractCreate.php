@@ -15,12 +15,24 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Exception\InvalidNodeCreationHandlerException;
 
 abstract class AbstractCreate extends AbstractStructuralChange
 {
+    /**
+     * @Flow\Inject
+     * @var NodeCommandHandler
+     */
+    protected $nodeCommandHandler;
+
     /**
      * The type of the node that will be created
      *
@@ -120,6 +132,36 @@ abstract class AbstractCreate extends AbstractStructuralChange
     public function getName()
     {
         return $this->name;
+    }
+
+    protected function createNode(TraversableNodeInterface $parentNode): TraversableNodeInterface
+    {
+        // TODO: the $name=... line should be as expressed below
+        // $name = $this->getName() ?: $this->nodeService->generateUniqueNodeName($parent->findParentNode());
+        $nodeName = new NodeName($this->getName() ?: uniqid('node-'));
+
+        $nodeAggregateIdentifier = new NodeAggregateIdentifier(); // generate a new NodeAggregateIdentifier
+
+        $command = new CreateNodeAggregateWithNode(
+            $parentNode->getContentStreamIdentifier(),
+            $nodeAggregateIdentifier,
+            new NodeTypeName($this->getNodeType()->getName()),
+            $parentNode->getDimensionSpacePoint(),
+            new NodeIdentifier(), // generate a new NodeIdentifier
+            $parentNode->getNodeIdentifier(),
+            $nodeName
+        );
+
+        $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
+
+        $newlyCreatedNode = $parentNode->findNamedChildNode($nodeName);
+        $this->applyNodeCreationHandlers($newlyCreatedNode);
+
+        $this->finish($newlyCreatedNode);
+        // NOTE: we need to run "finish" before "addNodeCreatedFeedback" to ensure the new node already exists when the last feedback is processed
+        $this->addNodeCreatedFeedback($newlyCreatedNode);
+
+        return $newlyCreatedNode;
     }
 
     /**
