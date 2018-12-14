@@ -228,6 +228,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             'isAutoCreated' => self::isAutoCreated($node),
             'depth' => $node->findNodePath()->getDepth(),
             'children' => [],
+            'parent' => $this->nodeAddressFactory->createFromNode($node->findParentNode())->serializeForUri(),
             // TODO: "matchescurrentdimensions"
             //'matchesCurrentDimensions' => ($node instanceof Node && $node->dimensionsAreMatchingTargetDimensionValues())
         ];
