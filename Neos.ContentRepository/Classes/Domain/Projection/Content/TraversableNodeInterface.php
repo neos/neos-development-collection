@@ -26,7 +26,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
  */
 interface TraversableNodeInterface extends NodeInterface
 {
-
     public function getSubgraph(): ContentSubgraphInterface;
 
     /**
