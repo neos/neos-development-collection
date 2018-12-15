@@ -184,7 +184,7 @@ class UsersController extends AbstractModuleController
     public function editAction(User $user): void
     {
         if (!$this->isEditingAllowed($user)) {
-            $this->addFlashMessage('Not allowed to edit the user "%s".', 'User editing denied', Message::SEVERITY_ERROR, array(htmlspecialchars($username)), 1416225563);
+            $this->addFlashMessage('Not allowed to edit the user "%s".', 'User editing denied', Message::SEVERITY_ERROR, [htmlspecialchars($username)], 1416225563);
             $this->redirect('index');
         }
 
@@ -395,7 +395,8 @@ class UsersController extends AbstractModuleController
      * 
      * @return array
      */
-    protected function getAllowedRoles() {
+    protected function getAllowedRoles()
+    {
         $currentUserRoles = $this->currentUser->getAccounts()[0]->getRoles();
         return $this->isAdministrator ? $this->policyService->getRoles() : $currentUserRoles;
     }
@@ -404,7 +405,8 @@ class UsersController extends AbstractModuleController
      * Returns whether the current user is allowed to edit the given user.
      * Administrators can edit anybody.
      */
-    protected function isEditingAllowed($user) {
+    protected function isEditingAllowed($user)
+    {
         if ($this->isAdministrator) {
             return true;
         }
