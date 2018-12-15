@@ -392,7 +392,7 @@ class UsersController extends AbstractModuleController
     /**
      * Returns the roles that the current editor is able to assign
      * Administrator can assign any roles, other users can only assign their own roles
-     * 
+     *
      * @return array
      */
     protected function getAllowedRoles()
