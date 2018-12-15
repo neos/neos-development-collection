@@ -61,6 +61,11 @@ class UsersController extends AbstractModuleController
     protected $currentUser;
 
     /**
+     * @var Boolean
+     */
+    protected $isAdministrator;
+
+    /**
      * @Flow\Inject
      * @var TokenAndProviderFactoryInterface
      */
@@ -87,6 +92,8 @@ class UsersController extends AbstractModuleController
             }
         }
         $this->currentUser = $this->userService->getCurrentUser();
+        $adminRole = $this->policyService->getRole('Neos.Neos:Administrator');
+        $this->isAdministrator = $this->currentUser->getAccounts()[0]->hasRole($adminRole);
     }
 
     /**
@@ -120,6 +127,7 @@ class UsersController extends AbstractModuleController
     {
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
+            'isEditingAllowed' => $this->isEditingAllowed($user),
             'user' => $user
         ]);
     }
@@ -135,7 +143,7 @@ class UsersController extends AbstractModuleController
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
             'user' => $user,
-            'roles' => $this->policyService->getRoles(),
+            'roles' => $this->getAllowedRoles(),
             'providers' => $this->getAuthenticationProviders()
         ]);
     }
@@ -156,8 +164,14 @@ class UsersController extends AbstractModuleController
      */
     public function createAction(string $username, array $password, User $user, array $roleIdentifiers, string $authenticationProviderName = null): void
     {
-        $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
-        $this->addFlashMessage('The user "%s" has been created.', 'User created', Message::SEVERITY_OK, [htmlspecialchars($username)], 1416225561);
+        $currentUserRoles = $this->currentUser->getAccounts()[0]->getRoles();
+        $isCreationAllowed = count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;
+        if ($isCreationAllowed) {
+            $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
+            $this->addFlashMessage('The user "%s" has been created.', 'User created', Message::SEVERITY_OK, [htmlspecialchars($username)], 1416225561);
+        } else {
+            $this->addFlashMessage('Not allowed to create a user with roles "%s".', 'User creation denied', Message::SEVERITY_ERROR, [implode(', ', $roleIdentifiers)], 1416225562);
+        }
         $this->redirect('index');
     }
 
@@ -169,12 +183,17 @@ class UsersController extends AbstractModuleController
      */
     public function editAction(User $user): void
     {
+        if (!$this->isEditingAllowed($user)) {
+            $this->addFlashMessage('Not allowed to edit the user "%s".', 'User editing denied', Message::SEVERITY_ERROR, array(htmlspecialchars($username)), 1416225563);
+            $this->redirect('index');
+        }
+
         $this->assignElectronicAddressOptions();
 
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
             'user' => $user,
-            'availableRoles' => $this->policyService->getRoles()
+            'availableRoles' => $this->getAllowedRoles()
         ]);
     }
 
@@ -187,6 +206,10 @@ class UsersController extends AbstractModuleController
      */
     public function updateAction(User $user): void
     {
+        if (!$this->isEditingAllowed($user)) {
+            $this->addFlashMessage('Not allowed to edit the user "%s".', 'User editing denied', Message::SEVERITY_ERROR, [$user->getName()->getFullName()], 1416225563);
+            $this->redirect('index');
+        }
         $this->userService->updateUser($user);
         $this->addFlashMessage('The user "%s" has been updated.', 'User updated', Message::SEVERITY_OK, [$user->getName()->getFullName()], 1412374498);
         $this->redirect('index');
@@ -202,6 +225,10 @@ class UsersController extends AbstractModuleController
      */
     public function deleteAction(User $user): void
     {
+        if (!$this->isEditingAllowed($user)) {
+            $this->addFlashMessage('Not allowed to delete the user "%s".', 'User editing denied', Message::SEVERITY_ERROR, [$user->getName()->getFullName()], 1416225564);
+            $this->redirect('index');
+        }
         if ($user === $this->currentUser) {
             $this->addFlashMessage('You can not delete the currently logged in user', 'Current user can\'t be deleted', Message::SEVERITY_WARNING, [], 1412374546);
             $this->redirect('index');
@@ -220,10 +247,15 @@ class UsersController extends AbstractModuleController
      */
     public function editAccountAction(Account $account): void
     {
+        $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
+        if (!$this->isEditingAllowed($user)) {
+            $this->addFlashMessage('Not allowed to edit the account for the user "%s".', 'User account editing denied', Message::SEVERITY_ERROR, [$user->getName()->getFullName()], 1416225565);
+            $this->redirect('index');
+        }
         $this->view->assignMultiple([
             'account' => $account,
-            'user' => $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName()),
-            'availableRoles' => $this->policyService->getRoles()
+            'user' => $user,
+            'availableRoles' => $this->getAllowedRoles()
         ]);
     }
 
@@ -243,6 +275,10 @@ class UsersController extends AbstractModuleController
     public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = []): void
     {
         $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
+        if (!$this->isEditingAllowed($user)) {
+            $this->addFlashMessage('Not allowed to edit the account for the user "%s".', 'User account editing denied', Message::SEVERITY_ERROR, [$user->getName()->getFullName()], 1416225565);
+            $this->redirect('index');
+        }
         if ($user === $this->currentUser) {
             $roles = [];
             foreach ($roleIdentifiers as $roleIdentifier) {
@@ -286,6 +322,10 @@ class UsersController extends AbstractModuleController
      */
     public function createElectronicAddressAction(User $user, ElectronicAddress $electronicAddress): void
     {
+        if (!$this->isEditingAllowed($user)) {
+            $this->addFlashMessage('Not allowed to create an electronic address for the user "%s".', 'User email editing denied', Message::SEVERITY_ERROR, [$user->getName()->getFullName()], 1416225566);
+            $this->redirect('index');
+        }
         /** @var User $user */
         $user->addElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
@@ -304,6 +344,10 @@ class UsersController extends AbstractModuleController
      */
     public function deleteElectronicAddressAction(User $user, ElectronicAddress $electronicAddress): void
     {
+        if (!$this->isEditingAllowed($user)) {
+            $this->addFlashMessage('Not allowed to delete an electronic address for the user "%s".', 'User email deletion denied', Message::SEVERITY_ERROR, [$user->getName()->getFullName()], 1416225567);
+            $this->redirect('index');
+        }
         $user->removeElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
@@ -343,5 +387,29 @@ class UsersController extends AbstractModuleController
         $providerNames = array_keys($this->tokenAndProviderFactory->getProviders());
         sort($providerNames);
         return array_combine($providerNames, $providerNames);
+    }
+
+    /**
+     * Returns the roles that the current editor is able to assign
+     * Administrator can assign any roles, other users can only assign their own roles
+     * 
+     * @return array
+     */
+    protected function getAllowedRoles() {
+        $currentUserRoles = $this->currentUser->getAccounts()[0]->getRoles();
+        return $this->isAdministrator ? $this->policyService->getRoles() : $currentUserRoles;
+    }
+
+    /**
+     * Returns whether the current user is allowed to edit the given user.
+     * Administrators can edit anybody.
+     */
+    protected function isEditingAllowed($user) {
+        if ($this->isAdministrator) {
+            return true;
+        }
+        $currentUserRoles = $this->currentUser->getAccounts()[0]->getRoles();
+        $userRoles = $user->getAccounts()[0]->getRoles();
+        return count(array_diff($userRoles, $currentUserRoles)) === 0;
     }
 }

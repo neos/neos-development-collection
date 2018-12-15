@@ -256,6 +256,15 @@ roles:
   'Neos.Neos:Editor':
     parentRoles: ['Neos.Neos:AbstractEditor', 'Neos.Neos:LivePublisher']
 
+  'Neos.Neos:UserManager':
+    privileges:
+      -
+        privilegeTarget: 'Neos.Neos:Backend.Module.Administration'
+        permission: GRANT
+      -
+        privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Users'
+        permission: GRANT
+
   'Neos.Neos:Administrator':
     parentRoles: ['Neos.Neos:Editor']
     privileges:
