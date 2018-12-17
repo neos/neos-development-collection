@@ -47,7 +47,7 @@ final class ContentStreamCommandHandler
         $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
 
         $this->eventPublisher->publish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier()),
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
             new Event\ContentStreamWasCreated(
                 $command->getContentStreamIdentifier(),
                 $command->getInitiatingUserIdentifier()
@@ -68,7 +68,7 @@ final class ContentStreamCommandHandler
         $sourceContentStream = $this->contentStreamRepository->findContentStream($command->getSourceContentStreamIdentifier());
 
         $this->eventPublisher->publish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier()),
+            ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
             new Event\ContentStreamWasForked(
                 $command->getContentStreamIdentifier(),
                 $command->getSourceContentStreamIdentifier(),

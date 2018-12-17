@@ -85,7 +85,7 @@ final class WorkspaceProjector implements ProjectorInterface
         ]);
 
         // TODO: HACK to update in-memory projection(!!!!!!) nasty!!!
-        $this->workspaceFinder->findOneByName($event->getWorkspaceName())->currentContentStreamIdentifier = $event->getCurrentContentStreamIdentifier();
+        $this->workspaceFinder->findOneByName($event->getWorkspaceName())->currentContentStreamIdentifier = (string)$event->getCurrentContentStreamIdentifier();
     }
 
     public function reset(): void

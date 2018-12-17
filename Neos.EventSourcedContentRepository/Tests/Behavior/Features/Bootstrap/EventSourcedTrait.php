@@ -1195,7 +1195,7 @@ trait EventSourcedTrait
 
         $subtree = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findSubtrees([$nodeAggregateIdentifier], $maximumLevels, $nodeTypeConstraints);
+            ->findSubtrees([$nodeAggregateIdentifier], (int)$maximumLevels, $nodeTypeConstraints);
 
         /** @var SubtreeInterface[] $flattenedSubtree */
         $flattenedSubtree = [];
