@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
@@ -37,6 +38,14 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
     {
         $this->node = $node;
         $this->subgraph = $subgraph;
+    }
+
+    /**
+     * @return ContentSubgraphInterface
+     */
+    public function getSubgraph(): ContentSubgraphInterface
+    {
+        return $this->subgraph;
     }
 
     public function findParentNode(): ?TraversableNodeInterface

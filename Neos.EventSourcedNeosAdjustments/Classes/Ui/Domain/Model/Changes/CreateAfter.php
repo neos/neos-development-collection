@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 
 /*
@@ -11,6 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
 class CreateAfter extends AbstractCreate
@@ -47,10 +50,18 @@ class CreateAfter extends AbstractCreate
     {
         if ($this->canApply()) {
             $subject = $this->getSubject();
-            $parent = $subject->getParent();
-            $node = $this->createNode($parent);
+            $parentNode = $subject->findParentNode();
+            $newlyCreatedNode = $this->createNode($parentNode);
 
-            $node->moveAfter($subject);
+            $this->nodeCommandHandler->handleMoveNode(new MoveNode(
+                $newlyCreatedNode->getContentStreamIdentifier(),
+                $newlyCreatedNode->getDimensionSpacePoint(),
+                $newlyCreatedNode->getNodeAggregateIdentifier(),
+                null,
+                $subject->getNodeAggregateIdentifier(), // TODO notfully correct I THINK, but for first tests it seems to work.
+                RelationDistributionStrategy::gatherAll()
+            ));
+
             $this->updateWorkspaceInfo();
         }
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 
 /*
@@ -11,23 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
 class Create extends AbstractCreate
 {
-
-    /**
-     * @Flow\Inject
-     * @var NodeCommandHandler
-     */
-    protected $nodeCommandHandler;
 
     /**
      * @param string $parentContextPath
@@ -69,33 +57,7 @@ class Create extends AbstractCreate
     {
         if ($this->canApply()) {
             $parentNode = $this->getSubject();
-
-            // TODO: the $name=... line should be as expressed below
-            // $name = $this->getName() ?: $this->nodeService->generateUniqueNodeName($parent->findParentNode());
-            $nodeName = new NodeName($this->getName() ?: uniqid('node-'));
-
-            $nodeAggregateIdentifier = new NodeAggregateIdentifier(); // generate a new NodeAggregateIdentifier
-
-            $command = new CreateNodeAggregateWithNode(
-                $parentNode->getContentStreamIdentifier(),
-                $nodeAggregateIdentifier,
-                new NodeTypeName($this->getNodeType()->getName()),
-                $parentNode->getDimensionSpacePoint(),
-                new NodeIdentifier(), // generate a new NodeIdentifier
-                $parentNode->getNodeIdentifier(),
-                $nodeName
-            );
-
-            $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
-
-            $newlyCreatedNode = $parentNode->findNamedChildNode($nodeName);
-            $this->applyNodeCreationHandlers($newlyCreatedNode);
-
-            $this->finish($newlyCreatedNode);
-            // NOTE: we need to run "finish" before "addNodeCreatedFeedback" to ensure the new node already exists when the last feedback is processed
-            $this->addNodeCreatedFeedback($newlyCreatedNode);
-
-
+            $this->createNode($parentNode);
             $this->updateWorkspaceInfo();
         }
     }

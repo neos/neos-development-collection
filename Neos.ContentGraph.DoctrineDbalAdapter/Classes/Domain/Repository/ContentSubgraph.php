@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
@@ -328,7 +329,7 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
         }
 
         $res = $query->execute($this->getDatabaseConnection())->fetchColumn(0);
-        return $res;
+        return (int)$res;
     }
 
     /**
