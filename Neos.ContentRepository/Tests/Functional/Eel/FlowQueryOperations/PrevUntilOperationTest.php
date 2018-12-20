@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;

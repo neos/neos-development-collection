@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
@@ -79,12 +80,11 @@ class PrevOperation extends AbstractOperation
      */
     protected function getPrevForNode(TraversableNodeInterface $contextNode)
     {
-        $nodesInContext = $contextNode->findParentNode()->findChildNodes();
-        for ($i = 0; $i < count($nodesInContext) - 1; $i++) {
-            if ($nodesInContext[$i + 1] === $contextNode) {
-                return $nodesInContext[$i];
-            }
+        try {
+            $parentNode = $contextNode->findParentNode();
+            return $parentNode->findChildNodes()->next($contextNode);
+        } catch (NodeException $e) {
+            return null;
         }
-        return null;
     }
 }

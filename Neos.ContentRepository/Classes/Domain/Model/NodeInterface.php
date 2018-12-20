@@ -11,11 +11,8 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 
@@ -152,7 +149,7 @@ interface NodeInterface
      * If the node has a content object attached, the properties will be fetched
      * there.
      *
-     * @return array Property values, indexed by their name
+     * @return PropertyCollectionInterface Property values
      * @api
      */
     public function getProperties();
@@ -160,7 +157,7 @@ interface NodeInterface
     /**
      * Returns the names of all properties of this node.
      *
-     * @return array Property names
+     * @return string[] Property names
      * @api
      */
     public function getPropertyNames();
@@ -203,10 +200,10 @@ interface NodeInterface
     /**
      * Returns the node type of this node.
      *
-     * @return NodeType|null
+     * @return NodeType
      * @api
      */
-    public function getNodeType(): ?NodeType;
+    public function getNodeType();
 
     /**
      * Sets the "hidden" flag for this node.
@@ -228,16 +225,16 @@ interface NodeInterface
     /**
      * Sets the date and time when this node becomes potentially visible.
      *
-     * @param \DateTime $dateTime Date before this node should be hidden
+     * @param \DateTimeInterface $dateTime Date before this node should be hidden
      * @return void
      * @api
      */
-    public function setHiddenBeforeDateTime(\DateTime $dateTime = null);
+    public function setHiddenBeforeDateTime(\DateTimeInterface $dateTime = null);
 
     /**
      * Returns the date and time before which this node will be automatically hidden.
      *
-     * @return \DateTime Date before this node will be hidden
+     * @return \DateTimeInterface|null Date before this node will be hidden - or null if no hidden before date is set
      * @api
      */
     public function getHiddenBeforeDateTime();
@@ -245,16 +242,16 @@ interface NodeInterface
     /**
      * Sets the date and time when this node should be automatically hidden
      *
-     * @param \DateTime $dateTime Date after which this node should be hidden
+     * @param \DateTimeInterface $dateTime Date after which this node should be hidden
      * @return void
      * @api
      */
-    public function setHiddenAfterDateTime(\DateTime $dateTime = null);
+    public function setHiddenAfterDateTime(\DateTimeInterface $dateTime = null);
 
     /**
      * Returns the date and time after which this node will be automatically hidden.
      *
-     * @return \DateTime Date after which this node will be hidden
+     * @return \DateTimeInterface|null Date after which this node will be hidden - or null if no hidden after date is set
      * @api
      */
     public function getHiddenAfterDateTime();
@@ -398,7 +395,7 @@ interface NodeInterface
      * @param string $name Name of the new node
      * @param NodeType $nodeType Node type of the new node (optional)
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-     * @return Node
+     * @return NodeInterface
      * @throws \InvalidArgumentException if the node name is not accepted.
      * @throws NodeExistsException if a node with this path already exists.
      * @api
@@ -414,7 +411,7 @@ interface NodeInterface
      * @param string $name Name of the new node
      * @param NodeType $nodeType Node type of the new node (optional)
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-     * @return Node
+     * @return NodeInterface
      * @throws \InvalidArgumentException if the node name is not accepted.
      * @throws NodeExistsException if a node with this path already exists.
      */
@@ -442,7 +439,7 @@ interface NodeInterface
     /**
      * Returns the primary child node of this node.
      *
-     * Which node acts as a primary child node will in the future depend on the
+     * Which node acts as a primary child node will in the future depend on theLayeredWorkspacesTest
      * node type. For now it is just the first child node.
      *
      * @return NodeInterface The primary child node or NULL if no such node exists
@@ -563,7 +560,7 @@ interface NodeInterface
      *
      * @param NodeInterface $referenceNode
      * @param string $nodeName
-     * @return NodeInterface
+     * @return NodeInterface The copied node
      * @throws NodeExistsException
      * @api
      */
@@ -574,7 +571,7 @@ interface NodeInterface
      *
      * @param NodeInterface $referenceNode
      * @param string $nodeName
-     * @return NodeInterface
+     * @return NodeInterface The copied node
      * @throws NodeExistsException
      * @api
      */
@@ -586,7 +583,7 @@ interface NodeInterface
      *
      * @param NodeInterface $referenceNode
      * @param string $nodeName
-     * @return NodeInterface
+     * @return NodeInterface The copied node
      * @throws NodeExistsException
      * @api
      */
