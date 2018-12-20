@@ -15,6 +15,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\ContentRepository\Exception\NodeException;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 /**
@@ -26,6 +27,8 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
  */
 interface TraversableNodeInterface extends NodeInterface
 {
+
+    public function getSubgraph(): ContentSubgraphInterface;
 
     /**
      * Retrieves and returns the parent node from the node's subgraph.
@@ -71,39 +74,6 @@ interface TraversableNodeInterface extends NodeInterface
      * @return int
      */
     public function countChildNodes(NodeTypeConstraints $nodeTypeConstraints = null): int;
-
-    /**
-     * Retrieves and returns all sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return TraversableNodes
-     */
-    public function findSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes;
-
-    /**
-     * Retrieves and returns all preceding sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return TraversableNodes
-     */
-    public function findPrecedingSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes;
-
-    /**
-     * Retrieves and returns all succeeding sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return TraversableNodes
-     */
-    public function findSucceedingSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes;
 
     /**
      * Retrieves and returns all nodes referenced by this node from its subgraph.

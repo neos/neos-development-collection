@@ -40,6 +40,7 @@ use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\ContentRepository\Utility;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 
 /**
  * This is the main API for storing and retrieving content in the system.
@@ -108,6 +109,11 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     {
         $this->nodeData = $nodeData;
         $this->context = $context;
+    }
+
+    public function getSubgraph(): ContentSubgraphInterface
+    {
+        throw new \RuntimeException('Not implemented!');
     }
 
     /**
@@ -2018,51 +2024,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     public function countChildNodes(NodeTypeConstraints $nodeTypeConstraints = null): int
     {
         return count($this->getChildNodes($nodeTypeConstraints));
-    }
-
-    /**
-     * Retrieves and returns all sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return TraversableNodes
-     * @throws NodeException
-     */
-    public function findSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes
-    {
-        return $this->findParentNode()->findChildNodes($nodeTypeConstraints, $limit, $offset);
-    }
-
-    /**
-     * Retrieves and returns all preceding sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return TraversableNodes
-     * @throws NodeMethodIsUnsupported
-     */
-    public function findPrecedingSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes
-    {
-        throw new NodeMethodIsUnsupported('findPrecedingSiblingNodes is unsupported in the legacy Node API.', 1542893567);
-    }
-
-    /**
-     * Retrieves and returns all succeeding sibling nodes of this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
-     *
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return TraversableNodes
-     * @throws NodeMethodIsUnsupported
-     */
-    public function findSucceedingSiblingNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes
-    {
-        throw new NodeMethodIsUnsupported('findSucceedingSiblingNodes is unsupported in the legacy Node API.', 1542893570);
     }
 
     /**
