@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
 
 /*
@@ -11,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
@@ -151,11 +153,10 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
             $tagArray[] = (string)$matchingSite->getNodeIdentifier();
 
-            if (strpos($requestPath, '/') === false) {
-                // if the request path does not contain path segments (i.e. no slashes), we *know* that we found the
-                // site node. Note it is not enough to check for empty string here, as the requestPath might contain
-                // a workspace name and/or dimension information like @user-admin;language=en_US. We do not need to
-                // process this information here, as it has been already extracted beforehand and is part of $matchingSubgraph
+            if ($requestPath === '' || substr($requestPath, 0, 1) === '@') {
+                // if the request path is:
+                // - "" (empty string): we are at the homepage in the live WS
+                // - "@...": we are at the homepage in a user workspace
                 $matchingNode = $matchingSite;
                 return;
             }
@@ -168,7 +169,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
         if ($this->onlyMatchSiteNodes()) {
             // if we only want to match Site nodes, we need to go one level up and need to find the "Neos.Neos:Sites" node.
             // Note this operation is usually fast because it is served from the ContentSubgraph's in-memory Cache
-            $parentOfMatchingNode = $matchingSubgraph->findParentNode($matchingNode->getNodeIdentifier());
+            $parentOfMatchingNode = $matchingSubgraph->findParentNode($matchingNode->getNodeAggregateIdentifier());
             $parentOfMatchingNodeIsSitesNode = $parentOfMatchingNode !== null && $parentOfMatchingNode->getNodeType()->isOfType('Neos.Neos:Sites');
             if (!$parentOfMatchingNodeIsSitesNode) {
                 return false;
@@ -217,6 +218,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
                     array_shift($remainingUriPathSegments);
                     if (empty($remainingUriPathSegments)) {
                         $matchingNode = $node;
+                        $continueTraversal = false;
                     } else {
                         $continueTraversal = true;
                     }
@@ -245,7 +247,8 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
 
         return $this->contentGraph->getSubgraphByIdentifier(
             $workspace->getCurrentContentStreamIdentifier(),
-            $this->getDimensionSpacePointFromParameters()
+            $this->getDimensionSpacePointFromParameters(),
+            VisibilityConstraints::withoutRestrictions()
         );
     }
 
@@ -258,16 +261,14 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      */
     protected function fetchSiteFromRequest(NodeInterface $rootNode, ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
     {
-        /** @var Node $site */
-        /** @var Node $rootNode */
         $domain = $this->domainRepository->findOneByActiveRequest();
         if ($domain) {
             $site = $contentSubgraph->findChildNodeConnectedThroughEdgeName(
-                $rootNode->getNodeIdentifier(),
+                $rootNode->getNodeAggregateIdentifier(),
                 new NodeName($domain->getSite()->getNodeName())
             );
         } else {
-            $site = $contentSubgraph->findChildNodes($rootNode->getNodeIdentifier())[0] ?? null;
+            $site = $contentSubgraph->findChildNodes($rootNode->getNodeAggregateIdentifier())[0] ?? null;
         }
 
         if (!$site) {
@@ -335,14 +336,14 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             }
         }
         /** @var NodeAddress $nodeAddress */
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint());
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
         if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {
             return false;
         }
 
-        $parentNode = $subgraph->findParentNode($node->getNodeIdentifier());
+        $parentNode = $subgraph->findParentNode($node->getNodeAggregateIdentifier());
         // a node is a site node if the node above it it Neos.Neos:Sites
         $isSiteNode = $parentNode && $parentNode->getNodeType()->isOfType('Neos.Neos:Sites');
         if ($this->onlyMatchSiteNodes() && !$isSiteNode) {
@@ -385,7 +386,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
     protected function getRequestPathByNode(ContentSubgraphInterface $contentSubgraph, NodeInterface $node)
     {
         // if the parent is the "sites" node, we return the empty URL.
-        $parentNode = $contentSubgraph->findParentNode($node->getNodeIdentifier());
+        $parentNode = $contentSubgraph->findParentNode($node->getNodeAggregateIdentifier());
         if ($parentNode->getNodeType()->isOfType('Neos.Neos:Sites')) {
             return '';
         }
@@ -405,7 +406,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
                             $node->getNodeIdentifier()), 1415020326);
                     }
 
-                    $parentNode = $contentSubgraph->findParentNode($node->getNodeIdentifier());
+                    $parentNode = $contentSubgraph->findParentNode($node->getNodeAggregateIdentifier());
                     if ($parentNode->getNodeType()->isOfType('Neos.Neos:Sites')) {
                         // do not traverse further up than the Site node (which is one level beneath the "Sites" node.
                         return false;

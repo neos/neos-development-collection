@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
@@ -57,7 +58,7 @@ final class NodeMoveMapping
     /**
      * @return NodeIdentifier
      */
-    public function getNewParentNodeIdentifier(): NodeIdentifier
+    public function getNewParentNodeIdentifier(): ?NodeIdentifier
     {
         return $this->newParentNodeIdentifier;
     }
@@ -65,7 +66,7 @@ final class NodeMoveMapping
     /**
      * @return NodeIdentifier
      */
-    public function getNewSucceedingSiblingIdentifier(): NodeIdentifier
+    public function getNewSucceedingSiblingIdentifier(): ?NodeIdentifier
     {
         return $this->newSucceedingSiblingIdentifier;
     }

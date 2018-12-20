@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
 
 /*
@@ -15,9 +16,10 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -156,16 +158,16 @@ class BackendController extends ActionController
 
         $workspaceName = $this->userService->getPersonalWorkspaceName();
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspaceName));
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint());
-        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeIdentifier(), new NodeName($this->siteRepository->findDefault()->getNodeName()));
-        $siteNode = new TraversableNode($siteNode, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, false));
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeAggregateIdentifier(), new NodeName($this->siteRepository->findDefault()->getNodeName()));
+        $siteNode = new TraversableNode($siteNode, $subgraph);
 
         if (!$nodeAddress) {
             // TODO: fix resolving node address from session?
             $node = $siteNode;
         } else {
             $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
-            $node = new TraversableNode($node, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, false));
+            $node = new TraversableNode($node, $subgraph);
         }
 
         $this->view->assign('user', $user);
@@ -176,8 +178,7 @@ class BackendController extends ActionController
         $this->view->assign('sitesForMenu', $this->menuHelper->buildSiteList($this->getControllerContext()));
 
         $this->view->assignMultiple([
-            'subgraph' => $subgraph,
-            'contextParameters' => new ContextParameters(new \DateTimeImmutable(), [], true, true)
+            'subgraph' => $subgraph
         ]);
 
         $this->view->assign('interfaceLanguage', $this->userService->getInterfaceLanguage());
@@ -211,12 +212,11 @@ class BackendController extends ActionController
     }
 
     /**
-     * @return \Neos\ContentRepository\Domain\ValueObject\NodeIdentifier
+     * @return NodeAggregateIdentifier
      * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
      */
-    protected function getRootNodeIdentifier(): \Neos\ContentRepository\Domain\ValueObject\NodeIdentifier
+    protected function getRootNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'))->getNodeIdentifier();
+        return $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'))->getNodeAggregateIdentifier();
     }
 }

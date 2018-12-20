@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 
@@ -100,7 +101,7 @@ trait NodeInterfaceProxy
         return $this->node->isHidden();
     }
 
-    public function getLabel(): string
+    public function getLabel(): ?string
     {
         return $this->node->getLabel();
     }

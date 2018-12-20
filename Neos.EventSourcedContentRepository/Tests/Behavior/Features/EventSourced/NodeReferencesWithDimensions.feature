@@ -67,11 +67,11 @@ Feature: Node References with Dimensions
 
     And I am in content stream "[cs-identifier]" and Dimension Space Point {"language": "de"}
 
-    Then I expect the Node "[source-node-identifier]" to have the references:
+    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
       | Key               | Value                   | Type   |
       | referenceProperty | dest-nodeAgg-identifier | Uuid[] |
 
-    And I expect the Node "[dest-node-identifier]" to be referenced by:
+    And I expect the Node aggregate "[dest-nodeAgg-identifier]" to be referenced by:
       | Key               | Value                     | Type   |
       | referenceProperty | source-nodeAgg-identifier | Uuid[] |
 
@@ -79,11 +79,11 @@ Feature: Node References with Dimensions
 
     And I am in content stream "[cs-identifier]" and Dimension Space Point {"language": "ch"}
 
-    Then I expect the Node "[source-node-identifier]" to have the references:
+    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
       | Key               | Value                   | Type   |
       | referenceProperty | dest-nodeAgg-identifier | Uuid[] |
 
-    And I expect the Node "[dest-node-identifier]" to be referenced by:
+    And I expect the Node aggregate "[dest-nodeAgg-identifier]" to be referenced by:
       | Key               | Value                     | Type   |
       | referenceProperty | source-nodeAgg-identifier | Uuid[] |
 
@@ -91,11 +91,11 @@ Feature: Node References with Dimensions
 
     And I am in content stream "[cs-identifier]" and Dimension Space Point {"language": "en"}
 
-    Then I expect the Node "[source-node-identifier]" to have the references:
+    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
       | Key               | Value | Type   |
       | referenceProperty |       | Uuid[] |
 
-    And I expect the Node "[dest-node-identifier]" to be referenced by:
+    And I expect the Node aggregate "[dest-nodeAgg-identifier]" to be referenced by:
       | Key               | Value | Type   |
       | referenceProperty |       | Uuid[] |
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
@@ -12,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Node\ReadOnlyNodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
@@ -38,7 +39,7 @@ final class NodeAggregate
     private $nodeName;
 
     /**
-     * @var array|ReadOnlyNodeInterface[]
+     * @var array|NodeInterface[]
      */
     private $nodes;
 
@@ -81,7 +82,7 @@ final class NodeAggregate
     }
 
     /**
-     * @return array|ReadOnlyNodeInterface[]
+     * @return array|NodeInterface[]
      */
     public function getNodes(): array
     {

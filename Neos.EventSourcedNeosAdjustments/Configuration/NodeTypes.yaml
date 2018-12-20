@@ -17,3 +17,7 @@
 'Neos.Neos:Document':
   properties:
     _hiddenInIndex: ~
+  options:
+    nodeCreationHandlers:
+      documentTitle:
+        nodeCreationHandler: 'Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\DocumentTitleNodeCreationHandler'

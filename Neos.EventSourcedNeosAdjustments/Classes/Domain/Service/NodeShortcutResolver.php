@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Domain\Service;
 
 /*
@@ -70,11 +71,11 @@ class NodeShortcutResolver
                     }
                     break;
                 case 'parentNode':
-                    $resolvedNode = $subgraph->findParentNode($resolvedNode->getNodeIdentifier());
+                    $resolvedNode = $subgraph->findParentNode($resolvedNode->getNodeAggregateIdentifier());
                     break;
                 case 'firstChildNode':
                 default:
-                    $childNodes = $subgraph->findChildNodes($resolvedNode->getNodeIdentifier(), new NodeTypeConstraints(false, ['Neos.Neos:Document']), 1);
+                    $childNodes = $subgraph->findChildNodes($resolvedNode->getNodeAggregateIdentifier(), new NodeTypeConstraints(false, ['Neos.Neos:Document']), 1);
                     $resolvedNode = reset($childNodes) ?? null;
             }
         }

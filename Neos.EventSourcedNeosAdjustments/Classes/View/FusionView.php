@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\View;
 
 /*
@@ -12,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\View;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\SiteNodeUtility;
 use Neos\Flow\I18n\Locale;
 use Neos\ContentRepository\Domain\Model\NodeInterface as LegacyNodeInterface;
 use Neos\Fusion\Exception\RuntimeException;
@@ -31,7 +33,7 @@ class FusionView extends \Neos\Neos\View\FusionView
     public function render()
     {
         $currentNode = $this->getCurrentNode();
-        $currentSiteNode = $this->getCurrentSiteNode();
+        $currentSiteNode = SiteNodeUtility::findSiteNode($currentNode);
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
         if ($currentNode instanceof LegacyNodeInterface) {

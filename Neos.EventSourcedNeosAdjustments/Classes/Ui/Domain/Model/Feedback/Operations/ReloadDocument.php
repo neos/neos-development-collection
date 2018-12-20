@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
 
 /*
@@ -11,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
@@ -64,7 +64,7 @@ class ReloadDocument extends AbstractFeedback
     /**
      * Get the node
      *
-     * @return NodeInterface
+     * @return TraversableNodeInterface
      */
     public function getNode()
     {

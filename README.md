@@ -1,6 +1,6 @@
 # Event Sourced Content Repository Collection
 
-[![StyleCI](https://github.styleci.io/repos/151722585/shield?branch=master)](https://github.styleci.io/repos/151722585)
+[![Build Status](https://travis-ci.org/neos/contentrepository-development-collection.svg?branch=master)](https://travis-ci.org/neos/contentrepository-development-collection) [![StyleCI](https://github.styleci.io/repos/151722585/shield?branch=master)](https://github.styleci.io/repos/151722585)
 
 This is the package bundle you can install alongside a plain Neos to play around with the event-sourced CR.
 
@@ -69,7 +69,7 @@ composer install
 
 ### In order to get the necessary code base you need to do a few things:
 
-1. Add `neos/contentrepository-development-collection` and `neos/content-repository-dimensionspace` dependencies ` as custom repositories` 
+1. Add `neos/contentrepository-development-collection` and `neos/content-repository-dimensionspace` dependencies ` as custom repositories`
 ```
 "repositories": [
     {
@@ -90,22 +90,7 @@ composer install
 ```
 "prefer-stable": true
 ```
-4. Change required `neos/neos-development-collection` dependency
-```
-"neos/neos-development-collection": "dev-event-sourced-patch as dev-master"
-```
-5. Add required `event-sourcing` dependency
-```
-"neos/event-sourcing": "dev-master"
-```
-6. Change required `neos/neos-ui` dependency
-```
-"neos/neos-ui": "dev-event-sourced-patch as dev-master"
-```
-7. Add demo package `neos/demo` dependency
-```
-"neos/neos-ui": "dev-event-sourced-patch as dev-master"
-```
+4. use the `require` part ot the composer.json file below:
 
 The resulting `composer.json` file should look something like this:
 ```yaml
@@ -128,10 +113,10 @@ The resulting `composer.json` file should look something like this:
     ],
     "require": {
         "neos/neos-development-collection": "dev-event-sourced-patch as dev-master",
-        "neos/flow-development-collection": "@dev",
+        "neos/flow-development-collection": "5.2.x-dev as dev-master",
         "neos/demo": "@dev",
 
-        "neos/contentrepository-development-collection": "@dev",
+        "neos/contentrepository-development-collection": "dev-master",
         "neos/content-repository-dimensionspace": "dev-master",
         "neos/event-sourcing": "dev-master",
         "neos/neos-ui": "dev-event-sourced-patch as dev-master",
@@ -180,7 +165,7 @@ Neos:
           en_US:
             label: 'English (US)'
             resolution:
-              value: us
+              value: en
             specializations:
               en_UK:
                 label: 'English (UK)'
@@ -245,7 +230,7 @@ Neos:
     - set up behat: `./flow behat:setup`
     - Create a new database for behat
     - create `Configuration/Testing/Behat/Settings.yaml` with the following contents:
-    
+
         ```yaml
         Neos:
           Flow:
@@ -256,7 +241,7 @@ Neos:
                 user: 'root'
                 password: ''
         ```
-        
+
         Important: the driver must be set to pdo_mysql; and the DB name and user need to be specified.
 
 16. To run the behavioral tests, do:
@@ -264,7 +249,7 @@ Neos:
     ```bash
     bin/behat -c Packages/CR/Neos.EventSourcedContentRepository/Tests/Behavior/behat.yml.dist
     ```
-    
+
 
 ## Road to first running alpha
 
@@ -310,7 +295,7 @@ see https://github.com/neos/neos-development-collection/pull/2202 for the Pull R
 - in namespace `Domain\Projection\Content`, the new `NodeInterface` and `TraversableNodeInterface` are defined.
 - in namespace `Domain\ValueObject`, corresponding value objects are defined.
 - the old `Neos\ContentRepository\Domain\Model\Node` implements the full new `NodeInterface` and most of `TraversableNodeInterface`.
-  This is needed to ensure we can build FlowQuery implementations which can work with old and new API at once. 
+  This is needed to ensure we can build FlowQuery implementations which can work with old and new API at once.
 - adjusted FlowQuery operations to `TraversableNodeInterface` (TODO not yet all of them)
 
 
@@ -335,7 +320,7 @@ Transition package implementing the event sourced CR core. In the longer run, wi
 
 ## CR / Neos.ContentGraph.DoctrineDbalAdapter
 
-implementation of the `ContentGraphInterface` and `ContentSubgraphInterface` using MySQL queries. 
+implementation of the `ContentGraphInterface` and `ContentSubgraphInterface` using MySQL queries.
 
 
 ## CR / Neos.EventSourcedNeosAdjustments
@@ -380,7 +365,7 @@ This is a replacement for `Frontend\NodeController` of Neos.Neos.
   - `NodeUri, ConvertUris`
   - `ContentElementEditable / ContentElementWrapping` (because the ContentElementWrapping service has changed quite a lot)
   - **Activation**: using fusion `autoInclude` in `Settings.yaml`, we load the Fusion file `resource://Neos.EventSourcedNeosAdjustments/Private/Fusion/Root.fusion`.
-    This `Root.fusion` *replaces the implementations* for the aforementioned Fusion objects, so things work as expected for integrators (without new namespaces). 
+    This `Root.fusion` *replaces the implementations* for the aforementioned Fusion objects, so things work as expected for integrators (without new namespaces).
 
 - Eel `NodeHelper` and `WorkspaceHelper`
   - **Activation**: These helpers are registered under the names `Neos.EventSourcedNeosAdjustments.*`; so a separate name.

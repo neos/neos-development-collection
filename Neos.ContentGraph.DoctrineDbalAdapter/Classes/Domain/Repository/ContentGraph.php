@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
@@ -62,22 +63,15 @@ final class ContentGraph implements ContentGraphInterface
      */
     final public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint
+        DimensionSpacePoint $dimensionSpacePoint,
+        Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
     ): ?ContentSubgraphInterface {
-        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash();
+        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash() . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
-            $this->subgraphs[$index] = new ContentSubgraph($contentStreamIdentifier, $dimensionSpacePoint);
+            $this->subgraphs[$index] = new ContentSubgraph($contentStreamIdentifier, $dimensionSpacePoint, $visibilityConstraints);
         }
 
         return $this->subgraphs[$index];
-    }
-
-    /**
-     * @return array|ContentSubgraphInterface[]
-     */
-    final public function getSubgraphs(): array
-    {
-        return $this->subgraphs;
     }
 
     /**
@@ -334,7 +328,7 @@ final class ContentGraph implements ContentGraphInterface
         $nodesByAggregate = [];
         foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $nodeRow) {
             $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
-            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['nodeidentifier']] = $this->nodeFactory->mapNodeRowToNode($nodeRow, null);
+            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['nodeidentifier']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
             if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
@@ -359,11 +353,11 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param Domain\Context\Node\ReadOnlyNodeInterface $node
+     * @param NodeInterface $node
      * @return DimensionSpacePointSet
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function findVisibleDimensionSpacePointsOfNode(Domain\Context\Node\ReadOnlyNodeInterface $node): DimensionSpacePointSet
+    public function findVisibleDimensionSpacePointsOfNode(NodeInterface $node): DimensionSpacePointSet
     {
         $connection = $this->client->getConnection();
 

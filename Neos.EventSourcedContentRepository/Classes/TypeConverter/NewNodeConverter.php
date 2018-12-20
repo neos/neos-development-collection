@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\TypeConverter;
 
 /*
@@ -11,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\TypeConverter;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
@@ -64,7 +66,7 @@ class NewNodeConverter extends AbstractTypeConverter
     {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($source);
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint());
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
         return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
     }
 }

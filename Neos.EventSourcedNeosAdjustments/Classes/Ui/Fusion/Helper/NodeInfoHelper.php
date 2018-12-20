@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
 
 /*
@@ -12,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
  */
 
 use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
@@ -228,6 +230,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             'isAutoCreated' => self::isAutoCreated($node),
             'depth' => $node->findNodePath()->getDepth(),
             'children' => [],
+            'parent' => $this->nodeAddressFactory->createFromNode($node->findParentNode())->serializeForUri(),
             // TODO: "matchescurrentdimensions"
             //'matchesCurrentDimensions' => ($node instanceof Node && $node->dimensionsAreMatchingTargetDimensionValues())
         ];
@@ -242,6 +245,15 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             }
         }
         return false;
+    }
+
+    public static function isNodeTypeAllowedAsChildNode(TraversableNodeInterface $node, NodeType $nodeType)
+    {
+        if (self::isAutoCreated($node)) {
+            return $node->findParentNode()->getNodeType()->allowsGrandchildNodeType((string)$node->getNodeName(), $nodeType);
+        } else {
+            return $node->getNodeType()->allowsChildNodeType($nodeType);
+        }
     }
 
 

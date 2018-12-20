@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
 
@@ -12,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
@@ -39,7 +41,8 @@ class NodeSiteResolvingService
     {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $nodeAddress->getContentStreamIdentifier(),
-            $nodeAddress->getDimensionSpacePoint()
+            $nodeAddress->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
         );
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
         $previousNode = null;
@@ -49,7 +52,7 @@ class NodeSiteResolvingService
                 return $previousNode;
             }
             $previousNode = $node;
-        } while ($node = $subgraph->findParentNode($node->getNodeIdentifier()));
+        } while ($node = $subgraph->findParentNode($node->getNodeAggregateIdentifier()));
 
         // no Site node found at rootline
         return null;

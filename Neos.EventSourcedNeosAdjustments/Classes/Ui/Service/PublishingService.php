@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
 
 /*
@@ -14,7 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
@@ -79,12 +80,13 @@ class PublishingService
             /* @var $change Change */
             $subgraph = $this->contentGraph->getSubgraphByIdentifier(
                 $workspace->getCurrentContentStreamIdentifier(),
-                $change->originDimensionSpacePoint
+                $change->originDimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
             );
             $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
 
             if ($node instanceof NodeInterface) {
-                $unpublishedNodes[] = new TraversableNode($node, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, true));
+                $unpublishedNodes[] = new TraversableNode($node, $subgraph);
             }
         }
         return $unpublishedNodes;

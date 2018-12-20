@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 /*
@@ -28,17 +29,14 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
      * @return ContentSubgraphInterface|null
      */
     public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint
+        DimensionSpacePoint $dimensionSpacePoint,
+        Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
     ): ?ContentSubgraphInterface;
-
-    /**
-     * @return array|ContentSubgraphInterface[]
-     */
-    public function getSubgraphs(): array;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -88,10 +86,10 @@ interface ContentGraphInterface
     public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
 
     /**
-     * @param Domain\Context\Node\ReadOnlyNodeInterface $node
+     * @param NodeInterface $node
      * @return DimensionSpacePointSet
      */
-    public function findVisibleDimensionSpacePointsOfNode(Domain\Context\Node\ReadOnlyNodeInterface $node): DimensionSpacePointSet;
+    public function findVisibleDimensionSpacePointsOfNode(NodeInterface $node): DimensionSpacePointSet;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier

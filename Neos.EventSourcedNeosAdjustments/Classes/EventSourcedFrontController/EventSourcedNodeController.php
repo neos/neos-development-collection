@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedFrontController;
 
 /*
@@ -15,7 +16,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
@@ -135,18 +136,19 @@ class EventSourcedNodeController extends ActionController
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $nodeAddress->getContentStreamIdentifier(),
-            $nodeAddress->getDimensionSpacePoint()
+            $nodeAddress->getDimensionSpacePoint(),
+            VisibilityConstraints::frontend()
         );
 
         $inBackend = !$nodeAddress->isInLiveWorkspace();
 
-        $contextParameters = $this->createContextParameters($inBackend);
+        $visibilityConstraints = $this->createVisibilityConstraints($inBackend);
         $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
         if (!$site) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
-        $this->fillCacheWithContentNodes($subgraph, $nodeAddress, $contextParameters);
+        $this->fillCacheWithContentNodes($subgraph, $nodeAddress, $visibilityConstraints);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
         if (is_null($node)) {
@@ -157,14 +159,13 @@ class EventSourcedNodeController extends ActionController
             $this->handleShortcutNode($subgraph, $node, $nodeAddress);
         }
 
-        $traversableNode = new TraversableNode($node, $subgraph, $contextParameters);
-        $traversableSite = new TraversableNode($site, $subgraph, $contextParameters);
+        $traversableNode = new TraversableNode($node, $subgraph);
+        $traversableSite = new TraversableNode($site, $subgraph);
 
         $this->view->assignMultiple([
             'value' => $traversableNode,
             'subgraph' => $subgraph,
             'site' => $traversableSite,
-            'contextParameters' => $contextParameters
         ]);
 
         if ($inBackend) {
@@ -183,11 +184,15 @@ class EventSourcedNodeController extends ActionController
 
     /**
      * @param bool $inBackend
-     * @return ContextParameters
+     * @return VisibilityConstraints
      */
-    protected function createContextParameters(bool $inBackend): ContextParameters
+    protected function createVisibilityConstraints(bool $inBackend): VisibilityConstraints
     {
-        return new ContextParameters($this->now, $this->securityContext->getRoles(), $inBackend, $inBackend);
+        if ($inBackend) {
+            return VisibilityConstraints::withoutRestrictions();
+        } else {
+            return VisibilityConstraints::frontend();
+        }
     }
 
     /**
@@ -240,19 +245,19 @@ class EventSourcedNodeController extends ActionController
         }
     }
 
-    private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, NodeAddress $nodeAddress, ContextParameters $contextParameters)
+    private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, NodeAddress $nodeAddress)
     {
-        $subtree = $subgraph->findSubtrees([$nodeAddress->getNodeAggregateIdentifier()], 10, $contextParameters, $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document'));
+        $subtree = $subgraph->findSubtrees([$nodeAddress->getNodeAggregateIdentifier()], 10, $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document'));
         $subtree = $subtree->getChildren()[0];
 
         $nodeByNodeIdentifierCache = $subgraph->getInMemoryCache()->getNodeByNodeIdentifierCache();
         $nodePathCache = $subgraph->getInMemoryCache()->getNodePathCache();
 
         $currentDocumentNode = $subtree->getNode();
-        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->getNodeIdentifier());
+        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->getNodeAggregateIdentifier());
 
         $nodeByNodeIdentifierCache->add($currentDocumentNode->getNodeIdentifier(), $currentDocumentNode);
-        $nodePathCache->add($currentDocumentNode->getNodeIdentifier(), $nodePathOfDocumentNode);
+        $nodePathCache->add($currentDocumentNode->getNodeAggregateIdentifier(), $nodePathOfDocumentNode);
 
         foreach ($subtree->getChildren() as $childSubtree) {
             self::fillCacheInternal($childSubtree, $currentDocumentNode, $nodePathOfDocumentNode, $subgraph->getInMemoryCache());
@@ -270,10 +275,10 @@ class EventSourcedNodeController extends ActionController
         $node = $subtree->getNode();
         $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
 
-        $parentNodeIdentifierByChildNodeIdentifierCache->add($node->getNodeIdentifier(), $parentNode->getNodeIdentifier());
+        $parentNodeIdentifierByChildNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier());
         $nodeByNodeIdentifierCache->add($node->getNodeIdentifier(), $node);
-        $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeIdentifier(), $node->getNodeName(), $node);
-        $nodePathCache->add($node->getNodeIdentifier(), $nodePath);
+        $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeAggregateIdentifier(), $node->getNodeName(), $node);
+        $nodePathCache->add($node->getNodeAggregateIdentifier(), $nodePath);
 
         $allChildNodes = [];
         foreach ($subtree->getChildren() as $childSubtree) {
@@ -282,6 +287,6 @@ class EventSourcedNodeController extends ActionController
         }
 
         // TODO Explain why this is safe (Content can not contain other documents)
-        $allChildNodesByNodeIdentifierCache->add($node->getNodeIdentifier(), $allChildNodes);
+        $allChildNodesByNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $allChildNodes);
     }
 }
