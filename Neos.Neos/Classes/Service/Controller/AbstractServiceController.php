@@ -11,7 +11,6 @@ namespace Neos\Neos\Service\Controller;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Response as HttpResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -30,7 +29,7 @@ abstract class AbstractServiceController extends ActionController
     /**
      * @var array
      */
-    protected $supportedMediaTypes = array('application/json');
+    protected $supportedMediaTypes = ['application/json'];
 
     /**
      * A preliminary error action for handling validation errors
@@ -44,10 +43,10 @@ abstract class AbstractServiceController extends ActionController
             foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyName => $propertyErrors) {
                 foreach ($propertyErrors as $propertyError) {
                     /** @var \Neos\Error\Messages\Error $propertyError */
-                    $error = array(
+                    $error = [
                         'severity' => $propertyError->getSeverity(),
                         'message' => $propertyError->render()
-                    );
+                    ];
                     if ($propertyError->getCode()) {
                         $error['code'] = $propertyError->getCode();
                     }
@@ -88,7 +87,7 @@ abstract class AbstractServiceController extends ActionController
             } else {
                 $response->setStatus(500);
             }
-            $response->setContent(json_encode(array('error' => $exceptionData)));
+            $response->setContent(json_encode(['error' => $exceptionData]));
             $this->systemLogger->logException($exception);
         }
     }
@@ -104,10 +103,10 @@ abstract class AbstractServiceController extends ActionController
                 $exceptionData['message'] = 'When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $exception->getReferenceCode();
             }
         } else {
-            $exceptionData = array(
+            $exceptionData = [
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage(),
-            );
+            ];
             $splitMessagePattern = '/
                 (?<=                # Begin positive lookbehind.
                   [.!?]\s           # Either an end of sentence punct,

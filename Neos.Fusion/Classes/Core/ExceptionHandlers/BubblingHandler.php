@@ -11,7 +11,6 @@ namespace Neos\Fusion\Core\ExceptionHandlers;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Fusion\Exception\RuntimeException;

@@ -27,7 +27,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function widthAndHeightDeterminedByExplicitlySetWidthAndHeightWithInsetMode()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'));
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy']);
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(110, 83);
@@ -46,7 +46,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function widthAndHeightDeterminedByExplicitlySetWidthAndHeightWithOutboundMode()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'));
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy']);
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(110, 110);
@@ -64,7 +64,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function ifWidthIsSetHeightIsDeterminedByTheOriginalAspectRatio()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'));
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy']);
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(110, 83);
@@ -80,7 +80,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function ifHeightIsSetWidthIsDeterminedByTheOriginalAspectRatio()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'));
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy']);
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(127, 95);
@@ -96,13 +96,13 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function minimumHeightIsGreaterZero()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'), array(
-            array(
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy'], [
+            [
                 'maximumWidth' => 250,
                 'maximumHeight' => 250,
                 'ratioMode' => ImageInterface::RATIOMODE_INSET
-            )
-        ));
+            ]
+        ]);
 
         $originalDimensions = new Box(2000, 2);
         $expectedDimensions = new Box(250, 1);
@@ -116,13 +116,13 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function minimumWidthIsGreaterZero()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'), array(
-            array(
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy'], [
+            [
                 'maximumWidth' => 250,
                 'maximumHeight' => 250,
                 'ratioMode' => ImageInterface::RATIOMODE_INSET
-            )
-        ));
+            ]
+        ]);
 
         $originalDimensions = new Box(2, 2000);
         $expectedDimensions = new Box(1, 250);
@@ -137,19 +137,19 @@ class ResizeImageAdjustmentTest extends UnitTestCase
      */
     public function minimumAndMaximumDimensions()
     {
-        return array(
-            array(null, 110, null, null, 110, 83, ImageInterface::RATIOMODE_INSET, false), # maximum width respects aspect ratio
-            array(null, 110, null, 80, 106, 80, ImageInterface::RATIOMODE_INSET, false),   # maximum height wins and aspect ratio is considered
-            array(null, 110, null, 80, 106, 80, ImageInterface::RATIOMODE_INSET, true),   # maximum height wins and aspect ratio is considered
-            array(null, 110, null, null, 110, 83, ImageInterface::RATIOMODE_OUTBOUND, false), # maximum width respects aspect ratio
-            array(null, 110, null, 80, 106, 80, ImageInterface::RATIOMODE_OUTBOUND, false),   # maximum height wins and aspect ratio is considered
-            array(null, 110, null, 80, 106, 80, ImageInterface::RATIOMODE_OUTBOUND, true),   # maximum height wins and aspect ratio is considered
-            array(500, null, null, 310, 400, 300, ImageInterface::RATIOMODE_INSET, false),   # upscaling not allowed, original image size wins
-            array(500, null, null, 310, 413, 310, ImageInterface::RATIOMODE_INSET, true),   # upscaling allowed, maximum height wins
-            array(500, null, 500, null, 300, 300, ImageInterface::RATIOMODE_OUTBOUND, false),   # upscaling not allowed, outbound box will be scaled down.
-            array(500, null, 500, null, 500, 500, ImageInterface::RATIOMODE_OUTBOUND, true),   # upscaling allowed, outbound box will be exact.
-            array(500, 450, 500, 445, 445, 445, ImageInterface::RATIOMODE_OUTBOUND, true),   # upscaling allowed, outbound box will be scaled to maximum sizes.
-        );
+        return [
+            [null, 110, null, null, 110, 83, ImageInterface::RATIOMODE_INSET, false], # maximum width respects aspect ratio
+            [null, 110, null, 80, 106, 80, ImageInterface::RATIOMODE_INSET, false],   # maximum height wins and aspect ratio is considered
+            [null, 110, null, 80, 106, 80, ImageInterface::RATIOMODE_INSET, true],   # maximum height wins and aspect ratio is considered
+            [null, 110, null, null, 110, 83, ImageInterface::RATIOMODE_OUTBOUND, false], # maximum width respects aspect ratio
+            [null, 110, null, 80, 106, 80, ImageInterface::RATIOMODE_OUTBOUND, false],   # maximum height wins and aspect ratio is considered
+            [null, 110, null, 80, 106, 80, ImageInterface::RATIOMODE_OUTBOUND, true],   # maximum height wins and aspect ratio is considered
+            [500, null, null, 310, 400, 300, ImageInterface::RATIOMODE_INSET, false],   # upscaling not allowed, original image size wins
+            [500, null, null, 310, 413, 310, ImageInterface::RATIOMODE_INSET, true],   # upscaling allowed, maximum height wins
+            [500, null, 500, null, 300, 300, ImageInterface::RATIOMODE_OUTBOUND, false],   # upscaling not allowed, outbound box will be scaled down.
+            [500, null, 500, null, 500, 500, ImageInterface::RATIOMODE_OUTBOUND, true],   # upscaling allowed, outbound box will be exact.
+            [500, 450, 500, 445, 445, 445, ImageInterface::RATIOMODE_OUTBOUND, true],   # upscaling allowed, outbound box will be scaled to maximum sizes.
+        ];
     }
 
     /**
@@ -158,17 +158,17 @@ class ResizeImageAdjustmentTest extends UnitTestCase
      */
     public function combinationsOfMaximumAndMinimumWidthAndHeightAreCalculatedCorrectly($width, $maximumWidth, $height, $maximumHeight, $expectedWidth, $expectedHeight, $ratioMode, $allowUpScaling)
     {
-        $options = array(
+        $options = [
             'width' => $width,
             'maximumWidth' => $maximumWidth,
             'height' => $height,
             'maximumHeight' => $maximumHeight,
             'ratioMode' => $ratioMode,
             'allowUpScaling' => $allowUpScaling
-        );
+        ];
 
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'), array($options));
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy'], [$options]);
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box($expectedWidth, $expectedHeight);

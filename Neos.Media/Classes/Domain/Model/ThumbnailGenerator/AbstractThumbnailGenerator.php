@@ -13,7 +13,6 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
 
 use Imagine\Image\ImagineInterface;
 use Neos\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Utility\Environment;
 use Neos\Media\Domain\Model\Thumbnail;

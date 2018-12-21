@@ -40,9 +40,9 @@ class FusionView extends AbstractView
      *
      * @var array
      */
-    protected $supportedOptions = array(
-        'enableContentCache' => array(null, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean')
-    );
+    protected $supportedOptions = [
+        'enableContentCache' => [null, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean']
+    ];
 
     /**
      * @Flow\Inject
@@ -92,12 +92,12 @@ class FusionView extends AbstractView
             // TODO: special case for Language DimensionSpacePoint!
         }
 
-        $fusionRuntime->pushContextArray(array(
+        $fusionRuntime->pushContextArray([
             'node' => $currentNode,
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSiteNode,
             'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
-        ));
+        ]);
         try {
             $output = $fusionRuntime->render($this->fusionPath);
             $output = $this->mergeHttpResponseFromOutput($output, $fusionRuntime);

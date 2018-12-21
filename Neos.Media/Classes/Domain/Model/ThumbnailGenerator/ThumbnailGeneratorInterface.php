@@ -11,8 +11,6 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Media\Domain\Model\Thumbnail;
 
 /**

@@ -17,7 +17,8 @@ use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Utility\Arrays;
@@ -84,7 +85,7 @@ class NodeDataRepository extends Repository
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var PsrSystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -730,7 +731,7 @@ class NodeDataRepository extends Repository
      */
     protected function openIndexSpace($parentPath, $referenceIndex)
     {
-        $this->systemLogger->log(sprintf('Opening sortindex space after index %s at path %s.', $referenceIndex, $parentPath), LOG_INFO);
+        $this->systemLogger->info(sprintf('Opening sortindex space after index %s at path %s.', $referenceIndex, $parentPath), LogEnvironment::fromMethodName(__METHOD__));
 
         /** @var Query $query */
         $query = $this->entityManager->createQuery('SELECT n.Persistence_Object_Identifier identifier, n.index, n.path FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');

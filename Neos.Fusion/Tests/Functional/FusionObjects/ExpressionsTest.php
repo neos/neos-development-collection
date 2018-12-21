@@ -18,14 +18,14 @@ class ExpressionsTest extends AbstractFusionObjectTest
 {
     public function expressionExamples()
     {
-        return array(
-            array('expressions/calculus', 42),
-            array('expressions/stringHelper', 'BAR'),
-            array('expressions/dateHelper', '14.07.2013 12:14'),
-            array('expressions/arrayHelper', 3),
-            array('expressions/customHelper', 'Flow'),
-            array('expressions/flowQuery', 3)
-        );
+        return [
+            ['expressions/calculus', 42],
+            ['expressions/stringHelper', 'BAR'],
+            ['expressions/dateHelper', '14.07.2013 12:14'],
+            ['expressions/arrayHelper', 3],
+            ['expressions/customHelper', 'Flow'],
+            ['expressions/flowQuery', 3]
+        ];
     }
 
     /**

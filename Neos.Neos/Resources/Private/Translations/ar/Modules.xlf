@@ -265,7 +265,7 @@
 			<target xml:lang="ar" state="translated">{0} أعادت تسمية {1} "{2}" إلى"{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target xml:lang="ar" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target xml:lang="ar" state="translated">{0} مُحتوى مُعدّل على {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="ar" state="translated">{0} إنشاء مستخدم جديد "{1}" ل {2}.</target></trans-unit>
@@ -554,7 +554,7 @@
 			<target xml:lang="ar" state="needs-translation">The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
-			<target xml:lang="ar" state="needs-translation">Add new site</target></trans-unit>
+			<target xml:lang="ar" state="translated">إضافة موقع جديد</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="ar" state="needs-translation">Create site</target></trans-unit>
@@ -566,7 +566,7 @@
 			<target xml:lang="ar" state="needs-translation">Root node name</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="ar" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="ar" state="translated">نطاقات</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve">
 				<source>Site</source>
 			<target xml:lang="ar" state="needs-translation">Site</target></trans-unit>
@@ -578,46 +578,46 @@
 			<target xml:lang="ar" state="needs-translation">Default asset collection</target></trans-unit>
       <trans-unit id="sites.sitePackage" xml:space="preserve">
 				<source>Site package</source>
-			<target xml:lang="ar" state="needs-translation">Site package</target></trans-unit>
+			<target xml:lang="ar" state="translated">حزمة الموقع</target></trans-unit>
       <trans-unit id="sites.delete" xml:space="preserve">
 				<source>Delete this site</source>
-			<target xml:lang="ar" state="needs-translation">Delete this site</target></trans-unit>
+			<target xml:lang="ar" state="translated">احذف هذا الموقع</target></trans-unit>
       <trans-unit id="sites.deactivate" xml:space="preserve">
 				<source>Deactivate site</source>
-			<target xml:lang="ar" state="needs-translation">Deactivate site</target></trans-unit>
+			<target xml:lang="ar" state="translated">إلغاء تفعيل الموقع</target></trans-unit>
       <trans-unit id="sites.activate" xml:space="preserve">
 				<source>Activate site</source>
-			<target xml:lang="ar" state="needs-translation">Activate site</target></trans-unit>
+			<target xml:lang="ar" state="translated">تفعيل الموقع</target></trans-unit>
       <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="ar" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target xml:lang="ar" state="translated">هل تريد حقاً حذف "{0}"؟ هذا الأمر لا يمكن التراجع عنه.</target></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the site</source>
-			<target xml:lang="ar" state="needs-translation">Yes, delete the site</target></trans-unit>
+			<target xml:lang="ar" state="translated">نعم, احذف هذا الموقع</target></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve">
 				<source>Import a site</source>
-			<target xml:lang="ar" state="needs-translation">Import a site</target></trans-unit>
+			<target xml:lang="ar" state="translated">استيراد موقع</target></trans-unit>
       <trans-unit id="sites.select" xml:space="preserve">
 				<source>Select a site package</source>
-			<target xml:lang="ar" state="needs-translation">Select a site package</target></trans-unit>
+			<target xml:lang="ar" state="translated">اختر حزمة موقع</target></trans-unit>
       <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
 				<source>No site packages are available. Make sure you have an active site package.</source>
-			<target xml:lang="ar" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+			<target xml:lang="ar" state="translated">لا توجد حزمة موقع متاحة. تأكد بأن لديك حزمة موقع مفعلة.</target></trans-unit>
       <trans-unit id="sites.createBlank" xml:space="preserve">
 				<source>Create a blank site</source>
-			<target xml:lang="ar" state="needs-translation">Create a blank site</target></trans-unit>
+			<target xml:lang="ar" state="translated">انشئ موقع فارغ</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
 			<target xml:lang="ar" state="needs-translation">Select a document nodeType</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
-			<target xml:lang="ar" state="needs-translation">Site name</target></trans-unit>
+			<target xml:lang="ar" state="translated">اسم الموقع</target></trans-unit>
       <trans-unit id="sites.createNode" xml:space="preserve">
 				<source>Create empty site</source>
-			<target xml:lang="ar" state="needs-translation">Create empty site</target></trans-unit>
+			<target xml:lang="ar" state="translated">انشئ موقع فارغ</target></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve">
 				<source>Create a new site package</source>
-			<target xml:lang="ar" state="needs-translation">Create a new site package</target></trans-unit>
+			<target xml:lang="ar" state="translated">انشئ حزمة موقع جديدة</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
 			<target xml:lang="ar" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
@@ -626,13 +626,13 @@
 			<target xml:lang="ar" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="ar" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target xml:lang="ar" state="translated">هل تريد حقاً حذف "{0}"؟ هذا الأمر لا يمكن التراجع عنه.</target></trans-unit>
       <trans-unit id="domain.new" xml:space="preserve">
 				<source>New domain</source>
-			<target xml:lang="ar" state="needs-translation">New domain</target></trans-unit>
+			<target xml:lang="ar" state="translated">نطاق جديد</target></trans-unit>
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
-			<target xml:lang="ar" state="needs-translation">Edit domain</target></trans-unit>
+			<target xml:lang="ar" state="translated">تعديل نطاق</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="ar" state="needs-translation">Configuration</target></trans-unit>

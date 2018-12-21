@@ -34,10 +34,10 @@ use Neos\FluidAdaptor\ViewHelpers\Form\AbstractFormFieldViewHelper;
  * </output>
  *
  * <code title="Bind to object property">
- * <neos.media:form.checkbox property="interests" value="TYPO3" />
+ * <neos.media:form.checkbox property="interests" value="Neos" />
  * </code>
  * <output>
- * <input type="checkbox" name="user[interests][]" value="TYPO3" checked="checked" />
+ * <input type="checkbox" name="user[interests][]" value="Neos" checked="checked" />
  * (depending on property "interests")
  * </output>
  *

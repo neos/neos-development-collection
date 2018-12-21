@@ -200,7 +200,7 @@ html,
 		.neos-actions {
 			bottom: 0;
 			width: 100%;
-			height: $unit;
+			min-height: $unit;
 
 			button, .btn {
 				text-align: center;

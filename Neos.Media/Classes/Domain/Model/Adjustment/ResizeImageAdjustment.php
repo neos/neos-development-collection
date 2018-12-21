@@ -349,10 +349,10 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
 
         $newDimensions = clone $originalDimensions;
 
-        $ratios = array(
+        $ratios = [
             $requestedWidth / $originalDimensions->getWidth(),
             $requestedHeight / $originalDimensions->getHeight()
-        );
+        ];
 
         $ratio = min($ratios);
         $newDimensions = $newDimensions->scale($ratio);
@@ -382,10 +382,10 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
         }
 
         // We need to make sure that the new dimensions are such that no upscaling is needed.
-        $ratios = array(
+        $ratios = [
             $originalDimensions->getWidth() / $requestedWidth,
             $originalDimensions->getHeight() / $requestedHeight
-        );
+        ];
 
         $ratio = min($ratios);
         $newDimensions = $newDimensions->scale($ratio);
@@ -480,10 +480,10 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     protected function calculateOutboundScalingDimensions(BoxInterface $imageSize, BoxInterface $requestedDimensions)
     {
-        $ratios = array(
+        $ratios = [
             $requestedDimensions->getWidth() / $imageSize->getWidth(),
             $requestedDimensions->getHeight() / $imageSize->getHeight()
-        );
+        ];
 
         return $imageSize->scale(max($ratios));
     }

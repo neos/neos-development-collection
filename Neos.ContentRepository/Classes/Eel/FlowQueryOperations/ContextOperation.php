@@ -77,7 +77,7 @@ class ContextOperation extends AbstractOperation
             throw new FlowQueryException('context() requires an array argument of context properties', 1398030427);
         }
 
-        $output = array();
+        $output = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             /** @var NodeInterface $contextNode */
             $contextProperties = $contextNode->getContext()->getProperties();

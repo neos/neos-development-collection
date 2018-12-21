@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Interface for a user of the content repository. Users can be owners of workspaces.

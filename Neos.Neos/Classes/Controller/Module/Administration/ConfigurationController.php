@@ -49,10 +49,10 @@ class ConfigurationController extends AbstractModuleController
     public function indexAction($type = 'Settings')
     {
         $availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'type' => $type,
             'availableConfigurationTypes' => $availableConfigurationTypes
-        ));
+        ]);
 
         if (in_array($type, $availableConfigurationTypes)) {
             $this->view->assign('configuration', $this->configurationManager->getConfiguration($type));
@@ -60,10 +60,10 @@ class ConfigurationController extends AbstractModuleController
             try {
                 $this->view->assign('validationResult', $this->configurationSchemaValidator->validate($type));
             } catch (SchemaValidationException $exception) {
-                $this->addFlashMessage(htmlspecialchars($exception->getMessage()), 'An error occurred during validation of the configuration.', Message::SEVERITY_ERROR, array(), 1412373972);
+                $this->addFlashMessage(htmlspecialchars($exception->getMessage()), 'An error occurred during validation of the configuration.', Message::SEVERITY_ERROR, [], 1412373972);
             }
         } else {
-            $this->addFlashMessage('Configuration type not found.', '', Message::SEVERITY_ERROR, array(), 1412373998);
+            $this->addFlashMessage('Configuration type not found.', '', Message::SEVERITY_ERROR, [], 1412373998);
         }
     }
 }

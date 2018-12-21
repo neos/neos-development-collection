@@ -25,12 +25,12 @@ abstract class AbstractRenderer
     /**
      * @var array Array of the default options that apply to this renderer.
      */
-    protected $defaultOptions = array();
+    protected $defaultOptions = [];
 
     /**
      * @var array Array containing the user applied and merged default options for the renderer.
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * The constructor. Instantiates the rendering engine and if options are passed,
@@ -38,7 +38,7 @@ abstract class AbstractRenderer
      *
      * @param array $options Optionally, an array of the options for the renderer.
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->setOptions($options);
     }

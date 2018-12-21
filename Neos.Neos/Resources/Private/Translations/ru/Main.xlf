@@ -338,16 +338,16 @@
 			<target xml:lang="ru" state="needs-translation">Toggle content tree</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target xml:lang="ru" state="needs-translation">Show publish options</target></trans-unit>
+			<target xml:lang="ru" state="translated">Показать параметры публикации</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target xml:lang="ru" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="ru" state="translated">Включить полноэкранный режим редактирования</target><alt-trans><target xml:lang="ru">Активировать полноэкранный режим редактирования</target></alt-trans></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target xml:lang="ru" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target xml:lang="ru" state="translated">Отключить полноэкранный режим редактирования</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target xml:lang="ru" state="needs-translation">Show preview</target></trans-unit>
+			<target xml:lang="ru" state="translated">Предварительный просмотр</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>

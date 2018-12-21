@@ -51,7 +51,7 @@ class ParentOperationTest extends UnitTestCase
         $this->secondLevelNode = $this->createMock(TraversableNodeInterface::class);
 
         $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site')));
-        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(array($this->firstLevelNode)));
+        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue([$this->firstLevelNode]));
         $this->siteNode->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('site-identifier-uuid')));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
@@ -66,14 +66,14 @@ class ParentOperationTest extends UnitTestCase
      */
     public function parentWillReturnEmptyResultForTheSiteNode()
     {
-        $context = array($this->siteNode);
+        $context = [$this->siteNode];
         $q = new FlowQuery($context);
 
         $operation = new ParentOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array(), $output);
+        $this->assertEquals([], $output);
     }
 
     /**
@@ -81,13 +81,13 @@ class ParentOperationTest extends UnitTestCase
      */
     public function parentWillReturnFirstLevelNodeForSecondLevelNode()
     {
-        $context = array($this->secondLevelNode);
+        $context = [$this->secondLevelNode];
         $q = new FlowQuery($context);
 
         $operation = new ParentOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->firstLevelNode), $output);
+        $this->assertEquals([$this->firstLevelNode], $output);
     }
 }

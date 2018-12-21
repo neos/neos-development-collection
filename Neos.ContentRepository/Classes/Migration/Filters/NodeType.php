@@ -11,8 +11,6 @@ namespace Neos\ContentRepository\Migration\Filters;
  * source code.
  */
 
-use Doctrine\ORM\Query\Expr;
-use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Persistence\Doctrine\Query;

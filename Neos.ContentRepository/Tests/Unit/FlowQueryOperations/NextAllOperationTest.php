@@ -57,11 +57,11 @@ class NextAllOperationTest extends UnitTestCase
         $this->thirdNodeInLevel = $this->createMock(TraversableNodeInterface::class);
 
         $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site')));
-        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(array(
+        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
-        )));
+        ]));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->firstNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
@@ -77,14 +77,14 @@ class NextAllOperationTest extends UnitTestCase
      */
     public function nextAllWillReturnEmptyResultForLastNodeInLevel()
     {
-        $context = array($this->thirdNodeInLevel);
+        $context = [$this->thirdNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new NextAllOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array(), $output);
+        $this->assertEquals([], $output);
     }
 
     /**
@@ -92,14 +92,14 @@ class NextAllOperationTest extends UnitTestCase
      */
     public function nextAllWillReturnSecondNodeAndThirdNodeInLevelForFirstNodeInLevel()
     {
-        $context = array($this->firstNodeInLevel);
+        $context = [$this->firstNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new NextAllOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->secondNodeInLevel, $this->thirdNodeInLevel), $output);
+        $this->assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 
     /**
@@ -107,14 +107,14 @@ class NextAllOperationTest extends UnitTestCase
      */
     public function nextAllWillReturnThirdNodeInLevelForSecondNodeInLevel()
     {
-        $context = array($this->secondNodeInLevel);
+        $context = [$this->secondNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new NextAllOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->thirdNodeInLevel), $output);
+        $this->assertEquals([$this->thirdNodeInLevel], $output);
     }
 
     /**
@@ -122,13 +122,13 @@ class NextAllOperationTest extends UnitTestCase
      */
     public function nextAllWillReturnSecondNodeAndThirdNodeInLevelForFirstAndSecondNodeInLevel()
     {
-        $context = array($this->firstNodeInLevel, $this->secondNodeInLevel);
+        $context = [$this->firstNodeInLevel, $this->secondNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new NextAllOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->secondNodeInLevel, $this->thirdNodeInLevel), $output);
+        $this->assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 }

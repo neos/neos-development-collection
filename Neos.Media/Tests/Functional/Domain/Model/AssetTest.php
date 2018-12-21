@@ -13,7 +13,6 @@ namespace Neos\Media\Tests\Functional\Domain\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Repository;
-use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Tag;

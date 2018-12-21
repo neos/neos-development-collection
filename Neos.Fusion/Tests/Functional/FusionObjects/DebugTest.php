@@ -39,9 +39,7 @@ class DebugTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('debug/empty');
         $view->render();
-        ob_start();
-        $this->debugStack->dump();
-        $result = ob_get_clean();
+        $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
         $this->assertEquals('NULL', $lines[1]);
     }
@@ -54,9 +52,7 @@ class DebugTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('debug/null');
         $view->render();
-        ob_start();
-        $this->debugStack->dump();
-        $result = ob_get_clean();
+        $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
         $this->assertEquals('NULL', $lines[1]);
     }
@@ -69,9 +65,7 @@ class DebugTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('debug/nullWithTitle');
         $view->render();
-        ob_start();
-        $this->debugStack->dump();
-        $result = ob_get_clean();
+        $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
         $this->assertEquals('Title @ debug/nullWithTitle<Neos.Fusion:Debug>.value', $lines[0]);
         $this->assertEquals('NULL', $lines[1]);
@@ -85,9 +79,7 @@ class DebugTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('debug/eelExpression');
         $view->render();
-        ob_start();
-        $this->debugStack->dump();
-        $result = ob_get_clean();
+        $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
         $this->assertEquals('string "hello world" (11)', $lines[1]);
     }
@@ -100,9 +92,7 @@ class DebugTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('debug/fusionObjectExpression');
         $view->render();
-        ob_start();
-        $this->debugStack->dump();
-        $result = ob_get_clean();
+        $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
         $this->assertEquals('string "hello world" (11)', $lines[1]);
     }
@@ -115,9 +105,7 @@ class DebugTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('debug/multipleValues');
         $view->render();
-        ob_start();
-        $this->debugStack->dump();
-        $result = ob_get_clean();
+        $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
         $this->assertEquals('@ debug/multipleValues<Neos.Fusion:Debug>.foo', $lines[0]);
         $this->assertEquals('string "foo" (3)', $lines[1]);

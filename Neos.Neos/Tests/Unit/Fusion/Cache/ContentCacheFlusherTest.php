@@ -11,11 +11,9 @@ namespace Neos\Neos\Tests\Unit\Fusion\Cache;
  * source code.
  */
 
-use Doctrine\ORM\Mapping\Cache;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\Neos\Fusion\Helper\CachingHelper;
@@ -32,8 +30,10 @@ class ContentCacheFlusherTest extends UnitTestCase
     {
         $contentCacheFlusher = $this->getMockBuilder(ContentCacheFlusher::class)->setMethods(['resolveWorkspaceChain', 'registerChangeOnNodeIdentifier', 'registerChangeOnNodeType'])->disableOriginalConstructor()->getMock();
         $contentCacheFlusher->expects($this->never())->method('resolveWorkspaceChain');
-        $contentCacheFlusher->expects($this->once())->method('registerChangeOnNodeIdentifier');
-        $contentCacheFlusher->expects($this->once())->method('registerChangeOnNodeType');
+
+        // Assume 2 calls as we still register all legacy tags as well
+        $contentCacheFlusher->expects($this->exactly(2))->method('registerChangeOnNodeIdentifier');
+        $contentCacheFlusher->expects($this->exactly(2))->method('registerChangeOnNodeType');
 
         $this->inject($contentCacheFlusher, 'workspacesToFlush', ['live' => ['some-hash']]);
 

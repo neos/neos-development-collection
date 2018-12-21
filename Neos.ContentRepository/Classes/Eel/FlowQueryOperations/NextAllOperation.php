@@ -57,8 +57,8 @@ class NextAllOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodePaths = array();
+        $output = [];
+        $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             foreach ($this->getNextForNode($contextNode) as $nextNode) {
                 if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->findNodePath()])) {

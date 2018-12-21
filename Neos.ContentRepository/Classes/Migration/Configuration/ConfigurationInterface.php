@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Migration\Configuration;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Interface for Migration Configurations to allow different configuration sources.

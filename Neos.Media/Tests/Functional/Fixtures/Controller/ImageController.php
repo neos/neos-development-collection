@@ -88,25 +88,25 @@ class ImageController extends ActionController
 
         $this->response->setHeader('Content-Type', 'application/json');
         return json_encode(
-            array(
+            [
                 '__identity' => $this->persistenceManager->getIdentifierByObject($image),
                 '__resourceUri' => $this->resourceManager->getPublicPersistentResourceUri($image->getResource()),
                 'width' => $image->getWidth(),
                 'height' => $image->getHeight(),
-                'thumbnail' => array(
+                'thumbnail' => [
                     '__resourceUri' => $this->resourceManager->getPublicPersistentResourceUri($thumbnail->getResource()),
                     'width' => $thumbnail->getWidth(),
                     'height' => $thumbnail->getHeight(),
-                ),
-                'variants' => array(
-                    array(
+                ],
+                'variants' => [
+                    [
                         '__identity' => $this->persistenceManager->getIdentifierByObject($imageVariant),
                         '__resourceUri' => $this->resourceManager->getPublicPersistentResourceUri($imageVariant->getResource()),
                         'width' => $imageVariant->getWidth(),
                         'height' => $imageVariant->getHeight(),
-                    )
-                )
-            )
+                    ]
+                ]
+            ]
         );
     }
 

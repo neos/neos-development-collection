@@ -44,7 +44,7 @@ class DebugDumpImplementation extends AbstractFusionObject
     {
         if ($this->stack->hasMessage() && $this->isEnabled()) {
             $this->getRuntime()->setEnableContentCache(false);
-            $this->stack->dump();
+            return $this->stack->dump();
         }
         return $this->fusionValue('value');
     }

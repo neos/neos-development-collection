@@ -310,7 +310,7 @@ Neos:
             label: 'Neos.Neos:Modules:history.label'
             controller: 'Neos\Neos\Controller\Module\Management\HistoryController'
             description: 'Neos.Neos:Modules:history.description'
-            icon: fas fa-calendar
+            icon: fas fa-calendar-alt
       administration:
         label: 'Neos.Neos:Modules:administration.label'
         controller: 'Neos\Neos\Controller\Module\AdministrationController'

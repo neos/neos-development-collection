@@ -91,9 +91,9 @@ class LinkingServiceTest extends FunctionalTestCase
         $domainRepository = $this->objectManager->get(DomainRepository::class);
         $siteRepository = $this->objectManager->get(SiteRepository::class);
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => 'live'
-        );
+        ];
         $contentContext = $this->contextFactory->create($contextProperties);
         $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile(__DIR__ . '/../Fixtures/NodeStructure.xml', $contentContext);
@@ -117,7 +117,7 @@ class LinkingServiceTest extends FunctionalTestCase
         $this->linkingService = $this->objectManager->get(LinkingService::class);
         /** @var $requestHandler FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $this->controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder());
+        $this->controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments([]), new UriBuilder());
     }
 
     /**
@@ -126,8 +126,8 @@ class LinkingServiceTest extends FunctionalTestCase
     public function tearDown()
     {
         parent::tearDown();
-        $this->inject($this->contextFactory, 'contextInstances', array());
-        $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
+        $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', []);
     }
 
     /**
@@ -185,11 +185,11 @@ class LinkingServiceTest extends FunctionalTestCase
 
     public function supportedSchemesDataProvider()
     {
-        return array(
-            array('node://aeabe76a-551a-495f-a324-ad9a86b2aff7', true),
-            array('asset://aeabe76a-551a-495f-a324-ad9a86b2aff7', true),
-            array('random://aeabe76a-551a-495f-a324-ad9a86b2aff7', false)
-        );
+        return [
+            ['node://aeabe76a-551a-495f-a324-ad9a86b2aff7', true],
+            ['asset://aeabe76a-551a-495f-a324-ad9a86b2aff7', true],
+            ['random://aeabe76a-551a-495f-a324-ad9a86b2aff7', false]
+        ];
     }
 
     /**

@@ -151,7 +151,7 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
     {
         if ($this->currentNodeRootline === null) {
             $nodeRootline = $this->currentNode->getContext()->getNodesOnPath($this->currentNode->getContext()->getCurrentSiteNode()->getPath(), $this->currentNode->getPath());
-            $this->currentNodeRootline = array();
+            $this->currentNodeRootline = [];
 
             foreach ($nodeRootline as $rootlineElement) {
                 $this->currentNodeRootline[$this->getNodeLevelInSite($rootlineElement)] = $rootlineElement;

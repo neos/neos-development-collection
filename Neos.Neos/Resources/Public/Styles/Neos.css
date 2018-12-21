@@ -27,17 +27,54 @@
   src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url("../Fonts/NotoSans/NotoSans-BoldItalic.ttf") format("truetype");
 }
 /*!
- * Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
- * License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ * Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 .fa,
 .fas,
+.neos button[class^="fa-"],
+.neos button[class*=" fa-"],
+.neos .neos-button[class^="fa-"],
+.neos .neos-button[class*=" fa-"],
+.neos .neos-modal .neos-modal-header .neos-close,
+.neos .neos-modal-content .neos-modal-header .neos-close,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span:after,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove::after,
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-active:before,
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover:before,
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div:after,
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input + span::before,
+.neos #neos-inspector .neos-inspector-form .neos-radio input + span::before,
+.neos .neos-secondary-inspector .neos-close,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span::before,
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle::before,
+.neos #neos-context-bar .chosen-container .chosen-single div:after,
+.neos #neos-context-bar .chosen-container .chosen-single abbr::after,
+.neos #neos-context-bar .chosen-container .chosen-drop .chosen-search,
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary::before,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr::after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search,
+.neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon,
+.neos.neos-module .neos-select:after,
+.neos.neos-module .neos-checkbox input + span::before,
+.neos.neos-module .neos-radio input + span::before,
 .neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button,
+.neos .neos-position-selector::after,
+.aloha-block-draghandle,
+.neos-backend .ui-dialog .ui-widget-header .ui-button,
+.neos-select2-container .neos-select2-choice > .neos-select2-arrow:after,
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-field:after,
+.neos-select2-with-searchbox .neos-select2-search:after,
 .far,
 .fal,
 .fab {
@@ -142,8 +179,45 @@
 
 .fa.fa-pull-left,
 .fas.fa-pull-left,
+.neos button.fa-pull-left[class^="fa-"],
+.neos button.fa-pull-left[class*=" fa-"],
+.neos .fa-pull-left.neos-button[class^="fa-"],
+.neos .fa-pull-left.neos-button[class*=" fa-"],
+.neos .neos-modal .neos-modal-header .fa-pull-left.neos-close,
+.neos .neos-modal-content .neos-modal-header .fa-pull-left.neos-close,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span.fa-pull-left:after,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span.fa-pull-left:after,
 .neos ul.neos-dynatree-container .neos-dynatree-node .fa-pull-left.neos-dynatree-expander,
+.neos #neos-inspector .neos-inspector-file ul li .fa-pull-left.neos-asset-editor-remove::after,
+.neos #neos-inspector .neos-inspector-image .fa-pull-left.typo3-fileupload-dropzone.typo3-fileupload-dropzone-active:before,
+.neos #neos-inspector .neos-inspector-image .fa-pull-left.typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover:before,
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div.fa-pull-left:after,
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input + span.fa-pull-left::before,
+.neos #neos-inspector .neos-inspector-form .neos-radio input + span.fa-pull-left::before,
+.neos .neos-secondary-inspector .fa-pull-left.neos-close,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-left::before,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span.fa-pull-left::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span.fa-pull-left::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span.fa-pull-left::before,
+.neos #neos-publish-menu.neos-button-group .fa-pull-left.neos-dropdown-toggle::before,
+.neos #neos-context-bar .chosen-container .chosen-single div.fa-pull-left:after,
+.neos #neos-context-bar .chosen-container .chosen-single abbr.fa-pull-left::after,
+.neos #neos-context-bar .chosen-container .chosen-drop .fa-pull-left.chosen-search,
+.neos #neos-context-bar .neos-content-dimension-selector .fa-pull-left.neos-content-dimension-selector-summary::before,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div.fa-pull-left:after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr.fa-pull-left::after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .fa-pull-left.chosen-search,
+.neos #neos-aloha-topmenu .aloha .ui-button .fa-pull-left.aloha-icon,
+.neos.neos-module .fa-pull-left.neos-select:after,
+.neos.neos-module .neos-checkbox input + span.fa-pull-left::before,
+.neos.neos-module .neos-radio input + span.fa-pull-left::before,
 .neos #neos-notification-container.neos-notification-top > .neos-notification i.fa-pull-left.neos-close-button,
+.neos .fa-pull-left.neos-position-selector::after,
+.fa-pull-left.aloha-block-draghandle,
+.neos-backend .ui-dialog .ui-widget-header .fa-pull-left.ui-button,
+.neos-select2-container .neos-select2-choice > .fa-pull-left.neos-select2-arrow:after,
+.neos-select2-container-multi .neos-select2-choices .fa-pull-left.neos-select2-search-field:after,
+.neos-select2-with-searchbox .fa-pull-left.neos-select2-search:after,
 .far.fa-pull-left,
 .fal.fa-pull-left,
 .fab.fa-pull-left {
@@ -151,8 +225,45 @@
 }
 .fa.fa-pull-right,
 .fas.fa-pull-right,
+.neos button.fa-pull-right[class^="fa-"],
+.neos button.fa-pull-right[class*=" fa-"],
+.neos .fa-pull-right.neos-button[class^="fa-"],
+.neos .fa-pull-right.neos-button[class*=" fa-"],
+.neos .neos-modal .neos-modal-header .fa-pull-right.neos-close,
+.neos .neos-modal-content .neos-modal-header .fa-pull-right.neos-close,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span.fa-pull-right:after,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span.fa-pull-right:after,
 .neos ul.neos-dynatree-container .neos-dynatree-node .fa-pull-right.neos-dynatree-expander,
+.neos #neos-inspector .neos-inspector-file ul li .fa-pull-right.neos-asset-editor-remove::after,
+.neos #neos-inspector .neos-inspector-image .fa-pull-right.typo3-fileupload-dropzone.typo3-fileupload-dropzone-active:before,
+.neos #neos-inspector .neos-inspector-image .fa-pull-right.typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover:before,
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div.fa-pull-right:after,
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input + span.fa-pull-right::before,
+.neos #neos-inspector .neos-inspector-form .neos-radio input + span.fa-pull-right::before,
+.neos .neos-secondary-inspector .fa-pull-right.neos-close,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-right::before,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span.fa-pull-right::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span.fa-pull-right::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span.fa-pull-right::before,
+.neos #neos-publish-menu.neos-button-group .fa-pull-right.neos-dropdown-toggle::before,
+.neos #neos-context-bar .chosen-container .chosen-single div.fa-pull-right:after,
+.neos #neos-context-bar .chosen-container .chosen-single abbr.fa-pull-right::after,
+.neos #neos-context-bar .chosen-container .chosen-drop .fa-pull-right.chosen-search,
+.neos #neos-context-bar .neos-content-dimension-selector .fa-pull-right.neos-content-dimension-selector-summary::before,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div.fa-pull-right:after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr.fa-pull-right::after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .fa-pull-right.chosen-search,
+.neos #neos-aloha-topmenu .aloha .ui-button .fa-pull-right.aloha-icon,
+.neos.neos-module .fa-pull-right.neos-select:after,
+.neos.neos-module .neos-checkbox input + span.fa-pull-right::before,
+.neos.neos-module .neos-radio input + span.fa-pull-right::before,
 .neos #neos-notification-container.neos-notification-top > .neos-notification i.fa-pull-right.neos-close-button,
+.neos .fa-pull-right.neos-position-selector::after,
+.fa-pull-right.aloha-block-draghandle,
+.neos-backend .ui-dialog .ui-widget-header .fa-pull-right.ui-button,
+.neos-select2-container .neos-select2-choice > .fa-pull-right.neos-select2-arrow:after,
+.neos-select2-container-multi .neos-select2-choices .fa-pull-right.neos-select2-search-field:after,
+.neos-select2-with-searchbox .fa-pull-right.neos-select2-search:after,
 .far.fa-pull-right,
 .fal.fa-pull-right,
 .fab.fa-pull-right {
@@ -219,7 +330,7 @@
   line-height: 2em;
   position: relative;
   vertical-align: middle;
-  width: 2em;
+  width: 2.5em;
 }
 
 .fa-stack-1x,
@@ -254,6 +365,14 @@ readers do not read off random characters that represent icons */
 
 .fa-accusoft:before {
   content: "\f369";
+}
+
+.fa-acquisitions-incorporated:before {
+  content: "\f6af";
+}
+
+.fa-ad:before {
+  content: "\f641";
 }
 
 .fa-address-book:before {
@@ -302,6 +421,10 @@ readers do not read off random characters that represent icons */
 
 .fa-align-right:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-align-right:before {
   content: "\f038";
+}
+
+.fa-alipay:before {
+  content: "\f642";
 }
 
 .fa-allergies:before {
@@ -382,6 +505,10 @@ readers do not read off random characters that represent icons */
 
 .fa-angular:before {
   content: "\f420";
+}
+
+.fa-ankh:before {
+  content: "\f644";
 }
 
 .fa-app-store:before {
@@ -620,6 +747,10 @@ readers do not read off random characters that represent icons */
   content: "\f55b";
 }
 
+.fa-bible:before {
+  content: "\f647";
+}
+
 .fa-bicycle:before {
   content: "\f206";
 }
@@ -658,6 +789,10 @@ readers do not read off random characters that represent icons */
 
 .fa-blender:before {
   content: "\f517";
+}
+
+.fa-blender-phone:before {
+  content: "\f6b6";
 }
 
 .fa-blind:before {
@@ -703,6 +838,10 @@ readers do not read off random characters that represent icons */
 
 .fa-book:before {
   content: "\f02d";
+}
+
+.fa-book-dead:before {
+  content: "\f6b7";
 }
 
 .fa-book-open:before {
@@ -797,6 +936,10 @@ readers do not read off random characters that represent icons */
   content: "\f55e";
 }
 
+.fa-business-time:before {
+  content: "\f64a";
+}
+
 .fa-buysellads:before {
   content: "\f20d";
 }
@@ -835,6 +978,10 @@ readers do not read off random characters that represent icons */
 
 .fa-camera-retro:before {
   content: "\f083";
+}
+
+.fa-campground:before {
+  content: "\f6bb";
 }
 
 .fa-cannabis:before {
@@ -905,6 +1052,10 @@ readers do not read off random characters that represent icons */
   content: "\f217";
 }
 
+.fa-cat:before {
+  content: "\f6be";
+}
+
 .fa-cc-amazon-pay:before {
   content: "\f42d";
 }
@@ -951,6 +1102,10 @@ readers do not read off random characters that represent icons */
 
 .fa-certificate:before {
   content: "\f0a3";
+}
+
+.fa-chair:before {
+  content: "\f6c0";
 }
 
 .fa-chalkboard:before {
@@ -1081,6 +1236,10 @@ readers do not read off random characters that represent icons */
   content: "\f1ce";
 }
 
+.fa-city:before {
+  content: "\f64f";
+}
+
 .fa-clipboard:before {
   content: "\f328";
 }
@@ -1111,6 +1270,34 @@ readers do not read off random characters that represent icons */
 
 .fa-cloud-download-alt:before {
   content: "\f381";
+}
+
+.fa-cloud-meatball:before {
+  content: "\f73b";
+}
+
+.fa-cloud-moon:before {
+  content: "\f6c3";
+}
+
+.fa-cloud-moon-rain:before {
+  content: "\f73c";
+}
+
+.fa-cloud-rain:before {
+  content: "\f73d";
+}
+
+.fa-cloud-showers-heavy:before {
+  content: "\f740";
+}
+
+.fa-cloud-sun:before {
+  content: "\f6c4";
+}
+
+.fa-cloud-sun-rain:before {
+  content: "\f743";
 }
 
 .fa-cloud-upload-alt:before {
@@ -1177,6 +1364,10 @@ readers do not read off random characters that represent icons */
   content: "\f27a";
 }
 
+.fa-comment-dollar:before {
+  content: "\f651";
+}
+
 .fa-comment-dots:before {
   content: "\f4ad";
 }
@@ -1187,6 +1378,10 @@ readers do not read off random characters that represent icons */
 
 .fa-comments:before {
   content: "\f086";
+}
+
+.fa-comments-dollar:before {
+  content: "\f653";
 }
 
 .fa-compact-disc:before {
@@ -1289,8 +1484,16 @@ readers do not read off random characters that represent icons */
   content: "\f4f2";
 }
 
+.fa-creative-commons-zero:before {
+  content: "\f4f3";
+}
+
 .fa-credit-card:before {
   content: "\f09d";
+}
+
+.fa-critical-role:before {
+  content: "\f6c9";
 }
 
 .fa-crop:before {
@@ -1299,6 +1502,10 @@ readers do not read off random characters that represent icons */
 
 .fa-crop-alt:before {
   content: "\f565";
+}
+
+.fa-cross:before {
+  content: "\f654";
 }
 
 .fa-crosshairs:before {
@@ -1341,6 +1548,10 @@ readers do not read off random characters that represent icons */
   content: "\f38d";
 }
 
+.fa-d-and-d-beyond:before {
+  content: "\f6ca";
+}
+
 .fa-dashcube:before {
   content: "\f210";
 }
@@ -1357,6 +1568,10 @@ readers do not read off random characters that represent icons */
   content: "\f1a5";
 }
 
+.fa-democrat:before {
+  content: "\f747";
+}
+
 .fa-deploydog:before {
   content: "\f38e";
 }
@@ -1369,8 +1584,16 @@ readers do not read off random characters that represent icons */
   content: "\f108";
 }
 
+.fa-dev:before {
+  content: "\f6cc";
+}
+
 .fa-deviantart:before {
   content: "\f1bd";
+}
+
+.fa-dharmachakra:before {
+  content: "\f655";
 }
 
 .fa-diagnoses:before {
@@ -1379,6 +1602,14 @@ readers do not read off random characters that represent icons */
 
 .fa-dice:before {
   content: "\f522";
+}
+
+.fa-dice-d20:before {
+  content: "\f6cf";
+}
+
+.fa-dice-d6:before {
+  content: "\f6d1";
 }
 
 .fa-dice-five:before {
@@ -1449,6 +1680,10 @@ readers do not read off random characters that represent icons */
   content: "\f395";
 }
 
+.fa-dog:before {
+  content: "\f6d3";
+}
+
 .fa-dollar-sign:before {
   content: "\f155";
 }
@@ -1493,6 +1728,10 @@ readers do not read off random characters that represent icons */
   content: "\f568";
 }
 
+.fa-dragon:before {
+  content: "\f6d5";
+}
+
 .fa-draw-polygon:before {
   content: "\f5ee";
 }
@@ -1517,12 +1756,20 @@ readers do not read off random characters that represent icons */
   content: "\f56a";
 }
 
+.fa-drumstick-bite:before {
+  content: "\f6d7";
+}
+
 .fa-drupal:before {
   content: "\f1a9";
 }
 
 .fa-dumbbell:before {
   content: "\f44b";
+}
+
+.fa-dungeon:before {
+  content: "\f6d9";
 }
 
 .fa-dyalog:before {
@@ -1579,6 +1826,10 @@ readers do not read off random characters that represent icons */
 
 .fa-envelope-open:before {
   content: "\f2b6";
+}
+
+.fa-envelope-open-text:before {
+  content: "\f658";
 }
 
 .fa-envelope-square:before {
@@ -1677,6 +1928,10 @@ readers do not read off random characters that represent icons */
   content: "\f082";
 }
 
+.fa-fantasy-flight-games:before {
+  content: "\f6dc";
+}
+
 .fa-fast-backward:before {
   content: "\f049";
 }
@@ -1727,6 +1982,10 @@ readers do not read off random characters that represent icons */
 
 .fa-file-contract:before {
   content: "\f56c";
+}
+
+.fa-file-csv:before {
+  content: "\f6dd";
 }
 
 .fa-file-download:before {
@@ -1845,12 +2104,20 @@ readers do not read off random characters that represent icons */
   content: "\f578";
 }
 
+.fa-fist-raised:before {
+  content: "\f6de";
+}
+
 .fa-flag:before {
   content: "\f024";
 }
 
 .fa-flag-checkered:before {
   content: "\f11e";
+}
+
+.fa-flag-usa:before {
+  content: "\f74d";
 }
 
 .fa-flask:before {
@@ -1877,8 +2144,16 @@ readers do not read off random characters that represent icons */
   content: "\f07b";
 }
 
+.fa-folder-minus:before {
+  content: "\f65d";
+}
+
 .fa-folder-open:before {
   content: "\f07c";
+}
+
+.fa-folder-plus:before {
+  content: "\f65e";
 }
 
 .fa-font:before {
@@ -1957,6 +2232,10 @@ readers do not read off random characters that represent icons */
   content: "\f50b";
 }
 
+.fa-funnel-dollar:before {
+  content: "\f662";
+}
+
 .fa-futbol:before {
   content: "\f1e3";
 }
@@ -1999,6 +2278,10 @@ readers do not read off random characters that represent icons */
 
 .fa-gg-circle:before {
   content: "\f261";
+}
+
+.fa-ghost:before {
+  content: "\f6e2";
 }
 
 .fa-gift:before {
@@ -2117,6 +2400,10 @@ readers do not read off random characters that represent icons */
   content: "\f1ee";
 }
 
+.fa-gopuram:before {
+  content: "\f664";
+}
+
 .fa-graduation-cap:before {
   content: "\f19d";
 }
@@ -2229,6 +2516,14 @@ readers do not read off random characters that represent icons */
   content: "\f5f7";
 }
 
+.fa-hammer:before {
+  content: "\f6e3";
+}
+
+.fa-hamsa:before {
+  content: "\f665";
+}
+
 .fa-hand-holding:before {
   content: "\f4bd";
 }
@@ -2297,8 +2592,20 @@ readers do not read off random characters that represent icons */
   content: "\f2b5";
 }
 
+.fa-hanukiah:before {
+  content: "\f6e6";
+}
+
 .fa-hashtag:before {
   content: "\f292";
+}
+
+.fa-hat-wizard:before {
+  content: "\f6e8";
+}
+
+.fa-haykal:before {
+  content: "\f666";
 }
 
 .fa-hdd:before {
@@ -2337,6 +2644,14 @@ readers do not read off random characters that represent icons */
   content: "\f591";
 }
 
+.fa-hiking:before {
+  content: "\f6ec";
+}
+
+.fa-hippo:before {
+  content: "\f6ed";
+}
+
 .fa-hips:before {
   content: "\f452";
 }
@@ -2363,6 +2678,10 @@ readers do not read off random characters that represent icons */
 
 .fa-hornbill:before {
   content: "\f592";
+}
+
+.fa-horse:before {
+  content: "\f6f0";
 }
 
 .fa-hospital:before {
@@ -2405,8 +2724,16 @@ readers do not read off random characters that represent icons */
   content: "\f251";
 }
 
+.fa-house-damage:before {
+  content: "\f6f1";
+}
+
 .fa-houzz:before {
   content: "\f27c";
+}
+
+.fa-hryvnia:before {
+  content: "\f6f2";
 }
 
 .fa-html5:before {
@@ -2498,6 +2825,10 @@ readers do not read off random characters that represent icons */
   content: "\f4e4";
 }
 
+.fa-jedi:before {
+  content: "\f669";
+}
+
 .fa-jedi-order:before {
   content: "\f50e";
 }
@@ -2518,6 +2849,10 @@ readers do not read off random characters that represent icons */
   content: "\f1aa";
 }
 
+.fa-journal-whills:before {
+  content: "\f66a";
+}
+
 .fa-js:before {
   content: "\f3b8";
 }
@@ -2528,6 +2863,10 @@ readers do not read off random characters that represent icons */
 
 .fa-jsfiddle:before {
   content: "\f1cc";
+}
+
+.fa-kaaba:before {
+  content: "\f66b";
 }
 
 .fa-kaggle:before {
@@ -2548,6 +2887,10 @@ readers do not read off random characters that represent icons */
 
 .fa-keycdn:before {
   content: "\f3ba";
+}
+
+.fa-khanda:before {
+  content: "\f66d";
 }
 
 .fa-kickstarter:before {
@@ -2576,6 +2919,10 @@ readers do not read off random characters that represent icons */
 
 .fa-korvue:before {
   content: "\f42f";
+}
+
+.fa-landmark:before {
+  content: "\f66f";
 }
 
 .fa-language:before {
@@ -2758,6 +3105,10 @@ readers do not read off random characters that represent icons */
   content: "\f076";
 }
 
+.fa-mail-bulk:before {
+  content: "\f674";
+}
+
 .fa-mailchimp:before {
   content: "\f59e";
 }
@@ -2826,6 +3177,10 @@ readers do not read off random characters that represent icons */
   content: "\f22a";
 }
 
+.fa-mask:before {
+  content: "\f6fa";
+}
+
 .fa-mastodon:before {
   content: "\f4f6";
 }
@@ -2882,8 +3237,16 @@ readers do not read off random characters that represent icons */
   content: "\f538";
 }
 
+.fa-menorah:before {
+  content: "\f676";
+}
+
 .fa-mercury:before {
   content: "\f223";
+}
+
+.fa-meteor:before {
+  content: "\f753";
 }
 
 .fa-microchip:before {
@@ -2990,8 +3353,16 @@ readers do not read off random characters that represent icons */
   content: "\f5a7";
 }
 
+.fa-mosque:before {
+  content: "\f678";
+}
+
 .fa-motorcycle:before {
   content: "\f21c";
+}
+
+.fa-mountain:before {
+  content: "\f6fc";
 }
 
 .fa-mouse-pointer:before {
@@ -3008,6 +3379,10 @@ readers do not read off random characters that represent icons */
 
 .fa-neos:before {
   content: "\f612";
+}
+
+.fa-network-wired:before {
+  content: "\f6ff";
 }
 
 .fa-neuter:before {
@@ -3078,6 +3453,10 @@ readers do not read off random characters that represent icons */
   content: "\f510";
 }
 
+.fa-om:before {
+  content: "\f679";
+}
+
 .fa-opencart:before {
   content: "\f23d";
 }
@@ -3096,6 +3475,10 @@ readers do not read off random characters that represent icons */
 
 .fa-osi:before {
   content: "\f41a";
+}
+
+.fa-otter:before {
+  content: "\f700";
 }
 
 .fa-outdent:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-outdent:before {
@@ -3154,6 +3537,10 @@ readers do not read off random characters that represent icons */
   content: "\f5ab";
 }
 
+.fa-pastafarianism:before {
+  content: "\f67b";
+}
+
 .fa-paste:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-formatless-paste:before {
   content: "\f0ea";
 }
@@ -3176,6 +3563,10 @@ readers do not read off random characters that represent icons */
 
 .fa-paypal:before {
   content: "\f1ed";
+}
+
+.fa-peace:before {
+  content: "\f67c";
 }
 
 .fa-pen:before {
@@ -3206,6 +3597,10 @@ readers do not read off random characters that represent icons */
   content: "\f5ae";
 }
 
+.fa-penny-arcade:before {
+  content: "\f704";
+}
+
 .fa-people-carry:before {
   content: "\f4ce";
 }
@@ -3220,6 +3615,10 @@ readers do not read off random characters that represent icons */
 
 .fa-periscope:before {
   content: "\f3da";
+}
+
+.fa-person-booth:before {
+  content: "\f756";
 }
 
 .fa-phabricator:before {
@@ -3290,6 +3689,10 @@ readers do not read off random characters that represent icons */
   content: "\f0d3";
 }
 
+.fa-place-of-worship:before {
+  content: "\f67f";
+}
+
 .fa-plane:before {
   content: "\f072";
 }
@@ -3334,8 +3737,20 @@ readers do not read off random characters that represent icons */
   content: "\f2ce";
 }
 
+.fa-poll:before {
+  content: "\f681";
+}
+
+.fa-poll-h:before {
+  content: "\f682";
+}
+
 .fa-poo:before {
   content: "\f2fe";
+}
+
+.fa-poo-storm:before {
+  content: "\f75a";
 }
 
 .fa-poop:before {
@@ -3352,6 +3767,14 @@ readers do not read off random characters that represent icons */
 
 .fa-power-off:before {
   content: "\f011";
+}
+
+.fa-pray:before {
+  content: "\f683";
+}
+
+.fa-praying-hands:before {
+  content: "\f684";
 }
 
 .fa-prescription:before {
@@ -3430,8 +3853,16 @@ readers do not read off random characters that represent icons */
   content: "\f10e";
 }
 
+.fa-quran:before {
+  content: "\f687";
+}
+
 .fa-r-project:before {
   content: "\f4f7";
+}
+
+.fa-rainbow:before {
+  content: "\f75b";
 }
 
 .fa-random:before {
@@ -3444,6 +3875,10 @@ readers do not read off random characters that represent icons */
 
 .fa-react:before {
   content: "\f41b";
+}
+
+.fa-reacteurope:before {
+  content: "\f75d";
 }
 
 .fa-readme:before {
@@ -3490,10 +3925,6 @@ readers do not read off random characters that represent icons */
   content: "\f25d";
 }
 
-.fa-rendact:before {
-  content: "\f3e4";
-}
-
 .fa-renren:before {
   content: "\f18b";
 }
@@ -3508,6 +3939,10 @@ readers do not read off random characters that represent icons */
 
 .fa-replyd:before {
   content: "\f3e6";
+}
+
+.fa-republican:before {
+  content: "\f75e";
 }
 
 .fa-researchgate:before {
@@ -3528,6 +3963,10 @@ readers do not read off random characters that represent icons */
 
 .fa-ribbon:before {
   content: "\f4d6";
+}
+
+.fa-ring:before {
+  content: "\f70b";
 }
 
 .fa-road:before {
@@ -3582,6 +4021,10 @@ readers do not read off random characters that represent icons */
   content: "\f548";
 }
 
+.fa-running:before {
+  content: "\f70c";
+}
+
 .fa-rupee-sign:before {
   content: "\f156";
 }
@@ -3622,8 +4065,20 @@ readers do not read off random characters that represent icons */
   content: "\f28a";
 }
 
+.fa-scroll:before {
+  content: "\f70e";
+}
+
 .fa-search:before {
   content: "\f002";
+}
+
+.fa-search-dollar:before {
+  content: "\f688";
+}
+
+.fa-search-location:before {
+  content: "\f689";
 }
 
 .fa-search-minus:before {
@@ -3770,6 +4225,10 @@ readers do not read off random characters that represent icons */
   content: "\f54c";
 }
 
+.fa-skull-crossbones:before {
+  content: "\f714";
+}
+
 .fa-skyatlas:before {
   content: "\f216";
 }
@@ -3784,6 +4243,10 @@ readers do not read off random characters that represent icons */
 
 .fa-slack-hash:before {
   content: "\f3ef";
+}
+
+.fa-slash:before {
+  content: "\f715";
 }
 
 .fa-sliders-h:before {
@@ -3804,6 +4267,10 @@ readers do not read off random characters that represent icons */
 
 .fa-smile-wink:before {
   content: "\f4da";
+}
+
+.fa-smog:before {
+  content: "\f75f";
 }
 
 .fa-smoking:before {
@@ -3828,6 +4295,10 @@ readers do not read off random characters that represent icons */
 
 .fa-snowflake:before {
   content: "\f2dc";
+}
+
+.fa-socks:before {
+  content: "\f696";
 }
 
 .fa-solar-panel:before {
@@ -3886,6 +4357,10 @@ readers do not read off random characters that represent icons */
   content: "\f3f3";
 }
 
+.fa-spider:before {
+  content: "\f717";
+}
+
 .fa-spinner:before {
   content: "\f110";
 }
@@ -3910,6 +4385,10 @@ readers do not read off random characters that represent icons */
   content: "\f45c";
 }
 
+.fa-square-root-alt:before {
+  content: "\f698";
+}
+
 .fa-squarespace:before {
   content: "\f5be";
 }
@@ -3930,12 +4409,20 @@ readers do not read off random characters that represent icons */
   content: "\f005";
 }
 
+.fa-star-and-crescent:before {
+  content: "\f699";
+}
+
 .fa-star-half:before {
   content: "\f089";
 }
 
 .fa-star-half-alt:before {
   content: "\f5c0";
+}
+
+.fa-star-of-david:before {
+  content: "\f69a";
 }
 
 .fa-star-of-life:before {
@@ -4086,6 +4573,10 @@ readers do not read off random characters that represent icons */
   content: "\f5c5";
 }
 
+.fa-synagogue:before {
+  content: "\f69b";
+}
+
 .fa-sync:before {
   content: "\f021";
 }
@@ -4162,6 +4653,14 @@ readers do not read off random characters that represent icons */
   content: "\f3fe";
 }
 
+.fa-temperature-high:before {
+  content: "\f769";
+}
+
+.fa-temperature-low:before {
+  content: "\f76b";
+}
+
 .fa-tencent-weibo:before {
   content: "\f1d5";
 }
@@ -4188,6 +4687,10 @@ readers do not read off random characters that represent icons */
 
 .fa-th-list:before {
   content: "\f00b";
+}
+
+.fa-the-red-yeti:before {
+  content: "\f69d";
 }
 
 .fa-theater-masks:before {
@@ -4224,6 +4727,10 @@ readers do not read off random characters that represent icons */
 
 .fa-thermometer-three-quarters:before {
   content: "\f2c8";
+}
+
+.fa-think-peaks:before {
+  content: "\f731";
 }
 
 .fa-thumbs-down:before {
@@ -4270,12 +4777,28 @@ readers do not read off random characters that represent icons */
   content: "\f205";
 }
 
+.fa-toilet-paper:before {
+  content: "\f71e";
+}
+
 .fa-toolbox:before {
   content: "\f552";
 }
 
 .fa-tooth:before {
   content: "\f5c9";
+}
+
+.fa-torah:before {
+  content: "\f6a0";
+}
+
+.fa-torii-gate:before {
+  content: "\f6a1";
+}
+
+.fa-tractor:before {
+  content: "\f722";
 }
 
 .fa-trade-federation:before {
@@ -4490,6 +5013,10 @@ readers do not read off random characters that represent icons */
   content: "\f501";
 }
 
+.fa-user-injured:before {
+  content: "\f728";
+}
+
 .fa-user-lock:before {
   content: "\f502";
 }
@@ -4606,6 +5133,10 @@ readers do not read off random characters that represent icons */
   content: "\f4e2";
 }
 
+.fa-vihara:before {
+  content: "\f6a7";
+}
+
 .fa-vimeo:before {
   content: "\f40a";
 }
@@ -4638,12 +5169,24 @@ readers do not read off random characters that represent icons */
   content: "\f027";
 }
 
+.fa-volume-mute:before {
+  content: "\f6a9";
+}
+
 .fa-volume-off:before {
   content: "\f026";
 }
 
 .fa-volume-up:before {
   content: "\f028";
+}
+
+.fa-vote-yea:before {
+  content: "\f772";
+}
+
+.fa-vr-cardboard:before {
+  content: "\f729";
 }
 
 .fa-vuejs:before {
@@ -4660,6 +5203,10 @@ readers do not read off random characters that represent icons */
 
 .fa-warehouse:before {
   content: "\f494";
+}
+
+.fa-water:before {
+  content: "\f773";
 }
 
 .fa-weebly:before {
@@ -4706,6 +5253,10 @@ readers do not read off random characters that represent icons */
   content: "\f266";
 }
 
+.fa-wind:before {
+  content: "\f72e";
+}
+
 .fa-window-close:before {
   content: "\f410";
 }
@@ -4726,6 +5277,10 @@ readers do not read off random characters that represent icons */
   content: "\f17a";
 }
 
+.fa-wine-bottle:before {
+  content: "\f72f";
+}
+
 .fa-wine-glass:before {
   content: "\f4e3";
 }
@@ -4736,6 +5291,10 @@ readers do not read off random characters that represent icons */
 
 .fa-wix:before {
   content: "\f5cf";
+}
+
+.fa-wizards-of-the-coast:before {
+  content: "\f730";
 }
 
 .fa-wolf-pack-battalion:before {
@@ -4764,6 +5323,10 @@ readers do not read off random characters that represent icons */
 
 .fa-wpforms:before {
   content: "\f298";
+}
+
+.fa-wpressr:before {
+  content: "\f3e4";
 }
 
 .fa-wrench:before {
@@ -4810,6 +5373,10 @@ readers do not read off random characters that represent icons */
   content: "\f157";
 }
 
+.fa-yin-yang:before {
+  content: "\f6ad";
+}
+
 .fa-yoast:before {
   content: "\f2b1";
 }
@@ -4847,56 +5414,93 @@ readers do not read off random characters that represent icons */
 }
 
 /*!
- * Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
- * License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ * Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 @font-face {
-  font-family: 'Font Awesome 5 Brands';
+  font-family: 'FontAwesome Brand';
   font-style: normal;
   font-weight: normal;
-  src: url("../webfonts/fa-brands-400.eot");
-  src: url("../webfonts/fa-brands-400.eot?#iefix") format("embedded-opentype"), url("../webfonts/fa-brands-400.woff2") format("woff2"), url("../webfonts/fa-brands-400.woff") format("woff"), url("../webfonts/fa-brands-400.ttf") format("truetype"), url("../webfonts/fa-brands-400.svg#fontawesome") format("svg");
+  src: url("../Library/fontawesome/webfonts/fa-brands-400.eot");
+  src: url("../Library/fontawesome/webfonts/fa-brands-400.eot?#iefix") format("embedded-opentype"), url("../Library/fontawesome/webfonts/fa-brands-400.woff2") format("woff2"), url("../Library/fontawesome/webfonts/fa-brands-400.woff") format("woff"), url("../Library/fontawesome/webfonts/fa-brands-400.ttf") format("truetype"), url("../Library/fontawesome/webfonts/fa-brands-400.svg#fontawesome") format("svg");
 }
 .fab {
-  font-family: 'Font Awesome 5 Brands';
+  font-family: 'FontAwesome Brand';
 }
 
 /*!
- * Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
- * License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ * Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 @font-face {
-  font-family: 'Font Awesome 5 Free';
+  font-family: 'FontAwesome';
   font-style: normal;
   font-weight: 400;
-  src: url("../webfonts/fa-regular-400.eot");
-  src: url("../webfonts/fa-regular-400.eot?#iefix") format("embedded-opentype"), url("../webfonts/fa-regular-400.woff2") format("woff2"), url("../webfonts/fa-regular-400.woff") format("woff"), url("../webfonts/fa-regular-400.ttf") format("truetype"), url("../webfonts/fa-regular-400.svg#fontawesome") format("svg");
+  src: url("../Library/fontawesome/webfonts/fa-regular-400.eot");
+  src: url("../Library/fontawesome/webfonts/fa-regular-400.eot?#iefix") format("embedded-opentype"), url("../Library/fontawesome/webfonts/fa-regular-400.woff2") format("woff2"), url("../Library/fontawesome/webfonts/fa-regular-400.woff") format("woff"), url("../Library/fontawesome/webfonts/fa-regular-400.ttf") format("truetype"), url("../Library/fontawesome/webfonts/fa-regular-400.svg#fontawesome") format("svg");
 }
 .far {
-  font-family: 'Font Awesome 5 Free';
+  font-family: 'FontAwesome';
   font-weight: 400;
 }
 
 /*!
- * Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
- * License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ * Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 @font-face {
-  font-family: 'Font Awesome 5 Free';
+  font-family: 'FontAwesome';
   font-style: normal;
   font-weight: 900;
-  src: url("../webfonts/fa-solid-900.eot");
-  src: url("../webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("../webfonts/fa-solid-900.woff2") format("woff2"), url("../webfonts/fa-solid-900.woff") format("woff"), url("../webfonts/fa-solid-900.ttf") format("truetype"), url("../webfonts/fa-solid-900.svg#fontawesome") format("svg");
+  src: url("../Library/fontawesome/webfonts/fa-solid-900.eot");
+  src: url("../Library/fontawesome/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("../Library/fontawesome/webfonts/fa-solid-900.woff2") format("woff2"), url("../Library/fontawesome/webfonts/fa-solid-900.woff") format("woff"), url("../Library/fontawesome/webfonts/fa-solid-900.ttf") format("truetype"), url("../Library/fontawesome/webfonts/fa-solid-900.svg#fontawesome") format("svg");
 }
 .fa,
 .fas,
+.neos button[class^="fa-"],
+.neos button[class*=" fa-"],
+.neos .neos-button[class^="fa-"],
+.neos .neos-button[class*=" fa-"],
+.neos .neos-modal .neos-modal-header .neos-close,
+.neos .neos-modal-content .neos-modal-header .neos-close,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span:after,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander,
 .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
-.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button {
-  font-family: 'Font Awesome 5 Free';
+.neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove::after,
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-active:before,
+.neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover:before,
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div:after,
+.neos #neos-inspector .neos-inspector-form .neos-checkbox input + span::before,
+.neos #neos-inspector .neos-inspector-form .neos-radio input + span::before,
+.neos .neos-secondary-inspector .neos-close,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span::before,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span::before,
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle::before,
+.neos #neos-context-bar .chosen-container .chosen-single div:after,
+.neos #neos-context-bar .chosen-container .chosen-single abbr::after,
+.neos #neos-context-bar .chosen-container .chosen-drop .chosen-search,
+.neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary::before,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr::after,
+.neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search,
+.neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon,
+.neos.neos-module .neos-select:after,
+.neos.neos-module .neos-checkbox input + span::before,
+.neos.neos-module .neos-radio input + span::before,
+.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button,
+.neos .neos-position-selector::after,
+.aloha-block-draghandle,
+.neos-backend .ui-dialog .ui-widget-header .ui-button,
+.neos-select2-container .neos-select2-choice > .neos-select2-arrow:after,
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-field:after,
+.neos-select2-with-searchbox .neos-select2-search:after {
+  font-family: 'FontAwesome';
   font-weight: 900;
 }
 
@@ -6952,11 +7556,6 @@ readers do not read off random characters that represent icons */
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=65);
   opacity: 0.65;
 }
-.neos button[class^="fa-"], .neos button[class*=" fa-"],
-.neos .neos-button[class^="fa-"],
-.neos .neos-button[class*=" fa-"] {
-  font-family: FontAwesome;
-}
 .neos button.neos-button-primary,
 .neos .neos-button.neos-button-primary {
   background-color: #00b5ff;
@@ -7282,14 +7881,6 @@ readers do not read off random characters that represent icons */
   text-shadow: none;
   filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -8641,14 +9232,6 @@ readers do not read off random characters that represent icons */
   border-left: 3px solid transparent;
 }
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f057";
   position: absolute;
   left: 12px;
@@ -8665,14 +9248,6 @@ readers do not read off random characters that represent icons */
   border-radius: 10px;
 }
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f017";
   font-weight: 400;
   position: absolute;
@@ -9269,14 +9844,6 @@ readers do not read off random characters that represent icons */
   background-color: #00b5ff;
 }
 .neos #neos-inspector .neos-inspector-file ul li .neos-asset-editor-remove::after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f00d";
   margin-left: -2px;
 }
@@ -9537,14 +10104,6 @@ readers do not read off random characters that represent icons */
 }
 .neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-active:before, .neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover:before {
   color: #fff;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f063";
   position: absolute;
   top: 50%;
@@ -9774,14 +10333,6 @@ readers do not read off random characters that represent icons */
   opacity: .15;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-breadcrumb-multiple div:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   display: block;
   position: absolute;
@@ -10187,14 +10738,6 @@ readers do not read off random characters that represent icons */
   border: 1px solid #adadad;
   color: #5b5b5b;
   cursor: pointer;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f00c";
   line-height: 20px;
   text-align: center;
@@ -11123,14 +11666,6 @@ readers do not read off random characters that represent icons */
   z-index: 10015;
   filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   -moz-transition-property: top, right;
   -o-transition-property: top, right;
   -webkit-transition-property: top, right;
@@ -11348,14 +11883,6 @@ readers do not read off random characters that represent icons */
   border: 1px solid #adadad;
   color: #5b5b5b;
   cursor: pointer;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f00c";
   line-height: 20px;
   text-align: center;
@@ -11557,14 +12084,6 @@ readers do not read off random characters that represent icons */
   margin-left: 0;
 }
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle::before {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   position: relative;
   top: 0;
@@ -11908,14 +12427,6 @@ readers do not read off random characters that represent icons */
   opacity: .15;
 }
 .neos #neos-context-bar .chosen-container .chosen-single div:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   display: block;
   position: absolute;
@@ -11938,14 +12449,6 @@ readers do not read off random characters that represent icons */
   color: #00b5ff;
 }
 .neos #neos-context-bar .chosen-container .chosen-single abbr::after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f057";
 }
 .neos #neos-context-bar .chosen-container .chosen-drop {
@@ -11964,14 +12467,6 @@ readers do not read off random characters that represent icons */
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-search {
   padding: 0;
   color: #000;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   font-size: 0;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-search input {
@@ -12113,14 +12608,6 @@ readers do not read off random characters that represent icons */
   clear: both;
 }
 .neos #neos-context-bar .neos-content-dimension-selector .neos-content-dimension-selector-summary::before {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   font-size: 14px;
   position: absolute;
@@ -12592,14 +13079,6 @@ readers do not read off random characters that represent icons */
   opacity: .15;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single div:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   display: block;
   position: absolute;
@@ -12622,14 +13101,6 @@ readers do not read off random characters that represent icons */
   color: #00b5ff;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-single abbr::after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f057";
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop {
@@ -12648,14 +13119,6 @@ readers do not read off random characters that represent icons */
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search {
   padding: 0;
   color: #000;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   font-size: 0;
 }
 .neos #neos-navigate-panel .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search input {
@@ -13105,14 +13568,6 @@ readers do not read off random characters that represent icons */
   margin: 0px;
   padding: 0px;
   text-indent: 0px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
 }
 .neos #neos-aloha-topmenu .aloha .ui-button.ui-state-hover .aloha-icon, .neos #neos-aloha-topmenu .aloha .ui-button.aloha-button-active .aloha-icon {
   color: #00b5ff;
@@ -13768,14 +14223,6 @@ readers do not read off random characters that represent icons */
   opacity: .15;
 }
 .neos.neos-module .neos-select:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   display: block;
   position: absolute;
@@ -13913,14 +14360,6 @@ readers do not read off random characters that represent icons */
   border: 1px solid #adadad;
   color: #5b5b5b;
   cursor: pointer;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f00c";
   line-height: 20px;
   text-align: center;
@@ -14763,14 +15202,6 @@ readers do not read off random characters that represent icons */
   font-size: 14px;
 }
 .neos .neos-position-selector::after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   position: absolute;
   font-size: 14px;
   color: #00b5ff;
@@ -15447,14 +15878,6 @@ td.aloha-table-selectrow {
   overflow: hidden;
   display: hidden;
   line-height: 1em;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   font-size: 16px;
   cursor: pointer;
   color: #fff;
@@ -15549,14 +15972,6 @@ td.aloha-table-selectrow {
   text-shadow: none;
   filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -16460,14 +16875,6 @@ disabled look for disabled choices in the results dropdown
   opacity: .15;
 }
 .neos-select2-container .neos-select2-choice > .neos-select2-arrow:after {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   content: "\f0d7";
   display: block;
   position: absolute;
@@ -16515,14 +16922,6 @@ disabled look for disabled choices in the results dropdown
   content: "\f002";
   line-height: 100%;
   font-size: 14px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   cursor: pointer;
 }
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice {
@@ -16596,14 +16995,6 @@ disabled look for disabled choices in the results dropdown
   content: "\f002";
   line-height: 100%;
   font-size: 14px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  line-height: 1;
-  vertical-align: -.125em;
   cursor: pointer;
 }
 .neos-select2-with-searchbox .neos-select2-search input {

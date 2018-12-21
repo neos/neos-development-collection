@@ -72,13 +72,20 @@ class Package extends BasePackage
         $dispatcher->connect(Site::class, 'siteChanged', $flushConfigurationCache);
         $dispatcher->connect(Site::class, 'siteChanged', RouterCachingService::class, 'flushCaches');
 
-        $dispatcher->connect(Node::class, 'nodeUpdated', ContentCacheFlusher::class, 'registerNodeChange');
-        $dispatcher->connect(Node::class, 'nodeAdded', ContentCacheFlusher::class, 'registerNodeChange');
-        $dispatcher->connect(Node::class, 'nodeRemoved', ContentCacheFlusher::class, 'registerNodeChange');
-        $dispatcher->connect(Node::class, 'beforeNodeMove', ContentCacheFlusher::class, 'registerNodeChange');
+        // Disable signal informations as we don't need them and we also expect as a second argument an optional workspace
+        $dispatcher->connect(Node::class, 'nodeUpdated', ContentCacheFlusher::class, 'registerNodeChange', false);
+        $dispatcher->connect(Node::class, 'nodeAdded', ContentCacheFlusher::class, 'registerNodeChange', false);
+        $dispatcher->connect(Node::class, 'nodeRemoved', ContentCacheFlusher::class, 'registerNodeChange', false);
 
-        $dispatcher->connect(AssetService::class, 'assetUpdated', ContentCacheFlusher::class, 'registerAssetChange');
-        $dispatcher->connect(AssetService::class, 'assetResourceReplaced', ContentCacheFlusher::class, 'registerAssetChange');
+        // method signature of emitBeforeNodeMove differs so we need to manually trigger the content cache flusher with correct params
+        $dispatcher->connect(Node::class, 'beforeNodeMove', function (NodeInterface $node) use ($bootstrap) {
+            /** @var ContentCacheFlusher $contentCacheFlusher */
+            $contentCacheFlusher = $bootstrap->getObjectManager()->get(ContentCacheFlusher::class);
+            $contentCacheFlusher->registerNodeChange($node);
+        });
+
+        $dispatcher->connect(AssetService::class, 'assetUpdated', ContentCacheFlusher::class, 'registerAssetChange', false);
+        $dispatcher->connect(AssetService::class, 'assetResourceReplaced', ContentCacheFlusher::class, 'registerAssetChange', false);
 
         $dispatcher->connect(ContentController::class, 'assetUploaded', SiteService::class, 'assignUploadedAssetToSiteAssetCollection');
 
@@ -96,8 +103,8 @@ class Package extends BasePackage
             }
         });
 
-        $dispatcher->connect(PublishingService::class, 'nodePublished', ContentCacheFlusher::class, 'registerNodeChange');
-        $dispatcher->connect(PublishingService::class, 'nodeDiscarded', ContentCacheFlusher::class, 'registerNodeChange');
+        $dispatcher->connect(PublishingService::class, 'nodePublished', ContentCacheFlusher::class, 'registerNodeChange', false);
+        $dispatcher->connect(PublishingService::class, 'nodeDiscarded', ContentCacheFlusher::class, 'registerNodeChange', false);
 
         $dispatcher->connect(Node::class, 'nodePathChanged', RouteCacheFlusher::class, 'registerNodeChange');
         $dispatcher->connect(Node::class, 'nodeRemoved', RouteCacheFlusher::class, 'registerNodeChange');

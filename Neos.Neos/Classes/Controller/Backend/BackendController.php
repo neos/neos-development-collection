@@ -69,7 +69,7 @@ class BackendController extends ActionController
     {
         $redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->request);
         if ($redirectionUri === null) {
-            $redirectionUri = $this->uriBuilder->uriFor('index', array(), 'Login', 'Neos.Neos');
+            $redirectionUri = $this->uriBuilder->uriFor('index', [], 'Login', 'Neos.Neos');
         }
         $this->redirectToUri($redirectionUri);
     }

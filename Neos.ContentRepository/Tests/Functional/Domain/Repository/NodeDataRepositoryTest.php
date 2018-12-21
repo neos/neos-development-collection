@@ -254,7 +254,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     {
         $this->createNodesForNodeSearchTest();
 
-        $result = $this->nodeDataRepository->findByProperties(array('test2' => 'simpleTestValue'), 'Neos.ContentRepository.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
+        $result = $this->nodeDataRepository->findByProperties(['test2' => 'simpleTestValue'], 'Neos.ContentRepository.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
         $this->assertCount(1, $result);
         $this->assertEquals('test-node-2', array_shift($result)->getName());
     }

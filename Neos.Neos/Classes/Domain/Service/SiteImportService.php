@@ -103,21 +103,21 @@ class SiteImportService
      *
      * @var array<string>
      */
-    protected $imageVariantClassNames = array();
+    protected $imageVariantClassNames = [];
 
     /**
      * An array that contains all fully qualified class names that implement AssetInterface
      *
      * @var array<string>
      */
-    protected $assetClassNames = array();
+    protected $assetClassNames = [];
 
     /**
      * An array that contains all fully qualified class names that extend \DateTime including \DateTime itself
      *
      * @var array<string>
      */
-    protected $dateTimeClassNames = array();
+    protected $dateTimeClassNames = [];
 
     /**
      * @return void
@@ -165,10 +165,16 @@ class SiteImportService
      */
     public function importFromFile($pathAndFilename)
     {
+        if (!file_exists($pathAndFilename)) {
+            throw new NeosException(sprintf('Error: File "%s" does not exist.', $pathAndFilename), 1540934412);
+        }
+
         /** @var Site $importedSite */
         $site = null;
         $xmlReader = new \XMLReader();
-        $xmlReader->open($pathAndFilename, null, LIBXML_PARSEHUGE);
+        if ($xmlReader->open($pathAndFilename, null, LIBXML_PARSEHUGE) === false) {
+            throw new NeosException(sprintf('Error: XMLReader could not open "%s".', $pathAndFilename), 1540934199);
+        }
 
         if ($this->workspaceRepository->findOneByName('live') === null) {
             $this->workspaceRepository->add(new Workspace('live'));

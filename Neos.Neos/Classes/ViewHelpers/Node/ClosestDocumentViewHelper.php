@@ -11,7 +11,6 @@ namespace Neos\Neos\ViewHelpers\Node;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -27,7 +26,7 @@ class ClosestDocumentViewHelper extends AbstractViewHelper
      */
     public function render(NodeInterface $node)
     {
-        $flowQuery = new FlowQuery(array($node));
+        $flowQuery = new FlowQuery([$node]);
         return $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
     }
 }

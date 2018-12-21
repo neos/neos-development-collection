@@ -82,7 +82,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      */
     public function groupBy($set, $groupingKey)
     {
-        $result = array();
+        $result = [];
         foreach ($set as $element) {
             $result[ObjectAccess::getPropertyPath($element, $groupingKey)][] = $element;
         }

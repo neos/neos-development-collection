@@ -17,7 +17,6 @@ use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Utility\Arrays;
-use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 
@@ -51,8 +50,8 @@ class UserCommandController extends CommandController
     {
         $users = $this->userService->getUsers();
 
-        $tableRows = array();
-        $headerRow = array('Name', 'Email', 'Account(s)', 'Role(s)', 'Active');
+        $tableRows = [];
+        $headerRow = ['Name', 'Email', 'Account(s)', 'Role(s)', 'Active'];
 
         foreach ($users as $user) {
             $tableRows[] = $this->getTableRowForUser($user);
@@ -79,12 +78,12 @@ class UserCommandController extends CommandController
     {
         $user = $this->userService->getUser($username, $authenticationProvider);
         if (!$user instanceof User) {
-            $this->outputLine('The username "%s" is not in use', array($username));
+            $this->outputLine('The username "%s" is not in use', [$username]);
             $this->quit(1);
         }
 
-        $headerRow = array('Name', 'Email', 'Account(s)', 'Role(s)', 'Active');
-        $tableRows = array($this->getTableRowForUser($user));
+        $headerRow = ['Name', 'Email', 'Account(s)', 'Role(s)', 'Active'];
+        $tableRows = [$this->getTableRowForUser($user)];
 
         $this->output->outputTable($tableRows, $headerRow);
     }
@@ -115,7 +114,7 @@ class UserCommandController extends CommandController
     {
         $user = $this->userService->getUser($username, $authenticationProvider);
         if ($user instanceof User) {
-            $this->outputLine('The username "%s" is already in use', array($username));
+            $this->outputLine('The username "%s" is already in use', [$username]);
             $this->quit(1);
         }
 
@@ -127,7 +126,7 @@ class UserCommandController extends CommandController
                 $user = $this->userService->createUser($username, $password, $firstName, $lastName, $roleIdentifiers, $authenticationProvider);
             }
 
-            $roleIdentifiers = array();
+            $roleIdentifiers = [];
             foreach ($user->getAccounts() as $account) {
                 /** @var Account $account */
                 foreach ($account->getRoles() as $role) {
@@ -138,10 +137,10 @@ class UserCommandController extends CommandController
             $roleIdentifiers = array_keys($roleIdentifiers);
 
             if (count($roleIdentifiers) === 0) {
-                $this->outputLine('Created user "%s".', array($username));
+                $this->outputLine('Created user "%s".', [$username]);
                 $this->outputLine('<b>Please note that this user currently does not have any roles assigned.</b>');
             } else {
-                $this->outputLine('Created user "%s" and assigned the following role%s: %s.', array($username, (count($roleIdentifiers) > 1 ? 's' : ''), implode(', ', $roleIdentifiers)));
+                $this->outputLine('Created user "%s" and assigned the following role%s: %s.', [$username, (count($roleIdentifiers) > 1 ? 's' : ''), implode(', ', $roleIdentifiers)]);
             }
         } catch (\Exception $exception) {
             $this->outputLine($exception->getMessage());
@@ -186,7 +185,7 @@ class UserCommandController extends CommandController
 
             if ($delete) {
                 $this->userService->deleteUser($user);
-                $this->outputLine('Deleted user "%s".', array($username));
+                $this->outputLine('Deleted user "%s".', [$username]);
             }
         }
     }
@@ -208,14 +207,14 @@ class UserCommandController extends CommandController
     {
         $users = $this->findUsersByUsernamePattern($username, $authenticationProvider);
         if (empty($users)) {
-            $this->outputLine('No users that match name-pattern "%s" do exist.', array($username));
+            $this->outputLine('No users that match name-pattern "%s" do exist.', [$username]);
             $this->quit(1);
         }
 
         foreach ($users as $user) {
             $username = $this->userService->getUsername($user, $authenticationProvider);
             $this->userService->activateUser($user);
-            $this->outputLine('Activated user "%s".', array($username));
+            $this->outputLine('Activated user "%s".', [$username]);
         }
     }
 
@@ -236,14 +235,14 @@ class UserCommandController extends CommandController
     {
         $users = $this->findUsersByUsernamePattern($username, $authenticationProvider);
         if (empty($users)) {
-            $this->outputLine('No users that match name-pattern "%s" do exist.', array($username));
+            $this->outputLine('No users that match name-pattern "%s" do exist.', [$username]);
             $this->quit(1);
         }
 
         foreach ($users as $user) {
             $username = $this->userService->getUsername($user, $authenticationProvider);
             $this->userService->deactivateUser($user);
-            $this->outputLine('Deactivated user "%s".', array($username));
+            $this->outputLine('Deactivated user "%s".', [$username]);
         }
     }
 
@@ -293,7 +292,7 @@ class UserCommandController extends CommandController
     {
         $users = $this->findUsersByUsernamePattern($username, $authenticationProvider);
         if (empty($users)) {
-            $this->outputLine('No users that match name-pattern "%s" do exist.', array($username));
+            $this->outputLine('No users that match name-pattern "%s" do exist.', [$username]);
             $this->quit(1);
         }
 
@@ -301,12 +300,12 @@ class UserCommandController extends CommandController
             $username = $this->userService->getUsername($user, $authenticationProvider);
             try {
                 if ($this->userService->addRoleToUser($user, $role) > 0) {
-                    $this->outputLine('Added role "%s" to accounts of user "%s".', array($role, $username));
+                    $this->outputLine('Added role "%s" to accounts of user "%s".', [$role, $username]);
                 } else {
-                    $this->outputLine('User "%s" already had the role "%s" assigned.', array($username, $role));
+                    $this->outputLine('User "%s" already had the role "%s" assigned.', [$username, $role]);
                 }
             } catch (NoSuchRoleException $exception) {
-                $this->outputLine('The role "%s" does not exist.', array($role));
+                $this->outputLine('The role "%s" does not exist.', [$role]);
                 $this->quit(2);
             }
         }
@@ -330,7 +329,7 @@ class UserCommandController extends CommandController
     {
         $users = $this->findUsersByUsernamePattern($username, $authenticationProvider);
         if (empty($users)) {
-            $this->outputLine('No users that match name-pattern "%s" do exist.', array($username));
+            $this->outputLine('No users that match name-pattern "%s" do exist.', [$username]);
             $this->quit(1);
         }
 
@@ -338,12 +337,12 @@ class UserCommandController extends CommandController
             $username = $this->userService->getUsername($user, $authenticationProvider);
             try {
                 if ($this->userService->removeRoleFromUser($user, $role) > 0) {
-                    $this->outputLine('Removed role "%s" from user "%s".', array($role, $username));
+                    $this->outputLine('Removed role "%s" from user "%s".', [$role, $username]);
                 } else {
-                    $this->outputLine('User "%s" did not have the role "%s" assigned.', array($username, $role));
+                    $this->outputLine('User "%s" did not have the role "%s" assigned.', [$username, $role]);
                 }
             } catch (NoSuchRoleException $exception) {
-                $this->outputLine('The role "%s" does not exist.', array($role));
+                $this->outputLine('The role "%s" does not exist.', [$role]);
                 $this->quit(2);
             }
         }
@@ -382,8 +381,8 @@ class UserCommandController extends CommandController
      */
     protected function getTableRowForUser(User $user)
     {
-        $roleNames = array();
-        $accountIdentifiers = array();
+        $roleNames = [];
+        $accountIdentifiers = [];
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
             $authenticationProviderName = $account->getAuthenticationProviderName();
@@ -398,6 +397,6 @@ class UserCommandController extends CommandController
                 $roleNames[] = $role->getIdentifier();
             }
         }
-        return array($user->getName()->getFullName(), $user->getPrimaryElectronicAddress(), implode(', ', $accountIdentifiers), implode(', ', $roleNames), ($user->isActive() ? 'yes' : 'no'));
+        return [$user->getName()->getFullName(), $user->getPrimaryElectronicAddress(), implode(', ', $accountIdentifiers), implode(', ', $roleNames), ($user->isActive() ? 'yes' : 'no')];
     }
 }

@@ -16,7 +16,10 @@ use Doctrine\Common\Collections\Criteria;
 use Neos\Flow\Annotations as Flow;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\ResourceManagement\Exception;
+use Neos\Media\Exception\ImageFileException;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Utility\TypeHandling;
@@ -87,6 +90,9 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      *
      * @param integer $initializationCause
      * @return void
+     * @throws Exception
+     * @throws ImageFileException
+     * @throws InvalidConfigurationException
      */
     public function initializeObject($initializationCause)
     {
@@ -121,6 +127,9 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      * image variant's resource.
      *
      * @return void
+     * @throws Exception
+     * @throws ImageFileException
+     * @throws InvalidConfigurationException
      * @see getResource()
      */
     public function refresh()
@@ -168,12 +177,20 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
     }
 
     /**
+     * @return string
+     */
+    public function getCopyrightNotice(): string
+    {
+        return $this->originalAsset->getCopyrightNotice();
+    }
+
+    /**
      * Sets a name which can be used for identifying this variant
      *
      * @param string $name
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -183,7 +200,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -196,7 +213,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      * @return void
      * @throws \RuntimeException
      */
-    public function setResource(PersistentResource $resource)
+    public function setResource(PersistentResource $resource): void
     {
         throw new \RuntimeException('Setting the resource on an ImageVariant is not supported.', 1366627480);
     }
@@ -242,7 +259,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      * @param ImageVariant $variant
      * @return void
      */
-    public function addVariant(ImageVariant $variant)
+    public function addVariant(ImageVariant $variant): void
     {
         throw new \RuntimeException('Adding variants to an ImageVariant is not supported.', 1381419461);
     }
@@ -252,9 +269,9 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      *
      * @return array
      */
-    public function getVariants()
+    public function getVariants(): array
     {
-        return array();
+        return [];
     }
 
     /**
@@ -264,8 +281,11 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      *
      * @param ImageAdjustmentInterface $adjustment The adjustment to apply
      * @return void
+     * @throws Exception
+     * @throws ImageFileException
+     * @throws InvalidConfigurationException
      */
-    public function addAdjustment(ImageAdjustmentInterface $adjustment)
+    public function addAdjustment(ImageAdjustmentInterface $adjustment): void
     {
         $this->applyAdjustment($adjustment);
         $this->refresh();
@@ -278,8 +298,11 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      *
      * @param array<ImageAdjustmentInterface> $adjustments
      * @return void
+     * @throws Exception
+     * @throws ImageFileException
+     * @throws InvalidConfigurationException
      */
-    public function addAdjustments(array $adjustments)
+    public function addAdjustments(array $adjustments): void
     {
         foreach ($adjustments as $adjustment) {
             $this->applyAdjustment($adjustment);
@@ -295,7 +318,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      * @param ImageAdjustmentInterface $adjustment
      * @return void
      */
-    protected function applyAdjustment(ImageAdjustmentInterface $adjustment)
+    protected function applyAdjustment(ImageAdjustmentInterface $adjustment): void
     {
         $existingAdjustmentFound = false;
         $newAdjustmentClassName = TypeHandling::getTypeForValue($adjustment);
@@ -311,7 +334,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
         if (!$existingAdjustmentFound) {
             $this->adjustments->add($adjustment);
             $adjustment->setImageVariant($this);
-            $this->adjustments = $this->adjustments->matching(new Criteria(null, array('position' => 'ASC')));
+            $this->adjustments = $this->adjustments->matching(new Criteria(null, ['position' => 'ASC']));
         }
 
         $this->lastModified = new \DateTime();
@@ -320,7 +343,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
     /**
      * @return Collection
      */
-    public function getAdjustments()
+    public function getAdjustments(): Collection
     {
         return $this->adjustments;
     }
@@ -329,8 +352,11 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      * Tells the ImageService to render the resource of this ImageVariant according to the existing adjustments.
      *
      * @return void
+     * @throws InvalidConfigurationException
+     * @throws Exception
+     * @throws ImageFileException
      */
-    protected function renderResource()
+    protected function renderResource(): void
     {
         $processedImageInfo = $this->imageService->processImage($this->originalAsset->getResource(), $this->adjustments->toArray());
         $this->resource = $processedImageInfo['resource'];

@@ -86,10 +86,10 @@ class AssetTransformation extends AbstractTransformation
                 $objectType = TypeHandling::getTypeForValue($assetObject);
                 $objectIdentifier = ObjectAccess::getProperty($assetObject, 'Persistence_Object_Identifier', true);
 
-                $nodeProperties[$propertyName] = array(
+                $nodeProperties[$propertyName] = [
                     '__flow_object_type' => $objectType,
                     '__identifier' => $objectIdentifier
-                );
+                ];
             }
         }
 
@@ -104,11 +104,11 @@ class AssetTransformation extends AbstractTransformation
      */
     protected function getHandledObjectTypes()
     {
-        return array(
+        return [
             Asset::class,
             Audio::class,
             Document::class,
             Video::class
-        );
+        ];
     }
 }

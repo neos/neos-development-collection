@@ -403,7 +403,7 @@
 								}
 
 								&::after {
-									@include fa-icon();
+									@extend .fas;
 									content: $fa-var-arrow-down;
 									position: absolute;
 									right: $relatedMargin + $tightMargin;

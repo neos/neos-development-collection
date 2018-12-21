@@ -39,19 +39,19 @@ class ContentContextTest extends UnitTestCase
     {
         $mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
 
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => null,
             'currentDateTime' => new \DateTime(),
-            'dimensions' => array(),
-            'targetDimensions' => array(),
+            'dimensions' => [],
+            'targetDimensions' => [],
             'invisibleContentShown' => null,
             'removedContentShown' => null,
             'inaccessibleContentShown' => null,
             'currentSite' => $mockSite,
             'currentDomain' => null
-        );
+        ];
 
-        $contentContext = $this->getAccessibleMock(ContentContext::class, array('dummy'), $contextProperties);
+        $contentContext = $this->getAccessibleMock(ContentContext::class, ['dummy'], $contextProperties);
         $this->assertSame($mockSite, $contentContext->getCurrentSite());
     }
 
@@ -62,18 +62,18 @@ class ContentContextTest extends UnitTestCase
     {
         $mockDomain = $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock();
 
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => null,
             'currentDateTime' => new \DateTime(),
-            'dimensions' => array(),
-            'targetDimensions' => array(),
+            'dimensions' => [],
+            'targetDimensions' => [],
             'invisibleContentShown' => null,
             'removedContentShown' => null,
             'inaccessibleContentShown' => null,
             'currentSite' => null,
             'currentDomain' => null
-        );
-        $contentContext = $this->getAccessibleMock(ContentContext::class, array('dummy'), $contextProperties);
+        ];
+        $contentContext = $this->getAccessibleMock(ContentContext::class, ['dummy'], $contextProperties);
 
         $this->assertNull($contentContext->getCurrentDomain());
         $contentContext->_set('currentDomain', $mockDomain);
