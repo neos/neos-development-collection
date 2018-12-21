@@ -11,9 +11,7 @@ namespace Neos\Neos\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Exception;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
