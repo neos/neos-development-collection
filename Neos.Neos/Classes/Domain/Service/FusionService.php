@@ -19,7 +19,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Utility\Files;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;

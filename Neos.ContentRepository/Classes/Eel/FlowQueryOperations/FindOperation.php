@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;

@@ -392,7 +392,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
         /** @var Node|MockObject $node */
-        $node = $this->getMockBuilder(Node::class)->setMethods(array_merge(array('materializeNodeData', 'materializeNodeDataAsNeeded', 'getNodeType'), $configurableMethods))->setConstructorArgs(array($nodeData, $context))->getMock();
+        $node = $this->getMockBuilder(Node::class)->setMethods(array_merge(['materializeNodeData', 'materializeNodeDataAsNeeded', 'getNodeType'], $configurableMethods))->setConstructorArgs([$nodeData, $context])->getMock();
         return $node;
     }
 

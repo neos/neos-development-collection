@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The node type constraints value object
