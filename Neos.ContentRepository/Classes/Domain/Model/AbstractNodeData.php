@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;

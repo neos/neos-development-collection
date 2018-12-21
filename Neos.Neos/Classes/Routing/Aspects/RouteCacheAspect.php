@@ -11,7 +11,6 @@ namespace Neos\Neos\Routing\Aspects;
  * source code.
  */
 
-use Neos\ContentRepository\Exception\NodeException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security\Context;
