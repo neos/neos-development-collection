@@ -373,13 +373,14 @@ var DimensionSwitcher = (_dec = (0, _reactRedux.connect)((0, _plowJs.$transform)
             transientPresets: {},
             loadingPresets: {}
         }, _this.getEffectivePresets = function () {
+            return _this.props.activePresets;
             var activePresets = _this.props.activePresets.map(function (dimensionPreset) {
                 return (0, _plowJs.$get)('value', dimensionPreset);
             });
             return Object.assign({}, activePresets.toJS() /*, this.state.transientPresets*/); // TODO: re-introduce transient presets
         }, _this.handleSelectPreset = function (selectedDimensionName, presetName) {
             // If only one dimension commit right away; else store in the transient state
-            if (_this.props.contentDimensions.count() === 1) {
+            if (_this.props.contentDimensions.length === 1) {
                 _this.setState({ isOpen: false });
                 _this.props.selectPreset(_defineProperty({}, selectedDimensionName, presetName));
             } else {
@@ -430,7 +431,7 @@ var DimensionSwitcher = (_dec = (0, _reactRedux.connect)((0, _plowJs.$transform)
                 contentDimensions = _props.contentDimensions,
                 activePresets = _props.activePresets;
 
-            var contentDimensionsObject = contentDimensions.toObject();
+            var contentDimensionsObject = contentDimensions;
             var contentDimensionsObjectKeys = Object.keys(contentDimensionsObject);
 
             return contentDimensionsObjectKeys.length ? _react2.default.createElement(
@@ -477,7 +478,7 @@ var DimensionSwitcher = (_dec = (0, _reactRedux.connect)((0, _plowJs.$transform)
                             onSelect: _this2.handleSelectPreset
                         });
                     }),
-                    contentDimensions.count() > 1 && _react2.default.createElement(
+                    contentDimensions.length > 1 && _react2.default.createElement(
                         'div',
                         { className: _style2.default.buttonGroup },
                         _react2.default.createElement(
@@ -510,9 +511,9 @@ var DimensionSwitcher = (_dec = (0, _reactRedux.connect)((0, _plowJs.$transform)
 
             var dimensionConfiguration = (0, _plowJs.$get)(dimensionName, contentDimensions);
 
-            return dimensionConfiguration.get('values'); /*.map(
-                                                         (presetConfiguration, presetName) => allowedPresets.get(dimensionName) && allowedPresets.get(dimensionName).contains(presetName) ? presetConfiguration : presetConfiguration.set('disabled', true)
-                                                         );*/ // TODO
+            return dimensionConfiguration.value; /*.map(
+                                                 (presetConfiguration, presetName) => allowedPresets.get(dimensionName) && allowedPresets.get(dimensionName).contains(presetName) ? presetConfiguration : presetConfiguration.set('disabled', true)
+                                                 );*/ // TODO
         }
     }]);
 

@@ -44,6 +44,9 @@ class NodeAddressFactory
     public function createFromNode(NodeInterface $node): NodeAddress
     {
         $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($node->getContentStreamIdentifier());
+        if ($workspace === null) {
+            throw new \RuntimeException('Cannot build a NodeAddress for node aggregate ' . $node->getNodeAggregateIdentifier() . ', because the content stream ' . $node->getContentStreamIdentifier() . ' is not assigned to a workspace.');
+        }
         return new NodeAddress($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier(), $workspace->getWorkspaceName());
     }
 

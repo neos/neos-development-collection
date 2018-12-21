@@ -12,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
@@ -96,6 +97,11 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      */
     protected $nodeTypeManager;
 
+    /**
+     * @Flow\Inject
+     * @var NodeTypeConstraintFactory
+     */
+    protected $nodeTypeConstraintFactory;
 
     /**
      * Extracts the node path from the request path.
@@ -151,7 +157,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             $matchingRootNode = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'));
 
             $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
-            $tagArray[] = (string)$matchingSite->getNodeIdentifier();
+            $tagArray[] = (string)$matchingSite->getNodeAggregateIdentifier();
 
             if ($requestPath === '' || substr($requestPath, 0, 1) === '@') {
                 // if the request path is:
@@ -192,45 +198,44 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      * @return NodeInterface
      * @throws NoSuchNodeException
      */
-    protected function fetchNodeForRequestPath(ContentSubgraphInterface $subgraph, NodeInterface $site, string $requestPath, array &$tagArray): NodeInterface
+    protected function fetchNodeForRequestPath(ContentSubgraphInterface $subgraph, NodeInterface $site, string $requestPath, array &$tagArray): ?NodeInterface
     {
         $remainingUriPathSegments = explode('/', $requestPath);
         $remainingUriPathSegments = array_slice($remainingUriPathSegments, $this->getUriPathSegmentOffset());
         $matchingNode = null;
-        $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', true, true);
-        $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(false, array_keys($documentNodeTypes)),
-            function (NodeInterface $node) use ($site, &$remainingUriPathSegments, &$matchingNode, &$tagArray) {
-                if ($node === $site) {
-                    return true;
-                }
-                $currentPathSegment = reset($remainingUriPathSegments);
-                $pivot = \mb_strpos($currentPathSegment, '.');
-                if ($pivot !== false) {
-                    $currentPathSegment = \mb_substr($currentPathSegment, 0, $pivot);
-                }
-                $pivot = \mb_strpos($currentPathSegment, '@');
-                if ($pivot !== false) {
-                    $currentPathSegment = \mb_substr($currentPathSegment, 0, $pivot);
-                }
-                $continueTraversal = false;
-                if ($node->getProperty('uriPathSegment') === $currentPathSegment) {
-                    $tagArray[] = (string)$node->getNodeIdentifier();
-                    array_shift($remainingUriPathSegments);
-                    if (empty($remainingUriPathSegments)) {
-                        $matchingNode = $node;
-                        $continueTraversal = false;
-                    } else {
-                        $continueTraversal = true;
-                    }
-                }
+        $documentNodeTypeFilter = $this->nodeTypeConstraintFactory->parseFilterString('Neos.Neos:Document');
 
-                return $continueTraversal;
-            });
+        $currentNode = $site;
+        foreach ($remainingUriPathSegments as $currentPathSegment) {
+            $pivot = \mb_strpos($currentPathSegment, '@');
+            if ($pivot !== false) {
+                $currentPathSegment = \mb_substr($currentPathSegment, 0, $pivot);
+            }
 
-        if (!$matchingNode instanceof NodeInterface) {
-            throw new NoSuchNodeException(sprintf('No node found on request path "%s"', $requestPath), 1346949857);
+            $childNodes = $subgraph->findChildNodes($currentNode->getNodeAggregateIdentifier(), $documentNodeTypeFilter);
+            $currentNode = self::findChildNodeWithMatchingPathSegment($childNodes, $currentPathSegment);
+            if ($currentNode === null) {
+                return null;
+            }
+            $tagArray[] = (string)$currentNode->getNodeAggregateIdentifier();
         }
-        return $matchingNode;
+
+        return $currentNode;
+    }
+
+    /**
+     * @param NodeInterface[] $childNodes
+     * @param string $currentPathSegment
+     * @return NodeInterface
+     */
+    protected static function findChildNodeWithMatchingPathSegment(array $childNodes, string $currentPathSegment): ?NodeInterface
+    {
+        foreach ($childNodes as $childNode) {
+            if ($childNode->getProperty('uriPathSegment') === $currentPathSegment) {
+                return $childNode;
+            }
+        }
+        return null;
     }
 
     /**

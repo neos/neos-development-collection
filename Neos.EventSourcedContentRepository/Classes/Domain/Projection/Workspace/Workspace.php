@@ -25,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
  * @CQRS\ReadModel
  * @ORM\Table(name="neos_contentrepository_projection_workspace_v1")
  */
-final class Workspace
+class Workspace
 {
 
     /**
