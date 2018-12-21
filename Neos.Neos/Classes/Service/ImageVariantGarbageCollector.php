@@ -61,7 +61,7 @@ class ImageVariantGarbageCollector
             return;
         }
         $identifier = $this->persistenceManager->getIdentifierByObject($oldValue);
-        $results = $this->nodeDataRepository->findNodesByRelatedEntities(array(ImageVariant::class => [$identifier]));
+        $results = $this->nodeDataRepository->findNodesByRelatedEntities([ImageVariant::class => [$identifier]]);
 
         // This case shouldn't happen as the query will usually find at least the node that triggered this call, still if there is no relation we can remove the ImageVariant.
         if ($results === []) {

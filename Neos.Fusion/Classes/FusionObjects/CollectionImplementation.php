@@ -11,16 +11,26 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Render a Fusion collection of nodes
  *
  * //tsPath collection *Collection
  * //tsPath itemRenderer the TS object which is triggered for each element in the node collection
+ * @deprecated since Neos 4.2 in favor of LoopImplementation
  */
 class CollectionImplementation extends AbstractCollectionImplementation
 {
+    /**
+     * Collections are always concatenated with an empty string
+     *
+     * @return string
+     */
+    public function getGlue()
+    {
+        return '';
+    }
+
     /**
      * Evaluate the collection nodes
      *

@@ -134,10 +134,10 @@ class AssetController extends ActionController
     protected $translator;
 
     /**
-     * @Flow\InjectConfiguration(path="assetSources", package="Neos.Media")
-     * @var array
+     * @Flow\Inject
+     * @var \Neos\Media\Domain\Service\AssetSourceService
      */
-    protected $assetSourcesConfiguration;
+    protected $assetSourceService;
 
     /**
      * @var AssetSourceInterface[]
@@ -157,11 +157,7 @@ class AssetController extends ActionController
             $this->browserState->set('automaticAssetCollectionSelection', true);
         }
 
-        foreach ($this->assetSourcesConfiguration as $assetSourceIdentifier => $assetSourceConfiguration) {
-            if (is_array($assetSourceConfiguration)) {
-                $this->assetSources[$assetSourceIdentifier] = new $assetSourceConfiguration['assetSource']($assetSourceIdentifier, $assetSourceConfiguration['assetSourceOptions'] ?? []);
-            }
-        }
+        $this->assetSources = $this->assetSourceService->getAssetSources();
     }
 
     /**

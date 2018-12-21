@@ -42,7 +42,7 @@ class ImageInterfaceJsonSerializer extends ImageInterfaceArrayPresenter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string The converted ImageInterface
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         $data = parent::convertFrom($source, 'array', $convertedChildProperties, $configuration);
         return json_encode($data);

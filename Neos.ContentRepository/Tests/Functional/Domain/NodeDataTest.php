@@ -53,7 +53,7 @@ class NodeDataTest extends FunctionalTestCase
         $workspaceRepository->add(new Workspace('live'));
         $this->persistenceManager->persistAll();
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
-        $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $this->context = $this->contextFactory->create(['workspaceName' => 'live']);
     }
 
     /**
@@ -62,7 +62,7 @@ class NodeDataTest extends FunctionalTestCase
     public function tearDown()
     {
         parent::tearDown();
-        $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
     /**
@@ -100,9 +100,9 @@ class NodeDataTest extends FunctionalTestCase
         $newNode = $rootNode->createNodeFromTemplate($template);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
-        $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
 
-        $newLiveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $newLiveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $newNodeAgain = $newLiveContext->getNode('/new-node');
 
         $this->assertEquals($newNode->getIdentifier(), $newNodeAgain->getIdentifier());
@@ -128,9 +128,9 @@ class NodeDataTest extends FunctionalTestCase
         $newNode = $rootNode->createNodeFromTemplate($template);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
-        $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
 
-        $newLiveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $newLiveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $newNodeAgain = $newLiveContext->getNode('/new-node');
         $entity = $newNodeAgain->getProperty('entity');
         $this->assertEquals('Reykjavik', $entity->getFavoritePlace());
@@ -139,9 +139,9 @@ class NodeDataTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
-        $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
 
-        $newLiveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $newLiveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $newNodeAgain = $newLiveContext->getNode('/new-node');
         $entity = $newNodeAgain->getProperty('entity');
 
@@ -163,16 +163,16 @@ class NodeDataTest extends FunctionalTestCase
         $newEntity->setFavoritePlace('Reykjavik');
         $anotherNewEntity = new Fixtures\RelatedEntity();
         $anotherNewEntity->setFavoritePlace('Japan');
-        $template->setProperty('entity', array($newEntity, $anotherNewEntity));
+        $template->setProperty('entity', [$newEntity, $anotherNewEntity]);
 
         $rootNode = $this->context->getRootNode();
 
         $newNode = $rootNode->createNodeFromTemplate($template);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
-        $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
 
-        $newLiveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+        $newLiveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $newNodeAgain = $newLiveContext->getNode('/new-node');
 
         $entityArray = $newNodeAgain->getProperty('entity');
@@ -190,13 +190,13 @@ class NodeDataTest extends FunctionalTestCase
         $siteImportService->importFromFile(__DIR__ . '/../Fixtures/NodesWithAndWithoutDimensions.xml', $this->context);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
-        $this->inject($this->contextFactory, 'contextInstances', array());
+        $this->inject($this->contextFactory, 'contextInstances', []);
 
         // The context is not important here, just a quick way to get a (live) workspace
         $context = $this->contextFactory->create();
         $nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
         // The identifier comes from the Fixture.
-        $resultingNodeData = $nodeDataRepository->findOneByIdentifier('78f5c720-e8df-2573-1fc1-f7ce5b338485', $context->getWorkspace(true), array());
+        $resultingNodeData = $nodeDataRepository->findOneByIdentifier('78f5c720-e8df-2573-1fc1-f7ce5b338485', $context->getWorkspace(true), []);
 
         $this->assertEmpty($resultingNodeData->getDimensions());
     }

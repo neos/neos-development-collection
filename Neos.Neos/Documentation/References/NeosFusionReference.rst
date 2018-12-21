@@ -14,11 +14,23 @@ This package contains general-purpose Fusion objects, which are usable both with
 Neos.Fusion:Array
 -----------------
 
+:[key]: (string) A nested definition (simple value, expression or object) that evaluates to a string
+:[key].@ignoreProperties: (array) A list of properties to ignore from being "rendered" during evaluation
+:[key].@position: (string/integer) Define the ordering of the nested definition
+
+.. note:: The Neos.Fusion:Array object has been renamed to Neos.Fusion:Join the old name is DEPRECATED;
+
+.. _Neos_Fusion__Join:
+
+Neos.Fusion:Join
+----------------
+
 Render multiple nested definitions and concatenate the results.
 
 :[key]: (string) A nested definition (simple value, expression or object) that evaluates to a string
 :[key].@ignoreProperties: (array) A list of properties to ignore from being "rendered" during evaluation
 :[key].@position: (string/integer) Define the ordering of the nested definition
+:@glue: (string) The glue used to join the items together (default = '').
 
 The order in which nested definitions are evaluated are specified using their
 ``@position`` meta property. For this argument, the following sort order applies:
@@ -55,7 +67,7 @@ Example Ordering::
 	# order (o1 ... o9) is *always* fixed, no matter in which order the
 	# individual statements are defined.
 
-	myArray = Neos.Fusion:Array {
+	myArray = Neos.Fusion:Join {
 		o1 = Neos.NodeTypes:Text
 		o1.@position = 'start 12'
 		o2 = Neos.NodeTypes:Text
@@ -87,7 +99,7 @@ to use ``@position`` and meaningful keys in your application, and not numeric on
 
 Example of numeric keys (discouraged)::
 
-	myArray = Neos.Fusion:Array {
+	myArray = Neos.Fusion:Join {
 		10 = Neos.NodeTypes:Text
 		20 = Neos.NodeTypes:Text
 	}
@@ -105,6 +117,8 @@ Render each item in ``collection`` using ``itemRenderer``.
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
 :itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated
+
+.. note:: The Neos.Fusion:Collection object is DEPRECATED use Neos.Fusion:Loop instead.
 
 Example using an object ``itemRenderer``::
 
@@ -137,7 +151,71 @@ Render each item in ``collection`` using ``itemRenderer`` and return the result 
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
-:itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element
+:itemRenderer: (mixed, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element
+
+.. note:: The Neos.Fusion:RawCollection object is DEPRECATED use Neos.Fusion:Map instead.**
+
+.. _Neos_Fusion__Loop:
+
+Neos.Fusion:Loop
+----------------
+
+Render each item in ``items`` using ``itemRenderer``.
+
+:items: (array/Iterable, **required**) The array or iterable to iterate over
+:itemName: (string, defaults to ``item``) Context variable name for each item
+:itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated
+:@glue: (string) The glue used to join the items together (default = '').
+
+Example using an object ``itemRenderer``::
+
+	myCollection = Neos.Fusion:Collection {
+		items = ${[1, 2, 3]}
+		itemName = 'element'
+		itemRenderer = Neos.Fusion:Template {
+			templatePath = 'resource://...'
+			element = ${element}
+		}
+	}
+
+
+Example using an expression ``itemRenderer``::
+
+	myCollection = Neos.Fusion:Collection {
+		items = ${[1, 2, 3]}
+		itemName = 'element'
+		itemRenderer = ${element * 2}
+	}
+
+.. _Neos_Fusion__Map:
+
+Neos.Fusion:Map
+---------------
+
+Render each item in ``items`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`Neos_Fusion__Collection`)
+
+:items: (array/Iterable, **required**) The array or iterable to iterate over
+:itemName: (string, defaults to ``item``) Context variable name for each item
+:itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:itemRenderer: (mixed, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element
+
+.. _Neos_Fusion__Reduce:
+
+Neos.Fusion:Reduce
+------------------
+
+Reduce the given items to a single value by using ``itemRenderer``.
+
+:items: (array/Iterable, **required**) The array or iterable to iterate over
+:itemName: (string, defaults to ``item``) Context variable name for each item
+:itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
+:carryName: (string, defaults to ``carry``) Context variable that contains the result of the last iteration
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:itemReducer: (mixed, **required**) The reducer definition (simple value, expression or object) that will be applied for every item.
+:initialValue: (mixed, defaults to ``null``) The value that is passed to the first iteration or returned if the items are empty
 
 .. _Neos_Fusion__Case:
 
@@ -248,11 +326,11 @@ Example::
 		bold = false
 
 		renderer = Neos.Fusion:Tag {
-			attributes.class = Neos.Fusion:RawArray {
+			attributes.class = Neos.Fusion:DataStructure {
 				component = 'component'
 				bold = ${props.bold ? 'component--bold' : false}
 			}
-			content = Neos.Fusion:Array {
+			content = Neos.Fusion:Join {
 				headline = Neos.Fusion:Tag {
 					tagName = ${props.titleTagName}
 					content = ${props.title}
@@ -280,7 +358,7 @@ Example as a standalone augmenter::
 
 	augmentedContent = Neos.Fusion:Augmenter {
 
-		content = Neos.Fusion:Array {
+		content = Neos.Fusion:Join {
 			title = Neos.Fusion:Tag {
 				@if.hasContent = ${this.content}
 				tagName = 'h2'
@@ -364,6 +442,21 @@ Evaluate nested definitions as an array (opposed to *string* for :ref:`Neos_Fusi
 
 .. tip:: For simple cases an expression with an array literal ``${[1, 2, 3]}`` might be easier to read
 
+.. note:: The Neos.Fusion:RawArray object has been renamed to Neos.Fusion:DataStructure the old name is DEPRECATED;
+
+.. _Neos_Fusion__Tag:
+
+
+Neos.Fusion:DataStructure
+--------------------
+
+Evaluate nested definitions as an array (opposed to *string* for :ref:`Neos_Fusion__Array`)
+
+:[key]: (mixed) A nested definition (simple value, expression or object), ``[key]`` will be used for the resulting array key
+:[key].@position: (string/integer) Define the ordering of the nested definition
+
+.. tip:: For simple cases an expression with an array literal ``${[1, 2, 3]}`` might be easier to read
+
 .. _Neos_Fusion__Tag:
 
 Neos.Fusion:Tag
@@ -414,7 +507,7 @@ Example:
 
 	attributes = Neos.Fusion:Attributes {
 		foo = 'bar'
-		class = Neos.Fusion:RawArray {
+		class = Neos.Fusion:DataStructure {
 			class1 = 'class1'
 			class2 = 'class2'
 		}

@@ -24,13 +24,13 @@ class UriBuilderTest extends AbstractFusionObjectTest
         $this->registerRoute(
             'Fusion functional test',
             'neos/flow/test/http/foo',
-            array(
+            [
                 '@package' => 'Neos.Flow',
                 '@subpackage' => 'Tests\Functional\Http\Fixtures',
                 '@controller' => 'Foo',
                 '@action' => 'index',
                 '@format' => 'html'
-            ));
+            ]);
 
         $view = $this->buildView();
         $view->setFusionPath('uriBuilder/foo');

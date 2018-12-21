@@ -13,7 +13,6 @@ namespace Neos\Neos\Controller\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
@@ -65,10 +64,10 @@ class NodesController extends ActionController
     /**
      * @var array
      */
-    protected $viewFormatToObjectNameMap = array(
+    protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
         'json' => NodeJsonView::class
-    );
+    ];
 
     /**
      * A list of IANA media types which are supported by this controller
@@ -76,10 +75,10 @@ class NodesController extends ActionController
      * @var array
      * @see http://www.iana.org/assignments/media-types/index.html
      */
-    protected $supportedMediaTypes = array(
+    protected $supportedMediaTypes = [
         'text/html',
         'application/json'
-    );
+    ];
 
     /**
      * Shows a list of nodes
@@ -92,9 +91,9 @@ class NodesController extends ActionController
      * @param NodeInterface $contextNode a node to use as context for the search
      * @return string
      */
-    public function indexAction($searchTerm = '', array $nodeIdentifiers = array(), $workspaceName = 'live', array $dimensions = array(), array $nodeTypes = array('Neos.Neos:Document'), NodeInterface $contextNode = null)
+    public function indexAction($searchTerm = '', array $nodeIdentifiers = [], $workspaceName = 'live', array $dimensions = [], array $nodeTypes = ['Neos.Neos:Document'], NodeInterface $contextNode = null)
     {
-        $searchableNodeTypeNames = array();
+        $searchableNodeTypeNames = [];
         foreach ($nodeTypes as $nodeTypeName) {
             if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
                 $this->throwStatus(400, sprintf('Unknown node type "%s"', $nodeTypeName));
@@ -108,7 +107,7 @@ class NodesController extends ActionController
         }
 
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
-        if ($nodeIdentifiers === array()) {
+        if ($nodeIdentifiers === []) {
             $nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode);
         } else {
             $nodes = array_map(function ($identifier) use ($contentContext) {
@@ -127,7 +126,7 @@ class NodesController extends ActionController
      * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
      * @return string
      */
-    public function showAction($identifier, $workspaceName = 'live', array $dimensions = array())
+    public function showAction($identifier, $workspaceName = 'live', array $dimensions = [])
     {
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
         /** @var $node NodeInterface */
@@ -145,10 +144,10 @@ class NodesController extends ActionController
             }
         });
 
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'node' => $node,
             'convertedNodeProperties' => $convertedNodeProperties
-        ));
+        ]);
     }
 
     /**
@@ -167,7 +166,7 @@ class NodesController extends ActionController
      * @param array $sourceDimensions
      * @return string
      */
-    public function createAction($mode, $identifier, $workspaceName = 'live', array $dimensions = array(), array $sourceDimensions = array())
+    public function createAction($mode, $identifier, $workspaceName = 'live', array $dimensions = [], array $sourceDimensions = [])
     {
         if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
             $originalContentContext = $this->createContentContext($workspaceName, $sourceDimensions);
@@ -181,11 +180,11 @@ class NodesController extends ActionController
 
             $this->adoptNodeAndParents($node, $contentContext, $mode === 'adoptFromAnotherDimensionAndCopyContent');
 
-            $this->redirect('show', null, null, array(
+            $this->redirect('show', null, null, [
                 'identifier' => $identifier,
                 'workspaceName' => $workspaceName,
                 'dimensions' => $dimensions
-            ));
+            ]);
         } else {
             $this->throwStatus(400, sprintf('The create mode "%s" is not supported.', $mode));
         }

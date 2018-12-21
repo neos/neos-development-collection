@@ -11,11 +11,7 @@ namespace Neos\Media\Tests\Unit\Domain\Model\Adjustment;
  * source code.
  */
 
-use Imagine\Image\Box;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
-use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
-use Neos\Media\Domain\Model\ImageInterface;
 
 /**
  * Test case for the Crop Image Adjustment

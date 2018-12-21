@@ -122,7 +122,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
     {
         $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Fusion/NodeTypes/Pages/Page.fusion';
 
-        $contextVariables = array();
+        $contextVariables = [];
         $contextVariables['packageKey'] = $packageKey;
         $contextVariables['siteName'] = $siteName;
         $packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
@@ -197,10 +197,10 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
     protected function generateAdditionalFolders($packageKey)
     {
         $resourcesPath = $this->packageManager->getPackage($packageKey)->getResourcesPath();
-        $publicResourcesPath = Files::concatenatePaths(array($resourcesPath, 'Public'));
+        $publicResourcesPath = Files::concatenatePaths([$resourcesPath, 'Public']);
 
-        foreach (array('Images', 'JavaScript', 'Styles') as $publicResourceFolder) {
-            Files::createDirectoryRecursively(Files::concatenatePaths(array($publicResourcesPath, $publicResourceFolder)));
+        foreach (['Images', 'JavaScript', 'Styles'] as $publicResourceFolder) {
+            Files::createDirectoryRecursively(Files::concatenatePaths([$publicResourcesPath, $publicResourceFolder]));
         }
     }
 }

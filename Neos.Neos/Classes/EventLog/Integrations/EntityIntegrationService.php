@@ -17,7 +17,6 @@ use Neos\Eel\CompilingEvaluator;
 use Neos\Eel\Exception;
 use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Neos\EventLog\Domain\Model\Event;
 
 /**
@@ -46,12 +45,6 @@ class EntityIntegrationService extends AbstractIntegrationService
      * @var array
      */
     protected $monitorEntitiesSetting;
-
-    /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $logger;
 
     /**
      * Dummy method which is called in a prePersist signal. If we remove that, this object is never instantiated and thus
@@ -90,9 +83,9 @@ class EntityIntegrationService extends AbstractIntegrationService
                 $entityMonitoringConfiguration = $this->monitorEntitiesSetting[$className];
 
                 if (isset($entityMonitoringConfiguration['events']['created'])) {
-                    $data = array();
+                    $data = [];
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
-                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, array('entity' => $entity));
+                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, ['entity' => $entity]);
                     }
 
                     $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['created'], $data);
@@ -107,9 +100,9 @@ class EntityIntegrationService extends AbstractIntegrationService
                 $entityMonitoringConfiguration = $this->monitorEntitiesSetting[$className];
 
                 if (isset($entityMonitoringConfiguration['events']['deleted'])) {
-                    $data = array();
+                    $data = [];
                     foreach ($entityMonitoringConfiguration['data'] as $key => $eelExpression) {
-                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, array('entity' => $entity));
+                        $data[$key] = Utility::evaluateEelExpression($eelExpression, $this->eelEvaluator, ['entity' => $entity]);
                     }
 
                     $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['deleted'], $data);

@@ -69,7 +69,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
     /**
      * @var array
      */
-    protected $templateVariables = array();
+    protected $templateVariables = [];
 
     public function setUp()
     {
@@ -92,7 +92,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
         $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
         $this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue(new NodeType('Acme.Test:Headline', [], [])));
 
-        $this->mockContext = array('node' => $this->mockNode);
+        $this->mockContext = ['node' => $this->mockNode];
         $this->mockRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockContext));
     }
 

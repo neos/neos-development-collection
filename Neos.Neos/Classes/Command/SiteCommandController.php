@@ -13,7 +13,8 @@ namespace Neos\Neos\Command;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -25,6 +26,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\NodeService;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Psr\Log\LoggerInterface;
 
 /**
  * The Site Command Controller
@@ -65,12 +67,6 @@ class SiteCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
-     * @Flow\Inject
      * @var ContextFactoryInterface
      */
     protected $nodeContextFactory;
@@ -94,6 +90,32 @@ class SiteCommandController extends CommandController
     protected $persistenceManager;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
+
+    /**
      * Create a new site
      *
      * This command allows to create a blank site with just a single empty document in the default dimension.
@@ -102,10 +124,10 @@ class SiteCommandController extends CommandController
      * If no ``nodeType`` option is specified the command will use `Neos.NodeTypes:Page` as fallback. The node type
      * must already exists and have the superType ``Neos.Neos:Document``.
      *
-     * If no ``nodeName` option is specified the command will create a unique node-name from the name of the site.
+     * If no ``nodeName`` option is specified the command will create a unique node-name from the name of the site.
      * If a node name is given it has to be unique for the setup.
      *
-     * If the flag ``activate` is set to false new site will not be activated.
+     * If the flag ``activate`` is set to false new site will not be activated.
      *
      * @param string $name The name of the site
      * @param string $packageKey The site package
@@ -195,25 +217,38 @@ class SiteCommandController extends CommandController
             $this->outputLine('You have to specify either "--package-key" or "--filename"');
             $this->quit(1);
         }
+
+        // Since this command uses a lot of memory when large sites are imported, we warn the user to watch for
+        // the confirmation of a successful import.
+        $this->outputLine('<b>This command can use a lot of memory when importing sites with many resources.</b>');
+        $this->outputLine('If the import is successful, you will see a message saying "Import of site ... finished".');
+        $this->outputLine('If you do not see this message, the import failed, most likely due to insufficient memory.');
+        $this->outputLine('Increase the <b>memory_limit</b> configuration parameter of your php CLI to attempt to fix this.');
+        $this->outputLine('Starting import...');
+        $this->outputLine('---');
+
+
         $site = null;
         if ($filename !== null) {
             try {
                 $site = $this->siteImportService->importFromFile($filename);
             } catch (\Exception $exception) {
-                $this->systemLogger->logException($exception);
-                $this->outputLine('<error>During the import of the file "%s" an exception occurred: %s, see log for further information.</error>', array($filename, $exception->getMessage()));
+                $logMessage = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
+                $this->outputLine('<error>During the import of the file "%s" an exception occurred: %s, see log for further information.</error>', [$filename, $exception->getMessage()]);
                 $this->quit(1);
             }
         } else {
             try {
                 $site = $this->siteImportService->importFromPackage($packageKey);
             } catch (\Exception $exception) {
-                $this->systemLogger->logException($exception);
-                $this->outputLine('<error>During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', array($packageKey, $exception->getMessage()));
+                $logMessage = $this->throwableStorage->logThrowable($exception);
+                $this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
+                $this->outputLine('<error>During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', [$packageKey, $exception->getMessage()]);
                 $this->quit(1);
             }
         }
-        $this->outputLine('Import of site "%s" finished.', array($site->getName()));
+        $this->outputLine('Import of site "%s" finished.', [$site->getName()]);
     }
 
     /**
@@ -253,16 +288,16 @@ class SiteCommandController extends CommandController
         if ($packageKey !== null) {
             $this->siteExportService->exportToPackage($sites, $tidy, $packageKey, $nodeTypeFilter);
             if ($siteNode !== null) {
-                $this->outputLine('The site "%s" has been exported to package "%s".', array($siteNode, $packageKey));
+                $this->outputLine('The site "%s" has been exported to package "%s".', [$siteNode, $packageKey]);
             } else {
-                $this->outputLine('All sites have been exported to package "%s".', array($packageKey));
+                $this->outputLine('All sites have been exported to package "%s".', [$packageKey]);
             }
         } elseif ($filename !== null) {
             $this->siteExportService->exportToFile($sites, $tidy, $filename, $nodeTypeFilter);
             if ($siteNode !== null) {
-                $this->outputLine('The site "%s" has been exported to "%s".', array($siteNode, $filename));
+                $this->outputLine('The site "%s" has been exported to "%s".', [$siteNode, $filename]);
             } else {
-                $this->outputLine('All sites have been exported to "%s".', array($filename));
+                $this->outputLine('All sites have been exported to "%s".', [$filename]);
             }
         } else {
             $this->output($this->siteExportService->export($sites, $tidy, $nodeTypeFilter));
@@ -282,6 +317,10 @@ class SiteCommandController extends CommandController
         $sites = $this->findSitesByNodeNamePattern($siteNode);
         if (empty($sites)) {
             $this->outputLine('<error>No Site found for pattern "%s".</error>', [$siteNode]);
+            // Help the user a little about what he needs to provide as a parameter here
+            $this->outputLine('To find out which sites you have, use the <b>site:list</b> command.');
+            $this->outputLine('The site:prune command expects the "Node name" from the site list as a parameter.');
+            $this->outputLine('If you want to delete all sites, you can run <b>site:prune \'*\'</b>.');
             $this->quit(1);
         }
         foreach ($sites as $site) {
@@ -307,16 +346,16 @@ class SiteCommandController extends CommandController
         $longestSiteName = 4;
         $longestNodeName = 9;
         $longestSiteResource = 17;
-        $availableSites = array();
+        $availableSites = [];
 
         foreach ($sites as $site) {
             /** @var Site $site */
-            array_push($availableSites, array(
+            array_push($availableSites, [
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName(),
                 'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey(),
                 'status' => ($site->getState() === SITE::STATE_ONLINE) ? 'online' : 'offline'
-            ));
+            ]);
             if (strlen($site->getName()) > $longestSiteName) {
                 $longestSiteName = strlen($site->getName());
             }

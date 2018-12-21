@@ -43,7 +43,7 @@ class YamlConfiguration extends Configuration
      */
     protected function registerAvailableVersions()
     {
-        $this->availableVersions = array();
+        $this->availableVersions = [];
         foreach ($this->packageManager->getAvailablePackages() as $package) {
             $this->registerVersionInDirectory($package, 'TYPO3CR');
             $this->registerVersionInDirectory($package, 'ContentRepository');
@@ -75,7 +75,7 @@ class YamlConfiguration extends Configuration
                     throw new MigrationException('The migration version ' . $versionNumber . ' exists twice, that is not supported.', 1345823182);
                 }
                 $versionFile = Files::getUnixStylePath($fileInfo->getPathname());
-                $this->availableVersions[$versionNumber] = array(
+                $this->availableVersions[$versionNumber] = [
                     'filePathAndName' => $versionFile,
                     'package' => $package,
                     'formattedVersionNumber' =>
@@ -84,7 +84,7 @@ class YamlConfiguration extends Configuration
                         $versionNumber[4] . $versionNumber[5] . '-' .
                         $versionNumber[0] . $versionNumber[1] . $versionNumber[2] . $versionNumber[3] . ' ' .
                         $versionNumber[8] . $versionNumber[9] . ':' . $versionNumber[10] . $versionNumber[11] . ':' . $versionNumber[12] . $versionNumber[13]
-                );
+                ];
             }
         }
     }

@@ -69,15 +69,14 @@ class ChildrenOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = array();
-        $outputNodeAggregateIdentifiers = array();
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $parsedFilter = FizzleParser::parseFilterGroup($arguments[0]);
             if ($this->earlyOptimizationOfFilters($flowQuery, $parsedFilter)) {
                 return;
             }
         }
-
 
         /** @var TraversableNodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
@@ -108,11 +107,11 @@ class ChildrenOperation extends AbstractOperation
     protected function earlyOptimizationOfFilters(FlowQuery $flowQuery, array $parsedFilter)
     {
         $optimized = false;
-        $output = array();
-        $outputNodeAggregateIdentifiers = array();
+        $output = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($parsedFilter['Filters'] as $filter) {
-            $instanceOfFilters = array();
-            $attributeFilters = array();
+            $instanceOfFilters = [];
+            $attributeFilters = [];
             if (isset($filter['AttributeFilters'])) {
                 foreach ($filter['AttributeFilters'] as $attributeFilter) {
                     if ($attributeFilter['Operator'] === 'instanceof' && $attributeFilter['Identifier'] === null) {
@@ -126,8 +125,8 @@ class ChildrenOperation extends AbstractOperation
             // Only apply optimization if there's a property name filter or a instanceof filter or another filter already did optimization
             if ((isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) || count($instanceOfFilters) > 0 || $optimized === true) {
                 $optimized = true;
-                $filteredOutput = array();
-                $filteredOutputNodeIdentifiers = array();
+                $filteredOutput = [];
+                $filteredOutputNodeIdentifiers = [];
                 // Optimize property name filter if present
                 if (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                     $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
@@ -172,7 +171,7 @@ class ChildrenOperation extends AbstractOperation
                         return $filters . $attributeFilter['text'];
                     });
                     $filteredFlowQuery = new FlowQuery($filteredOutput);
-                    $filteredFlowQuery->pushOperation('filter', array($attributeFilters));
+                    $filteredFlowQuery->pushOperation('filter', [$attributeFilters]);
                     $filteredOutput = $filteredFlowQuery->get();
                 }
 

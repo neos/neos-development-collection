@@ -52,11 +52,11 @@ class ModuleViewHelper extends AbstractViewHelper
      * @return string The rendered link
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render($path, $action = null, $arguments = array(), $section = '', $format = '', array $additionalParams = array(), $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array())
+    public function render($path, $action = null, $arguments = [], $section = '', $format = '', array $additionalParams = [], $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [])
     {
         $this->setMainRequestToUriBuilder();
-        $modifiedArguments = array('module' => $path);
-        if ($arguments !== array()) {
+        $modifiedArguments = ['module' => $path];
+        if ($arguments !== []) {
             $modifiedArguments['moduleArguments'] = $arguments;
         }
         if ($action !== null) {

@@ -26,44 +26,44 @@ class ParentsUntilOperationTest extends AbstractNodeTest
      */
     public function parentsUntilOperationDataProvider()
     {
-        return array(
-            array(
-                'currentNodePaths' => array('/b/b3'),
+        return [
+            [
+                'currentNodePaths' => ['/b/b3'],
                 'subject' => '',
-                'expectedNodePaths' => array('/b'),
-                'unexpectedNodePaths' => array('/a','/a/a5','/a/a3','/a/a2,')
-            ),
-            array(
-                'currentNodePaths' => array('/b/b3/b3b'),
+                'expectedNodePaths' => ['/b'],
+                'unexpectedNodePaths' => ['/a','/a/a5','/a/a3','/a/a2,']
+            ],
+            [
+                'currentNodePaths' => ['/b/b3/b3b'],
                 'subject' => '',
-                'expectedNodePaths' => array('/b/b3','/b'),
-                'unexpectedNodePaths' => array('/b2','/b3/b3a','/a/a2,','/a')
-            ),
-            array(
-                'currentNodePaths' => array('/b/b3/b3b'),
+                'expectedNodePaths' => ['/b/b3','/b'],
+                'unexpectedNodePaths' => ['/b2','/b3/b3a','/a/a2,','/a']
+            ],
+            [
+                'currentNodePaths' => ['/b/b3/b3b'],
                 'subject' => 'b',
-                'expectedNodePaths' => array('/b/b3'),
-                'unexpectedNodePaths' => array('/b2','/b3/b3a','/a/a2,','/a','/b')
-            ),
-            array(
-                'currentNodePaths' => array('/b/b3/b3b'),
+                'expectedNodePaths' => ['/b/b3'],
+                'unexpectedNodePaths' => ['/b2','/b3/b3a','/a/a2,','/a','/b']
+            ],
+            [
+                'currentNodePaths' => ['/b/b3/b3b'],
                 'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
-                'expectedNodePaths' => array('/b/b3'),
-                'unexpectedNodePaths' => array('/a/a5','/a/a3','/a/a2,','/b')
-            ),
-            array(
-                'currentNodePaths' => array('/a/a4'),
+                'expectedNodePaths' => ['/b/b3'],
+                'unexpectedNodePaths' => ['/a/a5','/a/a3','/a/a2,','/b']
+            ],
+            [
+                'currentNodePaths' => ['/a/a4'],
                 'subject' => '',
-                'expectedNodePaths' => array('/a'),
-                'unexpectedNodePaths' => array('/a/a5','/a/a3','/a/a2,')
-            ),
-            array(
-                'currentNodePaths' => array('/b/b4/b4b/b4bb/b4bba'),
+                'expectedNodePaths' => ['/a'],
+                'unexpectedNodePaths' => ['/a/a5','/a/a3','/a/a2,']
+            ],
+            [
+                'currentNodePaths' => ['/b/b4/b4b/b4bb/b4bba'],
                 'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
-                'expectedNodePaths' => array('/b/b4/b4b/b4bb'),
-                'unexpectedNodePaths' => array('b/b4','b/b4/b4b','/b/b3','/b')
-            ),
-        );
+                'expectedNodePaths' => ['/b/b4/b4b/b4bb'],
+                'unexpectedNodePaths' => ['b/b4','b/b4/b4b','/b/b3','/b']
+            ],
+        ];
     }
 
     /**
@@ -118,13 +118,13 @@ class ParentsUntilOperationTest extends AbstractNodeTest
         $nodeB4BB->createNode('b4bba');
 
 
-        $currentNodes = array();
+        $currentNodes = [];
         foreach ($currentNodePaths as $currentNodePath) {
             $currentNodes[] = $rootNode->getNode($currentNodePath);
         }
 
         if (is_array($subject)) {
-            $subjectNodes = array();
+            $subjectNodes = [];
             foreach ($subject as $subjectNodePath) {
                 $subjectNodes[] = $rootNode->getNode($subjectNodePath);
             }
@@ -134,7 +134,7 @@ class ParentsUntilOperationTest extends AbstractNodeTest
         $q = new FlowQuery($currentNodes);
         $result = $q->parentsUntil($subject)->get();
 
-        if ($expectedNodePaths === array() && $unexpectedNodePaths === array()) {
+        if ($expectedNodePaths === [] && $unexpectedNodePaths === []) {
             $this->assertEmpty($result);
         } else {
             foreach ($expectedNodePaths as $expectedNodePath) {

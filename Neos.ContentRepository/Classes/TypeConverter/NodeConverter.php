@@ -48,7 +48,7 @@ class NodeConverter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array('string', 'array');
+    protected $sourceTypes = ['string', 'array'];
 
     /**
      * @Flow\Inject
@@ -133,10 +133,10 @@ class NodeConverter extends AbstractTypeConverter
      * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported or could not be converted for other reasons
      * @throws NodeException
      */
-    public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if (is_string($source)) {
-            $source = array('__contextNodePath' => $source);
+            $source = ['__contextNodePath' => $source];
         }
 
         if (!is_array($source) || !isset($source['__contextNodePath'])) {
@@ -207,7 +207,7 @@ class NodeConverter extends AbstractTypeConverter
                 break;
                 case 'references':
                     $nodeIdentifiers = json_decode($nodePropertyValue);
-                    $nodePropertyValue = array();
+                    $nodePropertyValue = [];
                     if (is_array($nodeIdentifiers)) {
                         foreach ($nodeIdentifiers as $nodeIdentifier) {
                             $referencedNode = $context->getNodeByIdentifier($nodeIdentifier);
@@ -277,11 +277,11 @@ class NodeConverter extends AbstractTypeConverter
      */
     protected function prepareContextProperties($workspaceName, PropertyMappingConfigurationInterface $configuration = null, array $dimensions = null)
     {
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => $workspaceName,
             'invisibleContentShown' => false,
             'removedContentShown' => false
-        );
+        ];
         if ($workspaceName !== 'live') {
             $contextProperties['invisibleContentShown'] = true;
             if ($configuration !== null && $configuration->getConfigurationValue(\Neos\ContentRepository\TypeConverter\NodeConverter::class, self::REMOVED_CONTENT_SHOWN) === true) {

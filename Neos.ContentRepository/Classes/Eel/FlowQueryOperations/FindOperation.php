@@ -115,13 +115,13 @@ class FindOperation extends AbstractOperation
             return;
         }
 
-        $result = array();
+        $result = [];
         $selectorAndFilter = $arguments[0];
 
         $parsedFilter = null;
         $parsedFilter = FizzleParser::parseFilterGroup($selectorAndFilter);
         if (isset($parsedFilter['Filters']) && $this->hasOnlyInstanceOfFilters($parsedFilter['Filters'])) {
-            $nodeTypes = array();
+            $nodeTypes = [];
             foreach ($parsedFilter['Filters'] as $filter) {
                 $nodeTypes[] = $filter['AttributeFilters'][0]['Operand'];
             }
@@ -131,7 +131,7 @@ class FindOperation extends AbstractOperation
             }
         } else {
             foreach ($parsedFilter['Filters'] as $filter) {
-                $filterResults = array();
+                $filterResults = [];
                 $generatedNodes = false;
                 if (isset($filter['IdentifierFilter'])) {
                     if (!preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $filter['IdentifierFilter'])) {
@@ -139,7 +139,7 @@ class FindOperation extends AbstractOperation
                     }
                     foreach ($context as $contextNode) {
                         /** @var NodeInterface $contextNode */
-                        $filterResults = array($contextNode->getContext()->getNodeByIdentifier($filter['IdentifierFilter']));
+                        $filterResults = [$contextNode->getContext()->getNodeByIdentifier($filter['IdentifierFilter'])];
                     }
                     $generatedNodes = true;
                 } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
@@ -167,7 +167,7 @@ class FindOperation extends AbstractOperation
                     }
                     $filterQuery = new FlowQuery($filterResults);
                     foreach ($filter['AttributeFilters'] as $attributeFilter) {
-                        $filterQuery->pushOperation('filter', array($attributeFilter['text']));
+                        $filterQuery->pushOperation('filter', [$attributeFilter['text']]);
                     }
                     $filterResults = $filterQuery->get();
                 }

@@ -92,10 +92,11 @@ class ContentCacheFlusher
      * model or the Neos Publishing Service.
      *
      * @param NodeInterface $node The node which has changed in some way
+     * @param Workspace $targetWorkspace An optional workspace to flush
      * @return void
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function registerNodeChange(NodeInterface $node)
+    public function registerNodeChange(NodeInterface $node, Workspace $targetWorkspace = null): void
     {
         $this->tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
@@ -103,14 +104,39 @@ class ContentCacheFlusher
             $this->resolveWorkspaceChain($node->getWorkspace());
         }
 
+        if ($targetWorkspace !== null && empty($this->workspacesToFlush[$targetWorkspace->getName()])) {
+            $this->resolveWorkspaceChain($targetWorkspace);
+        }
+
         if (!array_key_exists($node->getWorkspace()->getName(), $this->workspacesToFlush)) {
             return;
         }
 
+        $this->registerAllTagsToFlushForNodeInWorkspace($node, $node->getWorkspace());
+        if ($targetWorkspace !== null) {
+            $this->registerAllTagsToFlushForNodeInWorkspace($node, $targetWorkspace);
+        }
+    }
+
+    /**
+     * @param NodeInterface $node
+     * @param Workspace $workspace
+     */
+    protected function registerAllTagsToFlushForNodeInWorkspace(NodeInterface $node, Workspace $workspace): void
+    {
         $nodeIdentifier = $node->getIdentifier();
-        foreach ($this->workspacesToFlush[$node->getWorkspace()->getName()] as $workspaceName => $workspaceHash) {
+
+        if (!array_key_exists($workspace->getName(), $this->workspacesToFlush) || is_array($this->workspacesToFlush[$workspace->getName()]) === false) {
+            return;
+        }
+
+        foreach ($this->workspacesToFlush[$workspace->getName()] as $workspaceName => $workspaceHash) {
             $this->registerChangeOnNodeIdentifier($workspaceHash .'_'. $nodeIdentifier);
             $this->registerChangeOnNodeType($node->getNodeType()->getName(), $nodeIdentifier, $workspaceHash);
+
+            // Still register legacy cache configuration tags
+            $this->registerChangeOnNodeIdentifier($nodeIdentifier);
+            $this->registerChangeOnNodeType($node->getNodeType()->getName(), $nodeIdentifier, '');
 
             $nodeInWorkspace = $node;
             while ($nodeInWorkspace->getDepth() > 1) {
@@ -121,6 +147,9 @@ class ContentCacheFlusher
                 }
                 $tagName = 'DescendantOf_' . $workspaceHash . '_' . $nodeInWorkspace->getIdentifier();
                 $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $node->getPath());
+
+                $legacyTagName = 'DescendantOf_' . $nodeInWorkspace->getIdentifier();
+                $this->tagsToFlush[$legacyTagName] = sprintf('which were tagged with legacy "%s" because node "%s" has changed.', $legacyTagName, $node->getPath());
             }
         }
     }

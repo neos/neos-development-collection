@@ -7,7 +7,7 @@
 
 The Neos User-Interface was completely rewritten based on ReactJS.
 
-While we have been focussing on recreating the existing User-Interface,
+While we have been focusing on recreating the existing User-Interface,
 there are important changes under the hood and even some exiting new features:
 
 * Responsive preview modes, showcasing how the website looks e.g. on mobile.
@@ -32,13 +32,13 @@ The new UI is default for new projects and can be added to existing projects via
 `FEATURE: Allow configuring route after login to backend <https://github.com/neos/neos-development-collection/pull/1794>`_
 --------------------------------------------------------------------------------------------------------------------------
 
-This is to allow switching to the new UI seemlessly but also allows to set a completely
+This is to allow switching to the new UI seamlessly but also allows to set a completely
 different module to be used after login.
 
 * Packages: ``Neos``
 
 `FEATURE: Image adjustment for image quality <https://github.com/neos/neos-development-collection/pull/1788>`_
------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
 
 Add adjustment for the image quality that can be used to override the global configuration.
 
@@ -57,7 +57,7 @@ based on the node type or path etc.
 * Packages: ``Neos``
 
 `FEATURE: Allow to configure if processed images must be interlaced <https://github.com/neos/neos-development-collection/pull/1780>`_
-----------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
 
 This change adds a new setting in the Media package to enable image interlacing.
 
@@ -98,7 +98,7 @@ editors.
 * Packages: ``Neos``
 
 `FEATURE: Add Atomic.Fusion prototypes \`Component\`, \`Editable\`, \`ContentComponent\` and \`Augmenter\`  <https://github.com/neos/neos-development-collection/pull/1752>`_
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 The prototypes `Component`, `Editable`, `ContentComponent` and `Augmenter` are added the Neos-core.
 

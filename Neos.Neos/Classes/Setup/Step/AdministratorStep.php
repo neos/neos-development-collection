@@ -69,12 +69,12 @@ class AdministratorStep extends AbstractStep
         $firstName = $personalSection->createElement('firstName', 'Neos.Form:SingleLineText');
         $firstName->setLabel('First name');
         $firstName->addValidator(new NotEmptyValidator());
-        $firstName->addValidator(new StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
+        $firstName->addValidator(new StringLengthValidator(['minimum' => 1, 'maximum' => 255]));
 
         $lastName = $personalSection->createElement('lastName', 'Neos.Form:SingleLineText');
         $lastName->setLabel('Last name');
         $lastName->addValidator(new NotEmptyValidator());
-        $lastName->addValidator(new StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
+        $lastName->addValidator(new StringLengthValidator(['minimum' => 1, 'maximum' => 255]));
 
         $credentialsSection = $page1->createElement('credentialsSection', 'Neos.Form:Section');
         $credentialsSection->setLabel('Credentials');
@@ -86,7 +86,7 @@ class AdministratorStep extends AbstractStep
 
         $password = $credentialsSection->createElement('password', 'Neos.Form:PasswordWithConfirmation');
         $password->addValidator(new NotEmptyValidator());
-        $password->addValidator(new StringLengthValidator(array('minimum' => 6, 'maximum' => 255)));
+        $password->addValidator(new StringLengthValidator(['minimum' => 6, 'maximum' => 255]));
         $password->setLabel('Password');
         $password->setProperty('passwordDescription', 'At least 6 characters');
 
@@ -101,6 +101,6 @@ class AdministratorStep extends AbstractStep
      */
     public function postProcessFormValues(array $formValues)
     {
-        $this->userService->createUser($formValues['username'], $formValues['password'], $formValues['firstName'], $formValues['lastName'], array('Neos.Neos:Administrator'));
+        $this->userService->createUser($formValues['username'], $formValues['password'], $formValues['firstName'], $formValues['lastName'], ['Neos.Neos:Administrator']);
     }
 }

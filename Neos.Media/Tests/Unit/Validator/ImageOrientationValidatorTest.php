@@ -26,7 +26,7 @@ class ImageOrientationValidatorTest extends UnitTestCase
      */
     public function validatorReturnsErrorsIfGivenValueIsNoImage()
     {
-        $validator = new ImageOrientationValidator(array('allowedOrientations' => array(ImageInterface::ORIENTATION_LANDSCAPE)));
+        $validator = new ImageOrientationValidator(['allowedOrientations' => [ImageInterface::ORIENTATION_LANDSCAPE]]);
 
         $value = new \stdClass();
         $this->assertTrue($validator->validate($value)->hasErrors());
@@ -37,13 +37,13 @@ class ImageOrientationValidatorTest extends UnitTestCase
      */
     public function invalidOptionsTestsDataProvider()
     {
-        return array(
-            array(array()),
-            array(array('allowedOrientations' => ImageInterface::ORIENTATION_LANDSCAPE)),
-            array(array('allowedOrientations' => array())),
-            array(array('allowedOrientations' => array('nonExistingOrientation'))),
-            array(array('allowedOrientations' => array('square', 'portrait', 'landscape'))),
-        );
+        return [
+            [[]],
+            [['allowedOrientations' => ImageInterface::ORIENTATION_LANDSCAPE]],
+            [['allowedOrientations' => []]],
+            [['allowedOrientations' => ['nonExistingOrientation']]],
+            [['allowedOrientations' => ['square', 'portrait', 'landscape']]],
+        ];
     }
 
     /**
@@ -64,13 +64,13 @@ class ImageOrientationValidatorTest extends UnitTestCase
      */
     public function validatorTestsDataProvider()
     {
-        return array(
-            array(array('allowedOrientations' => array('landscape')), null, false),
-            array(array('allowedOrientations' => array('landscape')), 'landscape', true),
-            array(array('allowedOrientations' => array(ImageInterface::ORIENTATION_LANDSCAPE)), 'landscape', true),
-            array(array('allowedOrientations' => array('square', 'landscape')), 'portrait', false),
-            array(array('allowedOrientations' => array('square', 'portrait')), 'portrait', true),
-        );
+        return [
+            [['allowedOrientations' => ['landscape']], null, false],
+            [['allowedOrientations' => ['landscape']], 'landscape', true],
+            [['allowedOrientations' => [ImageInterface::ORIENTATION_LANDSCAPE]], 'landscape', true],
+            [['allowedOrientations' => ['square', 'landscape']], 'portrait', false],
+            [['allowedOrientations' => ['square', 'portrait']], 'portrait', true],
+        ];
     }
 
     /**

@@ -42,7 +42,7 @@ class AssetRepository extends Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array('lastModified' => QueryInterface::ORDER_DESCENDING);
+    protected $defaultOrderings = ['lastModified' => QueryInterface::ORDER_DESCENDING];
 
     /**
      * @Flow\Inject
@@ -58,15 +58,15 @@ class AssetRepository extends Repository
      * @param AssetCollection $assetCollection*
      * @return QueryResultInterface
      */
-    public function findBySearchTermOrTags($searchTerm, array $tags = array(), AssetCollection $assetCollection = null)
+    public function findBySearchTermOrTags($searchTerm, array $tags = [], AssetCollection $assetCollection = null)
     {
         $query = $this->createQuery();
 
-        $constraints = array(
+        $constraints = [
             $query->like('title', '%' . $searchTerm . '%'),
             $query->like('resource.filename', '%' . $searchTerm . '%'),
             $query->like('caption', '%' . $searchTerm . '%')
-        );
+        ];
         foreach ($tags as $tag) {
             $constraints[] = $query->contains('tags', $tag);
         }

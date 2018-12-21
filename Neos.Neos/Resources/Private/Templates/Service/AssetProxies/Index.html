@@ -1,0 +1,46 @@
+{namespace neos=Neos\Neos\ViewHelpers}{namespace media=Neos\Media\ViewHelpers}
+<html>
+    <head>
+        <title>Asset Proxies</title>
+        <meta charset="UTF-8"/>
+    </head>
+    <body>
+        <div>
+            <h1>Asset Proxies</h1>
+            <table class="assets-proxies">
+                <tr>
+                    <th>Label</th>
+                    <th>Asset Source Identifier</th>
+                    <th>Asset Source Label</th>
+                    <th>Asset Proxy Identifier</th>
+                    <th>Local Asset Identifier</th>
+                    <th>Links</th>
+                </tr>
+                <f:for each="{assetProxiesByAssetSource}" as="assetProxies">
+                    <f:for each="{assetProxies}" as="assetProxy">
+                        <tr class="asset-proxy">
+                            <td class="asset-proxy-label">{assetProxy.label}</td>
+                            <td class="asset-source-identifier">{assetProxy.assetSource.identifier}</td>
+                            <td class="asset-source-label">{assetProxy.assetSource.label}</td>
+                            <td class="asset-proxy-identifier">{assetProxy.identifier}</td>
+                            <td class="local-asset-identifier">{assetProxy.localAssetIdentifier}</td>
+                            <td>
+                                <ul>
+                                    <li>
+                                        <f:if condition="{assetProxy.thumbnailUri}">
+                                            <f:then><a rel="thumbnail" href="{assetProxy.thumbnailUri}">{neos:backend.translate(id: 'thumbnail', value: 'thumbnail')}</a></f:then>
+                                            <f:else><a rel="thumbnail" href="{f:uri.resource(path:'Images/dummy-image.svg', package:'Neos.Neos')}">{neos:backend.translate(id: 'thumbnail', value: 'thumbnail')}</a></f:else>
+                                        </f:if>
+                                    </li>
+                                    <li>
+                                        <f:link.action rel="asset-show" controller="Service\AssetProxies" action="show" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}" format="html">{neos:backend.translate(id: 'show', value: 'show')}</f:link.action>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </f:for>
+                </f:for>
+            </table>
+        </div>
+    </body>
+</html>

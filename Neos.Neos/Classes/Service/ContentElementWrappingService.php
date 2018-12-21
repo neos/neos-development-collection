@@ -76,7 +76,7 @@ class ContentElementWrappingService
         $attributes = $this->addNodePropertyAttributes($attributes, $node);
         $attributes = $this->addCssClasses($attributes, $node, $this->collectEditingClassNames($node));
 
-        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', array('typeof'));
+        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', ['typeof']);
     }
 
     /**

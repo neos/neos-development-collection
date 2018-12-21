@@ -56,7 +56,7 @@ class NodeDataTest extends UnitTestCase
     public function setUp()
     {
         $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $this->nodeData = $this->getAccessibleMock(NodeData::class, array('addOrUpdate'), array('/foo/bar', $this->mockWorkspace));
+        $this->nodeData = $this->getAccessibleMock(NodeData::class, ['addOrUpdate'], ['/foo/bar', $this->mockWorkspace]);
 
         $this->mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
 
@@ -95,15 +95,15 @@ class NodeDataTest extends UnitTestCase
      */
     public function invalidPaths()
     {
-        return array(
-            array('foo'),
-            array('/ '),
-            array('//'),
-            array('/foo//bar'),
-            array('/foo/ bar'),
-            array('/foo/bar/'),
-            array('/123 bar'),
-        );
+        return [
+            ['foo'],
+            ['/ '],
+            ['//'],
+            ['/foo//bar'],
+            ['/foo/ bar'],
+            ['/foo/bar/'],
+            ['/123 bar'],
+        ];
     }
 
     /**
@@ -121,16 +121,16 @@ class NodeDataTest extends UnitTestCase
      */
     public function validPaths()
     {
-        return array(
-            array('/foo'),
-            array('/foo/bar'),
-            array('/foo/bar/baz'),
-            array('/12/foo'),
-            array('/12356'),
-            array('/foo-bar'),
-            array('/foo-bar/1-5'),
-            array('/foo-bar/bar/asdkak/dsflasdlfkjasd/asdflnasldfkjalsd/134-111324823-234234-234/sdasdflkj'),
-        );
+        return [
+            ['/foo'],
+            ['/foo/bar'],
+            ['/foo/bar/baz'],
+            ['/12/foo'],
+            ['/12356'],
+            ['/foo-bar'],
+            ['/foo-bar/1-5'],
+            ['/foo-bar/bar/asdkak/dsflasdlfkjasd/asdflnasldfkjalsd/134-111324823-234234-234/sdasdflkj'],
+        ];
     }
 
     /**
@@ -220,11 +220,11 @@ class NodeDataTest extends UnitTestCase
         $this->assertEquals('My Body', $this->nodeData->getProperty('body'));
         $this->assertEquals('My Title', $this->nodeData->getProperty('title'));
 
-        $this->assertEquals(array('title' => 'My Title', 'body' => 'My Body'), $this->nodeData->getProperties());
+        $this->assertEquals(['title' => 'My Title', 'body' => 'My Body'], $this->nodeData->getProperties());
 
         $actualPropertyNames = $this->nodeData->getPropertyNames();
         sort($actualPropertyNames);
-        $this->assertEquals(array('body', 'title'), $actualPropertyNames);
+        $this->assertEquals(['body', 'title'], $actualPropertyNames);
     }
 
     /**
@@ -321,11 +321,11 @@ class NodeDataTest extends UnitTestCase
         $this->assertEquals('My Body', $this->nodeData->getProperty('body'));
         $this->assertEquals('My Title', $this->nodeData->getProperty('title'));
 
-        $this->assertEquals(array('title' => 'My Title', 'body' => 'My Body'), $this->nodeData->getProperties());
+        $this->assertEquals(['title' => 'My Title', 'body' => 'My Body'], $this->nodeData->getProperties());
 
         $actualPropertyNames = $this->nodeData->getPropertyNames();
         sort($actualPropertyNames);
-        $this->assertEquals(array('body', 'title'), $actualPropertyNames);
+        $this->assertEquals(['body', 'title'], $actualPropertyNames);
 
         $this->nodeData->setProperty('title', 'My Other Title');
         $this->nodeData->setProperty('body', 'My Other Body');
@@ -362,7 +362,7 @@ class NodeDataTest extends UnitTestCase
         $mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(true));
         $mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnCallback(
             function ($name) {
-                return new NodeType($name, array(), array()) ;
+                return new NodeType($name, [], []) ;
             }
         ));
 
@@ -404,13 +404,13 @@ class NodeDataTest extends UnitTestCase
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $context->expects($this->once())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 
-        $nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(array('countByParentAndNodeType', 'add'))->getMock();
+        $nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['countByParentAndNodeType', 'add'])->getMock();
         $nodeDataRepository->expects($this->once())->method('countByParentAndNodeType')->with('/', null, $this->mockWorkspace)->will($this->returnValue(0));
         $nodeDataRepository->expects($this->once())->method('add');
         $nodeDataRepository->expects($this->any())->method('getContext')->will($this->returnValue($context));
 
         /** @var NodeData|\PHPUnit_Framework_MockObject_MockObject $currentNode */
-        $currentNode = $this->getAccessibleMock(NodeData::class, array('getNode'), array('/', $this->mockWorkspace));
+        $currentNode = $this->getAccessibleMock(NodeData::class, ['getNode'], ['/', $this->mockWorkspace]);
         $this->inject($currentNode, 'nodeDataRepository', $nodeDataRepository);
 
         $currentNode->expects($this->once())->method('createProxyForContextIfNeeded')->will($this->returnArgument(0));
@@ -431,13 +431,13 @@ class NodeDataTest extends UnitTestCase
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 
-        $oldNode = $this->getAccessibleMock(NodeData::class, array(), array('/foo', $this->mockWorkspace));
+        $oldNode = $this->getAccessibleMock(NodeData::class, [], ['/foo', $this->mockWorkspace]);
 
-        $nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(array('findOneByPath', 'getContext'))->getMock();
+        $nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['findOneByPath', 'getContext'])->getMock();
         $nodeDataRepository->expects($this->any())->method('findOneByPath')->with('/foo', $this->mockWorkspace)->will($this->returnValue($oldNode));
 
         /** @var NodeData|\PHPUnit_Framework_MockObject_MockObject $currentNode */
-        $currentNode = $this->getAccessibleMock(NodeData::class, array('getNode'), array('/', $this->mockWorkspace));
+        $currentNode = $this->getAccessibleMock(NodeData::class, ['getNode'], ['/', $this->mockWorkspace]);
         $this->inject($currentNode, 'nodeDataRepository', $nodeDataRepository);
         $currentNode->_set('context', $mockContext);
 
@@ -449,10 +449,10 @@ class NodeDataTest extends UnitTestCase
      */
     public function getNodeReturnsNullIfTheSpecifiedNodeDoesNotExist()
     {
-        $nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(array('findOneByPath', 'getContext'))->getMock();
+        $nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['findOneByPath', 'getContext'])->getMock();
         $nodeDataRepository->expects($this->once())->method('findOneByPath')->with('/foo/quux', $this->mockWorkspace)->will($this->returnValue(null));
 
-        $currentNode = $this->getAccessibleMock(NodeData::class, array('normalizePath', 'getContext'), array('/foo/baz', $this->mockWorkspace));
+        $currentNode = $this->getAccessibleMock(NodeData::class, ['normalizePath', 'getContext'], ['/foo/baz', $this->mockWorkspace]);
         $this->inject($currentNode, 'nodeDataRepository', $nodeDataRepository);
         $currentNode->expects($this->once())->method('normalizePath')->with('/foo/quux')->will($this->returnValue('/foo/quux'));
 
@@ -464,22 +464,22 @@ class NodeDataTest extends UnitTestCase
      */
     public function getChildNodeDataFindsUnreducedNodeDataChildren()
     {
-        $childNodeData = $this->getMockBuilder(NodeData::class)->setConstructorArgs(array('/foo/bar', $this->mockWorkspace))->getMock();
-        $nodeType = $this->getMockBuilder(NodeType::class)->setConstructorArgs(array('mynodetype', array(), array()))->getMock();
+        $childNodeData = $this->getMockBuilder(NodeData::class)->setConstructorArgs(['/foo/bar', $this->mockWorkspace])->getMock();
+        $nodeType = $this->getMockBuilder(NodeType::class)->setConstructorArgs(['mynodetype', [], []])->getMock();
         $childNodeData->setNodeType($nodeType);
-        $childNodeDataResults = array(
+        $childNodeDataResults = [
             $childNodeData
-        );
+        ];
 
         $nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->getMock();
         $nodeDataRepository->expects($this->at(0))->method('findByParentWithoutReduce')->with('/foo', $this->mockWorkspace)->will($this->returnValue($childNodeDataResults));
-        $nodeDataRepository->expects($this->at(1))->method('findByParentWithoutReduce')->with('/foo', $this->mockWorkspace)->will($this->returnValue(array()));
+        $nodeDataRepository->expects($this->at(1))->method('findByParentWithoutReduce')->with('/foo', $this->mockWorkspace)->will($this->returnValue([]));
 
-        $nodeData = $this->getAccessibleMock(NodeData::class, array('dummy'), array('/foo', $this->mockWorkspace));
+        $nodeData = $this->getAccessibleMock(NodeData::class, ['dummy'], ['/foo', $this->mockWorkspace]);
         $this->inject($nodeData, 'nodeDataRepository', $nodeDataRepository);
 
         $this->assertSame($childNodeDataResults, $nodeData->_call('getChildNodeData', 'mynodetype'));
-        $this->assertSame(array(), $nodeData->_call('getChildNodeData', 'notexistingnodetype'));
+        $this->assertSame([], $nodeData->_call('getChildNodeData', 'notexistingnodetype'));
     }
 
 
@@ -492,11 +492,11 @@ class NodeDataTest extends UnitTestCase
 
         $workspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
-        $nodeDataRepository = $this->getAccessibleMock(NodeDataRepository::class, array('setRemoved', 'update', 'remove'), array(), '', false);
+        $nodeDataRepository = $this->getAccessibleMock(NodeDataRepository::class, ['setRemoved', 'update', 'remove'], [], '', false);
         $this->inject($nodeDataRepository, 'entityClassName', NodeData::class);
         $this->inject($nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
 
-        $currentNode = $this->getAccessibleMock(NodeData::class, array('addOrUpdate'), array('/foo', $workspace));
+        $currentNode = $this->getAccessibleMock(NodeData::class, ['addOrUpdate'], ['/foo', $workspace]);
         $this->inject($currentNode, 'nodeDataRepository', $nodeDataRepository);
 
         $nodeDataRepository->expects($this->never())->method('remove');
@@ -516,11 +516,11 @@ class NodeDataTest extends UnitTestCase
         $workspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
         $workspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue(null));
 
-        $nodeDataRepository = $this->getAccessibleMock(NodeDataRepository::class, array('remove', 'update'), array(), '', false);
+        $nodeDataRepository = $this->getAccessibleMock(NodeDataRepository::class, ['remove', 'update'], [], '', false);
         $this->inject($nodeDataRepository, 'entityClassName', NodeData::class);
         $this->inject($nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
 
-        $currentNode = $this->getAccessibleMock(NodeData::class, null, array('/foo', $workspace));
+        $currentNode = $this->getAccessibleMock(NodeData::class, null, ['/foo', $workspace]);
         $this->inject($currentNode, 'persistenceManager', $mockPersistenceManager);
         $this->inject($currentNode, 'nodeDataRepository', $nodeDataRepository);
 
@@ -535,14 +535,14 @@ class NodeDataTest extends UnitTestCase
      */
     public function hasAccessRestrictionsDataProvider()
     {
-        return array(
-            array('accessRoles' => null, 'expectedResult' => false),
-            array('accessRoles' => array(), 'expectedResult' => false),
-            array('accessRoles' => array('Neos.Flow:Everybody'), 'expectedResult' => false),
+        return [
+            ['accessRoles' => null, 'expectedResult' => false],
+            ['accessRoles' => [], 'expectedResult' => false],
+            ['accessRoles' => ['Neos.Flow:Everybody'], 'expectedResult' => false],
 
-            array('accessRoles' => array('Some.Other:Role'), 'expectedResult' => true),
-            array('accessRoles' => array('Neos.Flow:Everybody', 'Some.Other:Role'), 'expectedResult' => true),
-        );
+            ['accessRoles' => ['Some.Other:Role'], 'expectedResult' => true],
+            ['accessRoles' => ['Neos.Flow:Everybody', 'Some.Other:Role'], 'expectedResult' => true],
+        ];
     }
 
     /**
@@ -580,7 +580,7 @@ class NodeDataTest extends UnitTestCase
         $mockSecurityContext->expects($this->never())->method('hasRole');
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
 
-        $this->nodeData->setAccessRoles(array('SomeOtherRole'));
+        $this->nodeData->setAccessRoles(['SomeOtherRole']);
         $this->assertTrue($this->nodeData->isAccessible());
     }
 
@@ -595,7 +595,7 @@ class NodeDataTest extends UnitTestCase
         $mockSecurityContext->expects($this->any())->method('hasRole')->will($this->returnValue(false));
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
 
-        $this->nodeData->setAccessRoles(array('SomeRole'));
+        $this->nodeData->setAccessRoles(['SomeRole']);
         $this->assertFalse($this->nodeData->isAccessible());
     }
 
@@ -611,7 +611,7 @@ class NodeDataTest extends UnitTestCase
         $mockSecurityContext->expects($this->at(2))->method('hasRole')->with('SomeOtherRole')->will($this->returnValue(true));
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
 
-        $this->nodeData->setAccessRoles(array('SomeRole', 'SomeOtherRole'));
+        $this->nodeData->setAccessRoles(['SomeRole', 'SomeOtherRole']);
         $this->assertTrue($this->nodeData->isAccessible());
     }
 
@@ -627,7 +627,7 @@ class NodeDataTest extends UnitTestCase
         $mockSecurityContext->expects($this->at(2))->method('hasRole')->with('Everyone')->will($this->returnValue(true));
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
 
-        $this->nodeData->setAccessRoles(array('SomeRole', 'Everyone', 'SomeOtherRole'));
+        $this->nodeData->setAccessRoles(['SomeRole', 'Everyone', 'SomeOtherRole']);
         $this->assertTrue($this->nodeData->isAccessible());
     }
 
@@ -651,7 +651,7 @@ class NodeDataTest extends UnitTestCase
     public function similarizeClearsPropertiesBeforeAddingNewOnes()
     {
         /** @var $sourceNode NodeData */
-        $sourceNode = $this->getAccessibleMock(NodeData::class, array('addOrUpdate'), array('/foo/bar', $this->mockWorkspace));
+        $sourceNode = $this->getAccessibleMock(NodeData::class, ['addOrUpdate'], ['/foo/bar', $this->mockWorkspace]);
         $this->inject($sourceNode, 'nodeTypeManager', $this->mockNodeTypeManager);
         $sourceNode->_set('nodeDataRepository', $this->createMock(RepositoryInterface::class));
 
@@ -662,10 +662,10 @@ class NodeDataTest extends UnitTestCase
         $sourceNode->setProperty('someProperty', 'someOverriddenPropertyValue');
         $this->nodeData->similarize($sourceNode);
 
-        $expectedProperties = array(
+        $expectedProperties = [
             'newProperty' => 'newPropertyValue',
             'someProperty' => 'someOverriddenPropertyValue'
-        );
+        ];
         $this->assertEquals($expectedProperties, $this->nodeData->getProperties());
     }
 
@@ -689,11 +689,11 @@ class NodeDataTest extends UnitTestCase
      */
     public function matchesWorkspaceAndDimensionsWithDifferentDimensionReturnsFalse()
     {
-        $this->nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, array('language' => array('en_US')));
+        $this->nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['language' => ['en_US']]);
 
         $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
-        $result = $this->nodeData->matchesWorkspaceAndDimensions($this->mockWorkspace, array('language' => array('de_DE', 'mul_ZZ')));
+        $result = $this->nodeData->matchesWorkspaceAndDimensions($this->mockWorkspace, ['language' => ['de_DE', 'mul_ZZ']]);
         $this->assertFalse($result);
     }
 
@@ -702,11 +702,11 @@ class NodeDataTest extends UnitTestCase
      */
     public function matchesWorkspaceAndDimensionsWithMatchingWorkspaceAndDimensionsReturnsTrue()
     {
-        $this->nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, array('language' => array('mul_ZZ')));
+        $this->nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['language' => ['mul_ZZ']]);
 
         $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
-        $result = $this->nodeData->matchesWorkspaceAndDimensions($this->mockWorkspace, array('language' => array('de_DE', 'mul_ZZ')));
+        $result = $this->nodeData->matchesWorkspaceAndDimensions($this->mockWorkspace, ['language' => ['de_DE', 'mul_ZZ']]);
         $this->assertTrue($result);
     }
 
@@ -715,10 +715,10 @@ class NodeDataTest extends UnitTestCase
      */
     public function getDimensionValuesReturnsDimensionsSortedByKey()
     {
-        $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, array('c' => array('c1', 'c2'), 'a' => array('a1')));
+        $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['c' => ['c1', 'c2'], 'a' => ['a1']]);
         $dimensionValues = $nodeData->getDimensionValues();
 
-        $this->assertSame(array('a' => array('a1'), 'c' => array('c1', 'c2')), $dimensionValues);
+        $this->assertSame(['a' => ['a1'], 'c' => ['c1', 'c2']], $dimensionValues);
     }
 
     /**
@@ -726,12 +726,12 @@ class NodeDataTest extends UnitTestCase
      */
     public function dimensionsHashIsOrderIndependent()
     {
-        $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, array('c' => array('c1', 'c2'), 'a' => array('a1')));
+        $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['c' => ['c1', 'c2'], 'a' => ['a1']]);
         $dimensionsHash = $nodeData->getDimensionsHash();
 
         $this->assertSame('955c716a191a0957f205ea9376600e72', $dimensionsHash);
 
-        $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, array('a' => array('a1'), 'c' => array('c2', 'c1')));
+        $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['a' => ['a1'], 'c' => ['c2', 'c1']]);
         $dimensionsHash = $nodeData->getDimensionsHash();
 
         $this->assertSame('955c716a191a0957f205ea9376600e72', $dimensionsHash);
@@ -744,17 +744,17 @@ class NodeDataTest extends UnitTestCase
     {
         $nodeData = new NodeData('/foo/bar', $this->mockWorkspace);
 
-        $dimensionsToSet = array(
+        $dimensionsToSet = [
             new NodeDimension($nodeData, 'c', 'c1'),
             new NodeDimension($nodeData, 'c', 'c2'),
             new NodeDimension($nodeData, 'a', 'a1'),
             new NodeDimension($nodeData, 'b', 'b1')
-        );
-        $expectedDimensionValues = array(
-            'a' => array('a1'),
-            'b' => array('b1'),
-            'c' => array('c1', 'c2')
-        );
+        ];
+        $expectedDimensionValues = [
+            'a' => ['a1'],
+            'b' => ['b1'],
+            'c' => ['c1', 'c2']
+        ];
 
         $nodeData->setDimensions($dimensionsToSet);
         $setDimensionValues = $nodeData->getDimensionValues();
@@ -767,19 +767,19 @@ class NodeDataTest extends UnitTestCase
      */
     public function setDimensionsAddsNewDimensionValues()
     {
-        $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, array('c' => array('c1', 'c2'), 'a' => array('a1')));
+        $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['c' => ['c1', 'c2'], 'a' => ['a1']]);
 
-        $dimensionsToSet = array(
+        $dimensionsToSet = [
             new NodeDimension($nodeData, 'c', 'c1'),
             new NodeDimension($nodeData, 'c', 'c2'),
             new NodeDimension($nodeData, 'a', 'a1'),
             new NodeDimension($nodeData, 'b', 'b1')
-        );
-        $expectedDimensionValues = array(
-            'a' => array('a1'),
-            'b' => array('b1'),
-            'c' => array('c1', 'c2')
-        );
+        ];
+        $expectedDimensionValues = [
+            'a' => ['a1'],
+            'b' => ['b1'],
+            'c' => ['c1', 'c2']
+        ];
 
         $nodeData->setDimensions($dimensionsToSet);
         $setDimensionValues = $nodeData->getDimensionValues();
@@ -792,18 +792,18 @@ class NodeDataTest extends UnitTestCase
      */
     public function setDimensionsRemovesDimensionValuesNotGiven()
     {
-        $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, array('c' => array('c1', 'c2'), 'a' => array('a1')));
+        $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['c' => ['c1', 'c2'], 'a' => ['a1']]);
 
-        $dimensionsToSet = array(
+        $dimensionsToSet = [
             new NodeDimension($nodeData, 'c', 'c1'),
             new NodeDimension($nodeData, 'b', 'b1'),
             new NodeDimension($nodeData, 'f', 'f1')
-        );
-        $expectedDimensionValues = array(
-            'b' => array('b1'),
-            'c' => array('c1'),
-            'f' => array('f1')
-        );
+        ];
+        $expectedDimensionValues = [
+            'b' => ['b1'],
+            'c' => ['c1'],
+            'f' => ['f1']
+        ];
 
         $nodeData->setDimensions($dimensionsToSet);
         $setDimensionValues = $nodeData->getDimensionValues();

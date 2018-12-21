@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Domain\Service\Cache;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A first level cache for the NodeDataRepository. It is used to keep
@@ -27,17 +26,17 @@ class FirstLevelNodeCache
     /**
      * @var array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
-    protected $nodesByPath = array();
+    protected $nodesByPath = [];
 
     /**
      * @var array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
-    protected $nodesByIdentifier = array();
+    protected $nodesByIdentifier = [];
 
     /**
      * @var array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
-    protected $childNodesByPathAndNodeTypeFilter = array();
+    protected $childNodesByPathAndNodeTypeFilter = [];
 
     /**
      * If the cache contains a node for the given path, it is returned.
@@ -133,7 +132,7 @@ class FirstLevelNodeCache
     public function setChildNodesByPathAndNodeTypeFilter($path, $nodeTypeFilter, array $nodes)
     {
         if (!isset($this->childNodesByPathAndNodeTypeFilter[$path])) {
-            $this->childNodesByPathAndNodeTypeFilter[$path] = array();
+            $this->childNodesByPathAndNodeTypeFilter[$path] = [];
         }
 
         foreach ($nodes as $node) {
@@ -152,8 +151,8 @@ class FirstLevelNodeCache
      */
     public function flush()
     {
-        $this->nodesByPath = array();
-        $this->nodesByIdentifier = array();
-        $this->childNodesByPathAndNodeTypeFilter = array();
+        $this->nodesByPath = [];
+        $this->nodesByIdentifier = [];
+        $this->childNodesByPathAndNodeTypeFilter = [];
     }
 }

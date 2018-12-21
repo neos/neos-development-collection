@@ -94,7 +94,7 @@ class ImageService
      */
     public function processImage(PersistentResource $originalResource, array $adjustments)
     {
-        $additionalOptions = array();
+        $additionalOptions = [];
         $adjustmentsApplied = false;
 
         // TODO: Special handling for SVG should be refactored at a later point.
@@ -129,7 +129,7 @@ class ImageService
         if ($this->imagineService instanceof Imagine && $originalResource->getFileExtension() === 'gif' && $this->isAnimatedGif(file_get_contents($resourceUri)) === true) {
             $imagineImage->layers()->coalesce();
             $layers = $imagineImage->layers();
-            $newLayers = array();
+            $newLayers = [];
             foreach ($layers as $index => $imagineFrame) {
                 $imagineFrame = $this->applyAdjustments($imagineFrame, $adjustments, $adjustmentsApplied);
                 $newLayers[] = $imagineFrame;
@@ -185,14 +185,14 @@ class ImageService
             $imageSize = $this->getImageSize($originalResource);
             $imageSize = new Box($imageSize['width'], $imageSize['height']);
         }
-        $this->imageSizeCache->set($resource->getCacheEntryIdentifier(), array('width' => $imageSize->getWidth(), 'height' => $imageSize->getHeight()));
+        $this->imageSizeCache->set($resource->getCacheEntryIdentifier(), ['width' => $imageSize->getWidth(), 'height' => $imageSize->getHeight()]);
 
-        $result = array(
+        $result = [
             'width' => $imageSize->getWidth(),
             'height' => $imageSize->getHeight(),
             'resource' => $resource,
             'quality' => $additionalOptions['quality']
-        );
+        ];
 
         return $result;
     }
@@ -202,13 +202,13 @@ class ImageService
      * @return array
      * @throws InvalidConfigurationException
      */
-    protected function getOptionsMergedWithDefaults(array $additionalOptions = array())
+    protected function getOptionsMergedWithDefaults(array $additionalOptions = [])
     {
         $defaultOptions = Arrays::getValueByPath($this->settings, 'image.defaultOptions');
         if (!is_array($defaultOptions)) {
-            $defaultOptions = array();
+            $defaultOptions = [];
         }
-        if ($additionalOptions !== array()) {
+        if ($additionalOptions !== []) {
             $defaultOptions = Arrays::arrayMergeRecursiveOverrule($defaultOptions, $additionalOptions);
         }
         $quality = isset($defaultOptions['quality']) ? (integer)$defaultOptions['quality'] : 90;
@@ -248,7 +248,7 @@ class ImageService
             try {
                 $imagineImage = $this->imagineService->read($resource->getStream());
                 $sizeBox = $imagineImage->getSize();
-                $imageSize = array('width' => $sizeBox->getWidth(), 'height' => $sizeBox->getHeight());
+                $imageSize = ['width' => $sizeBox->getWidth(), 'height' => $sizeBox->getHeight()];
             } catch (\Exception $e) {
                 throw new ImageFileException(sprintf('The given resource was not an image file your choosen driver can open. The original error was: %s', $e->getMessage()), 1336662898);
             }

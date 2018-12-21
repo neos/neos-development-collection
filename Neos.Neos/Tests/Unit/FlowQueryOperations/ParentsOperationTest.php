@@ -39,11 +39,11 @@ class ParentsOperationTest extends UnitTestCase
         $secondLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($firstLevelNode));
         $secondLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/sites/site/first/second')));
 
-        $context = array($secondLevelNode);
+        $context = [$secondLevelNode];
         $q = new FlowQuery($context);
 
         $operation = new ParentsOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $ancestors = $q->getContext();
         $this->assertEquals([$siteNode, $firstLevelNode], $ancestors);

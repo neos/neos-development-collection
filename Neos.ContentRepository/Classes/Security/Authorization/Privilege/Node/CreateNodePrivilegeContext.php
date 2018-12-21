@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * An Eel context matching expression for the CreateNodePrivilege
@@ -41,8 +40,8 @@ class CreateNodePrivilegeContext extends NodePrivilegeContext
         if (is_array($this->creationNodeTypes)) {
             return $this->creationNodeTypes;
         } elseif (is_string($this->creationNodeTypes)) {
-            return array($this->creationNodeTypes);
+            return [$this->creationNodeTypes];
         }
-        return array();
+        return [];
     }
 }

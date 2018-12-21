@@ -11,8 +11,6 @@ namespace Neos\Media\Domain\Model\Adjustment;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * An abstract adjustment which provides a constructor for setting options
@@ -26,7 +24,7 @@ abstract class AbstractAdjustment implements AdjustmentInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         foreach ($options as $optionKey => $optionValue) {
             $methodName = 'set' . ucfirst($optionKey);

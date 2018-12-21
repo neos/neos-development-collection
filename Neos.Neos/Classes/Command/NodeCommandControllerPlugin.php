@@ -11,14 +11,18 @@ namespace Neos\Neos\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Command\EventDispatchingNodeCommandControllerPluginInterface;
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\Eel\Exception as EelException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Exception as NeosException;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
-use Neos\ContentRepository\Command\NodeCommandControllerPluginInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
@@ -36,7 +40,7 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
  *
  * @Flow\Scope("singleton")
  */
-class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterface
+class NodeCommandControllerPlugin implements EventDispatchingNodeCommandControllerPluginInterface
 {
     /**
      * @Flow\Inject
@@ -76,6 +80,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
     /**
      * @var ConsoleOutput
+     * @deprecated It's discouraged to interact with the console output directly. Instead use the event dispatching. @see dispatch()
      */
     protected $output;
 
@@ -84,6 +89,14 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * Callbacks to be invoked when an event is triggered
+     *
+     * @see dispatch()
+     * @var \Closure[]
+     */
+    protected $eventCallbacks;
 
     /**
      * Returns a short description
@@ -97,6 +110,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             case 'repair':
                 return 'Run integrity checks related to Neos features';
         }
+        return '';
     }
 
     /**
@@ -129,13 +143,14 @@ Removes content dimensions from the root and sites nodes
 
 HELPTEXT;
         }
+        return '';
     }
 
     /**
      * A method which runs the task implemented by the plugin for the given command
      *
      * @param string $controllerCommandName Name of the command in question, for example "repair"
-     * @param ConsoleOutput $output An instance of ConsoleOutput which can be used for output or dialogues
+     * @param ConsoleOutput $output (unused)
      * @param NodeType $nodeType Only handle this node type (if specified)
      * @param string $workspaceName Only handle this workspace (if specified)
      * @param boolean $dryRun If true, don't do any changes, just simulate what you would do
@@ -146,6 +161,7 @@ HELPTEXT;
      */
     public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
+        /** @noinspection PhpDeprecationInspection This is only set for backwards compatibility */
         $this->output = $output;
         $commandMethods = [
             'generateUriPathSegments' => [ 'cleanup' => false ],
@@ -176,13 +192,12 @@ HELPTEXT;
     /**
      * Creates the /sites node if it is missing.
      *
-     * @param string $workspaceName Name of the workspace to consider (unused)
-     * @param boolean $dryRun Simulate?
      * @return void
+     * @throws IllegalObjectTypeException
      */
-    protected function createMissingSitesNode($workspaceName, $dryRun)
+    protected function createMissingSitesNode()
     {
-        $this->output->outputLine('Checking for "%s" node ...', array(SiteService::SITES_ROOT_PATH));
+        $this->dispatch(self::EVENT_NOTICE, sprintf('Checking for "%s" node ...', SiteService::SITES_ROOT_PATH));
         $rootNode = $this->contextFactory->create()->getRootNode();
         // We fetch the workspace to be sure it's known to the persistence manager and persist all
         // so the workspace and site node are persisted before we import any nodes to it.
@@ -190,15 +205,13 @@ HELPTEXT;
         $this->persistenceManager->persistAll();
         $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
         if ($sitesNode === null) {
-            if ($dryRun === false) {
+            $taskDescription = sprintf('Create missing site node "<i>%s</i>"', SiteService::SITES_ROOT_PATH);
+            $taskClosure = function () use ($rootNode) {
                 $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
-                $this->output->outputLine('Missing "%s" node was created', [SiteService::SITES_ROOT_PATH]);
-            } else {
-                $this->output->outputLine('"%s" node is missing!', [SiteService::SITES_ROOT_PATH]);
-            }
+                $this->persistenceManager->persistAll();
+            };
+            $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
         }
-
-        $this->persistenceManager->persistAll();
     }
 
     /**
@@ -210,26 +223,30 @@ HELPTEXT;
      * @param string $workspaceName
      * @param boolean $dryRun
      * @return void
+     * @throws EelException
+     * @throws NodeException
+     * @throws NeosException
      */
     public function generateUriPathSegments($workspaceName, $dryRun)
     {
         $baseContext = $this->createContext($workspaceName, []);
         $baseContextSitesNode = $baseContext->getNode(SiteService::SITES_ROOT_PATH);
         if (!$baseContextSitesNode) {
-            $this->output->outputLine('<error>Could not find "' . SiteService::SITES_ROOT_PATH . '" root node</error>');
+            $this->dispatch(self::EVENT_WARNING, sprintf('Could not find "%s" root node', SiteService::SITES_ROOT_PATH));
             return;
         }
         $baseContextSiteNodes = $baseContextSitesNode->getChildNodes();
         if ($baseContextSiteNodes === []) {
-            $this->output->outputLine('<error>Could not find any site nodes in "' . SiteService::SITES_ROOT_PATH . '" root node</error>');
+            $this->dispatch(self::EVENT_WARNING, sprintf('Could not find any site nodes in "%s" root node', SiteService::SITES_ROOT_PATH));
             return;
         }
 
         foreach ($this->dimensionCombinator->getAllAllowedCombinations() as $dimensionCombination) {
             $flowQuery = new FlowQuery($baseContextSiteNodes);
+            /** @noinspection PhpUndefinedMethodInspection */
             $siteNodes = $flowQuery->context(['dimensions' => $dimensionCombination, 'targetDimensions' => []])->get();
             if (count($siteNodes) > 0) {
-                $this->output->outputLine('Checking for nodes with missing URI path segment in dimension "%s"', array(trim(NodePaths::generateContextPath('', '', $dimensionCombination), '@;')));
+                $this->dispatch(self::EVENT_NOTICE, sprintf('Checking for nodes with missing URI path segment in dimension "%s"', trim(NodePaths::generateContextPath('', '', $dimensionCombination), '@;')));
                 foreach ($siteNodes as $siteNode) {
                     $this->generateUriPathSegmentsForNode($siteNode, $dryRun);
                 }
@@ -246,18 +263,19 @@ HELPTEXT;
      * @param NodeInterface $node The node where the traversal starts
      * @param boolean $dryRun
      * @return void
+     * @throws NodeException
+     * @throws NeosException
      */
     protected function generateUriPathSegmentsForNode(NodeInterface $node, $dryRun)
     {
         if ((string)$node->getProperty('uriPathSegment') === '') {
             $name = $node->getLabel() ?: $node->getName();
             $uriPathSegment = $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node);
-            if ($dryRun === false) {
+            $taskDescription = sprintf('Add missing URI path segment for "<i>%s</i>" (<i>%s</i>) => <i>%s</i>', $node->getPath(), $name, $uriPathSegment);
+            $taskClosure = function () use ($node, $uriPathSegment) {
                 $node->setProperty('uriPathSegment', $uriPathSegment);
-                $this->output->outputLine('Added missing URI path segment for "%s" (%s) => %s', array($node->getPath(), $name, $uriPathSegment));
-            } else {
-                $this->output->outputLine('Found missing URI path segment for "%s" (%s) => %s', array($node->getPath(), $name, $uriPathSegment));
-            }
+            };
+            $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
         }
         foreach ($node->getChildNodes('Neos.Neos:Document') as $childNode) {
             $this->generateUriPathSegmentsForNode($childNode, $dryRun);
@@ -271,37 +289,36 @@ HELPTEXT;
      * the nodes below "/sites" are always reachable.
      *
      * @param string $workspaceName
-     * @param boolean $dryRun
      * @return void
      */
-    public function removeContentDimensionsFromRootAndSitesNode($workspaceName, $dryRun)
+    public function removeContentDimensionsFromRootAndSitesNode($workspaceName)
     {
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
+        /** @noinspection PhpUndefinedMethodInspection */
         $rootNodes = $this->nodeDataRepository->findByPath('/', $workspace);
+        /** @noinspection PhpUndefinedMethodInspection */
         $sitesNodes = $this->nodeDataRepository->findByPath('/sites', $workspace);
-        $this->output->outputLine('Checking for root and site nodes with content dimensions set ...');
+        $this->dispatch(self::EVENT_NOTICE, 'Checking for root and site nodes with content dimensions set ...');
         /** @var \Neos\ContentRepository\Domain\Model\NodeData $rootNode */
         foreach ($rootNodes as $rootNode) {
             if ($rootNode->getDimensionValues() !== []) {
-                if ($dryRun === false) {
+                $taskDescription = 'Remove content dimensions from root node';
+                $taskClosure = function () use ($rootNode) {
                     $rootNode->setDimensions([]);
                     $this->nodeDataRepository->update($rootNode);
-                    $this->output->outputLine('Removed content dimensions from root node');
-                } else {
-                    $this->output->outputLine('Found root node with content dimensions set.');
-                }
+                };
+                $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
             }
         }
         /** @var \Neos\ContentRepository\Domain\Model\NodeData $sitesNode */
         foreach ($sitesNodes as $sitesNode) {
             if ($sitesNode->getDimensionValues() !== []) {
-                if ($dryRun === false) {
+                $taskDescription = 'Remove content dimensions from node "/sites"';
+                $taskClosure = function () use ($sitesNode) {
                     $sitesNode->setDimensions([]);
                     $this->nodeDataRepository->update($sitesNode);
-                    $this->output->outputLine('Removed content dimensions from node "/sites"');
-                } else {
-                    $this->output->outputLine('Found node "/sites"');
-                }
+                };
+                $this->dispatch(self::EVENT_TASK, $taskDescription, $taskClosure);
             }
         }
     }
@@ -315,13 +332,43 @@ HELPTEXT;
      */
     protected function createContext($workspaceName, array $dimensions)
     {
-        $contextProperties = array(
+        $contextProperties = [
             'workspaceName' => $workspaceName,
             'dimensions' => $dimensions,
             'invisibleContentShown' => true,
             'inaccessibleContentShown' => true
-        );
+        ];
 
         return $this->contextFactory->create($contextProperties);
+    }
+
+    /**
+     * Attaches a new event handler
+     *
+     * @param string $eventIdentifier one of the EVENT_* constants
+     * @param \Closure $callback a closure to be invoked when the corresponding event was triggered
+     * @return void
+     */
+    public function on(string $eventIdentifier, \Closure $callback): void
+    {
+        $this->eventCallbacks[$eventIdentifier][] = $callback;
+    }
+
+    /**
+     * Trigger a custom event
+     *
+     * @param string $eventIdentifier one of the EVENT_* constants
+     * @param array $eventPayload optional arguments to be passed to the handler closure
+     * @return void
+     */
+    protected function dispatch(string $eventIdentifier, ...$eventPayload): void
+    {
+        if (!isset($this->eventCallbacks[$eventIdentifier])) {
+            return;
+        }
+        /** @var \Closure $callback */
+        foreach ($this->eventCallbacks[$eventIdentifier] as $callback) {
+            call_user_func_array($callback, $eventPayload);
+        }
     }
 }

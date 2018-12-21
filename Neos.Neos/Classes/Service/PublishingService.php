@@ -43,7 +43,7 @@ class PublishingService extends \Neos\ContentRepository\Domain\Service\Publishin
         if (!$targetWorkspace instanceof Workspace) {
             return;
         }
-        $nodes = array($node);
+        $nodes = [$node];
         $nodeType = $node->getNodeType();
 
         if ($nodeType->isOfType('Neos.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
@@ -64,7 +64,7 @@ class PublishingService extends \Neos\ContentRepository\Domain\Service\Publishin
      */
     public function discardNode(NodeInterface $node)
     {
-        $nodes = array($node);
+        $nodes = [$node];
         $nodeType = $node->getNodeType();
 
         if ($nodeType->isOfType('Neos.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {

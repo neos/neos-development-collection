@@ -27,107 +27,107 @@ class NodeTypeTest extends UnitTestCase
      *
      * @var array
      */
-    protected $nodeTypesFixture = array(
-        'Neos.ContentRepository.Testing:ContentObject' => array(
-            'ui' => array(
+    protected $nodeTypesFixture = [
+        'Neos.ContentRepository.Testing:ContentObject' => [
+            'ui' => [
                 'label' => 'Abstract content object'
-            ),
+            ],
             'abstract' => true,
-            'properties' => array(
-                '_hidden' => array(
+            'properties' => [
+                '_hidden' => [
                     'type' => 'boolean',
                     'label' => 'Hidden',
                     'category' => 'visibility',
                     'priority' => 1
-                )
-            ),
-            'propertyGroups' => array(
-                'visibility' => array(
+                ]
+            ],
+            'propertyGroups' => [
+                'visibility' => [
                     'label' => 'Visibility',
                     'priority' => 1
-                )
-            )
-        ),
-        'Neos.ContentRepository.Testing:Text' => array(
-            'superTypes' => array('Neos.ContentRepository.Testing:ContentObject' => true),
-            'ui' => array(
+                ]
+            ]
+        ],
+        'Neos.ContentRepository.Testing:Text' => [
+            'superTypes' => ['Neos.ContentRepository.Testing:ContentObject' => true],
+            'ui' => [
                 'label' => 'Text'
-            ),
-            'properties' => array(
-                'headline' => array(
+            ],
+            'properties' => [
+                'headline' => [
                     'type' => 'string',
                     'placeholder' => 'Enter headline here'
-                ),
-                'text' => array(
+                ],
+                'text' => [
                     'type' => 'string',
                     'placeholder' => '<p>Enter text here</p>'
-                )
-            ),
-            'inlineEditableProperties' => array('headline', 'text')
-        ),
-        'Neos.ContentRepository.Testing:Document' => array(
-            'superTypes' => array('Neos.ContentRepository.Testing:SomeMixin' => true),
+                ]
+            ],
+            'inlineEditableProperties' => ['headline', 'text']
+        ],
+        'Neos.ContentRepository.Testing:Document' => [
+            'superTypes' => ['Neos.ContentRepository.Testing:SomeMixin' => true],
             'abstract' => true,
             'aggregate' => true
-        ),
-        'Neos.ContentRepository.Testing:SomeMixin' => array(
-            'ui' => array(
+        ],
+        'Neos.ContentRepository.Testing:SomeMixin' => [
+            'ui' => [
                 'label' => 'could contain an inspector tab'
-            ),
-            'properties' => array(
-                'someMixinProperty' => array(
+            ],
+            'properties' => [
+                'someMixinProperty' => [
                     'type' => 'string',
                     'label' => 'Important hint'
-                )
-            )
-        ),
-        'Neos.ContentRepository.Testing:Shortcut' => array(
-            'superTypes' => array(
+                ]
+            ]
+        ],
+        'Neos.ContentRepository.Testing:Shortcut' => [
+            'superTypes' => [
                 'Neos.ContentRepository.Testing:Document' => true,
                 'Neos.ContentRepository.Testing:SomeMixin' => false
-            ),
-            'ui' => array(
+            ],
+            'ui' => [
                 'label' => 'Shortcut'
-            ),
-            'properties' => array(
-                'target' => array(
+            ],
+            'properties' => [
+                'target' => [
                     'type' => 'string'
-                )
-            )
-        ),
-        'Neos.ContentRepository.Testing:SubShortcut' => array(
-            'superTypes' => array(
+                ]
+            ]
+        ],
+        'Neos.ContentRepository.Testing:SubShortcut' => [
+            'superTypes' => [
                 'Neos.ContentRepository.Testing:Shortcut' => true
-            ),
-            'ui' => array(
+            ],
+            'ui' => [
                 'label' => 'Sub-Shortcut'
-            )
-        ),
-        'Neos.ContentRepository.Testing:SubSubShortcut' => array(
-            'superTypes' => array(
+            ]
+        ],
+        'Neos.ContentRepository.Testing:SubSubShortcut' => [
+            'superTypes' => [
                 'Neos.ContentRepository.Testing:SubShortcut' => true,
                 'Neos.ContentRepository.Testing:SomeMixin' => true
-            ),
-            'ui' => array(
+            ],
+            'ui' => [
                 'label' => 'Sub-Sub-Shortcut'
-            )
-        ),
-        'Neos.ContentRepository.Testing:SubSubSubShortcut' => array(
-            'superTypes' => array(
+            ]
+        ],
+        'Neos.ContentRepository.Testing:SubSubSubShortcut' => [
+            'superTypes' => [
                 'Neos.ContentRepository.Testing:SubSubShortcut' => true
-            ),
-            'ui' => array(
+            ],
+            'ui' => [
                 'label' => 'Sub-Sub-Sub-Shortcut'
-            )
-        )
-    );
+            ]
+        ]
+    ];
 
     /**
      * @test
      */
     public function aNodeTypeHasAName()
     {
-        $nodeType = new NodeType('Neos.ContentRepository.Testing:Text', array(), array());
+        $nodeType = new NodeType('Neos.ContentRepository.Testing:Text', [], []);
         $this->assertSame('Neos.ContentRepository.Testing:Text', $nodeType->getName());
     }
 
@@ -137,7 +137,7 @@ class NodeTypeTest extends UnitTestCase
      */
     public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypesAsKeys()
     {
-        new NodeType('TYPO3CR:Folder', array('foo' => true), array());
+        new NodeType('TYPO3CR:Folder', ['foo' => true], []);
     }
 
     /**
@@ -146,7 +146,7 @@ class NodeTypeTest extends UnitTestCase
      */
     public function setDeclaredSuperTypesAcceptsAnArrayOfNodeTypes()
     {
-        new NodeType('TYPO3CR:Folder', array('foo'), array());
+        new NodeType('TYPO3CR:Folder', ['foo'], []);
     }
 
     /**
@@ -154,14 +154,36 @@ class NodeTypeTest extends UnitTestCase
      */
     public function nodeTypesCanHaveAnyNumberOfSuperTypes()
     {
-        $baseType = new NodeType('Neos.ContentRepository:Base', array(), array());
+        $baseType = new NodeType('Neos.ContentRepository:Base', [], []);
 
-        $folderType = new NodeType('Neos.ContentRepository.Testing:Document', array($baseType), array());
+        $timeableNodeType = new NodeType('Neos.ContentRepository.Testing:TimeableContent', [], []);
+        $documentType = new NodeType(
+            'Neos.ContentRepository.Testing:Document',
+            [
+                'Neos.ContentRepository:Base' => $baseType,
+                'Neos.ContentRepository.Testing:TimeableContent' => $timeableNodeType,
+            ],
+            []
+        );
 
-        $hideableNodeType = new NodeType('Neos.ContentRepository.Testing:HideableContent', array(), array());
-        $pageType = new NodeType('Neos.ContentRepository.Testing:Page', array($folderType, $hideableNodeType), array());
+        $hideableNodeType = new NodeType('Neos.ContentRepository.Testing:HideableContent', [], []);
+        $pageType = new NodeType(
+            'Neos.ContentRepository.Testing:Page',
+            [
+                'Neos.ContentRepository.Testing:Document' => $documentType,
+                'Neos.ContentRepository.Testing:HideableContent' => $hideableNodeType,
+                'Neos.ContentRepository.Testing:TimeableContent' => null,
+            ],
+            []
+        );
 
-        $this->assertEquals(array($folderType, $hideableNodeType), $pageType->getDeclaredSuperTypes());
+        $this->assertEquals(
+            [
+                'Neos.ContentRepository.Testing:Document' => $documentType,
+                'Neos.ContentRepository.Testing:HideableContent' => $hideableNodeType,
+            ],
+            $pageType->getDeclaredSuperTypes()
+        );
 
         $this->assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:Page'));
         $this->assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:HideableContent'));
@@ -169,6 +191,7 @@ class NodeTypeTest extends UnitTestCase
         $this->assertTrue($pageType->isOfType('Neos.ContentRepository:Base'));
 
         $this->assertFalse($pageType->isOfType('Neos.ContentRepository:Exotic'));
+        $this->assertFalse($pageType->isOfType('Neos.ContentRepository.Testing:TimeableContent'));
     }
 
     /**
@@ -176,7 +199,7 @@ class NodeTypeTest extends UnitTestCase
      */
     public function labelIsEmptyStringByDefault()
     {
-        $baseType = new NodeType('Neos.ContentRepository:Base', array(), array());
+        $baseType = new NodeType('Neos.ContentRepository:Base', [], []);
         $this->assertSame('', $baseType->getLabel());
     }
 
@@ -185,8 +208,8 @@ class NodeTypeTest extends UnitTestCase
      */
     public function propertiesAreEmptyArrayByDefault()
     {
-        $baseType = new NodeType('Neos.ContentRepository:Base', array(), array());
-        $this->assertSame(array(), $baseType->getProperties());
+        $baseType = new NodeType('Neos.ContentRepository:Base', [], []);
+        $this->assertSame([], $baseType->getProperties());
     }
 
     /**
@@ -194,7 +217,7 @@ class NodeTypeTest extends UnitTestCase
      */
     public function hasConfigurationInitializesTheNodeType()
     {
-        $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(array('initialize'))->getMock();
+        $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(['initialize'])->getMock();
         $nodeType->expects($this->once())->method('initialize');
         $nodeType->hasConfiguration('foo');
     }
@@ -204,11 +227,11 @@ class NodeTypeTest extends UnitTestCase
      */
     public function hasConfigurationReturnsTrueIfSpecifiedConfigurationPathExists()
     {
-        $nodeType = new NodeType('Neos.ContentRepository:Base', array(), array(
-            'someKey' => array(
+        $nodeType = new NodeType('Neos.ContentRepository:Base', [], [
+            'someKey' => [
                 'someSubKey' => 'someValue'
-            )
-        ));
+            ]
+        ]);
         $this->assertTrue($nodeType->hasConfiguration('someKey.someSubKey'));
     }
 
@@ -217,7 +240,7 @@ class NodeTypeTest extends UnitTestCase
      */
     public function hasConfigurationReturnsFalseIfSpecifiedConfigurationPathDoesNotExist()
     {
-        $nodeType = new NodeType('Neos.ContentRepository:Base', array(), array());
+        $nodeType = new NodeType('Neos.ContentRepository:Base', [], []);
         $this->assertFalse($nodeType->hasConfiguration('some.nonExisting.path'));
     }
 
@@ -226,7 +249,7 @@ class NodeTypeTest extends UnitTestCase
      */
     public function getConfigurationInitializesTheNodeType()
     {
-        $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(array('initialize'))->getMock();
+        $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(['initialize'])->getMock();
         $nodeType->expects($this->once())->method('initialize');
         $nodeType->getConfiguration('foo');
     }
@@ -236,11 +259,11 @@ class NodeTypeTest extends UnitTestCase
      */
     public function getConfigurationReturnsTheConfigurationWithTheSpecifiedPath()
     {
-        $nodeType = new NodeType('Neos.ContentRepository:Base', array(), array(
-            'someKey' => array(
+        $nodeType = new NodeType('Neos.ContentRepository:Base', [], [
+            'someKey' => [
                 'someSubKey' => 'someValue'
-            )
-        ));
+            ]
+        ]);
         $this->assertSame('someValue', $nodeType->getConfiguration('someKey.someSubKey'));
     }
 
@@ -249,7 +272,7 @@ class NodeTypeTest extends UnitTestCase
      */
     public function getConfigurationReturnsNullIfTheSpecifiedPathDoesNotExist()
     {
-        $nodeType = new NodeType('Neos.ContentRepository:Base', array(), array());
+        $nodeType = new NodeType('Neos.ContentRepository:Base', [], []);
         $this->assertNull($nodeType->getConfiguration('some.nonExisting.path'));
     }
 
@@ -258,14 +281,14 @@ class NodeTypeTest extends UnitTestCase
      */
     public function gettersThatRequiresInitialization()
     {
-        return array(
-            array('getFullConfiguration'),
-            array('getLabel'),
-            array('getNodeLabelGenerator'),
-            array('getProperties'),
-            array('getDefaultValuesForProperties'),
-            array('getAutoCreatedChildNodes'),
-        );
+        return [
+            ['getFullConfiguration'],
+            ['getLabel'],
+            ['getNodeLabelGenerator'],
+            ['getProperties'],
+            ['getDefaultValuesForProperties'],
+            ['getAutoCreatedChildNodes'],
+        ];
     }
 
     /**
@@ -276,7 +299,7 @@ class NodeTypeTest extends UnitTestCase
     public function accessingConfigurationOptionsInitializesTheNodeType($getter)
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $nodeType = $this->getAccessibleMock(NodeType::class, array('initialize'), array(), '', false);
+        $nodeType = $this->getAccessibleMock(NodeType::class, ['initialize'], [], '', false);
         $nodeType->_set('objectManager', $mockObjectManager);
         $nodeType->expects($this->atLeastOnce())->method('initialize');
         $nodeType->$getter();
@@ -287,16 +310,16 @@ class NodeTypeTest extends UnitTestCase
      */
     public function defaultValuesForPropertiesHandlesDateTypes()
     {
-        $nodeType = new NodeType('Neos.ContentRepository:Base', array(), array(
-            'properties' => array(
-                'date' => array(
+        $nodeType = new NodeType('Neos.ContentRepository:Base', [], [
+            'properties' => [
+                'date' => [
                     'type' => 'DateTime',
                     'defaultValue' => '2014-09-23'
-                )
-            )
-        ));
+                ]
+            ]
+        ]);
 
-        $this->assertEquals($nodeType->getDefaultValuesForProperties(), array('date' => new \DateTime('2014-09-23')));
+        $this->assertEquals($nodeType->getDefaultValuesForProperties(), ['date' => new \DateTime('2014-09-23')]);
     }
 
     /**
@@ -307,22 +330,22 @@ class NodeTypeTest extends UnitTestCase
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Text');
         $this->assertSame('Text', $nodeType->getLabel());
 
-        $expectedProperties = array(
-            '_hidden' => array(
+        $expectedProperties = [
+            '_hidden' => [
                 'type' => 'boolean',
                 'label' => 'Hidden',
                 'category' => 'visibility',
                 'priority' => 1
-            ),
-            'headline' => array(
+            ],
+            'headline' => [
                 'type' => 'string',
                 'placeholder' => 'Enter headline here'
-            ),
-            'text' => array(
+            ],
+            'text' => [
                 'type' => 'string',
                 'placeholder' => '<p>Enter text here</p>'
-            )
-        );
+            ]
+        ];
         $this->assertSame($expectedProperties, $nodeType->getProperties());
     }
 
@@ -335,11 +358,11 @@ class NodeTypeTest extends UnitTestCase
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Shortcut');
         $this->assertSame('Shortcut', $nodeType->getLabel());
 
-        $expectedProperties = array(
-            'target' => array(
+        $expectedProperties = [
+            'target' => [
                 'type' => 'string'
-            )
-        );
+            ]
+        ];
         $this->assertSame($expectedProperties, $nodeType->getProperties());
     }
 
@@ -370,11 +393,11 @@ class NodeTypeTest extends UnitTestCase
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubShortcut');
         $this->assertSame('Sub-Shortcut', $nodeType->getLabel());
 
-        $expectedProperties = array(
-            'target' => array(
+        $expectedProperties = [
+            'target' => [
                 'type' => 'string'
-            )
-        );
+            ]
+        ];
         $this->assertSame($expectedProperties, $nodeType->getProperties());
     }
 
@@ -387,15 +410,15 @@ class NodeTypeTest extends UnitTestCase
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubSubSubShortcut');
         $this->assertSame('Sub-Sub-Sub-Shortcut', $nodeType->getLabel());
 
-        $expectedProperties = array(
-            'target' => array(
+        $expectedProperties = [
+            'target' => [
                 'type' => 'string'
-            ),
-            'someMixinProperty' => array(
+            ],
+            'someMixinProperty' => [
                 'type' => 'string',
                 'label' => 'Important hint'
-            )
-        );
+            ]
+        ];
         $this->assertSame($expectedProperties, $nodeType->getProperties());
     }
 
@@ -412,7 +435,7 @@ class NodeTypeTest extends UnitTestCase
         }
 
         $configuration = $this->nodeTypesFixture[$nodeTypeName];
-        $declaredSuperTypes = array();
+        $declaredSuperTypes = [];
         if (isset($configuration['superTypes']) && is_array($configuration['superTypes'])) {
             foreach ($configuration['superTypes'] as $superTypeName => $enabled) {
                 $declaredSuperTypes[$superTypeName] = $enabled === true ? $this->getNodeType($superTypeName) : null;
@@ -427,10 +450,10 @@ class NodeTypeTest extends UnitTestCase
      */
     public function getAutoCreatedChildNodesReturnsLowercasePaths()
     {
-        $childNodeConfiguration = array('type' => 'Neos.ContentRepository:Base');
-        $baseType = new NodeType('Neos.ContentRepository:Base', array(), array(
-            'childNodes' => array('nodeName' => $childNodeConfiguration)
-        ));
+        $childNodeConfiguration = ['type' => 'Neos.ContentRepository:Base'];
+        $baseType = new NodeType('Neos.ContentRepository:Base', [], [
+            'childNodes' => ['nodeName' => $childNodeConfiguration]
+        ]);
         $mockNodeTypeManager = $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock();
         $mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnValue($baseType));
         $this->inject($baseType, 'nodeTypeManager', $mockNodeTypeManager);

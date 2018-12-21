@@ -226,10 +226,10 @@ class FeatureContext extends MinkContext
      */
     public function iShouldNotSeeTheTopBar()
     {
-        return array(
+        return [
             new Then('I should not see "Navigate"'),
             new Then('I should not see "Edit / Preview"'),
-        );
+        ];
         //c1$this->assertElementOnPage('.neos-previewmode #neos-top-bar');
     }
 
@@ -255,7 +255,7 @@ class FeatureContext extends MinkContext
         $nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
         /** @var ContextFactoryInterface $contextFactory */
         $contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
-        $contentContext = $contextFactory->create(array('workspace' => 'live'));
+        $contentContext = $contextFactory->create(['workspace' => 'live']);
         ObjectAccess::setProperty($nodeDataRepository, 'context', $contentContext, true);
 
         /** @var SiteImportService $siteImportService */
@@ -321,7 +321,7 @@ class FeatureContext extends MinkContext
     {
         /** @var ContextFactoryInterface $contextFactory */
         $contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
-        ObjectAccess::setProperty($contextFactory, 'contextInstances', array(), true);
+        ObjectAccess::setProperty($contextFactory, 'contextInstances', [], true);
     }
 
     /**
@@ -346,9 +346,9 @@ class FeatureContext extends MinkContext
         $actualSites = array_map(function ($row) {
             $firstColumn = $row->find('css', 'td:nth-of-type(1)');
             if ($firstColumn !== null) {
-                return array(
+                return [
                     'name' => $firstColumn->getText()
-                );
+                ];
             }
         }, $siteRows);
 
@@ -498,7 +498,7 @@ class FeatureContext extends MinkContext
 
         $this->lastExportedSiteXmlPathAndFilename = tempnam(sys_get_temp_dir(), 'Neos_LastExportedSite');
 
-        file_put_contents($this->lastExportedSiteXmlPathAndFilename, $siteExportService->export(array($site)));
+        file_put_contents($this->lastExportedSiteXmlPathAndFilename, $siteExportService->export([$site]));
     }
 
     /**

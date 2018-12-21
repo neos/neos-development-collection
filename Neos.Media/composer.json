@@ -13,9 +13,9 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
         "imagine/imagine": "*",
-        "doctrine/common": "~2.7.0",
-        "doctrine/orm": "~2.6.0",
-        "doctrine/dbal": "~2.7.0"
+        "doctrine/common": "^2.7",
+        "doctrine/orm": "^2.6",
+        "doctrine/dbal": "^2.8"
     },
     "replace": {
         "typo3/media": "self.version"

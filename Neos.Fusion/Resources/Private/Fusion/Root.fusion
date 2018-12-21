@@ -1,5 +1,7 @@
 prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
 prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:Join).@class = 'Neos\\Fusion\\FusionObjects\\JoinImplementation'
+prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:Template).@class = 'Neos\\Fusion\\FusionObjects\\TemplateImplementation'
 prototype(Neos.Fusion:Case).@class = 'Neos\\Fusion\\FusionObjects\\CaseImplementation'
 prototype(Neos.Fusion:Matcher).@class = 'Neos\\Fusion\\FusionObjects\\MatcherImplementation'
@@ -27,6 +29,26 @@ prototype(Neos.Fusion:RawCollection) {
   itemName = 'item'
   itemKey = 'itemKey'
   iterationName = 'iterator'
+}
+prototype(Neos.Fusion:Loop) {
+  @class = 'Neos\\Fusion\\FusionObjects\\LoopImplementation'
+  itemName = 'item'
+  itemKey = 'itemKey'
+  iterationName = 'iterator'
+}
+prototype(Neos.Fusion:Maping) {
+  @class = 'Neos\\Fusion\\FusionObjects\\MapImplementation'
+  itemName = 'item'
+  itemKey = 'itemKey'
+  iterationName = 'iterator'
+}
+prototype(Neos.Fusion:Reduce) {
+  @class = 'Neos\\Fusion\\FusionObjects\\ReduceImplementation'
+  itemName = 'item'
+  itemKey = 'itemKey'
+  carryName = 'carry'
+  iterationName = 'iterator'
+  initialValue = null
 }
 
 # Render an HTTP response header

@@ -21,7 +21,7 @@ class TestModelSerializer extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = array(TestModel::class);
+    protected $sourceTypes = [TestModel::class];
 
     /**
      * @var string
@@ -42,7 +42,7 @@ class TestModelSerializer extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return boolean
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         // This would use the identifier of the source in reality
         return serialize($source);

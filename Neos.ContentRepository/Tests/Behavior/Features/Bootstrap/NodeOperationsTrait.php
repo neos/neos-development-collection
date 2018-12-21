@@ -31,12 +31,12 @@ trait NodeOperationsTrait
     /**
      * @var array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
-    private $currentNodes = array();
+    private $currentNodes = [];
 
     /**
      * @var array
      */
-    private $nodeTypesConfiguration = array();
+    private $nodeTypesConfiguration = [];
 
     /**
      * @return mixed
@@ -163,12 +163,12 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
-            $dimensions = array();
+            $dimensions = [];
             $presetsFound = false;
             foreach ($table->getHash() as $row) {
-                $dimensions[$row['Identifier']] = array(
+                $dimensions[$row['Identifier']] = [
                     'default' => $row['Default']
-                );
+                ];
 
                 $defaultPreset = '';
                 if (isset($row['Presets'])) {
@@ -176,13 +176,13 @@ trait NodeOperationsTrait
                     // parse a preset string like:
                     // preset1=dimensionValue1,dimensionValue2; preset2=dimensionValue3
                     $presetStrings = Arrays::trimExplode(';', $row['Presets']);
-                    $presets = array();
+                    $presets = [];
                     foreach ($presetStrings as $presetString) {
                         list($presetName, $presetValues) = Arrays::trimExplode('=', $presetString);
-                        $presets[$presetName] = array(
+                        $presets[$presetName] = [
                             'values' => Arrays::trimExplode(',', $presetValues),
                             'uriSegment' => $presetName
-                        );
+                        ];
 
                         if ($defaultPreset === '') {
                             $defaultPreset = $presetName;
@@ -274,9 +274,9 @@ trait NodeOperationsTrait
 
             $node = $context->getNode($path);
             if ($node !== null) {
-                $this->currentNodes = array($node);
+                $this->currentNodes = [$node];
             } else {
-                $this->currentNodes = array();
+                $this->currentNodes = [];
             }
         }
     }
@@ -294,9 +294,9 @@ trait NodeOperationsTrait
 
             $node = $context->getNodeByIdentifier($identifier);
             if ($node !== null) {
-                $this->currentNodes = array($node);
+                $this->currentNodes = [$node];
             } else {
-                $this->currentNodes = array();
+                $this->currentNodes = [];
             }
         }
     }
@@ -411,7 +411,7 @@ trait NodeOperationsTrait
              * The method ``iPublishTheNode`` keeps all this information intact.
              **/
 
-            $sourceContext = $this->getContextForProperties(array('Workspace' => $sourceWorkspaceName));
+            $sourceContext = $this->getContextForProperties(['Workspace' => $sourceWorkspaceName]);
             $sourceWorkspace = $sourceContext->getWorkspace();
 
             $sourceWorkspace->publish($sourceWorkspace->getBaseWorkspace());
@@ -429,7 +429,7 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg($workspaceName)));
         } else {
-            $context = $this->getContextForProperties(array('Workspace' => $workspaceName));
+            $context = $this->getContextForProperties(['Workspace' => $workspaceName]);
             $workspace = $context->getWorkspace();
 
             /** @var PublishingServiceInterface $publishingService */
@@ -717,7 +717,7 @@ trait NodeOperationsTrait
             $context = $this->getContextForProperties($rows[0]);
 
             $currentNode = $this->iShouldHaveOneNode();
-            $this->currentNodes = array($context->adoptNode($currentNode, $recursive !== ''));
+            $this->currentNodes = [$context->adoptNode($currentNode, $recursive !== '')];
         }
     }
 
@@ -777,7 +777,7 @@ trait NodeOperationsTrait
                         unset($rows[$rowIndex]);
                     }
                 }
-                Assert::assertEquals(array(), $rows, 'All examples should have matched');
+                Assert::assertEquals([], $rows, 'All examples should have matched');
                 Assert::assertCount(0, $currentNodes, 'All nodes should be matched');
             }
         }
@@ -821,7 +821,7 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes(array());
+            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes([]);
         }
     }
 
@@ -973,7 +973,7 @@ trait NodeOperationsTrait
             /** @var \Neos\ContentRepository\Domain\Repository\ContentDimensionRepository $contentDimensionRepository */
 
             // Set the content dimensions to a fixed value for Behat scenarios
-            $contentDimensionRepository->setDimensionsConfiguration(array('language' => array('default' => 'mul_ZZ')));
+            $contentDimensionRepository->setDimensionsConfiguration(['language' => ['default' => 'mul_ZZ']]);
         }
     }
 
@@ -992,7 +992,7 @@ trait NodeOperationsTrait
         } else {
             /** @var \Neos\ContentRepository\Domain\Service\ContextFactoryInterface $contextFactory */
             $contextFactory = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class);
-            $contextProperties = array();
+            $contextProperties = [];
 
             if (isset($humanReadableContextProperties['Language'])) {
                 $contextProperties['dimensions']['language'] = Arrays::trimExplode(',', $humanReadableContextProperties['Language']);

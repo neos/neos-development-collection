@@ -158,14 +158,14 @@ class NodeType
      */
     protected function buildFullConfiguration()
     {
-        $mergedConfiguration = array();
+        $mergedConfiguration = [];
         $applicableSuperTypes = $this->buildInheritanceChain();
         foreach ($applicableSuperTypes as $key => $superType) {
             $mergedConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
         }
         $this->fullConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
 
-        if (isset($this->fullConfiguration['childNodes']) && is_array($this->fullConfiguration['childNodes']) && $this->fullConfiguration['childNodes'] !== array()) {
+        if (isset($this->fullConfiguration['childNodes']) && is_array($this->fullConfiguration['childNodes']) && $this->fullConfiguration['childNodes'] !== []) {
             $sorter = new PositionalArraySorter($this->fullConfiguration['childNodes']);
             $this->fullConfiguration['childNodes'] = $sorter->toArray();
         }
@@ -178,7 +178,7 @@ class NodeType
      */
     protected function buildInheritanceChain()
     {
-        $superTypes = array();
+        $superTypes = [];
         foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
             if ($superType !== null) {
                 $this->addInheritedSuperTypes($superTypes, $superType);
@@ -233,7 +233,7 @@ class NodeType
             if (!$postprocessor instanceof NodeTypePostprocessorInterface) {
                 throw new InvalidNodeTypePostprocessorException(sprintf('Expected NodeTypePostprocessorInterface but got "%s"', get_class($postprocessor)), 1364759955);
             }
-            $postprocessorOptions = array();
+            $postprocessorOptions = [];
             if (isset($postprocessorConfiguration['postprocessorOptions'])) {
                 $postprocessorOptions = $postprocessorConfiguration['postprocessorOptions'];
             }
@@ -402,7 +402,7 @@ class NodeType
     public function getOptions()
     {
         $this->initialize();
-        return (isset($this->fullConfiguration['options']) ? $this->fullConfiguration['options'] : array());
+        return (isset($this->fullConfiguration['options']) ? $this->fullConfiguration['options'] : []);
     }
 
     /**
@@ -441,7 +441,7 @@ class NodeType
     public function getProperties()
     {
         $this->initialize();
-        return (isset($this->fullConfiguration['properties']) ? $this->fullConfiguration['properties'] : array());
+        return (isset($this->fullConfiguration['properties']) ? $this->fullConfiguration['properties'] : []);
     }
 
     /**
@@ -470,10 +470,10 @@ class NodeType
     {
         $this->initialize();
         if (!isset($this->fullConfiguration['properties'])) {
-            return array();
+            return [];
         }
 
-        $defaultValues = array();
+        $defaultValues = [];
         foreach ($this->fullConfiguration['properties'] as $propertyName => $propertyConfiguration) {
             if (isset($propertyConfiguration['defaultValue'])) {
                 $type = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : '';
@@ -500,10 +500,10 @@ class NodeType
     {
         $this->initialize();
         if (!isset($this->fullConfiguration['childNodes'])) {
-            return array();
+            return [];
         }
 
-        $autoCreatedChildNodes = array();
+        $autoCreatedChildNodes = [];
         foreach ($this->fullConfiguration['childNodes'] as $childNodeName => $childNodeConfiguration) {
             if (isset($childNodeConfiguration['type'])) {
                 $autoCreatedChildNodes[Utility::renderValidNodeName($childNodeName)] = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
@@ -547,7 +547,7 @@ class NodeType
      */
     public function allowsChildNodeType(NodeType $nodeType)
     {
-        $constraints = $this->getConfiguration('constraints.nodeTypes') ?: array();
+        $constraints = $this->getConfiguration('constraints.nodeTypes') ?: [];
         return $this->isNodeTypeAllowedByConstraints($nodeType, $constraints);
     }
 
@@ -568,13 +568,13 @@ class NodeType
         if (!isset($autoCreatedChildNodes[$childNodeName])) {
             throw new \InvalidArgumentException('The method "allowsGrandchildNodeType" can only be used on auto-created childNodes, given $childNodeName "' . $childNodeName . '" is not auto-created.', 1403858395);
         }
-        $constraints = $autoCreatedChildNodes[$childNodeName]->getConfiguration('constraints.nodeTypes') ?: array();
+        $constraints = $autoCreatedChildNodes[$childNodeName]->getConfiguration('constraints.nodeTypes') ?: [];
 
         $childNodeConfiguration = [];
         foreach ($this->getConfiguration('childNodes') as $name => $configuration) {
             $childNodeConfiguration[Utility::renderValidNodeName($name)] = $configuration;
         }
-        $childNodeConstraintConfiguration = ObjectAccess::getPropertyPath($childNodeConfiguration, $childNodeName . '.constraints.nodeTypes') ?: array();
+        $childNodeConstraintConfiguration = ObjectAccess::getPropertyPath($childNodeConfiguration, $childNodeName . '.constraints.nodeTypes') ?: [];
 
         $constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
 
@@ -622,7 +622,7 @@ class NodeType
      */
     protected function isNodeTypeAllowedByDirectConstraints(NodeType $nodeType, array $constraints)
     {
-        if ($constraints === array()) {
+        if ($constraints === []) {
             return true;
         }
 

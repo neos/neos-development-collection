@@ -67,7 +67,7 @@ class NextUntilOperation extends AbstractOperation
             $nextNodes = $this->getNextForNode($contextNode);
             if (isset($arguments[0]) && !empty($arguments[0])) {
                 $untilQuery = new FlowQuery($nextNodes);
-                $untilQuery->pushOperation('filter', array($arguments[0]));
+                $untilQuery->pushOperation('filter', [$arguments[0]]);
 
                 $until = $untilQuery->get();
             }
@@ -87,7 +87,7 @@ class NextUntilOperation extends AbstractOperation
         $flowQuery->setContext($output);
 
         if (isset($arguments[1]) && !empty($arguments[1])) {
-            $flowQuery->pushOperation('filter', array($arguments[1]));
+            $flowQuery->pushOperation('filter', [$arguments[1]]);
         }
     }
 

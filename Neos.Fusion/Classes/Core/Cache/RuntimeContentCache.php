@@ -12,7 +12,6 @@ namespace Neos\Fusion\Core\Cache;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Cache\CacheAwareInterface;
 use Neos\Utility\Unicode\Functions;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception;

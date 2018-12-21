@@ -62,11 +62,11 @@ class SiblingsOperationTest extends UnitTestCase
         $this->thirdNodeInLevel = $this->createMock(TraversableNodeInterface::class);
 
         $this->siteNode->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('site')));
-        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(array(
+        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
-        )));
+        ]));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->firstNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
@@ -82,14 +82,14 @@ class SiblingsOperationTest extends UnitTestCase
      */
     public function siblingsWillReturnEmptyResultForAllNodesInLevel()
     {
-        $context = array($this->firstNodeInLevel, $this->secondNodeInLevel, $this->thirdNodeInLevel);
+        $context = [$this->firstNodeInLevel, $this->secondNodeInLevel, $this->thirdNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new SiblingsOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array(), $output);
+        $this->assertEquals([], $output);
     }
 
     /**
@@ -97,14 +97,14 @@ class SiblingsOperationTest extends UnitTestCase
      */
     public function siblingsWillReturnFirstAndThirdNodeInLevelForSecondNodeInLevel()
     {
-        $context = array($this->secondNodeInLevel);
+        $context = [$this->secondNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new SiblingsOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->firstNodeInLevel, $this->thirdNodeInLevel), $output);
+        $this->assertEquals([$this->firstNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 
     /**
@@ -112,14 +112,14 @@ class SiblingsOperationTest extends UnitTestCase
      */
     public function siblingsWillReturnFirstNodeForSecondAndThirdNodeInLevel()
     {
-        $context = array($this->secondNodeInLevel, $this->thirdNodeInLevel);
+        $context = [$this->secondNodeInLevel, $this->thirdNodeInLevel];
         $q = new FlowQuery($context);
 
         $operation = new SiblingsOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array($this->firstNodeInLevel), $output);
+        $this->assertEquals([$this->firstNodeInLevel], $output);
     }
 
     /**
@@ -127,13 +127,13 @@ class SiblingsOperationTest extends UnitTestCase
      */
     public function siblingsWillReturnEmptyArrayForSiteNode()
     {
-        $context = array($this->siteNode);
+        $context = [$this->siteNode];
         $q = new FlowQuery($context);
 
         $operation = new SiblingsOperation();
-        $operation->evaluate($q, array());
+        $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals(array(), $output);
+        $this->assertEquals([], $output);
     }
 }

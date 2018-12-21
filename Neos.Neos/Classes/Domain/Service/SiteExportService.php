@@ -95,7 +95,7 @@ class SiteExportService
         }
         $contentPathAndFilename = sprintf('resource://%s/Private/Content/Sites.xml', $packageKey);
 
-        $this->resourcesPath = Files::concatenatePaths(array(dirname($contentPathAndFilename), 'Resources'));
+        $this->resourcesPath = Files::concatenatePaths([dirname($contentPathAndFilename), 'Resources']);
         Files::createDirectoryRecursively($this->resourcesPath);
 
         $this->xmlWriter = new \XMLWriter();
@@ -118,7 +118,7 @@ class SiteExportService
      */
     public function exportToFile(array $sites, $tidy = false, $pathAndFilename, $nodeTypeFilter = null)
     {
-        $this->resourcesPath = Files::concatenatePaths(array(dirname($pathAndFilename), 'Resources'));
+        $this->resourcesPath = Files::concatenatePaths([dirname($pathAndFilename), 'Resources']);
         Files::createDirectoryRecursively($this->resourcesPath);
 
         $this->xmlWriter = new \XMLWriter();
@@ -160,11 +160,11 @@ class SiteExportService
     protected function exportSite(Site $site, $nodeTypeFilter)
     {
         /** @var ContentContext $contentContext */
-        $contentContext = $this->contextFactory->create(array(
+        $contentContext = $this->contextFactory->create([
             'currentSite' => $site,
             'invisibleContentShown' => true,
             'inaccessibleContentShown' => true
-        ));
+        ]);
 
         $siteNode = $contentContext->getCurrentSiteNode();
 

@@ -11,8 +11,6 @@ namespace Neos\Media\Domain\Model\Adjustment;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Interface for an Asset Adjustment

@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -33,13 +32,13 @@ class FilterOperationTest extends UnitTestCase
         $node2 = $this->createMock(TraversableNodeInterface::class);
         $node2->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('node2-identifier-uuid')));
 
-        $context = array($node1, $node2);
+        $context = [$node1, $node2];
         $q = new FlowQuery($context);
 
         $operation = new FilterOperation();
-        $operation->evaluate($q, array('#node2-identifier-uuid'));
+        $operation->evaluate($q, ['#node2-identifier-uuid']);
 
-        $this->assertEquals(array($node2), $q->getContext());
+        $this->assertEquals([$node2], $q->getContext());
     }
 
     /**
@@ -50,12 +49,12 @@ class FilterOperationTest extends UnitTestCase
         $node1 = $this->createMock(TraversableNodeInterface::class);
         $node2 = $this->createMock(TraversableNodeInterface::class);
 
-        $context = array($node1, $node2);
+        $context = [$node1, $node2];
         $q = new FlowQuery($context);
 
         $operation = new FilterOperation();
-        $operation->evaluate($q, array($node2));
+        $operation->evaluate($q, [$node2]);
 
-        $this->assertEquals(array($node2), $q->getContext());
+        $this->assertEquals([$node2], $q->getContext());
     }
 }

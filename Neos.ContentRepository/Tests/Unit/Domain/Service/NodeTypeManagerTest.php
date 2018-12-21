@@ -60,90 +60,90 @@ class NodeTypeManagerTest extends UnitTestCase
      *
      * @var array
      */
-    protected $nodeTypesFixture = array(
-        'Neos.ContentRepository.Testing:ContentObject' => array(
-            'ui' => array(
+    protected $nodeTypesFixture = [
+        'Neos.ContentRepository.Testing:ContentObject' => [
+            'ui' => [
                 'label' => 'Abstract content object',
-            ),
+            ],
             'abstract' => true,
-            'properties' => array(
-                '_hidden' => array(
+            'properties' => [
+                '_hidden' => [
                     'type' => 'boolean',
                     'label' => 'Hidden',
                     'category' => 'visibility',
                     'priority' => 1
-                ),
-            ),
-            'propertyGroups' => array(
-                'visibility' => array(
+                ],
+            ],
+            'propertyGroups' => [
+                'visibility' => [
                     'label' => 'Visibility',
                     'priority' => 1
-                )
-            )
-        ),
-        'Neos.ContentRepository.Testing:MyFinalType' => array(
-            'superTypes' => array('Neos.ContentRepository.Testing:ContentObject' => true),
+                ]
+            ]
+        ],
+        'Neos.ContentRepository.Testing:MyFinalType' => [
+            'superTypes' => ['Neos.ContentRepository.Testing:ContentObject' => true],
             'final' => true
-        ),
-        'Neos.ContentRepository.Testing:AbstractType' => array(
-            'superTypes' => array('Neos.ContentRepository.Testing:ContentObject' => true),
-            'ui' => array(
+        ],
+        'Neos.ContentRepository.Testing:AbstractType' => [
+            'superTypes' => ['Neos.ContentRepository.Testing:ContentObject' => true],
+            'ui' => [
                 'label' => 'Abstract type',
-            ),
+            ],
             'abstract' => true
-        ),
-        'Neos.ContentRepository.Testing:Text' => array(
-            'superTypes' => array('Neos.ContentRepository.Testing:ContentObject' => true),
-            'ui' => array(
+        ],
+        'Neos.ContentRepository.Testing:Text' => [
+            'superTypes' => ['Neos.ContentRepository.Testing:ContentObject' => true],
+            'ui' => [
                 'label' => 'Text',
-            ),
-            'properties' => array(
-                'headline' => array(
+            ],
+            'properties' => [
+                'headline' => [
                     'type' => 'string',
                     'placeholder' => 'Enter headline here'
-                ),
-                'text' => array(
+                ],
+                'text' => [
                     'type' => 'string',
                     'placeholder' => '<p>Enter text here</p>'
-                )
-            ),
-            'inlineEditableProperties' => array('headline', 'text')
-        ),
-        'Neos.ContentRepository.Testing:TextWithImage' => array(
-            'superTypes' => array('Neos.ContentRepository.Testing:Text' => true),
-            'ui' => array(
+                ]
+            ],
+            'inlineEditableProperties' => ['headline', 'text']
+        ],
+        'Neos.ContentRepository.Testing:TextWithImage' => [
+            'superTypes' => ['Neos.ContentRepository.Testing:Text' => true],
+            'ui' => [
                 'label' => 'Text with image',
-            ),
-            'properties' => array(
-                'image' => array(
+            ],
+            'properties' => [
+                'image' => [
                     'type' => 'Neos\Neos\Domain\Model\Media\Image',
                     'label' => 'Image'
-                )
-            )
-        ),
-        'Neos.ContentRepository.Testing:Document' => array(
+                ]
+            ]
+        ],
+        'Neos.ContentRepository.Testing:Document' => [
             'abstract' => true,
             'aggregate' => true
-        ),
-        'Neos.ContentRepository.Testing:Page' => array(
-            'superTypes' => array('Neos.ContentRepository.Testing:Document' => true),
-        ),
-        'Neos.ContentRepository.Testing:Page2' => array(
-            'superTypes' => array('Neos.ContentRepository.Testing:Document' => true),
-        ),
-        'Neos.ContentRepository.Testing:Page3' => array(
-            'superTypes' => array('Neos.ContentRepository.Testing:Document' => true),
-        ),
-        'Neos.ContentRepository.Testing:DocumentWithSupertypes' => array(
-            'superTypes' => array(
+        ],
+        'Neos.ContentRepository.Testing:Page' => [
+            'superTypes' => ['Neos.ContentRepository.Testing:Document' => true],
+        ],
+        'Neos.ContentRepository.Testing:Page2' => [
+            'superTypes' => ['Neos.ContentRepository.Testing:Document' => true],
+        ],
+        'Neos.ContentRepository.Testing:Page3' => [
+            'superTypes' => ['Neos.ContentRepository.Testing:Document' => true],
+        ],
+        'Neos.ContentRepository.Testing:DocumentWithSupertypes' => [
+            'superTypes' => [
                 0 => 'Neos.ContentRepository.Testing:Document',
                 'Neos.ContentRepository.Testing:Page' => true,
                 'Neos.ContentRepository.Testing:Page2' => false,
                 'Neos.ContentRepository.Testing:Page3' => null
-            )
-        ),
-        'Neos.ContentRepository:FallbackNode' => array()
-    );
+            ]
+        ],
+        'Neos.ContentRepository:FallbackNode' => []
+    ];
 
     /**
      * @test
@@ -153,22 +153,22 @@ class NodeTypeManagerTest extends UnitTestCase
         $nodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Text');
         $this->assertSame('Text', $nodeType->getLabel());
 
-        $expectedProperties = array(
-            '_hidden' => array(
+        $expectedProperties = [
+            '_hidden' => [
                 'type' => 'boolean',
                 'label' => 'Hidden',
                 'category' => 'visibility',
                 'priority' => 1
-            ),
-            'headline' => array(
+            ],
+            'headline' => [
                 'type' => 'string',
                 'placeholder' => 'Enter headline here'
-            ),
-            'text' => array(
+            ],
+            'text' => [
                 'type' => 'string',
                 'placeholder' => '<p>Enter text here</p>'
-            )
-        );
+            ]
+        ];
         $this->assertSame($expectedProperties, $nodeType->getProperties());
     }
 
@@ -250,7 +250,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getNodeTypesReturnsRegisteredNodeTypes()
     {
-        $expectedNodeTypes = array(
+        $expectedNodeTypes = [
             'Neos.ContentRepository.Testing:ContentObject',
             'Neos.ContentRepository.Testing:MyFinalType',
             'Neos.ContentRepository.Testing:AbstractType',
@@ -262,7 +262,7 @@ class NodeTypeManagerTest extends UnitTestCase
             'Neos.ContentRepository.Testing:Page3',
             'Neos.ContentRepository.Testing:DocumentWithSupertypes',
             'Neos.ContentRepository:FallbackNode'
-        );
+        ];
         $this->assertEquals($expectedNodeTypes, array_keys($this->nodeTypeManager->getNodeTypes()));
     }
 
@@ -342,14 +342,14 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getNodeTypeThrowsExceptionIfFinalNodeTypeIsSubclassed()
     {
-        $nodeTypesFixture = array(
-            'Neos.ContentRepository.Testing:Base' => array(
+        $nodeTypesFixture = [
+            'Neos.ContentRepository.Testing:Base' => [
                 'final' => true
-            ),
-            'Neos.ContentRepository.Testing:Sub' => array(
-                'superTypes' => array('Neos.ContentRepository.Testing:Base' => true)
-            )
-        );
+            ],
+            'Neos.ContentRepository.Testing:Sub' => [
+                'superTypes' => ['Neos.ContentRepository.Testing:Base' => true]
+            ]
+        ];
 
         $this->prepareNodeTypeManager($nodeTypesFixture);
         $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Sub');

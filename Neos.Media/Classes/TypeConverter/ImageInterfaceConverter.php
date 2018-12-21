@@ -65,7 +65,7 @@ class ImageInterfaceConverter extends AssetInterfaceConverter
     public function getSourceChildPropertiesToBeConverted($source)
     {
         if (is_string($source)) {
-            return array();
+            return [];
         }
         if (isset($source['adjustments'])) {
             unset($source['adjustments']);

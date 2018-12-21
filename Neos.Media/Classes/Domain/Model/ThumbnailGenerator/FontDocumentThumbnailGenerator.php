@@ -12,7 +12,6 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\Files;
@@ -110,18 +109,18 @@ class FontDocumentThumbnailGenerator extends AbstractThumbnailGenerator
      */
     protected function resize(Thumbnail $thumbnail, PersistentResource $resource)
     {
-        $adjustments = array(
+        $adjustments = [
             new ResizeImageAdjustment(
-                array(
+                [
                     'width' => $thumbnail->getConfigurationValue('width'),
                     'maximumWidth' => $thumbnail->getConfigurationValue('maximumWidth'),
                     'height' => $thumbnail->getConfigurationValue('height'),
                     'maximumHeight' => $thumbnail->getConfigurationValue('maximumHeight'),
                     'ratioMode' => $thumbnail->getConfigurationValue('ratioMode'),
                     'allowUpScaling' => $thumbnail->getConfigurationValue('allowUpScaling'),
-                )
+                ]
             )
-        );
+        ];
 
         return $this->imageService->processImage($resource, $adjustments);
     }
