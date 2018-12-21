@@ -33,8 +33,15 @@ trait BrowserTrait
      */
     protected $browser;
 
-    protected function setupBrowserTrait()
+    /**
+     * @BeforeScenario
+     */
+    public function setupBrowserForEveryScenario()
     {
+        // we reset the security context at the beginning of every scenario; such that we start with a clean session at
+        // every scenario and SHARE the session throughout the scenario!
+        $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->clearContext();
+
         $this->browser = new \Neos\Flow\Http\Client\Browser();
         $this->browser->setRequestEngine(new \Neos\EventSourcedNeosAdjustments\Testing\CustomizedInternalRequestEngine());
         $bootstrap = $this->getObjectManager()->get(\Neos\Flow\Core\Bootstrap::class);
