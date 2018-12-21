@@ -228,7 +228,8 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      * @param string $currentPathSegment
      * @return NodeInterface
      */
-    static protected function findChildNodeWithMatchingPathSegment(array $childNodes, string $currentPathSegment): ?NodeInterface {
+    protected static function findChildNodeWithMatchingPathSegment(array $childNodes, string $currentPathSegment): ?NodeInterface
+    {
         foreach ($childNodes as $childNode) {
             if ($childNode->getProperty('uriPathSegment') === $currentPathSegment) {
                 return $childNode;

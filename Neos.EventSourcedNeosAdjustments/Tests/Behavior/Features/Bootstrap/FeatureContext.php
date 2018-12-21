@@ -54,7 +54,8 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
     /**
      * @BeforeScenario
      */
-    public function resetPersistenceManagerAndFeedbackCollection() {
+    public function resetPersistenceManagerAndFeedbackCollection()
+    {
         $this->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->clearState();
         // FIXME: FeedbackCollection is a really ugly, hacky SINGLETON; so it needs to be RESET!
         $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
