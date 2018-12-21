@@ -137,7 +137,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      */
     protected function matchValue($requestPath)
     {
-        if ($this->onlyMatchSiteNodes() && \mb_substr_count($requestPath, '/') >= $this->getUriPathSegmentOffset()) {
+        if ($this->onlyMatchSiteNodes() && \mb_substr_count($requestPath, '/') > $this->getUriPathSegmentOffset()) {
             return false;
         }
         /** @var NodeInterface $matchingRootNode */
@@ -198,13 +198,8 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      * @return NodeInterface
      * @throws NoSuchNodeException
      */
-    protected function fetchNodeForRequestPath(ContentSubgraphInterface $subgraph, NodeInterface $site, string $requestPath, array &$tagArray): NodeInterface
+    protected function fetchNodeForRequestPath(ContentSubgraphInterface $subgraph, NodeInterface $site, string $requestPath, array &$tagArray): ?NodeInterface
     {
-        if (!empty($this->splitString)) {
-            $tmp = explode($this->splitString, $requestPath,1);
-            $requestPath = $tmp[0];
-        }
-
         $remainingUriPathSegments = explode('/', $requestPath);
         $remainingUriPathSegments = array_slice($remainingUriPathSegments, $this->getUriPathSegmentOffset());
         $matchingNode = null;
@@ -219,6 +214,9 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
 
             $childNodes = $subgraph->findChildNodes($currentNode->getNodeAggregateIdentifier(), $documentNodeTypeFilter);
             $currentNode = self::findChildNodeWithMatchingPathSegment($childNodes, $currentPathSegment);
+            if ($currentNode === null) {
+                return null;
+            }
             $tagArray[] = (string)$currentNode->getNodeAggregateIdentifier();
         }
 
@@ -230,13 +228,13 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      * @param string $currentPathSegment
      * @return NodeInterface
      */
-    static protected function findChildNodeWithMatchingPathSegment(array $childNodes, string $currentPathSegment): NodeInterface {
+    static protected function findChildNodeWithMatchingPathSegment(array $childNodes, string $currentPathSegment): ?NodeInterface {
         foreach ($childNodes as $childNode) {
             if ($childNode->getProperty('uriPathSegment') === $currentPathSegment) {
                 return $childNode;
             }
         }
-        throw new NoSuchNodeException(sprintf('No node found on request path "%s"', $currentPathSegment), 1346949857);
+        return null;
     }
 
     /**
