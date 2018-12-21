@@ -6,8 +6,8 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "doctrine/dbal": "~2.7.0",
-        "doctrine/migrations": "~1.8.0",
+        "doctrine/dbal": "*",
+        "doctrine/migrations": "*",
         "neos/event-sourcing": "dev-master",
         "neos/content-repository": "*",
         "neos/content-repository-dimensionspace": "dev-master",
