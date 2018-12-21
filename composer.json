@@ -8,9 +8,9 @@
     "require": {
         "doctrine/dbal": "*",
         "doctrine/migrations": "*",
-        "neos/event-sourcing": "dev-master",
+        "neos/event-sourcing": "*",
         "neos/content-repository": "*",
-        "neos/content-repository-dimensionspace": "dev-master",
+        "neos/content-repository-dimensionspace": "*",
         "neos/neos": "*",
         "neos/neos-ui": "*"
     },
