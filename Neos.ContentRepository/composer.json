@@ -13,7 +13,6 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-files": "*",
         "neos/utility-arrays": "*",
-        "neos/content-repository-dimensionspace": "*",
         "doctrine/orm": "^2.6",
         "gedmo/doctrine-extensions": "^2.4",
         "behat/transliterator": "^1.0"
