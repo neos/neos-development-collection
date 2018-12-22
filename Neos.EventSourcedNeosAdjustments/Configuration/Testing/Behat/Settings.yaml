@@ -1,0 +1,40 @@
+Neos:
+  EventSourcedContentRepository:
+    contentDimensions:
+      language:
+        label: 'Neos.Demo:Main:contentDimensions.language'
+        icon: icon-language
+        defaultValue: en_US
+        resolution:
+          mode: 'uriPathSegment'
+        values:
+          en_US:
+            label: 'English (US)'
+            resolution:
+              value: en
+            specializations:
+              en_UK:
+                label: 'English (UK)'
+                resolution:
+                  value: uk
+          de:
+            label: German
+            resolution:
+              value: de
+            specializations:
+              nl:
+                label: Dutch
+                resolution:
+                  value: nl
+          fr:
+            label: French
+            resolution:
+              value: fr
+          da:
+            label: Danish
+            resolution:
+              value: da
+          lv:
+            label: Latvian
+            resolution:
+              value: lv
