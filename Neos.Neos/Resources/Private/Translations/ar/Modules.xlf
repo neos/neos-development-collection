@@ -563,7 +563,7 @@
 			<target xml:lang="ar" state="needs-translation">Create a new site</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve">
 				<source>Root node name</source>
-			<target xml:lang="ar" state="needs-translation">Root node name</target></trans-unit>
+			<target xml:lang="ar" state="translated">اسم عقدة الجذر</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
 			<target xml:lang="ar" state="translated">نطاقات</target></trans-unit>
@@ -575,7 +575,7 @@
 			<target xml:lang="ar" state="translated">الاسم</target></trans-unit>
       <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
 				<source>Default asset collection</source>
-			<target xml:lang="ar" state="needs-translation">Default asset collection</target></trans-unit>
+			<target xml:lang="ar" state="translated">مجموعة الأصول الافتراضية</target></trans-unit>
       <trans-unit id="sites.sitePackage" xml:space="preserve">
 				<source>Site package</source>
 			<target xml:lang="ar" state="translated">حزمة الموقع</target></trans-unit>
@@ -608,7 +608,7 @@
 			<target xml:lang="ar" state="translated">انشئ موقع فارغ</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
-			<target xml:lang="ar" state="needs-translation">Select a document nodeType</target></trans-unit>
+			<target xml:lang="ar" state="translated">حدد وثيقة نوع العقدة</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
 			<target xml:lang="ar" state="translated">اسم الموقع</target></trans-unit>
