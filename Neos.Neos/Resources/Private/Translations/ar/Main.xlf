@@ -742,7 +742,7 @@
 			<target xml:lang="ar" state="translated">انقل {source} إلى {target}</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target xml:lang="ar" state="needs-translation">Please select the position at which you want {source} inserted relative to {target}.</target></trans-unit>
+			<target xml:lang="ar" state="translated">الرجاء تحديد الموضع الذي تريد إدخال {source} فيه نسبة إلى {target}.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
 			<target xml:lang="ar" state="translated">إدراج</target></trans-unit>
@@ -799,7 +799,7 @@
 			<target xml:lang="ar" state="translated">إزالة التنسيق</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target xml:lang="ar" state="needs-translation">Outdent</target></trans-unit>
+			<target xml:lang="ar" state="translated">تحريك للأعلى</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
 			<target xml:lang="ar" state="translated">المسافة البادئة</target></trans-unit>
@@ -811,7 +811,7 @@
 			<target xml:lang="ar" state="translated">لم يتم العثور على تطابق</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target xml:lang="ar" state="needs-translation">Please enter ###CHARACTERS### more character</target></trans-unit>
+			<target xml:lang="ar" state="translated">الرجاء إدخال # # #CHARACTERS### أكثر من رمز</target></trans-unit>
     </body>
   </file>
 </xliff>
