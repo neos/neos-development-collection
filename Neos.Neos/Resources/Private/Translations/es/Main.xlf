@@ -660,13 +660,13 @@
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
 				<source>Welcome to Neos</source>
-			<target xml:lang="es-ES" state="translated">Bienvenido a Neos</target></trans-unit>
+			<target xml:lang="es-ES" state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
 			<target xml:lang="es-ES" state="translated">Ir a la configuración</target><alt-trans><target xml:lang="es-ES">Ir a configuración</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
 				<source>Technical Information</source>
-			<target xml:lang="es-ES" state="translated">Información técnica</target></trans-unit>
+			<target xml:lang="es-ES" state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target xml:lang="es-ES" state="translated">Falta la página de inicio</target></trans-unit>
