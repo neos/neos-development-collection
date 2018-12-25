@@ -347,7 +347,7 @@
 			<target xml:lang="es-ES" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target xml:lang="es-ES" state="needs-translation">Show preview</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Mostrar vista previa</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
