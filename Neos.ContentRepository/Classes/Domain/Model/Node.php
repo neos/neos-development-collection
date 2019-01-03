@@ -122,7 +122,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Example: /sites/mysitecom/homepage/about@user-admin
      *
      * @return string Node path with context information
-     * @api
+     * @deprecated with version 4.3 - Use the node's NodeAddress instead
      */
     public function getContextPath()
     {
@@ -424,7 +424,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Counting starts with 0 for "/", 1 for "/foo", 2 for "/foo/bar" etc.
      *
      * @return integer
-     * @api
+     * @deprecated with version 4.3 - Use TraversableNodeInterface::findNodePath()->getDepth() instead
      */
     public function getDepth()
     {
@@ -463,6 +463,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return void
      * @throws NodeException
      * @throws NodeTypeNotFoundException
+     * @deprecated with version 4.3 - From 5.0 you will be able to use the ContentStream instead
      */
     public function setWorkspace(Workspace $workspace): void
     {
@@ -481,7 +482,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the workspace this node is contained in
      *
      * @return Workspace
-     * @api
+     * @deprecated with version 4.3 - From 5.0 you will be able to use the ContentStream instead
      */
     public function getWorkspace()
     {
@@ -508,6 +509,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @return void
      * @throws NodeException
      * @throws NodeTypeNotFoundException
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement
      */
     public function setIndex($index): void
     {
@@ -527,6 +529,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * with the same parent node.
      *
      * @return integer
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement
      */
     public function getIndex()
     {
@@ -1013,7 +1016,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      *
      * @param object $contentObject The content object
      * @return void
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
      * @throws NodeTypeNotFoundException
      * @throws NodeException
      */
@@ -1033,7 +1036,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the content object of this node (if any).
      *
      * @return object
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
      */
     public function getContentObject()
     {
@@ -1044,9 +1047,9 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Unsets the content object of this node.
      *
      * @return void
-     * @api
      * @throws NodeTypeNotFoundException
      * @throws NodeException
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
      */
     public function unsetContentObject(): void
     {
@@ -1212,7 +1215,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      *
      * @param string $path Path specifying the node, relative to this node
      * @return NodeInterface|null The specified node or NULL if no such node exists
-     * @api
+     * @deprecated with version 4.3 - use findNamedChildNode() instead - for absolute paths a new API will be added with 5.0
      */
     public function getNode($path): ?NodeInterface
     {
@@ -1339,7 +1342,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * If this node is a removed node.
      *
      * @return boolean
-     * @api
+     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve removed nodes
      */
     public function isRemoved(): bool
     {
@@ -1403,7 +1406,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the date and time before which this node will be automatically hidden.
      *
      * @return \DateTimeInterface Date before this node will be hidden
-     * @api
+     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
      */
     public function getHiddenBeforeDateTime(): ?\DateTimeInterface
     {
@@ -1435,7 +1438,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the date and time after which this node will be automatically hidden.
      *
      * @return \DateTimeInterface Date after which this node will be hidden
-     * @api
+     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
      */
     public function getHiddenAfterDateTime(): ?\DateTimeInterface
     {
@@ -1482,6 +1485,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @api
      * @throws NodeTypeNotFoundException
      * @throws NodeException
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function setAccessRoles(array $accessRoles): void
     {
@@ -1501,7 +1505,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the names of defined access roles
      *
      * @return array
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function getAccessRoles(): array
     {
@@ -1513,7 +1517,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * current security context.
      *
      * @return boolean
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function hasAccessRestrictions(): bool
     {
@@ -1527,7 +1531,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * taken into account.
      *
      * @return boolean
-     * @api
+     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
      */
     public function isVisible(): bool
     {
@@ -1549,7 +1553,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Tells if this node may be accessed according to the current security context.
      *
      * @return boolean
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function isAccessible(): bool
     {
@@ -1560,7 +1564,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the context this node operates in.
      *
      * @return Context
-     * @api
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement, but you can access the node's subGraph via getSubgraph()
      */
     public function getContext(): Context
     {
@@ -1730,6 +1734,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
 
     /**
      * @return NodeData
+     * @deprecated with version 4.3 - will be removed with 5.0 without replacement
      */
     public function getNodeData(): NodeData
     {
@@ -1751,6 +1756,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Return the assigned content dimensions of the node.
      *
      * @return array
+     * @deprecated with version 4.3 - will be replaced in 5.0 by getOriginDimensionSpacePoint() and getDimensionSpacePoint()
      */
     public function getDimensions(): array
     {
@@ -1874,6 +1880,8 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * should not be deleted.
      *
      * @return boolean true if this node is auto-created by the parent.
+     * @deprecated with version 4.3 - will be removed with 5.0. This information should not be required usually. Otherwise it can be determined via:
+     * if (array_key_exists((string)$node->getNodeName(), $parent->getNodeType()->getAutoCreatedChildNodes()))
      */
     public function isAutoCreated(): bool
     {
