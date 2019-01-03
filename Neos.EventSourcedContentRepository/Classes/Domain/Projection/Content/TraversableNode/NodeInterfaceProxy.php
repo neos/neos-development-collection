@@ -96,7 +96,7 @@ trait NodeInterfaceProxy
         return $this->node->getProperty($propertyName);
     }
 
-    public function isHidden()
+    public function isHidden(): bool
     {
         return $this->node->isHidden();
     }
@@ -104,5 +104,10 @@ trait NodeInterfaceProxy
     public function getLabel(): string
     {
         return $this->node->getLabel();
+    }
+
+    public function isRoot(): bool
+    {
+        return $this->node->isRoot();
     }
 }

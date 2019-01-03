@@ -133,6 +133,12 @@ class BackendController extends ActionController
      */
     protected $styleAndJavascriptInclusionService;
 
+    /**
+     * @Flow\InjectConfiguration(package="Neos.Neos.Ui", path="splashScreen.partial")
+     * @var string
+     */
+    protected $splashScreenPartial;
+
     public function initializeView(ViewInterface $view)
     {
         $view->setFusionPath('backend');
@@ -175,6 +181,7 @@ class BackendController extends ActionController
         $this->view->assign('site', $siteNode);
         $this->view->assign('headScripts', $this->styleAndJavascriptInclusionService->getHeadScripts());
         $this->view->assign('headStylesheets', $this->styleAndJavascriptInclusionService->getHeadStylesheets());
+        $this->view->assign('splashScreenPartial', $this->splashScreenPartial);
         $this->view->assign('sitesForMenu', $this->menuHelper->buildSiteList($this->getControllerContext()));
 
         $this->view->assignMultiple([

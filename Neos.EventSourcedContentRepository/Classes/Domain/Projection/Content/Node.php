@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
+use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
@@ -103,6 +104,17 @@ class Node implements NodeInterface
         $this->nodeName = $nodeName;
         $this->hidden = $hidden;
         $this->properties = $properties;
+    }
+
+    /**
+     * Whether or not this node is the root of the graph, i.e. has no parent node
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    public function isRoot(): bool
+    {
+        return $this->nodeAggregateIdentifier->equals(RootNodeIdentifiers::rootNodeAggregateIdentifier());
     }
 
     /**
@@ -210,12 +222,12 @@ class Node implements NodeInterface
      */
     public function getCacheEntryIdentifier():string
     {
-        return (string)$this->getNodeIdentifier() . '@' . (string)$this->getContentStreamIdentifier() . '@' . $this->getDimensionSpacePoint()->serializeForUri();
+        return $this->getNodeIdentifier() . '@' . $this->getContentStreamIdentifier() . '@' . $this->getDimensionSpacePoint()->serializeForUri();
     }
 
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
-        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
+        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this) ?? '';
     }
 }

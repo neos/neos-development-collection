@@ -106,13 +106,14 @@ export default class DimensionSwitcher extends PureComponent {
     // Merge active presets comming from redux with local transientPresets state (i.e. presents selected, but not yet applied)
     //
     getEffectivePresets = () => {
+    	return this.props.activePresets;
         const activePresets = this.props.activePresets.map(dimensionPreset => $get('value', dimensionPreset));
         return Object.assign({}, activePresets.toJS()/*, this.state.transientPresets*/); // TODO: re-introduce transient presets
     };
 
     handleSelectPreset = (selectedDimensionName, presetName) => {
         // If only one dimension commit right away; else store in the transient state
-        if (this.props.contentDimensions.count() === 1) {
+        if (this.props.contentDimensions.length === 1) {
             this.setState({isOpen: false});
             this.props.selectPreset({[selectedDimensionName]: presetName});
         } else {
@@ -158,7 +159,7 @@ export default class DimensionSwitcher extends PureComponent {
 
     render() {
         const {contentDimensions, activePresets} = this.props;
-        const contentDimensionsObject = contentDimensions.toObject();
+        const contentDimensionsObject = contentDimensions;
         const contentDimensionsObjectKeys = Object.keys(contentDimensionsObject);
 
         return contentDimensionsObjectKeys.length ? (
@@ -202,7 +203,7 @@ export default class DimensionSwitcher extends PureComponent {
                             />
                         );
                     })}
-                    {contentDimensions.count() > 1 && <div className={style.buttonGroup}>
+                    {contentDimensions.length > 1 && <div className={style.buttonGroup}>
                         <Button
                             onClick={this.handleClose}
                             style="lighter"
@@ -226,7 +227,7 @@ export default class DimensionSwitcher extends PureComponent {
         const {contentDimensions, allowedPresets} = this.props;
         const dimensionConfiguration = $get(dimensionName, contentDimensions);
 
-        return dimensionConfiguration.get('values'); /*.map(
+        return dimensionConfiguration.value; /*.map(
             (presetConfiguration, presetName) => allowedPresets.get(dimensionName) && allowedPresets.get(dimensionName).contains(presetName) ? presetConfiguration : presetConfiguration.set('disabled', true)
         );*/ // TODO
     }
