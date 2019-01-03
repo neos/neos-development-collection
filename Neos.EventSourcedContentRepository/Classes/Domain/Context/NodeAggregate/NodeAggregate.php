@@ -107,7 +107,7 @@ final class NodeAggregate
                         $occupiedDimensionSpacePoints[$event->getGeneralizationLocation()->getHash()] = $event->getGeneralizationLocation();
                         break;
                     default:
-                        continue;
+                        continue 2;
                 }
             }
         }
@@ -143,7 +143,7 @@ final class NodeAggregate
                         }
                         break;
                     default:
-                        continue;
+                        continue 2;
                 }
             }
         }
@@ -172,7 +172,7 @@ final class NodeAggregate
                         $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getGeneralizationLocation()->equals($dimensionSpacePoint);
                         break;
                     default:
-                        continue;
+                        continue 2;
                 }
             }
         }
