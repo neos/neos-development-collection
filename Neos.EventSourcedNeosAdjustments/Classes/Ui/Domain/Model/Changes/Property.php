@@ -12,10 +12,13 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -203,8 +206,29 @@ class Property extends AbstractChange
                 $nodeType = $this->nodeTypeManager->getNodeType($value);
                 $node = $this->changeNodeType($node, $nodeType);
             } elseif ($propertyName{0} === '_') {
-                throw new \Exception("TODO FIX");
-                ObjectAccess::setProperty($node, substr($propertyName, 1), $value);
+                if ($propertyName === '_hidden') {
+                    if ($value === true) {
+                        $command = new HideNode(
+                            $node->getContentStreamIdentifier(),
+                            $node->getNodeAggregateIdentifier(),
+                            // TODO: what do we want to hide? I.e. including NESTED dimensions?
+                            new DimensionSpacePointSet([$node->getOriginDimensionSpacePoint()])
+                        );
+                        $this->nodeCommandHandler->handleHideNode($command);
+                    } else {
+                        // unhide
+                        $command = new ShowNode(
+                            $node->getContentStreamIdentifier(),
+                            $node->getNodeAggregateIdentifier(),
+                            // TODO: what do we want to unhide? I.e. including NESTED dimensions?
+                            new DimensionSpacePointSet([$node->getOriginDimensionSpacePoint()])
+                        );
+                        $this->nodeCommandHandler->handleShowNode($command);
+                    }
+                } else {
+                    throw new \Exception("TODO FIX");
+                    ObjectAccess::setProperty($node, substr($propertyName, 1), $value);
+                }
             } else {
                 $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
                 $command = new SetNodeProperty(
