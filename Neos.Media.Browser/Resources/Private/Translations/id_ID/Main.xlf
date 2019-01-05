@@ -58,10 +58,10 @@
 			<target xml:lang="id" state="translated">Menurun</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="id" state="translated">Urutkan arah Ascending</target></trans-unit>
+			<target xml:lang="id" state="translated">Urutkan Menaik</target><alt-trans><target xml:lang="id">Urutkan arah Ascending</target></alt-trans></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="id" state="translated">Urutkan arah Descending</target></trans-unit>
+			<target xml:lang="id" state="translated">Urutkan Menurun</target><alt-trans><target xml:lang="id">Urutkan arah Descending</target></alt-trans></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="id" state="translated">Drag dan drop pada tag atau koleksi</target></trans-unit>
@@ -100,7 +100,7 @@
 			<target xml:lang="id" state="translated">Gantikan</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="id" state="translated">Ganti sumber daya aset</target></trans-unit>
+			<target xml:lang="id" state="translated">Mengganti sumber aset</target><alt-trans><target xml:lang="id">Ganti sumber daya aset</target></alt-trans></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="id" state="translated">Simpan</target></trans-unit>
@@ -382,13 +382,13 @@
 			<target xml:lang="id" state="translated">Menghasilkan pengalihan dari url file asli ke url baru</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target xml:lang="id" state="translated">'Sumber daya tipe " {0} " hanya bisa diganti dengan sumber daya yang serupa. Punya tipe " {1} " '</target></trans-unit>
+			<target xml:lang="id" state="translated">'Sumber tipe "{0}" hanya bisa diganti oleh sumber yang sama. Dapatkan tipe "{1}"'</target><alt-trans><target xml:lang="id">'Sumber daya tipe " {0} " hanya bisa diganti dengan sumber daya yang serupa. Punya tipe " {1} " '</target></alt-trans></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target xml:lang="id" state="translated">Tidak ada akses ke ruang kerja " {0} "</target></trans-unit>
+			<target xml:lang="id" state="translated">Tidak bisa mengakses bidang kerja " {0} "</target><alt-trans><target xml:lang="id">Tidak ada akses ke ruang kerja " {0} "</target></alt-trans></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target xml:lang="id" state="translated">Tidak ada simpul dokumen yang ditemukan untuk node ini</target></trans-unit>
+			<target xml:lang="id" state="translated">Tak ditemukan node dokumen untuk node ini</target><alt-trans><target xml:lang="id">Tak ditemukan simpul dokumen untuk simpul ini</target></alt-trans><alt-trans><target xml:lang="id">Tidak ada simpul dokumen yang ditemukan untuk node ini</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
