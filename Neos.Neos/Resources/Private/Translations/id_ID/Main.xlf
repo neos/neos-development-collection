@@ -311,7 +311,7 @@
 			<target xml:lang="id" state="translated">Klik untuk menghapus</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="id" state="translated">Klik untuk membuat yang baru</target></trans-unit>
+			<target xml:lang="id" state="translated">Klik untuk buat yang baru</target><alt-trans><target xml:lang="id">Klik untuk membuat yang baru</target></alt-trans></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
 			<target xml:lang="id" state="translated">Status</target></trans-unit>
@@ -326,7 +326,7 @@
 			<target xml:lang="id" state="translated">Domain</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="id" state="translated">Ya, hapus saja!</target></trans-unit>
+			<target xml:lang="id" state="translated">Ya, hapus!</target><alt-trans><target xml:lang="id">Ya, hapus saja!</target></alt-trans></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target xml:lang="id" state="translated">Kunci paket</target></trans-unit>
@@ -739,46 +739,46 @@
 			<target xml:lang="id" state="translated">Salin {source} ke {target}</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
-			<target xml:lang="id" state="translated">Memindahkan {source} ke {target}</target></trans-unit>
+			<target xml:lang="id" state="translated">Pindah {source} ke {target}</target><alt-trans><target xml:lang="id">Memindahkan {source} ke {target}</target></alt-trans></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target xml:lang="id" state="translated">Harap pilih posisi yang Anda inginkan {source} dimasukkan relatif terhadap {target}.</target></trans-unit>
+			<target xml:lang="id" state="translated">Pilihlah pada posisi mana anda ingin {source} dimasukkan, relatif terhadap {target}.</target><alt-trans><target xml:lang="id">Harap pilih posisi yang Anda inginkan {source} dimasukkan relatif terhadap {target}.</target></alt-trans></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
-			<target xml:lang="id" state="translated">Memasukkan</target></trans-unit>
+			<target xml:lang="id" state="translated">Sisipkan</target><alt-trans><target xml:lang="id">Memasukkan</target></alt-trans></trans-unit>
       <trans-unit id="insertMode" xml:space="preserve">
 				<source>Insert mode</source>
-			<target xml:lang="id" state="translated">Sisipkan mode</target></trans-unit>
+			<target xml:lang="id" state="translated">Sisipkan mode</target><alt-trans><target xml:lang="id">Mode Penyisipan</target></alt-trans></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target xml:lang="id" state="translated">Pilih Rasio Aspek</target></trans-unit>
+			<target xml:lang="id" state="translated">Tentukan Perbandingan Segi</target><alt-trans><target xml:lang="id">Pilih Rasio Aspek</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
-			<target xml:lang="id" state="translated">Berani</target></trans-unit>
+			<target xml:lang="id" state="translated">Tebal</target><alt-trans><target xml:lang="id">Berani</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
 				<source>Italic</source>
 			<target xml:lang="id" state="translated">Miring</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
 				<source>Underline</source>
-			<target xml:lang="id" state="translated">Menggarisbawahi</target></trans-unit>
+			<target xml:lang="id" state="translated">Garis Bawah</target><alt-trans><target xml:lang="id">Menggarisbawahi</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
-			<target xml:lang="id" state="translated">Tanda tangansss</target></trans-unit>
+			<target xml:lang="id" state="translated">Tulisan di bawah</target><alt-trans><target xml:lang="id">Tanda tangansss</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
 			<target xml:lang="id" state="translated">Tulisan di atas</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
-			<target xml:lang="id" state="translated">Dicoret</target></trans-unit>
+			<target xml:lang="id" state="translated">Coret</target><alt-trans><target xml:lang="id">Dicoret</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve" approved="yes">
 				<source>Link</source>
 			<target xml:lang="id" state="translated">Link / tautan</target><alt-trans><target xml:lang="id">Tautan</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
-			<target xml:lang="id" state="translated">Daftar pesanan</target></trans-unit>
+			<target xml:lang="id" state="translated">Daftar Setelah Diurutkan</target><alt-trans><target xml:lang="id">Daftar pesanan</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
 				<source>Unordered list</source>
-			<target xml:lang="id" state="translated">Daftar tak berurutan</target></trans-unit>
+			<target xml:lang="id" state="translated">Daftar Tanpa Diurutkan</target><alt-trans><target xml:lang="id">Daftar tak berurutan</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
 				<source>Align left</source>
 			<target xml:lang="id" state="translated">Rata kiri</target></trans-unit>
@@ -787,31 +787,31 @@
 			<target xml:lang="id" state="translated">Rata kanan</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
 				<source>Align center</source>
-			<target xml:lang="id" state="translated">Pusat sejajar</target></trans-unit>
+			<target xml:lang="id" state="translated">Rata Tengah</target><alt-trans><target xml:lang="id">Pusat sejajar</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
 				<source>Align justify</source>
-			<target xml:lang="id" state="translated">Align membenarkan</target></trans-unit>
+			<target xml:lang="id" state="translated">Rata Kanan-Kiri</target><alt-trans><target xml:lang="id">Align membenarkan</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
 				<source>Table</source>
-			<target xml:lang="id" state="translated">Meja</target></trans-unit>
+			<target xml:lang="id" state="translated">Tabel</target><alt-trans><target xml:lang="id">Meja</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
 				<source>Remove format</source>
 			<target xml:lang="id" state="translated">Hapus format</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target xml:lang="id" state="translated">Outdent</target></trans-unit>
+			<target xml:lang="id" state="translated">Menjorok Keluar</target><alt-trans><target xml:lang="id">Outdent</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target xml:lang="id" state="translated">Indentasi</target></trans-unit>
+			<target xml:lang="id" state="translated">Menjorok Masuk</target><alt-trans><target xml:lang="id">Indentasi</target></alt-trans></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target xml:lang="id" state="translated">Buat baru</target></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
-			<target xml:lang="id" state="translated">Tidak ditemukan kecocokan</target></trans-unit>
+			<target xml:lang="id" state="translated">Tidak ada temuan yang cocok</target><alt-trans><target xml:lang="id">Tidak ditemukan kecocokan</target></alt-trans></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target xml:lang="id" state="translated">Silakan masukkan ###KARAKTER### lebih banyak karakter</target></trans-unit>
+			<target xml:lang="id" state="translated">Masukkan ## #CHARACTERS### karakter lain</target><alt-trans><target xml:lang="id">Silakan masukkan ###KARAKTER### lebih banyak karakter</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
