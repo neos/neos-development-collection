@@ -218,7 +218,7 @@ interface NodeInterface
      * Returns the current state of the hidden flag
      *
      * @return boolean
-     * @api
+     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
      */
     public function isHidden();
 
