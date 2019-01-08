@@ -59,11 +59,6 @@ class Node
     public $nodeTypeName;
 
     /**
-     * @var bool
-     */
-    public $hidden;
-
-    /**
      * Transient node name to store a node name after fetching a node with hierarchy (not always available)
      *
      * @var NodeName
@@ -80,7 +75,6 @@ class Node
      * @param string $originDimensionSpacePointHash
      * @param array $properties
      * @param NodeTypeName $nodeTypeName
-     * @param bool $hidden
      * @param NodeName $nodeName
      */
     public function __construct(
@@ -91,7 +85,6 @@ class Node
         ?string $originDimensionSpacePointHash,
         ?array $properties,
         NodeTypeName $nodeTypeName,
-        bool $hidden = false,
         NodeName $nodeName = null
     ) {
         $this->relationAnchorPoint = $relationAnchorPoint;
@@ -102,7 +95,6 @@ class Node
         $this->properties = $properties;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeName = $nodeName;
-        $this->hidden = $hidden;
     }
 
     /**
@@ -117,8 +109,7 @@ class Node
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
-            'nodetypename' => (string) $this->nodeTypeName,
-            'hidden' => (int)$this->hidden
+            'nodetypename' => (string) $this->nodeTypeName
         ]);
     }
 
@@ -130,8 +121,7 @@ class Node
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
-            'nodetypename' => (string) $this->nodeTypeName,
-            'hidden' => (int)$this->hidden
+            'nodetypename' => (string) $this->nodeTypeName
         ],
         [
             'relationanchorpoint' => $this->relationAnchorPoint
@@ -163,7 +153,6 @@ class Node
             $databaseRow['origindimensionspacepointhash'],
             json_decode($databaseRow['properties'], true),
             new NodeTypeName($databaseRow['nodetypename']),
-            (bool)$databaseRow['hidden'],
             isset($databaseRow['name']) ? new NodeName($databaseRow['name']) : null
         );
     }

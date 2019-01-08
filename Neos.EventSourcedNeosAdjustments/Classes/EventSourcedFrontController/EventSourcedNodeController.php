@@ -134,13 +134,13 @@ class EventSourcedNodeController extends ActionController
     {
         $nodeAddress = $node;
 
+        $inBackend = !$nodeAddress->isInLiveWorkspace();
+
         $subgraph = $this->contentGraph->getSubgraphByIdentifier(
             $nodeAddress->getContentStreamIdentifier(),
             $nodeAddress->getDimensionSpacePoint(),
-            VisibilityConstraints::frontend()
+            $inBackend ? VisibilityConstraints::withoutRestrictions() : VisibilityConstraints::frontend()
         );
-
-        $inBackend = !$nodeAddress->isInLiveWorkspace();
 
         $visibilityConstraints = $this->createVisibilityConstraints($inBackend);
         $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);

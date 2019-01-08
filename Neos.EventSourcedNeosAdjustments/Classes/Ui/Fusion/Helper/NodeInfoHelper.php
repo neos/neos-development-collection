@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
@@ -84,6 +85,12 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     protected $nodePropertyConverterService;
 
     /**
+     * @Flow\Inject
+     * @var NodeHiddenStateFinder
+     */
+    protected $nodeHiddenStateFinder;
+
+    /**
      * @Flow\InjectConfiguration(path="userInterface.navigateComponent.nodeTree.presets.default.baseNodeType", package="Neos.Neos")
      * @var string
      */
@@ -139,7 +146,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         $nodeInfo = $this->getBasicNodeInformation($node);
         $nodeInfo['properties'] = [
             // if we are only rendering the tree state, ensure _isHidden is sent to hidden nodes are correctly shown in the tree.
-            '_hidden' => $node->isHidden(),
+            '_hidden' => $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden(),
             //'_hiddenInIndex' => $node->isHiddenInIndex(),
             //'_hiddenBeforeDateTime' => $node->getHiddenBeforeDateTime() instanceof \DateTimeInterface,
             //'_hiddenAfterDateTime' => $node->getHiddenAfterDateTime() instanceof \DateTimeInterface,
