@@ -72,4 +72,3 @@ Feature: Single Node operations on live workspace
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node "[node-identifier]" to exist in the graph projection
-    And I expect the Node "[node-identifier]" is shown

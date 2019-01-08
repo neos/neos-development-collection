@@ -70,11 +70,6 @@ class Node implements NodeInterface
     protected $nodeName;
 
     /**
-     * @var bool
-     */
-    protected $hidden;
-
-    /**
      * @var PropertyCollection
      */
     protected $properties;
@@ -89,10 +84,9 @@ class Node implements NodeInterface
      * @param NodeTypeName $nodeTypeName
      * @param NodeType $nodeType
      * @param NodeName $nodeName
-     * @param bool $hidden
      * @param PropertyCollection $properties
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, bool $hidden, PropertyCollection $properties)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, PropertyCollection $properties)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -102,7 +96,6 @@ class Node implements NodeInterface
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
-        $this->hidden = $hidden;
         $this->properties = $properties;
     }
 
@@ -179,14 +172,6 @@ class Node implements NodeInterface
     public function getNodeName(): NodeName
     {
         return $this->nodeName;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHidden(): bool
-    {
-        return $this->hidden;
     }
 
     /**
