@@ -114,7 +114,7 @@ class Node implements NodeInterface
      */
     public function isRoot(): bool
     {
-        $this->nodeAggregateIdentifier->equals(RootNodeIdentifiers::rootNodeAggregateIdentifier());
+        return $this->nodeAggregateIdentifier->equals(RootNodeIdentifiers::rootNodeAggregateIdentifier());
     }
 
     /**
@@ -222,7 +222,7 @@ class Node implements NodeInterface
      */
     public function getCacheEntryIdentifier():string
     {
-        return (string)$this->getNodeIdentifier() . '@' . (string)$this->getContentStreamIdentifier() . '@' . $this->getDimensionSpacePoint()->serializeForUri();
+        return $this->getNodeIdentifier() . '@' . $this->getContentStreamIdentifier() . '@' . $this->getDimensionSpacePoint()->serializeForUri();
     }
 
 
