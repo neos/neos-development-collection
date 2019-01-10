@@ -1,0 +1,81 @@
+`3.3.17 (2019-01-10) <https://github.com/neos/neos-development-collection/releases/tag/3.3.17>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Don't create duplicate auto-created child nodes <https://github.com/neos/neos-development-collection/pull/2307>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This checks for existing auto-created child nodes before they
+are created in `createVariantForContext($context)`.
+
+Fixes #782
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`BUGFIX: Continue in switch targets surrounding foreach <https://github.com/neos/neos-development-collection/pull/2309>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``ContentRepository``
+
+`TASK: Remove the feature list <https://github.com/neos/neos-development-collection/pull/2306>`_
+------------------------------------------------------------------------------------------------
+
+According to neos/documentation#8, feature list was removed. A redirect
+on RTD has been added.
+
+* Packages: ``Neos``
+
+`TASK: Documentation tweaks <https://github.com/neos/neos-development-collection/pull/2305>`_
+---------------------------------------------------------------------------------------------
+
+This includes:
+
+- TASK: Remove outdated toctree reverse setup
+- TASK: Fix embedded rST markup in command controller
+- TASK: Fix rST markup errors
+- TASK: Remove user guide (is on neos.io now)
+
+Resolves https://github.com/neos/documentation/issues/11
+
+* Packages: ``Neos``
+
+`BUGFIX: Use nodeType instead of documentNodeType in history translations <https://github.com/neos/neos-development-collection/pull/2297>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+In the history module, the translation uses the documents NodeType instead of the actually modified nodes NodeType.
+
+Additionally,  the `linkedNode` and `user` templates get trimmed to prevent ugly spaces.
+
+* Packages: ``Neos``
+
+`BUGFIX: fix generation of i18n lables for the creationDialog <https://github.com/neos/neos-development-collection/pull/2164>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This fixes support for I18n labels of `editorOptions` in the `creationDialog`.
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Fix parameters of internal method call <https://github.com/neos/neos-development-collection/pull/2285>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The method `repairShadowNodes` calls `fixShadowNodesInWorkspace`
+in turn. The call passes the `$nodeType` parameter in place of the
+`$dryRun`.
+
+This changes fixes that and corrects the return type annotation of
+`fixShadowNodesInWorkspace` as well.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Neos``
+
+`Replace a few occurrences of TYPO3 with Neos <https://github.com/neos/neos-development-collection/pull/2273>`_
+---------------------------------------------------------------------------------------------------------------
+
+This change replaces a few occurrences of "TYPO3" with "Neos",
+mostly affecting code examples and documentation.
+
+* Packages: ``Media`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.3.16...3.3.17>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
