@@ -1,0 +1,25 @@
+`4.2.4 (2019-01-10) <https://github.com/neos/neos-development-collection/releases/tag/4.2.4>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix example in the documentation  <https://github.com/neos/neos-development-collection/pull/2319>`_
+------------------------------------------------------------------------------------------------------------
+
+`Neos.Fusion:Loop` had a incorrect example using the old Fusion prototype name
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Don't create duplicate auto-created child nodes <https://github.com/neos/neos-development-collection/pull/2307>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This checks for existing auto-created child nodes before they
+are created in `createVariantForContext($context)`.
+
+Fixes #782
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.2.3...4.2.4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
