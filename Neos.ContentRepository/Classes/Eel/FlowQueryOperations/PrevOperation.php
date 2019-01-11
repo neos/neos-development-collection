@@ -82,8 +82,10 @@ class PrevOperation extends AbstractOperation
     {
         try {
             $parentNode = $contextNode->findParentNode();
-            return $parentNode->findChildNodes()->next($contextNode);
+            return $parentNode->findChildNodes()->previous($contextNode);
         } catch (NodeException $e) {
+            return null;
+        } catch (\InvalidArgumentException $e) {
             return null;
         }
     }

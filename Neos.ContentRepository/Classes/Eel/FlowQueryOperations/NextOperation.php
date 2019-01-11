@@ -85,6 +85,8 @@ class NextOperation extends AbstractOperation
             return $parentNode->findChildNodes()->next($contextNode);
         } catch (NodeException $e) {
             return null;
+        } catch (\InvalidArgumentException $e) {
+            return null;
         }
     }
 }
