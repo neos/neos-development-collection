@@ -15,20 +15,20 @@ This is the package bundle you can install alongside a plain Neos to play around
 | Feature                     | Current CR | Event Sourced CR |
 | --------------------------- |:----------:|:----------------:|
 | **Basics**                  |            |                  |
-| Create/ Edit / Delete Nodes |     ✅     |        ⏩        |
+| Create/ Edit / Delete Nodes |     ✅     |        ✅        |
 | Shortcut Handling            |    ✅     |                  |
-| Query Nodes                 |     ✅     |        ⏩        |
+| Query Nodes                 |     ✅     |        ✅        |
 | Cut / Copy / Paste          |     ✅     |                  |
 | Move Nodes                  |     ✅     |        ⏩        |
-| Hide Nodes                  |     ✅     |                  |
+| Hide Nodes                  |     ✅     |        ✅        |
 | History                     |     ✅     |                  |
 | Undo / Redo                 |     🚫     |                  |
 | Setting Start / End time    |     ✅     |                  |
-| Workspaces                  |     ✅     |                  |
-| Resolving Referencing Nodes |     🚫     |        ⏩        |
+| Workspaces                  |     ✅     |        ⏩        |
+| Resolving Referencing Nodes |     🚫     |        ✅        |
 | **Advanced**                |            |                  |
-| Dimensions                  |     ✅     |        ⏩        |
-| Dimension Fallback          |     ✅     |        ⏩        |
+| Dimensions                  |     ✅     |        (✅)      |
+| Dimension Fallback          |     ✅     |       (✅)       |
 | Multiple Sites              |     ✅     |                  |
 | **Maintenance**             |            |                  |
 | Export / Import             |     ✅     |                  |
