@@ -43,7 +43,8 @@ This is the package bundle you can install alongside a plain Neos to play around
 The Event Sourced Content Repository relies on a feature called (Recursive) Common Table Expressions (CTE) that require
 * [MySQL](https://www.mysql.com/why-mysql/presentations/mysql-80-common-table-expressions/): 8.0+
 * [MariaDB](https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/): 10.2.2+
-* or [PostgreSQL](https://www.postgresql.org/docs/8.4/queries-with.html): 8.4+
+
+Lateron, we will also support [PostgreSQL](https://www.postgresql.org/docs/8.4/queries-with.html). (We know it will work, but we did not create migrations or did testing yet).
 
 ### PHP
 
