@@ -310,7 +310,10 @@ class UserService
     public function deleteUser(User $user)
     {
         foreach ($user->getAccounts() as $account) {
-            $this->deletePersonalWorkspace($account->getAccountIdentifier());
+            $this->securityContext->withoutAuthorizationChecks(function () use ($account) {
+                $this->deletePersonalWorkspace($account->getAccountIdentifier());
+            });
+
             $this->accountRepository->remove($account);
         }
 
