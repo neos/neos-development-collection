@@ -25,6 +25,24 @@
   font-weight: 700;
   src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url("../Fonts/NotoSans/NotoSans-BoldItalic.ttf") format("truetype");
 }
+/*!
+ * Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ */
+@font-face {
+  font-family: 'FontAwesome';
+  font-style: normal;
+  font-weight: 900;
+  src: url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.eot");
+  src: url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.woff2") format("woff2"), url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.woff") format("woff"), url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.ttf") format("truetype"), url("../../Neos.Neos/Library/fontawesome/webfonts/fa-solid-900.svg#fontawesome") format("svg");
+}
+.fa,
+.fas,
+.neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a.neos-drag-active:not(.neos-active)::after {
+  font-family: 'FontAwesome';
+  font-weight: 900;
+}
+
 .neos.media-browser-inspector {
   padding: 40px 54px;
 }
@@ -125,6 +143,10 @@
     margin: 0;
   }
 }
+.neos.media-browser .neos-media-content {
+  display: flex;
+  flex-direction: row;
+}
 .neos.media-browser .neos-media-content:not(.neos-media-aside-condensed) {
   *zoom: 1;
 }
@@ -181,6 +203,9 @@
 }
 .neos.media-browser .neos-media-content .neos-search button[type="submit"] i {
   vertical-align: baseline;
+}
+.neos.media-browser .neos-media-content.neos-media-aside-condensed {
+  flex-direction: column;
 }
 .neos.media-browser .neos-media-content.neos-media-aside-condensed .neos-media-aside {
   margin-top: 32px;
@@ -297,6 +322,9 @@
   max-width: 320px;
 }
 @media (max-width: 767px) {
+  .neos.media-browser .neos-media-content {
+    flex-direction: column;
+  }
   .neos.media-browser .neos-media-content .neos-media-aside {
     margin-top: 32px;
     *zoom: 1;
@@ -479,8 +507,7 @@
   display: inline-block;
   font-style: normal;
   font-variant: normal;
-  font-family: FontAwesome;
-  font-weight: 900;
+  font-weight: normal;
   line-height: 1;
   vertical-align: -.125em;
   content: \f063;
@@ -757,15 +784,6 @@
 .neos.media-browser:not(.media-module) .neos-media-assets .neos-thumbnails li .neos-img-container:hover {
   cursor: pointer;
   outline: 4px solid #00b5ff;
-}
-.neos.media-browser .neos-media-content {
-  display: flex;
-  flex-direction: row;
-}
-@media screen and (max-width: 767px) {
-  .neos.media-browser .neos-media-content {
-    flex-direction: column;
-  }
 }
 .neos.media-browser .neos-image-inputs,
 .neos.media-browser .neos-image-example {
