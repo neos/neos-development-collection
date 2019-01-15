@@ -15,8 +15,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 
-final class ShowNode implements \JsonSerializable
+final class ShowNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -89,5 +90,14 @@ final class ShowNode implements \JsonSerializable
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'affectedDimensionSpacePoints' => $this->affectedDimensionSpacePoints,
         ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    {
+        return new ShowNode(
+            $targetContentStream,
+            $this->nodeAggregateIdentifier,
+            $this->affectedDimensionSpacePoints
+        );
     }
 }

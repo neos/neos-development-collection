@@ -18,6 +18,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 
 /**
  * CreateNodeAggregateWithNode command
@@ -26,7 +27,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
  * The node will be appended as child node of the given `parentNodeIdentifier` which must be visible in the given
  * `dimensionSpacePoint`.
  */
-final class CreateNodeAggregateWithNode implements \JsonSerializable
+final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -168,5 +169,18 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable
             'parentNodeIdentifier' => $this->parentNodeIdentifier,
             'nodeName' => $this->nodeName,
         ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    {
+        return new CreateNodeAggregateWithNode(
+            $targetContentStream,
+            $this->nodeAggregateIdentifier,
+            $this->nodeTypeName,
+            $this->dimensionSpacePoint,
+            $this->nodeIdentifier,
+            $this->parentNodeIdentifier,
+            $this->nodeName
+        );
     }
 }

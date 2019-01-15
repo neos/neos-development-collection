@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
+namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,6 +14,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 
+/**
+ * This interface is implemented by commands and events which allow to be copied to a different content stream.
+ */
 interface CopyableAcrossContentStreamsInterface
 {
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream);

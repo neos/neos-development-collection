@@ -18,11 +18,12 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\Node;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 
 /**
  * AddNodeToAggregate command
  */
-final class AddNodeToAggregate implements \JsonSerializable
+final class AddNodeToAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -149,5 +150,17 @@ final class AddNodeToAggregate implements \JsonSerializable
             'parentNodeIdentifier' => $this->parentNodeIdentifier,
             'nodeName' => $this->nodeName,
         ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    {
+        return new AddNodeToAggregate(
+            $targetContentStream,
+            $this->nodeAggregateIdentifier,
+            $this->dimensionSpacePoint,
+            $this->nodeIdentifier,
+            $this->parentNodeIdentifier,
+            $this->nodeName
+        );
     }
 }

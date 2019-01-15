@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Exception;
 
 /**
@@ -25,7 +26,7 @@ use Neos\EventSourcedContentRepository\Exception;
  * NOTE: If the last edge pointing to a node is removed, the corresponding node is removed as well (as it
  * is not reachable anymore).
  */
-final class RemoveNodesFromAggregate implements \JsonSerializable
+final class RemoveNodesFromAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -100,5 +101,14 @@ final class RemoveNodesFromAggregate implements \JsonSerializable
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'dimensionSpacePointSet' => $this->dimensionSpacePointSet,
         ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    {
+        return new RemoveNodesFromAggregate(
+            $targetContentStream,
+            $this->nodeAggregateIdentifier,
+            $this->dimensionSpacePointSet
+        );
     }
 }
