@@ -40,7 +40,7 @@ Configuration
 
 In your generator class use the ``AbstractThumbnailGenerator::getOption()`` to access your settings::
 
-    TYPO3:
+    Neos:
       Media:
         thumbnailGenerators:
           'Your\Package\Domain\Model\ThumbnailGenerator\YourOwnThumbnailGenerator':
@@ -53,8 +53,8 @@ Remember to add the Media Package in your package ``composer.json``` to load the
     {
         ...
         "require": {
-            "typo3/flow": "*",
-            "typo3/media": "*"
+            "neos/flow": "*",
+            "neos/media": "*"
         }
         ...
     }

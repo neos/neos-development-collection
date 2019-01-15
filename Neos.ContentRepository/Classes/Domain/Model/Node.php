@@ -1731,7 +1731,11 @@ class Node implements NodeInterface, CacheAwareInterface
          * @var $autoCreatedChildNode NodeInterface
          */
         foreach ($autoCreatedChildNodes as $autoCreatedChildNode) {
-            $autoCreatedChildNode->createVariantForContext($context);
+            $existingChildNode = $node->getNode($autoCreatedChildNode->getName());
+            if ($existingChildNode === null || !$existingChildNode->dimensionsAreMatchingTargetDimensionValues()) {
+                // only if needed, see https://github.com/neos/neos-development-collection/issues/782
+                $autoCreatedChildNode->createVariantForContext($context);
+            }
         }
 
         return $node;

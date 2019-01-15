@@ -61,10 +61,10 @@
 			<target xml:lang="cs" state="needs-translation">Descending</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="cs" state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target xml:lang="cs" state="translated">Směr řazení vzestupně</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="cs" state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target xml:lang="cs" state="translated">Směr řazení sestupně</target><alt-trans><target xml:lang="cs">Způsob řazení sestupně</target></alt-trans></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="cs" state="needs-translation">Drag and drop on tag or collection</target></trans-unit>

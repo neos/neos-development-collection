@@ -33,6 +33,7 @@
 			position: relative;
 
 			&::before {
+				@extend .fas;
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -42,7 +43,6 @@
 				border: 1px solid $textSubtleLight;
 				color: $textSubtle;
 				cursor: pointer;
-				@include fa-icon();
 				content: fa-content($fa-var-check);
 				line-height: $unit / 2;
 				text-align: center;
