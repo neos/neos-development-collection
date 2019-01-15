@@ -148,7 +148,7 @@ class FeatureContext extends MinkContext
      */
     public function iAmAuthenticatedWithAndForTheBackend($username, $password)
     {
-        $this->visit('https://t3n.de/');
+        $this->visit('/');
         $this->fillField('Username', $username);
         $this->fillField('Password', $password);
         $this->pressButton('Login');
