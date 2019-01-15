@@ -168,7 +168,7 @@ Feature: ChildNode Constraints
     When I get a node by path "/sites/content-repository" with the following context:
       | Workspace |
       | live      |
-    And I should be able to create a child node of type "Neos.ContentRepository.Testing:Chapter"
+    Then I should be able to create a child node of type "Neos.ContentRepository.Testing:Chapter"
 
   @fixtures
   Scenario: Constraints for auto created childnodes are ignored on node create
@@ -182,9 +182,9 @@ Feature: ChildNode Constraints
         nodeTypes:
           'Neos.ContentRepository.Testing:ContentCollection': FALSE
     """
-    And I have the following nodes:
-      | Identifier                           | Path                          | Node Type                      | Properties
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/create-page    | Neos.ContentRepository.Testing:Page     | {"title": "page"}
+    When I have the following nodes:
+      | Identifier                           | Path                                     | Node Type                               | Properties        |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/create-page    | Neos.ContentRepository.Testing:Page     | {"title": "page"} |
     And I get a node by path "/sites/content-repository/create-page/main" with the following context:
       | Workspace |
       | live      |
@@ -203,8 +203,8 @@ Feature: ChildNode Constraints
           'Neos.ContentRepository.Testing:ContentCollection': FALSE
     """
     And I have the following nodes:
-      | Identifier                           | Path                        | Node Type                      | Properties
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/copy-page    | Neos.ContentRepository.Testing:Page     | {"title": "page"}
+      | Identifier                           | Path                                   | Node Type                               | Properties        |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/copy-page    | Neos.ContentRepository.Testing:Page     | {"title": "page"} |
     And I get a node by path "/sites/content-repository/copy-page" with the following context:
       | Workspace |
       | live      |
@@ -229,9 +229,9 @@ Feature: ChildNode Constraints
           'Neos.ContentRepository.Testing:ContentCollection': FALSE
     """
     And I have the following nodes:
-      | Identifier                           | Path                         | Node Type                      | Properties
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/move-page1    | Neos.ContentRepository.Testing:Page     | {"title": "page"}
-      | ad5ba6e1-4313-b145-1004-dad2f1173a36 | /sites/content-repository/move-page2    | Neos.ContentRepository.Testing:Page     | {"title": "page 2"}
+      | Identifier                           | Path                                    | Node Type                               | Properties          |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/move-page1    | Neos.ContentRepository.Testing:Page     | {"title": "page"}   |
+      | ad5ba6e1-4313-b145-1004-dad2f1173a36 | /sites/content-repository/move-page2    | Neos.ContentRepository.Testing:Page     | {"title": "page 2"} |
     And I get a node by path "/sites/content-repository/move-page1" with the following context:
       | Workspace |
       | live      |
