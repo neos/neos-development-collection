@@ -40,7 +40,7 @@ trait HistoryDefinitionsTrait
     public function iHaveAnEmptyHistory()
     {
         $this->resetHistory();
-        $this->getSubcontext('flow')->persistAll();
+        $this->persistAll();
     }
 
     /**
@@ -49,7 +49,7 @@ trait HistoryDefinitionsTrait
      */
     public function iShouldHaveTheFollowingHistoryEntries($ignoringOrder, TableNode $table)
     {
-        $this->getSubcontext('flow')->persistAll();
+        $this->persistAll();
         $allEvents = $this->getEventRepository()->findAll()->toArray();
         $eventsByInternalId = [];
         $unmatchedParentEvents = [];
@@ -180,6 +180,6 @@ trait HistoryDefinitionsTrait
             );
         }
 
-        $this->getSubcontext('flow')->persistAll();
+        $this->persistAll();
     }
 }
