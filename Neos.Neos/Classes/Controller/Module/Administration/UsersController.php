@@ -412,7 +412,7 @@ class UsersController extends AbstractModuleController
      * 
      * @param User $user
      */
-    protected function isEditingAllowed($user)
+    protected function isEditingAllowed(User $user): bool
     {
         if ($this->isAdministrator) {
             return true;
