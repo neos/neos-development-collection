@@ -72,6 +72,12 @@ class UsersController extends AbstractModuleController
     protected $tokenAndProviderFactory;
 
     /**
+     * @Flow\Inject
+     * @var \Neos\Flow\Security\Context
+     */
+    protected $securityContext;
+
+    /**
      * @return void
      * @throws NoSuchArgumentException
      */
@@ -92,8 +98,7 @@ class UsersController extends AbstractModuleController
             }
         }
         $this->currentUser = $this->userService->getCurrentUser();
-        $adminRole = $this->policyService->getRole('Neos.Neos:Administrator');
-        $this->isAdministrator = $this->currentUser->getAccounts()[0]->hasRole($adminRole);
+        $this->isAdministrator = $this->securityContext->hasRole('Neos.Neos:Administrator');
     }
 
     /**
@@ -164,7 +169,7 @@ class UsersController extends AbstractModuleController
      */
     public function createAction(string $username, array $password, User $user, array $roleIdentifiers, string $authenticationProviderName = null): void
     {
-        $currentUserRoles = $this->currentUser->getAccounts()[0]->getRoles();
+        $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
         $isCreationAllowed = count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;
         if ($isCreationAllowed) {
             $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
@@ -397,21 +402,23 @@ class UsersController extends AbstractModuleController
      */
     protected function getAllowedRoles()
     {
-        $currentUserRoles = $this->currentUser->getAccounts()[0]->getRoles();
+        $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
         return $this->isAdministrator ? $this->policyService->getRoles() : $currentUserRoles;
     }
 
     /**
      * Returns whether the current user is allowed to edit the given user.
      * Administrators can edit anybody.
+     * 
+     * @param User $user
      */
     protected function isEditingAllowed($user)
     {
         if ($this->isAdministrator) {
             return true;
         }
-        $currentUserRoles = $this->currentUser->getAccounts()[0]->getRoles();
-        $userRoles = $user->getAccounts()[0]->getRoles();
+        $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
+        $userRoles = $this->userService->getAllRoles($user);
         return count(array_diff($userRoles, $currentUserRoles)) === 0;
     }
 }
