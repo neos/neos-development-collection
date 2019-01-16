@@ -764,7 +764,7 @@ class UserService
      * @param User $user The user
      * @return array
      */
-    protected function getAllRoles(User $user)
+    public function getAllRoles(User $user)
     {
         $roles = [
             'Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody'),
