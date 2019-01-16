@@ -61,7 +61,7 @@ class UsersController extends AbstractModuleController
     protected $currentUser;
 
     /**
-     * @var Boolean
+     * @var bool
      */
     protected $isAdministrator;
 
