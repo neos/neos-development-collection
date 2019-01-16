@@ -9,7 +9,12 @@ default:
   suites:
     content:
         paths:
+          - "%paths.base%/Features/Administration"
+          - "%paths.base%/Features/Bootstrap"
           - "%paths.base%/Features/Content"
+          - "%paths.base%/Features/EventLog"
+          - "%paths.base%/Features/Security"
+          - "%paths.base%/Features"
         contexts:
             - FeatureContext
 
