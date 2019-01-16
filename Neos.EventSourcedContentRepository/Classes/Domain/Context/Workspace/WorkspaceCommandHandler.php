@@ -256,7 +256,7 @@ final class WorkspaceCommandHandler
             $eventStore->commit($baseWorkspaceContentStreamName, $events, $contentStreamWasForked->getVersionOfSourceContentStream());
             return CommandResult::fromPublishedEvents($events);
         } catch (ConcurrencyException $e) {
-            throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf('The base workspace "%s" (Content Stream "%s") has been modified in the meantime; please rebase workspace "%s". Expected version %d of source content stream "%s"', $baseWorkspace->getWorkspaceName(), $baseContentStreamIdentifier, $workspace->getWorkspaceName(), $contentStreamWasForked->getVersionOfSourceContentStream(), $currentContentStreamIdentifier), 1547823025);
+            throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf('The base workspace has been modified in the meantime; please rebase. Expected version %d of source content stream %s', $contentStreamWasForked->getVersionOfSourceContentStream(), $baseContentStreamIdentifier));
         }
     }
 
