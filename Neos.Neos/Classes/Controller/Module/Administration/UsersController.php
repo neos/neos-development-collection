@@ -400,7 +400,7 @@ class UsersController extends AbstractModuleController
      *
      * @return array
      */
-    protected function getAllowedRoles()
+    protected function getAllowedRoles(): array
     {
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
         return $this->isAdministrator ? $this->policyService->getRoles() : $currentUserRoles;
