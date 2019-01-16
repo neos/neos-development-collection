@@ -409,7 +409,7 @@ class UsersController extends AbstractModuleController
     /**
      * Returns whether the current user is allowed to edit the given user.
      * Administrators can edit anybody.
-     * 
+     *
      * @param User $user
      */
     protected function isEditingAllowed(User $user): bool
