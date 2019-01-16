@@ -6,7 +6,15 @@ default:
   autoload:
     '': "%paths.base%/Features/Bootstrap"
   suites:
-    default:
+    cr:
+      paths:
+        - "%paths.base%/Features/Basic"
+        - "%paths.base%/Features/Bootstrap"
+        - "%paths.base%/Features/Constraints"
+        - "%paths.base%/Features/Crazy"
+        - "%paths.base%/Features/Localization"
+        - "%paths.base%/Features/Security"
+        - "%paths.base%/Features/Workspace"
       contexts:
         - FeatureContext
 
