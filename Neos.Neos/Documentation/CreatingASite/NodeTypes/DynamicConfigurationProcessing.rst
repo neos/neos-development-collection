@@ -37,7 +37,7 @@ by changing its group name to a non-existant value:
         type: string
         ui:
           inspector:
-            hidden: 'ClientEval:node.properties.borderWidth ? "style" : "invalid-group"'
+            hidden: 'ClientEval:node.properties.borderWidth ? true : false
 
 Dependent SelectBoxes
 ---------------------
