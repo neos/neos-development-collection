@@ -137,6 +137,11 @@ class DomainCommandController extends CommandController
             $this->outputLine('<error>Domain not found.</error>');
             $this->quit(1);
         }
+        $site = $domain->getSite();
+        if ($site->getPrimaryDomain() === $domain) {
+            $site->setPrimaryDomain(null);
+            $this->siteRepository->update($site);
+        }
 
         $this->domainRepository->remove($domain);
         $this->outputLine('Domain entry deleted.');
