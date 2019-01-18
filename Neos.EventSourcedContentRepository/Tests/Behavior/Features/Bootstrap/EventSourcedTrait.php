@@ -244,10 +244,18 @@ trait EventSourcedTrait
     {
         $eventPayload = [];
         foreach ($payloadTable->getHash() as $line) {
-            $value = json_decode($line['Value'], true);
-            if ($value === null && json_last_error() !== JSON_ERROR_NONE) {
-                throw new \Exception(sprintf('The value "%s" is no valid JSON string', $line['Value']), 1546522626);
+            if (strpos($line['Value'], '$this->') === 0) {
+                // Special case: Referencing stuff from the context here
+                $propertyName = substr($line['Value'], strlen('$this->'));
+                $value = (string) $this->$propertyName;
+            } else {
+                // default case
+                $value = json_decode($line['Value'], true);
+                if ($value === null && json_last_error() !== JSON_ERROR_NONE) {
+                    throw new \Exception(sprintf('The value "%s" is no valid JSON string', $line['Value']), 1546522626);
+                }
             }
+
             $eventPayload[$line['Key']] = $value;
         }
         return $eventPayload;

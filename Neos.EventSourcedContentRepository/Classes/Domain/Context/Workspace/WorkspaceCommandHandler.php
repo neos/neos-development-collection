@@ -214,11 +214,34 @@ final class WorkspaceCommandHandler
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $workspace->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513924882);
         }
-        // TODO this hack is currently needed in order to avoid the $workspace to return a previously cached content stream identifier ($workspace->getCurrentContentStreamIdentifier() did not work here in behat tests)
-        $currentContentStreamIdentifier = $this->workspaceFinder->getContentStreamIdentifierForWorkspace($command->getWorkspaceName());
-        $baseContentStreamIdentifier = $this->workspaceFinder->getContentStreamIdentifierForWorkspace($baseWorkspace->getWorkspaceName());
 
-        return $this->publishContentStream($workspace->getCurrentContentStreamIdentifier(), $baseWorkspace->getCurrentContentStreamIdentifier());
+        $commandResult = $this->publishContentStream($workspace->getCurrentContentStreamIdentifier(), $baseWorkspace->getCurrentContentStreamIdentifier());
+
+        // After publishing a workspace, we need to again fork from Base.
+        $newContentStream = ContentStreamIdentifier::create();
+        $commandResult = $commandResult->merge(
+            $this->contentStreamCommandHandler->handleForkContentStream(
+                new ForkContentStream(
+                    $newContentStream,
+                    $baseWorkspace->getCurrentContentStreamIdentifier()
+                )
+            )
+        );
+
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        // TODO: "Workspace was rebased" is probably the wrong name. We can rebase a content stream,
+        // but not really a workspace. We can just change the ContentStream for a workspace.
+        $events = DomainEvents::withSingleEvent(
+            new WorkspaceWasRebased(
+                $command->getWorkspaceName(),
+                $newContentStream
+            )
+        );
+        $eventStore->commit($streamName, $events);
+
+        $commandResult = $commandResult->merge(CommandResult::fromPublishedEvents($events));
+        return $commandResult;
     }
 
     private function publishContentStream(ContentStreamIdentifier $contentStreamIdentifier, ContentStreamIdentifier $baseContentStreamIdentifier): CommandResult
@@ -265,7 +288,7 @@ final class WorkspaceCommandHandler
      * @return ContentStreamWasForked
      * @throws \Exception
      */
-    private static function extractSingleForkedContentStreamEvent(array $stream) : ContentStreamWasForked
+    private static function extractSingleForkedContentStreamEvent(array $stream): ContentStreamWasForked
     {
         $contentStreamWasForkedEvents = array_filter($stream, function (EventEnvelope $eventEnvelope) {
             return $eventEnvelope->getDomainEvent() instanceof ContentStreamWasForked;

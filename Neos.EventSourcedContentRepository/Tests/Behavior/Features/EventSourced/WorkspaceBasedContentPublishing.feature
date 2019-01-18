@@ -31,7 +31,7 @@ Feature: Workspace based content publishing
       | nodeTypeName            | "Neos.ContentRepository.Testing:Content" |
       | nodeIdentifier          | "node-identifier"                        |
       | parentNodeIdentifier    | "rn-identifier"                          |
-      | nodeName                | "root"                                    |
+      | nodeName                | "root"                                   |
 
     And the graph projection is fully up to date
 
@@ -176,5 +176,43 @@ Feature: Workspace based content publishing
       | text | Modified in user workspace |
 
 
+  Scenario: modify the property in the nested workspace, publish, modify again and publish again (e.g. a workspace can be re-used after publishing for other changes)
 
+    When the command "SetNodeProperty" is executed with payload:
+      | Key                       | Value                                |
+      | contentStreamIdentifier   | "cs-2-identifier"                    |
+      | nodeAggregateIdentifier   | "na-identifier"                      |
+      | originDimensionSpacePoint | {}                                   |
+      | propertyName              | "text"                               |
+      | value                     | {"value":"Modified","type":"string"} |
 
+    And the graph projection is fully up to date
+
+    # PUBLISHING
+    And the command "PublishWorkspace" is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "user-test" |
+    And the graph projection is fully up to date
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+
+    When the command "SetNodeProperty" is executed with payload:
+      | Key                       | Value                                     |
+      | contentStreamIdentifier   | $this->contentStreamIdentifier            |
+      | nodeAggregateIdentifier   | "na-identifier"                           |
+      | originDimensionSpacePoint | {}                                        |
+      | propertyName              | "text"                                    |
+      | value                     | {"value":"Modified anew","type":"string"} |
+
+    And the graph projection is fully up to date
+
+    # PUBLISHING
+    And the command "PublishWorkspace" is executed with payload:
+      | Key           | Value       |
+      | workspaceName | "user-test" |
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    Then I expect a node "node-identifier" to exist in the graph projection
+    And I expect the Node "node-identifier" to have the properties:
+      | Key  | Value         |
+      | text | Modified anew |
