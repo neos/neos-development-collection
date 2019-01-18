@@ -32,6 +32,7 @@ Neos:
     Ui:
 
       configurationDefaultEelContext:
+        Neos.EventSourcedNeosAdjustments.Workspace: Neos\EventSourcedNeosAdjustments\Fusion\Helper\WorkspaceHelper
         Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
         Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
 
@@ -45,6 +46,8 @@ Neos:
             byName: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.contentDimensionsByName()}'
             active: '${subgraph.dimensionSpacePoint.toLegacyDimensionArray()}'
             allowedPresets: '${Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions.allowedPresetsByName(subgraph.dimensionSpacePoint)}'
+          workspaces:
+            personalWorkspace: '${Neos.EventSourcedNeosAdjustments.Workspace.getPersonalWorkspace()}'
         ui:
           contentCanvas:
             src: '${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.uri(Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.nodeAddress(documentNode), controllerContext)}'

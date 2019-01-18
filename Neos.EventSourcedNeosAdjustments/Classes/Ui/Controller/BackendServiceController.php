@@ -22,6 +22,7 @@ use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
+use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePolicyService;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
@@ -44,7 +45,6 @@ use Neos\Neos\Ui\Domain\Model\Feedback\Messages\Success;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\Redirect;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\RemoveNode;
-use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\Neos\Ui\Domain\Service\NodeTreeBuilder;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -142,23 +142,6 @@ class BackendServiceController extends ActionController
     }
 
     /**
-     * Helper method to inform the client, that new workspace information is available
-     *
-     * @param string $documentNodeContextPath
-     * @return void
-     */
-    protected function updateWorkspaceInfo(string $documentNodeContextPath)
-    {
-        $updateWorkspaceInfo = new UpdateWorkspaceInfo();
-        $documentNode = $this->nodeService->getNodeFromContextPath($documentNodeContextPath, null, null, true);
-        $updateWorkspaceInfo->setWorkspace(
-            $documentNode->getContext()->getWorkspace()
-        );
-
-        $this->feedbackCollection->add($updateWorkspaceInfo);
-    }
-
-    /**
      * Apply a set of changes to the system
      *
      * @param ChangeCollection $changes
@@ -228,8 +211,9 @@ class BackendServiceController extends ActionController
             $success = new Success();
             $success->setMessage(sprintf('Published %d change(s) to %s.', count($nodeContextPaths), $targetWorkspaceName));
 
-            $this->updateWorkspaceInfo($nodeContextPaths[0]);
+            $updateWorkspaceInfo = new UpdateWorkspaceInfo($workspaceName);
             $this->feedbackCollection->add($success);
+            $this->feedbackCollection->add($updateWorkspaceInfo);
 
             $this->persistenceManager->persistAll();
         } catch (\Exception $e) {
