@@ -1,5 +1,8 @@
 <?php
-namespace Neos\ContentRepository\Service\Utility;
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
@@ -20,7 +23,7 @@ class TransientNodeCache
      * @param string $nodeIdentifier
      * @return bool
      */
-    private function has($nodeIdentifier)
+    private function has(string $nodeIdentifier): bool
     {
         return array_key_exists($nodeIdentifier, $this->nodes);
     }
@@ -29,7 +32,7 @@ class TransientNodeCache
      * @param string $nodeIdentifier
      * @return NodeInterface
      */
-    private function get($nodeIdentifier)
+    private function get(string $nodeIdentifier): NodeInterface
     {
         return $this->nodes[$nodeIdentifier];
     }
@@ -38,7 +41,7 @@ class TransientNodeCache
      * @param string $nodeIdentifier
      * @param NodeInterface $node
      */
-    private function put($nodeIdentifier, NodeInterface $node)
+    private function put(string $nodeIdentifier, NodeInterface $node)
     {
         $this->nodes[$nodeIdentifier] = $node;
     }
@@ -48,7 +51,7 @@ class TransientNodeCache
      * @param callable $getter
      * @return NodeInterface
      */
-    public function cache($nodeIdentifier, callable $getter)
+    public function cache(string $nodeIdentifier, callable $getter)
     {
         if ($this->has($nodeIdentifier)) {
             return $this->get($nodeIdentifier);
