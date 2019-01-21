@@ -128,6 +128,8 @@ additionalProperties:
                         additionalProperties: false
                         properties:
 
+                          'hidden': { type: ['string', 'null'], description: 'Option to hide a property.' }
+
                           'group': { type: ['string', 'null'], description: 'Identifier of the inspector group in which this property should be edited. If not set, will not appear in inspector at all.' }
 
                           'position': { type: ['integer', 'null'], description: 'Position inside the inspector group, small numbers are sorted on top' }
