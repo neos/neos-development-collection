@@ -17,49 +17,26 @@ use Neos\Flow\Annotations as Flow;
  */
 class TransientNodeCache
 {
+
+    /**
+     * @var NodeInterface[]
+     */
     private $nodes = [];
-
-    /**
-     * @param string $nodeIdentifier
-     * @return bool
-     */
-    private function has(string $nodeIdentifier): bool
-    {
-        return array_key_exists($nodeIdentifier, $this->nodes);
-    }
-
-    /**
-     * @param string $nodeIdentifier
-     * @return NodeInterface
-     */
-    private function get(string $nodeIdentifier): NodeInterface
-    {
-        return $this->nodes[$nodeIdentifier];
-    }
-
-    /**
-     * @param string $nodeIdentifier
-     * @param NodeInterface $node
-     */
-    private function put(string $nodeIdentifier, NodeInterface $node)
-    {
-        $this->nodes[$nodeIdentifier] = $node;
-    }
 
     /**
      * @param string $nodeIdentifier
      * @param callable $getter
      * @return NodeInterface
      */
-    public function cache(string $nodeIdentifier, callable $getter)
+    public function cache(string $nodeIdentifier, callable $getter): NodeInterface
     {
-        if ($this->has($nodeIdentifier)) {
-            return $this->get($nodeIdentifier);
+        if (array_key_exists($nodeIdentifier, $this->nodes)) {
+            return $this->nodes[$nodeIdentifier];
         }
 
         $node = $getter();
         if ($node) {
-            $this->put($nodeIdentifier, $node);
+            $this->nodes[$nodeIdentifier] = $node;
         }
         return $node;
     }
