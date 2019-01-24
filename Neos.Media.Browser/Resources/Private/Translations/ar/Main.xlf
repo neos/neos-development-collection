@@ -22,7 +22,7 @@
 			<target xml:lang="ar" state="translated">العنوان</target></trans-unit>
       <trans-unit id="field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="ar" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="ar" state="translated">التسمية</target></trans-unit>
       <trans-unit id="field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="ar" state="translated">العنوان</target></trans-unit>
@@ -130,7 +130,7 @@
 			<target xml:lang="ar" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="ar" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="ar" state="translated">بحث</target></trans-unit>
       <trans-unit id="search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="ar" state="needs-translation">{0} items</target></trans-unit>
