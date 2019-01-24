@@ -323,7 +323,7 @@
 			<target xml:lang="ar" state="translated">بيانات المستخدم</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ar" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ar" state="translated">اسم المستخدم</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
 			<target xml:lang="ar" state="translated">كلمة السر</target></trans-unit>
@@ -383,7 +383,7 @@
 			<target xml:lang="ar" state="translated">الحسابات</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ar" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ar" state="translated">اسم المستخدم</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ar" state="translated">الأدوار</target></trans-unit>
@@ -428,7 +428,7 @@
 			<target xml:lang="ar" state="translated">الحساب</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ar" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ar" state="translated">اسم المستخدم</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="ar" state="translated">لا يمكن تغيير اسم المستخدم عن طريق واجهة المستخدم</target></trans-unit>
@@ -712,7 +712,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target xml:lang="ar" state="translated">الحسابات</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ar" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ar" state="translated">اسم المستخدم</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ar" state="translated">الأدوار</target></trans-unit>
