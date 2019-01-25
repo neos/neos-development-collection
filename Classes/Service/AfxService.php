@@ -83,7 +83,7 @@ class AfxService
      */
     protected static function astStringToFusion($payload, $indentation = '')
     {
-        return '\'' . str_replace('\'', '\\\'', $payload) . '\'';
+        return '\'' . addslashes($payload) . '\'';
     }
 
     /**
