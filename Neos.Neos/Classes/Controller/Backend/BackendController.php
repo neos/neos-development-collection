@@ -64,6 +64,9 @@ class BackendController extends ActionController
      * Default action of the backend controller.
      *
      * @return void
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
+     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
     public function indexAction()
     {
@@ -79,6 +82,13 @@ class BackendController extends ActionController
      *
      * @param Site $site
      * @return void
+     * @throws \Neos\Cache\Exception
+     * @throws \Neos\Cache\Exception\InvalidDataException
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
+     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
+     * @throws \Neos\Neos\Exception
      */
     public function switchSiteAction($site)
     {
@@ -97,10 +107,13 @@ class BackendController extends ActionController
      *
      * @param string $locale
      * @return string
+     * @throws \Neos\Flow\I18n\Exception
+     * @throws \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
      */
     public function xliffAsJsonAction($locale)
     {
         $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setHeader('Cache-Control', 'max-age=' . (3600 * 24 * 7));
 
         return $this->xliffService->getCachedJson(new Locale($locale));
     }
