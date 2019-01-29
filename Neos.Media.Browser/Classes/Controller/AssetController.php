@@ -134,6 +134,12 @@ class AssetController extends ActionController
     protected $translator;
 
     /**
+     * @Flow\InjectConfiguration(path="asyncThumbnails", package="Neos.Media")
+     * @var array
+     */
+    protected $asyncThumbnails;
+
+    /**
      * @Flow\InjectConfiguration(path="assetSources", package="Neos.Media")
      * @var array
      */
@@ -244,7 +250,7 @@ class AssetController extends ActionController
             } elseif ($this->browserState->get('activeTag') !== null) {
                 $assetProxies = $assetProxyRepository->findByTag($this->browserState->get('activeTag'));
             } else {
-                $assetProxies = $activeAssetCollection === null ? $assetProxyRepository->findAll() : $assetProxyRepository->findAll();
+                $assetProxies = $assetProxyRepository->findAll();
             }
 
             $allCollectionsCount = $assetProxyRepository->countAll();
@@ -268,7 +274,8 @@ class AssetController extends ActionController
             'maximumFileUploadSize' => $this->getMaximumFileUploadSize(),
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($this->getMaximumFileUploadSize()),
             'activeAssetSource' => $activeAssetSource,
-            'activeAssetSourceSupportsSorting' => ($assetProxyRepository instanceof SupportsSortingInterface)
+            'activeAssetSourceSupportsSorting' => ($assetProxyRepository instanceof SupportsSortingInterface),
+            'asyncThumbnails' => $this->asyncThumbnails
         ]);
     }
 
@@ -299,7 +306,8 @@ class AssetController extends ActionController
             'asset' => $asset,
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'redirectPackageEnabled' => $this->packageManager->isPackageAvailable('Neos.RedirectHandler'),
-            'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
+            'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize),
+            'asyncThumbnails' => $this->asyncThumbnails
         ]);
     }
 
@@ -324,7 +332,8 @@ class AssetController extends ActionController
 
             $this->view->assignMultiple([
                 'assetProxy' => $assetProxy,
-                'assetCollections' => $this->assetCollectionRepository->findAll()
+                'assetCollections' => $this->assetCollectionRepository->findAll(),
+                'asyncThumbnails' => $this->asyncThumbnails
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Asset not found');
@@ -378,7 +387,8 @@ class AssetController extends ActionController
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
                 'contentPreview' => $contentPreview,
-                'assetSource' => $assetSource
+                'assetSource' => $assetSource,
+                'asyncThumbnails' => $this->asyncThumbnails
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Asset not found');
