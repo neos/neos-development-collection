@@ -138,6 +138,11 @@ class DomainCommandController extends CommandController
             $this->quit(1);
         }
         foreach ($domains as $domain) {
+            $site = $domain->getSite();
+            if ($site->getPrimaryDomain() === $domain) {
+                $site->setPrimaryDomain(null);
+                $this->siteRepository->update($site);
+            }
             $this->domainRepository->remove($domain);
             $this->outputLine('Domain entry "%s" deleted.', [$domain->getHostname()]);
         }
