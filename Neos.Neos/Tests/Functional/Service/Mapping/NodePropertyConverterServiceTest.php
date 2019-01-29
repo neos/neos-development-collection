@@ -149,10 +149,10 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
     public function complexTypesWithGivenTypeConverterAreConvertedByTypeConverter()
     {
         $propertyValue = $this->getMockForAbstractClass(ImageInterface::class);
-        $expected = json_encode([
+        $expected = [
             '__identity' => null,
             '__type' => get_class($propertyValue)
-        ]);
+        ];
 
         $nodeType = $this
             ->getMockBuilder(NodeType::class)
