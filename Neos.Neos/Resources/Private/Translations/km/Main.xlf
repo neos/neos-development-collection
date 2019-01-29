@@ -660,15 +660,9 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target xml:lang="km" state="translated">ការចូលរបស់អ្នកបានផុតកំណត់សូមចូលម្តងទៀត</target></trans-unit>
       <!-- Error handlers -->
-      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
-				<source>Welcome to Neos</source>
-			<target xml:lang="km" state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
 			<target xml:lang="km" state="translated">ទៅតំឡើង</target></trans-unit>
-      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
-				<source>Technical Information</source>
-			<target xml:lang="km" state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
 			<target xml:lang="km" state="translated">បាត់ទំព័រដើម</target></trans-unit>
@@ -681,12 +675,12 @@
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
 			<target xml:lang="km" state="translated">ដាតាបេស មានបញ្ហារ</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
-				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target xml:lang="km" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>Run the setup to configure your database.</source>
-			<target xml:lang="km" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
+				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
+			<target xml:lang="km" state="translated">សុំទោស យើងរកឃើញ បញ្ហារជាមួយ ដាតាបេសអ្នក។ ត្រួត្យពិនិត្យ កំណត់ត្រារបស់អ្នក នៅក្នុង Data/Logs/* ដើម្បី រកព័រមាន បន្ថែម។</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
+				<source>You might want to configure or check your database configuration in the setup.</source>
+			<target xml:lang="km" state="translated">អ្នកប្រហែលជាចង់ កែរការកំណត់ ឬ ពិនិត្យការកំណត់ដាតាបេស នៅក្នុង ការតំឡើងនេះ។</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target xml:lang="km" state="translated">បាត់ទំព័រ</target></trans-unit>
