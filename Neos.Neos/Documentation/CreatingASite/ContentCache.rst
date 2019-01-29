@@ -211,7 +211,8 @@ The following methods are provided by default to create all kind of patterns of 
 ``${Neos.Caching.nodeTag(node)}``
   Flushes cache entries if the node changes.
   Notice: In earlier versions of Neos we just used a plain String ``Node_[Identifier]`` which could lead into
-  unwanted cache flush behaviours. ``Identifier`` had to be replaced by a valid node identifier.
+  unwanted cache flush behaviours. ``Identifier`` had to be replaced by a valid node identifier. You might want to use
+  ``${Neos.Caching.nodeTagForIdentifier("identifier")}`` if you don't have a node instance but only a node identifier as string.
 
 ``${Neos.Caching.descendantOfTag(node)}``
   Flushes cache entries if a child node of the node changes.

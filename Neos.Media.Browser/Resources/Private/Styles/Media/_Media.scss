@@ -1,8 +1,9 @@
 @mixin neos-media-aside-condensed {
-	flex-direction: column;
+	flex-direction: row-reverse;
 
 	.neos-media-aside {
-		margin-top: $wideMargin;
+		flex: 1;
+		margin-right: $wideMargin;
 		@include clearfix;
 
 		.neos-media-aside-group {
@@ -146,6 +147,10 @@
 				}
 			}
 		}
+	}
+
+	.neos-media-assets {
+		flex: 3;
 	}
 }
 
