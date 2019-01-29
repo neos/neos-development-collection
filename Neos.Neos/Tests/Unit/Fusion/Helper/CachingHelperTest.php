@@ -211,6 +211,45 @@ class CachingHelperTest extends UnitTestCase
         $actualResult = $helper->nodeTag($nodes);
         $this->assertEquals($expectedResult, $actualResult);
     }
+
+    /**
+     * @test
+     */
+    public function nodeTagsCanBeInitializedWithAnIdentifierString()
+    {
+        $helper = new CachingHelper();
+
+        $workspaceName = 'live';
+        $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
+        $workspaceMock->expects($this->any())->method('getName')->willReturn($workspaceName);
+
+        $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+        $contextMock->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+
+        $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
+        $node = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
+        $node->expects($this->any())->method('getContext')->willReturn($contextMock);
+        $node->expects($this->any())->method('getIdentifier')->willReturn($nodeIdentifier);
+
+        $hashedWorkspaceName = $helper->renderWorkspaceTagForContextNode($workspaceName);
+
+        $actual = $helper->nodeTagForIdentifier($nodeIdentifier, $node);
+
+        $this->assertEquals('Node_'.$hashedWorkspaceName.'_'.$nodeIdentifier, $actual);
+    }
+
+    /**
+     * @test
+     */
+    public function nodeTagForIdentifierStringWillFallbackToLegacyTagIfNoContextNodeIsGiven()
+    {
+        $helper = new CachingHelper();
+        $identifier = 'some-uuid-identifier';
+
+        $actual = $helper->nodeTagForIdentifier($identifier);
+        $this->assertEquals('Node_'.$identifier, $actual);
+    }
+
     /**
      *
      */
