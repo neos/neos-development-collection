@@ -158,7 +158,7 @@ class NodeType
     protected function buildFullConfiguration()
     {
         $mergedConfiguration = [];
-        $applicableSuperTypes = $this->buildInheritanceChain();
+        $applicableSuperTypes = static::getFlattenedSuperTypes($this);
         foreach ($applicableSuperTypes as $key => $superType) {
             $mergedConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
         }
@@ -173,47 +173,27 @@ class NodeType
     /**
      * Returns a flat list of super types to inherit from.
      *
+     * @param NodeType $nodeType
+     *
      * @return array
      */
-    protected function buildInheritanceChain()
+    protected static function getFlattenedSuperTypes(NodeType $nodeType) : array
     {
-        $superTypes = [];
-        foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
+        $flattenedSuperTypes = [];
+        foreach ($nodeType->declaredSuperTypes as $superTypeName => $superType) {
             if ($superType !== null) {
-                $this->addInheritedSuperTypes($superTypes, $superType);
-                $superTypes[$superTypeName] = $superType;
+                $flattenedSuperTypes += static::getFlattenedSuperTypes($superType);
+                $flattenedSuperTypes[$superTypeName] = $superType;
             }
         }
 
-        foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
+        foreach ($nodeType->declaredSuperTypes as $superTypeName => $superType) {
             if ($superType === null) {
-                unset($superTypes[$superTypeName]);
+                unset($flattenedSuperTypes[$superTypeName]);
             }
         }
 
-        return array_unique($superTypes);
-    }
-
-    /**
-     * Recursively add super types
-     *
-     * @param array $superTypes
-     * @param NodeType $superType
-     * @return void
-     */
-    protected function addInheritedSuperTypes(array &$superTypes, NodeType $superType)
-    {
-        foreach ($superType->getDeclaredSuperTypes() as $inheritedSuperTypeName => $inheritedSuperType) {
-            $this->addInheritedSuperTypes($superTypes, $inheritedSuperType);
-            $superTypes[$inheritedSuperTypeName] = $inheritedSuperType;
-        }
-
-        $superTypesInSuperType = $superType->getConfiguration('superTypes') ?: [];
-        foreach ($superTypesInSuperType as $inheritedSuperTypeName => $inheritedSuperType) {
-            if (!$inheritedSuperType) {
-                unset($superTypes[$inheritedSuperTypeName]);
-            }
-        }
+        return $flattenedSuperTypes;
     }
 
     /**
