@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2019-01-10
+This reference was automatically generated from code on 2019-01-30
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -1080,6 +1080,17 @@ given nodes (for any variant) is updated.
 
 **Return** (array)
 
+Neos.Caching.nodeTagForIdentifier(identifier, contextNode)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Generate a `@cache` entry tag for a single node identifier. If a NodeInterface $contextNode is given the
+entry tag will respect the workspace hash.
+
+* ``identifier`` (string)
+* ``contextNode`` (NodeInterface|null, *optional*)
+
+**Return** (string)
+
 Neos.Caching.nodeTypeTag(nodeType, contextNode)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1228,23 +1239,6 @@ Render a human-readable description for the passed $dimensions
 * ``dimensions`` (array)
 
 **Return** (string)
-
-
-
-
-
-
-.. _`Eel Helpers Reference: Neos.Ui.Activation`:
-
-Neos.Ui.Activation
-------------------
-
-
-
-Implemented in: ``Neos\Neos\Ui\Fusion\Helper\ActivationHelper``
-
-Neos.Ui.Activation.isLegacyBackendEnabled()
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
@@ -1466,12 +1460,29 @@ Helper for security related information
 
 Implemented in: ``Neos\Eel\Helper\SecurityHelper``
 
+Security.csrfToken()
+^^^^^^^^^^^^^^^^^^^^
+
+Returns CSRF token which is required for "unsafe" requests (e.g. POST, PUT, DELETE, ...)
+
+**Return** (string)
+
 Security.getAccount()
 ^^^^^^^^^^^^^^^^^^^^^
 
 Get the account of the first authenticated token.
 
 **Return** (Account|NULL)
+
+Security.hasAccess(privilegeTarget, parameters)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns true, if access to the given privilege-target is granted
+
+* ``privilegeTarget`` (string) The identifier of the privilege target to decide on
+* ``parameters`` (array, *optional*) Optional array of privilege parameters (simple key => value array)
+
+**Return** (boolean) true if access is granted, false otherwise
 
 Security.hasRole(roleIdentifier)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1482,6 +1493,13 @@ a role with the given identifier, also recursively.
 * ``roleIdentifier`` (string) The string representation of the role to search for
 
 **Return** (boolean) true, if a role with the given string representation was found
+
+Security.isAuthenticated()
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns true, if any account is currently authenticated
+
+**Return** (boolean) true if any account is authenticated
 
 
 
@@ -1620,6 +1638,16 @@ Example::
 * ``string`` (string) The input string
 
 **Return** (string) The string with the first letter in uppercase
+
+String.format(format, args)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Implementation of the PHP vsprintf function
+
+* ``format`` (string) A formatting string containing directives
+* ``args`` (array) An array of values to be inserted according to the formatting string $format
+
+**Return** (string) A string produced according to the formatting string $format
 
 String.htmlSpecialChars(string, preserveEntities)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
