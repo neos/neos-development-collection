@@ -1,0 +1,127 @@
+`4.2.5 (2019-01-30) <https://github.com/neos/neos-development-collection/releases/tag/4.2.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Adjust behavior of NodePropertyConverterServiceTest <https://github.com/neos/neos-development-collection/pull/2359>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+This adjusts the complexTypesWithGivenTypeConverterAreConvertedByTypeConverter
+of NodePropertyConverterServiceTest to behave as if the new UI is installed
+which is insalled when test are run on CI and probably the case in all
+other installations.
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`TASK: Fix documentation example for toggling visibility of properties in inspector <https://github.com/neos/neos-development-collection/pull/2334>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+I updated the example for *"Hiding one property when the other one is not set"* in the *"Dynamic Client-side Configuration Processing"* docs (https://neos.readthedocs.io/en/stable/CreatingASite/NodeTypes/DynamicConfigurationProcessing.html). The example didn't work, as stated here (https://github.com/neos/neos-ui/pull/2118#issuecomment-441986052), but the "hidden" property has been introduced with https://github.com/neos/neos-ui/pull/2118.
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Add cache control header to xliffAsJsonAction <https://github.com/neos/neos-development-collection/pull/2357>`_
+------------------------------------------------------------------------------------------------------------------------
+
+This is needed to get rid of https://github.com/neos/neos-ui/blob/`2239fe5465a84971d6aa6a94ea2f7a058959bf59 <https://github.com/neos/neos-development-collection/commit/2239fe5465a84971d6aa6a94ea2f7a058959bf59>`_/Classes/Aspects/XliffConfigurationCacheHeaderAspect.php in the Neos UI
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: change aside bar in media browser for many tags <https://github.com/neos/neos-development-collection/pull/2352>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+It's unfortunate, that the interactive fields are below the gallery, if the editors use too many tags in the media browser. It results in the odd behavior that the search bar is at the bottom of the page and limits the usability:
+
+![aside-bar-at-bottom](https://user-images.githubusercontent.com/6552092/51618692-063b8a00-1f2f-11e9-8477-68e7da329749.png)
+
+
+
+I understand that it quickly turns unsightly, if there are too many tags in the side bar, but I've noticed that if we use the button-style tags, rather than the tag list in the aside-bar, it works out quite nicely:
+
+![aside-bar-to-the-left](https://user-images.githubusercontent.com/6552092/51618693-063b8a00-1f2f-11e9-8f96-cac9f0b82e5e.png)
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Removed super types can be added again regardless of order <https://github.com/neos/neos-development-collection/pull/2272>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+I noticed the order of `superTypes` being of importance in one special case: re-adding a super type removed by a super type.
+There already was a test, but it didn't catch one case: the re-addition being positioned **before** the super type where it was removed. Run the same test with only the changes in [NodeTypeTest.php](https://github.com/neos/neos-development-collection/pull/2272/files#diff-960a57534a39e75dc45c37535d2ba971R108) and you'll get a [failed test](https://travis-ci.org/ComiR/neos-development-collection/jobs/454551553).
+
+By making the Method `addInheritedSuperTypes()` `static` and slightly modifying it to not handing over the array, I could get rid of `buildInheritanceChain()` completely and renamed the method to `getFlattenedSuperTypes()`.
+The `array_unique()` present before wasn't useful anyway because the array was already indexed by the node type names.
+
+As a reminder: The visibility is determined by class and not by object. You can just call `$nodeType->declaredSuperTypes`, even if it is another object (of the same class of course)!
+
+Since I started working on the `master` branch, there also is a version for that: https://github.com/ComiR/neos-development-collection/commit/`a8076ae958676e1309a4e33a51491d3204847239 <https://github.com/neos/neos-development-collection/commit/a8076ae958676e1309a4e33a51491d3204847239>`_.
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Asynchronous and presets for media browser thumbnails <https://github.com/neos/neos-development-collection/pull/2331>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Fixes the usage of the `asyncThumbnails` option in the media browser
+along with using the thumbnail preset to improve performance of the
+media browser and avoid additional thumbnails being generated.
+
+Fixes: #2330
+
+* Packages: ``Browser``
+
+`BUGFIX: Allow primary domains to be removed via CLI <https://github.com/neos/neos-development-collection/pull/2345>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Fixes: #2344
+
+* Packages: ``Neos``
+
+`BUGFIX: Deletion of backend users <https://github.com/neos/neos-development-collection/pull/2323>`_
+----------------------------------------------------------------------------------------------------
+
+**What I did**
+Backend users can now be deleted, even if they have a private workspace.
+
+**How I did it**
+Wrap deletePersonalWorkspace() in withoutAuthorizationChecks.
+
+**How to verify it**
+Create a backend user, log in and edit something. Log in as administrator and delete this user.
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed.
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+Fixes #926 
+@nezaniel
+
+* Packages: ``Neos``
+
+`BUGFIX: Copyrightnotice migration for postgres needs default value <https://github.com/neos/neos-development-collection/pull/2342>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Resolves: #2333
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Add new nodeTagForIdentifier() method to CachingHelper <https://github.com/neos/neos-development-collection/pull/2340>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Resolves #2339 
+
+* Packages: ``Browser`` ``Neos``
+
+`TASK: Remove useless ternary operator use <https://github.com/neos/neos-development-collection/pull/2338>`_
+------------------------------------------------------------------------------------------------------------
+
+The issue described in #2337 is not as bad as it seems. In fact, the
+ternary operation is useless *and* no longer needed. The filtering is
+applied via `applyAssetCollectionFilterFromBrowserState()` already.
+
+Resolves #2337
+
+* Packages: ``Browser`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.2.4...4.2.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
