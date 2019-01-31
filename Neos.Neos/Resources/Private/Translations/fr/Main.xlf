@@ -447,7 +447,7 @@
 			<target xml:lang="fr" state="translated">Aucune date définie</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
 				<source>Today</source>
-			<target xml:lang="fr" state="needs-translation">Today</target></trans-unit>
+			<target xml:lang="fr" state="translated">Aujourd'hui</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="fr" state="translated">Appliquer</target></trans-unit>
