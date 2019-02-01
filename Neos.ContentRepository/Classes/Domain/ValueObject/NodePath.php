@@ -12,6 +12,12 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Flow\Annotations as Flow;
+
+/**
+ * @Flow\Proxy(false)
+ */
 final class NodePath implements \JsonSerializable
 {
 
@@ -20,9 +26,30 @@ final class NodePath implements \JsonSerializable
      */
     private $path;
 
-    public function __construct(string $path)
+    private function __construct(string $path)
     {
+        if ($path !== '/') {
+            $pathParts = explode('/', ltrim($path, '/'));
+            foreach ($pathParts as $pathPart) {
+                if (preg_match(NodeInterface::MATCH_PATTERN_NAME, $pathPart) !== 1) {
+                    throw new \InvalidArgumentException(sprintf('The path "%s" is no valid NodePath because it contains a segment "%s" that is no valid NodeName', $path, $pathPart), 1548157108);
+                }
+            }
+        }
         $this->path = $path;
+    }
+
+    public static function fromString(string $path): self
+    {
+        return new static($path);
+    }
+
+    public static function fromPathSegments(array $pathSegments): self
+    {
+        if ($pathSegments === []) {
+            return new static('/');
+        }
+        return new static('/' . implode('/', $pathSegments));
     }
 
     public function isRoot(): bool
@@ -32,7 +59,7 @@ final class NodePath implements \JsonSerializable
 
     public function isAbsolute(): bool
     {
-        return $this->path{0} === '/';
+        return strpos($this->path, '/') === 0;
     }
 
     /**
@@ -40,9 +67,9 @@ final class NodePath implements \JsonSerializable
      * @param NodeName $nodeName
      * @return NodePath
      */
-    public function appendPathSegment(NodeName $nodeName): NodePath
+    public function appendPathSegment(NodeName $nodeName): self
     {
-        return new NodePath($this->path . '/' . (string)$nodeName);
+        return new static($this->path . '/' . $nodeName);
     }
 
     /**
@@ -50,21 +77,17 @@ final class NodePath implements \JsonSerializable
      */
     public function getParts(): array
     {
-        $path = $this->path;
-        if ($this->isAbsolute()) {
-            $path = substr($path, 1);
-        }
-        $pathParts = explode('/', $path);
+        $pathParts = explode('/', ltrim($this->path, '/'));
 
-        return array_map(function ($pathPart) {
-            return new NodeName($pathPart);
+        return array_map(function (string $pathPart) {
+            return NodeName::fromString($pathPart);
         }, $pathParts);
     }
 
     public function getDepth(): int
     {
         if (!$this->isAbsolute()) {
-            return new \Exception('TODO: not supported');
+            throw new \RuntimeException(sprintf('Depth of relative node path "%s" cannot be determined', $this->path), 1548162166);
         }
         return count($this->getParts());
     }

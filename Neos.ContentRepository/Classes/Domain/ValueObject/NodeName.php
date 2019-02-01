@@ -12,7 +12,11 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Flow\Annotations as Flow;
 
+/**
+ * @Flow\Proxy(false)
+ */
 final class NodeName implements \JsonSerializable
 {
 
@@ -22,21 +26,48 @@ final class NodeName implements \JsonSerializable
     private static $rootNodeName;
 
     /**
+     * @var NodeName
+     */
+    private static $unnamedNodeName;
+
+    /**
      * @var string
      */
-    private $name;
+    private $value;
 
-    public function __construct(?string $name)
+    private function __construct(string $value)
     {
-        if ($name === null || empty($name)) {
-            return;
+        if (!is_string($value) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $value) !== 1) {
+            throw new \InvalidArgumentException('Invalid node name "' . $value . '" (a node name must only contain lowercase characters, numbers and the "-" sign).', 1364290748);
         }
 
-        if (!is_string($name) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $name) !== 1) {
-            throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain lowercase characters, numbers and the "-" sign).', 1364290748);
-        }
+        $this->value = $value;
+    }
 
-        $this->name = $name;
+    public static function fromString(string $value): self
+    {
+        return new static($value);
+    }
+
+    /**
+     * This constructor creates an empty NodeName that can be used to create "unnamed" nodes
+     * @see isUnnamed()
+     *
+     * @return NodeName
+     */
+    public static function unnamed(): NodeName
+    {
+        if (!self::$unnamedNodeName) {
+            self::$unnamedNodeName = new static('-');
+            self::$unnamedNodeName->value = '';
+        }
+        return self::$unnamedNodeName;
+    }
+
+
+    public function isUnnamed(): bool
+    {
+        return $this === self::$unnamedNodeName;
     }
 
     /**
@@ -47,9 +78,14 @@ final class NodeName implements \JsonSerializable
     public static function root(): NodeName
     {
         if (!self::$rootNodeName) {
-            self::$rootNodeName = new NodeName('-');
+            self::$rootNodeName = new static('-');
         }
         return self::$rootNodeName;
+    }
+
+    public function isRoot(): bool
+    {
+        return $this === self::$rootNodeName;
     }
 
     /**
@@ -57,7 +93,7 @@ final class NodeName implements \JsonSerializable
      */
     public function jsonSerialize(): string
     {
-        return $this->name ?? '';
+        return $this->value ?? '';
     }
 
     /**
@@ -65,11 +101,6 @@ final class NodeName implements \JsonSerializable
      */
     public function __toString(): string
     {
-        return $this->name ?? '';
-    }
-
-    public function isRoot(): bool
-    {
-        return $this === self::$rootNodeName;
+        return $this->value ?? '';
     }
 }
