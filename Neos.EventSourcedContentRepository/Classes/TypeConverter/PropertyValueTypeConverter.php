@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\TypeConverter;
 
 /*
@@ -25,7 +26,7 @@ class PropertyValueTypeConverter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array('array');
+    protected $sourceTypes = ['array'];
 
     /**
      * @var string
@@ -37,7 +38,7 @@ class PropertyValueTypeConverter extends AbstractTypeConverter
      */
     protected $priority = 1;
 
-    public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         return new PropertyValue($source['value'], $source['type']);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -73,5 +74,4 @@ final class ChangeNodeName
     {
         return $this->newNodeName;
     }
-
 }

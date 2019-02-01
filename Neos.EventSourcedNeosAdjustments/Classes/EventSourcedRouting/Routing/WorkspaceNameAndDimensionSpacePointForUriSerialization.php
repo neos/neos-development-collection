@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Routing;
 
@@ -141,6 +142,4 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
     {
         return $this->dimensionSpacePoint;
     }
-
-
 }

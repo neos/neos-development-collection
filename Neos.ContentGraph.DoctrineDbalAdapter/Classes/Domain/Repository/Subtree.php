@@ -1,17 +1,20 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: sebastian
- * Date: 28.02.18
- * Time: 15:04
- */
+declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
+/*
+ * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-
 
 /**
  * Class Subtree
@@ -34,7 +37,8 @@ class Subtree implements SubtreeInterface
      */
     protected $children = [];
 
-    public function __construct(int $level, NodeInterface $node = null) {
+    public function __construct(int $level, NodeInterface $node = null)
+    {
         $this->level = $level;
         $this->node = $node;
     }

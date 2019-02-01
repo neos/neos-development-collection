@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\Exception;
 
 /*
@@ -10,7 +11,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\Exception
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 
 /**

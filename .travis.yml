@@ -1,0 +1,34 @@
+language: php
+matrix:
+  include:
+    - php: 7.2
+      env: DB=mysql
+      addons:
+        mariadb: '10.2'
+
+sudo: false
+before_install:
+  - export NEOS_TARGET_VERSION=master
+  - cd ..
+  - git clone https://github.com/neos/neos-development-distribution.git -b ${NEOS_TARGET_VERSION}
+  - cp contentrepository-development-collection/.travis_composer_json.json neos-development-distribution/composer.json
+  - cd neos-development-distribution
+  - cat composer.json
+install:
+  - composer update --no-progress --no-interaction
+  - composer install -d Build/Behat
+  - cd ..
+  - rm -rf neos-development-distribution/Packages/CR
+  - mv contentrepository-development-collection neos-development-distribution/Packages/CR
+  - cd neos-development-distribution
+  - ./flow flow:package:rescan
+before_script:
+  - cp Configuration/Settings.yaml.example Configuration/Settings.yaml
+  - Build/BuildEssentials/TravisCi/SetupDatabase.sh
+  - cp Configuration/Settings.yaml Configuration/Testing/
+
+script:
+  - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedContentRepository/Tests/Functional
+  - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Functional
+  - bin/behat --ansi --stop-on-failure -f progress -c Packages/CR/Neos.EventSourcedContentRepository/Tests/Behavior/behat.yml.dist
+  - bin/behat --ansi --stop-on-failure -f progress -c Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Behavior/behat.yml.dist

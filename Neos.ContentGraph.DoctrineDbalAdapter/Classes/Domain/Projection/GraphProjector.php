@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
@@ -132,7 +133,48 @@ class GraphProjector implements ProjectorInterface
                 $event->getInitialPropertyValues(),
                 $event->getNodeName()
             );
+
+            $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
+                $event->getContentStreamIdentifier(),
+                $event->getParentNodeIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getVisibleInDimensionSpacePoints()
+            );
         });
+    }
+
+    /**
+     * Copy the restriction edges from the parent Node to the newly created child node;
+     * so that newly created nodes inherit the visibility constraints of the parent.
+     */
+    private function connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $parentNodeIdentifier, NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier, DimensionSpacePointSet $visibleDimensionsOfNewlyCreateNodeAggregate)
+    {
+        $parentNode = $this->projectionContentGraph->getNode($parentNodeIdentifier, $contentStreamIdentifier);
+        $this->getDatabaseConnection()->executeUpdate('
+                INSERT INTO neos_contentgraph_restrictionedge (
+                  contentstreamidentifier,
+                  dimensionspacepointhash,
+                  originnodeaggregateidentifier,
+                  affectednodeaggregateidentifier
+                )
+                SELECT
+                  r.contentstreamidentifier,
+                  r.dimensionspacepointhash,
+                  r.originnodeaggregateidentifier,
+                  "' . $newlyCreatedNodeAggregateIdentifier . '" as affectednodeaggregateidentifier
+                FROM
+                    neos_contentgraph_restrictionedge r
+                    WHERE 
+                        r.contentstreamidentifier = :sourceContentStreamIdentifier
+                        and r.dimensionspacepointhash IN (:visibleDimensionSpacePoints)
+                        and r.affectednodeaggregateidentifier = :parentNodeAggregateIdentifier
+            ', [
+            'sourceContentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'visibleDimensionSpacePoints' => $visibleDimensionsOfNewlyCreateNodeAggregate->getPointHashes(),
+            'parentNodeAggregateIdentifier' => (string)$parentNode->nodeAggregateIdentifier
+        ], [
+            'visibleDimensionSpacePoints' => Connection::PARAM_STR_ARRAY
+        ]);
     }
 
     /**
@@ -155,6 +197,13 @@ class GraphProjector implements ProjectorInterface
                 $event->getVisibleInDimensionSpacePoints(),
                 $event->getPropertyDefaultValuesAndTypes(),
                 $event->getNodeName()
+            );
+
+            $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
+                $event->getContentStreamIdentifier(),
+                $event->getParentNodeIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getVisibleInDimensionSpacePoints()
             );
         });
     }
@@ -266,8 +315,7 @@ class GraphProjector implements ProjectorInterface
         DimensionSpacePointSet $dimensionSpacePointSet,
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
         NodeName $relationName = null
-    ): void
-    {
+    ): void {
         foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
             $position = $this->getRelationPosition(
                 $parentNodeAnchorPoint,
@@ -306,8 +354,7 @@ class GraphProjector implements ProjectorInterface
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int
-    {
+    ): int {
         $position = $this->projectionContentGraph->determineHierarchyRelationPosition($parentAnchorPoint, $childAnchorPoint, $succeedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
 
         if ($position % 2 !== 0) {
@@ -332,8 +379,7 @@ class GraphProjector implements ProjectorInterface
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int
-    {
+    ): int {
         if (!$childAnchorPoint && !$parentAnchorPoint) {
             throw new \InvalidArgumentException('You must either specify a parent or child node anchor to get relation positions after recalculation.', 1519847858);
         }
@@ -362,6 +408,10 @@ class GraphProjector implements ProjectorInterface
     public function whenContentStreamWasForked(ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event)
     {
         $this->transactional(function () use ($event) {
+
+            //
+            // 1) Copy HIERARCHY RELATIONS (this is the MAIN OPERATION here)
+            //
             $this->getDatabaseConnection()->executeUpdate('
                 INSERT INTO neos_contentgraph_hierarchyrelation (
                   parentnodeanchor,
@@ -383,6 +433,28 @@ class GraphProjector implements ProjectorInterface
                 FROM
                     neos_contentgraph_hierarchyrelation h
                     WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
+            ', [
+                'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
+            ]);
+
+            //
+            // 2) copy Hidden Node information to second content stream
+            //
+            $this->getDatabaseConnection()->executeUpdate('
+                INSERT INTO neos_contentgraph_restrictionedge (
+                  contentstreamidentifier,
+                  dimensionspacepointhash,
+                  originnodeaggregateidentifier,
+                  affectednodeaggregateidentifier
+                )
+                SELECT
+                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier,
+                  r.dimensionspacepointhash,
+                  r.originnodeaggregateidentifier,
+                  r.affectednodeaggregateidentifier 
+                FROM
+                    neos_contentgraph_restrictionedge r
+                    WHERE r.contentstreamidentifier = :sourceContentStreamIdentifier
             ', [
                 'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
             ]);
@@ -434,9 +506,63 @@ class GraphProjector implements ProjectorInterface
     public function whenNodeWasHidden(NodeWasHidden $event)
     {
         $this->transactional(function () use ($event) {
-            $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
-                $node->hidden = true;
-            });
+            $this->getDatabaseConnection()->executeUpdate('
+-- GraphProjector::whenNodeWasHidden
+insert into neos_contentgraph_restrictionedge
+(
+    -- we build a recursive tree
+    with recursive tree as (
+         -- --------------------------------
+         -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
+         -- --------------------------------
+         select
+            n.relationanchorpoint,
+            n.nodeaggregateidentifier,
+            h.dimensionspacepointhash
+         from
+            neos_contentgraph_node n
+         -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
+         inner join neos_contentgraph_hierarchyrelation h
+            on h.childnodeanchor = n.relationanchorpoint
+         where
+            n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
+            and h.contentstreamidentifier = :contentStreamIdentifier
+            and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+    union
+         -- --------------------------------
+         -- RECURSIVE query: do one "child" query step
+         -- --------------------------------
+         select
+            c.relationanchorpoint,
+            c.nodeaggregateidentifier,
+            h.dimensionspacepointhash
+         from
+            tree p
+         inner join neos_contentgraph_hierarchyrelation h
+            on h.parentnodeanchor = p.relationanchorpoint
+         inner join neos_contentgraph_node c
+            on h.childnodeanchor = c.relationanchorpoint
+         where
+            h.contentstreamidentifier = :contentStreamIdentifier
+            and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+    )
+
+    select
+        "' . (string)$event->getContentStreamIdentifier() . '" as contentstreamidentifier,
+        dimensionspacepointhash,
+        "' . (string)$event->getNodeAggregateIdentifier() . '" as originnodeidentifier,
+        nodeaggregateidentifier as affectednodeaggregateidentifier
+    from tree
+)
+            ',
+                [
+                    'entryNodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
+                    'dimensionSpacePointHashes' => $event->getAffectedDimensionSpacePoints()->getPointHashes()
+                ],
+            [
+                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+            ]);
         });
     }
 
@@ -447,10 +573,132 @@ class GraphProjector implements ProjectorInterface
     public function whenNodeWasShown(NodeWasShown $event)
     {
         $this->transactional(function () use ($event) {
-            $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) {
-                $node->hidden = false;
-            });
+            $this->removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getAffectedDimensionSpacePoints());
         });
+    }
+
+    private function removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
+    {
+        $this->getDatabaseConnection()->executeUpdate('
+                -- GraphProjector::removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints
+ 
+                delete r.* from
+                    neos_contentgraph_restrictionedge r
+                    join 
+                     (
+                        -- we build a recursive tree
+                        with recursive tree as (
+                             -- --------------------------------
+                             -- INITIAL query: select the root nodes of the tree
+                             -- --------------------------------
+                             select
+                                n.relationanchorpoint,
+                                n.nodeaggregateidentifier,
+                                h.dimensionspacepointhash
+                             from
+                                neos_contentgraph_node n
+                             -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
+                             inner join neos_contentgraph_hierarchyrelation h
+                                on h.childnodeanchor = n.relationanchorpoint
+                             where
+                                n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
+                                and h.contentstreamidentifier = :contentStreamIdentifier
+                                and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+                        union
+                             -- --------------------------------
+                             -- RECURSIVE query: do one "child" query step
+                             -- --------------------------------
+                             select
+                                c.relationanchorpoint,
+                                c.nodeaggregateidentifier,
+                                h.dimensionspacepointhash
+                             from
+                                tree p
+                             inner join neos_contentgraph_hierarchyrelation h
+                                on h.parentnodeanchor = p.relationanchorpoint
+                             inner join neos_contentgraph_node c
+                                on h.childnodeanchor = c.relationanchorpoint
+                             where
+                                h.contentstreamidentifier = :contentStreamIdentifier
+                                and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+                        )
+                        select * from tree
+                     ) as tree
+
+                -- the "tree" CTE now contains a list of tuples (nodeAggregateIdentifier,dimensionSpacePointHash)
+                -- which are *descendants* of the starting NodeAggregateIdentifier (in the given DimensionSpacePointHashes).
+                where
+                    r.contentstreamidentifier = :contentStreamIdentifier
+                    and r.dimensionspacepointhash = tree.dimensionspacepointhash
+                    and r.affectednodeaggregateidentifier = tree.nodeaggregateidentifier
+            ',
+            [
+                'entryNodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
+            ],
+            [
+                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+            ]);
+    }
+
+    private function removeAllRestrictionEdgesUnderneathNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
+    {
+        $this->getDatabaseConnection()->executeUpdate('
+                -- GraphProjector::removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints
+ 
+                delete r.* from
+                    neos_contentgraph_restrictionedge r
+                    join 
+                     (
+                        -- we build a recursive tree
+                        with recursive tree as (
+                             -- --------------------------------
+                             -- INITIAL query: select the root nodes of the tree
+                             -- --------------------------------
+                             select
+                                n.relationanchorpoint,
+                                n.nodeaggregateidentifier,
+                                h.dimensionspacepointhash
+                             from
+                                neos_contentgraph_node n
+                             -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
+                             inner join neos_contentgraph_hierarchyrelation h
+                                on h.childnodeanchor = n.relationanchorpoint
+                             where
+                                n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
+                                and h.contentstreamidentifier = :contentStreamIdentifier
+                        union
+                             -- --------------------------------
+                             -- RECURSIVE query: do one "child" query step
+                             -- --------------------------------
+                             select
+                                c.relationanchorpoint,
+                                c.nodeaggregateidentifier,
+                                h.dimensionspacepointhash
+                             from
+                                tree p
+                             inner join neos_contentgraph_hierarchyrelation h
+                                on h.parentnodeanchor = p.relationanchorpoint
+                             inner join neos_contentgraph_node c
+                                on h.childnodeanchor = c.relationanchorpoint
+                             where
+                                h.contentstreamidentifier = :contentStreamIdentifier
+                        )
+                        select * from tree
+                     ) as tree
+
+                -- the "tree" CTE now contains a list of tuples (nodeAggregateIdentifier,dimensionSpacePointHash)
+                -- which are *descendants* of the starting NodeAggregateIdentifier in ALL DimensionSpacePointHashes
+                where
+                    r.contentstreamidentifier = :contentStreamIdentifier
+                    and r.dimensionspacepointhash = tree.dimensionspacepointhash
+                    and r.affectednodeaggregateidentifier = tree.nodeaggregateidentifier
+            ',
+            [
+                'entryNodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            ]);
     }
 
     /**
@@ -595,6 +843,20 @@ class GraphProjector implements ProjectorInterface
                     : null;
                 $inboundHierarchyRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNode($nodeToBeMoved->relationAnchorPoint, $event->getContentStreamIdentifier());
                 if ($moveNodeMapping->getNewParentNodeIdentifier()) {
+                    //
+                    // 1. PRE-MOVE HOUSEKEEPING
+                    // - of the to-be moved nodes, remove all restriction edges
+                    // - TODO: this means that when moving a HIDDEN node itself (and none of its children), it will LOOSE its hidden state. TODO FIX!!!
+                    //
+                    $this->removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints(
+                        $event->getContentStreamIdentifier(),
+                        $nodeToBeMoved->nodeAggregateIdentifier,
+                        $moveNodeMapping->getDimensionSpacePointSet()
+                    );
+
+                    //
+                    // 2. do the MOVE ITSELF
+                    //
                     $newParentNode = $this->projectionContentGraph->getNode($moveNodeMapping->getNewParentNodeIdentifier(), $event->getContentStreamIdentifier());
                     foreach ($moveNodeMapping->getDimensionSpacePointSet()->getPoints() as $dimensionSpacePoint) {
                         $newPosition = $this->getRelationPosition(
@@ -606,6 +868,17 @@ class GraphProjector implements ProjectorInterface
                         );
                         $this->assignHierarchyRelationToNewParent($inboundHierarchyRelations[$dimensionSpacePoint->getHash()], $newParentNode->nodeIdentifier, $event->getContentStreamIdentifier(), $newPosition);
                     }
+
+                    //
+                    // 3. POST-MOVE HOUSEKEEPING
+                    // - if parent node is hidden, hide the moved-to target as well.
+                    //
+                    $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
+                        $event->getContentStreamIdentifier(),
+                        $newParentNode->nodeIdentifier,
+                        $nodeToBeMoved->nodeAggregateIdentifier,
+                        $moveNodeMapping->getDimensionSpacePointSet()
+                    );
                 } else {
                     foreach ($moveNodeMapping->getDimensionSpacePointSet()->getPoints() as $dimensionSpacePoint) {
                         $newPosition = $this->getRelationPosition(
@@ -631,6 +904,7 @@ class GraphProjector implements ProjectorInterface
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
+            $this->removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
             $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
             foreach ($inboundRelations as $inboundRelation) {
                 $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($inboundRelation);
@@ -647,6 +921,8 @@ class GraphProjector implements ProjectorInterface
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
+            $this->removeAllRestrictionEdgesUnderneathNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
+
             $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
             foreach ($inboundRelations as $inboundRelation) {
                 $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($inboundRelation);
@@ -782,5 +1058,4 @@ class GraphProjector implements ProjectorInterface
     {
         return $this->client->getConnection();
     }
-
 }

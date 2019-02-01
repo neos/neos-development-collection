@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
 
 /*
@@ -137,5 +138,4 @@ final class CreateRootWorkspace
     {
         return $this->rootNodeTypeName;
     }
-
 }

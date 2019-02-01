@@ -1,8 +1,6 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
-
-use Neos\ContentRepository\Domain;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The menu item state value object

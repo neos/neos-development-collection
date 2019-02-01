@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\Parameters;
 
 /*
@@ -12,12 +13,14 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Parameters;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Policy\Role;
 
 /**
  * The context parameters value object
+ *
+ * Maybe future: "Node Filter" tree or so as replacement of ReadNodePrivilege?
+ * @Flow\Proxy(false)
  */
-final class ContextParameters
+final class VisibilityConstraints
 {
     /**
      * @var \DateTimeImmutable
@@ -25,31 +28,16 @@ final class ContextParameters
     protected $currentDateTime;
 
     /**
-     * @var array|Role[]
-     */
-    protected $roles = [];
-
-    /**
      * @var boolean
-     * @deprecated use roles instead
      */
     protected $invisibleContentShown = false;
 
-    /**
-     * @var boolean
-     * @deprecated evaluate roles instead
-     */
-    protected $inaccessibleContentShown = false;
 
-
-    public function __construct(\DateTimeImmutable $currentDateTime, array $roles, bool $invisibleContentShown, bool $inaccessibleContentShown)
+    private function __construct(\DateTimeImmutable $currentDateTime, bool $invisibleContentShown)
     {
         $this->currentDateTime = $currentDateTime;
-        $this->roles = $roles;
         $this->invisibleContentShown = $invisibleContentShown;
-        $this->inaccessibleContentShown = $invisibleContentShown;
     }
-
 
     /**
      * @return \DateTimeImmutable
@@ -60,28 +48,25 @@ final class ContextParameters
     }
 
     /**
-     * @return array|Role[]
-     */
-    public function getRoles(): array
-    {
-        return $this->roles;
-    }
-
-    /**
      * @return bool
-     * @deprecated evaluate roles instead
      */
     public function isInvisibleContentShown(): bool
     {
         return $this->invisibleContentShown;
     }
 
-    /**
-     * @return bool
-     * @deprecated evaluate roles instead
-     */
-    public function isInaccessibleContentShown(): bool
+    public function getHash(): string
     {
-        return $this->inaccessibleContentShown;
+        return md5($this->currentDateTime->format(\DateTime::W3C) . '-invisible' . $this->invisibleContentShown);
+    }
+
+    public static function withoutRestrictions(): VisibilityConstraints
+    {
+        return new VisibilityConstraints(new \DateTimeImmutable(), true);
+    }
+
+    public static function frontend(): VisibilityConstraints
+    {
+        return new VisibilityConstraints(new \DateTimeImmutable(), false);
     }
 }

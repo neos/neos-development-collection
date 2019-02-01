@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
@@ -84,6 +85,4 @@ final class SetNodeReferences
     {
         return $this->propertyName;
     }
-
-
 }

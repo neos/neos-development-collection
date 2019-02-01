@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace;
 
 /*
@@ -197,10 +198,10 @@ final class WorkspaceCommandHandler
         // - extract the initial ContentStreamWasForked event, to read the version of the source content stream when the fork occurred
         // - ensure that no other changes have been done in the meantime in the base content stream
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName->getEventStreamName());
 
         /* @var $workspaceContentStream EventAndRawEvent[] */
-        $workspaceContentStream = iterator_to_array($eventStore->get(new StreamNameFilter($workspaceContentStreamName)));
+        $workspaceContentStream = iterator_to_array($eventStore->get(new StreamNameFilter($workspaceContentStreamName->getEventStreamName())));
 
         $events = [];
         foreach ($workspaceContentStream as $eventAndRawEvent) {
@@ -215,7 +216,7 @@ final class WorkspaceCommandHandler
         $contentStreamWasForked = $this->extractSingleForkedContentStreamEvent($workspaceContentStream);
         try {
             $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($baseWorkspace->getCurrentContentStreamIdentifier());
-            $this->eventPublisher->publishMany($baseWorkspaceContentStreamName, $events, $contentStreamWasForked->getVersionOfSourceContentStream());
+            $this->eventPublisher->publishMany($baseWorkspaceContentStreamName->getEventStreamName(), $events, $contentStreamWasForked->getVersionOfSourceContentStream());
         } catch (ConcurrencyException $e) {
             throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf('The base workspace has been modified in the meantime; please rebase. Expected version %d of source content stream %s', $contentStreamWasForked->getVersionOfSourceContentStream(), $baseWorkspace->getCurrentContentStreamIdentifier()));
         }
@@ -228,7 +229,7 @@ final class WorkspaceCommandHandler
      */
     protected static function extractSingleForkedContentStreamEvent(array $stream) : ContentStreamWasForked
     {
-        $contentStreamWasForkedEvents = array_filter($stream, function(EventAndRawEvent $eventAndRawEvent) {
+        $contentStreamWasForkedEvents = array_filter($stream, function (EventAndRawEvent $eventAndRawEvent) {
             return $eventAndRawEvent->getEvent() instanceof ContentStreamWasForked;
         });
 
@@ -279,9 +280,9 @@ final class WorkspaceCommandHandler
         );
 
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName->getEventStreamName());
 
-        $workspaceContentStream = $eventStore->get(new StreamNameFilter($workspaceContentStreamName));
+        $workspaceContentStream = $eventStore->get(new StreamNameFilter($workspaceContentStreamName->getEventStreamName()));
         foreach ($workspaceContentStream as $eventAndRawEvent) {
             $metadata = $eventAndRawEvent->getRawEvent()->getMetadata();
             if (isset($metadata['commandClass'])) {
@@ -325,7 +326,6 @@ final class WorkspaceCommandHandler
                     default:
                         throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($commandToRebase)));
                 }
-
             }
         }
 

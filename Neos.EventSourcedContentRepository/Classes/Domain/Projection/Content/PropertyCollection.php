@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
@@ -13,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
-use Neos\EventSourcedContentRepository\Domain;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Annotations as Flow;

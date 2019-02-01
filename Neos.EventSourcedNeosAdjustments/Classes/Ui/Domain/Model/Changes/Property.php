@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 
 /*
@@ -11,19 +12,21 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
+use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePropertyConversionService;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
 use Neos\Utility\ObjectAccess;
 
@@ -84,12 +87,6 @@ class Property extends AbstractChange
      * @var NodeCommandHandler
      */
     protected $nodeCommandHandler;
-
-    /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
 
     /**
      * Set the property name
@@ -209,8 +206,29 @@ class Property extends AbstractChange
                 $nodeType = $this->nodeTypeManager->getNodeType($value);
                 $node = $this->changeNodeType($node, $nodeType);
             } elseif ($propertyName{0} === '_') {
-                throw new \Exception("TODO FIX");
-                ObjectAccess::setProperty($node, substr($propertyName, 1), $value);
+                if ($propertyName === '_hidden') {
+                    if ($value === true) {
+                        $command = new HideNode(
+                            $node->getContentStreamIdentifier(),
+                            $node->getNodeAggregateIdentifier(),
+                            // TODO: what do we want to hide? I.e. including NESTED dimensions?
+                            new DimensionSpacePointSet([$node->getOriginDimensionSpacePoint()])
+                        );
+                        $this->nodeCommandHandler->handleHideNode($command);
+                    } else {
+                        // unhide
+                        $command = new ShowNode(
+                            $node->getContentStreamIdentifier(),
+                            $node->getNodeAggregateIdentifier(),
+                            // TODO: what do we want to unhide? I.e. including NESTED dimensions?
+                            new DimensionSpacePointSet([$node->getOriginDimensionSpacePoint()])
+                        );
+                        $this->nodeCommandHandler->handleShowNode($command);
+                    }
+                } else {
+                    throw new \Exception("TODO FIX");
+                    ObjectAccess::setProperty($node, substr($propertyName, 1), $value);
+                }
             } else {
                 $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
                 $command = new SetNodeProperty(
@@ -227,8 +245,7 @@ class Property extends AbstractChange
 
             $reloadIfChangedConfigurationPath = sprintf('properties.%s.ui.reloadIfChanged', $propertyName);
             if (!$this->getIsInline() && $node->getNodeType()->getConfiguration($reloadIfChangedConfigurationPath)) {
-                $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint());
-                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $subgraph->findParentNode($node->getNodeIdentifier())->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
+                if ($this->getNodeDomAddress() && $this->getNodeDomAddress()->getFusionPath() && $node->findParentNode()->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
                     $reloadContentOutOfBand = new ReloadContentOutOfBand();
                     $reloadContentOutOfBand->setNode($node);
                     $reloadContentOutOfBand->setNodeDomAddress($this->getNodeDomAddress());
@@ -251,11 +268,11 @@ class Property extends AbstractChange
     }
 
     /**
-     * @param NodeInterface $node
+     * @param TraversableNodeInterface $node
      * @param NodeType $nodeType
-     * @return NodeInterface
+     * @return TraversableNodeInterface
      */
-    protected function changeNodeType(NodeInterface $node, NodeType $nodeType)
+    protected function changeNodeType(TraversableNodeInterface $node, NodeType $nodeType)
     {
         $oldNodeType = $node->getNodeType();
         ObjectAccess::setProperty($node, 'nodeType', $nodeType);

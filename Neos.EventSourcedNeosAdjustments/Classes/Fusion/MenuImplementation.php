@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 /*
@@ -16,7 +17,6 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParametersFactory;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
 use Neos\Fusion\Exception as FusionException;
@@ -65,12 +65,6 @@ class MenuImplementation extends AbstractMenuImplementation
      * @var NodeTypeConstraints
      */
     protected $nodeTypeConstraints;
-
-    /**
-     * @Flow\Inject
-     * @var ContextParametersFactory
-     */
-    protected $contextParametersFactory;
 
     /**
      * The last navigation level which should be rendered.
@@ -164,10 +158,11 @@ class MenuImplementation extends AbstractMenuImplementation
     {
         if (!is_null($this->getItemCollection())) {
             $menuLevelCollection = $this->getItemCollection();
-            $entryNodeAggregateIdentifiers = array_map(function(NodeInterface $node) { return $node->getNodeAggregateIdentifier(); }, $menuLevelCollection);
+            $entryNodeAggregateIdentifiers = array_map(function (NodeInterface $node) {
+                return $node->getNodeAggregateIdentifier();
+            }, $menuLevelCollection);
 
-            $subtree = $this->getSubgraph()->findSubtrees($entryNodeAggregateIdentifiers, $this->getMaximumLevels(), $this->contextParametersFactory->createDefaultParameters(), $this->getNodeTypeConstraints());
-
+            $subtree = $this->getSubgraph()->findSubtrees($entryNodeAggregateIdentifiers, $this->getMaximumLevels(), $this->getNodeTypeConstraints());
         } else {
             $entryParentNode = $this->findMenuStartingPoint();
             if (!$entryParentNode) {
@@ -176,7 +171,7 @@ class MenuImplementation extends AbstractMenuImplementation
 
             $entryNodeAggregateIdentifiers = [$entryParentNode->getNodeAggregateIdentifier()];
 
-            $subtree = $this->getSubgraph()->findSubtrees($entryNodeAggregateIdentifiers, $this->getMaximumLevels(), $this->contextParametersFactory->createDefaultParameters(), $this->getNodeTypeConstraints());
+            $subtree = $this->getSubgraph()->findSubtrees($entryNodeAggregateIdentifiers, $this->getMaximumLevels(), $this->getNodeTypeConstraints());
             $subtree = $subtree->getChildren()[0];
         }
 

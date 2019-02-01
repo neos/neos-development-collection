@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
@@ -268,8 +269,7 @@ class ProjectionContentGraph
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int
-    {
+    ): int {
         if (!$parentAnchorPoint && !$childAnchorPoint) {
             throw new \InvalidArgumentException('You must specify either parent or child node anchor to determine a hierarchy relation position', 1519847447);
         }
@@ -289,7 +289,7 @@ class ProjectionContentGraph
 
             $succeedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanhor') . ' = :parentOrChildAnchorPoint
+                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanchor') . ' = :parentOrChildAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
                           AND h.`position` > :position',
@@ -309,7 +309,7 @@ class ProjectionContentGraph
         } else {
             $rightmostSucceedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MAX(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanhor') . ' = :parentOrChildAnchorPoint
+                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanchor') . ' = :parentOrChildAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
                           ORDER BY h.`position` DESC',
@@ -341,8 +341,7 @@ class ProjectionContentGraph
         NodeRelationAnchorPoint $parentAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): array
-    {
+    ): array {
         $relations = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
@@ -372,8 +371,7 @@ class ProjectionContentGraph
         NodeRelationAnchorPoint $childAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): array
-    {
+    ): array {
         $relations = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
@@ -493,8 +491,7 @@ class ProjectionContentGraph
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet
-    ): array
-    {
+    ): array {
         $relations = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
@@ -528,8 +525,7 @@ class ProjectionContentGraph
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet = null
-    ): array
-    {
+    ): array {
         $relations = [];
 
         $query = 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h

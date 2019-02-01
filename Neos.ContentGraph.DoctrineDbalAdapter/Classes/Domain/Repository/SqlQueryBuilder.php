@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
@@ -14,7 +15,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
-use Neos\EventSourcedContentRepository\Domain;
 
 /**
  * The Doctrine DBAL adapter content graph
@@ -34,7 +34,8 @@ final class SqlQueryBuilder
     protected $parameters = [];
     protected $types = [];
 
-    public function addToQuery($queryPart, string $markerToReplaceInQuery = null) {
+    public function addToQuery($queryPart, string $markerToReplaceInQuery = null)
+    {
         if ($markerToReplaceInQuery !== null) {
             $this->query = str_replace($markerToReplaceInQuery, $queryPart, $this->query);
         } else {
@@ -43,7 +44,8 @@ final class SqlQueryBuilder
         return $this;
     }
 
-    public function parameter($parameterName, $parameterValue, $parameterType = null) {
+    public function parameter($parameterName, $parameterValue, $parameterType = null)
+    {
         $this->parameters[$parameterName] = $parameterValue;
 
         if ($parameterType !== null) {

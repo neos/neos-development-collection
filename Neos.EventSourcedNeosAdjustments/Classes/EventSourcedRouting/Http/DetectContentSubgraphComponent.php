@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http;
 
 /*
@@ -82,7 +83,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         $path = $componentContext->getHttpRequest()->getUri()->getPath();
 
         /** @todo no more paths! */
-        $isContextPath = WorkspaceNameAndDimensionSpacePointForUriSerialization::isParseablebackendUri($path);
+        $isParseablebackendUri = WorkspaceNameAndDimensionSpacePointForUriSerialization::isParseablebackendUri($path);
         $backendUriDimensionPresetDetector = new ContentDimensionDetection\BackendUriContentDimensionValueDetector();
         $dimensions = $this->dimensionSource->getContentDimensionsOrderedByPriority();
         $this->sortDimensionsByOffset($dimensions);
@@ -99,7 +100,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
                 }
             }
 
-            if ($isContextPath) {
+            if ($isParseablebackendUri) {
                 $dimensionValue = $backendUriDimensionPresetDetector->detectValue($contentDimension, $componentContext);
                 if ($dimensionValue) {
                     $coordinates[$rawDimensionIdentifier] = (string)$dimensionValue;

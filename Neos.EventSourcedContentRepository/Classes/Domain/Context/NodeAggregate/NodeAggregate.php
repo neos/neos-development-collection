@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
@@ -254,7 +255,7 @@ final class NodeAggregate
                         $occupiedDimensionSpacePoints[$event->getGeneralizationLocation()->getHash()] = $event->getGeneralizationLocation();
                         break;
                     default:
-                        continue;
+                        continue 2;
                 }
             }
         }
@@ -290,7 +291,7 @@ final class NodeAggregate
                         }
                         break;
                     default:
-                        continue;
+                        continue 2;
                 }
             }
         }
@@ -308,18 +309,18 @@ final class NodeAggregate
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
                         /** @var NodeAggregateWithNodeWasCreated $event */
-                        $dimensionSpacePointOccupied |= $event->getDimensionSpacePoint()->equals($dimensionSpacePoint);
+                        $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getDimensionSpacePoint()->equals($dimensionSpacePoint);
                         break;
                     case Event\NodeSpecializationWasCreated::class:
                         /** @var Event\NodeSpecializationWasCreated $event */
-                        $dimensionSpacePointOccupied |= $event->getSpecializationLocation()->equals($dimensionSpacePoint);
+                        $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getSpecializationLocation()->equals($dimensionSpacePoint);
                         break;
                     case Event\NodeGeneralizationWasCreated::class:
                         /** @var Event\NodeGeneralizationWasCreated $event */
-                        $dimensionSpacePointOccupied |= $event->getGeneralizationLocation()->equals($dimensionSpacePoint);
+                        $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getGeneralizationLocation()->equals($dimensionSpacePoint);
                         break;
                     default:
-                        continue;
+                        continue 2;
                 }
             }
         }

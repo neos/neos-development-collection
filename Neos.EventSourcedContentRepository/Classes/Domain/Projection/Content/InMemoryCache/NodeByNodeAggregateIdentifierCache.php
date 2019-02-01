@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 
@@ -15,7 +16,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
-
 /**
  * NodeAggregateIdentifier -> Node cache
  *
@@ -23,7 +23,6 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
  */
 final class NodeByNodeAggregateIdentifierCache
 {
-
     protected $nodes = [];
     protected $nonExistingNodeAggregateIdentifiers = [];
 

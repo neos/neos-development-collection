@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace;
 
@@ -13,7 +14,6 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace;
  */
 
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The workspace name value for Neos contexts

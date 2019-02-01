@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
 
 /*
@@ -24,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
  * @CQRS\ReadModel
  * @ORM\Table(name="neos_contentrepository_projection_workspace_v1")
  */
-final class Workspace
+class Workspace
 {
 
     /**

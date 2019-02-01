@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
 
 /*
@@ -12,9 +13,12 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
  */
 
 use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping\NodePropertyConverterService;
@@ -81,6 +85,12 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     protected $nodePropertyConverterService;
 
     /**
+     * @Flow\Inject
+     * @var NodeHiddenStateFinder
+     */
+    protected $nodeHiddenStateFinder;
+
+    /**
      * @Flow\InjectConfiguration(path="userInterface.navigateComponent.nodeTree.presets.default.baseNodeType", package="Neos.Neos")
      * @var string
      */
@@ -136,7 +146,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         $nodeInfo = $this->getBasicNodeInformation($node);
         $nodeInfo['properties'] = [
             // if we are only rendering the tree state, ensure _isHidden is sent to hidden nodes are correctly shown in the tree.
-            '_hidden' => $node->isHidden(),
+            '_hidden' => $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden(),
             //'_hiddenInIndex' => $node->isHiddenInIndex(),
             //'_hiddenBeforeDateTime' => $node->getHiddenBeforeDateTime() instanceof \DateTimeInterface,
             //'_hiddenAfterDateTime' => $node->getHiddenAfterDateTime() instanceof \DateTimeInterface,
@@ -227,6 +237,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             'isAutoCreated' => self::isAutoCreated($node),
             'depth' => $node->findNodePath()->getDepth(),
             'children' => [],
+            'parent' => $this->nodeAddressFactory->createFromNode($node->findParentNode())->serializeForUri(),
             // TODO: "matchescurrentdimensions"
             //'matchesCurrentDimensions' => ($node instanceof Node && $node->dimensionsAreMatchingTargetDimensionValues())
         ];
@@ -243,6 +254,15 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         return false;
     }
 
+    public static function isNodeTypeAllowedAsChildNode(TraversableNodeInterface $node, NodeType $nodeType)
+    {
+        if (self::isAutoCreated($node)) {
+            return $node->findParentNode()->getNodeType()->allowsGrandchildNodeType((string)$node->getNodeName(), $nodeType);
+        } else {
+            return $node->getNodeType()->allowsChildNodeType($nodeType);
+        }
+    }
+
 
     /**
      * Get information for all children of the given parent node.
@@ -250,22 +270,23 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      * @param TraversableNodeInterface $node
      * @param string $nodeTypeFilterString
      * @return array
+     * @throws NodeAddressCannotBeSerializedException
      */
     protected function renderChildrenInformation(TraversableNodeInterface $node, string $nodeTypeFilterString): array
     {
         $documentChildNodes = $node->findChildNodes($this->nodeTypeConstraintFactory->parseFilterString($nodeTypeFilterString));
         // child nodes for content tree, must not include those nodes filtered out by `baseNodeType`
         $contentChildNodes = $node->findChildNodes($this->nodeTypeConstraintFactory->parseFilterString($this->buildContentChildNodeFilterString()));
-        $childNodes = array_merge($documentChildNodes, $contentChildNodes);
+        $childNodes = $documentChildNodes->merge($contentChildNodes);
 
-        $mapper = function (TraversableNodeInterface $childNode) {
-            return [
+        $infos = [];
+        foreach ($childNodes as $childNode) {
+            $infos[] = [
                 'contextPath' => $this->nodeAddressFactory->createFromNode($childNode)->serializeForUri(),
                 'nodeType' => $childNode->getNodeType()->getName() // TODO: DUPLICATED; should NOT be needed!!!
             ];
         };
-
-        return array_map($mapper, $childNodes);
+        return $infos;
     }
 
     /**
@@ -410,7 +431,6 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      */
     public function uri(NodeAddress $nodeAddress, ControllerContext $controllerContext)
     {
-
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
@@ -418,9 +438,8 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             ->reset()
             ->setFormat('html')
             ->setCreateAbsoluteUri(true)
-            ->uriFor('show', array('node' => $nodeAddress), 'Frontend\Node', 'Neos.Neos');
+            ->uriFor('show', ['node' => $nodeAddress], 'Frontend\Node', 'Neos.Neos');
         return $uri;
-
     }
 
     /**

@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
-class Version20181030124912  extends AbstractMigration
+class Version20181030124912 extends AbstractMigration
 {
     public function getDescription(): string
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -11,8 +12,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
@@ -27,22 +29,28 @@ final class NodeWasHidden implements EventInterface, CopyableAcrossContentStream
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * Node Aggregate identifier which the user intended to hide
+     *
+     * @var NodeAggregateIdentifier
      */
-    private $nodeIdentifier;
+    private $nodeAggregateIdentifier;
+
+    /**
+     * @var DimensionSpacePointSet
+     */
+    private $affectedDimensionSpacePoints;
 
     /**
      * NodeWasHidden constructor.
-     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePointSet $affectedDimensionSpacePoints
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $nodeIdentifier
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->affectedDimensionSpacePoints = $affectedDimensionSpacePoints;
     }
 
     /**
@@ -54,11 +62,19 @@ final class NodeWasHidden implements EventInterface, CopyableAcrossContentStream
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
+    }
+
+    /**
+     * @return DimensionSpacePointSet
+     */
+    public function getAffectedDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->affectedDimensionSpacePoints;
     }
 
     /**
@@ -69,7 +85,8 @@ final class NodeWasHidden implements EventInterface, CopyableAcrossContentStream
     {
         return new NodeWasHidden(
             $targetContentStream,
-            $this->nodeIdentifier
+            $this->nodeAggregateIdentifier,
+            $this->affectedDimensionSpacePoints
         );
     }
 }

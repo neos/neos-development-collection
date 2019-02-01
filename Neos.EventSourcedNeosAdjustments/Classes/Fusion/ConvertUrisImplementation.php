@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 /*
@@ -137,7 +138,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
             return $resolvedUri;
         }, $text);
 
-        if ($unresolvedUris !== array()) {
+        if ($unresolvedUris !== []) {
             $processedContent = preg_replace('/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
             $processedContent = preg_replace(LinkingService::PATTERN_SUPPORTED_URIS, '', $processedContent);
         }

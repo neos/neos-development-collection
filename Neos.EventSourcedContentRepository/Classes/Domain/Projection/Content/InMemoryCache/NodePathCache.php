@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 
@@ -12,33 +13,31 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
-
 
 /**
  * Node Identifier -> Node Path cache
  */
 final class NodePathCache
 {
-
     protected $nodePaths = [];
 
-    public function contains(NodeIdentifier $nodeIdentifier): bool
+    public function contains(NodeAggregateIdentifier $nodeAggregateIdentifier): bool
     {
-        $key = (string)$nodeIdentifier;
+        $key = (string)$nodeAggregateIdentifier;
         return isset($this->nodePaths[$key]);
     }
 
-    public function add(NodeIdentifier $nodeIdentifier, NodePath $nodePath): void
+    public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, NodePath $nodePath): void
     {
-        $key = (string)$nodeIdentifier;
+        $key = (string)$nodeAggregateIdentifier;
         $this->nodePaths[$key] = $nodePath;
     }
 
-    public function get(NodeIdentifier $nodeIdentifier): ?NodePath
+    public function get(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodePath
     {
-        $key = (string)$nodeIdentifier;
+        $key = (string)$nodeAggregateIdentifier;
 
         return $this->nodePaths[$key] ?? null;
     }

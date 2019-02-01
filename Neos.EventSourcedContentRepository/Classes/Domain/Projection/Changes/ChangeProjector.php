@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
 
 /*
@@ -64,17 +65,21 @@ class ChangeProjector implements ProjectorInterface
     }
 
     // TODO fix (change from NodeAggregateIdentifier to NodeIdentifier
-    /*public function whenNodeWasHidden(NodeWasHidden $event)
+    public function whenNodeWasHidden(NodeWasHidden $event)
     {
-        $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeIdentifier());
+        foreach ($event->getAffectedDimensionSpacePoints()->getPoints() as $dimensionSpacePoint) {
+            $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $dimensionSpacePoint);
+        }
     }
 
     public function whenNodeWasShown(NodeWasShown $event)
     {
-        $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeIdentifier());
+        foreach ($event->getAffectedDimensionSpacePoints()->getPoints() as $dimensionSpacePoint) {
+            $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $dimensionSpacePoint);
+        }
     }
 
-    public function whenNodeWasMoved(NodeWasMoved $event)
+    /*public function whenNodeWasMoved(NodeWasMoved $event)
     {
         $this->markAsMoved($event->getContentStreamIdentifier(), $event->getNodeIdentifier());
     }*/

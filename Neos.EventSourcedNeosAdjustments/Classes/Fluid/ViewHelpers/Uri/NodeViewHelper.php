@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Uri;
 
 /*
@@ -132,10 +133,10 @@ class NodeViewHelper extends AbstractViewHelper
         $node = null,
         $format = null,
         $absolute = false,
-        array $arguments = array(),
+        array $arguments = [],
         $section = '',
         $addQueryString = false,
-        array $argumentsToBeExcludedFromQueryString = array(),
+        array $argumentsToBeExcludedFromQueryString = [],
         $resolveShortcuts = true,
         ContentSubgraphInterface $subgraph = null
     ) {

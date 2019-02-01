@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 
 /*
@@ -82,7 +83,6 @@ final class NodeEventPublisher
         } finally {
             $this->currentlyInCommandClosure = false;
         }
-
     }
 
     /**

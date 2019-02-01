@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Link;
 
 /*
@@ -164,7 +165,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @return string The rendered link
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
-    public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $nodeVariableName = 'linkedNode', $resolveShortcuts = true, ContentSubgraphInterface $subgraph = null)
+    public function render($node = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $nodeVariableName = 'linkedNode', $resolveShortcuts = true, ContentSubgraphInterface $subgraph = null)
     {
         $uri = null;
         $nodeAddress = null;

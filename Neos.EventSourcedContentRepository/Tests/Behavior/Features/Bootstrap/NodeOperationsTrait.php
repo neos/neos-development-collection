@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
@@ -37,7 +38,7 @@ trait NodeOperationsTrait
     /**
      * @var array
      */
-    private $nodeTypesConfiguration = array();
+    private $nodeTypesConfiguration = [];
 
     /**
      * @return mixed
@@ -52,7 +53,7 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes(array());
+            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes([]);
         }
     }
 
@@ -156,5 +157,4 @@ trait NodeOperationsTrait
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'rootGeneralizations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightNormalizationBase', null, true);
     }
-
 }

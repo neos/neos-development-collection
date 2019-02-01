@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 
@@ -19,7 +20,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
-use Neos\EventSourcedContentRepository\Domain;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 
@@ -96,13 +96,13 @@ trait NodeInterfaceProxy
         return $this->node->getProperty($propertyName);
     }
 
-    public function isHidden()
-    {
-        return $this->node->isHidden();
-    }
-
     public function getLabel(): string
     {
         return $this->node->getLabel();
+    }
+
+    public function isRoot(): bool
+    {
+        return $this->node->isRoot();
     }
 }

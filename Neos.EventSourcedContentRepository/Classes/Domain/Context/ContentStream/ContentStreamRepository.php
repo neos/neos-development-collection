@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 
 /*
@@ -55,9 +56,9 @@ final class ContentStreamRepository
     {
         if (!isset($this->contentStreams[(string)$contentStreamIdentifier])) {
             $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
-            $eventStore = $this->eventStoreManager->getEventStoreForStreamName($eventStreamName);
+            $eventStore = $this->eventStoreManager->getEventStoreForStreamName($eventStreamName->getEventStreamName());
             try {
-                $eventStream = $eventStore->get(new StreamNameFilter($eventStreamName));
+                $eventStream = $eventStore->get(new StreamNameFilter($eventStreamName->getEventStreamName()));
                 $eventStream->rewind();
                 if (!$eventStream->current()) {
                     // a content stream without events in its event stream does not exist yet

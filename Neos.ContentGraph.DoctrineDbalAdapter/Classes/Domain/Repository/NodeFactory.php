@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
@@ -19,7 +20,6 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -27,7 +27,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
-
 
 /**
  * Implementation detail of ContentGraph and ContentSubgraph
@@ -87,7 +86,7 @@ final class NodeFactory
 
         // Reference and References "are no properties" anymore by definition; so Node does not know
         // anything about it.
-        $properties = array_filter($properties, function($propertyName) use ($nodeType) {
+        $properties = array_filter($properties, function ($propertyName) use ($nodeType) {
             $propertyType = $nodeType->getPropertyType($propertyName);
             return $propertyType !== 'reference' && $propertyType !== 'references';
         }, ARRAY_FILTER_USE_KEY);
@@ -104,10 +103,8 @@ final class NodeFactory
             new NodeTypeName($nodeRow['nodetypename']),
             $nodeType,
             new NodeName($nodeRow['name']),
-            $nodeRow['hidden'],
             $propertyCollection
         );
-            //new ContentProjection\PropertyCollection(, $referenceProperties, $referencesProperties, $nodeIdentifier, $contentSubgraph),
 
         if (!array_key_exists('name', $nodeRow)) {
             throw new \Exception('The "name" property was not found in the $nodeRow; you need to include the "name" field in the SQL result.');

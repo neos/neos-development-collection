@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 /*
@@ -19,6 +20,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariati
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\Flow\Annotations as Flow;
@@ -83,7 +85,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                     $subgraph = $this->getSubgraph();
                     $variant = $this->currentNode;
                 } else {
-                    $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->currentNode->getContentStreamIdentifier(), $dimensionSpacePoint);
+                    $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->currentNode->getContentStreamIdentifier(), $dimensionSpacePoint, VisibilityConstraints::frontend());
                     $variant = $subgraph->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
                 }
 
@@ -107,7 +109,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
 
         if ($this->getContentDimensionIdentifierToLimitTo() && $this->getValuesToRestrictTo()) {
             $order = array_flip($this->getValuesToRestrictTo());
-            usort($menuItems, function(array $menuItemA, array $menuItemB) use ($order) {
+            usort($menuItems, function (array $menuItemA, array $menuItemB) use ($order) {
                 return $order[$menuItemA['subgraph']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())]
                     <=> $order[$menuItemB['subgraph']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())];
             });
@@ -144,7 +146,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
         ksort($generalizations);
         foreach ($generalizations as $generalization) {
             if ($generalization->getCoordinate($contentDimensionIdentifier) === $dimensionSpacePoint->getCoordinate($contentDimensionIdentifier)) {
-                $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($this->currentNode->getContentStreamIdentifier(), $generalization);
+                $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($this->currentNode->getContentStreamIdentifier(), $generalization, VisibilityConstraints::frontend());
                 $variant = $contentSubgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
                 if ($variant) {
                     return $variant;

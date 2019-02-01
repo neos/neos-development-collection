@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\ContentElementWrapping;
 
 /*
@@ -220,4 +221,3 @@ class ContentElementWrappingService
         return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)->getWorkspaceName()->isLive();
     }
 }
-

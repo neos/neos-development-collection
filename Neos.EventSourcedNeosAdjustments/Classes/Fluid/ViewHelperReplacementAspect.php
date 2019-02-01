@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedNeosAdjustments\Fluid;
 
@@ -21,7 +22,6 @@ use Neos\Flow\Aop\JoinPointInterface;
  */
 class ViewHelperReplacementAspect
 {
-
     protected $viewHelperClassMapping = [
         \Neos\Neos\ViewHelpers\Link\NodeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Link\NodeViewHelper::class,
         \Neos\Neos\ViewHelpers\Uri\NodeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Uri\NodeViewHelper::class,

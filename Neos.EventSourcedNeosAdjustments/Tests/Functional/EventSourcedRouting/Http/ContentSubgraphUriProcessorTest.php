@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Tests\Functional\EventSourcedRouting\Http;
 
 /*
@@ -28,7 +29,6 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimens
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
 use Neos\Utility\ObjectAccess;
-
 
 class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 {

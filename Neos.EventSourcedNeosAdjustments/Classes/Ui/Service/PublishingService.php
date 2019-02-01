@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
 
 /*
@@ -14,7 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
@@ -25,13 +26,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Exception\WorkspaceException;
-use Neos\ContentRepository\Service\Utility\NodePublishingDependencySolver;
 
 /**
  * A generic ContentRepository Publishing Service
@@ -77,7 +72,7 @@ class PublishingService
     {
         $workspace = $this->workspaceFinder->findOneByName($workspaceName);
         if ($workspace->getBaseWorkspaceName() === null) {
-            return array();
+            return [];
         }
         $changes = $this->changeFinder->findByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
         $unpublishedNodes = [];
@@ -85,12 +80,13 @@ class PublishingService
             /* @var $change Change */
             $subgraph = $this->contentGraph->getSubgraphByIdentifier(
                 $workspace->getCurrentContentStreamIdentifier(),
-                $change->originDimensionSpacePoint
+                $change->originDimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
             );
             $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
 
             if ($node instanceof NodeInterface) {
-                $unpublishedNodes[] = new TraversableNode($node, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, true));
+                $unpublishedNodes[] = new TraversableNode($node, $subgraph);
             }
         }
         return $unpublishedNodes;
@@ -131,5 +127,4 @@ class PublishingService
         );
         $this->workspaceCommandHandler->handlePublishWorkspace($command);
     }
-
 }

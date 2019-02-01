@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
 
 /*
@@ -12,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -61,6 +63,12 @@ class NodePropertyConverterService
     protected $systemLogger;
 
     /**
+     * @Flow\Inject
+     * @var NodeHiddenStateFinder
+     */
+    protected $nodeHiddenStateFinder;
+
+    /**
      * Get a single property reduced to a simple type (no objects) representation
      *
      * @param NodeInterface $node
@@ -69,6 +77,9 @@ class NodePropertyConverterService
      */
     public function getProperty(NodeInterface $node, $propertyName)
     {
+        if ($propertyName === '_hidden') {
+            return $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden();
+        }
         if ($propertyName[0] === '_') {
             $propertyValue = ObjectAccess::getProperty($node, ltrim($propertyName, '_'));
         } else {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
@@ -98,6 +99,17 @@ class NodeRecord
      */
     public function updateToDatabase(Connection $databaseConnection): void
     {
+        $databaseConnection->update('neos_contentgraph_node', [
+            'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
+            'nodeidentifier' => (string) $this->nodeIdentifier,
+            'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
+            'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
+            'properties' => json_encode($this->properties),
+            'nodetypename' => (string) $this->nodeTypeName
+        ],
+        [
+            'relationanchorpoint' => $this->relationAnchorPoint
+        ]);
         $databaseConnection->update('neos_contentgraph_node',
             [
                 'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,

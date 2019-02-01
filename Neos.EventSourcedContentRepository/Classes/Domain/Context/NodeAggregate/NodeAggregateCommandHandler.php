@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
@@ -29,6 +30,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -586,24 +588,24 @@ final class NodeAggregateCommandHandler
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePoint $generalization
-     * @throws DimensionSpacePointIsNoSpecialization
+     * @throws DimensionSpacePointIsNoGeneralizationException
      */
     protected function requireDimensionSpacePointToBeSpecialization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $generalization): void
     {
         if (!$this->interDimensionalVariationGraph->getSpecializationSet($generalization)->contains($dimensionSpacePoint)) {
-            throw new DimensionSpacePointIsNoSpecialization($dimensionSpacePoint . ' is no specialization of ' . $generalization, 1519931770);
+            throw new DimensionSpace\Exception\DimensionSpacePointIsNoSpecializationException($dimensionSpacePoint . ' is no specialization of ' . $generalization, 1519931770);
         }
     }
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePoint $specialization
-     * @throws DimensionSpacePointIsNoGeneralization
+     * @throws DimensionSpacePointIsNoGeneralizationException
      */
     protected function requireDimensionSpacePointToBeGeneralization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $specialization): void
     {
         if (!$this->interDimensionalVariationGraph->getSpecializationSet($dimensionSpacePoint)->contains($specialization)) {
-            throw new DimensionSpacePointIsNoGeneralization($dimensionSpacePoint . ' is no generalization of ' . $dimensionSpacePoint, 1521367710);
+            throw new DimensionSpace\Exception\DimensionSpacePointIsNoGeneralizationException($dimensionSpacePoint . ' is no generalization of ' . $dimensionSpacePoint, 1521367710);
         }
     }
 
@@ -620,8 +622,8 @@ final class NodeAggregateCommandHandler
         DimensionSpacePoint $sourceDimensionSpacePoint,
         DimensionSpacePoint $dimensionSpacePoint
     ): void {
-        $sourceSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $sourceDimensionSpacePoint);
-        $sourceParentNode = $sourceSubgraph->findParentNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+        $sourceSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $sourceDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
+        $sourceParentNode = $sourceSubgraph->findParentNode($nodeAggregateIdentifier);
         if (!$sourceParentNode // the root node is visible in all dimension space points
             || $this->contentGraph->findVisibleDimensionSpacePointsOfNodeAggregate($contentStreamIdentifier, $sourceParentNode->getNodeAggregateIdentifier())
                 ->contains($dimensionSpacePoint)) {

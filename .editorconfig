@@ -1,0 +1,18 @@
+# editorconfig.org
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# PHP should follow the PSR-2 standard
+[*.php]
+indent_size = 4
+
+# JS should use tabs, to reduce conflicts
+[*.js]
+indent_style = tab

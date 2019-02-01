@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 /*
@@ -11,7 +12,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The hierarchy traversal direction value object

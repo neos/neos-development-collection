@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Exception;
 
 /*
@@ -12,7 +13,6 @@ namespace Neos\EventSourcedContentRepository\Exception;
  */
 
 use Neos\Flow\Exception;
-
 
 class NodeNotOriginatingInCorrectDimensionSpacePointException extends Exception
 {

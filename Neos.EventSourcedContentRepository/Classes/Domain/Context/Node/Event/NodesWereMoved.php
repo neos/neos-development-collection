@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
@@ -16,14 +17,14 @@ final class NodesWereMoved implements EventInterface, CopyableAcrossContentStrea
     private $contentStreamIdentifier;
 
     /**
-     * @var array|NodeMoveMapping[]
+     * @var array<NodeMoveMapping>
      */
     private $nodeMoveMappings;
 
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param array|NodeMoveMapping[] $nodeMoveMappings
+     * @param array<NodeMoveMapping> $nodeMoveMappings
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -43,7 +44,7 @@ final class NodesWereMoved implements EventInterface, CopyableAcrossContentStrea
     }
 
     /**
-     * @return array|NodeMoveMapping[]
+     * @return array<NodeMoveMapping>
      */
     public function getNodeMoveMappings(): array
     {

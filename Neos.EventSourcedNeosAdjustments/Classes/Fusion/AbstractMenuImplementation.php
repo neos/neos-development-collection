@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 /*
@@ -127,7 +128,7 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
         if ($this->currentNodeRootline === null) {
             /** @todo replace this */
             $nodeRootline = $this->currentNode->getContext()->getNodesOnPath($this->runtime->getCurrentContext()['site']->getPath(), $this->currentNode->getPath());
-            $this->currentNodeRootline = array();
+            $this->currentNodeRootline = [];
 
             foreach ($nodeRootline as $rootlineElement) {
                 $this->currentNodeRootline[$this->getNodeLevelInSite($rootlineElement)] = $rootlineElement;
