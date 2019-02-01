@@ -137,7 +137,7 @@ class ChildrenOperation extends AbstractOperation
                         $resolvedNode = $contextNode;
                         while (($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
                             try {
-                                $resolvedNode = $resolvedNode->findNamedChildNode(new NodeName($nodePathSegment));
+                                $resolvedNode = $resolvedNode->findNamedChildNode(NodeName::fromString($nodePathSegment));
                             } catch (NodeException $exception) {
                                 $resolvedNode = null;
                             }

@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\ValueObject;
 
 /*
@@ -12,8 +11,10 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
- * The node type constraints value object
+ * @Flow\Proxy(false)
  */
 final class NodeTypeConstraints
 {

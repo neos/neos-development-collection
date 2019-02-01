@@ -13,52 +13,46 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 
 use Neos\Cache\CacheAwareInterface;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
+use Neos\Flow\Utility\Algorithms;
+use Neos\Flow\Annotations as Flow;
 
+/**
+ * @Flow\Proxy(false)
+ */
 final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInterface
 {
     /**
-     * @var UuidInterface
+     * @var string
      */
-    protected $uuid;
+    private $value;
 
-    /**
-     * Constructor.
-     *
-     * @param string $existingIdentifier
-     * @throws \Exception
-     */
-    public function __construct(string $existingIdentifier = null)
+    private function __construct(string $value)
     {
-        if ($existingIdentifier !== null) {
-            $this->uuid = Uuid::fromString($existingIdentifier);
-        } else {
-            $this->uuid = Uuid::uuid4();
-        }
+        $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString(): string
+    public static function fromString(string $value): self
     {
-        return $this->uuid->toString();
+        return new static($value);
     }
 
-    /**
-     * @return string
-     */
+    public static function create(): self
+    {
+        return new static(Algorithms::generateUUID());
+    }
+
     public function jsonSerialize(): string
     {
-        return $this->uuid->toString();
+        return $this->value;
     }
 
-    /**
-     * @return string
-     */
     public function getCacheEntryIdentifier(): string
     {
-        return $this->uuid->toString();
+        return $this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 }

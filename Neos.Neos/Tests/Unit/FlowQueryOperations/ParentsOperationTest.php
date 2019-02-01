@@ -33,11 +33,11 @@ class ParentsOperationTest extends UnitTestCase
         $firstLevelNode = $this->createMock(TraversableNodeInterface::class);
         $secondLevelNode = $this->createMock(TraversableNodeInterface::class);
 
-        $siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/sites/site')));
+        $siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/sites/site')));
         $firstLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($siteNode));
-        $firstLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/sites/site/first')));
+        $firstLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/sites/site/first')));
         $secondLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($firstLevelNode));
-        $secondLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/sites/site/first/second')));
+        $secondLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/sites/site/first/second')));
 
         $context = [$secondLevelNode];
         $q = new FlowQuery($context);
