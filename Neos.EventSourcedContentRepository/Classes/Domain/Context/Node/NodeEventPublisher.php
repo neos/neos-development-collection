@@ -20,8 +20,6 @@ use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Property\PropertyMappingConfiguration;
 
 /**
  * Ensure all invariants are held for Node-based events:
@@ -42,17 +40,14 @@ final class NodeEventPublisher
     protected $eventStoreManager;
 
     /**
-     * @Flow\Inject
-     * @var PropertyMapper
-     */
-    protected $propertyMapper;
-
-    /**
      * safeguard that the "withCommand()" method is never called recursively.
      * @var bool
      */
     private $currentlyInCommandClosure = false;
 
+    /**
+     * @var \JsonSerializable
+     */
     private $command;
 
     /**
@@ -68,6 +63,9 @@ final class NodeEventPublisher
 
         if (!$command) {
             throw new \RuntimeException('TODO: withCommand() has to have a command passed in');
+        }
+        if (!$command instanceof \JsonSerializable) {
+            throw new \RuntimeException(sprintf('withCommand() has to have a command implementing JsonSerializable passed in, given: %s', get_class($command)), 1547133201);
         }
         $this->command = $command;
 
@@ -117,7 +115,7 @@ final class NodeEventPublisher
             }
 
             if ($this->command) {
-                $commandPayload = $this->propertyMapper->convert($this->command, 'array');
+                $commandPayload = $this->command->jsonSerialize();
 
                 if (!isset($commandPayload['contentStreamIdentifier'])) {
                     throw new \RuntimeException(sprintf('TODO: Command %s does not have a property "contentStreamIdentifier" (which is required).', get_class($this->command)));

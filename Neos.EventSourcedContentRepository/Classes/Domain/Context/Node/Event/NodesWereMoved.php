@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -20,23 +22,18 @@ final class NodesWereMoved implements DomainEventInterface, CopyableAcrossConten
     private $contentStreamIdentifier;
 
     /**
-     * @var array<NodeMoveMapping>
+     * @var NodeMoveMappings
      */
     private $nodeMoveMappings;
 
-
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param array<NodeMoveMapping> $nodeMoveMappings
+     * @param NodeMoveMappings $nodeMoveMappings
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        array $nodeMoveMappings
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeMoveMappings $nodeMoveMappings) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeMoveMappings = $nodeMoveMappings;
     }
-
 
     /**
      * @return ContentStreamIdentifier
@@ -47,9 +44,9 @@ final class NodesWereMoved implements DomainEventInterface, CopyableAcrossConten
     }
 
     /**
-     * @return array<NodeMoveMapping>
+     * @return NodeMoveMappings
      */
-    public function getNodeMoveMappings(): array
+    public function getNodeMoveMappings(): NodeMoveMappings
     {
         return $this->nodeMoveMappings;
     }

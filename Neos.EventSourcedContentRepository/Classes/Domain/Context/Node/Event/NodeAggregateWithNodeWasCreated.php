@@ -17,6 +17,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -76,9 +77,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
     private $nodeName;
 
     /**
-     * (property name => PropertyValue)
-     *
-     * @var array<PropertyValue>
+     * @var PropertyValues
      */
     private $propertyDefaultValuesAndTypes;
 
@@ -93,7 +92,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeIdentifier $parentNodeIdentifier
      * @param NodeName $nodeName
-     * @param array<Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue> $propertyDefaultValuesAndTypes
+     * @param PropertyValues $propertyDefaultValuesAndTypes
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -104,7 +103,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         NodeIdentifier $nodeIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         NodeName $nodeName,
-        array $propertyDefaultValuesAndTypes
+        PropertyValues $propertyDefaultValuesAndTypes
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -115,11 +114,6 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeName = $nodeName;
         $this->propertyDefaultValuesAndTypes = $propertyDefaultValuesAndTypes;
-        foreach ($propertyDefaultValuesAndTypes as $propertyName => $property) {
-            if (!$property instanceof PropertyValue) {
-                throw new \InvalidArgumentException(sprintf('Property %s was not of type PropertyValue', $propertyName));
-            }
-        }
     }
 
     /**
@@ -187,14 +181,14 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
     }
 
     /**
-     * @return array
+     * @return PropertyValues
      */
-    public function getPropertyDefaultValuesAndTypes(): array
+    public function getPropertyDefaultValuesAndTypes(): PropertyValues
     {
         return $this->propertyDefaultValuesAndTypes;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
     {
         return new NodeAggregateWithNodeWasCreated(
             $targetContentStream,

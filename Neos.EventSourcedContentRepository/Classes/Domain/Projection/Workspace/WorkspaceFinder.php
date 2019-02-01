@@ -83,4 +83,16 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
         $this->cachedWorkspacesByName = [];
         $this->cachedWorkspacesByContentStreamIdentifier = [];
     }
+
+    public function getContentStreamIdentifierForWorkspace(WorkspaceName $workspaceName): ContentStreamIdentifier
+    {
+        $query = $this->createQuery();
+        $query
+            ->getQueryBuilder()
+            ->select('e.currentContentStreamIdentifier')
+            ->where('e.workspaceName = :workspaceName')
+            ->setParameter('workspaceName', $workspaceName);
+        $result = $query->execute()->getFirst();
+        return ContentStreamIdentifier::fromString($result['currentContentStreamIdentifier']);
+    }
 }

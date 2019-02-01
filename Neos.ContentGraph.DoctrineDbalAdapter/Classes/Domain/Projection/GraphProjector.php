@@ -29,6 +29,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
@@ -87,7 +88,7 @@ class GraphProjector implements ProjectorInterface
      */
     final public function whenRootNodeWasCreated(Event\RootNodeWasCreated $event)
     {
-        $nodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+        $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $node = new Node(
             $nodeRelationAnchorPoint,
             $event->getNodeIdentifier(),
@@ -101,7 +102,7 @@ class GraphProjector implements ProjectorInterface
         $this->transactional(function () use ($node, $event) {
             $node->addToDatabase($this->getDatabaseConnection());
             $this->connectHierarchy(
-                new NodeRelationAnchorPoint('00000000-0000-0000-0000-000000000000'),
+                NodeRelationAnchorPoint::fromString('00000000-0000-0000-0000-000000000000'),
                 $node->relationAnchorPoint,
                 null,
                 $node->nodeName,
@@ -212,7 +213,7 @@ class GraphProjector implements ProjectorInterface
      * @param NodeIdentifier $parentNodeIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
-     * @param array $propertyDefaultValuesAndTypes
+     * @param PropertyValues $propertyDefaultValuesAndTypes
      * @param NodeName $nodeName
      * @throws \Doctrine\DBAL\DBALException
      */
@@ -224,10 +225,10 @@ class GraphProjector implements ProjectorInterface
         NodeIdentifier $parentNodeIdentifier,
         DimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
-        array $propertyDefaultValuesAndTypes,
+        PropertyValues $propertyDefaultValuesAndTypes,
         NodeName $nodeName
     ) {
-        $nodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+        $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $node = new Node(
             $nodeRelationAnchorPoint,
             $nodeIdentifier,
@@ -236,7 +237,7 @@ class GraphProjector implements ProjectorInterface
             $originDimensionSpacePoint->getHash(),
             array_map(function (ContentRepository\ValueObject\PropertyValue $propertyValue) {
                 return $propertyValue->getValue();
-            }, $propertyDefaultValuesAndTypes),
+            }, iterator_to_array($propertyDefaultValuesAndTypes)),
             $nodeTypeName
         );
 
@@ -697,7 +698,7 @@ insert into neos_contentgraph_restrictionedge
         $this->transactional(function () use ($event) {
             $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getNodeAggregateIdentifier(), $event->getContentStreamIdentifier(), $event->getSourceDimensionSpacePoint());
 
-            $specializedNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+            $specializedNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
             $specializedNode = new Node(
                 $specializedNodeRelationAnchorPoint,
                 $event->getSpecializationIdentifier(),
@@ -743,7 +744,7 @@ insert into neos_contentgraph_restrictionedge
                 throw new \Exception('Seems someone tried to generalize a root node and I don\'t have a proper name yet', 1519995795);
             }
 
-            $generalizedNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+            $generalizedNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
             $generalizedNode = new Node(
                 $generalizedNodeRelationAnchorPoint,
                 $event->getGeneralizationIdentifier(),
@@ -779,7 +780,7 @@ insert into neos_contentgraph_restrictionedge
     public function whenNodeInAggregateWasTranslated(Event\NodeInAggregateWasTranslated $event)
     {
         $this->transactional(function () use ($event) {
-            $childNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+            $childNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
 
             $sourceNode = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getSourceNodeIdentifier(), $event->getContentStreamIdentifier());
             if ($sourceNode === null) {
@@ -821,9 +822,8 @@ insert into neos_contentgraph_restrictionedge
      */
     public function whenNodesWereMoved(Event\NodesWereMoved $event)
     {
-        $this->transactional(function () use ($event) {
+        #$this->transactional(function () use ($event) {
             foreach ($event->getNodeMoveMappings() as $moveNodeMapping) {
-                /* @var $moveNodeMapping Event\NodeMoveMapping */
                 $nodeToBeMoved = $this->projectionContentGraph->getNode($moveNodeMapping->getNodeIdentifier(), $event->getContentStreamIdentifier());
                 $newSucceedingSibling = $moveNodeMapping->getNewSucceedingSiblingIdentifier()
                     ? $this->projectionContentGraph->getNode($moveNodeMapping->getNewSucceedingSiblingIdentifier(), $event->getContentStreamIdentifier())
@@ -879,7 +879,7 @@ insert into neos_contentgraph_restrictionedge
                     }
                 }
             }
-        });
+        #});
     }
 
     /**
@@ -1000,7 +1000,7 @@ insert into neos_contentgraph_restrictionedge
 
             // 1) fetch node, adjust properties, assign new Relation Anchor Point
             $copiedNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPointForNode);
-            $copiedNode->relationAnchorPoint = new NodeRelationAnchorPoint();
+            $copiedNode->relationAnchorPoint = NodeRelationAnchorPoint::create();
             $result = $operations($copiedNode);
             $copiedNode->addToDatabase($this->getDatabaseConnection());
 

@@ -165,7 +165,7 @@ class BackendController extends ActionController
         $workspaceName = $this->userService->getPersonalWorkspaceName();
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspaceName));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeAggregateIdentifier(), new NodeName($this->siteRepository->findDefault()->getNodeName()));
+        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeAggregateIdentifier(), NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
         $siteNode = new TraversableNode($siteNode, $subgraph);
 
         if (!$nodeAddress) {
@@ -224,6 +224,6 @@ class BackendController extends ActionController
      */
     protected function getRootNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'))->getNodeAggregateIdentifier();
+        return $this->contentGraph->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'))->getNodeAggregateIdentifier();
     }
 }

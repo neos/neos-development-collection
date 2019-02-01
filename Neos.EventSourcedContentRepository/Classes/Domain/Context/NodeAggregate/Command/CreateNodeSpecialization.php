@@ -23,32 +23,32 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
  * Copy a node identified by node aggregate identifier and source dimension space point to a specialized dimension space point in a content stream
  * respecting further specialization mechanisms.
  */
-final class CreateNodeSpecialization
+final class CreateNodeSpecialization implements \JsonSerializable
 {
     /**
      * @var ContentStreamIdentifier
      */
-    protected $contentStreamIdentifier;
+    private $contentStreamIdentifier;
 
     /**
      * @var NodeAggregateIdentifier
      */
-    protected $nodeAggregateIdentifier;
+    private $nodeAggregateIdentifier;
 
     /**
      * @var DimensionSpacePoint
      */
-    protected $sourceDimensionSpacePoint;
+    private $sourceDimensionSpacePoint;
 
     /**
      * @var DimensionSpacePoint
      */
-    protected $targetDimensionSpacePoint;
+    private $targetDimensionSpacePoint;
 
     /**
      * @var NodeIdentifier
      */
-    protected $specializationIdentifier;
+    private $specializationIdentifier;
 
 
     /**
@@ -58,18 +58,24 @@ final class CreateNodeSpecialization
      * @param DimensionSpacePoint $targetDimensionSpacePoint
      * @param NodeIdentifier $specializationIdentifier
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $sourceDimensionSpacePoint,
-        DimensionSpacePoint $targetDimensionSpacePoint,
-        NodeIdentifier $specializationIdentifier
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $sourceDimensionSpacePoint, DimensionSpacePoint $targetDimensionSpacePoint, NodeIdentifier $specializationIdentifier)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
         $this->targetDimensionSpacePoint = $targetDimensionSpacePoint;
         $this->specializationIdentifier = $specializationIdentifier;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            new DimensionSpacePoint($array['sourceDimensionSpacePoint']),
+            new DimensionSpacePoint($array['targetDimensionSpacePoint']),
+            NodeIdentifier::fromString($array['specializationIdentifier'])
+        );
     }
 
     /**
@@ -110,5 +116,16 @@ final class CreateNodeSpecialization
     public function getSpecializationIdentifier(): NodeIdentifier
     {
         return $this->specializationIdentifier;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'sourceDimensionSpacePoint' => $this->sourceDimensionSpacePoint,
+            'targetDimensionSpacePoint' => $this->targetDimensionSpacePoint,
+            'specializationIdentifier' => $this->specializationIdentifier,
+        ];
     }
 }

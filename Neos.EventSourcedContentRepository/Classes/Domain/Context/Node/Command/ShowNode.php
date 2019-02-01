@@ -16,7 +16,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 
-final class ShowNode
+final class ShowNode implements \JsonSerializable
 {
 
     /**
@@ -49,6 +49,15 @@ final class ShowNode
         $this->affectedDimensionSpacePoints = $affectedDimensionSpacePoints;
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            new DimensionSpacePointSet($array['affectedDimensionSpacePoints'])
+        );
+    }
+
     /**
      * @return ContentStreamIdentifier
      */
@@ -71,5 +80,14 @@ final class ShowNode
     public function getAffectedDimensionSpacePoints(): DimensionSpacePointSet
     {
         return $this->affectedDimensionSpacePoints;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'affectedDimensionSpacePoints' => $this->affectedDimensionSpacePoints,
+        ];
     }
 }

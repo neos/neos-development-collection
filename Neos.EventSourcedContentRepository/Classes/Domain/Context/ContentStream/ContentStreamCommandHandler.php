@@ -76,8 +76,7 @@ final class ContentStreamCommandHandler
             $command->getSourceContentStreamIdentifier(),
             $sourceContentStreamVersion
         );
-
-       $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
+        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
 

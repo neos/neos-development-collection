@@ -44,7 +44,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNode
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeMoveMapping;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
@@ -55,7 +54,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Exception;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
@@ -162,7 +164,7 @@ final class NodeCommandHandler
             if ($parentNode === null) {
                 throw new NodeNotFoundException(sprintf('Parent node %s not found for content stream %s, %s',
                     $parentNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint),
-                    1506440451, $parentNodeIdentifier);
+                    1506440451);
             }
         }
 
@@ -177,21 +179,20 @@ final class NodeCommandHandler
             $command->getNodeIdentifier(),
             $parentNodeIdentifier,
             $command->getNodeName(),
-            $propertyDefaultValuesAndTypes
+            PropertyValues::fromArray($propertyDefaultValuesAndTypes)
         );
 
         foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
-            $childNodeName = new NodeName($childNodeNameStr);
-            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName,
-                $nodeAggregateIdentifier);
-            $childNodeIdentifier = new NodeIdentifier();
+            $childNodeName = NodeName::fromString($childNodeNameStr);
+            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName, $nodeAggregateIdentifier);
+            $childNodeIdentifier = NodeIdentifier::create();
             $childParentNodeIdentifier = $command->getNodeIdentifier();
 
             $events = array_merge($events,
                 $this->nodeAggregateWithNodeWasCreatedFromCommand(new CreateNodeAggregateWithNode(
                     $contentStreamIdentifier,
                     $childNodeAggregateIdentifier,
-                    new NodeTypeName($childNodeType),
+                    NodeTypeName::fromString($childNodeType->getName()),
                     $dimensionSpacePoint,
                     $childNodeIdentifier,
                     $childParentNodeIdentifier,
@@ -282,14 +283,14 @@ final class NodeCommandHandler
             $nodeIdentifier,
             $parentNodeIdentifier,
             $command->getNodeName(),
-            $propertyDefaultValuesAndTypes
+            PropertyValues::fromArray($propertyDefaultValuesAndTypes)
         );
 
         foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
-            $childNodeName = new NodeName($childNodeNameStr);
+            $childNodeName = NodeName::fromString($childNodeNameStr);
             // TODO Check if it is okay to "guess" the existing node aggregate identifier, should already be handled by a soft constraint check above
             $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName, $nodeAggregateIdentifier);
-            $childNodeIdentifier = new NodeIdentifier();
+            $childNodeIdentifier = NodeIdentifier::create();
             $childParentNodeIdentifier = $nodeIdentifier;
 
             $events = array_merge($events,
@@ -500,10 +501,10 @@ final class NodeCommandHandler
                 }
             }
 
-            $nodeMoveMappings = [];
+            $nodeMoveMappings = NodeMoveMappings::createEmpty();
             switch ($command->getRelationDistributionStrategy()->getStrategy()) {
                 case RelationDistributionStrategy::STRATEGY_SCATTER:
-                    $nodeMoveMappings = $this->getMoveNodeMappings($node, $command);
+                    $nodeMoveMappings = $nodeMoveMappings->merge($this->getMoveNodeMappings($node, $command));
                     break;
                 case RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS:
                     $specializationSet = $this->interDimensionalVariationGraph->getSpecializationSet($command->getDimensionSpacePoint());
@@ -514,7 +515,7 @@ final class NodeCommandHandler
                     );
 
                     foreach ($nodesInSpecializationSet as $nodeInSpecializationSet) {
-                        $nodeMoveMappings = array_merge($nodeMoveMappings, $this->getMoveNodeMappings($nodeInSpecializationSet, $command));
+                        $nodeMoveMappings = $nodeMoveMappings->merge($this->getMoveNodeMappings($nodeInSpecializationSet, $command));
                     }
                     break;
                 case RelationDistributionStrategy::STRATEGY_GATHER_ALL:
@@ -525,7 +526,7 @@ final class NodeCommandHandler
                     );
 
                     foreach ($nodesInSpecializationSet as $nodeInSpecializationSet) {
-                        $nodeMoveMappings = array_merge($nodeMoveMappings, $this->getMoveNodeMappings($nodeInSpecializationSet, $command));
+                        $nodeMoveMappings = $nodeMoveMappings->merge($this->getMoveNodeMappings($nodeInSpecializationSet, $command));
                     }
             }
 
@@ -544,11 +545,11 @@ final class NodeCommandHandler
     /**
      * @param NodeInterface $node
      * @param MoveNode $command
-     * @return array|NodeMoveMapping[]
+     * @return NodeMoveMappings
      */
-    protected function getMoveNodeMappings(NodeInterface $node, MoveNode $command): array
+    private function getMoveNodeMappings(NodeInterface $node, MoveNode $command): NodeMoveMappings
     {
-        $nodeMoveMappings = [];
+        $nodeMoveMappings = NodeMoveMappings::createEmpty();
         $visibleInDimensionSpacePoints = $this->contentGraph->findVisibleDimensionSpacePointsOfNode($node);
         foreach ($visibleInDimensionSpacePoints->getPoints() as $visibleDimensionSpacePoint) {
             $variantSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $visibleDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
@@ -557,12 +558,12 @@ final class NodeCommandHandler
             $newSucceedingSiblingVariant = $command->getNewSucceedingSiblingNodeAggregateIdentifier() ? $variantSubgraph->findNodeByNodeAggregateIdentifier($command->getNewSucceedingSiblingNodeAggregateIdentifier()) : null;
             $mappingDimensionSpacePointSet = $newParentVariant ? $this->contentGraph->findVisibleDimensionSpacePointsOfNode($newParentVariant) : $visibleInDimensionSpacePoints;
 
-            $nodeMoveMappings[] = new NodeMoveMapping(
+            $nodeMoveMappings = $nodeMoveMappings->appendMapping(new NodeMoveMapping(
                 $node->getNodeIdentifier(),
                 $newParentVariant ? $newParentVariant->getNodeIdentifier() : null,
                 $newSucceedingSiblingVariant ? $newSucceedingSiblingVariant->getNodeIdentifier() : null,
                 $mappingDimensionSpacePointSet
-            );
+            ));
         }
 
         /**
@@ -688,7 +689,7 @@ final class NodeCommandHandler
         $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
-            $events = $this->nodeInAggregateWasTranslatedFromCommand($command);
+            $events = DomainEvents::fromArray($this->nodeInAggregateWasTranslatedFromCommand($command));
             $this->nodeEventPublisher->publishMany(
                 ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
                 $events
@@ -696,7 +697,7 @@ final class NodeCommandHandler
         });
     }
 
-    private function nodeInAggregateWasTranslatedFromCommand(TranslateNodeInAggregate $command): DomainEvents
+    private function nodeInAggregateWasTranslatedFromCommand(TranslateNodeInAggregate $command): array
     {
         $sourceNodeIdentifier = $command->getSourceNodeIdentifier();
         $contentStreamIdentifier = $command->getContentStreamIdentifier();
@@ -743,13 +744,13 @@ final class NodeCommandHandler
 
         // TODO Add a recursive flag and translate _all_ child nodes in this case
         foreach ($sourceNode->getNodeType()->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
-            $childNode = $sourceContentSubgraph->findChildNodeConnectedThroughEdgeName($sourceNode->getNodeAggregateIdentifier(), new NodeName($childNodeNameStr));
+            $childNode = $sourceContentSubgraph->findChildNodeConnectedThroughEdgeName($sourceNode->getNodeAggregateIdentifier(), NodeName::fromString($childNodeNameStr));
             if ($childNode === null) {
                 throw new NodeException(sprintf('Could not find auto-created child node with name %s for %s in %s',
                     $childNodeNameStr, $sourceNodeIdentifier, $sourceNode->getDimensionSpacePoint()), 1506506170);
             }
 
-            $childDestinationNodeIdentifier = new NodeIdentifier();
+            $childDestinationNodeIdentifier = NodeIdentifier::create();
             $childDestinationParentNodeIdentifier = $destinationNodeIdentifier;
             $events = array_merge($events,
                 $this->nodeInAggregateWasTranslatedFromCommand(new TranslateNodeInAggregate(
@@ -761,7 +762,7 @@ final class NodeCommandHandler
                 )));
         }
 
-        return DomainEvents::fromArray($events);
+        return $events;
     }
 
 

@@ -95,7 +95,7 @@ class Workspace
      */
     public function getCurrentContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return new ContentStreamIdentifier($this->currentContentStreamIdentifier);
+        return ContentStreamIdentifier::fromString($this->currentContentStreamIdentifier);
     }
 
     /**

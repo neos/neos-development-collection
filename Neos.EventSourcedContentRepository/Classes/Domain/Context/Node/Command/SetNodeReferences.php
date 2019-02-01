@@ -11,7 +11,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 /**
  * Create a named reference from source- to destination-node
  */
-final class SetNodeReferences
+final class SetNodeReferences implements \JsonSerializable
 {
 
     /**
@@ -42,16 +42,21 @@ final class SetNodeReferences
      * @param PropertyName $propertyName
      * @param array $destinationNodeAggregateIdentifiers
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $nodeIdentifier,
-        PropertyName $propertyName,
-        array $destinationNodeAggregateIdentifiers
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, PropertyName $propertyName, array $destinationNodeAggregateIdentifiers) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->propertyName = $propertyName;
         $this->destinationNodeAggregateIdentifiers = $destinationNodeAggregateIdentifiers;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeIdentifier::fromString($array['nodeIdentifier']),
+            PropertyName::fromString($array['propertyName']),
+            array_map(function($identifier) { return NodeAggregateIdentifier::fromString($identifier); }, $array['destinationNodeAggregateIdentifiers'])
+        );
     }
 
     /**
@@ -84,5 +89,15 @@ final class SetNodeReferences
     public function getPropertyName(): PropertyName
     {
         return $this->propertyName;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeIdentifier' => $this->nodeIdentifier,
+            'propertyName' => $this->propertyName,
+            'destinationNodeAggregateIdentifiers' => $this->destinationNodeAggregateIdentifiers,
+        ];
     }
 }

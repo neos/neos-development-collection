@@ -165,7 +165,7 @@ class NodeViewHelper extends AbstractViewHelper
             /* @var $documentNode \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
             $documentNode = $this->getContextVariable('documentNode');
             $nodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
-            $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, new NodeAggregateIdentifier(\mb_substr($node, 7)));
+            $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, NodeAggregateIdentifier::fromString(\mb_substr($node, 7)));
         } else {
             // @todo add path support
             return '';

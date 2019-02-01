@@ -63,7 +63,7 @@ class ContentSubgraphConverter extends AbstractTypeConverter
         $sourceArray = json_decode($source, true);
 
         return $this->contentGraph->getSubgraphByIdentifier(
-            new ContentStreamIdentifier($sourceArray['contentStreamIdentifier']),
+            ContentStreamIdentifier::fromString($sourceArray['contentStreamIdentifier']),
             new DimensionSpacePoint($sourceArray['dimensionSpacePoint']['coordinates']),
             VisibilityConstraints::withoutRestrictions()
         );

@@ -13,10 +13,10 @@ Feature: Node References with Dimensions
       | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
 
     And the command CreateWorkspace is executed with payload:
-      | Key                      | Value                                | Type |
-      | workspaceName            | live                                 |      |
-      | contentStreamIdentifier  | cs-identifier                        | Uuid |
-      | rootNodeIdentifier       | rn-identifier                        | Uuid |
+      | Key                     | Value           |
+      | workspaceName           | "live"          |
+      | contentStreamIdentifier | "cs-identifier" |
+      | rootNodeIdentifier      | "rn-identifier" |
 
     And I have the following NodeTypes configuration:
     """
@@ -31,73 +31,74 @@ Feature: Node References with Dimensions
     """
 
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                     | Type                   |
-      | contentStreamIdentifier     | cs-identifier                             | Uuid                   |
-      | nodeAggregateIdentifier     | source-nodeAgg-identifier                 | Uuid                   |
-      | nodeTypeName                | Neos.ContentRepository:NodeWithReferences |                        |
-      | dimensionSpacePoint         | {"language": "de"}                        | json                   |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "ch"}]   | DimensionSpacePointSet |
-      | nodeIdentifier              | source-node-identifier                    | Uuid                   |
-      | parentNodeIdentifier        | rn-identifier                             | Uuid                   |
-      | nodeName                    | dest                                      |                        |
+      | Key                           | Value                                       |
+      | contentStreamIdentifier       | "cs-identifier"                             |
+      | nodeAggregateIdentifier       | "source-node-agg-identifier"                |
+      | nodeTypeName                  | "Neos.ContentRepository:NodeWithReferences" |
+      | dimensionSpacePoint           | {"language": "de"}                          |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "ch"}]     |
+      | nodeIdentifier                | "source-node-identifier"                    |
+      | parentNodeIdentifier          | "rn-identifier"                             |
+      | nodeName                      | "dest"                                      |
 
 
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                                                          | Type                   |
-      | contentStreamIdentifier     | cs-identifier                                                                  | Uuid                   |
-      | nodeAggregateIdentifier     | dest-nodeAgg-identifier                                                        | Uuid                   |
-      | nodeTypeName                | Neos.ContentRepository:NodeWithReferences                                      |                        |
-      | dimensionSpacePoint         | {"language": "mul"}                                                            | json                   |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "en"},{"language": "ch"},{"language": "mul"}] | DimensionSpacePointSet |
-      | nodeIdentifier              | dest-node-identifier                                                           | Uuid                   |
-      | parentNodeIdentifier        | rn-identifier                                                                  | Uuid                   |
-      | nodeName                    | dest                                                                           |                        |
+      | Key                           | Value                                                                          |
+      | contentStreamIdentifier       | "cs-identifier"                                                                |
+      | nodeAggregateIdentifier       | "dest-node-agg-identifier"                                                     |
+      | nodeTypeName                  | "Neos.ContentRepository:NodeWithReferences"                                    |
+      | dimensionSpacePoint           | {"language": "mul"}                                                            |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "en"},{"language": "ch"},{"language": "mul"}] |
+      | nodeIdentifier                | "dest-node-identifier"                                                         |
+      | parentNodeIdentifier          | "rn-identifier"                                                                |
+      | nodeName                      | "dest"                                                                         |
 
+    And the graph projection is fully up to date
 
     And the command "SetNodeReferences" is executed with payload:
-      | Key                                 | Value                   | Type   |
-      | contentStreamIdentifier             | cs-identifier           | Uuid   |
-      | nodeIdentifier                      | source-node-identifier  | Uuid   |
-      | propertyName                        | referenceProperty       |        |
-      | destinationNodeAggregateIdentifiers | dest-nodeAgg-identifier | Uuid[] |
+      | Key                                 | Value                        |
+      | contentStreamIdentifier             | "cs-identifier"              |
+      | nodeIdentifier                      | "source-node-identifier"     |
+      | propertyName                        | "referenceProperty"          |
+      | destinationNodeAggregateIdentifiers | ["dest-node-agg-identifier"] |
 
     And the graph projection is fully up to date
 
   Scenario: Ensure that the reference can be read in current dimension
 
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"language": "de"}
+    And I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
 
-    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
-      | Key               | Value                   | Type   |
-      | referenceProperty | dest-nodeAgg-identifier | Uuid[] |
+    Then I expect the Node aggregate "source-node-agg-identifier" to have the references:
+      | Key               | Value                        |
+      | referenceProperty | ["dest-node-agg-identifier"] |
 
-    And I expect the Node aggregate "[dest-nodeAgg-identifier]" to be referenced by:
-      | Key               | Value                     | Type   |
-      | referenceProperty | source-nodeAgg-identifier | Uuid[] |
+    And I expect the Node aggregate "dest-node-agg-identifier" to be referenced by:
+      | Key               | Value                          |
+      | referenceProperty | ["source-node-agg-identifier"] |
 
   Scenario: Ensure that the reference can be read in fallback dimension
 
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"language": "ch"}
+    And I am in content stream "cs-identifier" and Dimension Space Point {"language": "ch"}
 
-    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
-      | Key               | Value                   | Type   |
-      | referenceProperty | dest-nodeAgg-identifier | Uuid[] |
+    Then I expect the Node aggregate "source-node-agg-identifier" to have the references:
+      | Key               | Value                        |
+      | referenceProperty | ["dest-node-agg-identifier"] |
 
-    And I expect the Node aggregate "[dest-nodeAgg-identifier]" to be referenced by:
-      | Key               | Value                     | Type   |
-      | referenceProperty | source-nodeAgg-identifier | Uuid[] |
+    And I expect the Node aggregate "dest-node-agg-identifier" to be referenced by:
+      | Key               | Value                          |
+      | referenceProperty | ["source-node-agg-identifier"] |
 
   Scenario: Ensure that the reference cannot be read in independent dimension
 
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"language": "en"}
+    And I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}
 
-    Then I expect the Node aggregate "[source-nodeAgg-identifier]" to have the references:
-      | Key               | Value | Type   |
-      | referenceProperty |       | Uuid[] |
+    Then I expect the Node aggregate "source-node-agg-identifier" to have the references:
+      | Key               | Value |
+      | referenceProperty | []    |
 
-    And I expect the Node aggregate "[dest-nodeAgg-identifier]" to be referenced by:
-      | Key               | Value | Type   |
-      | referenceProperty |       | Uuid[] |
+    And I expect the Node aggregate "dest-node-agg-identifier" to be referenced by:
+      | Key               | Value |
+      | referenceProperty | []    |
 
 
 

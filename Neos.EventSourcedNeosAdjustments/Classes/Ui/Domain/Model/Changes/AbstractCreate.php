@@ -139,21 +139,24 @@ abstract class AbstractCreate extends AbstractStructuralChange
     {
         // TODO: the $name=... line should be as expressed below
         // $name = $this->getName() ?: $this->nodeService->generateUniqueNodeName($parent->findParentNode());
-        $nodeName = new NodeName($this->getName() ?: uniqid('node-'));
+        $nodeName = NodeName::fromString($this->getName() ?: uniqid('node-'));
 
-        $nodeAggregateIdentifier = new NodeAggregateIdentifier(); // generate a new NodeAggregateIdentifier
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::create(); // generate a new NodeAggregateIdentifier
 
         $command = new CreateNodeAggregateWithNode(
             $parentNode->getContentStreamIdentifier(),
             $nodeAggregateIdentifier,
-            new NodeTypeName($this->getNodeType()->getName()),
+            NodeTypeName::fromString($this->getNodeType()->getName()),
             $parentNode->getDimensionSpacePoint(),
-            new NodeIdentifier(), // generate a new NodeIdentifier
+            NodeIdentifier::create(),
             $parentNode->getNodeIdentifier(),
             $nodeName
         );
 
         $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
+
+        // TODO hack
+        sleep(1);
 
         $newlyCreatedNode = $parentNode->findNamedChildNode($nodeName);
         $this->applyNodeCreationHandlers($newlyCreatedNode);

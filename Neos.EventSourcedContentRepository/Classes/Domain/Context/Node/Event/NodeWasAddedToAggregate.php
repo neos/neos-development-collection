@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -91,8 +92,7 @@ final class NodeWasAddedToAggregate implements DomainEventInterface, CopyableAcr
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeIdentifier $parentNodeIdentifier
      * @param NodeName $nodeName
-     * @param array $propertyDefaultValuesAndTypes
-     * @param array<NodeIdentifierAndDimensionSpacePointSet> $nodeVisibilityChanges
+     * @param PropertyValues $propertyDefaultValuesAndTypes
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -103,7 +103,7 @@ final class NodeWasAddedToAggregate implements DomainEventInterface, CopyableAcr
         NodeIdentifier $nodeIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         NodeName $nodeName,
-        array $propertyDefaultValuesAndTypes
+        PropertyValues $propertyDefaultValuesAndTypes
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -181,9 +181,9 @@ final class NodeWasAddedToAggregate implements DomainEventInterface, CopyableAcr
     }
 
     /**
-     * @return array
+     * @return PropertyValues
      */
-    public function getPropertyDefaultValuesAndTypes(): array
+    public function getPropertyDefaultValuesAndTypes(): PropertyValues
     {
         return $this->propertyDefaultValuesAndTypes;
     }

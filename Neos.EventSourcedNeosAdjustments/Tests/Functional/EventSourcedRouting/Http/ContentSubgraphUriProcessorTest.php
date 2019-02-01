@@ -140,14 +140,14 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
         $uriProcessor = new ContentSubgraphUriProcessor();
 
         $contentQuery = new NodeAddress(
-            new ContentStreamIdentifier(),
+            ContentStreamIdentifier::create(),
             new DimensionSpacePoint([
                 'market' => 'GB',
                 'seller' => 'sellerA',
                 'channel' => 'channelA',
                 'language' => 'en'
             ]),
-            new NodeAggregateIdentifier(),
+            NodeAggregateIdentifier::create(),
             WorkspaceName::forLive()
         );
         $dimensionUriConstraints = $uriProcessor->resolveDimensionUriConstraints($contentQuery, false);

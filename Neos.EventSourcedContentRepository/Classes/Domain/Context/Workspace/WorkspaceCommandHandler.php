@@ -48,6 +48,7 @@ use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
+use vendor\project\StatusTest;
 
 /**
  * WorkspaceCommandHandler
@@ -179,17 +180,19 @@ final class WorkspaceCommandHandler
             throw new WorkspaceDoesNotExist(sprintf('The workspace %s does not exist', $command->getWorkspaceName()), 1513924741);
         }
         $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
-
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $workspace->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513924882);
         }
+        // TODO this hack is currently needed in order to avoid the $workspace to return a previously cached content stream identifier
+        $currentContentStreamIdentifier = $this->workspaceFinder->getContentStreamIdentifierForWorkspace($command->getWorkspaceName());
+        $baseContentStreamIdentifier = $this->workspaceFinder->getContentStreamIdentifierForWorkspace($baseWorkspace->getWorkspaceName());
 
 
         // TODO: please check the code below in-depth. it does:
         // - copy all events from the "user" content stream which implement "CopyableAcrossContentStreamsInterface"
         // - extract the initial ContentStreamWasForked event, to read the version of the source content stream when the fork occurred
         // - ensure that no other changes have been done in the meantime in the base content stream
-        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier())->getEventStreamName();
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($currentContentStreamIdentifier)->getEventStreamName();
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
 
         /* @var $workspaceContentStream EventEnvelope[] */
@@ -199,7 +202,7 @@ final class WorkspaceCommandHandler
         foreach ($workspaceContentStream as $eventEnvelope) {
             $event = $eventEnvelope->getDomainEvent();
             if ($event instanceof CopyableAcrossContentStreamsInterface) {
-                $events[] = $event->createCopyForContentStream($baseWorkspace->getCurrentContentStreamIdentifier());
+                $events[] = $event->createCopyForContentStream($baseContentStreamIdentifier);
             }
         }
 
@@ -207,11 +210,11 @@ final class WorkspaceCommandHandler
 
         $contentStreamWasForked = self::extractSingleForkedContentStreamEvent($workspaceContentStream);
         try {
-            $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($baseWorkspace->getCurrentContentStreamIdentifier())->getEventStreamName();
+            $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($baseContentStreamIdentifier)->getEventStreamName();
             $eventStore = $this->eventStoreManager->getEventStoreForStreamName($baseWorkspaceContentStreamName);
             $eventStore->commit($baseWorkspaceContentStreamName, DomainEvents::fromArray($events), $contentStreamWasForked->getVersionOfSourceContentStream());
         } catch (ConcurrencyException $e) {
-            throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf('The base workspace has been modified in the meantime; please rebase. Expected version %d of source content stream %s', $contentStreamWasForked->getVersionOfSourceContentStream(), $baseWorkspace->getCurrentContentStreamIdentifier()));
+            throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf('The base workspace "%s" (Content Stream "%s") has been modified in the meantime; please rebase workspace "%s". Expected version %d of source content stream "%s"', $baseWorkspace->getWorkspaceName(), $baseContentStreamIdentifier, $workspace->getWorkspaceName(), $contentStreamWasForked->getVersionOfSourceContentStream(), $currentContentStreamIdentifier), 1547823025);
         }
     }
 
@@ -264,13 +267,15 @@ final class WorkspaceCommandHandler
         // TODO: please check the code below in-depth. it does:
         // - fork a new content stream
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
-        $rebasedContentStream = new ContentStreamIdentifier();
+        $rebasedContentStream = ContentStreamIdentifier::create();
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $rebasedContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier()
             )
         );
+        // TODO hack!
+        sleep(1);
 
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier())->getEventStreamName();
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
@@ -278,48 +283,54 @@ final class WorkspaceCommandHandler
         $workspaceContentStream = $eventStore->load($workspaceContentStreamName);
         foreach ($workspaceContentStream as $eventAndRawEvent) {
             $metadata = $eventAndRawEvent->getRawEvent()->getMetadata();
-            if (isset($metadata['commandClass'])) {
-                $commandToRebaseClass = $metadata['commandClass'];
-                $commandToRebasePayload = $metadata['commandPayload'];
-
-                // try to apply the command on the rebased content stream
-                $commandToRebasePayload['contentStreamIdentifier'] = (string)$rebasedContentStream;
-
-                $commandToRebase = $this->propertyMapper->convert($commandToRebasePayload, $commandToRebaseClass);
-
-                // TODO: use a more clever dispatching mechanism than the hard coded switch!!
-                switch (get_class($commandToRebase)) {
-                    case AddNodeToAggregate::class:
-                        $this->nodeCommandHandler->handleAddNodeToAggregate($commandToRebase);
-                        break;
-                    case ChangeNodeName::class:
-                        $this->nodeCommandHandler->handleChangeNodeName($commandToRebase);
-                        break;
-                    case CreateNodeAggregateWithNode::class:
-                        $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($commandToRebase);
-                        break;
-                    case CreateRootNode::class:
-                        $this->nodeCommandHandler->handleCreateRootNode($commandToRebase);
-                        break;
-                    case MoveNode::class:
-                        $this->nodeCommandHandler->handleMoveNode($commandToRebase);
-                        break;
-                    case SetNodeProperty::class:
-                        $this->nodeCommandHandler->handleSetNodeProperty($commandToRebase);
-                        break;
-                    case HideNode::class:
-                        $this->nodeCommandHandler->handleHideNode($commandToRebase);
-                        break;
-                    case ShowNode::class:
-                        $this->nodeCommandHandler->handleShowNode($commandToRebase);
-                        break;
-                    case TranslateNodeInAggregate::class:
-                        $this->nodeCommandHandler->handleTranslateNodeInAggregate($commandToRebase);
-                        break;
-                    default:
-                        throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($commandToRebase)));
-                }
+            if (!isset($metadata['commandClass'])) {
+                continue;
             }
+            $commandToRebaseClass = $metadata['commandClass'];
+            $commandToRebasePayload = $metadata['commandPayload'];
+
+            if (!method_exists($commandToRebaseClass, 'fromArray')) {
+                throw new \RuntimeException(sprintf('Command "%s" can\'t be rebased because it does not implement a static "fromArray" constructor', $commandToRebaseClass), 1547815341);
+            }
+            // try to apply the command on the rebased content stream
+            $commandToRebasePayload['contentStreamIdentifier'] = (string)$rebasedContentStream;
+
+            $commandToRebase = $commandToRebaseClass::fromArray($commandToRebasePayload);
+
+            // TODO: use a more clever dispatching mechanism than the hard coded switch!!
+            switch (get_class($commandToRebase)) {
+                case AddNodeToAggregate::class:
+                    $this->nodeCommandHandler->handleAddNodeToAggregate($commandToRebase);
+                    break;
+                case ChangeNodeName::class:
+                    $this->nodeCommandHandler->handleChangeNodeName($commandToRebase);
+                    break;
+                case CreateNodeAggregateWithNode::class:
+                    $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($commandToRebase);
+                    break;
+                case CreateRootNode::class:
+                    $this->nodeCommandHandler->handleCreateRootNode($commandToRebase);
+                    break;
+                case MoveNode::class:
+                    $this->nodeCommandHandler->handleMoveNode($commandToRebase);
+                    break;
+                case SetNodeProperty::class:
+                    $this->nodeCommandHandler->handleSetNodeProperty($commandToRebase);
+                    break;
+                case HideNode::class:
+                    $this->nodeCommandHandler->handleHideNode($commandToRebase);
+                    break;
+                case ShowNode::class:
+                    $this->nodeCommandHandler->handleShowNode($commandToRebase);
+                    break;
+                case TranslateNodeInAggregate::class:
+                    $this->nodeCommandHandler->handleTranslateNodeInAggregate($commandToRebase);
+                    break;
+                default:
+                    throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($commandToRebase)));
+            }
+            // TODO hack!
+            sleep(1);
         }
 
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());

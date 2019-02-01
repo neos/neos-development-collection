@@ -22,7 +22,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  *
  * A root node has no aggregate (and is colorless in the content graph).
  */
-final class CreateRootNode
+final class CreateRootNode implements \JsonSerializable
 {
     /**
      * @var ContentStreamIdentifier
@@ -60,6 +60,15 @@ final class CreateRootNode
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeIdentifier::fromString($array['nodeIdentifier']),
+            NodeTypeName::fromString($array['nodeTypeName']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
+        );
+    }
 
     /**
      * @return ContentStreamIdentifier
@@ -93,5 +102,15 @@ final class CreateRootNode
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeIdentifier' => $this->nodeIdentifier,
+            'nodeTypeName' => $this->nodeTypeName,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+        ];
     }
 }
