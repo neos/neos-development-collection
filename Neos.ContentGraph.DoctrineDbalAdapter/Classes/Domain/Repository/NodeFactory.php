@@ -103,7 +103,6 @@ final class NodeFactory
             new NodeTypeName($nodeRow['nodetypename']),
             $nodeType,
             new NodeName($nodeRow['name']),
-            $nodeRow['hidden'],
             $propertyCollection
         );
 

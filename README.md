@@ -15,20 +15,20 @@ This is the package bundle you can install alongside a plain Neos to play around
 | Feature                     | Current CR | Event Sourced CR |
 | --------------------------- |:----------:|:----------------:|
 | **Basics**                  |            |                  |
-| Create/ Edit / Delete Nodes |     ✅     |        ⏩        |
+| Create/ Edit / Delete Nodes |     ✅     |        ✅        |
 | Shortcut Handling            |    ✅     |                  |
-| Query Nodes                 |     ✅     |        ⏩        |
+| Query Nodes                 |     ✅     |        ✅        |
 | Cut / Copy / Paste          |     ✅     |                  |
 | Move Nodes                  |     ✅     |        ⏩        |
-| Hide Nodes                  |     ✅     |                  |
+| Hide Nodes                  |     ✅     |        ✅        |
 | History                     |     ✅     |                  |
 | Undo / Redo                 |     🚫     |                  |
 | Setting Start / End time    |     ✅     |                  |
-| Workspaces                  |     ✅     |                  |
-| Resolving Referencing Nodes |     🚫     |        ⏩        |
+| Workspaces                  |     ✅     |        ⏩        |
+| Resolving Referencing Nodes |     🚫     |        ✅        |
 | **Advanced**                |            |                  |
-| Dimensions                  |     ✅     |        ⏩        |
-| Dimension Fallback          |     ✅     |        ⏩        |
+| Dimensions                  |     ✅     |        (✅)      |
+| Dimension Fallback          |     ✅     |       (✅)       |
 | Multiple Sites              |     ✅     |                  |
 | **Maintenance**             |            |                  |
 | Export / Import             |     ✅     |                  |
@@ -43,7 +43,8 @@ This is the package bundle you can install alongside a plain Neos to play around
 The Event Sourced Content Repository relies on a feature called (Recursive) Common Table Expressions (CTE) that require
 * [MySQL](https://www.mysql.com/why-mysql/presentations/mysql-80-common-table-expressions/): 8.0+
 * [MariaDB](https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/): 10.2.2+
-* or [PostgreSQL](https://www.postgresql.org/docs/8.4/queries-with.html): 8.4+
+
+Lateron, we will also support [PostgreSQL](https://www.postgresql.org/docs/8.4/queries-with.html). (We know it will work, but we did not create migrations or did testing yet).
 
 ### PHP
 
@@ -113,7 +114,7 @@ The resulting `composer.json` file should look something like this:
     ],
     "require": {
         "neos/neos-development-collection": "dev-event-sourced-patch as dev-master",
-        "neos/flow-development-collection": "dev-browser-fix-relative-locations as dev-master",
+        "neos/flow-development-collection": "dev-master",
         "neos/demo": "@dev",
 
         "neos/contentrepository-development-collection": "dev-master",

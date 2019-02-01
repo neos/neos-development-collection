@@ -1068,32 +1068,6 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the Node "([^"]*)" is hidden$/
-     */
-    public function iExpectTheNodeIsHidden($nodeIdentifier)
-    {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
-        /** @var \Neos\EventSourcedContentRepository\Domain\Model\Node $node */
-        $node = $this->contentGraphInterface
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
-        Assert::assertEquals(true, $node->isHidden(), 'Node is visible. Expected: hidden;');
-    }
-
-    /**
-     * @Then /^I expect the Node "([^"]*)" is shown/
-     */
-    public function iExpectTheNodeIsShown($nodeIdentifier)
-    {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
-        /** @var \Neos\EventSourcedContentRepository\Domain\Model\Node $node */
-        $node = $this->contentGraphInterface
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
-        Assert::assertEquals(false, $node->isHidden(), 'Node is hidden. Expected: shown;');
-    }
-
-    /**
      * @Then /^I expect the path "([^"]*)" to lead to the node "([^"]*)"$/
      * @throws Exception
      */
