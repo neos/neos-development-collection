@@ -103,7 +103,6 @@ final class NodeAggregateCommandHandler
      * @throws \Neos\Flow\Security\Exception
      * @throws NodeTypeNotFound
      * @throws NodeTypeIsNotOfTypeRoot
-     * @throws NodeNameIsAlreadyOccupied
      * @throws \Exception
      */
     public function handleCreateRootNodeAggregateWithNode(CreateRootNodeAggregateWithNode $command): void
@@ -115,22 +114,11 @@ final class NodeAggregateCommandHandler
             throw new NodeTypeIsNotOfTypeRoot('Node type "' . $nodeType . '" for root node "' . $command->getNodeAggregateIdentifier() . '" is not of type root.', 1541765701);
         }
 
-        if ($command->getNodeName()) {
-            $this->requireNodeNameToBeUnoccupied(
-                $command->getContentStreamIdentifier(),
-                $command->getNodeName(),
-                RootNodeIdentifiers::rootNodeAggregateIdentifier(),
-                RootNodeIdentifiers::rootDimensionSpacePoint(),
-                $this->allowedDimensionSubspace
-            );
-        }
-
         $nodeAggregate->createRootWithNode(
             $command->getContentStreamIdentifier(),
             $command->getNodeTypeName(),
             $this->allowedDimensionSubspace,
-            $command->getInitiatingUserIdentifier(),
-            $command->getNodeName()
+            $command->getInitiatingUserIdentifier()
         );
     }
 

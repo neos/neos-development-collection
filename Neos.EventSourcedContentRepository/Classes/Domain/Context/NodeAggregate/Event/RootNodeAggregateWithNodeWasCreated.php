@@ -15,13 +15,12 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\ContentRepository\Migration\Filters\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * A root node aggregate and its node were created
+ * A root node aggregate and its initial node were created
  */
 final class RootNodeAggregateWithNodeWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
@@ -52,25 +51,18 @@ final class RootNodeAggregateWithNodeWasCreated implements EventInterface, Copya
      */
     private $initiatingUserIdentifier;
 
-    /**
-     * @var NodeName
-     */
-    private $nodeName;
-
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
-        UserIdentifier $initiatingUserIdentifier,
-        NodeName $nodeName = null
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->nodeName = $nodeName;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -98,11 +90,6 @@ final class RootNodeAggregateWithNodeWasCreated implements EventInterface, Copya
         return $this->initiatingUserIdentifier;
     }
 
-    public function getNodeName(): ?NodeName
-    {
-        return $this->nodeName;
-    }
-
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): RootNodeAggregateWithNodeWasCreated
     {
         return new RootNodeAggregateWithNodeWasCreated(
@@ -110,8 +97,7 @@ final class RootNodeAggregateWithNodeWasCreated implements EventInterface, Copya
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->visibleInDimensionSpacePoints,
-            $this->initiatingUserIdentifier,
-            $this->nodeName
+            $this->initiatingUserIdentifier
         );
     }
 }

@@ -110,8 +110,7 @@ class GraphProjector implements ProjectorInterface
                 new NodeRelationAnchorPoint('00000000-0000-0000-0000-000000000000'),
                 $node->relationAnchorPoint,
                 $event->getVisibleInDimensionSpacePoints(),
-                null,
-                $event->getNodeName()
+                null
             );
         });
     }

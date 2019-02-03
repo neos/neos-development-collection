@@ -101,7 +101,6 @@ final class NodeAggregate
      * @param NodeTypeName $nodeTypeName
      * @param DimensionSpacePointSet $visibleDimensionSpacePoints
      * @param UserIdentifier $initiatingUserIdentifier
-     * @param NodeName|null $nodeName
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
@@ -109,8 +108,7 @@ final class NodeAggregate
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeTypeName $nodeTypeName,
         DimensionSpacePointSet $visibleDimensionSpacePoints,
-        UserIdentifier $initiatingUserIdentifier,
-        NodeName $nodeName = null
+        UserIdentifier $initiatingUserIdentifier
     ): void {
         if ($this->existsCurrently()) {
             throw new NodeAggregateCurrentlyExists('Root node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541781941);
@@ -123,8 +121,7 @@ final class NodeAggregate
                 $this->identifier,
                 $nodeTypeName,
                 $visibleDimensionSpacePoints,
-                $initiatingUserIdentifier,
-                $nodeName
+                $initiatingUserIdentifier
             )
         );
     }
@@ -222,6 +219,9 @@ final class NodeAggregate
         $this->traverseEventStream(function(EventInterface $event) use(&$existsCurrently) {
             switch (get_class($event)) {
                 case NodeAggregateWithNodeWasCreated::class:
+                    $existsCurrently = true;
+                    break;
+                case RootNodeAggregateWithNodeWasCreated::class:
                     $existsCurrently = true;
                     break;
                 // @todo handle NodeWasDeleted for toggling to false

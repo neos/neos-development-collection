@@ -13,7 +13,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
@@ -45,23 +44,16 @@ final class CreateRootNodeAggregateWithNode
      */
     private $initiatingUserIdentifier;
 
-    /**
-     * @var NodeName
-     */
-    private $nodeName;
-
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
-        UserIdentifier $initiatingUserIdentifier,
-        NodeName $nodeName = null
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->nodeName = $nodeName;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -82,10 +74,5 @@ final class CreateRootNodeAggregateWithNode
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
-    }
-
-    public function getNodeName(): ?NodeName
-    {
-        return $this->nodeName;
     }
 }
