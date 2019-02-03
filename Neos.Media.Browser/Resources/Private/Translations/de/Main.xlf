@@ -56,10 +56,10 @@
       <trans-unit id="sortDirection.desc" xml:space="preserve" approved="yes">
 				<source>Descending</source>
 			<target xml:lang="de" state="translated">Absteigend</target><alt-trans><target xml:lang="de">Absteigende Reihenfolge</target></alt-trans></trans-unit>
-      <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
+      <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve" approved="yes">
 				<source>Sort direction Ascending</source>
 			<target xml:lang="de" state="translated">Sortierrichtung Aufsteigend</target></trans-unit>
-      <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
+      <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve" approved="yes">
 				<source>Sort direction Descending</source>
 			<target xml:lang="de" state="translated">Sortierrichtung Absteigend</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
@@ -98,7 +98,7 @@
       <trans-unit id="replace" xml:space="preserve" approved="yes">
 				<source>Replace</source>
 			<target xml:lang="de" state="translated">Ersetzen</target></trans-unit>
-      <trans-unit id="replaceAssetResource" xml:space="preserve">
+      <trans-unit id="replaceAssetResource" xml:space="preserve" approved="yes">
 				<source>Replace asset resource</source>
 			<target xml:lang="de" state="translated">Ressource ersetzen</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
@@ -278,7 +278,7 @@
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target xml:lang="de" state="translated">Datei kann nicht hochgeladen werden</target></trans-unit>
-      <trans-unit id="noFileSelected" xml:space="preserve">
+      <trans-unit id="noFileSelected" xml:space="preserve" approved="yes">
 				<source>No file selected</source>
 			<target xml:lang="de" state="translated">Keine Datei ausgewählt</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
@@ -315,25 +315,25 @@
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
 			<target xml:lang="de" state="translated">Verweise auf "{asset}"</target><alt-trans><target xml:lang="de">Verweist auf "{asset}"</target></alt-trans></trans-unit>
-      <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
+      <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve" approved="yes">
 				<source>Replace "{filename}"</source>
 			<target xml:lang="de" state="translated">Datei "{filename}" ersetzen</target><alt-trans><target xml:lang="de">"{filename}" ersetzen</target></alt-trans></trans-unit>
-      <trans-unit id="replaceAsset.description" xml:space="preserve">
+      <trans-unit id="replaceAsset.description" xml:space="preserve" approved="yes">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
 			<target xml:lang="de" state="translated">Sie können durch Hochladen einer neuen Datei die Vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target><alt-trans><target xml:lang="de">Sie können durch hochladen einer neuen Datei die vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target></alt-trans></trans-unit>
-      <trans-unit id="replaceAsset.note" xml:space="preserve">
+      <trans-unit id="replaceAsset.note" xml:space="preserve" approved="yes">
 				<source>Note</source>
 			<target xml:lang="de" state="translated">Hinweis</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
 				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
 			<target xml:lang="de" state="translated">Diese Aktion wird die Datei in allen veröffentlichten und unveröffentlichten Arbeitsbereichen ersetzen, genauso wie in der Live-Website.</target></trans-unit>
-      <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
+      <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve" approved="yes">
 				<source>Choose a new file</source>
 			<target xml:lang="de" state="translated">Neue Datei auswählen</target><alt-trans><target xml:lang="de">Neue Datei wählen</target></alt-trans></trans-unit>
-      <trans-unit id="replace.usageCount" xml:space="preserve">
+      <trans-unit id="replace.usageCount" xml:space="preserve" approved="yes">
 				<source>Currently the asset is used {usageCount} times.</source>
 			<target xml:lang="de" state="translated">Derzeit wird die Datei {usageCount} Mal verwendet.</target></trans-unit>
-      <trans-unit id="replace.allUsages" xml:space="preserve">
+      <trans-unit id="replace.allUsages" xml:space="preserve" approved="yes">
 				<source>Show all usages</source>
 			<target xml:lang="de" state="translated">Zeige alle Verwendungen</target></trans-unit>
       <trans-unit id="replace.notUsed" xml:space="preserve">
