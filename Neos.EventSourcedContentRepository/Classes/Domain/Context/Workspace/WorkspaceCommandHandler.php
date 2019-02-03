@@ -20,7 +20,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\Conten
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ChangeNodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
@@ -162,15 +161,6 @@ final class WorkspaceCommandHandler
                 $contentStreamIdentifier
             )
         );
-
-        $this->nodeCommandHandler->handleCreateRootNode(
-            new CreateRootNode(
-                $contentStreamIdentifier,
-                $command->getRootNodeIdentifier(),
-                $command->getRootNodeTypeName(),
-                $command->getInitiatingUserIdentifier()
-            )
-        );
     }
 
     /**
@@ -304,9 +294,6 @@ final class WorkspaceCommandHandler
                         break;
                     case CreateNodeAggregateWithNode::class:
                         $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($commandToRebase);
-                        break;
-                    case CreateRootNode::class:
-                        $this->nodeCommandHandler->handleCreateRootNode($commandToRebase);
                         break;
                     case MoveNode::class:
                         $this->nodeCommandHandler->handleMoveNode($commandToRebase);

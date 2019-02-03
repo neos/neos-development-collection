@@ -80,8 +80,6 @@ final class NodeFactory
         $dimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
         $originDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
 
-        $nodeIdentifier = new NodeIdentifier($nodeRow['nodeidentifier']);
-
         $properties = json_decode($nodeRow['properties'], true);
 
         // Reference and References "are no properties" anymore by definition; so Node does not know
@@ -99,7 +97,6 @@ final class NodeFactory
             $dimensionSpacePoint,
             new NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']),
             $originDimensionSpacePoint,
-            $nodeIdentifier,
             new NodeTypeName($nodeRow['nodetypename']),
             $nodeType,
             new NodeName($nodeRow['name']),

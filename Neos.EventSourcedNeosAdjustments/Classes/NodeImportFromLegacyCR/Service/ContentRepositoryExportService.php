@@ -19,11 +19,12 @@ use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -85,14 +86,15 @@ class ContentRepositoryExportService
 
     /**
      * @Flow\Inject
+     * @var NodeAggregateCommandHandler
+     */
+    protected $nodeAggregateCommandHandler;
+
+    /**
+     * @Flow\Inject
      * @var EventPublisher
      */
     protected $eventPublisher;
-
-    /**
-     * @var NodeIdentifier
-     */
-    protected $sitesRootNodeIdentifier;
 
     /**
      * @var NodeAggregateIdentifier
@@ -139,7 +141,6 @@ class ContentRepositoryExportService
         $this->alreadyCreatedNodeAggregateIdentifiers = [];
 
         $this->contentStreamIdentifier = new ContentStreamIdentifier();
-        $this->sitesRootNodeIdentifier = new NodeIdentifier();
         $this->nodeAggregateIdentifierForSitesNode = new NodeAggregateIdentifier();
 
         $this->eventPublisher->publish($this->contentStreamName(), new ContentStreamWasCreated(
@@ -424,11 +425,11 @@ class ContentRepositoryExportService
             $this->contentStreamIdentifier
         ));
 
-        // we use the *command handler* instead of directly generating events here for CreateRootNode, because
+        // we use the *command handler* instead of directly generating events here for CreateRootNodeAggregateWithNode, because
         // the root node also contains dimension information (which is resolved in the command handler).
-        $this->nodeCommandHandler->handleCreateRootNode(new CreateRootNode(
+        $this->nodeAggregateCommandHandler->handleCreateRootNodeAggregateWithNode(new CreateRootNodeAggregateWithNode(
             $this->contentStreamIdentifier,
-            $this->sitesRootNodeIdentifier,
+            $this->nodeAggregateIdentifierForSitesNode,
             new NodeTypeName('Neos.Neos:Sites'),
             UserIdentifier::forSystemUser()
         ));

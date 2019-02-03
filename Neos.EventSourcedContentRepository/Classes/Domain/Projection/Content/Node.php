@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
@@ -28,7 +27,6 @@ use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
  */
 class Node implements NodeInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -48,11 +46,6 @@ class Node implements NodeInterface
      * @var DimensionSpacePoint
      */
     protected $originDimensionSpacePoint;
-
-    /**
-     * @var NodeIdentifier
-     */
-    protected $nodeIdentifier;
 
     /**
      * @var NodeTypeName
@@ -75,24 +68,21 @@ class Node implements NodeInterface
     protected $properties;
 
     /**
-     * Node constructor.
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param NodeIdentifier $nodeIdentifier
      * @param NodeTypeName $nodeTypeName
      * @param NodeType $nodeType
      * @param NodeName $nodeName
      * @param PropertyCollection $properties
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, PropertyCollection $properties)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, PropertyCollection $properties)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
@@ -140,14 +130,6 @@ class Node implements NodeInterface
     public function getOriginDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->originDimensionSpacePoint;
-    }
-
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNodeIdentifier(): NodeIdentifier
-    {
-        return $this->nodeIdentifier;
     }
 
     /**

@@ -16,6 +16,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -24,7 +25,6 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
@@ -103,6 +103,33 @@ final class ContentGraph implements ContentGraphInterface
             [
                 'nodeIdentifier' => (string)$nodeIdentifier,
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            ]
+        )->fetch();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
+    }
+
+    /**
+     * @param NodeIdentifier $nodeIdentifier
+     * @return NodeInterface|null
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function findNodeByIdentifier(NodeIdentifier $nodeIdentifier): ?NodeInterface
+    {
+        $connection = $this->client->getConnection();
+
+        // @todo remove fetching additional dimension space point once the matter is resolved
+        // HINT: we check the ContentStreamIdentifier on the EDGE; as this is where we actually find out whether the node exists in the content stream
+        $nodeRow = $connection->executeQuery(
+            'SELECT n.*, h.contentstreamidentifier, h.name, n.origindimensionspacepoint, n.origindimensionspacepoint AS dimensionspacepoint FROM neos_contentgraph_node n
+                  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+                  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
+                  AND h.contentstreamidentifier = :contentStreamIdentifier',
+            [
+                'nodeAggregateIdentifier' => (string)$nodeIdentifier->getNodeAggregateIdentifier(),
+                'originDimensionSpacePointHash' => $nodeIdentifier->getOriginDimensionSpacePoint()->getHash(),
+                'contentStreamIdentifier' => (string)$nodeIdentifier->getContentStreamIdentifier()
             ]
         )->fetch();
 

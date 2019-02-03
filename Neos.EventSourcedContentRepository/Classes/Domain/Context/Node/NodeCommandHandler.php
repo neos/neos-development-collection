@@ -24,7 +24,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
@@ -32,7 +31,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ChangeNodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
@@ -53,7 +51,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemove
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Exception;
@@ -301,34 +298,6 @@ final class NodeCommandHandler
         }
 
         return $events;
-    }
-
-    /**
-     * CreateRootNode
-     *
-     * @param CreateRootNode $command
-     */
-    public function handleCreateRootNode(CreateRootNode $command): void
-    {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-
-            $dimensionSpacePointSet = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
-
-            $event = new RootNodeWasCreated(
-                $contentStreamIdentifier,
-                $command->getNodeIdentifier(),
-                RootNodeIdentifiers::rootNodeAggregateIdentifier(),
-                $command->getNodeTypeName(),
-                $dimensionSpacePointSet,
-                $command->getInitiatingUserIdentifier()
-            );
-
-            $this->nodeEventPublisher->publish(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
-                $event
-            );
-        });
     }
 
     /**

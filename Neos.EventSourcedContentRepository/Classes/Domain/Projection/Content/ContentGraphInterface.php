@@ -17,10 +17,10 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier;
 
 /**
  * The interface to be implemented by content graphs
@@ -45,6 +45,12 @@ interface ContentGraphInterface
      * @return NodeInterface|null
      */
     public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): ?NodeInterface;
+
+    /**
+     * @param NodeIdentifier $nodeIdentifier
+     * @return NodeInterface|null
+     */
+    public function findNodeByIdentifier(NodeIdentifier $nodeIdentifier): ?NodeInterface;
 
     /**
      * @param NodeTypeName $nodeTypeName
