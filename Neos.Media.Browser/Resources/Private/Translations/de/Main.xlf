@@ -65,10 +65,10 @@
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="de" state="translated">Auf Tag oder Sammlung ziehen und loslassen</target></trans-unit>
-      <trans-unit id="view" xml:space="preserve">
+      <trans-unit id="view" xml:space="preserve" approved="yes">
 				<source>View</source>
 			<target xml:lang="de" state="translated">Ansicht</target></trans-unit>
-      <trans-unit id="viewAsset" xml:space="preserve">
+      <trans-unit id="viewAsset" xml:space="preserve" approved="yes">
 				<source>View asset</source>
 			<target xml:lang="de" state="translated">Asset anzeigen</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
@@ -83,13 +83,13 @@
       <trans-unit id="message.reallyDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete collection "{0}"?</source>
 			<target xml:lang="de" state="translated">Wollen Sie die Sammlung "{0}" wirklich löschen?</target></trans-unit>
-      <trans-unit id="message.reallyDeleteTag" xml:space="preserve" approved="yes">
+      <trans-unit id="message.reallyDeleteTag" xml:space="preserve">
 				<source>Do you really want to delete tag "{0}"?</source>
 			<target xml:lang="de" state="translated">Wollen Sie das Tag "{0}" wirklich löschen?</target></trans-unit>
-      <trans-unit id="message.willBeDeleted" xml:space="preserve" approved="yes">
+      <trans-unit id="message.willBeDeleted" xml:space="preserve">
 				<source>This will delete the asset.</source>
 			<target xml:lang="de" state="translated">Dadurch wird das Asset gelöscht.</target></trans-unit>
-      <trans-unit id="message.willDeleteCollection" xml:space="preserve" approved="yes">
+      <trans-unit id="message.willDeleteCollection" xml:space="preserve">
 				<source>This will delete the collection, but not the assets that it contains.</source>
 			<target xml:lang="de" state="translated">Dadurch wird die Sammlung gelöscht, aber nicht die darin enthaltenen Assets.</target></trans-unit>
       <trans-unit id="message.willDeleteTag" xml:space="preserve" approved="yes">
@@ -179,13 +179,13 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
 			<target xml:lang="de" state="translated">Miniaturansicht</target></trans-unit>
-      <trans-unit id="connectionError" xml:space="preserve">
+      <trans-unit id="connectionError" xml:space="preserve" approved="yes">
 				<source>Connection error</source>
 			<target xml:lang="de" state="translated">Verbindungsfehler</target></trans-unit>
-      <trans-unit id="mediaSource" xml:space="preserve">
+      <trans-unit id="mediaSource" xml:space="preserve" approved="yes">
 				<source>Media source</source>
 			<target xml:lang="de" state="translated">Medienquelle</target></trans-unit>
-      <trans-unit id="mediaSources" xml:space="preserve">
+      <trans-unit id="mediaSources" xml:space="preserve" approved="yes">
 				<source>Media sources</source>
 			<target xml:lang="de" state="translated">Medienquellen</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
@@ -293,7 +293,7 @@
       <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve" approved="yes">
 				<source>Caption</source>
 			<target xml:lang="de" state="translated">Beschriftung</target></trans-unit>
-      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
+      <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve" approved="yes">
 				<source>Copyright Notice</source>
 			<target xml:lang="de" state="translated">Urheberrechtshinweis</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
@@ -341,19 +341,19 @@
 			<target xml:lang="de" state="translated">Verweise auf "{asset}"</target><alt-trans><target xml:lang="de">Verweist auf "{asset}"</target></alt-trans></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="de" state="translated">Datei "{filename}" ersetzen</target><alt-trans><target xml:lang="de">"{filename}" ersetzen</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Datei "{filename}" ersetzen</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-			<target xml:lang="de" state="translated">Sie können durch Hochladen einer neuen Datei die Vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target><alt-trans><target xml:lang="de">Sie können durch hochladen einer neuen Datei die vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Sie können durch Hochladen einer neuen Datei die Vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target></trans-unit>
       <trans-unit id="replaceAsset.note" xml:space="preserve">
 				<source>Note</source>
 			<target xml:lang="de" state="translated">Hinweis</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
 				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-			<target xml:lang="de" state="translated">Diese Aktion wird die Datei in allen veröffentlichten und unveröffentlichten Arbeitsbereichen ersetzen, genauso wie in der Live-Website.</target></trans-unit>
+			<target xml:lang="de" state="translated">Diese Aktion wird die Datei in allen veröffentlichten und unveröffentlichten Arbeitsbereichen ersetzen, inklusive der Live-Website.</target></trans-unit>
       <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
 				<source>Choose a new file</source>
-			<target xml:lang="de" state="translated">Neue Datei auswählen</target><alt-trans><target xml:lang="de">Neue Datei wählen</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Neue Datei auswählen</target></trans-unit>
       <trans-unit id="replace.usageCount" xml:space="preserve">
 				<source>Currently the asset is used {usageCount} times.</source>
 			<target xml:lang="de" state="translated">Derzeit wird die Datei {usageCount} Mal verwendet.</target></trans-unit>
