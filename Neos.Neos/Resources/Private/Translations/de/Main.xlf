@@ -333,19 +333,19 @@
       <trans-unit id="description" xml:space="preserve" approved="yes">
 				<source>Description</source>
 			<target xml:lang="de" state="translated">Beschreibung</target></trans-unit>
-      <trans-unit id="toggleContentTree" xml:space="preserve">
+      <trans-unit id="toggleContentTree" xml:space="preserve" approved="yes">
 				<source>Toggle content tree</source>
 			<target xml:lang="de" state="translated">Inhaltsbaum umschalten</target></trans-unit>
-      <trans-unit id="showPublishOptions" xml:space="preserve">
+      <trans-unit id="showPublishOptions" xml:space="preserve" approved="yes">
 				<source>Show publish options</source>
 			<target xml:lang="de" state="translated">Veröffentlichungsoptionen anzeigen</target></trans-unit>
-      <trans-unit id="activateFullscreen" xml:space="preserve">
+      <trans-unit id="activateFullscreen" xml:space="preserve" approved="yes">
 				<source>Activate Fullscreen edit mode</source>
 			<target xml:lang="de" state="translated">Vollbild-Bearbeitungsmodus aktivieren</target></trans-unit>
-      <trans-unit id="deactivateFullscreen" xml:space="preserve">
+      <trans-unit id="deactivateFullscreen" xml:space="preserve" approved="yes">
 				<source>Deactivate Fullscreen edit mode</source>
 			<target xml:lang="de" state="translated">Vollbild-Bearbeitungsmodus deaktivieren</target></trans-unit>
-      <trans-unit id="showPreview" xml:space="preserve">
+      <trans-unit id="showPreview" xml:space="preserve" approved="yes">
 				<source>Show preview</source>
 			<target xml:lang="de" state="translated">Vorschau anzeigen</target></trans-unit>
       <!-- node types -->
