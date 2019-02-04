@@ -134,8 +134,8 @@ class AssetController extends ActionController
     protected $translator;
 
     /**
-     * @Flow\InjectConfiguration(path="assetSources", package="Neos.Media")
-     * @var array
+     * @Flow\Inject
+     * @var \Neos\Media\Domain\Service\AssetSourceService
      */
     protected $assetSourceService;
 
