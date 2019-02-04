@@ -213,8 +213,13 @@ class RuntimeContentCache
                 $maximumLifetime = $this->runtime->evaluate($evaluateContext['fusionPath'] . '/__meta/cache/maximumLifetime', $fusionObject);
 
                 if ($maximumLifetime !== null && $this->cacheMetadata !== []) {
-                    $cacheMetadata = &$this->cacheMetadata[count($this->cacheMetadata) - 1];
-                    $cacheMetadata['lifetime'] = $cacheMetadata['lifetime'] !== null ? min($cacheMetadata['lifetime'], $maximumLifetime) : $maximumLifetime;
+                    $parentCacheMetadata = &$this->cacheMetadata[count($this->cacheMetadata) - 1];
+
+                    if ($parentCacheMetadata['lifetime'] === null) {
+                        $parentCacheMetadata['lifetime'] = (int)$maximumLifetime;
+                    } elseif ($maximumLifetime > 0) {
+                        $parentCacheMetadata['lifetime'] = min((int)$parentCacheMetadata['lifetime'], (int)$maximumLifetime);
+                    }
                 }
             }
         }

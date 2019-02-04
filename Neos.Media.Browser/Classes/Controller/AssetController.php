@@ -134,14 +134,8 @@ class AssetController extends ActionController
     protected $translator;
 
     /**
-     * @Flow\InjectConfiguration(path="asyncThumbnails", package="Neos.Media")
+     * @Flow\InjectConfiguration(path="assetSources", package="Neos.Media")
      * @var array
-     */
-    protected $asyncThumbnails;
-
-    /**
-     * @Flow\Inject
-     * @var \Neos\Media\Domain\Service\AssetSourceService
      */
     protected $assetSourceService;
 
@@ -270,8 +264,7 @@ class AssetController extends ActionController
             'maximumFileUploadSize' => $this->getMaximumFileUploadSize(),
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($this->getMaximumFileUploadSize()),
             'activeAssetSource' => $activeAssetSource,
-            'activeAssetSourceSupportsSorting' => ($assetProxyRepository instanceof SupportsSortingInterface),
-            'asyncThumbnails' => $this->asyncThumbnails
+            'activeAssetSourceSupportsSorting' => ($assetProxyRepository instanceof SupportsSortingInterface)
         ]);
     }
 
@@ -302,8 +295,7 @@ class AssetController extends ActionController
             'asset' => $asset,
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'redirectPackageEnabled' => $this->packageManager->isPackageAvailable('Neos.RedirectHandler'),
-            'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize),
-            'asyncThumbnails' => $this->asyncThumbnails
+            'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
         ]);
     }
 
@@ -328,8 +320,7 @@ class AssetController extends ActionController
 
             $this->view->assignMultiple([
                 'assetProxy' => $assetProxy,
-                'assetCollections' => $this->assetCollectionRepository->findAll(),
-                'asyncThumbnails' => $this->asyncThumbnails
+                'assetCollections' => $this->assetCollectionRepository->findAll()
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Asset not found');
@@ -382,9 +373,7 @@ class AssetController extends ActionController
                 'tags' => $tags,
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
-                'contentPreview' => $contentPreview,
-                'assetSource' => $assetSource,
-                'asyncThumbnails' => $this->asyncThumbnails
+                'assetSource' => $assetSource
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Asset not found');
