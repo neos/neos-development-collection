@@ -47,6 +47,5 @@
       "post-package-install": "Neos\\Flow\\Composer\\InstallerScripts::postPackageUpdateAndInstall"
   },
   "require-dev": {
-      "flowpack/behat": "dev-master"
   }
 }
