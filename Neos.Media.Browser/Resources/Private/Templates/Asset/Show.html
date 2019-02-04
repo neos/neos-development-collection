@@ -75,7 +75,7 @@
     <label>{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}</label>
     <div class="neos-preview-image">
         <a href="{assetProxy.importStream}" target="_blank">
-            <m:thumbnail asset="{assetProxy.asset}" preset="Neos.Media.Browser:Preview" alt="{assetProxy.label}" async="{asyncThumbnails}" class="img-polaroid" />
+            <img src="{assetProxy.previewUri}" class="img-polaroid" alt="{assetProxy.label}"/>
         </a>
     </div>
 </f:section>

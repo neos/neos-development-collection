@@ -151,6 +151,15 @@
     <f:form action="index" id="postHelper" method="post"></f:form>
 </f:section>
 
+<f:section name="ContentImage">
+    <label>{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}</label>
+    <div class="neos-preview-image">
+        <a href="{assetProxy.importStream}" target="_blank">
+            <img src="{assetProxy.previewUri}" class="img-polaroid" alt="{assetProxy.label}"/>
+        </a>
+    </div>
+</f:section>
+
 <f:section name="Scripts">
     <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/edit.js')}"></script>
 </f:section>

@@ -417,9 +417,9 @@ class ContentCacheTest extends AbstractFusionObjectTest
         }));
 
         $firstRenderResult = $view->render();
-        $this->assertEquals('Foo|Bar|Baz', $firstRenderResult);
+        $this->assertEquals('Foo|Bar|Baz|Qux', $firstRenderResult);
 
-        $this->assertCount(3, $entriesWritten);
+        $this->assertCount(4, $entriesWritten);
         $this->assertEquals([
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.5
             '7075cb501854d7d8b25926b8c7f79c3e' => [
@@ -428,6 +428,10 @@ class ContentCacheTest extends AbstractFusionObjectTest
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.25
             '007836f2658952a45cfd706c300e208f' => [
                 'lifetime' => null
+            ],
+            // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.35
+            'd27ee4bbdef0fe0a4611e8f7bb34472b' => [
+                'lifetime' => 0
             ],
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments
             'a604a8f56ba95f256b3df4769b42bc6a' => [
