@@ -97,11 +97,11 @@
                              data-trigger="hover"
                              data-title="{f:if(condition: assetProxy.widthInPixels, then: '{assetProxy.widthInPixels} x {assetProxy.heightInPixels}')}"
                              data-html="true"
-                             data-content="{m:thumbnail(asset: assetProxy.asset, alt: assetProxy.label, preset: 'Neos.Media.Browser:Thumbnail', async: asyncThumbnails) -> f:format.htmlentities()}"
+                             data-content="{mediaBrowser:thumbnail(assetProxy: assetProxy, alt: '') -> f:format.htmlentities()}"
                              alt=""
                              width="250"
                              height="250">
-                            <m:thumbnail asset="{assetProxy.asset}" preset="Neos.Media.Browser:Thumbnail" alt="{assetProxy.label}" async="{asyncThumbnails}" />
+                            <img src="{assetProxy.thumbnailUri}" alt="{assetProxy.label}" width="250" height="250"/>
                         </div>
                     </td>
                     <td class="asset-label"><span data-neos-toggle="tooltip" title="{assetProxy.label}"><f:format.crop maxCharacters="50">{assetProxy.label}</f:format.crop></span></td>
