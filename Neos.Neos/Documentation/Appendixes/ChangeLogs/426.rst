@@ -1,0 +1,26 @@
+`4.2.6 (2019-02-04) <https://github.com/neos/neos-development-collection/releases/tag/4.2.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Revert "BUGFIX: Asynchronous and presets for media browser thumbnails" <https://github.com/neos/neos-development-collection/pull/2364>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+Reverts neos/neos-development-collection#2331
+
+* Packages: ``Browser`` ``Fusion``
+
+`BUGFIX: Handle maximum cache lifetime of 0 <https://github.com/neos/neos-development-collection/pull/2300>`_
+-------------------------------------------------------------------------------------------------------------
+
+If a cached prototype had a `maximumLifetime` of 0
+configured, which is meant as infinite cache
+lifetime, this value is propagated upwards to all
+surrounding prototypes as it is the selected
+as minimum value
+
+* Packages: ``Fusion`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.2.5...4.2.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
