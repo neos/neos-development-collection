@@ -95,7 +95,7 @@
 		margin-left: 0;
 
 		&::before {
-			@include fa-icon();
+			@extend .fas;
 			content: fa-content($fa-var-caret-down);
 			position: relative;
 			top: 0;

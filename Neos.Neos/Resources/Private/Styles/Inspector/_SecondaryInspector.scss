@@ -40,6 +40,7 @@
 	}
 
 	.neos-close {
+		@extend .fas;
 		position: absolute;
 		top: $unit + 1;
 		right: 0;
@@ -52,7 +53,6 @@
 		border: 1px solid $grayLight;
 		z-index: 10015;
 		@include opacity(1);
-		@include fa-icon();
 		@include transition-property(top, right);
 		@include transition-duration(.2s);
 
