@@ -1,0 +1,15 @@
+`4.2.7 (2019-02-05) <https://github.com/neos/neos-development-collection/releases/tag/4.2.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Render missing icons in old ui parts <https://github.com/neos/neos-development-collection/pull/2349>`_
+---------------------------------------------------------------------------------------------------------------
+
+This is a backport of `b742d9e997a03f9fe343f8fa1fd3e5d42c94a5f0 <https://github.com/neos/neos-development-collection/commit/b742d9e997a03f9fe343f8fa1fd3e5d42c94a5f0>`_ of #2311 and `4a62c8958496454991287ada1df8c692ffcc3d8f <https://github.com/neos/neos-development-collection/commit/4a62c8958496454991287ada1df8c692ffcc3d8f>`_ of #2261 which fixes (most?) missing icons in 4.1.
+
+* Packages: ``Browser`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.2.6...4.2.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
