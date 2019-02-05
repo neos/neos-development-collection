@@ -377,6 +377,7 @@ class AssetController extends ActionController
                 'tags' => $tags,
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
+                'contentPreview' => $contentPreview,
                 'assetSource' => $assetSource
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {
