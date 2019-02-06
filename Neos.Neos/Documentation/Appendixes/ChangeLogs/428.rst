@@ -1,0 +1,8 @@
+`4.2.8 (2019-02-06) <https://github.com/neos/neos-development-collection/releases/tag/4.2.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.2.7...4.2.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
