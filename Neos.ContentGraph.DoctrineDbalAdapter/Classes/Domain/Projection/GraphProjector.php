@@ -822,7 +822,7 @@ insert into neos_contentgraph_restrictionedge
      */
     public function whenNodesWereMoved(Event\NodesWereMoved $event)
     {
-        #$this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event) {
             foreach ($event->getNodeMoveMappings() as $moveNodeMapping) {
                 $nodeToBeMoved = $this->projectionContentGraph->getNode($moveNodeMapping->getNodeIdentifier(), $event->getContentStreamIdentifier());
                 $newSucceedingSibling = $moveNodeMapping->getNewSucceedingSiblingIdentifier()
@@ -879,7 +879,7 @@ insert into neos_contentgraph_restrictionedge
                     }
                 }
             }
-        #});
+        });
     }
 
     /**

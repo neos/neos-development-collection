@@ -5,15 +5,14 @@ Feature: Remove Nodes from Aggregate
 
   This feature tests the following combinations:
   - workspaces:
-  - (1) LIVE
-  - (2) USER workspace
+    - (1) LIVE
+    - (2) USER workspace
   - children:
-  - (A) WITHOUT children
-  - (B) WITH children
+    - (A) WITHOUT children
+    - (B) WITH children
   - Dimensions:
-  - (a) with dimension shine-through - when both DimensionSpacePoints are scheduled to be deleted, the node is acutually removed fully.
-  - (b) with explicit variant in another dimension (deleting the "child dimension" node; node still needs to exist in "parent dimension")
-
+    - (a) with dimension shine-through - when both DimensionSpacePoints are scheduled to be deleted, the node is actually removed fully.
+    - (b) with explicit variant in another dimension (deleting the "child dimension" node; node still needs to exist in "parent dimension")
 
   Background:
     Given I have the following content dimensions:

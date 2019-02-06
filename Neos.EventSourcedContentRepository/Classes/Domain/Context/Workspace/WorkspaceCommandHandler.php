@@ -183,7 +183,7 @@ final class WorkspaceCommandHandler
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $workspace->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513924882);
         }
-        // TODO this hack is currently needed in order to avoid the $workspace to return a previously cached content stream identifier
+        // TODO this hack is currently needed in order to avoid the $workspace to return a previously cached content stream identifier ($workspace->getCurrentContentStreamIdentifier() did not work here in behat tests)
         $currentContentStreamIdentifier = $this->workspaceFinder->getContentStreamIdentifierForWorkspace($command->getWorkspaceName());
         $baseContentStreamIdentifier = $this->workspaceFinder->getContentStreamIdentifierForWorkspace($baseWorkspace->getWorkspaceName());
 
