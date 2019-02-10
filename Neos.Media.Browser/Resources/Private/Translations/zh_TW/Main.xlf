@@ -26,9 +26,6 @@
       <trans-unit id="field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="zh-TW" state="translated">描述</target></trans-unit>
-      <trans-unit id="field.copyrightnotice" xml:space="preserve">
-				<source>Copyright Notice</source>
-			<target xml:lang="zh-TW" state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			<target xml:lang="zh-TW" state="translated">上次修改</target></trans-unit>
