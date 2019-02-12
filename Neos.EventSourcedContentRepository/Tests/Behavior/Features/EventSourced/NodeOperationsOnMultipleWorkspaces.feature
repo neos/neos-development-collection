@@ -45,6 +45,8 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | propertyName              | "text"                               |
       | value                     | {"value":"Original","type":"string"} |
 
+    And the graph projection is fully up to date
+
     And the command CreateWorkspace is executed with payload:
       | Key                     | Value                |
       | workspaceName           | "user-test"          |
