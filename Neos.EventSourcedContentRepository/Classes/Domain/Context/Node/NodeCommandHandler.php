@@ -62,7 +62,6 @@ use Neos\EventSourcedContentRepository\Exception;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
 use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
@@ -101,12 +100,6 @@ final class NodeCommandHandler
      * @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface
      */
     protected $contentGraph;
-
-    /**
-     * @Flow\Inject
-     * @var EventStoreManager
-     */
-    protected $eventStoreManager;
 
     /**
      * @param CreateNodeAggregateWithNode $command
