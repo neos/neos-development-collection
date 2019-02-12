@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
 
 /*
@@ -28,12 +27,12 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
     /**
      * @var array
      */
-    protected $cachedWorkspacesByName = [];
+    private $cachedWorkspacesByName = [];
 
     /**
      * @var array
      */
-    protected $cachedWorkspacesByContentStreamIdentifier = [];
+    private $cachedWorkspacesByContentStreamIdentifier = [];
 
     /**
      * @param WorkspaceName $name
@@ -41,9 +40,10 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
      */
     public function findOneByName(WorkspaceName $name): ?Workspace
     {
-        if (!isset($this->cachedWorkspacesByName[(string)$name])) {
+        // TODO consider re-introducing runtime cache
+        #if (!isset($this->cachedWorkspacesByName[(string)$name])) {
             $this->cachedWorkspacesByName[(string)$name] = $this->__call('findOneByWorkspaceName', [(string)$name]);
-        }
+        #}
         return $this->cachedWorkspacesByName[(string)$name];
     }
 
@@ -53,9 +53,10 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
      */
     public function findOneByCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ?Workspace
     {
-        if (!isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
+        // TODO consider re-introducing runtime cache
+        #if (!isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
             $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier] = $this->__call('findOneByCurrentContentStreamIdentifier', [(string)$contentStreamIdentifier]);
-        }
+        #}
         return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
     }
 
@@ -78,11 +79,12 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
         return $result;
     }
 
-    public function resetCache()
-    {
-        $this->cachedWorkspacesByName = [];
-        $this->cachedWorkspacesByContentStreamIdentifier = [];
-    }
+    // TODO consider re-introducing runtime cache
+//    public function resetCache()
+//    {
+//        $this->cachedWorkspacesByName = [];
+//        $this->cachedWorkspacesByContentStreamIdentifier = [];
+//    }
 
     public function getContentStreamIdentifierForWorkspace(WorkspaceName $workspaceName): ContentStreamIdentifier
     {

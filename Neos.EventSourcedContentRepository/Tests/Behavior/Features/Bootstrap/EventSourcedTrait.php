@@ -141,7 +141,6 @@ trait EventSourcedTrait
     public function beforeEventSourcedScenarioDispatcher()
     {
         $this->contentGraphInterface->resetCache();
-        $this->workspaceFinder->resetCache();
         $this->visibilityConstraints = VisibilityConstraints::frontend();
     }
 
@@ -434,6 +433,7 @@ trait EventSourcedTrait
         } elseif ($commandClassName === \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateRootNode::class) {
             $this->rootNodeIdentifier = NodeIdentifier::fromString($commandArguments['nodeIdentifier']);
         }
+        $this->eventBus->flush();
     }
 
     /**
