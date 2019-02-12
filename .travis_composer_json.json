@@ -16,7 +16,7 @@
   ],
   "require": {
       "neos/neos-development-collection": "dev-event-sourced-patch as dev-master",
-      "neos/flow-development-collection": "dev-browser-fix-relative-locations as dev-master",
+      "neos/flow-development-collection": "dev-master",
 
       "neos/contentrepository-development-collection": "dev-master",
       "neos/content-repository-dimensionspace": "dev-master",
@@ -38,7 +38,7 @@
       "mikey179/vfsstream": "~1.6",
       "phpunit/phpunit": "~7.1.0",
       "symfony/css-selector": "~2.0",
-      "neos/behat": "dev-master"
+      "neos/behat": "~5.0.0"
   },
   "scripts": {
       "post-update-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
@@ -47,6 +47,5 @@
       "post-package-install": "Neos\\Flow\\Composer\\InstallerScripts::postPackageUpdateAndInstall"
   },
   "require-dev": {
-      "flowpack/behat": "dev-master"
   }
 }
