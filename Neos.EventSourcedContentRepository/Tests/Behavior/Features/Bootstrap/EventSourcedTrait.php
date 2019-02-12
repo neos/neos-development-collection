@@ -12,17 +12,15 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralizationException;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecializationException;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
-use Neos\ContentRepository\Exception\NodeConstraintException;
-use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
@@ -30,42 +28,28 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregateNotFound;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeSpecialization;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeTypeNotFound;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
-use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
+use Neos\EventSourcing\EventBus\EventBus;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Features context
@@ -124,6 +108,11 @@ trait EventSourcedTrait
     protected $visibilityConstraints;
 
     /**
+     * @var EventBus
+     */
+    private $eventBus;
+
+    /**
      * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
      */
     abstract protected function getObjectManager();
@@ -138,6 +127,7 @@ trait EventSourcedTrait
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
         $this->eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
+        $this->eventBus = $this->getObjectManager()->get(EventBus::class);
 
         $contentStreamRepository = $this->getObjectManager()->get(ContentStreamRepository::class);
         \Neos\Utility\ObjectAccess::setProperty($contentStreamRepository, 'contentStreams', [], true);
@@ -653,9 +643,7 @@ trait EventSourcedTrait
      */
     public function theGraphProjectionIsFullyUpToDate()
     {
-        // TODO HACK
-        sleep(1);
-        #usleep(600000); # 600000ms = 0.6s
+        $this->eventBus->flush();
     }
 
     /**

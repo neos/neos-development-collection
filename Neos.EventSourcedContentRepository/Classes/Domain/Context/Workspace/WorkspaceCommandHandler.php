@@ -42,6 +42,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\Worksp
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
+use Neos\EventSourcing\EventBus\EventBus;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
@@ -84,6 +85,12 @@ final class WorkspaceCommandHandler
      * @var PropertyMapper
      */
     protected $propertyMapper;
+
+    /**
+     * @Flow\Inject
+     * @var EventBus
+     */
+    protected $eventBus;
 
 
     /**
@@ -275,7 +282,7 @@ final class WorkspaceCommandHandler
             )
         );
         // TODO hack!
-        sleep(1);
+        $this->eventBus->flush();
 
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier())->getEventStreamName();
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
@@ -330,7 +337,7 @@ final class WorkspaceCommandHandler
                     throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($commandToRebase)));
             }
             // TODO hack!
-            sleep(1);
+            $this->eventBus->flush();
         }
 
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());

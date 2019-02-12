@@ -45,9 +45,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventBus\DeferredEventBus;
-use Neos\EventSourcing\EventBus\EventBusInterface;
-use Neos\EventSourcing\EventStore\EventStore;
+use Neos\EventSourcing\EventBus\EventBus;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
@@ -76,10 +74,10 @@ class ContentRepositoryExportService
     protected $interDimensionalFallbackGraph;
 
     /**
-     * @Flow\Inject(lazy=false)
-     * @var DeferredEventBus
+     * @Flow\Inject
+     * @var EventBus
      */
-    protected $deferredEventBus;
+    protected $eventBus;
 
     /**
      * @var Connection
@@ -169,7 +167,7 @@ class ContentRepositoryExportService
             $this->contentStreamIdentifier,
             UserIdentifier::forSystemUser()
         );
-        $this->commitEventWithDeferredBus($streamName, $event);
+        $this->commitEvent($streamName, $event);
 
         $this->createRootWorkspace();
         $this->createRootNode();
@@ -203,7 +201,7 @@ class ContentRepositoryExportService
         }
         var_dump("NODE DATAS IN NEXT ITER: " . count($nodeDatasToExportAtNextIteration));
 
-        $this->deferredEventBus->processEvents();
+        $this->eventBus->flush();
     }
 
     protected function exportNodeData(NodeData $nodeData, DimensionSpacePoint $dimensionRestriction = null, &$nodeDatasToExportAtNextIteration)
@@ -286,7 +284,7 @@ class ContentRepositoryExportService
                 PropertyValues::fromArray($propertyValues)
             );
         }
-        $this->commitEventWithDeferredBus($streamName, $event);
+        $this->commitEvent($streamName, $event);
 
         // publish reference edges
         foreach ($propertyReferences as $propertyName => $references) {
@@ -298,7 +296,7 @@ class ContentRepositoryExportService
                 PropertyName::fromString($propertyName),
                 $references
             );
-            $this->commitEventWithDeferredBus($streamName, $event);
+            $this->commitEvent($streamName, $event);
         }
 
         $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = true;
@@ -439,7 +437,7 @@ class ContentRepositoryExportService
             UserIdentifier::forSystemUser(),
             $this->contentStreamIdentifier
         );
-        $this->commitEventWithDeferredBus($streamName, $event);
+        $this->commitEvent($streamName, $event);
     }
 
     private function createRootNode()
@@ -454,14 +452,12 @@ class ContentRepositoryExportService
             UserIdentifier::forSystemUser()
         );
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($this->contentStreamIdentifier)->getEventStreamName();
-        $this->commitEventWithDeferredBus($streamName, $event);
+        $this->commitEvent($streamName, $event);
     }
 
-    private function commitEventWithDeferredBus(StreamName $streamName, DomainEventInterface $event): void
+    private function commitEvent(StreamName $streamName, DomainEventInterface $event): void
     {
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $eventStore->withEventBus($this->deferredEventBus, function(EventStore $augmentedEventStore) use ($streamName, $event) {
-            $augmentedEventStore->commit($streamName, DomainEvents::withSingleEvent($event));
-        });
+        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 }

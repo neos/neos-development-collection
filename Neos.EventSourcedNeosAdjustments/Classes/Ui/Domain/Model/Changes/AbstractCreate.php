@@ -23,6 +23,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
+use Neos\EventSourcing\EventBus\EventBus;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Exception\InvalidNodeCreationHandlerException;
 
@@ -33,6 +34,12 @@ abstract class AbstractCreate extends AbstractStructuralChange
      * @var NodeCommandHandler
      */
     protected $nodeCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var EventBus
+     */
+    protected $eventBus;
 
     /**
      * The type of the node that will be created
@@ -156,7 +163,8 @@ abstract class AbstractCreate extends AbstractStructuralChange
         $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
 
         // TODO hack
-        sleep(1);
+        $this->eventBus->flush();
+
 
         $newlyCreatedNode = $parentNode->findNamedChildNode($nodeName);
         $this->applyNodeCreationHandlers($newlyCreatedNode);
