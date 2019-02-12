@@ -62,7 +62,7 @@ class NextAllOperationTest extends UnitTestCase
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
-        ]);
+        ])));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->firstNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
