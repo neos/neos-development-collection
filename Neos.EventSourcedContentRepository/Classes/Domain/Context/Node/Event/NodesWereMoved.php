@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
@@ -30,7 +29,8 @@ final class NodesWereMoved implements DomainEventInterface, CopyableAcrossConten
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeMoveMappings $nodeMoveMappings
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeMoveMappings $nodeMoveMappings) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeMoveMappings $nodeMoveMappings)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeMoveMappings = $nodeMoveMappings;
     }

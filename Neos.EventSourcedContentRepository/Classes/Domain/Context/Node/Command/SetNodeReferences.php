@@ -42,7 +42,8 @@ final class SetNodeReferences implements \JsonSerializable
      * @param PropertyName $propertyName
      * @param array $destinationNodeAggregateIdentifiers
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, PropertyName $propertyName, array $destinationNodeAggregateIdentifiers) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, PropertyName $propertyName, array $destinationNodeAggregateIdentifiers)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->propertyName = $propertyName;
@@ -55,7 +56,9 @@ final class SetNodeReferences implements \JsonSerializable
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeIdentifier::fromString($array['nodeIdentifier']),
             PropertyName::fromString($array['propertyName']),
-            array_map(function($identifier) { return NodeAggregateIdentifier::fromString($identifier); }, $array['destinationNodeAggregateIdentifiers'])
+            array_map(function ($identifier) {
+                return NodeAggregateIdentifier::fromString($identifier);
+            }, $array['destinationNodeAggregateIdentifiers'])
         );
     }
 

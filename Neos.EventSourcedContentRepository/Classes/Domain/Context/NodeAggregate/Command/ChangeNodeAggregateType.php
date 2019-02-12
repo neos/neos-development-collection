@@ -40,7 +40,8 @@ final class ChangeNodeAggregateType
     protected $strategy;
 
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $newNodeTypeName, ?NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $newNodeTypeName, ?NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newNodeTypeName = $newNodeTypeName;

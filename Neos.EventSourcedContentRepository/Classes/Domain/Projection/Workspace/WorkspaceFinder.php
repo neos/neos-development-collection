@@ -42,7 +42,7 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
     {
         // TODO consider re-introducing runtime cache
         #if (!isset($this->cachedWorkspacesByName[(string)$name])) {
-            $this->cachedWorkspacesByName[(string)$name] = $this->__call('findOneByWorkspaceName', [(string)$name]);
+        $this->cachedWorkspacesByName[(string)$name] = $this->__call('findOneByWorkspaceName', [(string)$name]);
         #}
         return $this->cachedWorkspacesByName[(string)$name];
     }
@@ -55,7 +55,7 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
     {
         // TODO consider re-introducing runtime cache
         #if (!isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
-            $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier] = $this->__call('findOneByCurrentContentStreamIdentifier', [(string)$contentStreamIdentifier]);
+        $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier] = $this->__call('findOneByCurrentContentStreamIdentifier', [(string)$contentStreamIdentifier]);
         #}
         return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
     }

@@ -49,7 +49,6 @@ use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
-use vendor\project\StatusTest;
 
 /**
  * WorkspaceCommandHandler

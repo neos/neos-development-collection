@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregate;
 use Neos\EventSourcing\EventStore;
 use Neos\EventSourcing\EventStore\StreamName;
