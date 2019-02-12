@@ -4,6 +4,10 @@
   abstract: true
   superTypes:
     'Neos.NodeTypes.BaseMixins:ContentImageMixin': true
+    'Neos.NodeTypes:ImageMixin': true
+    'Neos.NodeTypes:LinkMixin': true
+    'Neos.NodeTypes:ImageCaptionMixin': true
+    'Neos.NodeTypes:ImageAlignmentMixin': true
 
 'Neos.NodeTypes:ImageMixin':
   abstract: true
