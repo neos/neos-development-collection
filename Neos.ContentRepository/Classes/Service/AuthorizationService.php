@@ -109,7 +109,7 @@ class AuthorizationService
             }
         }
         $implicitlyDeniedNodeTypes = array_diff($abstainedCreationNodeTypes, $grantedCreationNodeTypes);
-        return array_merge($implicitlyDeniedNodeTypes, $deniedCreationNodeTypes);
+        return array_unique(array_merge($implicitlyDeniedNodeTypes, $deniedCreationNodeTypes));
     }
 
     /**
