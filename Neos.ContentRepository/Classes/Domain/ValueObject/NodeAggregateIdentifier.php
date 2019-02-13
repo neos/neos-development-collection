@@ -13,10 +13,11 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Utility;
-use Ramsey\Uuid\Uuid;
+use Neos\Flow\Utility\Algorithms;
+use Neos\Flow\Annotations as Flow;
 
 /**
- * A node aggregate identifier is a externally referenceable identifier of a node aggregate.
+ * @Flow\Proxy(false)
  */
 final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInterface
 {
@@ -28,42 +29,24 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
     /**
      * @var string
      */
-    private $identifier;
+    private $value;
 
-    /**
-     * NodeAggregateIdentifier constructor.
-     *
-     * @param string $existingIdentifier
-     * @throws \Exception
-     */
-    public function __construct(string $existingIdentifier = null)
+    private function __construct(string $value)
     {
-        if ($existingIdentifier !== null) {
-            $this->setIdentifier($existingIdentifier);
-        } else {
-            $this->setIdentifier((string)Uuid::uuid4());
+        if (!preg_match(self::PATTERN, $value)) {
+            throw new \InvalidArgumentException('Invalid node aggregate identifier "' . $value . '" (a node aggregate identifier must only contain lowercase characters, numbers and the "-" sign).', 1505840197862);
         }
+        $this->value = $value;
     }
 
-    /**
-     * @param string $identifier
-     */
-    private function setIdentifier(string $identifier)
+    public static function create(): self
     {
-        if (!preg_match(self::PATTERN, $identifier)) {
-            throw new \InvalidArgumentException('Invalid node aggregate identifier "' . $identifier . '" (a node aggregate identifier must only contain lowercase characters, numbers and the "-" sign).', 1505840197862);
-        }
-        $this->identifier = $identifier;
+        return new static(Algorithms::generateUUID());
     }
 
-    /**
-     * @param string $identifier
-     * @return NodeAggregateIdentifier
-     * @throws \Exception
-     */
-    public static function fromString(string $identifier): NodeAggregateIdentifier
+    public static function fromString(string $value): self
     {
-        return new NodeAggregateIdentifier($identifier);
+        return new static($value);
     }
 
     /**
@@ -72,9 +55,9 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
      * @return static
      * @throws \Exception
      */
-    public static function forAutoCreatedChildNode(NodeName $childNodeName, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregateIdentifier
+    public static function forAutoCreatedChildNode(NodeName $childNodeName, NodeAggregateIdentifier $nodeAggregateIdentifier): self
     {
-        return new NodeAggregateIdentifier(Utility::buildAutoCreatedChildNodeIdentifier((string)$childNodeName, (string)$nodeAggregateIdentifier));
+        return new static(Utility::buildAutoCreatedChildNodeIdentifier((string)$childNodeName, (string)$nodeAggregateIdentifier));
     }
 
     /**
@@ -83,7 +66,7 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
      */
     public function equals(NodeAggregateIdentifier $other): bool
     {
-        return $this->identifier === (string) $other;
+        return $this->value === $other->value;
     }
 
     /**
@@ -91,7 +74,7 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
      */
     public function jsonSerialize()
     {
-        return $this->identifier;
+        return $this->value;
     }
 
     /**
@@ -99,7 +82,7 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
      */
     public function __toString()
     {
-        return $this->identifier;
+        return $this->value;
     }
 
     /**
@@ -107,6 +90,6 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
      */
     public function getCacheEntryIdentifier(): string
     {
-        return $this->identifier;
+        return $this->value;
     }
 }

@@ -493,7 +493,7 @@ class NodeType
     /**
      * Return an array with child nodes which should be automatically created
      *
-     * @return array the key of this array is the name of the child, and the value its NodeType.
+     * @return self[] the key of this array is the name of the child, and the value its NodeType.
      * @api
      */
     public function getAutoCreatedChildNodes()

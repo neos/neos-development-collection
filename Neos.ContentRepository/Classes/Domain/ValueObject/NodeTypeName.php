@@ -11,30 +11,40 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
+/**
+ * @Flow\Proxy(false)
+ */
 final class NodeTypeName implements \JsonSerializable
 {
 
     /**
      * @var string
      */
-    private $name;
+    private $value;
 
-    public function __construct(string $name)
+    private function __construct(string $value)
     {
-        if ($name === '') {
+        if ($value === '') {
             throw new \InvalidArgumentException('Node type name must not be empty.', 1505835958);
         }
 
-        $this->name = $name;
+        $this->value = $value;
+    }
+
+    public static function fromString(string $value): self
+    {
+        return new static($value);
     }
 
     public function jsonSerialize()
     {
-        return $this->name;
+        return $this->value;
     }
 
     public function __toString()
     {
-        return $this->name;
+        return $this->value;
     }
 }
