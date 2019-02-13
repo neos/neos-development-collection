@@ -120,8 +120,8 @@ Node privileges define what can be restricted in relation to accessing and editi
             isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
             && createdNodeIsOfType("Neos.NodeTypes:Text")
 
-  will actually only affect nodes of that type (and subtypes). All users will still be able to create other node types,
-  unless you also add a more generic privilege target:
+  will actually only affect nodes of the type `Neos.NodeTypes:Text` (not even subtypes). All users will still be able to
+  create other node types, unless you also add a more generic privilege target:
 
   .. code-block:: yaml
 
@@ -219,6 +219,7 @@ Usage example:
 
 This defines a privilege target that intercepts creation of Text nodes in the specified node (and all of its child
 nodes).
+To include all sub node types of `Neos.NodeTypes:Text`, use ``createdNodeIsOfType("Neos.NodeTypes:Text", true)``.
 
 EditNodePrivilege
 -----------------
@@ -341,9 +342,10 @@ Inheritance is taken into account, so that specific types also match if a supert
 The second one allows to match on the type of a node that is being created:
 
 Signature:
-  ``createdNodeIsOfType(nodetype-identifier)``
+  ``createdNodeIsOfType(nodetype-identifier[, include-subnodetypes])``
 Parameters:
   * ``nodetype-identifier`` (string|array) an array of supported node type identifiers or a single node type identifier
+  * ``include-subnodetypes`` (bool, optional) if sub node types should be included, defaults to ``false``
 Applicable to:
   matchers of the ``CreateNodePrivilege``
 
