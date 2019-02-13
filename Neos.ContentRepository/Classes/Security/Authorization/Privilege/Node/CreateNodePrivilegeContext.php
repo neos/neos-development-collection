@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 
@@ -43,13 +42,14 @@ class CreateNodePrivilegeContext extends NodePrivilegeContext
 
         if ($includeSubNodeTypes) {
             $creationNodeTypeNames = [];
-            foreach ($this->creationNodeTypes as $creationNodeType) {
-                foreach ($this->nodeTypeManager->getSubNodeTypes($creationNodeType) as $subNodeType) {
-                    /** @var NodeType $subNodeType */
-                    $creationNodeTypeNames[$subNodeType->getName()] = true;
+            foreach ($this->creationNodeTypes as $creationNodeTypeName) {
+                $creationNodeTypeNames[$creationNodeTypeName] = true;
+                $subNodeTypes = $this->nodeTypeManager->getSubNodeTypes($creationNodeTypeName, false);
+                foreach ($subNodeTypes as $subNodeTypeName => $subNodeType) {
+                    $creationNodeTypeNames[$subNodeTypeName] = true;
                 }
             }
-            $this->creationNodeTypes = array_merge($this->creationNodeTypes, array_keys($creationNodeTypeNames));
+            $this->creationNodeTypes = array_keys($creationNodeTypeNames);
         }
 
         return true;
