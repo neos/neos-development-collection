@@ -67,6 +67,15 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     }
 
     /**
+     * @param string $jsonString A JSON string representation, see jsonSerialize
+     * @return DimensionSpacePoint
+     */
+    public static function fromArray(array $coordinates): DimensionSpacePoint
+    {
+        return new DimensionSpacePoint($coordinates);
+    }
+
+    /**
      * @param array $legacyDimensionValues Array from dimension name to dimension values
      * @return static
      */

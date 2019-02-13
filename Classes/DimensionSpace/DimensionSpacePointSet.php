@@ -14,10 +14,13 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * A set of points in the dimension space.
  *
  * E.g.: {[language => es, country => ar], [language => es, country => es]}
+ * @Flow\Proxy(false)
  */
 final class DimensionSpacePointSet implements \JsonSerializable, \IteratorAggregate, \ArrayAccess, \Countable
 {
@@ -44,6 +47,14 @@ final class DimensionSpacePointSet implements \JsonSerializable, \IteratorAggreg
             $this->points[$point->getHash()] = $point;
         }
         $this->iterator = new \ArrayIterator($this->points);
+    }
+
+    public static function fromArray(array $points): self {
+        $converted = [];
+        foreach ($points as $point) {
+            $converted[] = new DimensionSpacePoint($point);
+        }
+        return new DimensionSpacePointSet($converted);
     }
 
     /**
