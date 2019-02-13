@@ -5,8 +5,11 @@ Feature: Privilege to restrict creation of nodes
     """
     privilegeTargets:
       'Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilege':
-        'Neos.ContentRepository.Testing:Service':
-          matcher: 'isDescendantNodeOf("/sites/content-repository/service/") && nodeIsOfType("Neos.ContentRepository.Testing:Document") && createdNodeIsOfType("Neos.ContentRepository.Testing:Text")'
+        'Neos.ContentRepository.Testing:ServiceText':
+          matcher: 'isDescendantNodeOf("/sites/content-repository/service/") && createdNodeIsOfType("Neos.ContentRepository.Testing:Text")'
+
+        'Neos.ContentRepository.Testing:ServiceTextSubnodes':
+          matcher: 'isDescendantNodeOf("/sites/content-repository/service/") && createdNodeIsOfType("Neos.ContentRepository.Testing:Text", true)'
 
         'Neos.ContentRepository.Testing:Company':
           matcher: 'isDescendantNodeOf("68ca0dcd-2afb-ef0e-1106-a5301e65b8a0")'
@@ -23,10 +26,16 @@ Feature: Privilege to restrict creation of nodes
 
       'Neos.ContentRepository:Administrator':
         privileges:
-          - privilegeTarget: 'Neos.ContentRepository.Testing:Service'
-            permission: GRANT
           - privilegeTarget: 'Neos.ContentRepository.Testing:Company'
             permission: GRANT
+
+      'Neos.ContentRepository.Testing:CreateServiceText':
+        - privilegeTarget: 'Neos.ContentRepository.Testing:ServiceText'
+          permission: GRANT
+
+      'Neos.ContentRepository.Testing:CreateServiceTextSubnodes':
+        - privilegeTarget: 'Neos.ContentRepository.Testing:ServiceTextSubnodes'
+          permission: GRANT
       """
     And I have the following nodes:
       | Identifier                           | Path                                   | Node Type                               | Properties           | Workspace |
@@ -45,6 +54,15 @@ Feature: Privilege to restrict creation of nodes
     And I should get false when asking the node authorization service if creating a new "mynewtext" child node of type "Neos.ContentRepository.Testing:Text" is granted
 
   @Isolated @fixtures
+  Scenario: creating TextWithImage nodes under service is denied to everybody
+    Given I am not authenticated
+    And I get a node by path "/sites/content-repository/service" with the following context:
+      | Workspace |
+      | live      |
+    Then I should not be granted to create a new "mynewtextwithimage" child node of type "Neos.ContentRepository.Testing:TextWithImage"
+    And I should get false when asking the node authorization service if creating a new "mynewtextwithimage" child node of type "Neos.ContentRepository.Testing:TextWithImage" is granted
+
+  @Isolated @fixtures
   Scenario: creating image nodes under service is granted to everybody
     Given I am not authenticated
     And I get a node by path "/sites/content-repository/service" with the following context:
@@ -54,8 +72,29 @@ Feature: Privilege to restrict creation of nodes
     And I should get true when asking the node authorization service if creating a new "mynewimage" child node of type "Neos.ContentRepository.Testing:Image" is granted
 
   @Isolated @fixtures
-  Scenario: creating text nodes under service is granted to administrators
-    Given I am authenticated with role "Neos.ContentRepository:Administrator"
+  Scenario: unauthenticated users cannot create Text or TextWithImage nodes under service
+    Given I am not authenticated
+    And I get a node by path "/sites/content-repository/service" with the following context:
+      | Workspace |
+      | live      |
+    Then I should get the following list of denied node types for this node from the node authorization service:
+      | nodeTypeName                                 |
+      | Neos.ContentRepository.Testing:Text          |
+      | Neos.ContentRepository.Testing:TextWithImage |
+
+  @Isolated @fixtures
+  Scenario: CreateServiceText role cannot create TextWithImage nodes under service
+    Given I am authenticated with role "Neos.ContentRepository.Testing:CreateServiceText"
+    And I get a node by path "/sites/content-repository/service" with the following context:
+      | Workspace |
+      | live      |
+    Then I should get the following list of denied node types for this node from the node authorization service:
+      | nodeTypeName                                 |
+      | Neos.ContentRepository.Testing:TextWithImage |
+
+  @Isolated @fixtures
+  Scenario: creating text nodes under service is granted to role CreateServiceText
+    Given I am authenticated with role "Neos.ContentRepository.Testing:CreateServiceText"
     And I get a node by path "/sites/content-repository/service" with the following context:
       | Workspace |
       | live      |
@@ -63,14 +102,22 @@ Feature: Privilege to restrict creation of nodes
     And I should get true when asking the node authorization service if creating a new "mynewtext" child node of type "Neos.ContentRepository.Testing:Text" is granted
 
   @Isolated @fixtures
-  Scenario: creating text nodes under service is denied to everybody
-    Given I am not authenticated
+  Scenario: creating text nodes under service is granted to role CreateServiceTextSubnodes
+    Given I am authenticated with role "Neos.ContentRepository.Testing:CreateServiceTextSubnodes"
     And I get a node by path "/sites/content-repository/service" with the following context:
       | Workspace |
       | live      |
-    Then I should get the following list of denied node types for this node from the node authorization service:
-      | nodeTypeName                        |
-      | Neos.ContentRepository.Testing:Text |
+    Then I should be granted to create a new "mynewtext" child node of type "Neos.ContentRepository.Testing:Text"
+    And I should get true when asking the node authorization service if creating a new "mynewtext" child node of type "Neos.ContentRepository.Testing:Text" is granted
+
+  @Isolated @fixtures
+  Scenario: creating TextWithImage nodes under service is granted to role CreateServiceTextSubnodes
+    Given I am authenticated with role "Neos.ContentRepository.Testing:CreateServiceTextSubnodes"
+    And I get a node by path "/sites/content-repository/service" with the following context:
+      | Workspace |
+      | live      |
+    Then I should be granted to create a new "mynewtextwithimage" child node of type "Neos.ContentRepository.Testing:TextWithImage"
+    And I should get true when asking the node authorization service if creating a new "mynewtextwithimage" child node of type "Neos.ContentRepository.Testing:TextWithImage" is granted
 
   @Isolated @fixtures
   Scenario: creating text nodes under company is granted to administrators
