@@ -24,7 +24,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
  *
  * The node aggregate of the parent of the given node needs to have a visible node in the given dimension space point.
  */
-final class TranslateNodeInAggregate
+final class TranslateNodeInAggregate implements \JsonSerializable
 {
 
     /**
@@ -67,18 +67,24 @@ final class TranslateNodeInAggregate
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeIdentifier $destinationParentNodeIdentifier
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $sourceNodeIdentifier,
-        NodeIdentifier $destinationNodeIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeIdentifier $destinationParentNodeIdentifier = null
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $sourceNodeIdentifier, NodeIdentifier $destinationNodeIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeIdentifier $destinationParentNodeIdentifier = null)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->sourceNodeIdentifier = $sourceNodeIdentifier;
         $this->destinationNodeIdentifier = $destinationNodeIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->destinationParentNodeIdentifier = $destinationParentNodeIdentifier;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeIdentifier::fromString($array['sourceNodeIdentifier']),
+            NodeIdentifier::fromString($array['destinationNodeIdentifier']),
+            new DimensionSpacePoint($array['dimensionSpacePoint']),
+            isset($array['destinationParentNodeIdentifier']) ? NodeIdentifier::fromString($array['destinationParentNodeIdentifier']) : null
+        );
     }
 
     /**
@@ -119,5 +125,16 @@ final class TranslateNodeInAggregate
     public function getDestinationParentNodeIdentifier(): ?NodeIdentifier
     {
         return $this->destinationParentNodeIdentifier;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'sourceNodeIdentifier' => $this->sourceNodeIdentifier,
+            'destinationNodeIdentifier' => $this->destinationNodeIdentifier,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint,
+            'destinationParentNodeIdentifier' => $this->destinationParentNodeIdentifier,
+        ];
     }
 }

@@ -12,8 +12,11 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * Position of a reference (when moving or copying)
+ * @Flow\Proxy(false)
  */
 final class ReferencePosition implements \JsonSerializable
 {

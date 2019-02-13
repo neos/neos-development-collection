@@ -15,7 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 
-final class RemoveNodeAggregate
+final class RemoveNodeAggregate implements \JsonSerializable
 {
 
     /**
@@ -39,6 +39,14 @@ final class RemoveNodeAggregate
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier'])
+        );
+    }
+
     /**
      * @return ContentStreamIdentifier
      */
@@ -53,5 +61,13 @@ final class RemoveNodeAggregate
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+        ];
     }
 }

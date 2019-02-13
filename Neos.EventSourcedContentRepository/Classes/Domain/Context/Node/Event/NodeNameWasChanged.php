@@ -15,9 +15,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
-final class NodeNameWasChanged implements EventInterface, CopyableAcrossContentStreamsInterface
+/**
+ * @Flow\Proxy(false)
+ */
+final class NodeNameWasChanged implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**

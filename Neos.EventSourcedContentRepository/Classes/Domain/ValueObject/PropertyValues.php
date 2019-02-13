@@ -12,7 +12,13 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
-final class PropertyValues implements \JsonSerializable
+use Neos\Flow\Annotations as Flow;
+use Traversable;
+
+/**
+ * @Flow\Proxy(false)
+ */
+final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
 
     /**
@@ -21,18 +27,43 @@ final class PropertyValues implements \JsonSerializable
     private $values;
 
     /**
-     * @param array $values
+     * @param PropertyValue[] values
      */
-    public function __construct(array $values)
+    private function __construct(array $values)
     {
-        // TODO
         $this->values = $values;
     }
 
-    public function jsonSerialize()
+    public static function fromArray(array $propertyValues): self
     {
-        return [
-            'values' => $this->values,
-        ];
+        $values = [];
+        foreach ($propertyValues as $propertyName => $propertyValue) {
+            if (is_array($propertyValue)) {
+                $values[$propertyName] = PropertyValue::fromArray($propertyValue);
+            } elseif ($propertyValue instanceof PropertyValue) {
+                $values[$propertyName] = $propertyValue;
+            } else {
+                throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', PropertyValue::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
+            }
+        }
+        return new static($values);
+    }
+
+    /**
+     * @return PropertyValue[]|Traversable<PropertyValue>
+     */
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->values);
+    }
+
+    public function count(): int
+    {
+        return count($this->values);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->values;
     }
 }

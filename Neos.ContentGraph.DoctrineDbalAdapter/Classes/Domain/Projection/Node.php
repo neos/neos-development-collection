@@ -146,14 +146,14 @@ class Node
     public static function fromDatabaseRow(array $databaseRow)
     {
         return new static(
-            new NodeRelationAnchorPoint($databaseRow['relationanchorpoint']),
-            new NodeIdentifier($databaseRow['nodeidentifier']),
-            $databaseRow['nodeaggregateidentifier'] ? new NodeAggregateIdentifier($databaseRow['nodeaggregateidentifier']) : null,
+            NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
+            NodeIdentifier::fromString($databaseRow['nodeidentifier']),
+            $databaseRow['nodeaggregateidentifier'] ? NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']) : null,
             json_decode($databaseRow['origindimensionspacepoint'], true),
             $databaseRow['origindimensionspacepointhash'],
             json_decode($databaseRow['properties'], true),
-            new NodeTypeName($databaseRow['nodetypename']),
-            isset($databaseRow['name']) ? new NodeName($databaseRow['name']) : null
+            NodeTypeName::fromString($databaseRow['nodetypename']),
+            isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null
         );
     }
 }

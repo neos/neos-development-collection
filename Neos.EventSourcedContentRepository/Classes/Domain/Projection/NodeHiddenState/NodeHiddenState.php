@@ -83,9 +83,9 @@ class NodeHiddenState
     public static function fromDatabaseRow(array $databaseRow)
     {
         return new static(
-            new ContentStreamIdentifier($databaseRow['contentstreamidentifier']),
-            new NodeAggregateIdentifier($databaseRow['nodeaggregateidentifier']),
-            new DimensionSpacePoint(json_decode($databaseRow['dimensionspacepoint'], true)),
+            ContentStreamIdentifier::fromString($databaseRow['contentstreamidentifier']),
+            NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
+            DimensionSpacePoint::fromJsonString($databaseRow['dimensionspacepoint']),
             (bool)$databaseRow['hidden']
         );
     }

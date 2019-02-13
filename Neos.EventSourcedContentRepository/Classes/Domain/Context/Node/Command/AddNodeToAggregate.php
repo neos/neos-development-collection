@@ -17,11 +17,12 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Node;
 
 /**
  * AddNodeToAggregate command
  */
-final class AddNodeToAggregate
+final class AddNodeToAggregate implements \JsonSerializable
 {
 
     /**
@@ -68,20 +69,26 @@ final class AddNodeToAggregate
      * @param NodeIdentifier $parentNodeIdentifier
      * @param NodeName $nodeName
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeIdentifier $nodeIdentifier,
-        NodeIdentifier $parentNodeIdentifier,
-        NodeName $nodeName
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeIdentifier $nodeIdentifier, NodeIdentifier $parentNodeIdentifier, NodeName $nodeName)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeName = $nodeName;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            new DimensionSpacePoint($array['dimensionSpacePoint']),
+            NodeIdentifier::fromString($array['nodeIdentifier']),
+            NodeIdentifier::fromString($array['parentNodeIdentifier']),
+            NodeName::fromString($array['nodeName'])
+        );
     }
 
     /**
@@ -130,5 +137,17 @@ final class AddNodeToAggregate
     public function getNodeName(): NodeName
     {
         return $this->nodeName;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint,
+            'nodeIdentifier' => $this->nodeIdentifier,
+            'parentNodeIdentifier' => $this->parentNodeIdentifier,
+            'nodeName' => $this->nodeName,
+        ];
     }
 }

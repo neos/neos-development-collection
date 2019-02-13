@@ -1,13 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
+namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Nodes were moved
+ *
+ * @Flow\Proxy(false)
  */
 final class NodeMoveMapping
 {
@@ -46,6 +49,15 @@ final class NodeMoveMapping
         $this->dimensionSpacePointSet = $dimensionSpacePointSet;
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            NodeIdentifier::fromString($array['nodeIdentifier']),
+            isset($array['newParentNodeIdentifier']) ? NodeIdentifier::fromString($array['newParentNodeIdentifier']) : null,
+            isset($array['newSucceedingSiblingIdentifier']) ? NodeIdentifier::fromString($array['newSucceedingSiblingIdentifier']) : null,
+            new DimensionSpacePointSet($array['dimensionSpacePointSet'])
+        );
+    }
 
     /**
      * @return NodeIdentifier

@@ -17,12 +17,13 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
- * WorkspaceWasCreated
+ * @Flow\Proxy(false)
  */
-class WorkspaceWasCreated implements EventInterface
+class WorkspaceWasCreated implements DomainEventInterface
 {
     /**
      * @var WorkspaceName

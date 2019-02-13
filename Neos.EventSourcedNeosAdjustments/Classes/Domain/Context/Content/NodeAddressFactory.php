@@ -58,7 +58,7 @@ class NodeAddressFactory
         list($workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdentifierSerialized) = explode('__', $nodeAddressSerialized);
         $workspaceName = new WorkspaceName($workspaceNameSerialized);
         $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
-        $nodeAggregateIdentifier = new NodeAggregateIdentifier($nodeAggregateIdentifierSerialized);
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifierSerialized);
 
         $contentStreamIdentifier = $this->workspaceFinder->findOneByName($workspaceName)->getCurrentContentStreamIdentifier();
 
@@ -79,7 +79,7 @@ class NodeAddressFactory
         $nodePath = \mb_strpos($pathValues['nodePath'], '/sites') === 0 ? \mb_substr($pathValues['nodePath'], 6) : $pathValues['nodePath'];
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
-        $node = $subgraph->findNodeByPath($nodePath, $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'))->getNodeAggregateIdentifier());
+        $node = $subgraph->findNodeByPath($nodePath, $this->contentGraph->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'))->getNodeAggregateIdentifier());
 
         return new NodeAddress($contentStreamIdentifier, $dimensionSpacePoint, $node->getNodeAggregateIdentifier(), $workspace->getWorkspaceName());
     }

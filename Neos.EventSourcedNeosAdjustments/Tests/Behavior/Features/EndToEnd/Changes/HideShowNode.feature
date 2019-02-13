@@ -14,6 +14,7 @@ Feature: Nodes can be hidden/shown
       | packageKey | Neos.Demo |
     And I execute the flow command "contentrepositorymigrate:run" only once per feature
     And I am logged in as "admin" "password"
+    And the graph projection is fully up to date
     Given I am in the active content stream of workspace "user-admin" and Dimension Space Point {"language": "en_US"}
     # the "Teaser title" node on the homepage
     And I get the node address for node aggregate "d17caff2-f50c-d30b-b735-9b9216de02e9", remembering it as "TEASERNODE"

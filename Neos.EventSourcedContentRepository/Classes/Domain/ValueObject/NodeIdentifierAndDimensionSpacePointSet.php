@@ -12,8 +12,11 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * A node identifier and dimension space point set
+ * @Flow\Proxy(false)
  */
 final class NodeIdentifierAndDimensionSpacePointSet implements \JsonSerializable
 {

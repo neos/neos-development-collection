@@ -499,7 +499,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name, hp.dimensionspacepoint FROM neos
             foreach ($edgeNames as $edgeName) {
                 // identifier exists here :)
                 $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->getNodeAggregateIdentifier(),
-                    new NodeName($edgeName));
+                    NodeName::fromString($edgeName));
                 if (!$currentNode) {
                     return null;
                 }
@@ -676,14 +676,14 @@ WHERE
                 ]
             )->fetchAll();
 
-            $nodePath = [];
+            $nodePathSegments = [];
 
             foreach ($result as $r) {
-                $nodePath[] = $r['name'];
+                $nodePathSegments[] = $r['name'];
             }
 
-            $nodePath = array_reverse($nodePath);
-            $nodePath = new NodePath('/' . implode('/', $nodePath));
+            $nodePathSegments = array_reverse($nodePathSegments);
+            $nodePath = NodePath::fromPathSegments($nodePathSegments);
             $cache->add($nodeAggregateIdentifier, $nodePath);
         }
 

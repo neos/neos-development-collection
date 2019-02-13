@@ -200,7 +200,7 @@ final class ContentGraph implements ContentGraphInterface
             $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
         }
 
-        return new NodeAggregate($nodeAggregateIdentifier, new NodeTypeName($rawNodeTypeName), new NodeName($rawNodeName), $nodes);
+        return new NodeAggregate($nodeAggregateIdentifier, NodeTypeName::fromString($rawNodeTypeName), NodeName::fromString($rawNodeName), $nodes);
     }
 
     /**
@@ -265,7 +265,7 @@ final class ContentGraph implements ContentGraphInterface
         $nodesByAggregate = [];
         foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $nodeRow) {
             $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
-            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['nodeidentifier']] = $this->nodeFactory->mapNodeRowToNode($nodeRow, null);
+            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['nodeidentifier']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
             if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
@@ -279,9 +279,9 @@ final class ContentGraph implements ContentGraphInterface
         }
         foreach ($nodesByAggregate as $rawNodeAggregateIdentifier => $nodes) {
             $parentAggregates[$rawNodeAggregateIdentifier] = new NodeAggregate(
-                new NodeAggregateIdentifier($rawNodeAggregateIdentifier),
-                new NodeTypeName($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
-                new NodeName($rawNodeNames[$rawNodeAggregateIdentifier]),
+                NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
+                NodeTypeName::fromString($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
+                isset($rawNodeNames[$rawNodeAggregateIdentifier]) ? NodeName::fromString($rawNodeNames[$rawNodeAggregateIdentifier]) : NodeName::unnamed(),
                 $nodesByAggregate[$rawNodeAggregateIdentifier]
             );
         }
@@ -342,9 +342,9 @@ final class ContentGraph implements ContentGraphInterface
         }
         foreach ($nodesByAggregate as $rawNodeAggregateIdentifier => $nodes) {
             $childAggregates[$rawNodeAggregateIdentifier] = new NodeAggregate(
-                new NodeAggregateIdentifier($rawNodeAggregateIdentifier),
-                new NodeTypeName($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
-                new NodeName($rawNodeNames[$rawNodeAggregateIdentifier]),
+                NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
+                NodeTypeName::fromString($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
+                NodeName::fromString($rawNodeNames[$rawNodeAggregateIdentifier]),
                 $nodesByAggregate[$rawNodeAggregateIdentifier]
             );
         }

@@ -11,7 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Annotations as Flow;
+
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
 use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
@@ -25,12 +25,6 @@ use Neos\EventSourcing\Projection\ProjectorInterface;
 final class WorkspaceProjector implements ProjectorInterface
 {
     private const TABLE_NAME = 'neos_contentrepository_projection_workspace_v1';
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
 
     /**
      * @var \Doctrine\DBAL\Connection
@@ -63,6 +57,7 @@ final class WorkspaceProjector implements ProjectorInterface
             'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
         ]);
     }
+
     /**
      * @param RootWorkspaceWasCreated $event
      */
@@ -83,9 +78,6 @@ final class WorkspaceProjector implements ProjectorInterface
         ], [
             'workspaceName' => $event->getWorkspaceName()
         ]);
-
-        // TODO: HACK to update in-memory projection(!!!!!!) nasty!!!
-        $this->workspaceFinder->findOneByName($event->getWorkspaceName())->currentContentStreamIdentifier = (string)$event->getCurrentContentStreamIdentifier();
     }
 
     public function reset(): void

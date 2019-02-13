@@ -195,7 +195,7 @@ class ProjectionContentGraph
         }
 
         if (count($rows) === 1) {
-            return new NodeRelationAnchorPoint($rows[0]['relationanchorpoint']);
+            return NodeRelationAnchorPoint::fromString($rows[0]['relationanchorpoint']);
         } else {
             return null;
         }
@@ -228,7 +228,7 @@ class ProjectionContentGraph
         }
 
         if (count($rows) === 1) {
-            return new NodeRelationAnchorPoint($rows[0]['relationanchorpoint']);
+            return NodeRelationAnchorPoint::fromString($rows[0]['relationanchorpoint']);
         } else {
             return null;
         }
@@ -595,7 +595,7 @@ class ProjectionContentGraph
                 'nodeRelationAnchorPoint' => (string)$nodeRelationAnchorPoint,
             ]
         )->fetchAll() as $row) {
-            $contentStreamIdentifiers[] = new ContentStreamIdentifier($row['contentstreamidentifier']);
+            $contentStreamIdentifiers[] = ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
         }
 
         return $contentStreamIdentifiers;
@@ -634,10 +634,10 @@ class ProjectionContentGraph
         $dimensionSpacePoint = new DimensionSpacePoint($dimensionSpacePointData);
 
         return new HierarchyRelation(
-            new NodeRelationAnchorPoint($rawData['parentnodeanchor']),
-            new NodeRelationAnchorPoint($rawData['childnodeanchor']),
-            $rawData['name'] ? new NodeName($rawData['name']) : null,
-            new ContentStreamIdentifier($rawData['contentstreamidentifier']),
+            NodeRelationAnchorPoint::fromString($rawData['parentnodeanchor']),
+            NodeRelationAnchorPoint::fromString($rawData['childnodeanchor']),
+            $rawData['name'] ? NodeName::fromString($rawData['name']) : null,
+            ContentStreamIdentifier::fromString($rawData['contentstreamidentifier']),
             $dimensionSpacePoint,
             $rawData['dimensionspacepointhash'],
             $rawData['position']

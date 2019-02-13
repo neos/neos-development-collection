@@ -14,13 +14,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStream;
 use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
-use Neos\EventSourcing\EventStore\StreamNameFilter;
+use Neos\EventSourcing\EventStore\StreamName;
 
 /**
  * The node aggregate
@@ -36,30 +35,23 @@ final class NodeAggregate
     /**
      * @var NodeAggregateIdentifier
      */
-    protected $identifier;
+    private $identifier;
 
     /**
      * @var EventStore
      */
-    protected $eventStore;
+    private $eventStore;
 
     /**
-     * @var string
+     * @var StreamName
      */
-    protected $streamName;
+    private $streamName;
 
-    /**
-     * @var NodeEventPublisher
-     */
-    protected $nodeEventPublisher;
-
-
-    public function __construct(NodeAggregateIdentifier $identifier, EventStore $eventStore, string $streamName, NodeEventPublisher $nodeEventPublisher)
+    public function __construct(NodeAggregateIdentifier $identifier, EventStore $eventStore, StreamName $streamName)
     {
         $this->identifier = $identifier;
         $this->eventStore = $eventStore;
         $this->streamName = $streamName;
-        $this->nodeEventPublisher = $nodeEventPublisher;
     }
 
 
@@ -91,8 +83,8 @@ final class NodeAggregate
 
         $eventStream = $this->getEventStream();
         if ($eventStream) {
-            foreach ($eventStream as $eventAndRawEvent) {
-                $event = $eventAndRawEvent->getEvent();
+            foreach ($eventStream as $eventEnvelope) {
+                $event = $eventEnvelope->getDomainEvent();
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
                         /** @var NodeAggregateWithNodeWasCreated $event */
@@ -121,8 +113,8 @@ final class NodeAggregate
 
         $eventStream = $this->getEventStream();
         if ($eventStream) {
-            foreach ($eventStream as $eventAndRawEvent) {
-                $event = $eventAndRawEvent->getEvent();
+            foreach ($eventStream as $eventEnvelope) {
+                $event = $eventEnvelope->getDomainEvent();
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
                         /** @var NodeAggregateWithNodeWasCreated $event */
@@ -156,8 +148,8 @@ final class NodeAggregate
         $dimensionSpacePointOccupied = false;
         $eventStream = $this->getEventStream();
         if ($eventStream) {
-            foreach ($eventStream as $eventAndRawEvent) {
-                $event = $eventAndRawEvent->getEvent();
+            foreach ($eventStream as $eventEnvelope) {
+                $event = $eventEnvelope->getDomainEvent();
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
                         /** @var NodeAggregateWithNodeWasCreated $event */
@@ -185,15 +177,15 @@ final class NodeAggregate
         return $this->identifier;
     }
 
-    public function getStreamName(): string
+    public function getStreamName(): StreamName
     {
         return $this->streamName;
     }
 
-    protected function getEventStream(): ?EventStream
+    private function getEventStream(): ?EventStream
     {
         try {
-            return $this->eventStore->get(new StreamNameFilter($this->streamName));
+            return $this->eventStore->load($this->streamName);
         } catch (EventStreamNotFoundException $eventStreamNotFound) {
             return null;
         }

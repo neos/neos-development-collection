@@ -10,14 +10,14 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | market     | DE      | DE, CH  | CH->DE          |
       | language   | de      | de, gsw | gsw->de         |
     And the command "CreateRootWorkspace" is executed with payload:
-      | Key                      | Value                                | Type |
-      | workspaceName            | live                                 |      |
-      | workspaceTitle           | Live                                 |      |
-      | workspaceDescription     | The live workspace                   |      |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
-      | contentStreamIdentifier  | cs-identifier                        | Uuid |
-      | rootNodeIdentifier       | rn-identifier                        | Uuid |
-      | rootNodeTypeName         | Neos.ContentRepository:Root          |      |
+      | Key                      | Value                                  |
+      | workspaceName            | "live"                                 |
+      | workspaceTitle           | "Live"                                 |
+      | workspaceDescription     | "The live workspace"                   |
+      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
+      | contentStreamIdentifier  | "cs-identifier"                        |
+      | rootNodeIdentifier       | "rn-identifier"                        |
+      | rootNodeTypeName         | "Neos.ContentRepository:Root"          |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository.Testing:Document': []
@@ -42,242 +42,247 @@ Feature: Move node to a new parent / within the current parent before a sibling 
 
   Scenario: Try to move a node in a non-existing dimension space point:
     When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                                     | Type                |
-      | contentStreamIdentifier                     | cs-identifier                             | Uuid                |
-      | dimensionSpacePoint                         | {"market": "nope", "language": "neither"} | DimensionSpacePoint |
-      | nodeAggregateIdentifier                     | na-identifier                             | Uuid                |
-      | newParentNodeAggregateIdentifier            |                                           | null                |
-      | newSucceedingSiblingNodeAggregateIdentifier |                                           | null                |
-      | relationDistributionStrategy                | scatter                                   |                     |
-    Then the last command should have thrown an exception of type "Exception"
+      | Key                                         | Value                                     |
+      | contentStreamIdentifier                     | "cs-identifier"                           |
+      | dimensionSpacePoint                         | {"market": "nope", "language": "neither"} |
+      | nodeAggregateIdentifier                     | "na-identifier"                           |
+      | newParentNodeAggregateIdentifier            | null                                      |
+      | newSucceedingSiblingNodeAggregateIdentifier | null                                      |
+      | relationDistributionStrategy                | "scatter"                                 |
+    Then the last command should have thrown an exception of type "NodeAggregateNotFound"
 
   Scenario: Try to move a non-existing node
     When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              | Type                |
-      | contentStreamIdentifier                     | cs-identifier                      | Uuid                |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} | DimensionSpacePoint |
-      | nodeAggregateIdentifier                     | na-identifier                      | Uuid                |
-      | newParentNodeAggregateIdentifier            |                                    | null                |
-      | newSucceedingSiblingNodeAggregateIdentifier |                                    | null                |
-      | relationDistributionStrategy                | scatter                            |                     |
+      | Key                                         | Value                              |
+      | contentStreamIdentifier                     | "cs-identifier"                    |
+      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier                     | "na-identifier"                    |
+      | newParentNodeAggregateIdentifier            | null                               |
+      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
+      | relationDistributionStrategy                | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeAggregateNotFound"
 
   Scenario: Try to move existing node to a non-existing parent
     Given the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:na-identifier" with payload:
-      | Key                           | Value                                                                                                                                           | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                   | Uuid                   |
-      | nodeAggregateIdentifier       | na-identifier                                                                                                                                   | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Document                                                                                                         |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                              | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"},{"market": "DE", "language": "gsw"},{"market": "CH", "language": "de"},{"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | doc-identifier                                                                                                                                  | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                                                                                                                                   | Uuid                   |
-      | nodeName                      | document                                                                                                                                        |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                              | json                   |
+      | Key                           | Value                                                                                                                                           |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                 |
+      | nodeAggregateIdentifier       | "na-identifier"                                                                                                                                 |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                       |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                              |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"},{"market": "DE", "language": "gsw"},{"market": "CH", "language": "de"},{"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "doc-identifier"                                                                                                                                |
+      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                 |
+      | nodeName                      | "document"                                                                                                                                      |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                              |
     When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              | Type                |
-      | contentStreamIdentifier                     | cs-identifier                      | Uuid                |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} | DimensionSpacePoint |
-      | nodeAggregateIdentifier                     | na-identifier                      | Uuid                |
-      | newParentNodeAggregateIdentifier            | non-existing-parent-identifier     | Uuid                |
-      | newSucceedingSiblingNodeAggregateIdentifier |                                    | null                |
-      | relationDistributionStrategy                | scatter                            |                     |
+      | Key                                         | Value                              |
+      | contentStreamIdentifier                     | "cs-identifier"                    |
+      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier                     | "na-identifier"                    |
+      | newParentNodeAggregateIdentifier            | "non-existing-parent-identifier"   |
+      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
+      | relationDistributionStrategy                | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeAggregateNotFound"
 
   Scenario: Try to move a node to a parent that already has a child node of the same name
     Given the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:413f8404-fae9-448b-8170-b6a4bea74213" with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | doc-agg-identifier                                                                                                                                 | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Document                                                                                                            |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | doc-identifier                                                                                                                                     | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                                                                                                                                      | Uuid                   |
-      | nodeName                      | document                                                                                                                                           |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "doc-agg-identifier"                                                                                                                               |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "doc-identifier"                                                                                                                                   |
+      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
+      | nodeName                      | "document"                                                                                                                                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
     And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:afbf2dec-cb77-4f7b-b252-0363e6a38770" with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | cdoc-agg-identifier                                                                                                                                | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Document                                                                                                            |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | cdoc-identifier                                                                                                                                    | Uuid                   |
-      | parentNodeIdentifier          | doc-identifier                                                                                                                                     | Uuid                   |
-      | nodeName                      | document                                                                                                                                           |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "cdoc-agg-identifier"                                                                                                                              |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "cdoc-identifier"                                                                                                                                  |
+      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
+      | nodeName                      | "document"                                                                                                                                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
     And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:6ce151a5-a4e1-4070-b4f1-95ba108f1db9" with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | gcdoc-agg-identifier                                                                                                                               | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Document                                                                                                            |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | gcdoc-identifier                                                                                                                                   | Uuid                   |
-      | parentNodeIdentifier          | cdoc-identifier                                                                                                                                    | Uuid                   |
-      | nodeName                      | document                                                                                                                                           |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "gcdoc-agg-identifier"                                                                                                                             |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "gcdoc-identifier"                                                                                                                                 |
+      | parentNodeIdentifier          | "cdoc-identifier"                                                                                                                                  |
+      | nodeName                      | "document"                                                                                                                                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
+    And the graph projection is fully up to date
     When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              | Type                |
-      | contentStreamIdentifier                     | cs-identifier                      | Uuid                |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} | DimensionSpacePoint |
-      | nodeAggregateIdentifier                     | gcdoc-agg-identifier               | Uuid                |
-      | newParentNodeAggregateIdentifier            | doc-agg-identifier                 | Uuid                |
-      | newSucceedingSiblingNodeAggregateIdentifier |                                    | null                |
-      | relationDistributionStrategy                | scatter                            |                     |
+      | Key                                         | Value                              |
+      | contentStreamIdentifier                     | "cs-identifier"                    |
+      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier                     | "gcdoc-agg-identifier"             |
+      | newParentNodeAggregateIdentifier            | "doc-agg-identifier"               |
+      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
+      | relationDistributionStrategy                | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeExistsException"
 
   Scenario: Try to move a node to a parent whose node type does not allow child nodes of the node's type
     Given the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:c8973421-c835-44dc-9e90-933c0672b096" with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | doc-agg-identifier                                                                                                                                 | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Document                                                                                                            |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | doc-identifier                                                                                                                                     | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                                                                                                                                      | Uuid                   |
-      | nodeName                      | document                                                                                                                                           |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "doc-agg-identifier"                                                                                                                               |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "doc-identifier"                                                                                                                                   |
+      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
+      | nodeName                      | "document"                                                                                                                                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
     And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:01a87ee4-cfc6-443b-9809-2568910b7e8f" with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | cdoc-agg-identifier                                                                                                                                | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Document                                                                                                            |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | cdoc-identifier                                                                                                                                    | Uuid                   |
-      | parentNodeIdentifier          | doc-identifier                                                                                                                                     | Uuid                   |
-      | nodeName                      | document                                                                                                                                           |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "cdoc-agg-identifier"                                                                                                                              |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "cdoc-identifier"                                                                                                                                  |
+      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
+      | nodeName                      | "document"                                                                                                                                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
     And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:a5c593f5-944b-47b0-b2dd-e399b85a6d85" with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | content-agg-identifier                                                                                                                             | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Content                                                                                                             |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | content-identifier                                                                                                                                 | Uuid                   |
-      | parentNodeIdentifier          | doc-identifier                                                                                                                                     | Uuid                   |
-      | nodeName                      | content                                                                                                                                            |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "content-agg-identifier"                                                                                                                           |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                           |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "content-identifier"                                                                                                                               |
+      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
+      | nodeName                      | "content"                                                                                                                                          |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
+    And the graph projection is fully up to date
     When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              | Type                |
-      | contentStreamIdentifier                     | cs-identifier                      | Uuid                |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} | DimensionSpacePoint |
-      | nodeAggregateIdentifier                     | cdoc-agg-identifier                | Uuid                |
-      | newParentNodeAggregateIdentifier            | content-agg-identifier             | Uuid                |
-      | newSucceedingSiblingNodeAggregateIdentifier |                                    | null                |
-      | relationDistributionStrategy                | scatter                            |                     |
+      | Key                                         | Value                              |
+      | contentStreamIdentifier                     | "cs-identifier"                    |
+      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier                     | "cdoc-agg-identifier"              |
+      | newParentNodeAggregateIdentifier            | "content-agg-identifier"           |
+      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
+      | relationDistributionStrategy                | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move a node to a parent whose parent's node type does not allow grand child nodes of the node's type
     Given the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | doc-agg-identifier                                                                                                                                 | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:DocumentWithAutoCreatedChildNode                                                                                    |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | doc-identifier                                                                                                                                     | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                                                                                                                                      | Uuid                   |
-      | nodeName                      | document                                                                                                                                           |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "doc-agg-identifier"                                                                                                                               |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:DocumentWithAutoCreatedChildNode"                                                                                  |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "doc-identifier"                                                                                                                                   |
+      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
+      | nodeName                      | "document"                                                                                                                                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | autoc-agg-identifier                                                                                                                               | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Content                                                                                                             |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | autoc-identifier                                                                                                                                   | Uuid                   |
-      | parentNodeIdentifier          | doc-identifier                                                                                                                                     | Uuid                   |
-      | nodeName                      | autocreated                                                                                                                                        |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "autoc-agg-identifier"                                                                                                                             |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                           |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "autoc-identifier"                                                                                                                                 |
+      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
+      | nodeName                      | "autocreated"                                                                                                                                      |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | c-agg-identifier                                                                                                                                   | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Content                                                                                                             |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | c-identifier                                                                                                                                       | Uuid                   |
-      | parentNodeIdentifier          | doc-identifier                                                                                                                                     | Uuid                   |
-      | nodeName                      | content                                                                                                                                            |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "c-agg-identifier"                                                                                                                                 |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                           |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "c-identifier"                                                                                                                                     |
+      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
+      | nodeName                      | "content"                                                                                                                                          |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
+    And the graph projection is fully up to date
     When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              | Type                |
-      | contentStreamIdentifier                     | cs-identifier                      | Uuid                |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} | DimensionSpacePoint |
-      | nodeAggregateIdentifier                     | c-agg-identifier                   | Uuid                |
-      | newParentNodeAggregateIdentifier            | autoc-agg-identifier               | Uuid                |
-      | newSucceedingSiblingNodeAggregateIdentifier |                                    | null                |
-      | relationDistributionStrategy                | scatter                            |                     |
+      | Key                                         | Value                              |
+      | contentStreamIdentifier                     | "cs-identifier"                    |
+      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier                     | "c-agg-identifier"                 |
+      | newParentNodeAggregateIdentifier            | "autoc-agg-identifier"             |
+      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
+      | relationDistributionStrategy                | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move existing node to a non-existing succeeding sibling
     Given the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | na-identifier                                                                                                                                      | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Document                                                                                                            |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | n-identifier                                                                                                                                       | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                                                                                                                                      | Uuid                   |
-      | nodeName                      | document                                                                                                                                           |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "na-identifier"                                                                                                                                    |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "n-identifier"                                                                                                                                     |
+      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
+      | nodeName                      | "document"                                                                                                                                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
+    And the graph projection is fully up to date
     When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              | Type                |
-      | contentStreamIdentifier                     | cs-identifier                      | Uuid                |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} | DimensionSpacePoint |
-      | nodeAggregateIdentifier                     | na-identifier                      | Uuid                |
-      | newParentNodeAggregateIdentifier            |                                    | null                |
-      | newSucceedingSiblingNodeAggregateIdentifier | nonexistent-agg-identifier         | Uuid                |
-      | relationDistributionStrategy                | scatter                            |                     |
+      | Key                                         | Value                              |
+      | contentStreamIdentifier                     | "cs-identifier"                    |
+      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier                     | "na-identifier"                    |
+      | newParentNodeAggregateIdentifier            | null                               |
+      | newSucceedingSiblingNodeAggregateIdentifier | "nonexistent-agg-identifier"       |
+      | relationDistributionStrategy                | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeAggregateNotFound"
 
   Scenario: Try to move an autogenerated child node to a new parent
     Given the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | odoc-agg-identifier                                                                                                                                | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Document                                                                                                            |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | odoc-identifier                                                                                                                                    | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                                                                                                                                      | Uuid                   |
-      | nodeName                      | other-document                                                                                                                                     |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "odoc-agg-identifier"                                                                                                                              |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "odoc-identifier"                                                                                                                                  |
+      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
+      | nodeName                      | "other-document"                                                                                                                                   |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
     Given the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | doc-agg-identifier                                                                                                                                 | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:DocumentWithAutoCreatedChildNode                                                                                    |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | doc-identifier                                                                                                                                     | Uuid                   |
-      | parentNodeIdentifier          | rn-identifier                                                                                                                                      | Uuid                   |
-      | nodeName                      | document                                                                                                                                           |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "doc-agg-identifier"                                                                                                                               |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:DocumentWithAutoCreatedChildNode"                                                                                  |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "doc-identifier"                                                                                                                                   |
+      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
+      | nodeName                      | "document"                                                                                                                                         |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
     And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                              | Type                   |
-      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
-      | nodeAggregateIdentifier       | autoc-agg-identifier                                                                                                                               | Uuid                   |
-      | nodeTypeName                  | Neos.ContentRepository.Testing:Content                                                                                                             |                        |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet |
-      | nodeIdentifier                | autoc-identifier                                                                                                                                   | Uuid                   |
-      | parentNodeIdentifier          | doc-identifier                                                                                                                                     | Uuid                   |
-      | nodeName                      | autocreated                                                                                                                                        |                        |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
+      | Key                           | Value                                                                                                                                              |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateIdentifier       | "autoc-agg-identifier"                                                                                                                             |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                           |
+      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | nodeIdentifier                | "autoc-identifier"                                                                                                                                 |
+      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
+      | nodeName                      | "autocreated"                                                                                                                                      |
+      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
+    And the graph projection is fully up to date
     When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              | Type                |
-      | contentStreamIdentifier                     | cs-identifier                      | Uuid                |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} | DimensionSpacePoint |
-      | nodeAggregateIdentifier                     | autoc-agg-identifier               | Uuid                |
-      | newParentNodeAggregateIdentifier            | odoc-agg-identifier                | Uuid                |
-      | newSucceedingSiblingNodeAggregateIdentifier |                                    | null                |
-      | relationDistributionStrategy                | scatter                            |                     |
+      | Key                                         | Value                              |
+      | contentStreamIdentifier                     | "cs-identifier"                    |
+      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier                     | "autoc-agg-identifier"             |
+      | newParentNodeAggregateIdentifier            | "odoc-agg-identifier"              |
+      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
+      | relationDistributionStrategy                | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeConstraintException"

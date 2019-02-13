@@ -76,11 +76,11 @@ final class NodeFactory
             throw new \Exception('The "origindimensionspacepoint" property was not found in the $nodeRow; you need to include the "origindimensionspacepoint" field in the SQL result.');
         }
 
-        $contentStreamIdentifier = new ContentStreamIdentifier($nodeRow['contentstreamidentifier']);
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
         $dimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
         $originDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
 
-        $nodeIdentifier = new NodeIdentifier($nodeRow['nodeidentifier']);
+        $nodeIdentifier = NodeIdentifier::fromString($nodeRow['nodeidentifier']);
 
         $properties = json_decode($nodeRow['properties'], true);
 
@@ -97,12 +97,12 @@ final class NodeFactory
         $node = new $className(
             $contentStreamIdentifier,
             $dimensionSpacePoint,
-            new NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']),
+            NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
             $originDimensionSpacePoint,
             $nodeIdentifier,
-            new NodeTypeName($nodeRow['nodetypename']),
+            NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
-            new NodeName($nodeRow['name']),
+            isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : NodeName::unnamed(),
             $propertyCollection
         );
 

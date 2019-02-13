@@ -82,6 +82,18 @@ final class CreateRootWorkspace
         $this->rootNodeTypeName = $rootNodeTypeName;
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            new WorkspaceName($array['workspaceName']),
+            new WorkspaceTitle($array['workspaceTitle']),
+            new WorkspaceDescription($array['workspaceDescription']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier']),
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeIdentifier::fromString($array['rootNodeIdentifier']),
+            NodeTypeName::fromString($array['rootNodeTypeName'])
+        );
+    }
 
     /**
      * @return WorkspaceName

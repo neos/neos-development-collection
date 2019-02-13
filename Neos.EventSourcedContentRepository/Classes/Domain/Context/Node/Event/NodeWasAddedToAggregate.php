@@ -16,16 +16,19 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifierAndDimensionSpacePointSet;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Node was added to node aggregate event
+ *
+ * @Flow\Proxy(false)
  */
-final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossContentStreamsInterface
+final class NodeWasAddedToAggregate implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -89,8 +92,7 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeIdentifier $parentNodeIdentifier
      * @param NodeName $nodeName
-     * @param array $propertyDefaultValuesAndTypes
-     * @param array<NodeIdentifierAndDimensionSpacePointSet> $nodeVisibilityChanges
+     * @param PropertyValues $propertyDefaultValuesAndTypes
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -101,7 +103,7 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
         NodeIdentifier $nodeIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         NodeName $nodeName,
-        array $propertyDefaultValuesAndTypes
+        PropertyValues $propertyDefaultValuesAndTypes
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -179,9 +181,9 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
     }
 
     /**
-     * @return array
+     * @return PropertyValues
      */
-    public function getPropertyDefaultValuesAndTypes(): array
+    public function getPropertyDefaultValuesAndTypes(): PropertyValues
     {
         return $this->propertyDefaultValuesAndTypes;
     }

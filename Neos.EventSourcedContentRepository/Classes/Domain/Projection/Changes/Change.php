@@ -101,8 +101,8 @@ class Change
     public static function fromDatabaseRow(array $databaseRow)
     {
         return new static(
-            new ContentStreamIdentifier($databaseRow['contentStreamIdentifier']),
-            new NodeAggregateIdentifier($databaseRow['nodeAggregateIdentifier']),
+            ContentStreamIdentifier::fromString($databaseRow['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($databaseRow['nodeAggregateIdentifier']),
             new DimensionSpacePoint(json_decode($databaseRow['originDimensionSpacePoint'], true)),
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved']

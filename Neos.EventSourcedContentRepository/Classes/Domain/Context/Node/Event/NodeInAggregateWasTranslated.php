@@ -16,9 +16,13 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
-class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossContentStreamsInterface
+/**
+ * @Flow\Proxy(false)
+ */
+class NodeInAggregateWasTranslated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**

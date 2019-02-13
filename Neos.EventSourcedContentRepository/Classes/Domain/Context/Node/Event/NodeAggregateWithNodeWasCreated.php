@@ -16,16 +16,19 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Node aggregate with node was created event
+ *
+ * @Flow\Proxy(false)
  */
-final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -73,9 +76,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
     private $nodeName;
 
     /**
-     * (property name => PropertyValue)
-     *
-     * @var array<PropertyValue>
+     * @var PropertyValues
      */
     private $propertyDefaultValuesAndTypes;
 
@@ -90,7 +91,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeIdentifier $parentNodeIdentifier
      * @param NodeName $nodeName
-     * @param array<Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue> $propertyDefaultValuesAndTypes
+     * @param PropertyValues $propertyDefaultValuesAndTypes
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -101,7 +102,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
         NodeIdentifier $nodeIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         NodeName $nodeName,
-        array $propertyDefaultValuesAndTypes
+        PropertyValues $propertyDefaultValuesAndTypes
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -112,11 +113,6 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeName = $nodeName;
         $this->propertyDefaultValuesAndTypes = $propertyDefaultValuesAndTypes;
-        foreach ($propertyDefaultValuesAndTypes as $propertyName => $property) {
-            if (!$property instanceof PropertyValue) {
-                throw new \InvalidArgumentException(sprintf('Property %s was not of type PropertyValue', $propertyName));
-            }
-        }
     }
 
     /**
@@ -184,14 +180,14 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
     }
 
     /**
-     * @return array
+     * @return PropertyValues
      */
-    public function getPropertyDefaultValuesAndTypes(): array
+    public function getPropertyDefaultValuesAndTypes(): PropertyValues
     {
         return $this->propertyDefaultValuesAndTypes;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
     {
         return new NodeAggregateWithNodeWasCreated(
             $targetContentStream,

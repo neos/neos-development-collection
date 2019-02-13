@@ -14,9 +14,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
-final class NodeAggregateWasRemoved implements EventInterface, CopyableAcrossContentStreamsInterface
+/**
+ * @Flow\Proxy(false)
+ */
+final class NodeAggregateWasRemoved implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**

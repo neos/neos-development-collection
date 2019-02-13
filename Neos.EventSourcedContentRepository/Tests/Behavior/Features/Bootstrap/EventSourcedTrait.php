@@ -12,17 +12,15 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralizationException;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecializationException;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
-use Neos\ContentRepository\Exception\NodeConstraintException;
-use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
@@ -30,42 +28,28 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregateNotFound;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeSpecialization;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeTypeNotFound;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
-use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
-use Neos\EventSourcing\Event\EventInterface;
-use Neos\EventSourcing\Event\EventPublisher;
+use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
-use Neos\EventSourcing\EventStore\EventAndRawEvent;
+use Neos\EventSourcing\EventBus\EventBus;
+use Neos\EventSourcing\EventStore\EventEnvelope;
+use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStoreManager;
-use Neos\EventSourcing\EventStore\StreamNameFilter;
-use Neos\EventSourcing\EventStore\StreamNamePrefixFilter;
-use Neos\Flow\Property\PropertyMapper;
+use Neos\EventSourcing\EventStore\StreamName;
+use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Features context
@@ -77,16 +61,6 @@ trait EventSourcedTrait
      * @var EventTypeResolver
      */
     private $eventTypeResolver;
-
-    /**
-     * @var PropertyMapper
-     */
-    private $propertyMapper;
-
-    /**
-     * @var EventPublisher
-     */
-    private $eventPublisher;
 
     /**
      * @var EventStoreManager
@@ -123,11 +97,20 @@ trait EventSourcedTrait
      */
     protected $currentNode;
 
+    /**
+     * @var EventNormalizer
+     */
+    protected $eventNormalizer;
 
     /**
      * @var VisibilityConstraints
      */
     protected $visibilityConstraints;
+
+    /**
+     * @var EventBus
+     */
+    private $eventBus;
 
     /**
      * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
@@ -139,12 +122,12 @@ trait EventSourcedTrait
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
         $this->nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
         $this->eventTypeResolver = $this->getObjectManager()->get(EventTypeResolver::class);
-        $this->propertyMapper = $this->getObjectManager()->get(PropertyMapper::class);
-        $this->eventPublisher = $this->getObjectManager()->get(EventPublisher::class);
         $this->eventStoreManager = $this->getObjectManager()->get(EventStoreManager::class);
         $this->contentGraphInterface = $this->getObjectManager()->get(ContentGraphInterface::class);
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
+        $this->eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
+        $this->eventBus = $this->getObjectManager()->get(EventBus::class);
 
         $contentStreamRepository = $this->getObjectManager()->get(ContentStreamRepository::class);
         \Neos\Utility\ObjectAccess::setProperty($contentStreamRepository, 'contentStreams', [], true);
@@ -158,7 +141,6 @@ trait EventSourcedTrait
     public function beforeEventSourcedScenarioDispatcher()
     {
         $this->contentGraphInterface->resetCache();
-        $this->workspaceFinder->resetCache();
         $this->visibilityConstraints = VisibilityConstraints::frontend();
     }
 
@@ -169,9 +151,9 @@ trait EventSourcedTrait
     public function theEventRootNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
-        $this->publishEvent('Neos.EventSourcedContentRepository:RootNodeWasCreated', $streamName, $eventPayload);
-        $this->rootNodeIdentifier = new NodeIdentifier($eventPayload['nodeIdentifier']);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']));
+        $this->publishEvent('Neos.EventSourcedContentRepository:RootNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $this->rootNodeIdentifier = NodeIdentifier::fromString($eventPayload['nodeIdentifier']);
     }
 
     /**
@@ -191,10 +173,9 @@ trait EventSourcedTrait
             $eventPayload['visibleInDimensionSpacePoints'] = [[]];
         }
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
-        $streamName = $this->replaceUuidIdentifiers($streamName);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']));
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated', $streamName, $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated', StreamName::fromString($streamName), $eventPayload);
     }
 
     /**
@@ -204,10 +185,9 @@ trait EventSourcedTrait
     public function theEventNodeSpecializationWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
-        $streamName = $this->replaceUuidIdentifiers($streamName);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']));
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeSpecializationWasCreated', $streamName, $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeSpecializationWasCreated', StreamName::fromString($streamName), $eventPayload);
     }
 
     /**
@@ -217,10 +197,9 @@ trait EventSourcedTrait
     public function theEventNodeGeneralizationWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
-        $streamName = $this->replaceUuidIdentifiers($streamName);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']));
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeGeneralizationWasCreated', $streamName, $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeGeneralizationWasCreated', StreamName::fromString($streamName), $eventPayload);
     }
 
     /**
@@ -229,34 +208,20 @@ trait EventSourcedTrait
      */
     public function theEventWasPublishedToStreamWithPayload($eventType, $streamName, TableNode $payloadTable)
     {
-        $streamName = $this->replaceUuidIdentifiers($streamName);
-
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $this->publishEvent($eventType, $streamName, $eventPayload);
+        $this->publishEvent($eventType, StreamName::fromString($streamName), $eventPayload);
     }
 
     /**
      * @param $eventType
-     * @param $streamName
+     * @param StreamName $streamName
      * @param $eventPayload
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
-    protected function publishEvent($eventType, $streamName, $eventPayload)
+    protected function publishEvent($eventType, StreamName $streamName, $eventPayload)
     {
-        $eventClassName = $this->eventTypeResolver->getEventClassNameByType($eventType);
-
-        /** @var EventInterface $event */
-        switch ($eventClassName) {
-            case \Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereMoved::class:
-                \Neos\Flow\var_dump($eventPayload, 'hello from publishEvent');
-                exit();
-            default:
-                $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-                $event = $this->propertyMapper->convert($eventPayload, $eventClassName, $configuration);
-        }
-
-        $this->eventPublisher->publish($streamName, $event);
+        $event = $this->eventNormalizer->denormalize($eventPayload, $eventType);
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
     }
 
 
@@ -269,72 +234,13 @@ trait EventSourcedTrait
     {
         $eventPayload = [];
         foreach ($payloadTable->getHash() as $line) {
-            if (!empty($line['Type'])) {
-                switch ($line['Type']) {
-                    case 'json':
-                        $eventPayload[$line['Key']] = json_decode($line['Value'], true);
-                        break;
-                    case 'DimensionSpacePoint':
-                        $eventPayload[$line['Key']] = new DimensionSpacePoint(json_decode($line['Value'], true));
-                        break;
-                    case 'DimensionSpacePointSet':
-                        $tmp = json_decode($line['Value'], true);
-                        $convertedPoints = [];
-                        if (isset($tmp)) {
-                            foreach ($tmp as $point) {
-                                $convertedPoints[] = new DimensionSpacePoint($point);
-                            }
-                        }
-                        $eventPayload[$line['Key']] = new DimensionSpacePointSet($convertedPoints);
-                        break;
-                    case 'NodeAggregateIdentifier':
-                        $eventPayload[$line['Key']] = new NodeAggregateIdentifier($line['Value']);
-                        break;
-                    case 'PropertyValue':
-                        $tmp = json_decode($line['Value'], true);
-                        $eventPayload[$line['Key']] = new PropertyValue($tmp['value'], $tmp['type']);
-                        break;
-                    case 'Uuid':
-                        $eventPayload[$line['Key']] = $this->replaceUuidIdentifiers('[' . $line['Value'] . ']');
-                        break;
-                    case 'Uuid[]':
-                        if ($line['Value']) {
-                            $eventPayload[$line['Key']] = array_map(
-                                function ($part) {
-                                    return $this->replaceUuidIdentifiers('[' . trim($part) . ']');
-                                },
-                                explode(',', $line['Value'])
-                            );
-                        } else {
-                            $eventPayload[$line['Key']] = [];
-                        }
-                        break;
-                    case 'null':
-                        $eventPayload[$line['Key']] = null;
-                        break;
-                    default:
-                        throw new \Exception("I do not understand type " . $line['Type'] . " in line: " . json_encode($line));
-                }
-            } else {
-                $eventPayload[$line['Key']] = $line['Value'];
+            $value = json_decode($line['Value'], true);
+            if ($value === null && json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception(sprintf('The value "%s" is no valid JSON string', $line['Value']), 1546522626);
             }
+            $eventPayload[$line['Key']] = $value;
         }
-
         return $eventPayload;
-    }
-
-    protected function replaceUuidIdentifiers($identifierString)
-    {
-        return preg_replace_callback(
-            '#\[[0-9a-zA-Z\-]+\]#',
-            function ($matches) {
-                if ($matches[0] === '[ROOT]') {
-                    return RootNodeIdentifiers::rootNodeAggregateIdentifier();
-                }
-                return (string)Uuid::uuid5('00000000-0000-0000-0000-000000000000', $matches[0]);
-            },
-            $identifierString
-        );
     }
 
     /**
@@ -348,8 +254,7 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeSpecialization::class, $configuration);
+        $command = CreateNodeSpecialization::fromArray($commandArguments);
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
@@ -395,8 +300,7 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, RemoveNodeAggregate::class, $configuration);
+        $command = RemoveNodeAggregate::fromArray($commandArguments);
         /** @var NodeCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
@@ -429,8 +333,7 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, RemoveNodesFromAggregate::class, $configuration);
+        $command = RemoveNodesFromAggregate::fromArray($commandArguments);
         /** @var NodeCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
@@ -449,8 +352,7 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, CreateNodeGeneralization::class, $configuration);
+        $command = CreateNodeGeneralization::fromArray($commandArguments);
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
@@ -481,9 +383,9 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
 
         $command = new ChangeNodeAggregateType(
-            new ContentStreamIdentifier($commandArguments['contentStreamIdentifier']),
-            new NodeAggregateIdentifier($commandArguments['nodeAggregateIdentifier']),
-            new NodeTypeName($commandArguments['newNodeTypeName']),
+            ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
+            NodeTypeName::fromString($commandArguments['newNodeTypeName']),
             $commandArguments['strategy'] ? new NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy($commandArguments['strategy']) : null
         );
         /** @var NodeAggregateCommandHandler $commandHandler */
@@ -514,35 +416,24 @@ trait EventSourcedTrait
     public function theCommandIsExecutedWithPayload($shortCommandName, TableNode $payloadTable = null, $commandArguments = null)
     {
         list($commandClassName, $commandHandlerClassName, $commandHandlerMethod) = self::resolveShortCommandName($shortCommandName);
-        if ($commandArguments === null) {
+        if ($commandArguments === null && $payloadTable !== null) {
             $commandArguments = $this->readPayloadTable($payloadTable);
         }
 
-        switch ($commandClassName) {
-            case \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode::class:
-                $command = new \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode(
-                    is_string($commandArguments['contentStreamIdentifier']) ? new ContentStreamIdentifier($commandArguments['contentStreamIdentifier']) : $commandArguments['contentStreamIdentifier'],
-                    $commandArguments['dimensionSpacePoint'],
-                    is_string($commandArguments['nodeAggregateIdentifier']) ? new NodeAggregateIdentifier($commandArguments['nodeAggregateIdentifier']) : $commandArguments['nodeAggregateIdentifier'],
-                    is_string($commandArguments['newParentNodeAggregateIdentifier']) ? new NodeAggregateIdentifier($commandArguments['newParentNodeAggregateIdentifier']) : $commandArguments['newParentNodeAggregateIdentifier'],
-                    is_string($commandArguments['newSucceedingSiblingNodeAggregateIdentifier']) ? new NodeAggregateIdentifier($commandArguments['newSucceedingSiblingNodeAggregateIdentifier']) : $commandArguments['newSucceedingSiblingNodeAggregateIdentifier'],
-                    is_string($commandArguments['relationDistributionStrategy']) ? RelationDistributionStrategy::fromConfigurationValue($commandArguments['relationDistributionStrategy']) : $commandArguments['relationDistributionStrategy']
-                );
-                break;
-            default:
-                $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-                $command = $this->propertyMapper->convert($commandArguments, $commandClassName, $configuration);
+        if (!method_exists($commandClassName, 'fromArray')) {
+            throw new \InvalidArgumentException(sprintf('Command "%s" does not implement a static "fromArray" constructor', $commandClassName), 1545564621);
         }
+        $command = $commandClassName::fromArray($commandArguments);
 
         $commandHandler = $this->getObjectManager()->get($commandHandlerClassName);
-
         $commandHandler->$commandHandlerMethod($command);
 
         if (isset($commandArguments['rootNodeIdentifier'])) {
-            $this->rootNodeIdentifier = new NodeIdentifier($commandArguments['rootNodeIdentifier']);
+            $this->rootNodeIdentifier = NodeIdentifier::fromString($commandArguments['rootNodeIdentifier']);
         } elseif ($commandClassName === \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateRootNode::class) {
-            $this->rootNodeIdentifier = new NodeIdentifier($commandArguments['nodeIdentifier']);
+            $this->rootNodeIdentifier = NodeIdentifier::fromString($commandArguments['nodeIdentifier']);
         }
+        $this->eventBus->flush();
     }
 
     /**
@@ -555,12 +446,12 @@ trait EventSourcedTrait
 
         $commandArguments['workspaceTitle'] = ucfirst($commandArguments['workspaceName']);
         $commandArguments['workspaceDescription'] = 'The workspace "' . $commandArguments['workspaceName'] . '".';
-        $commandArguments['initiatingUserIdentifier'] = $this->replaceUuidIdentifiers('[initiatingUserIdentifier]');
+        $commandArguments['initiatingUserIdentifier'] = 'initiatingUserIdentifier';
         $commandArguments['rootNodeTypeName'] = !empty($commandArguments['rootNodeTypeName']) ? $commandArguments['rootNodeTypeName'] : 'Neos.ContentRepository:Root';
 
         $commandName = 'CreateRootWorkspace';
         if (!empty($commandArguments['baseWorkspaceName'])) {
-            $commandArguments['workspaceOwner'] = $this->replaceUuidIdentifiers('[workspaceOwner]');
+            $commandArguments['workspaceOwner'] = 'workspaceOwner';
             $commandName = 'CreateWorkspace';
         }
 
@@ -586,65 +477,8 @@ trait EventSourcedTrait
     public function theLastCommandShouldHaveThrown($shortExceptionName)
     {
         Assert::assertNotNull($this->lastCommandException, 'Command did not throw exception');
-
-        switch ($shortExceptionName) {
-            case 'Exception':
-                return;
-            case 'NodeNotFoundException':
-                Assert::assertInstanceOf(NodeNotFoundException::class, $this->lastCommandException);
-
-                return;
-            case 'BaseWorkspaceHasBeenModifiedInTheMeantime':
-                Assert::assertInstanceOf(BaseWorkspaceHasBeenModifiedInTheMeantime::class, $this->lastCommandException);
-
-                return;
-            case 'NodeAggregateNotFound':
-                Assert::assertInstanceOf(NodeAggregateNotFound::class, $this->lastCommandException);
-
-                return;
-            case 'NodeExistsException':
-                Assert::assertInstanceOf(NodeExistsException::class, $this->lastCommandException);
-
-                return;
-            case 'NodeConstraintException':
-                Assert::assertInstanceOf(NodeConstraintException::class, $this->lastCommandException);
-
-                return;
-            case 'DimensionSpacePointIsNoSpecialization':
-                Assert::assertInstanceOf(DimensionSpacePointIsNoSpecializationException::class, $this->lastCommandException);
-
-                return;
-            case 'DimensionSpacePointIsAlreadyOccupied':
-                Assert::assertInstanceOf(DimensionSpacePointIsAlreadyOccupied::class, $this->lastCommandException);
-
-                return;
-            case 'DimensionSpacePointIsNotYetOccupied':
-                Assert::assertInstanceOf(DimensionSpacePointIsNotYetOccupied::class, $this->lastCommandException);
-
-                return;
-            case 'DimensionSpacePointIsNoGeneralization':
-                Assert::assertInstanceOf(DimensionSpacePointIsNoGeneralizationException::class, $this->lastCommandException);
-
-                return;
-            case 'NodeTypeNotFound':
-                Assert::assertInstanceOf(NodeTypeNotFound::class, $this->lastCommandException);
-
-                return;
-            case 'DimensionSpacePointNotFound':
-                Assert::assertInstanceOf(DimensionSpacePointNotFound::class, $this->lastCommandException);
-
-                return;
-            case 'ParentsNodeAggregateNotVisibleInDimensionSpacePoint':
-                Assert::assertInstanceOf(ParentsNodeAggregateNotVisibleInDimensionSpacePoint::class, $this->lastCommandException);
-
-                return;
-            case 'SpecializedDimensionsMustBePartOfDimensionSpacePointSet':
-                Assert::assertInstanceOf(SpecializedDimensionsMustBePartOfDimensionSpacePointSet::class, $this->lastCommandException);
-
-                return;
-            default:
-                throw new \Exception('The short exception name "' . $shortExceptionName . '" is currently not supported by the tests.');
-        }
+        $lastCommandExceptionShortName = (new \ReflectionClass($this->lastCommandException))->getShortName();
+        Assert::assertSame($shortExceptionName, $lastCommandExceptionShortName, sprintf('Actual exception: %s (%s): %s', get_class($this->lastCommandException), $this->lastCommandException->getCode(), $this->lastCommandException->getMessage()));
     }
 
     /**
@@ -757,10 +591,9 @@ trait EventSourcedTrait
      */
     public function iExpectExactlyEventToBePublishedOnStream($numberOfEvents, $streamName)
     {
-        $streamName = $this->replaceUuidIdentifiers($streamName);
-
+        $streamName = StreamName::fromString($streamName);
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $stream = $eventStore->get(new StreamNameFilter($streamName));
+        $stream = $eventStore->load($streamName);
         $this->currentEventStreamAsArray = iterator_to_array($stream, false);
         Assert::assertEquals($numberOfEvents, count($this->currentEventStreamAsArray), 'Number of events did not match');
     }
@@ -771,10 +604,10 @@ trait EventSourcedTrait
      */
     public function iExpectExactlyEventToBePublishedOnStreamWithPrefix($numberOfEvents, $streamName)
     {
-        $streamName = $this->replaceUuidIdentifiers($streamName);
+        $streamName = StreamName::forCategory($streamName);
 
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $stream = $eventStore->get(new StreamNamePrefixFilter($streamName));
+        $stream = $eventStore->load($streamName);
         $this->currentEventStreamAsArray = iterator_to_array($stream, false);
         Assert::assertEquals($numberOfEvents, count($this->currentEventStreamAsArray), 'Number of events did not match');
     }
@@ -790,7 +623,7 @@ trait EventSourcedTrait
 
         Assert::assertArrayHasKey($eventNumber, $this->currentEventStreamAsArray, 'Event at index does not exist');
 
-        /* @var $actualEvent EventAndRawEvent */
+        /* @var $actualEvent EventEnvelope */
         $actualEvent = $this->currentEventStreamAsArray[$eventNumber];
 
         Assert::assertNotNull($actualEvent, sprintf('Event with number %d not found', $eventNumber));
@@ -799,17 +632,8 @@ trait EventSourcedTrait
         $actualEventPayload = $actualEvent->getRawEvent()->getPayload();
 
         foreach ($payloadTable->getHash() as $assertionTableRow) {
-            $actualValue = \Neos\Utility\Arrays::getValueByPath($actualEventPayload, $assertionTableRow['Key']);
-            if (isset($assertionTableRow['Type']) && $assertionTableRow['Type'] == 'Uuid') {
-                $expectedValue = $this->replaceUuidIdentifiers('[' . $assertionTableRow['Expected'] . ']');
-            } else {
-                $expectedValue = $assertionTableRow['Expected'];
-            }
-            if (isset($assertionTableRow['AssertionType']) && $assertionTableRow['AssertionType'] === 'json') {
-                $expectedValue = json_decode($expectedValue, true);
-            }
-
-            Assert::assertEquals($expectedValue, $actualValue, 'ERROR at ' . $assertionTableRow['Key'] . ': ' . json_encode($actualValue) . ' !== ' . json_encode($expectedValue));
+            $actualValue = Arrays::getValueByPath($actualEventPayload, $assertionTableRow['Key']);
+            Assert::assertJsonStringEqualsJsonString($assertionTableRow['Expected'], json_encode($actualValue));
         }
     }
 
@@ -819,7 +643,7 @@ trait EventSourcedTrait
      */
     public function theGraphProjectionIsFullyUpToDate()
     {
-        // we do not need to do anything here yet, as the graph projection is synchronous.
+        $this->eventBus->flush();
     }
 
     /**
@@ -843,7 +667,11 @@ trait EventSourcedTrait
     public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint)
     {
         $workspaceName = new WorkspaceName($workspaceName);
-        $this->contentStreamIdentifier = $this->workspaceFinder->findOneByName($workspaceName)->getCurrentContentStreamIdentifier();
+        $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+        if ($workspace === null) {
+            throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
+        }
+        $this->contentStreamIdentifier = $workspace->getCurrentContentStreamIdentifier();
         $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true));
     }
 
@@ -852,8 +680,7 @@ trait EventSourcedTrait
      */
     public function iAmInContentStreamAndDimensionSpacePoint(string $contentStreamIdentifier, string $dimensionSpacePoint)
     {
-        $contentStreamIdentifier = $this->replaceUuidIdentifiers($contentStreamIdentifier);
-        $this->contentStreamIdentifier = new ContentStreamIdentifier($contentStreamIdentifier);
+        $this->contentStreamIdentifier = ContentStreamIdentifier::fromString($contentStreamIdentifier);
         $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true));
     }
 
@@ -883,7 +710,6 @@ trait EventSourcedTrait
      */
     public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamIdentifier)
     {
-        $rawContentStreamIdentifier = $this->replaceUuidIdentifiers($rawContentStreamIdentifier);
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($rawWorkspaceName));
 
         Assert::assertNotEquals($rawContentStreamIdentifier, (string)$workspace->getCurrentContentStreamIdentifier());
@@ -895,11 +721,11 @@ trait EventSourcedTrait
      */
     public function iExpectANodeToExistInTheGraphProjection($nodeIdentifier)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        $nodeIdentifier = NodeIdentifier::fromString($nodeIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
-        Assert::assertNotNull($node, 'Node "' . $nodeIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
+            ->findNodeByIdentifier($nodeIdentifier);
+        Assert::assertNotNull($node, sprintf('Node "%s" was not found in the current Content Stream "%s" / Dimension Space Point "%s".', $nodeIdentifier, $this->contentStreamIdentifier, $this->dimensionSpacePoint->getHash()));
     }
 
     /**
@@ -908,10 +734,9 @@ trait EventSourcedTrait
      */
     public function iExpectANodeNotToExistInTheGraphProjection($nodeIdentifier)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+            ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
         // we're not using assertNull here: If $node is not null, the
         Assert::assertTrue($node === null, 'Node "' . $nodeIdentifier . '" was found in the current Content Stream / Dimension Space Point.');
     }
@@ -922,11 +747,10 @@ trait EventSourcedTrait
      */
     public function iExpectANodeIdentifiedByAggregateIdentifierToExistInTheSubgraph(string $nodeAggregateIdentifier)
     {
-        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
-        Assert::assertNotNull($this->currentNode, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+        Assert::assertNotNull($this->currentNode, sprintf('Node with aggregate identifier "%s" was not found in the current Content Stream ("%s") / Dimension Space Point ("%s").', $nodeAggregateIdentifier, $this->contentStreamIdentifier, $this->dimensionSpacePoint));
     }
 
     /**
@@ -935,10 +759,9 @@ trait EventSourcedTrait
      */
     public function iExpectANodeIdentifiedByAggregateIdentifierNotToExistInTheSubgraph(string $nodeAggregateIdentifier)
     {
-        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
         Assert::assertTrue($node === null, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was found in the current Content Stream / Dimension Space Point, but it SHOULD NOT BE FOUND.');
     }
 
@@ -947,20 +770,20 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheFollowingChildNodes($nodeAggregateIdentifier, TableNode $expectedChildNodesTable)
     {
-        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
+        $nodeAggregateIdentifier = $nodeAggregateIdentifier === 'root' ? RootNodeIdentifiers::rootNodeAggregateIdentifier() : NodeAggregateIdentifier::fromString($nodeAggregateIdentifier);
         $nodes = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findChildNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+            ->findChildNodes($nodeAggregateIdentifier);
 
         $numberOfChildNodes = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->countChildNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+            ->countChildNodes($nodeAggregateIdentifier);
 
         Assert::assertEquals(count($expectedChildNodesTable->getHash()), $numberOfChildNodes, 'ContentSubgraph::countChildNodes returned a wrong value');
         Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'ContentSubgraph::findChildNodes: Child Node Count does not match');
         foreach ($expectedChildNodesTable->getHash() as $index => $row) {
             Assert::assertEquals($row['Name'], (string)$nodes[$index]->getNodeName(), 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeName());
-            Assert::assertEquals($this->replaceUuidIdentifiers($row['NodeIdentifier']), (string)$nodes[$index]->getNodeIdentifier(), 'ContentSubgraph::findChildNodes: Node identifier in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeIdentifier() . ' Expected: ' . $this->replaceUuidIdentifiers($row['NodeIdentifier']));
+            Assert::assertEquals($row['NodeIdentifier'], (string)$nodes[$index]->getNodeIdentifier(), 'ContentSubgraph::findChildNodes: Node identifier in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeIdentifier() . ' Expected: ' . $row['NodeIdentifier']);
         }
     }
 
@@ -969,11 +792,9 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeAggregateToHaveTheNodes($nodeAggregateIdentifier, $nodeIdentifier)
     {
-        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
         Assert::assertNotNull($node, 'Node with ID "' . $nodeIdentifier . '" not found!');
         Assert::assertEquals($nodeIdentifier, (string)$node->getNodeIdentifier(), 'Node ID does not match!');
     }
@@ -984,10 +805,9 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheType($nodeIdentifier, $nodeType)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+            ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
         Assert::assertEquals($nodeType, (string)$node->getNodeTypeName(), 'Node Type names do not match');
     }
 
@@ -996,10 +816,12 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheProperties($nodeIdentifier, TableNode $expectedProperties)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        // TODO the following line is required in order to avoid cached results from previous calls
+        $this->contentGraphInterface->resetCache();
+
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+            ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
         $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
     }
 
@@ -1008,6 +830,12 @@ trait EventSourcedTrait
      */
     public function iExpectTheCurrentNodeToHaveTheProperties(TableNode $expectedProperties)
     {
+        // TODO hack: $this->currentNode might be stale, so we need to re-fetch it
+        $this->contentGraphInterface->resetCache();
+        $this->currentNode = $this->contentGraphInterface
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
+
         $properties = $this->currentNode->getProperties();
         foreach ($expectedProperties->getHash() as $row) {
             Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
@@ -1021,14 +849,13 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheReferences($nodeAggregateIdentifier, TableNode $expectedReferences)
     {
-        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $expectedReferences = $this->readPayloadTable($expectedReferences);
 
         /** @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface $subgraph */
         $subgraph = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
-            $destinationNodes = $subgraph->findReferencedNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier), new PropertyName($propertyName));
+            $destinationNodes = $subgraph->findReferencedNodes(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier), PropertyName::fromString($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
                     if ($item instanceof NodeInterface) {
@@ -1048,14 +875,13 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToBeReferencedBy($nodeAggregateIdentifier, TableNode $expectedReferences)
     {
-        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $expectedReferences = $this->readPayloadTable($expectedReferences);
 
         /** @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface $subgraph */
         $subgraph = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
-            $destinationNodes = $subgraph->findReferencingNodes(new NodeAggregateIdentifier($nodeAggregateIdentifier), new PropertyName($propertyName));
+            $destinationNodes = $subgraph->findReferencingNodes(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier), PropertyName::fromString($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
                     if ($item instanceof NodeInterface) {
@@ -1081,7 +907,6 @@ trait EventSourcedTrait
      */
     public function iExpectThePathToLeadToTheNode($nodePath, $nodeIdentifier)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         if (!$this->rootNodeIdentifier) {
             throw new \Exception('ERROR: RootNodeIdentifier needed for running this step. You need to use "the Event RootNodeWasCreated was published with payload" to create a root node..');
         }
@@ -1097,10 +922,9 @@ trait EventSourcedTrait
      */
     public function iGoToTheParentNodeOfNode($nodeAggregateIdentifier)
     {
-        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findParentNode(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+            ->findParentNode(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
     }
 
     /**
@@ -1120,7 +944,6 @@ trait EventSourcedTrait
      */
     public function currentNodeAggregateShouldBe($nodeAggregateIdentifier)
     {
-        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         Assert::assertEquals($nodeAggregateIdentifier, (string)$this->currentNode->getNodeAggregateIdentifier());
     }
 
@@ -1164,7 +987,7 @@ trait EventSourcedTrait
     public function theSubtreeForNodeAggregateWithNodeTypesAndLevelsDeepShouldBe($nodeAggregateIdentifier, $nodeTypeConstraints, $maximumLevels, TableNode $table)
     {
         $expectedRows = $table->getHash();
-        $nodeAggregateIdentifier = new NodeAggregateIdentifier($this->replaceUuidIdentifiers($nodeAggregateIdentifier));
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifier);
         $nodeTypeConstraints = $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeConstraints);
 
         $subtree = $this->contentGraphInterface
@@ -1179,10 +1002,10 @@ trait EventSourcedTrait
 
         foreach ($expectedRows as $i => $expectedRow) {
             Assert::assertEquals($expectedRow['Level'], $flattenedSubtree[$i]->getLevel(), 'Level does not match in index ' . $i);
-            if ($expectedRow['NodeAggregateIdentifier'] === 'ROOT') {
-                Assert::assertNull($flattenedSubtree[$i]->getNode(), 'ROOT node was not correct at index ' . $i);
+            if ($expectedRow['NodeAggregateIdentifier'] === 'root') {
+                Assert::assertNull($flattenedSubtree[$i]->getNode(), 'root node was not correct at index ' . $i);
             } else {
-                Assert::assertEquals($this->replaceUuidIdentifiers($expectedRow['NodeAggregateIdentifier']), (string)$flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier(), 'NodeAggregateIdentifier does not match in index ' . $i);
+                Assert::assertEquals($expectedRow['NodeAggregateIdentifier'], (string)$flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier(), 'NodeAggregateIdentifier does not match in index ' . $i . ', expected: ' . $expectedRow['NodeAggregateIdentifier'] . ', actual: ' . $flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier());
             }
         }
     }
@@ -1224,10 +1047,9 @@ trait EventSourcedTrait
      */
     public function iGetTheNodeAddressForNodeAggregate($nodeAggregateIdentifier, $alias = 'DEFAULT')
     {
-        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
         Assert::assertNotNull($node, 'Did find node with aggregate identifier "' . $nodeAggregateIdentifier . '"');
 
         /* @var $nodeAddressFactory NodeAddressFactory */

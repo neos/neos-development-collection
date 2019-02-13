@@ -14,9 +14,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
-final class ContentStreamWasCreated implements EventInterface
+/**
+ * @Flow\Proxy(false)
+ */
+final class ContentStreamWasCreated implements DomainEventInterface
 {
     /**
      * @var ContentStreamIdentifier
