@@ -50,15 +50,15 @@ class ParentOperationTest extends UnitTestCase
         $this->firstLevelNode = $this->createMock(TraversableNodeInterface::class);
         $this->secondLevelNode = $this->createMock(TraversableNodeInterface::class);
 
-        $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site')));
+        $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site')));
         $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue([$this->firstLevelNode]));
-        $this->siteNode->expects($this->any())->method('getNodeAggregateIdentifier')->willReturn(new NodeAggregateIdentifier('site-identifier-uuid'));
+        $this->siteNode->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('site-identifier-uuid')));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->firstLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->firstLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site/first')));
+        $this->firstLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/first')));
         $this->secondLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->secondLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(new NodePath('/site/first/second')));
+        $this->secondLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/first/second')));
     }
 
     /**

@@ -12,7 +12,11 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\Flow\Annotations as Flow;
 
+/**
+ * @Flow\Proxy(false)
+ */
 final class RootNodeIdentifiers
 {
     /**
@@ -48,7 +52,7 @@ final class RootNodeIdentifiers
     public static function rootNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         if (!self::$rootNodeAggregateIdentifier) {
-            self::$rootNodeAggregateIdentifier = new NodeAggregateIdentifier('00000000-0000-0000-0000-000000000000');
+            self::$rootNodeAggregateIdentifier = NodeAggregateIdentifier::fromString('00000000-0000-0000-0000-000000000000');
         }
         return self::$rootNodeAggregateIdentifier;
     }

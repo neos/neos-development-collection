@@ -28,9 +28,9 @@ class FilterOperationTest extends UnitTestCase
     public function filterWithIdentifierUsesNodeAggregateIdentifier()
     {
         $node1 = $this->createMock(TraversableNodeInterface::class);
-        $node1->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('node1-identifier-uuid')));
+        $node1->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('node1-identifier-uuid')));
         $node2 = $this->createMock(TraversableNodeInterface::class);
-        $node2->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(new NodeAggregateIdentifier('node2-identifier-uuid')));
+        $node2->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('node2-identifier-uuid')));
 
         $context = [$node1, $node2];
         $q = new FlowQuery($context);
