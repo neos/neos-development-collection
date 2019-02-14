@@ -20,6 +20,7 @@ use Neos\Flow\Annotations as Flow;
  * A set of points in the dimension space.
  *
  * E.g.: {[language => es, country => ar], [language => es, country => es]}
+ *
  * @Flow\Proxy(false)
  */
 final class DimensionSpacePointSet implements \JsonSerializable, \IteratorAggregate, \ArrayAccess, \Countable
@@ -41,20 +42,16 @@ final class DimensionSpacePointSet implements \JsonSerializable, \IteratorAggreg
     {
         $this->points = [];
         foreach ($points as $index => $point) {
+            if (is_array($point)) {
+                $point = new DimensionSpacePoint($point);
+            }
+
             if (!$point instanceof DimensionSpacePoint) {
                 throw new \InvalidArgumentException(sprintf('Point %s was not of type DimensionSpacePoint', $index));
             }
             $this->points[$point->getHash()] = $point;
         }
         $this->iterator = new \ArrayIterator($this->points);
-    }
-
-    public static function fromArray(array $points): self {
-        $converted = [];
-        foreach ($points as $point) {
-            $converted[] = new DimensionSpacePoint($point);
-        }
-        return new DimensionSpacePointSet($converted);
     }
 
     /**

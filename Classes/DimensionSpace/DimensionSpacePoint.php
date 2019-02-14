@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Utility\Arrays;
@@ -23,6 +24,8 @@ use Neos\Utility\Arrays;
  * E.g.: ["language" => "es", "country" => "ar"]
  *
  * Implements CacheAwareInterface because of Fusion Runtime caching and Routing
+ *
+ * @Flow\Proxy(false)
  */
 final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface
 {
@@ -64,15 +67,6 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     public static function fromJsonString(string $jsonString): DimensionSpacePoint
     {
         return new DimensionSpacePoint(json_decode($jsonString, true));
-    }
-
-    /**
-     * @param string $jsonString A JSON string representation, see jsonSerialize
-     * @return DimensionSpacePoint
-     */
-    public static function fromArray(array $coordinates): DimensionSpacePoint
-    {
-        return new DimensionSpacePoint($coordinates);
     }
 
     /**
