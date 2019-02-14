@@ -12,8 +12,12 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Migration\Filters\DimensionValues;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
@@ -47,14 +51,17 @@ class ContentDimensionsHelper implements ProtectedContextAwareInterface
             $result[(string)$dimension->getIdentifier()] = [
                 'label' => $dimension->getConfigurationValue('label'),
                 'icon' => $dimension->getConfigurationValue('icon'),
-                'defaultValue' => $dimension->getDefaultValue()->getValue(),
-                'values' => []
+
+                'default' => $dimension->getDefaultValue()->getValue(),
+                'defaultPreset' => $dimension->getDefaultValue()->getValue(),
+                'presets' => []
             ];
 
             foreach ($dimension->getValues() as $value) {
                 // TODO: make certain values hidable
-                $result[(string)$dimension->getIdentifier()]['values'][$value->getValue()] = [
-                    'value' => $value->getValue(),
+                $result[(string)$dimension->getIdentifier()]['presets'][$value->getValue()] = [
+                    // TODO: name, uriSegment!
+                    'values' => [$value->getValue()],
                     'label' => $value->getConfigurationValue('label')
                 ];
             }
@@ -68,20 +75,14 @@ class ContentDimensionsHelper implements ProtectedContextAwareInterface
      */
     public function allowedPresetsByName(DimensionSpacePoint $dimensions)
     {
-        // TODO: fix allowedPresetsByName
-        return [];
-
+        // TODO: re-implement this here; currently EVERYTHING is allowed!!
         $allowedPresets = [];
-        $preselectedDimensionPresets = [];
-        foreach ($dimensions as $dimensionName => $dimensionValues) {
-            $preset = $this->contentDimensionSource->findPresetByDimensionValues($dimensionName, $dimensionValues);
-            if ($preset !== null) {
-                $preselectedDimensionPresets[$dimensionName] = $preset['identifier'];
+        foreach ($dimensions->getCoordinates() as $dimensionName => $dimensionValue) {
+            $dimension = $this->contentDimensionSource->getDimension(new ContentDimensionIdentifier($dimensionName));
+            $value = $dimension->getValue($dimensionValue);
+            if ($value !== null) {
+                $allowedPresets[$dimensionName] = array_keys($dimension->getValues());
             }
-        }
-        foreach ($preselectedDimensionPresets as $dimensionName => $presetName) {
-            $presets = $this->contentDimensionSource->getAllowedDimensionPresetsAccordingToPreselection($dimensionName, $preselectedDimensionPresets);
-            $allowedPresets[$dimensionName] = array_keys($presets[$dimensionName]['presets']);
         }
 
         return $allowedPresets;
