@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace;
  * source code.
  */
 
+use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\DimensionSpace\Dimension;
@@ -27,7 +28,7 @@ use Neos\Utility\Arrays;
  *
  * @Flow\Proxy(false)
  */
-final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface
+final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, ProtectedContextAwareInterface
 {
     /**
      * @var array
@@ -219,5 +220,14 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     public function getCacheEntryIdentifier(): string
     {
         return $this->getHash();
+    }
+
+    /**
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return true;
     }
 }
