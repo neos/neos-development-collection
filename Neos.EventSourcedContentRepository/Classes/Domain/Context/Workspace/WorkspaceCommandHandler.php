@@ -162,7 +162,7 @@ final class WorkspaceCommandHandler
         );
         $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
 
-        $this->nodeCommandHandler->handleCreateRootNode(
+        $this->nodeCommandHandler->blockingHandle(
             new CreateRootNode(
                 $contentStreamIdentifier,
                 $command->getRootNodeIdentifier(),
@@ -302,41 +302,7 @@ final class WorkspaceCommandHandler
             $commandToRebasePayload['contentStreamIdentifier'] = (string)$rebasedContentStream;
 
             $commandToRebase = $commandToRebaseClass::fromArray($commandToRebasePayload);
-
-            // TODO: use a more clever dispatching mechanism than the hard coded switch!!
-            switch (get_class($commandToRebase)) {
-                case AddNodeToAggregate::class:
-                    $this->nodeCommandHandler->handleAddNodeToAggregate($commandToRebase);
-                    break;
-                case ChangeNodeName::class:
-                    $this->nodeCommandHandler->handleChangeNodeName($commandToRebase);
-                    break;
-                case CreateNodeAggregateWithNode::class:
-                    $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($commandToRebase);
-                    break;
-                case CreateRootNode::class:
-                    $this->nodeCommandHandler->handleCreateRootNode($commandToRebase);
-                    break;
-                case MoveNode::class:
-                    $this->nodeCommandHandler->handleMoveNode($commandToRebase);
-                    break;
-                case SetNodeProperty::class:
-                    $this->nodeCommandHandler->handleSetNodeProperty($commandToRebase);
-                    break;
-                case HideNode::class:
-                    $this->nodeCommandHandler->handleHideNode($commandToRebase);
-                    break;
-                case ShowNode::class:
-                    $this->nodeCommandHandler->handleShowNode($commandToRebase);
-                    break;
-                case TranslateNodeInAggregate::class:
-                    $this->nodeCommandHandler->handleTranslateNodeInAggregate($commandToRebase);
-                    break;
-                default:
-                    throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($commandToRebase)));
-            }
-            // TODO hack!
-            $this->eventBus->flush();
+            $this->nodeCommandHandler->blockingHandle($commandToRebase);
         }
 
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());

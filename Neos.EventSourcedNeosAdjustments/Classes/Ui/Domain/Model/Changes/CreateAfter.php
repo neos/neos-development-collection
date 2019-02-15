@@ -53,7 +53,7 @@ class CreateAfter extends AbstractCreate
             $parentNode = $subject->findParentNode();
             $newlyCreatedNode = $this->createNode($parentNode);
 
-            $this->nodeCommandHandler->handleMoveNode(new MoveNode(
+            $this->nodeCommandHandler->blockingHandle(new MoveNode(
                 $newlyCreatedNode->getContentStreamIdentifier(),
                 $newlyCreatedNode->getDimensionSpacePoint(),
                 $newlyCreatedNode->getNodeAggregateIdentifier(),

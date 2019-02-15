@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
@@ -29,6 +30,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\Projection\ProjectorInterface;
@@ -54,6 +56,19 @@ class GraphProjector implements ProjectorInterface
      * @var DbalClient
      */
     protected $client;
+
+    /**
+     * @Flow\Inject
+     * @var VariableFrontend
+     */
+    protected $processedEventsCache;
+
+    public function hasProcessed(NodeCommandResult $commandResult): bool
+    {
+        foreach ($commandResult->getPublishedEvents() as $event) {
+
+        }
+    }
 
     /**
      * @Flow\Signal

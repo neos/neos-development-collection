@@ -44,7 +44,7 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             if (isset($data['title'])) {
-                $this->nodeCommandHandler->handleSetNodeProperty(new SetNodeProperty(
+                $this->nodeCommandHandler->blockingHandle(new SetNodeProperty(
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
@@ -53,7 +53,7 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                 ));
             }
 
-            $this->nodeCommandHandler->handleSetNodeProperty(new SetNodeProperty(
+            $this->nodeCommandHandler->blockingHandle(new SetNodeProperty(
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),

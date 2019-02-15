@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * source code.
  */
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -102,11 +103,47 @@ final class NodeCommandHandler
     protected $contentGraph;
 
     /**
-     * @param CreateNodeAggregateWithNode $command
+     * @Flow\Inject
+     * @var GraphProjector
      */
-    public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): void
+    protected $graphProjector;
+
+    /**
+     * TODO document / rename?
+     *
+     * @param object $command
+     */
+    public function blockingHandle($command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        try {
+            $commandName = (new \ReflectionClass($command))->getShortName();
+        } catch (\ReflectionException $exception) {
+            throw new \InvalidArgumentException('Could not reflect the given command object', 1550232158);
+        }
+        $handlerMethodName = 'handle' . $commandName;
+        if (!method_exists($this, $handlerMethodName)) {
+            throw new \InvalidArgumentException(sprintf('Handler method "%s" does not exist', $handlerMethodName), 1550232216);
+        }
+        $commandResult = $this->$handlerMethodName($command);
+
+        $attempts = 0;
+        // TODO refactor/cleanup
+        while (!$this->graphProjector->hasProcessed($commandResult)) {
+            usleep(50000); // 50000μs = 50ms
+            if (++$attempts > 10) {
+                throw new \RuntimeException('TIMEOUT!', 1550232279);
+            }
+        }
+    }
+
+    /**
+     * @param CreateNodeAggregateWithNode $command
+     * @return NodeCommandResult
+     */
+    public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): NodeCommandResult
+    {
+        $events = [];
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
 
             $events = $this->nodeAggregateWithNodeWasCreatedFromCommand($command);
@@ -118,6 +155,7 @@ final class NodeCommandHandler
                 $this->nodeEventPublisher->publish($streamName, $event, ExpectedVersion::NO_STREAM);
             }
         });
+        return NodeCommandResult::fromPublishedEvents(DomainEvents::fromArray($events));
     }
 
     /**
@@ -198,10 +236,12 @@ final class NodeCommandHandler
 
     /**
      * @param AddNodeToAggregate $command
+     * @return NodeCommandResult
      */
-    public function handleAddNodeToAggregate(AddNodeToAggregate $command): void
+    public function handleAddNodeToAggregate(AddNodeToAggregate $command): NodeCommandResult
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        $events = [];
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
 
             $events = $this->nodeWasAddedToAggregateFromCommand($command);
@@ -212,6 +252,7 @@ final class NodeCommandHandler
                 $this->nodeEventPublisher->publish(StreamName::fromString($contentStreamStreamName . ':NodeAggregate:' . $event->getNodeAggregateIdentifier()), $event);
             }
         });
+        return NodeCommandResult::fromPublishedEvents(DomainEvents::fromArray($events));
     }
 
     /**
@@ -304,10 +345,12 @@ final class NodeCommandHandler
      * CreateRootNode
      *
      * @param CreateRootNode $command
+     * @return NodeCommandResult
      */
-    public function handleCreateRootNode(CreateRootNode $command): void
+    public function handleCreateRootNode(CreateRootNode $command): NodeCommandResult
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        $events = [];
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             $dimensionSpacePointSet = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
@@ -320,20 +363,24 @@ final class NodeCommandHandler
                 $dimensionSpacePointSet,
                 $command->getInitiatingUserIdentifier()
             );
+            $events[] = $event;
 
             $this->nodeEventPublisher->publish(
                 ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
                 $event
             );
         });
+        return NodeCommandResult::fromPublishedEvents(DomainEvents::fromArray($events));
     }
 
     /**
      * @param SetNodeProperty $command
+     * @return NodeCommandResult
      */
-    public function handleSetNodeProperty(SetNodeProperty $command): void
+    public function handleSetNodeProperty(SetNodeProperty $command): NodeCommandResult
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        $events = [];
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node exists
@@ -351,16 +398,20 @@ final class NodeCommandHandler
                 ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
                 $event
             );
+            $events[] = $event;
         });
+        return NodeCommandResult::fromPublishedEvents(DomainEvents::fromArray($events));
     }
 
     /**
      * @param SetNodeReferences $command
+     * @return NodeCommandResult
      * @throws NodeException
      */
-    public function handleSetNodeReferences(SetNodeReferences $command): void
+    public function handleSetNodeReferences(SetNodeReferences $command): NodeCommandResult
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        $events = [];
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
             $nodeIdentifier = $command->getNodeIdentifier();
 
@@ -385,14 +436,17 @@ final class NodeCommandHandler
                 DomainEvents::fromArray($events)
             );
         });
+        return NodeCommandResult::fromPublishedEvents(DomainEvents::fromArray($events));
     }
 
     /**
      * @param HideNode $command
+     * @return NodeCommandResult
      */
-    public function handleHideNode(HideNode $command): void
+    public function handleHideNode(HideNode $command): NodeCommandResult
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        $events = [];
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Soft constraint check: Check if node exists in *all* given DimensionSpacePoints
@@ -411,15 +465,19 @@ final class NodeCommandHandler
                 ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
                 $event
             );
+            $events[] = $event;
         });
+        return NodeCommandResult::fromPublishedEvents(DomainEvents::fromArray($events));
     }
 
     /**
      * @param ShowNode $command
+     * @return NodeCommandResult
      */
-    public function handleShowNode(ShowNode $command): void
+    public function handleShowNode(ShowNode $command): NodeCommandResult
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        $events = [];
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Soft constraint check: Check if node exists in *all* given DimensionSpacePoints
@@ -437,15 +495,19 @@ final class NodeCommandHandler
                 ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
                 $event
             );
+            $events[] = $event;
         });
+        return NodeCommandResult::fromPublishedEvents(DomainEvents::fromArray($events));
     }
 
     /**
      * @param MoveNode $command
+     * @return NodeCommandResult
      */
-    public function handleMoveNode(MoveNode $command): void
+    public function handleMoveNode(MoveNode $command): NodeCommandResult
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        $events = [];
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $command->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
             if ($contentSubgraph === null) {
                 throw new Exception(sprintf('Content subgraph not found for content stream %s, %s', $command->getContentStreamIdentifier(), $command->getDimensionSpacePoint()), 1506074858);
@@ -532,7 +594,10 @@ final class NodeCommandHandler
                 ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
                 $nodesWereMoved
             );
+
+            $events[] = $nodesWereMoved;
         });
+        return NodeCommandResult::fromPublishedEvents(DomainEvents::fromArray($events));
     }
 
     /**
@@ -586,11 +651,13 @@ final class NodeCommandHandler
 
     /**
      * @param ChangeNodeName $command
+     * @return NodeCommandResult
      * @throws NodeException
      */
-    public function handleChangeNodeName(ChangeNodeName $command)
+    public function handleChangeNodeName(ChangeNodeName $command): NodeCommandResult
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        $events = [];
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
             /** @var Node $node */
             $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
@@ -609,15 +676,19 @@ final class NodeCommandHandler
                 ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
                 $event
             );
+            $events[] = $event;
         });
+        return NodeCommandResult::fromPublishedEvents(DomainEvents::fromArray($events));
     }
 
     /**
      * @param RemoveNodeAggregate $command
+     * @return NodeCommandResult
      */
-    public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): void
+    public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): NodeCommandResult
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        $events = [];
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node aggregate exists
@@ -635,13 +706,16 @@ final class NodeCommandHandler
                 ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
                 $event
             );
+            $events[] = $event;
         });
+        return NodeCommandResult::fromPublishedEvents(DomainEvents::fromArray($events));
     }
 
     /**
      * @param RemoveNodesFromAggregate $command
+     * @return NodeCommandResult
      */
-    public function handleRemoveNodesFromAggregate(RemoveNodesFromAggregate $command): void
+    public function handleRemoveNodesFromAggregate(RemoveNodesFromAggregate $command): NodeCommandResult
     {
         foreach ($command->getDimensionSpacePointSet()->getPoints() as $point) {
             $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($point, false);
@@ -652,7 +726,8 @@ final class NodeCommandHandler
             }
         }
 
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        $events = [];
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node aggregate exists
@@ -671,15 +746,19 @@ final class NodeCommandHandler
                 ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
                 $event
             );
+            $events[] = $event;
         });
+        return NodeCommandResult::fromPublishedEvents(DomainEvents::fromArray($events));
     }
 
     /**
      * @param TranslateNodeInAggregate $command
+     * @return NodeCommandResult
      */
-    public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command): void
+    public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command): NodeCommandResult
     {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+        $events = null;
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             $events = DomainEvents::fromArray($this->nodeInAggregateWasTranslatedFromCommand($command));
@@ -688,6 +767,7 @@ final class NodeCommandHandler
                 $events
             );
         });
+        return NodeCommandResult::fromPublishedEvents($events);
     }
 
     private function nodeInAggregateWasTranslatedFromCommand(TranslateNodeInAggregate $command): array

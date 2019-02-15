@@ -214,7 +214,7 @@ class Property extends AbstractChange
                             // TODO: what do we want to hide? I.e. including NESTED dimensions?
                             new DimensionSpacePointSet([$node->getOriginDimensionSpacePoint()])
                         );
-                        $this->nodeCommandHandler->handleHideNode($command);
+                        $this->nodeCommandHandler->blockingHandle($command);
                     } else {
                         // unhide
                         $command = new ShowNode(
@@ -223,7 +223,7 @@ class Property extends AbstractChange
                             // TODO: what do we want to unhide? I.e. including NESTED dimensions?
                             new DimensionSpacePointSet([$node->getOriginDimensionSpacePoint()])
                         );
-                        $this->nodeCommandHandler->handleShowNode($command);
+                        $this->nodeCommandHandler->blockingHandle($command);
                     }
                 } else {
                     throw new \Exception("TODO FIX");
@@ -238,7 +238,7 @@ class Property extends AbstractChange
                     $propertyName,
                     new PropertyValue($value, $propertyType)
                 );
-                $this->nodeCommandHandler->handleSetNodeProperty($command);
+                $this->nodeCommandHandler->blockingHandle($command);
             }
 
             $this->updateWorkspaceInfo();

@@ -304,7 +304,7 @@ trait EventSourcedTrait
         /** @var NodeCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
-        $commandHandler->handleRemoveNodeAggregate($command);
+        $commandHandler->blockingHandle($command);
     }
 
 
@@ -337,7 +337,7 @@ trait EventSourcedTrait
         /** @var NodeCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
-        $commandHandler->handleRemoveNodesFromAggregate($command);
+        $commandHandler->blockingHandle($command);
     }
 
 
