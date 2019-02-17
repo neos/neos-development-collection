@@ -17,7 +17,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | contentStreamIdentifier  | cs-identifier                        | Uuid |
       | rootNodeIdentifier       | rn-identifier                        | Uuid |
 
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                  | Type                   |
       | contentStreamIdentifier       | cs-identifier                          | Uuid                   |
       | nodeAggregateIdentifier       | na-identifier                          | Uuid                   |
@@ -26,7 +26,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | parentNodeIdentifier          | rn-identifier                          | Uuid                   |
       | nodeName                      | text1                                  |                        |
 
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                  | Type                   |
       | contentStreamIdentifier       | cs-identifier                          | Uuid                   |
       | nodeAggregateIdentifier       | na-2-identifier                        | Uuid                   |

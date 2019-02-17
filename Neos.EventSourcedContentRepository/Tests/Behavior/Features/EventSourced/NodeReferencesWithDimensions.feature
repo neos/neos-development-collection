@@ -30,7 +30,7 @@ Feature: Node References with Dimensions
           type: references
     """
 
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     | Type                   |
       | contentStreamIdentifier     | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier     | source-nodeAgg-identifier                 | Uuid                   |
@@ -42,7 +42,7 @@ Feature: Node References with Dimensions
       | nodeName                    | dest                                      |                        |
 
 
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                          | Type                   |
       | contentStreamIdentifier     | cs-identifier                                                                  | Uuid                   |
       | nodeAggregateIdentifier     | dest-nodeAgg-identifier                                                        | Uuid                   |

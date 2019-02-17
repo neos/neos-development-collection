@@ -28,20 +28,21 @@ Feature: Change node aggregate type
           type: string
           defaultValue: 'otherText'
     """
-    And the command "CreateRootNode" is executed with payload:
-      | Key                      | Value                                | Type |
-      | contentStreamIdentifier  | cs-identifier                        | Uuid |
-      | nodeIdentifier           | rn-identifier                        | Uuid |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
-      | nodeTypeName             | Neos.ContentRepository:Root          |      |
+    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                     | Type                    |
+      | contentStreamIdentifier       | cs-identifier                             | ContentStreamIdentifier |
+      | nodeAggregateIdentifier       | sir-david-nodenborough                    | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Root               | NodeTypeName            |
+      | visibleInDimensionSpacePoints | [{"language": "de"}, {"language": "gsw"}] | DimensionSpacePointSet  |
+      | initiatingUserIdentifier      | 00000000-0000-0000-0000-000000000000      | UserIdentifier          |
 
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                         | Type                   |
       | contentStreamIdentifier       | cs-identifier                                 | Uuid                   |
       | nodeAggregateIdentifier       | parent-agg-identifier                         | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:ParentNodeType |                        |
       | dimensionSpacePoint           | {"language":"de"}                             | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]      | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]      | DimensionSpacePointSet |
       | nodeIdentifier                | parent-identifier-de                          | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                                 | Uuid                   |
       | nodeName                      | parent                                        |                        |
@@ -65,13 +66,13 @@ Feature: Change node aggregate type
           '*': TRUE
           'Neos.ContentRepository.Testing:NodeTypeB': FALSE
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    | Type                   |
       | contentStreamIdentifier       | cs-identifier                            | Uuid                   |
       | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
       | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
       | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
       | parentNodeIdentifier          | parent-identifier-de                     | Uuid                   |
       | nodeName                      | nodea                                    |                        |
@@ -97,24 +98,24 @@ Feature: Change node aggregate type
               '*': TRUE
               'Neos.ContentRepository.Testing:NodeTypeB': FALSE
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                      | Type                   |
       | contentStreamIdentifier       | cs-identifier                              | Uuid                   |
       | nodeAggregateIdentifier       | auto-agg-identifier                        | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated |                        |
       | dimensionSpacePoint           | {"language": "de"}                         | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
       | nodeIdentifier                | auto-identifier-de                         | Uuid                   |
       | parentNodeIdentifier          | parent-identifier-de                       | Uuid                   |
       | nodeName                      | autocreated                                |                        |
       | propertyDefaultValuesAndTypes | {}                                         | json                   |
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    | Type                   |
       | contentStreamIdentifier       | cs-identifier                            | Uuid                   |
       | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
       | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
       | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
       | parentNodeIdentifier          | auto-identifier-de                       | Uuid                   |
       | nodeName                      | nodea                                    |                        |
@@ -136,13 +137,13 @@ Feature: Change node aggregate type
         autocreated:
           type: 'Neos.ContentRepository.Testing:AutoCreated'
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                      | Type                   |
       | contentStreamIdentifier       | cs-identifier                              | Uuid                   |
       | nodeAggregateIdentifier       | auto-agg-identifier                        | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated |                        |
       | dimensionSpacePoint           | {"language": "de"}                         | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
       | nodeIdentifier                | auto-identifier-de                         | Uuid                   |
       | parentNodeIdentifier          | parent-identifier-de                       | Uuid                   |
       | nodeName                      | autocreated                                |                        |
@@ -164,13 +165,13 @@ Feature: Change node aggregate type
           '*': TRUE
           'Neos.ContentRepository.Testing:NodeTypeA': FALSE
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    | Type                   |
       | contentStreamIdentifier       | cs-identifier                            | Uuid                   |
       | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
       | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
       | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
       | parentNodeIdentifier          | parent-identifier-de                     | Uuid                   |
       | nodeName                      | nodea                                    |                        |
@@ -204,24 +205,24 @@ Feature: Change node aggregate type
               '*': TRUE
               'Neos.ContentRepository.Testing:NodeTypeA': FALSE
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                      | Type                   |
       | contentStreamIdentifier       | cs-identifier                              | Uuid                   |
       | nodeAggregateIdentifier       | auto-agg-identifier                        | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:AutoCreated |                        |
       | dimensionSpacePoint           | {"language": "de"}                         | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   | DimensionSpacePointSet |
       | nodeIdentifier                | auto-identifier-de                         | Uuid                   |
       | parentNodeIdentifier          | parent-identifier-de                       | Uuid                   |
       | nodeName                      | autocreated                                |                        |
       | propertyDefaultValuesAndTypes | {}                                         | json                   |
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    | Type                   |
       | contentStreamIdentifier       | cs-identifier                            | Uuid                   |
       | nodeAggregateIdentifier       | nodea-agg-identifier                     | Uuid                   |
       | nodeTypeName                  | Neos.ContentRepository.Testing:NodeTypeA |                        |
       | dimensionSpacePoint           | {"language":"de"}                        | DimensionSpacePoint    |
-      | visibleInDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
+      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] | DimensionSpacePointSet |
       | nodeIdentifier                | nodea-identifier-de                      | Uuid                   |
       | parentNodeIdentifier          | auto-identifier-de                       | Uuid                   |
       | nodeName                      | nodea                                    |                        |
@@ -235,7 +236,7 @@ Feature: Change node aggregate type
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   #Scenario: Change node type
-  #  And the Event NodeAggregateWithNodeWasCreated was published with payload:
+  #  And the event NodeAggregateWithNodeWasCreated was published with payload:
   #    | Key                                      | Value                                                                                | Type                   |
   #    | contentStreamIdentifier                  | cs-identifier                                                                        | Uuid                   |
   #    | nodeAggregateIdentifier                  | nodea-agg-identifier                                                                 | Uuid                   |

@@ -127,15 +127,16 @@ class GraphProjector implements ProjectorInterface
                 $event->getNodeAggregateIdentifier(),
                 $event->getNodeTypeName(),
                 $event->getParentNodeAggregateIdentifier(),
-                $event->getDimensionSpacePoint(),
+                $event->getOriginDimensionSpacePoint(),
                 $event->getVisibleInDimensionSpacePoints(),
                 $event->getInitialPropertyValues(),
+                $event->getSucceedingNodeAggregateIdentifier(),
                 $event->getNodeName()
             );
 
             $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
                 $event->getContentStreamIdentifier(),
-                $event->getParentNodeIdentifier(),
+                $event->getParentNodeAggregateIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getVisibleInDimensionSpacePoints()
             );
@@ -145,10 +146,14 @@ class GraphProjector implements ProjectorInterface
     /**
      * Copy the restriction edges from the parent Node to the newly created child node;
      * so that newly created nodes inherit the visibility constraints of the parent.
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier
+     * @param DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
+     * @throws \Doctrine\DBAL\DBALException
      */
-    private function connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $parentNodeIdentifier, NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier, DimensionSpacePointSet $visibleDimensionsOfNewlyCreateNodeAggregate)
+    private function connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier, DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible)
     {
-        $parentNode = $this->projectionContentGraph->getNode($parentNodeIdentifier, $contentStreamIdentifier);
         $this->getDatabaseConnection()->executeUpdate('
                 INSERT INTO neos_contentgraph_restrictionedge (
                   contentstreamidentifier,
@@ -169,8 +174,8 @@ class GraphProjector implements ProjectorInterface
                         and r.affectednodeaggregateidentifier = :parentNodeAggregateIdentifier
             ', [
             'sourceContentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'visibleDimensionSpacePoints' => $visibleDimensionsOfNewlyCreateNodeAggregate->getPointHashes(),
-            'parentNodeAggregateIdentifier' => (string)$parentNode->nodeAggregateIdentifier
+            'visibleDimensionSpacePoints' => $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible->getPointHashes(),
+            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier
         ], [
             'visibleDimensionSpacePoints' => Connection::PARAM_STR_ARRAY
         ]);

@@ -19,7 +19,7 @@ Feature: Creation of nodes underneath hidden nodes
         text:
           type: string
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                     | Value                                  | Type |
       | contentStreamIdentifier | cs-identifier                          | Uuid |
       | nodeAggregateIdentifier | na-identifier                          | Uuid |
@@ -35,7 +35,7 @@ Feature: Creation of nodes underneath hidden nodes
       | affectedDimensionSpacePoints | [{}]          | json |
 
   Scenario: When a new node is created underneath a hidden node, this one should be hidden as well
-    When the Event NodeAggregateWithNodeWasCreated was published with payload:
+    When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                     | Value                                  | Type |
       | contentStreamIdentifier | cs-identifier                          | Uuid |
       | nodeAggregateIdentifier | cna-identifier                         | Uuid |

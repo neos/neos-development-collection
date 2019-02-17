@@ -13,8 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralization;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralizationException;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
@@ -138,7 +137,7 @@ final class NodeAggregateCommandHandler
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): void
     {
         $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-        $this->requireDimensionSpacePointToExist($command->getDimensionSpacePoint());
+        $this->requireDimensionSpacePointToExist($command->getOriginDimensionSpacePoint());
         $nodeType = $this->getNodeType($command->getNodeTypeName());
         $this->requireAutoCreatedChildNodeTypesToExist($nodeType);
         $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $nodeType, $command->getNodeName(), [$command->getParentNodeAggregateIdentifier()]);
@@ -151,9 +150,9 @@ final class NodeAggregateCommandHandler
         if ($command->getSucceedingSiblingNodeAggregateIdentifier()) {
             $this->requireNodeAggregateToCurrentlyExist($command->getContentStreamIdentifier(), $command->getSucceedingSiblingNodeAggregateIdentifier());
         }
-        $this->requireNodeAggregateToBeVisibleInDimensionSpacePoint($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier(), $command->getDimensionSpacePoint());
+        $this->requireNodeAggregateToBeVisibleInDimensionSpacePoint($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier(), $command->getOriginDimensionSpacePoint());
 
-        $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($command->getDimensionSpacePoint());
+        $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($command->getOriginDimensionSpacePoint());
         $parentAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
         $visibleDimensionSpacePoints = $specializations->intersect($parentAggregate->getVisibleInDimensionSpacePoints());
 
@@ -161,7 +160,7 @@ final class NodeAggregateCommandHandler
             $command->getContentStreamIdentifier(),
             $command->getNodeName(),
             $command->getParentNodeAggregateIdentifier(),
-            $command->getDimensionSpacePoint(),
+            $command->getOriginDimensionSpacePoint(),
             $visibleDimensionSpacePoints
         );
 
@@ -181,7 +180,7 @@ final class NodeAggregateCommandHandler
         $nodeAggregate->createWithNode(
             $command->getContentStreamIdentifier(),
             $command->getNodeTypeName(),
-            $command->getDimensionSpacePoint(),
+            $command->getOriginDimensionSpacePoint(),
             $visibleDimensionSpacePoints,
             $command->getParentNodeAggregateIdentifier(),
             $command->getNodeName(),
@@ -191,7 +190,7 @@ final class NodeAggregateCommandHandler
         $this->handleAutoCreatedChildNodes(
             $command->getContentStreamIdentifier(),
             $nodeType,
-            $command->getDimensionSpacePoint(),
+            $command->getOriginDimensionSpacePoint(),
             $visibleDimensionSpacePoints,
             $command->getNodeAggregateIdentifier(),
             $descendantNodeAggregateIdentifiers

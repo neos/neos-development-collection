@@ -17,7 +17,7 @@ final class PropertyValues implements \JsonSerializable, \IteratorAggregate
     /**
      * @var array|PropertyValue[]
      */
-    private $values;
+    private $values = [];
 
     /**
      * @var \ArrayIterator
@@ -27,7 +27,7 @@ final class PropertyValues implements \JsonSerializable, \IteratorAggregate
     /**
      * @param array|PropertyValue[] $values
      */
-    public function __construct(array $values)
+    public function __construct(array $values = [])
     {
         foreach ($values as $propertyName => $propertyValue) {
             $propertyName = new PropertyName($propertyName);

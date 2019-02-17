@@ -19,7 +19,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
         text:
           type: string
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                     | Value                                  | Type |
       | contentStreamIdentifier | cs-identifier                          | Uuid |
       | nodeAggregateIdentifier | na-identifier                          | Uuid |
@@ -28,7 +28,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | parentNodeIdentifier    | rn-identifier                          | Uuid |
       | nodeName                | text1                                  |      |
 
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                     | Value                                  | Type |
       | contentStreamIdentifier | cs-identifier                          | Uuid |
       | nodeAggregateIdentifier | cna-identifier                         | Uuid |

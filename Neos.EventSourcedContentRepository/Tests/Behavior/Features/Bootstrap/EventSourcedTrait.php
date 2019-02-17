@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\ContentRepository\Exception\NodeConstraintException;
@@ -39,7 +40,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionS
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
@@ -50,12 +53,14 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeTypeIsNo
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeTypeNotFound;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -187,29 +192,37 @@ trait EventSourcedTrait
     public function theEventRootNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $streamName = NodeAggregateEventStreamName::fromContentStreamEventStreamNameAndNodeAggregateIdentifier(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($eventPayload['contentStreamIdentifier']),
+        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
+            $eventPayload['contentStreamIdentifier'],
             $eventPayload['nodeAggregateIdentifier']
         );
         $this->publishEvent('Neos.EventSourcedContentRepository:RootNodeAggregateWithNodeWasCreated', $streamName, $eventPayload);
         $this->rootNodeAggregateIdentifier = $eventPayload['nodeAggregateIdentifier'];
     }
+
+    /**
+     * @Given /^the event NodeAggregateWithNodeWasCreated was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
     public function theEventNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (empty($eventPayload['propertyDefaultValuesAndTypes'])) {
-            $eventPayload['propertyDefaultValuesAndTypes'] = [];
+        if (empty($eventPayload['initialPropertyValues'])) {
+            $eventPayload['initialPropertyValues'] = new PropertyValues([]);
         }
         if (empty($eventPayload['dimensionSpacePoint'])) {
-            $eventPayload['dimensionSpacePoint'] = [];
+            $eventPayload['dimensionSpacePoint'] = new DimensionSpacePoint([]);
         }
         if (empty($eventPayload['visibleInDimensionSpacePoints'])) {
-            $eventPayload['visibleInDimensionSpacePoints'] = [[]];
+            $eventPayload['visibleInDimensionSpacePoints'] = new DimensionSpacePointSet([new DimensionSpacePoint([])]);
         }
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($eventPayload['contentStreamIdentifier']);
         $streamName = $this->replaceUuidIdentifiers($streamName);
         $streamName .= ':NodeAggregate:' . $eventPayload['nodeAggregateIdentifier'];
+
         $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated', $streamName, $eventPayload);
     }
 
@@ -300,7 +313,11 @@ trait EventSourcedTrait
                         $eventPayload[$line['Key']] = new WorkspaceDescription($line['Value']);
                         break;
                     case 'ContentStreamIdentifier':
-                        $eventPayload[$line['Key']] = new ContentStreamIdentifier($line['Value']);
+                        try {
+                            $eventPayload[$line['Key']] = new ContentStreamIdentifier($line['Value']);
+                        } catch (\Ramsey\Uuid\Exception\InvalidUuidStringException $e) {
+                            $eventPayload[$line['Key']] = new ContentStreamIdentifier($this->replaceUuidIdentifiers($line['Value']));
+                        }
                         break;
                     case 'DimensionSpacePoint':
                         $eventPayload[$line['Key']] = DimensionSpacePoint::fromJsonString($line['Value']);
@@ -321,12 +338,30 @@ trait EventSourcedTrait
                     case 'NodeTypeName':
                         $eventPayload[$line['Key']] = new NodeTypeName($line['Value']);
                         break;
+                    case 'NodeName':
+                        $eventPayload[$line['Key']] = new NodeName($line['Value']);
+                        break;
                     case 'UserIdentifier':
-                        $eventPayload[$line['Key']] = new UserIdentifier($line['Value']);
+                        try {
+                            $eventPayload[$line['Key']] = new UserIdentifier($line['Value']);
+                        } catch (\Ramsey\Uuid\Exception\InvalidUuidStringException $e) {
+                            $eventPayload[$line['Key']] = new UserIdentifier($this->replaceUuidIdentifiers($line['Value']));
+                        }
                         break;
                     case 'PropertyValue':
                         $tmp = json_decode($line['Value'], true);
                         $eventPayload[$line['Key']] = new PropertyValue($tmp['value'], $tmp['type']);
+                        break;
+                    case 'PropertyName':
+                        $eventPayload[$line['Key']] = new PropertyName($line['Value']);
+                        break;
+                    case 'PropertyValues':
+                        $tmp = json_decode($line['Value'], true);
+                        $propertyValues = [];
+                        foreach ($tmp as $rawPropertyName => $rawPropertyValue) {
+                            $propertyValues[$rawPropertyName] = new PropertyValue($rawPropertyValue['value'], $rawPropertyValue['type']);
+                        }
+                        $eventPayload[$line['Key']] = new PropertyValues($propertyValues);
                         break;
                     case 'Uuid':
                         $eventPayload[$line['Key']] = $this->replaceUuidIdentifiers('[' . $line['Value'] . ']');
@@ -357,7 +392,7 @@ trait EventSourcedTrait
         return $eventPayload;
     }
 
-    protected function replaceUuidIdentifiers($identifierString)
+    protected function replaceUuidIdentifiers($identifierString): string
     {
         return preg_replace_callback(
             '#\[[0-9a-zA-Z\-]+\]#',
@@ -383,7 +418,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
 
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode::class, $configuration);
+        $command = $this->propertyMapper->convert($commandArguments, CreateRootNodeAggregateWithNode::class, $configuration);
 
         $this->getNodeAggregateCommandHandler()->handleCreateRootNodeAggregateWithNode($command);
     }
@@ -396,6 +431,36 @@ trait EventSourcedTrait
     {
         try {
             $this->theCommandCreateRootNodeAggregateWithNodeIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
+     * @When /^the command CreateNodeAggregateWithNode is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
+    public function theCommandCreateNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
+        $command = $this->propertyMapper->convert($commandArguments, CreateNodeAggregateWithNode::class, $configuration);
+
+        $this->getNodeAggregateCommandHandler()->handleCreateNodeAggregateWithNode($command);
+    }
+
+    /**
+     * @When /^the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     */
+    public function theCommandCreateNodeAggregateWithNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandCreateNodeAggregateWithNodeIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
@@ -616,18 +681,41 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $commandArguments['workspaceTitle'] = ucfirst($commandArguments['workspaceName']);
-        $commandArguments['workspaceDescription'] = 'The workspace "' . $commandArguments['workspaceName'] . '".';
-        $commandArguments['initiatingUserIdentifier'] = $this->replaceUuidIdentifiers('[initiatingUserIdentifier]');
-        $commandArguments['rootNodeTypeName'] = !empty($commandArguments['rootNodeTypeName']) ? $commandArguments['rootNodeTypeName'] : 'Neos.ContentRepository:Root';
-
-        $commandName = 'CreateRootWorkspace';
-        if (!empty($commandArguments['baseWorkspaceName'])) {
-            $commandArguments['workspaceOwner'] = $this->replaceUuidIdentifiers('[workspaceOwner]');
-            $commandName = 'CreateWorkspace';
+        if (!isset($commandArguments['workspaceTitle'])) {
+            $commandArguments['workspaceTitle'] = new WorkspaceTitle(ucfirst((string) $commandArguments['workspaceName']));
+        }
+        if (!isset($commandArguments['workspaceDescription'])) {
+            $commandArguments['workspaceDescription'] = new WorkspaceDescription('The workspace "' . $commandArguments['workspaceName'] . '".');
+        }
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = new UserIdentifier($this->replaceUuidIdentifiers('[initiatingUserIdentifier]'));
         }
 
-        $this->theCommandIsExecutedWithPayload($commandName, null, $commandArguments);
+        $this->theCommandIsExecutedWithPayload('CreateWorkspace', null, $commandArguments);
+    }
+
+    /**
+     * @When /^the command CreateRootWorkspace is executed with payload:$/
+     * @throws Exception
+     */
+    public function theCommandCreateRootWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        if (!isset($commandArguments['workspaceTitle'])) {
+            $commandArguments['workspaceTitle'] = new WorkspaceTitle(ucfirst((string) $commandArguments['workspaceName']));
+        }
+        if (!isset($commandArguments['workspaceDescription'])) {
+            $commandArguments['workspaceDescription'] = new WorkspaceDescription('The workspace "' . $commandArguments['workspaceName'] . '".');
+        }
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = new UserIdentifier($this->replaceUuidIdentifiers('[initiatingUserIdentifier]'));
+        }
+        if (!isset($commandArguments['workspaceOwner'])) {
+            $commandArguments['workspaceOwner'] = new UserIdentifier($this->replaceUuidIdentifiers('[workspaceOwner]'));
+        }
+
+        $this->theCommandIsExecutedWithPayload('CreateRootWorkspace', null, $commandArguments);
     }
 
     /**
@@ -733,25 +821,25 @@ trait EventSourcedTrait
             case 'CreateRootWorkspace':
                 return [
                     \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace::class,
-                    \Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
+                    WorkspaceCommandHandler::class,
                     'handleCreateRootWorkspace'
                 ];
             case 'CreateWorkspace':
                 return [
                     \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace::class,
-                    \Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
+                    WorkspaceCommandHandler::class,
                     'handleCreateWorkspace'
                 ];
             case 'PublishWorkspace':
                 return [
                     \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace::class,
-                    \Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
+                    WorkspaceCommandHandler::class,
                     'handlePublishWorkspace'
                 ];
             case 'RebaseWorkspace':
                 return [
                     \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace::class,
-                    \Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
+                    WorkspaceCommandHandler::class,
                     'handleRebaseWorkspace'
                 ];
             case 'AddNodeToAggregate':
@@ -762,7 +850,7 @@ trait EventSourcedTrait
                 ];
             case 'CreateNodeAggregateWithNode':
                 return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode::class,
+                    CreateNodeAggregateWithNode::class,
                     NodeCommandHandler::class,
                     'handleCreateNodeAggregateWithNode'
                 ];
@@ -869,8 +957,9 @@ trait EventSourcedTrait
 
         foreach ($payloadTable->getHash() as $assertionTableRow) {
             $actualValue = \Neos\Utility\Arrays::getValueByPath($actualEventPayload, $assertionTableRow['Key']);
-            if (isset($assertionTableRow['Type']) && $assertionTableRow['Type'] == 'Uuid') {
-                $expectedValue = $this->replaceUuidIdentifiers('[' . $assertionTableRow['Expected'] . ']');
+            $type = $assertionTableRow['Type'] ?? null;
+            if ($type == 'Uuid' || $type === 'ContentStreamIdentifier' || $type == 'UserIdentifier') {
+                $expectedValue = $this->replaceUuidIdentifiers($assertionTableRow['Expected']);
             } else {
                 $expectedValue = $assertionTableRow['Expected'];
             }
@@ -992,6 +1081,7 @@ trait EventSourcedTrait
      */
     public function iExpectANodeWithIdentifierToExistInTheContentGraph(string $serializedNodeIdentifier)
     {
+        $serializedNodeIdentifier = $this->replaceUuidIdentifiers($serializedNodeIdentifier);
         $nodeIdentifier = NodeIdentifier::fromJsonString($serializedNodeIdentifier);
         $this->currentNode = $this->contentGraph->findNodeByIdentifier($nodeIdentifier);
         Assert::assertNotNull($this->currentNode, 'Node with aggregate identifier "' . $nodeIdentifier->getNodeAggregateIdentifier()
@@ -1049,7 +1139,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the Node Aggregate "([^"]*)" to resolve to node "([^"]*)"$/
+     * @Then /^I expect the node aggregate "([^"]*)" to resolve to node "([^"]*)"$/
      */
     public function iExpectTheNodeAggregateToHaveTheNodes($nodeAggregateIdentifier, $nodeIdentifier)
     {
@@ -1064,7 +1154,7 @@ trait EventSourcedTrait
 
 
     /**
-     * @Then /^I expect the Node "([^"]*)" to have the type "([^"]*)"$/
+     * @Then /^I expect the node "([^"]*)" to have the type "([^"]*)"$/
      */
     public function iExpectTheNodeToHaveTheType($nodeIdentifier, $nodeType)
     {
@@ -1076,7 +1166,16 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the Node "([^"]*)" to have the properties:$/
+     * @Then /^I expect this node to have the properties:$/
+     * @param TableNode $expectedProperties
+     */
+    public function iExpectThisNodeToHaveTheProperties(TableNode $expectedProperties)
+    {
+        $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
+    }
+
+    /**
+     * @Then /^I expect the node "([^"]*)" to have the properties:$/
      */
     public function iExpectTheNodeToHaveTheProperties($nodeIdentifier, TableNode $expectedProperties)
     {
@@ -1101,7 +1200,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the Node aggregate "([^"]*)" to have the references:$/
+     * @Then /^I expect the node aggregate "([^"]*)" to have the references:$/
      */
     public function iExpectTheNodeToHaveTheReferences($nodeAggregateIdentifier, TableNode $expectedReferences)
     {
@@ -1128,7 +1227,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the Node aggregate "([^"]*)" to be referenced by:$/
+     * @Then /^I expect the node aggregate "([^"]*)" to be referenced by:$/
      */
     public function iExpectTheNodeToBeReferencedBy($nodeAggregateIdentifier, TableNode $expectedReferences)
     {

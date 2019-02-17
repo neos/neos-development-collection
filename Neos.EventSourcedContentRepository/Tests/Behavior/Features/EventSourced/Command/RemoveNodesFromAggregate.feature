@@ -24,16 +24,17 @@ Feature: Remove Nodes from Aggregate
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository:Document': []
     """
-    And the command "CreateRootNode" is executed with payload:
-      | Key                      | Value                                | Type |
-      | contentStreamIdentifier  | live-cs-identifier                   | Uuid |
-      | nodeIdentifier           | rn-identifier                        | Uuid |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
-      | nodeTypeName             | Neos.ContentRepository:Root          |      |
+    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                     | Type                    |
+      | contentStreamIdentifier       | live-cs-identifier                        | ContentStreamIdentifier |
+      | nodeAggregateIdentifier       | sir-david-nodenborough                    | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Root               | NodeTypeName            |
+      | visibleInDimensionSpacePoints | [{"language": "de"}, {"language": "gsw"}] | DimensionSpacePointSet  |
+      | initiatingUserIdentifier      | 00000000-0000-0000-0000-000000000000      | UserIdentifier          |
 
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                  | Type                    |
       | contentStreamIdentifier       | live-cs-identifier                     | Uuid                    |
       | nodeAggregateIdentifier       | doc-agg-identifier                     | NodeAggregateIdentifier |
@@ -46,7 +47,7 @@ Feature: Remove Nodes from Aggregate
       | propertyDefaultValuesAndTypes | {}                                     | json                    |
     # We also want to add a child node to make sure it is correctly removed when the parent is removed
     # Node /document/child-document
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                  | Type                    |
       | contentStreamIdentifier       | live-cs-identifier                     | Uuid                    |
       | nodeAggregateIdentifier       | cdoc-agg-identifier                    | NodeAggregateIdentifier |
@@ -60,7 +61,7 @@ Feature: Remove Nodes from Aggregate
 
     # We also want to add a grandchild node to make sure it is correctly removed when the parent is removed
     # Node /document/child-document/grandchild-document
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                  | Type                    |
       | contentStreamIdentifier       | live-cs-identifier                     | Uuid                    |
       | nodeAggregateIdentifier       | gcdoc-agg-identifier                   | NodeAggregateIdentifier |

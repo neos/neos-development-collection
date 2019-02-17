@@ -40,7 +40,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
      *
      * @var DimensionSpacePoint
      */
-    private $dimensionSpacePoint;
+    private $originDimensionSpacePoint;
 
     /**
      * The dimension space points the node aggregate and its node are visible in
@@ -95,32 +95,32 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $nodeName
-     * @param PropertyValues $propertyDefaultValues
+     * @param PropertyValues $initialPropertyValues
      * @param NodeAggregateIdentifier|null $succeedingNodeAggregateIdentifier
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
-        DimensionSpacePoint $dimensionSpacePoint,
+        DimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $nodeName,
-        PropertyValues $propertyDefaultValues,
+        PropertyValues $initialPropertyValues,
         NodeAggregateIdentifier $succeedingNodeAggregateIdentifier = null
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
         $this->parentNodeAggregateIdentifier = $parentNodeAggregateIdentifier;
         $this->nodeName = $nodeName;
-        $this->initialPropertyValues = $propertyDefaultValues;
+        $this->initialPropertyValues = $initialPropertyValues;
         $this->succeedingNodeAggregateIdentifier = $succeedingNodeAggregateIdentifier;
     }
 
@@ -139,9 +139,9 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
         return $this->nodeTypeName;
     }
 
-    public function getDimensionSpacePoint(): DimensionSpacePoint
+    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
     {
-        return $this->dimensionSpacePoint;
+        return $this->originDimensionSpacePoint;
     }
 
     public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
@@ -175,7 +175,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
-            $this->dimensionSpacePoint,
+            $this->originDimensionSpacePoint,
             $this->visibleInDimensionSpacePoints,
             $this->parentNodeAggregateIdentifier,
             $this->nodeName,

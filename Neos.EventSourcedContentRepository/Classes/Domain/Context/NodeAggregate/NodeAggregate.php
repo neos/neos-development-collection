@@ -244,7 +244,7 @@ final class NodeAggregate
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
                         /** @var NodeAggregateWithNodeWasCreated $event */
-                        $occupiedDimensionSpacePoints[$event->getDimensionSpacePoint()->getHash()] = $event->getDimensionSpacePoint();
+                        $occupiedDimensionSpacePoints[$event->getOriginDimensionSpacePoint()->getHash()] = $event->getOriginDimensionSpacePoint();
                         break;
                     case Event\NodeSpecializationWasCreated::class:
                         /** @var Event\NodeSpecializationWasCreated $event */
@@ -309,7 +309,7 @@ final class NodeAggregate
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
                         /** @var NodeAggregateWithNodeWasCreated $event */
-                        $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getDimensionSpacePoint()->equals($dimensionSpacePoint);
+                        $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getOriginDimensionSpacePoint()->equals($dimensionSpacePoint);
                         break;
                     case Event\NodeSpecializationWasCreated::class:
                         /** @var Event\NodeSpecializationWasCreated $event */

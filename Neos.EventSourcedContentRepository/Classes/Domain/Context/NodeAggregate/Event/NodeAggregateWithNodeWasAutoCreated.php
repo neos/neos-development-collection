@@ -97,7 +97,7 @@ final class NodeAggregateWithNodeWasAutoCreated implements EventInterface, Copya
      * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $nodeName
-     * @param PropertyValues $propertyDefaultValues
+     * @param PropertyValues $initialPropertyValues
      * @param NodeAggregateIdentifier $succeedingNodeAggregateIdentifier
      */
     public function __construct(
@@ -108,7 +108,7 @@ final class NodeAggregateWithNodeWasAutoCreated implements EventInterface, Copya
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $nodeName,
-        PropertyValues $propertyDefaultValues,
+        PropertyValues $initialPropertyValues,
         NodeAggregateIdentifier $succeedingNodeAggregateIdentifier = null
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -118,7 +118,7 @@ final class NodeAggregateWithNodeWasAutoCreated implements EventInterface, Copya
         $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
         $this->parentNodeAggregateIdentifier = $parentNodeAggregateIdentifier;
         $this->nodeName = $nodeName;
-        $this->initialPropertyValues = $propertyDefaultValues;
+        $this->initialPropertyValues = $initialPropertyValues;
         $this->succeedingNodeAggregateIdentifier = $succeedingNodeAggregateIdentifier;
     }
 

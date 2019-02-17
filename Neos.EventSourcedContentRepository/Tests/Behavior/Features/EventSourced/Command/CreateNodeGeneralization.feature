@@ -14,34 +14,35 @@ Feature: Create node generalization
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository:Document': []
     """
-    And the command "CreateRootNode" is executed with payload:
-      | Key                      | Value                                | Type |
-      | contentStreamIdentifier  | cs-identifier                        | Uuid |
-      | nodeIdentifier           | rn-identifier                        | Uuid |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
-      | nodeTypeName             | Neos.ContentRepository:Root          |      |
+    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                                                                                                                              | Type                    |
+      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | ContentStreamIdentifier |
+      | nodeAggregateIdentifier       | sir-david-nodenborough                                                                                                                             | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Root                                                                                                                        | NodeTypeName            |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet  |
+      | initiatingUserIdentifier      | 00000000-0000-0000-0000-000000000000                                                                                                               | UserIdentifier          |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                               | Type                    |
       | contentStreamIdentifier       | cs-identifier                       | Uuid                    |
       | nodeAggregateIdentifier       | doc-agg-identifier                  | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document     |                         |
       | dimensionSpacePoint           | {"market":"CH", "language":"gsw"}   | DimensionSpacePoint     |
-      | visibleInDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints | [{"market":"CH", "language":"gsw"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | doc-identifier-ch-gsw               | Uuid                    |
       | parentNodeIdentifier          | rn-identifier                       | Uuid                    |
       | nodeName                      | document                            |                         |
       | propertyDefaultValuesAndTypes | {}                                  | json                    |
     # We also want to add a child node to make sure it is still reachable after creating a generalization of the parent
     # Node /document/child-document
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                               | Type                    |
       | contentStreamIdentifier       | cs-identifier                       | Uuid                    |
       | nodeAggregateIdentifier       | cdoc-agg-identifier                 | NodeAggregateIdentifier |
       | nodeTypeName                  | Neos.ContentRepository:Document     |                         |
       | dimensionSpacePoint           | {"market":"CH", "language":"gsw"}   | DimensionSpacePoint     |
-      | visibleInDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}] | DimensionSpacePointSet  |
+      | visibleInDimensionSpacePoints | [{"market":"CH", "language":"gsw"}] | DimensionSpacePointSet  |
       | nodeIdentifier                | cdoc-identifier-ch-gsw              | Uuid                    |
       | parentNodeIdentifier          | doc-identifier-ch-gsw               | Uuid                    |
       | nodeName                      | child-document                      |                         |

@@ -5,12 +5,14 @@ Feature: Reading of our Graph Projection
     Given I have the following content dimensions:
       | Identifier | Default | Values          | Generalizations      |
       | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
-    And the command "CreateRootNode" is executed with payload:
-      | Key                      | Value                                |
-      | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d |
-      | nodeIdentifier           | 5387cb08-2aaf-44dc-a8a1-483497aa0a03 |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |
-      | nodeTypeName             | Neos.ContentRepository:Root          |
+
+    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                                                             | Type                    |
+      | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                              | ContentStreamIdentifier |
+      | nodeAggregateIdentifier       | sir-david-nodenborough                                                            | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Root                                                       | NodeTypeName            |
+      | visibleInDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "ch"}] | DimensionSpacePointSet  |
+      | initiatingUserIdentifier      | 00000000-0000-0000-0000-000000000000                                              | UserIdentifier          |
 
   Scenario: Property Changes with two dimensions
 

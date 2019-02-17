@@ -23,7 +23,7 @@ Feature: Node References without Dimensions
           type: references
     """
 
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     | Type                   |
       | contentStreamIdentifier       | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier       | source-nodeAgg-identifier                 | Uuid                   |
@@ -32,7 +32,7 @@ Feature: Node References without Dimensions
       | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
       | nodeName                      | source                                    |                        |
 
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     | Type                   |
       | contentStreamIdentifier     | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier     | dest-1-nodeAgg-identifier                 | Uuid                   |
@@ -43,7 +43,7 @@ Feature: Node References without Dimensions
       | nodeName                    | dest-1                                    |                        |
 
 
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     | Type                   |
       | contentStreamIdentifier     | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier     | dest-2-nodeAgg-identifier                 | Uuid                   |
@@ -53,7 +53,7 @@ Feature: Node References without Dimensions
       | parentNodeIdentifier        | rn-identifier                             | Uuid                   |
       | nodeName                    | dest-2                                    |                        |
 
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     | Type                   |
       | contentStreamIdentifier     | cs-identifier                             | Uuid                   |
       | nodeAggregateIdentifier     | dest-3-nodeAgg-identifier                 | Uuid                   |

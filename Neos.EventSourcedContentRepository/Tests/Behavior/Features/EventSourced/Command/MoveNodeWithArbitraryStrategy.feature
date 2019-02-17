@@ -173,7 +173,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move a node to a parent whose parent's node type does not allow grand child nodes of the node's type
-    Given the Event NodeAggregateWithNodeWasCreated was published with payload:
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              | Type                   |
       | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
       | nodeAggregateIdentifier       | doc-agg-identifier                                                                                                                                 | Uuid                   |
@@ -184,7 +184,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | parentNodeIdentifier          | rn-identifier                                                                                                                                      | Uuid                   |
       | nodeName                      | document                                                                                                                                           |                        |
       | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              | Type                   |
       | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
       | nodeAggregateIdentifier       | autoc-agg-identifier                                                                                                                               | Uuid                   |
@@ -195,7 +195,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | parentNodeIdentifier          | doc-identifier                                                                                                                                     | Uuid                   |
       | nodeName                      | autocreated                                                                                                                                        |                        |
       | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              | Type                   |
       | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
       | nodeAggregateIdentifier       | c-agg-identifier                                                                                                                                   | Uuid                   |
@@ -217,7 +217,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move existing node to a non-existing succeeding sibling
-    Given the Event NodeAggregateWithNodeWasCreated was published with payload:
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              | Type                   |
       | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
       | nodeAggregateIdentifier       | na-identifier                                                                                                                                      | Uuid                   |
@@ -239,7 +239,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "NodeAggregateNotFound"
 
   Scenario: Try to move an autogenerated child node to a new parent
-    Given the Event NodeAggregateWithNodeWasCreated was published with payload:
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              | Type                   |
       | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
       | nodeAggregateIdentifier       | odoc-agg-identifier                                                                                                                                | Uuid                   |
@@ -250,7 +250,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | parentNodeIdentifier          | rn-identifier                                                                                                                                      | Uuid                   |
       | nodeName                      | other-document                                                                                                                                     |                        |
       | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
-    Given the Event NodeAggregateWithNodeWasCreated was published with payload:
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              | Type                   |
       | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
       | nodeAggregateIdentifier       | doc-agg-identifier                                                                                                                                 | Uuid                   |
@@ -261,7 +261,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | parentNodeIdentifier          | rn-identifier                                                                                                                                      | Uuid                   |
       | nodeName                      | document                                                                                                                                           |                        |
       | propertyDefaultValuesAndTypes | {}                                                                                                                                                 | json                   |
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              | Type                   |
       | contentStreamIdentifier       | cs-identifier                                                                                                                                      | Uuid                   |
       | nodeAggregateIdentifier       | autoc-agg-identifier                                                                                                                               | Uuid                   |

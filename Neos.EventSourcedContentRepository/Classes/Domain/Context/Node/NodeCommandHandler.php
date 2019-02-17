@@ -30,7 +30,7 @@ use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ChangeNodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
@@ -40,7 +40,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeRefere
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeMoveMapping;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
@@ -53,6 +53,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Exception;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
@@ -102,24 +103,6 @@ final class NodeCommandHandler
     protected $eventStoreManager;
 
     /**
-     * @param CreateNodeAggregateWithNode $command
-     */
-    public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): void
-    {
-        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
-            $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
-
-            $events = $this->nodeAggregateWithNodeWasCreatedFromCommand($command);
-
-            /** @var NodeAggregateWithNodeWasCreated $event */
-            foreach ($events as $event) {
-                // TODO Use a node aggregate aggregate and let that one publish the events
-                $this->nodeEventPublisher->publish($contentStreamStreamName . ':NodeAggregate:' . $event->getNodeAggregateIdentifier(), $event, ExpectedVersion::NO_STREAM);
-            }
-        });
-    }
-
-    /**
      * Create events for adding a node aggregate with node, including all auto-created child node aggregates with nodes (recursively)
      *
      * @param CreateNodeAggregateWithNode $command
@@ -128,19 +111,24 @@ final class NodeCommandHandler
      * @throws Exception
      * @throws NodeNotFoundException
      */
+    /*
     private function nodeAggregateWithNodeWasCreatedFromCommand(CreateNodeAggregateWithNode $command, bool $checkParent = true): array
     {
         $nodeType = $this->getNodeType($command->getNodeTypeName());
 
         $propertyDefaultValuesAndTypes = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-            $propertyDefaultValuesAndTypes[$propertyName] = new PropertyValue($propertyValue,
-                $nodeType->getPropertyType($propertyName));
+            $propertyDefaultValuesAndTypes[$propertyName] = new PropertyValue(
+                $propertyValue,
+                $nodeType->getPropertyType($propertyName)
+            );
         }
+        $defaultPropertyValues = new PropertyValues($propertyDefaultValuesAndTypes);
+        $initialPropertyValues = $defaultPropertyValues->merge($command->getInitialPropertyValues());
 
         $events = [];
 
-        $dimensionSpacePoint = $command->getDimensionSpacePoint();
+        $dimensionSpacePoint = $command->getOriginDimensionSpacePoint();
         $contentStreamIdentifier = $command->getContentStreamIdentifier();
         $parentNodeIdentifier = $command->getParentNodeAggregateIdentifier();
         $nodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
@@ -194,7 +182,7 @@ final class NodeCommandHandler
         }
 
         return $events;
-    }
+    }*/
 
     /**
      * @param AddNodeToAggregate $command

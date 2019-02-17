@@ -101,7 +101,6 @@ class NodeRecord
     {
         $databaseConnection->update('neos_contentgraph_node', [
             'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
-            'nodeidentifier' => (string) $this->nodeIdentifier,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),

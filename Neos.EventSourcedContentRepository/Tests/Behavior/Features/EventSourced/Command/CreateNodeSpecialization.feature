@@ -14,16 +14,17 @@ Feature: Create node specialization
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository:Document': []
     """
-    And the command "CreateRootNode" is executed with payload:
-      | Key                      | Value                                | Type |
-      | contentStreamIdentifier  | cs-identifier                        | Uuid |
-      | nodeIdentifier           | rn-identifier                        | Uuid |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
-      | nodeTypeName             | Neos.ContentRepository:Root          |      |
+    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                                                                                                                              | Type                    |
+      | contentStreamIdentifier       | cs-identifier                                                                                                                                      | ContentStreamIdentifier |
+      | nodeAggregateIdentifier       | sir-david-nodenborough                                                                                                                             | NodeAggregateIdentifier |
+      | nodeTypeName                  | Neos.ContentRepository:Root                                                                                                                        | NodeTypeName            |
+      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] | DimensionSpacePointSet  |
+      | initiatingUserIdentifier      | 00000000-0000-0000-0000-000000000000                                                                                                               | UserIdentifier          |
 
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                      | Type                    |
       | contentStreamIdentifier       | cs-identifier                                                                                                                              | Uuid                    |
       | nodeAggregateIdentifier       | doc-agg-identifier                                                                                                                         | NodeAggregateIdentifier |
@@ -36,7 +37,7 @@ Feature: Create node specialization
       | propertyDefaultValuesAndTypes | {}                                                                                                                                         | json                    |
     # We also want to add a child node to make sure it is still reachable after specializing the parent
     # Node /document/child-document
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                      | Type                    |
       | contentStreamIdentifier       | cs-identifier                                                                                                                              | Uuid                    |
       | nodeAggregateIdentifier       | cdoc-agg-identifier                                                                                                                        | NodeAggregateIdentifier |
@@ -59,7 +60,7 @@ Feature: Create node specialization
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to create a node specialization from a non-occupied dimension space point
-    Given the Event NodeAggregateWithNodeWasCreated was published with payload:
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                              | Type                    |
       | contentStreamIdentifier       | cs-identifier                      | Uuid                    |
       | nodeAggregateIdentifier       | otherdoc-agg-identifier            | NodeAggregateIdentifier |
@@ -119,7 +120,7 @@ Feature: Create node specialization
     Then the last command should have thrown an exception of type "DimensionSpacePointIsNoSpecialization"
 
   Scenario: Try to create a node specialization in a dimension space point the parent node's aggregate is not visible in
-    Given the Event NodeAggregateWithNodeWasCreated was published with payload:
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                   | Type                    |
       | contentStreamIdentifier       | cs-identifier                                                                                           | Uuid                    |
       | nodeAggregateIdentifier       | doc2-agg-identifier                                                                                     | NodeAggregateIdentifier |
@@ -130,7 +131,7 @@ Feature: Create node specialization
       | parentNodeIdentifier          | rn-identifier                                                                                           | Uuid                    |
       | nodeName                      | document2                                                                                               |                         |
       | propertyDefaultValuesAndTypes | {}                                                                                                                                                                 | json                    |
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                   | Type                    |
       | contentStreamIdentifier       | cs-identifier                                                                                           | Uuid                    |
       | nodeAggregateIdentifier       | cdoc2-agg-identifier                                                                                    | NodeAggregateIdentifier |

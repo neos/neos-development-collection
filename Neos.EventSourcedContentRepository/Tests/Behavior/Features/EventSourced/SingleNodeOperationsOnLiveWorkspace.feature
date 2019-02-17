@@ -17,7 +17,7 @@ Feature: Single Node operations on live workspace
         text:
           type: string
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                     | Value                                  | Type |
       | contentStreamIdentifier | cs-identifier                          | Uuid |
       | nodeAggregateIdentifier | na-identifier                          | Uuid |
