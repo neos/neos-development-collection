@@ -1,0 +1,25 @@
+# Renders an <a> tag based on Neos.Neos:NodeUri pointing to a node
+#
+prototype(Neos.Neos:NodeLink) < prototype(Neos.Fusion:Tag) {
+  node = 'pass-the-node'
+  additionalParams = Neos.Fusion:RawArray
+  arguments = Neos.Fusion:RawArray
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
+
+  @context.node = ${this.node}
+  @context.additionalParams = ${this.additionalParams}
+  @context.arguments = ${this.arguments}
+  @context.argumentsToBeExcludedFromQueryString = ${this.argumentsToBeExcludedFromQueryString}
+
+  tagName = 'a'
+  attributes {
+    href = Neos.Neos:NodeUri {
+      node = ${node}
+      additionalParams = ${additionalParams}
+      arguments = ${arguments}
+      argumentsToBeExcludedFromQueryString = ${argumentsToBeExcludedFromQueryString}
+    }
+  }
+
+  content = ''
+}
