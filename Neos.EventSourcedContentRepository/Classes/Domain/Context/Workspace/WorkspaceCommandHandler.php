@@ -150,6 +150,7 @@ final class WorkspaceCommandHandler
      * @param CreateRootWorkspace $command
      * @return CommandResult
      * @throws WorkspaceAlreadyExists
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamAlreadyExists
      */
     public function handleCreateRootWorkspace(CreateRootWorkspace $command): CommandResult
     {
@@ -214,7 +215,6 @@ final class WorkspaceCommandHandler
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $workspace->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513924882);
         }
-
         $commandResult = $this->publishContentStream($workspace->getCurrentContentStreamIdentifier(), $baseWorkspace->getCurrentContentStreamIdentifier());
 
         // After publishing a workspace, we need to again fork from Base.
@@ -238,14 +238,15 @@ final class WorkspaceCommandHandler
                 $newContentStream
             )
         );
+        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         $eventStore->commit($streamName, $events);
-
         $commandResult = $commandResult->merge(CommandResult::fromPublishedEvents($events));
         return $commandResult;
     }
 
     private function publishContentStream(ContentStreamIdentifier $contentStreamIdentifier, ContentStreamIdentifier $baseContentStreamIdentifier): CommandResult
     {
+
         $contentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
         $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($baseContentStreamIdentifier);
 
@@ -253,6 +254,7 @@ final class WorkspaceCommandHandler
         // - copy all events from the "user" content stream which implement "CopyableAcrossContentStreamsInterface"
         // - extract the initial ContentStreamWasForked event, to read the version of the source content stream when the fork occurred
         // - ensure that no other changes have been done in the meantime in the base content stream
+
 
 
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($contentStreamName);
@@ -370,9 +372,9 @@ final class WorkspaceCommandHandler
      */
     private function extractCommandsFromContentStreamMetadata(ContentStreamEventStreamName $workspaceContentStreamName): array
     {
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName->getEventStreamName());
 
-        $workspaceContentStream = $eventStore->load($workspaceContentStreamName);
+        $workspaceContentStream = $eventStore->load($workspaceContentStreamName->getEventStreamName());
 
         $commands = [];
         foreach ($workspaceContentStream as $eventAndRawEvent) {
@@ -460,9 +462,6 @@ final class WorkspaceCommandHandler
             } else {
                 $remainingCommands[] = $originalCommand;
             }
-            // TODO hack!
-            $this->eventBus->flush();
-            // TODO sleep here??
         }
 
         // 2) fork a new contentStream, based on the base WS, and apply MATCHING
@@ -473,9 +472,14 @@ final class WorkspaceCommandHandler
                 $baseWorkspace->getCurrentContentStreamIdentifier()
             )
         );
+
+        $this->eventBus->flush();
+        sleep(1);
+
         foreach ($matchingCommands as $matchingCommand) {
             /* @var $matchingCommand \Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface */
             $this->applyCommand($matchingCommand->createCopyForContentStream($matchingContentStream));
+
         }
 
         // 3) fork a new contentStream, based on the matching content stream, and apply REST
@@ -486,9 +490,18 @@ final class WorkspaceCommandHandler
                 $matchingContentStream
             )
         );
+        // TODO hack!
+        $this->eventBus->flush();
+        sleep(1);
+        // TODO sleep here??
+
         foreach ($remainingCommands as $remainingCommand) {
             /* @var $remainingCommand \Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface */
             $this->applyCommand($remainingCommand->createCopyForContentStream($remainingContentStream));
+            // TODO hack!
+            $this->eventBus->flush();
+            sleep(1);
+            // TODO sleep here??
         }
 
         // 4) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
