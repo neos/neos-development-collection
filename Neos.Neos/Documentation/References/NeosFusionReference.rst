@@ -1023,6 +1023,28 @@ Example::
 		node = ${q(node).parent().get(0)}
 	}
 
+
+.. _Neos_Neos__NodeLink:
+
+Neos.Neos:NodeLink
+-----------------
+
+Renders an anchor tag pointing to the node given via the argument. Based on :ref:`Neos_Neos__NodeUri`.
+The link text is the node label, unless overridden.
+
+:\*: All :ref:`Neos_Neos__NodeUri` properties
+:attributes: (:ref:`Neos_Fusion__Attributes`) Link tag attributes
+:content: (string) The label of the link, defaults to ``node.label``.
+
+Example::
+
+	nodeLink = Neos.Neos:NodeLink {
+		node = ${q(node).parent().get(0)}
+	}
+
+.. note::
+   By default no ``title`` is generated. By setting ``attributes.title = ${node.label}`` the label is rendered as title.
+
 .. _Neos_Neos__ImageUri:
 
 Neos.Neos:ImageUri
