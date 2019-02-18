@@ -19,6 +19,7 @@ include: Prototypes/ContentElementWrapping.fusion
 include: Prototypes/ContentElementEditable.fusion
 include: Prototypes/NodeUri.fusion
 include: Prototypes/ImageUri.fusion
+include: Prototypes/NodeLink.fusion
 include: Prototypes/FallbackNode.fusion
 
 # The root matcher used to start rendering in Neos
