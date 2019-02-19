@@ -13,8 +13,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralization;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeConstraintException;
@@ -175,7 +173,6 @@ final class NodeAggregateCommandHandler
      * @throws DimensionSpacePointIsAlreadyOccupied
      * @throws DimensionSpacePointIsNotYetOccupied
      * @throws DimensionSpacePointNotFound
-     * @throws DimensionSpacePointIsNoSpecialization
      * @throws ParentsNodeAggregateNotVisibleInDimensionSpacePoint
      */
     public function handleCreateNodeSpecialization(Command\CreateNodeSpecialization $command): void
@@ -212,7 +209,6 @@ final class NodeAggregateCommandHandler
     /**
      * @param Command\CreateNodeGeneralization $command
      * @throws DimensionSpacePointNotFound
-     * @throws DimensionSpacePointIsNoGeneralization
      * @throws DimensionSpacePointIsAlreadyOccupied
      * @throws DimensionSpacePointIsNotYetOccupied
      */
@@ -254,7 +250,6 @@ final class NodeAggregateCommandHandler
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePoint $generalization
-     * @throws DimensionSpacePointIsNoGeneralizationException
      */
     protected function requireDimensionSpacePointToBeSpecialization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $generalization)
     {
@@ -266,7 +261,6 @@ final class NodeAggregateCommandHandler
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePoint $specialization
-     * @throws DimensionSpacePointIsNoGeneralizationException
      */
     protected function requireDimensionSpacePointToBeGeneralization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $specialization)
     {

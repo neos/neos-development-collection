@@ -33,6 +33,9 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\EventSourcing\EventListener\ActsAfterInvokingEventListenerMethodsInterface;
+use Neos\EventSourcing\EventStore\RawEvent;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -41,7 +44,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class GraphProjector implements ProjectorInterface
+class GraphProjector implements ProjectorInterface, ActsAfterInvokingEventListenerMethodsInterface
 {
     const RELATION_DEFAULT_OFFSET = 128;
 
@@ -66,8 +69,14 @@ class GraphProjector implements ProjectorInterface
     public function hasProcessed(NodeCommandResult $commandResult): bool
     {
         foreach ($commandResult->getPublishedEvents() as $event) {
-
+            if (!$event instanceof DomainEventWithIdentifierInterface) {
+                throw new \RuntimeException(sprintf('The CommandResult contains an event "%s" that does not implement the %s interface', get_class($event), DomainEventWithIdentifierInterface::class), 1550314769);
+            }
+            if (!$this->processedEventsCache->has(md5($event->getIdentifier()))) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
@@ -87,6 +96,7 @@ class GraphProjector implements ProjectorInterface
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
         });
+        $this->processedEventsCache->flush();
     }
 
     /**
@@ -1059,5 +1069,10 @@ insert into neos_contentgraph_restrictionedge
     protected function getDatabaseConnection(): Connection
     {
         return $this->client->getConnection();
+    }
+
+    public function afterInvokingEventListenerMethod(DomainEventInterface $event, RawEvent $rawEvent): void
+    {
+        $this->processedEventsCache->set(md5($rawEvent->getIdentifier()), true);
     }
 }
