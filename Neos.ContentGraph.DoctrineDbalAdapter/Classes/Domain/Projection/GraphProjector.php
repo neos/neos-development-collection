@@ -34,7 +34,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\Event\DomainEventInterface;
-use Neos\EventSourcing\EventListener\ActsAfterInvokingEventListenerMethodsInterface;
+use Neos\EventSourcing\EventListener\AfterInvokeInterface;
+use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\RawEvent;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
@@ -44,7 +45,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class GraphProjector implements ProjectorInterface, ActsAfterInvokingEventListenerMethodsInterface
+class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 {
     const RELATION_DEFAULT_OFFSET = 128;
 
@@ -1071,8 +1072,8 @@ insert into neos_contentgraph_restrictionedge
         return $this->client->getConnection();
     }
 
-    public function afterInvokingEventListenerMethod(DomainEventInterface $event, RawEvent $rawEvent): void
+    public function afterInvoke(EventEnvelope $eventEnvelope): void
     {
-        $this->processedEventsCache->set(md5($rawEvent->getIdentifier()), true);
+        $this->processedEventsCache->set(md5($eventEnvelope->getRawEvent()->getIdentifier()), true);
     }
 }
