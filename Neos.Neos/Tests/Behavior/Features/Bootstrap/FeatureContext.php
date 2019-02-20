@@ -10,13 +10,13 @@
  * source code.
  */
 
-use Behat\Behat\Context\Step\Then;
-use Behat\Behat\Exception\PendingException;
+use Behat\Behat\Definition\Call\Then;
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\ElementInterface;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkContext;
-use Neos\Behat\Tests\Behat\FlowContext;
+use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
@@ -41,7 +41,7 @@ use Neos\Utility\Files;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert as Assert;
 
-require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContext.php');
+require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
@@ -53,6 +53,7 @@ require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
  */
 class FeatureContext extends MinkContext
 {
+    use FlowContextTrait;
     use NodeOperationsTrait;
     use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
@@ -80,25 +81,20 @@ class FeatureContext extends MinkContext
     protected $lastExportedSiteXmlPathAndFilename = '';
 
     /**
-     * Initializes the context
-     *
-     * @param array $parameters Context parameters (configured through behat.yml)
+     * @var Environment
      */
-    public function __construct(array $parameters)
+    protected $environment;
+
+    public function __construct()
     {
-        $this->useContext('flow', new FlowContext($parameters));
-        $this->objectManager = $this->getSubcontext('flow')->getObjectManager();
+        if (self::$bootstrap === null) {
+            self::$bootstrap = $this->initializeFlow();
+        }
+        $this->objectManager = self::$bootstrap->getObjectManager();
         $this->environment = $this->objectManager->get(Environment::class);
+
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->setupSecurity();
-    }
-
-    /**
-     * @return ObjectManagerInterface
-     */
-    protected function getObjectManager()
-    {
-        return $this->objectManager;
     }
 
     /**
@@ -144,7 +140,7 @@ class FeatureContext extends MinkContext
             }, Arrays::trimExplode(',', $row['roles']));
             $userService->createUser($row['username'], $row['password'], $row['firstname'], $row['lastname'], $roleIdentifiers);
         }
-        $this->getSubcontext('flow')->persistAll();
+        $this->persistAll();
     }
 
     /**
@@ -152,7 +148,7 @@ class FeatureContext extends MinkContext
      */
     public function iAmAuthenticatedWithAndForTheBackend($username, $password)
     {
-        $this->visit('/neos/login');
+        $this->visit('/');
         $this->fillField('Username', $username);
         $this->fillField('Password', $password);
         $this->pressButton('Login');
@@ -260,9 +256,8 @@ class FeatureContext extends MinkContext
 
         /** @var SiteImportService $siteImportService */
         $siteImportService = $this->objectManager->get(SiteImportService::class);
-        $siteImportService->importFromPackage($packageKey, $contentContext);
-
-        $this->getSubcontext('flow')->persistAll();
+        $siteImportService->importFromPackage($packageKey);
+        $this->persistAll();
     }
 
     /**
@@ -449,7 +444,7 @@ class FeatureContext extends MinkContext
      */
     public function locatePath($path)
     {
-        return parent::locatePath($this->getSubcontext('flow')->resolvePath($path));
+        return parent::locatePath($this->resolvePath($path));
     }
 
     /**
@@ -481,7 +476,7 @@ class FeatureContext extends MinkContext
         $siteRepository = $this->objectManager->get(SiteRepository::class);
         $siteRepository->add($site);
 
-        $this->getSubContext('flow')->persistAll();
+        $this->persistAll();
     }
 
     /**
@@ -510,7 +505,7 @@ class FeatureContext extends MinkContext
         $siteService = $this->objectManager->get(SiteService::class);
         $siteService->pruneAll();
 
-        $this->getSubContext('flow')->persistAll();
+        $this->persistAll();
     }
 
     /**
@@ -520,7 +515,7 @@ class FeatureContext extends MinkContext
     {
         // Persist any pending entity insertions (caused by lazy creation of live Workspace)
         // This is a workaround which should be solved by properly isolating all read-only steps
-        $this->getSubContext('flow')->persistAll();
+        $this->persistAll();
         $this->resetNodeInstances();
 
         /** @var SiteImportService $siteImportService */
