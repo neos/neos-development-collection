@@ -1,18 +1,52 @@
-# editorconfig.org
+# For more information about the properties used in
+# this file, please see the EditorConfig documentation:
+# http://editorconfig.org/
+
+# top-most EditorConfig file
 root = true
 
+# Default
 [*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing-whitespace = true
+indent_style = space
+indent_size = 4
+
+# 2-space files
+[{*.{yaml,yml,sh,jscsrc},package.json,.*rc}]
 indent_style = space
 indent_size = 2
-end_of_line = lf
-charset = utf-8
-trim_trailing_whitespace = true
-insert_final_newline = true
 
 # PHP should follow the PSR-2 standard
-[*.php]
+[*.{json,php}]
+indent_style = space
+indent_size = 4
+
+# Fusion uses 4 spaces
+[*.fusion]
+indent_style = space
 indent_size = 4
 
 # JS should use tabs, to reduce conflicts
 [*.js]
 indent_style = tab
+
+# JSON can have longer lines
+[*.{json}]
+max_line_length = 1000
+
+[Sites.xml]
+indent_size = 1
+max_line_length = 1000
+
+[*.{note,md,edit,read}]
+indent_size = 2
+trim_trailing-whitespace = false
+
+[Makefile]
+indent_style = tab
+
+[*.css.d.ts]
+indent_size = 2
