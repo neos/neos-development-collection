@@ -17,7 +17,6 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
-use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -88,10 +87,6 @@ class NodeController extends ActionController
 
         $inBackend = $node->getContext()->isInBackend();
 
-        if ($node->getNodeType()->isOfType('Neos.Neos:Shortcut') && !$inBackend) {
-            $this->handleShortcutNode($node);
-        }
-
         $this->view->assign('value', $node);
 
         if ($inBackend) {
@@ -132,29 +127,6 @@ class NodeController extends ActionController
 
         if (($fusionPath = $this->request->getInternalArgument('__fusionPath')) !== null) {
             $this->view->setFusionPath($fusionPath);
-        }
-    }
-
-    /**
-     * Handles redirects to shortcut targets in live rendering.
-     *
-     * @param NodeInterface $node
-     * @return void
-     * @throws NodeNotFoundException|UnresolvableShortcutException
-     */
-    protected function handleShortcutNode(NodeInterface $node)
-    {
-        $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node);
-        if ($resolvedNode === null) {
-            throw new NodeNotFoundException(sprintf('The shortcut node target of node "%s" could not be resolved', $node->getPath()), 1430218730);
-        } elseif (is_string($resolvedNode)) {
-            $this->redirectToUri($resolvedNode);
-        } elseif ($resolvedNode instanceof NodeInterface && $resolvedNode === $node) {
-            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1502793585);
-        } elseif ($resolvedNode instanceof NodeInterface) {
-            $this->redirect('show', null, null, ['node' => $resolvedNode]);
-        } else {
-            throw new UnresolvableShortcutException(sprintf('The shortcut node target of node "%s" resolves to an unsupported type "%s"', $node->getPath(), is_object($resolvedNode) ? get_class($resolvedNode) : gettype($resolvedNode)), 1430218738);
         }
     }
 }
