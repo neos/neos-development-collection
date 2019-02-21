@@ -28,7 +28,7 @@
 			<target xml:lang="nl" state="translated">Onderschrift</target></trans-unit>
       <trans-unit id="field.copyrightnotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target xml:lang="nl" state="needs-translation">Copyright Notice</target></trans-unit>
+			<target xml:lang="nl" state="translated">Copyright melding</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified</source>
 			<target xml:lang="nl" state="translated">Laatst bewerkt</target></trans-unit>
@@ -73,7 +73,7 @@
 			<target xml:lang="nl" state="translated">Weergeven</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target xml:lang="nl" state="needs-translation">View asset</target></trans-unit>
+			<target xml:lang="nl" state="translated">Bekijk materiaal</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="nl" state="translated">Bestand bewerken</target><alt-trans><target xml:lang="nl">Asset bewerken</target></alt-trans></trans-unit>
@@ -187,10 +187,10 @@
 			<target xml:lang="nl" state="translated">Verbindingsfout</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target xml:lang="nl" state="needs-translation">Media source</target></trans-unit>
+			<target xml:lang="nl" state="translated">Media bron</target><alt-trans><target xml:lang="nl">Mediabron</target></alt-trans></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target xml:lang="nl" state="needs-translation">Media sources</target></trans-unit>
+			<target xml:lang="nl" state="translated">Media bronnen</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target xml:lang="nl" state="translated">Collecties</target></trans-unit>
@@ -298,7 +298,7 @@
 			<target xml:lang="nl" state="translated">Onderschrift</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target xml:lang="nl" state="needs-translation">Copyright Notice</target></trans-unit>
+			<target xml:lang="nl" state="translated">Copyright melding</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target xml:lang="nl" state="translated">Voorbeeld</target></trans-unit>

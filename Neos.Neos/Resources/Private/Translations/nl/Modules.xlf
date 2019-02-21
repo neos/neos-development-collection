@@ -553,7 +553,7 @@
 			<target xml:lang="nl" state="needs-translation">Root node name</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="nl" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="nl" state="translated">Domeinen</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve">
 				<source>Site</source>
 			<target xml:lang="nl" state="translated">Site</target></trans-unit>
