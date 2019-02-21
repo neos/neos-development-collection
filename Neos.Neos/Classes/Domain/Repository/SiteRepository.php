@@ -12,6 +12,7 @@ namespace Neos\Neos\Domain\Repository;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Neos\Domain\Model\Site;
@@ -25,6 +26,13 @@ use Neos\Neos\Domain\Exception as NeosException;
  */
 class SiteRepository extends Repository
 {
+    /**
+     * @var array
+     */
+    protected $defaultOrderings = [
+        'name' => QueryInterface::ORDER_ASCENDING,
+        'nodeName' => QueryInterface::ORDER_ASCENDING
+    ];
 
     /**
      * @Flow\InjectConfiguration(package="Neos.Neos", path="defaultSiteNodeName")
