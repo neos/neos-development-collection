@@ -1,6 +1,16 @@
 <?php
-namespace Neos\Neos\View;
+declare(strict_types=1);
 
+namespace Neos\Neos\View;
+/*
+ * This file is part of the Neos.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\View\ViewInterface;
@@ -139,7 +149,7 @@ class FusionExceptionView extends AbstractView implements ViewInterface
      * @param string $output
      * @return string The message body without the message head
      */
-    protected function extractBodyFromOutput($output)
+    protected function extractBodyFromOutput(string $output): string
     {
         if (substr($output, 0, 5) === 'HTTP/') {
             $endOfHeader = strpos($output, "\r\n\r\n");
@@ -155,7 +165,7 @@ class FusionExceptionView extends AbstractView implements ViewInterface
      * @param ControllerContext $controllerContext
      * @return \Neos\Fusion\Core\Runtime
      */
-    protected function getFusionRuntime(NodeInterface $currentSiteNode, $controllerContext)
+    protected function getFusionRuntime(NodeInterface $currentSiteNode, ControllerContext  $controllerContext): \Neos\Fusion\Core\Runtime
     {
         if ($this->fusionRuntime === null) {
             $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $controllerContext);

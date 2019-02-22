@@ -92,7 +92,7 @@ root {
 # The matcher recieves the context values `exception`, `renderingOptions`, `statusCode`,
 # `statusMessage` and `referenceCode`.
 #
-# By default a the existing template is rendered but by extending the matcher
+# By default the existing template is rendered but by extending the matcher
 # custom rendering can be implemented
 #
 error = Neos.Fusion:Case {
