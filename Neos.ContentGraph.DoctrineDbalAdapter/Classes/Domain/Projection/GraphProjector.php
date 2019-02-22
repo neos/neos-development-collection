@@ -33,10 +33,9 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
-use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\EventSourcing\Event\Decorator\DomainEventWithIdentifierInterface;
 use Neos\EventSourcing\EventListener\AfterInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\EventSourcing\EventStore\RawEvent;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
