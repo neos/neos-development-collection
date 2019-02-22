@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
+use Neos\EventSourcing\EventBus\EventBus;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\Package as BasePackage;
 
@@ -30,6 +31,6 @@ class Package extends BasePackage
     public function boot(Bootstrap $bootstrap)
     {
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
-        $dispatcher->connect(GraphProjector::class, 'projectionUpdated', ContentGraph::class, 'resetCache');
+        $dispatcher->connect(EventBus::class, 'publishDomainEvents', ContentGraph::class, 'disableCache');
     }
 }

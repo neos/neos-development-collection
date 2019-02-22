@@ -24,21 +24,42 @@ final class ParentNodeIdentifierByChildNodeIdentifierCache
     protected $parentNodeAggregateIdentifiers = [];
     protected $nodesWithoutParentNode = [];
 
+    /**
+     * @var bool
+     */
+    protected $isEnabled;
+
+    public function __construct(bool $isEnabled)
+    {
+        $this->isEnabled = $isEnabled;
+    }
+
     public function add(NodeAggregateIdentifier $childNodeAggregateIdentifier, NodeAggregateIdentifier $parentNodeAggregateIdentifier): void
     {
+        if ($this->isEnabled === false) {
+            return;
+        }
+
         $key = (string)$childNodeAggregateIdentifier;
         $this->parentNodeAggregateIdentifiers[$key] = $parentNodeAggregateIdentifier;
     }
 
     public function knowsAbout(NodeAggregateIdentifier $childNodeAggregateIdentifier): bool
     {
+        if ($this->isEnabled === false) {
+            return false;
+        }
+
         $key = (string)$childNodeAggregateIdentifier;
         return isset($this->parentNodeAggregateIdentifiers[$key])  || isset($this->nodesWithoutParentNode[$key]);
-        ;
     }
 
     public function rememberNonExistingParentNode(NodeAggregateIdentifier $nodeAggregateIdentifier): void
     {
+        if ($this->isEnabled === false) {
+            return;
+        }
+
         $key = (string)$nodeAggregateIdentifier;
         $this->nodesWithoutParentNode[$key] = true;
     }
@@ -46,6 +67,10 @@ final class ParentNodeIdentifierByChildNodeIdentifierCache
 
     public function get(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeAggregateIdentifier
     {
+        if ($this->isEnabled === false) {
+            return null;
+        }
+
         $key = (string)$childNodeAggregateIdentifier;
         return $this->parentNodeAggregateIdentifiers[$key] ?? null;
     }

@@ -147,7 +147,7 @@ trait EventSourcedTrait
      */
     public function beforeEventSourcedScenarioDispatcher()
     {
-        $this->contentGraphInterface->resetCache();
+        $this->contentGraphInterface->enableCache();
         $this->visibilityConstraints = VisibilityConstraints::frontend();
     }
 
@@ -838,9 +838,6 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheProperties($nodeIdentifier, TableNode $expectedProperties)
     {
-        // TODO the following line is required in order to avoid cached results from previous calls
-        $this->contentGraphInterface->resetCache();
-
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
@@ -852,8 +849,6 @@ trait EventSourcedTrait
      */
     public function iExpectTheCurrentNodeToHaveTheProperties(TableNode $expectedProperties)
     {
-        // TODO hack: $this->currentNode might be stale, so we need to re-fetch it
-        $this->contentGraphInterface->resetCache();
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());

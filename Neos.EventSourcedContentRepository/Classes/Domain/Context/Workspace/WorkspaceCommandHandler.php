@@ -256,7 +256,6 @@ final class WorkspaceCommandHandler
         // - ensure that no other changes have been done in the meantime in the base content stream
 
 
-
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($contentStreamName);
 
         /* @var $workspaceContentStream EventEnvelope[] */
@@ -352,18 +351,22 @@ final class WorkspaceCommandHandler
 
             // try to apply the command on the rebased content stream
             $commandToRebase = $originalCommand->createCopyForContentStream($rebasedContentStream);
-            $this->applyCommand($commandToRebase);
+            $this->applyCommand($commandToRebase)->blockUntilProjectionsAreUpToDate();
         }
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $event = new WorkspaceWasRebased(
-            $command->getWorkspaceName(),
-            $rebasedContentStream
+        $events = DomainEvents::withSingleEvent(
+            new WorkspaceWasRebased(
+                $command->getWorkspaceName(),
+                $rebasedContentStream
+            )
         );
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
+        $eventStore->commit($streamName, $events);
+
+        return CommandResult::fromPublishedEvents(events);
     }
 
     /**
@@ -392,37 +395,37 @@ final class WorkspaceCommandHandler
         return $commands;
     }
 
-    private function applyCommand($command)
+    private function applyCommand($command): CommandResult
     {
         // TODO: use a more clever dispatching mechanism than the hard coded switch!!
         // TODO: add all commands!!
         switch (get_class($command)) {
             case AddNodeToAggregate::class:
-                $this->nodeCommandHandler->handleAddNodeToAggregate($command);
+                return $this->nodeCommandHandler->handleAddNodeToAggregate($command);
                 break;
             case ChangeNodeName::class:
-                $this->nodeCommandHandler->handleChangeNodeName($command);
+                return $this->nodeCommandHandler->handleChangeNodeName($command);
                 break;
             case CreateNodeAggregateWithNode::class:
-                $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
+                return $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
                 break;
             case CreateRootNode::class:
-                $this->nodeCommandHandler->handleCreateRootNode($command);
+                return $this->nodeCommandHandler->handleCreateRootNode($command);
                 break;
             case MoveNode::class:
-                $this->nodeCommandHandler->handleMoveNode($command);
+                return $this->nodeCommandHandler->handleMoveNode($command);
                 break;
             case SetNodeProperty::class:
-                $this->nodeCommandHandler->handleSetNodeProperty($command);
+                return $this->nodeCommandHandler->handleSetNodeProperty($command);
                 break;
             case HideNode::class:
-                $this->nodeCommandHandler->handleHideNode($command);
+                return $this->nodeCommandHandler->handleHideNode($command);
                 break;
             case ShowNode::class:
-                $this->nodeCommandHandler->handleShowNode($command);
+                return $this->nodeCommandHandler->handleShowNode($command);
                 break;
             case TranslateNodeInAggregate::class:
-                $this->nodeCommandHandler->handleTranslateNodeInAggregate($command);
+                return $this->nodeCommandHandler->handleTranslateNodeInAggregate($command);
                 break;
             default:
                 throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($command)));
@@ -478,8 +481,7 @@ final class WorkspaceCommandHandler
 
         foreach ($matchingCommands as $matchingCommand) {
             /* @var $matchingCommand \Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface */
-            $this->applyCommand($matchingCommand->createCopyForContentStream($matchingContentStream));
-
+            $this->applyCommand($matchingCommand->createCopyForContentStream($matchingContentStream))->blockUntilProjectionsAreUpToDate();
         }
 
         // 3) fork a new contentStream, based on the matching content stream, and apply REST
@@ -489,23 +491,15 @@ final class WorkspaceCommandHandler
                 $remainingContentStream,
                 $matchingContentStream
             )
-        );
-        // TODO hack!
-        $this->eventBus->flush();
-        sleep(1);
-        // TODO sleep here??
+        )->blockUntilProjectionsAreUpToDate();
 
         foreach ($remainingCommands as $remainingCommand) {
             /* @var $remainingCommand \Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface */
-            $this->applyCommand($remainingCommand->createCopyForContentStream($remainingContentStream));
-            // TODO hack!
-            $this->eventBus->flush();
-            sleep(1);
-            // TODO sleep here??
+            $this->applyCommand($remainingCommand->createCopyForContentStream($remainingContentStream))->blockUntilProjectionsAreUpToDate();
         }
 
         // 4) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
-        $this->publishContentStream($matchingContentStream, $baseWorkspace->getCurrentContentStreamIdentifier());
+        $commandResult = $this->publishContentStream($matchingContentStream, $baseWorkspace->getCurrentContentStreamIdentifier());
 
         // 5) TODO Re-target base workspace
 
@@ -525,7 +519,7 @@ final class WorkspaceCommandHandler
         $eventStore->commit($streamName, $events);
 
         // It is safe to only return the last command result, as the commands which were rebased are already executed "synchronously"
-        return CommandResult::fromPublishedEvents($events);
+        return $commandResult->merge(CommandResult::fromPublishedEvents($events));
     }
 
     /**
