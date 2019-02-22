@@ -58,11 +58,11 @@ class ContentElementEditableService
     {
         /** @var $contentContext ContentContext */
         $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
-            return $content;
-        }
-
-        if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
+        if ($contentContext->getWorkspaceName() === 'live'
+            || !$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+            || !$this->nodeAuthorizationService->isGrantedToEditNode($node)
+            || !$this->nodeAuthorizationService->isGrantedToEditNodeProperty($node, $property)
+        ) {
             return $content;
         }
 
