@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace Neos\Neos\View;
+
 /*
  * This file is part of the Neos.Neos package.
  *
@@ -11,6 +12,7 @@ namespace Neos\Neos\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\View\ViewInterface;
@@ -33,6 +35,14 @@ use Neos\Flow\Mvc\Controller\Arguments;
 
 class FusionExceptionView extends AbstractView implements ViewInterface
 {
+
+    /**
+     * This contains the supported options, their default values, descriptions and types.
+     * @var array
+     */
+    protected $supportedOptions = [
+        'enableContentCache' => ['defaultValue', true, 'boolean'],
+    ];
 
     /**
      * @Flow\Inject
@@ -118,10 +128,10 @@ class FusionExceptionView extends AbstractView implements ViewInterface
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
 
         $dimensions = $currentSiteNode->getContext()->getDimensions();
-        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
+        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
             $currentLocale = new Locale($dimensions['language'][0]);
             $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            $this->i18nService->getConfiguration()->setFallbackRule(array('strict' => false, 'order' => array_reverse($dimensions['language'])));
+            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => false, 'order' => array_reverse($dimensions['language'])]);
         }
 
         $fusionRuntime->pushContextArray(array_merge(
