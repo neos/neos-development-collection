@@ -1,0 +1,41 @@
+prototype(Neos.Neos:MenuData) < prototype(Neos.Fusion:Component) {
+
+  node = null
+  itemCollection = null
+  startingPoint = ${node}
+  entryLevel = ${this.startingPoint ? 0 : 1}
+  maximumLevels = 2
+  renderHiddenInIndex = false
+  // currentLevel = ${q(this.node).parentsUntil(this.startingPoint).count()}
+
+  filter = Neos.Fusion:Loop {
+    items = ${this.filter}
+    itemRenderer = Neos.Fusion:Case {
+      negativeFilter {
+        condition = ${String.indexOf(item, '!') == 0}
+        renderer = ${'![instanceof ' + String.replace(item, '!', '') + ']'}
+      }
+
+      positiveFilter {
+        condition = ${true}
+        renderer = ${'[instanceof ' + item + ']'}
+      }
+    }
+    @glue = ','
+  }
+
+  items = ${this.itemCollection ? this.itemCollection : q(documentNode).children('[instanceof Neos.Neos:Document]')}
+  // items = ${this.itemCollection}
+
+  renderer = Neos.Fusion:Map {
+    items = ${props.items}
+    itemRenderer = Neos.Neos:MenuDataItem {
+      menuItemNode = ${item}
+      startingPoint = ${props.startingPoint}
+      currentLevel = ${props.entryLevel}
+      renderHiddenInIndex = ${props.renderHiddenInIndex}
+    }
+
+    @if.foo = ${props.currentLevel >= entryLevel}
+  }
+}

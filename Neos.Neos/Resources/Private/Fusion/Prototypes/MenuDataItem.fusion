@@ -1,0 +1,44 @@
+prototype(Neos.Neos:MenuDataItem) < prototype(Neos.Fusion:Component) {
+  currentDocumentNode = ${documentNode}
+  menuItemNode = ${this.menuItemNode}
+  rootline = ${q(this.currentDocumentNode).parents().get()}
+  entryLevel = 0
+
+  renderer = Neos.Fusion:DataStructure {
+    @if.renderHiddenOrVisible = ${!q(props.menuItemNode).property('_hiddenInIndex') || props.renderHiddenInIndex}
+
+    state = Neos.Fusion:Case {
+      current {
+        condition = ${props.menuItemNode == props.currentDocumentNode}
+        renderer = 'current'
+      }
+
+      absent {
+        condition = ${props.menuItemNode == null}
+        renderer = 'absent'
+      }
+
+      active {
+        condition = ${Array.indexOf(props.rootline, props.menuItemNode) != -1}
+        renderer = 'active'
+      }
+
+      normal {
+        condition = ${true}
+        renderer = 'normal'
+      }
+    }
+
+    node = ${props.menuItemNode}
+
+    label = ${q(props.menuItemNode).property('_label')}
+
+    subItems = Neos.Neos:MenuData {
+      @if.renderLevel = ${props.currentLevel < (props.entryLevel + props.maximumLevel)}
+      itemCollection = ${q(props.menuItemNode).children('[instanceof Neos.Neos:Document]').get()}
+      startingPoint = ${props.currentLevel + 1}
+    }
+
+    menuLevel = ${props.currentLevel}
+  }
+}
