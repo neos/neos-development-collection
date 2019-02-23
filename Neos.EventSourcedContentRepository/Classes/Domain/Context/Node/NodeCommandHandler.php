@@ -56,6 +56,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
@@ -63,6 +64,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Exception;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
+use Neos\EventSourcing\Event\Decorator\EventDecoratorUtilities;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
@@ -111,38 +113,10 @@ final class NodeCommandHandler
     protected $graphProjector;
 
     /**
-     * TODO document / rename?
-     *
-     * @param object $command
-     */
-    public function blockingHandle($command): void
-    {
-        try {
-            $commandName = (new \ReflectionClass($command))->getShortName();
-        } catch (\ReflectionException $exception) {
-            throw new \InvalidArgumentException('Could not reflect the given command object', 1550232158);
-        }
-        $handlerMethodName = 'handle' . $commandName;
-        if (!method_exists($this, $handlerMethodName)) {
-            throw new \InvalidArgumentException(sprintf('Handler method "%s" does not exist', $handlerMethodName), 1550232216);
-        }
-        $commandResult = $this->$handlerMethodName($command);
-
-        $attempts = 0;
-        // TODO refactor/cleanup
-        while (!$this->graphProjector->hasProcessed($commandResult)) {
-            usleep(50000); // 50000μs = 50ms
-            if (++$attempts > 10) {
-                throw new \RuntimeException('TIMEOUT!', 1550232279);
-            }
-        }
-    }
-
-    /**
      * @param CreateNodeAggregateWithNode $command
-     * @return NodeCommandResult
+     * @return CommandResult
      */
-    public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): NodeCommandResult
+    public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
     {
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
@@ -150,14 +124,15 @@ final class NodeCommandHandler
 
             $events = $this->nodeAggregateWithNodeWasCreatedFromCommand($command);
 
-            /** @var NodeAggregateWithNodeWasCreated $event */
             foreach ($events as $event) {
+                /** @var NodeAggregateWithNodeWasCreated $undecoratedEvent */
+                $undecoratedEvent = EventDecoratorUtilities::extractUndecoratedEvent($event);
                 // TODO Use a node aggregate aggregate and let that one publish the events
-                $streamName = StreamName::fromString($contentStreamStreamName . ':NodeAggregate:' . $event->getNodeAggregateIdentifier());
+                $streamName = StreamName::fromString($contentStreamStreamName . ':NodeAggregate:' . $undecoratedEvent->getNodeAggregateIdentifier());
                 $this->nodeEventPublisher->publish($streamName, $event, ExpectedVersion::NO_STREAM);
             }
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
@@ -241,9 +216,9 @@ final class NodeCommandHandler
 
     /**
      * @param AddNodeToAggregate $command
-     * @return NodeCommandResult
+     * @return CommandResult
      */
-    public function handleAddNodeToAggregate(AddNodeToAggregate $command): NodeCommandResult
+    public function handleAddNodeToAggregate(AddNodeToAggregate $command): CommandResult
     {
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
@@ -251,13 +226,14 @@ final class NodeCommandHandler
 
             $events = $this->nodeWasAddedToAggregateFromCommand($command);
 
-            /** @var NodeAggregateWithNodeWasCreated $event */
             foreach ($events as $event) {
+                /** @var NodeAggregateWithNodeWasCreated $undecoratedEvent */
+                $undecoratedEvent = EventDecoratorUtilities::extractUndecoratedEvent($event);
                 // TODO Use a node aggregate aggregate and let that one publish the events
-                $this->nodeEventPublisher->publish(StreamName::fromString($contentStreamStreamName . ':NodeAggregate:' . $event->getNodeAggregateIdentifier()), $event);
+                $this->nodeEventPublisher->publish(StreamName::fromString($contentStreamStreamName . ':NodeAggregate:' . $undecoratedEvent->getNodeAggregateIdentifier()), $event);
             }
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
@@ -354,9 +330,9 @@ final class NodeCommandHandler
      * CreateRootNode
      *
      * @param CreateRootNode $command
-     * @return NodeCommandResult
+     * @return CommandResult
      */
-    public function handleCreateRootNode(CreateRootNode $command): NodeCommandResult
+    public function handleCreateRootNode(CreateRootNode $command): CommandResult
     {
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
@@ -381,14 +357,14 @@ final class NodeCommandHandler
                 $events
             );
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
      * @param SetNodeProperty $command
-     * @return NodeCommandResult
+     * @return CommandResult
      */
-    public function handleSetNodeProperty(SetNodeProperty $command): NodeCommandResult
+    public function handleSetNodeProperty(SetNodeProperty $command): CommandResult
     {
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
@@ -414,14 +390,14 @@ final class NodeCommandHandler
                 $events
             );
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
      * @param SetNodeReferences $command
-     * @return NodeCommandResult
+     * @return CommandResult
      */
-    public function handleSetNodeReferences(SetNodeReferences $command): NodeCommandResult
+    public function handleSetNodeReferences(SetNodeReferences $command): CommandResult
     {
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
@@ -452,14 +428,14 @@ final class NodeCommandHandler
                 $events
             );
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
      * @param HideNode $command
-     * @return NodeCommandResult
+     * @return CommandResult
      */
-    public function handleHideNode(HideNode $command): NodeCommandResult
+    public function handleHideNode(HideNode $command): CommandResult
     {
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
@@ -486,14 +462,14 @@ final class NodeCommandHandler
                 $events
             );
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
      * @param ShowNode $command
-     * @return NodeCommandResult
+     * @return CommandResult
      */
-    public function handleShowNode(ShowNode $command): NodeCommandResult
+    public function handleShowNode(ShowNode $command): CommandResult
     {
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
@@ -519,14 +495,14 @@ final class NodeCommandHandler
                 $events
             );
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
      * @param MoveNode $command
-     * @return NodeCommandResult
+     * @return CommandResult
      */
-    public function handleMoveNode(MoveNode $command): NodeCommandResult
+    public function handleMoveNode(MoveNode $command): CommandResult
     {
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
@@ -620,7 +596,7 @@ final class NodeCommandHandler
                 $events
             );
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
@@ -674,10 +650,10 @@ final class NodeCommandHandler
 
     /**
      * @param ChangeNodeName $command
-     * @return NodeCommandResult
+     * @return CommandResult
      * @throws NodeException
      */
-    public function handleChangeNodeName(ChangeNodeName $command): NodeCommandResult
+    public function handleChangeNodeName(ChangeNodeName $command): CommandResult
     {
         $events = [];
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
@@ -704,14 +680,14 @@ final class NodeCommandHandler
                 $events
             );
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
      * @param RemoveNodeAggregate $command
-     * @return NodeCommandResult
+     * @return CommandResult
      */
-    public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): NodeCommandResult
+    public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): CommandResult
     {
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
@@ -737,15 +713,15 @@ final class NodeCommandHandler
                 $events
             );
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
      * @param RemoveNodesFromAggregate $command
-     * @return NodeCommandResult
+     * @return CommandResult
      * @throws SpecializedDimensionsMustBePartOfDimensionSpacePointSet
      */
-    public function handleRemoveNodesFromAggregate(RemoveNodesFromAggregate $command): NodeCommandResult
+    public function handleRemoveNodesFromAggregate(RemoveNodesFromAggregate $command): CommandResult
     {
         foreach ($command->getDimensionSpacePointSet()->getPoints() as $point) {
             $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($point, false);
@@ -782,14 +758,14 @@ final class NodeCommandHandler
                 $events
             );
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
      * @param TranslateNodeInAggregate $command
-     * @return NodeCommandResult
+     * @return CommandResult
      */
-    public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command): NodeCommandResult
+    public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command): CommandResult
     {
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
@@ -801,7 +777,7 @@ final class NodeCommandHandler
                 $events
             );
         });
-        return NodeCommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     private function nodeInAggregateWasTranslatedFromCommand(TranslateNodeInAggregate $command): DomainEvents

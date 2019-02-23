@@ -29,6 +29,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization;
@@ -41,6 +42,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFind
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\EventBus\EventBus;
@@ -111,6 +113,11 @@ trait EventSourcedTrait
      * @var EventBus
      */
     private $eventBus;
+
+    /**
+     * @var CommandResult
+     */
+    protected $lastCommandOrEventResult;
 
     /**
      * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
@@ -220,8 +227,11 @@ trait EventSourcedTrait
     protected function publishEvent($eventType, StreamName $streamName, $eventPayload)
     {
         $event = $this->eventNormalizer->denormalize($eventPayload, $eventType);
+        $event = EventWithIdentifier::create($event);
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
+        $events = DomainEvents::withSingleEvent($event);
+        $eventStore->commit($streamName, $events);
+        $this->lastCommandOrEventResult = CommandResult::fromPublishedEvents($events);
     }
 
 
@@ -258,7 +268,7 @@ trait EventSourcedTrait
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
-        $commandHandler->handleCreateNodeSpecialization($command);
+        $this->lastCommandOrEventResult = $commandHandler->handleCreateNodeSpecialization($command);
     }
 
     /**
@@ -304,7 +314,7 @@ trait EventSourcedTrait
         /** @var NodeCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
-        $commandHandler->blockingHandle($command);
+        $this->lastCommandOrEventResult = $commandHandler->handleRemoveNodeAggregate($command);
     }
 
 
@@ -337,7 +347,7 @@ trait EventSourcedTrait
         /** @var NodeCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
-        $commandHandler->blockingHandle($command);
+        $this->lastCommandOrEventResult = $commandHandler->handleRemoveNodesFromAggregate($command);
     }
 
 
@@ -356,7 +366,7 @@ trait EventSourcedTrait
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
-        $commandHandler->handleCreateNodeGeneralization($command);
+        $this->lastCommandOrEventResult = $commandHandler->handleCreateNodeGeneralization($command);
     }
 
     /**
@@ -426,14 +436,14 @@ trait EventSourcedTrait
         $command = $commandClassName::fromArray($commandArguments);
 
         $commandHandler = $this->getObjectManager()->get($commandHandlerClassName);
-        $commandHandler->$commandHandlerMethod($command);
+
+        $this->lastCommandOrEventResult = $commandHandler->$commandHandlerMethod($command);
 
         if (isset($commandArguments['rootNodeIdentifier'])) {
             $this->rootNodeIdentifier = NodeIdentifier::fromString($commandArguments['rootNodeIdentifier']);
         } elseif ($commandClassName === \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateRootNode::class) {
             $this->rootNodeIdentifier = NodeIdentifier::fromString($commandArguments['nodeIdentifier']);
         }
-        $this->eventBus->flush();
     }
 
     /**
@@ -643,7 +653,11 @@ trait EventSourcedTrait
      */
     public function theGraphProjectionIsFullyUpToDate()
     {
-        $this->eventBus->flush();
+        if ($this->lastCommandOrEventResult === null) {
+            throw new \RuntimeException('lastCommandOrEventResult not filled; so I cannot block!');
+        }
+        $this->lastCommandOrEventResult->blockUntilProjectionsAreUpToDate();
+        $this->lastCommandOrEventResult = null;
     }
 
     /**

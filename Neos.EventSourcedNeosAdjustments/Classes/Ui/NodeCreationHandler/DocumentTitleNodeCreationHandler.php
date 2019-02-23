@@ -44,7 +44,7 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             if (isset($data['title'])) {
-                $this->nodeCommandHandler->blockingHandle(new SetNodeProperty(
+                $this->nodeCommandHandler->handleSetNodeProperty(new SetNodeProperty(
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
@@ -53,13 +53,13 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                 ));
             }
 
-            $this->nodeCommandHandler->blockingHandle(new SetNodeProperty(
+            $this->nodeCommandHandler->handleSetNodeProperty(new SetNodeProperty(
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
                 'uriPathSegment',
                 new PropertyValue($data['title'], 'string')
-            ));
+            ))->blockUntilProjectionsAreUpToDate();
             // TODO: re-enable line below
             // $node->setProperty('uriPathSegment', $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node, (isset($data['title']) ? $data['title'] : null)));
         }

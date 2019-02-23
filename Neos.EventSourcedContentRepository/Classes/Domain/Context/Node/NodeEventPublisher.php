@@ -13,6 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcing\Event\Decorator\EventDecoratorUtilities;
+use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\Decorator\EventWithMetadata;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -110,7 +112,8 @@ final class NodeEventPublisher
         }
         $processedEvents = DomainEvents::createEmpty();
         foreach ($events as $event) {
-            if (!($event instanceof CopyableAcrossContentStreamsInterface)) {
+            $undecoratedEvent = EventDecoratorUtilities::extractUndecoratedEvent($event);
+            if (!$undecoratedEvent instanceof CopyableAcrossContentStreamsInterface) {
                 throw new \RuntimeException(sprintf('TODO: Event %s has to implement CopyableAcrossContentStreamsInterface', get_class($event)));
             }
 

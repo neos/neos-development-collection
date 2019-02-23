@@ -53,14 +53,14 @@ class CreateAfter extends AbstractCreate
             $parentNode = $subject->findParentNode();
             $newlyCreatedNode = $this->createNode($parentNode);
 
-            $this->nodeCommandHandler->blockingHandle(new MoveNode(
+            $this->nodeCommandHandler->handleMoveNode(new MoveNode(
                 $newlyCreatedNode->getContentStreamIdentifier(),
                 $newlyCreatedNode->getDimensionSpacePoint(),
                 $newlyCreatedNode->getNodeAggregateIdentifier(),
                 null,
                 $subject->getNodeAggregateIdentifier(), // TODO notfully correct I THINK, but for first tests it seems to work.
                 RelationDistributionStrategy::gatherAll()
-            ));
+            ))->blockUntilProjectionsAreUpToDate();
 
             $this->updateWorkspaceInfo();
         }

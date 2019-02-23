@@ -30,10 +30,10 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\Event\Decorator\DomainEventWithIdentifierInterface;
+use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\AfterInvokeInterface;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\Projection\ProjectorInterface;
@@ -66,9 +66,9 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
      */
     protected $processedEventsCache;
 
-    public function hasProcessed(NodeCommandResult $commandResult): bool
+    public function hasProcessed(DomainEvents $events): bool
     {
-        foreach ($commandResult->getPublishedEvents() as $event) {
+        foreach ($events as $event) {
             if (!$event instanceof DomainEventWithIdentifierInterface) {
                 throw new \RuntimeException(sprintf('The CommandResult contains an event "%s" that does not implement the %s interface', get_class($event), DomainEventWithIdentifierInterface::class), 1550314769);
             }

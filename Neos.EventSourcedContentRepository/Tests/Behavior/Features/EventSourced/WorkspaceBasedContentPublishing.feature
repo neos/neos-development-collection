@@ -114,7 +114,6 @@ Feature: Workspace based content publishing
       | text | Modified |
 
     # PUBLISHING
-    When the graph projection is fully up to date
     And the command "PublishWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
@@ -158,8 +157,7 @@ Feature: Workspace based content publishing
     Then the last command should have thrown an exception of type "BaseWorkspaceHasBeenModifiedInTheMeantime"
 
     # REBASING + Publishing: works now (TODO soft constraint check for old value)
-    When the graph projection is fully up to date
-    And the command "RebaseWorkspace" is executed with payload:
+    When the command "RebaseWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
 
