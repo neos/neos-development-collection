@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcing\Event\Decorator\EventDecoratorUtilities;
-use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\Decorator\EventWithMetadata;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;

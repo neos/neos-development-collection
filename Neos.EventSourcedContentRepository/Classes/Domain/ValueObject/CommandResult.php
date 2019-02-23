@@ -87,12 +87,12 @@ final class CommandResult
         self::blockProjector($publishedEventsForWorkspaceProjector, $this->workspaceProjector);
     }
 
-    static protected function blockProjector(DomainEvents $events, $projector)
+    protected static function blockProjector(DomainEvents $events, $projector)
     {
         $attempts = 0;
         while (!$projector->hasProcessed($events)) {
             usleep(50000); // 50000μs = 50ms
-            if (++$attempts > 40) { // 2 seconds
+            if (++$attempts > 300) { // 15 seconds
                 $ids = '';
                 foreach ($events as $p) {
                     $ids .= '   ' . $p->getIdentifier();

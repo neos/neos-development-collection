@@ -14,7 +14,6 @@ Feature: The demo site is rendered when we log into the system.
       | packageKey | Neos.Demo |
     And I execute the flow command "contentrepositorymigrate:run" only once per feature
     And I am logged in as "admin" "password"
-    And the graph projection is fully up to date
 
   Scenario: rendering the homepage in backend works
     When I visit "/@user-admin;language=en_US"

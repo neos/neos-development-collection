@@ -42,7 +42,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\Worksp
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
-use Neos\EventSourcing\Event\Decorator\DomainEventWithIdentifierInterface;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventBus\EventBus;
