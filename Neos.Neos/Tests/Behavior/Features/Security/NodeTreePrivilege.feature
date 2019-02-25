@@ -71,7 +71,7 @@ Feature: Privilege to restrict nodes shown in the node tree
       | Workspace  |
       | user-admin |
     Then I should be granted to set the "title" property to "The company"
-    And I should get TRUE when asking the node authorization service if editing the "title" property is granted
+    And I should get true when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Editors are not granted to set properties on service node
@@ -80,7 +80,7 @@ Feature: Privilege to restrict nodes shown in the node tree
       | Workspace  |
       | user-admin |
     Then I should not be granted to set the "title" property to "Our services"
-    And I should get FALSE when asking the node authorization service if editing the "title" property is granted
+    And I should get false when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Editors are not granted to set properties on service sub node
@@ -89,7 +89,7 @@ Feature: Privilege to restrict nodes shown in the node tree
       | Workspace  |
       | user-admin |
     Then I should not be granted to set the "title" property to "Our newsletter"
-    And I should get FALSE when asking the node authorization service if editing the "title" property is granted
+    And I should get false when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Administrators are granted to set properties on company node
@@ -98,7 +98,7 @@ Feature: Privilege to restrict nodes shown in the node tree
       | Workspace  |
       | user-admin |
     Then I should be granted to set the "title" property to "The company"
-    And I should get TRUE when asking the node authorization service if editing the "title" property is granted
+    And I should get true when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Administrators are granted to set properties on service node
@@ -107,7 +107,7 @@ Feature: Privilege to restrict nodes shown in the node tree
       | Workspace  |
       | user-admin |
     Then I should be granted to set the "title" property to "Our services"
-    And I should get TRUE when asking the node authorization service if editing the "title" property is granted
+    And I should get true when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Administrators are granted to set properties on service sub node
@@ -116,7 +116,7 @@ Feature: Privilege to restrict nodes shown in the node tree
       | Workspace  |
       | user-admin |
     Then I should be granted to set the "title" property to "Our newsletter"
-    And I should get TRUE when asking the node authorization service if editing the "title" property is granted
+    And I should get true when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Editors are not granted to set properties on a neos sub node
@@ -125,7 +125,7 @@ Feature: Privilege to restrict nodes shown in the node tree
       | Workspace  |
       | user-admin |
     Then I should not be granted to set the "title" property to "The Teams"
-    And I should get FALSE when asking the node authorization service if editing the "title" property is granted
+    And I should get false when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Administrators are granted to set properties on a neos sub node
@@ -134,13 +134,13 @@ Feature: Privilege to restrict nodes shown in the node tree
       | Workspace  |
       | user-admin |
     Then I should be granted to set the "title" property to "Basti"
-    And I should get TRUE when asking the node authorization service if editing the "title" property is granted
+    And I should get true when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
-  Scenario: Administrators are not granted to set properties on a ancestor node of teams
+  Scenario: Administrators are not granted to set properties on an ancestor node of teams
     Given I am authenticated with role "Neos.Neos:Administrator"
     And I get a node by path "/sites/neos/community" with the following context:
       | Workspace  |
       | user-admin |
     Then I should not be granted to set the "title" property to "The Community"
-    And I should get FALSE when asking the node authorization service if editing the "title" property is granted
+    And I should get false when asking the node authorization service if editing the "title" property is granted
