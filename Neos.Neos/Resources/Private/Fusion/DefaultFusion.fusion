@@ -10,6 +10,7 @@ include: Prototypes/BreadcrumbMenu.fusion
 include: Prototypes/DimensionsMenu.fusion
 include: Prototypes/Menu.fusion
 include: Prototypes/MenuData.fusion
+include: Prototypes/BreadcrumbMenuData.fusion
 include: Prototypes/DimensionsMenuData.fusion
 include: Prototypes/Plugin.fusion
 include: Prototypes/PluginView.fusion
