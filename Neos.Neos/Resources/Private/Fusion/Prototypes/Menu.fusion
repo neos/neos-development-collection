@@ -1,10 +1,8 @@
 # Neos.Neos:Menu provides basic menu rendering
 #
 prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
-	@class = 'Neos\\Neos\\Fusion\\MenuImplementation'
 	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/Menu.html'
 	node = ${node}
-	items = ${this.items}
 
 	entryLevel = ${this.startingPoint ? 0 : 1}
 	maximumLevels = 2
@@ -21,6 +19,25 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
 	normal.attributes = Neos.Fusion:Attributes {
 		class = 'normal'
 	}
+
+  @context {
+    itemCollection = ${this.itemCollection}
+    entryLevel = ${this.entryLevel}
+    startingPoint = ${this.startingPoint}
+    maximumLevels = ${this.maximumLevels}
+    filter = ${this.filter}
+    renderHiddenInIndex = ${this.renderHiddenInIndex}
+  }
+
+  items = Neos.Neos:MenuData {
+    node = ${node}
+    itemCollection = ${itemCollection}
+    entryLevel = ${entryLevel}
+    startingPoint = ${startingPoint}
+    maximumLevels = ${maximumLevels}
+    filter = ${filter}
+    renderHiddenInIndex = ${renderHiddenInIndex}
+  }
 
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ContextDependentHandler'
 
