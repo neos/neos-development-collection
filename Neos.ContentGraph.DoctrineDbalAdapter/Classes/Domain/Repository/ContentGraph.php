@@ -271,24 +271,21 @@ final class ContentGraph implements ContentGraphInterface
                       INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint 
-                      WHERE ph.contentstreamidentifier = :contentStreamIdentifier
+                      WHERE c.nodeaggregateidentifier = :nodeAggregateIdentifier
+                      AND ph.contentstreamidentifier = :contentStreamIdentifier
                       AND ch.contentstreamidentifier = :contentStreamIdentifier';
-        $query = 'SELECT p.* FROM neos_contentgraph_node p';
         $parameters = [
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
+            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier
         ];
 
         $parentAggregates = [];
         $rawNodeTypeNames = [];
         $rawNodeNames = [];
         $nodesByAggregate = [];
-        \Neos\Flow\var_dump($parameters);
-        \Neos\Flow\var_dump($connection->executeQuery($query, $parameters)->fetchAll(), 'parents');
-        exit();
         foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $nodeRow) {
-            \Neos\Flow\var_dump($nodeRow, 'row');
             $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
-            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['dimensionspacepointhash']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
+            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['origindimensionspacepointhash']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
             if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
@@ -348,7 +345,7 @@ final class ContentGraph implements ContentGraphInterface
         $nodesByAggregate = [];
         foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $nodeRow) {
             $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
-            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['dimensionspacepointhash']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
+            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['origindimensionspacepointhash']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
             if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
