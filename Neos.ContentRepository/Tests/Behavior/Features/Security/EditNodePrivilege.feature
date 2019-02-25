@@ -48,7 +48,7 @@ Feature: Privilege to restrict editing of nodes
       | Workspace  |
       | user-admin |
     Then I should be granted to set the "title" property to "MyNewCompany"
-    And I should get TRUE when asking the node authorization service if editing the "title" property is granted
+    And I should get true when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Anonymous users are not granted to set properties on service node
@@ -57,7 +57,7 @@ Feature: Privilege to restrict editing of nodes
       | Workspace  |
       | user-admin |
     Then I should not be granted to set the "title" property to "ServiceDessertGermany"
-    And I should get FALSE when asking the node authorization service if editing the "title" property is granted
+    And I should get false when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Anonymous users are not granted to set attributes on the service node
@@ -66,7 +66,7 @@ Feature: Privilege to restrict editing of nodes
       | Workspace  |
       | user-admin |
     Then I should not be granted to set any of the node's attributes
-    And I should get FALSE when asking the node authorization service if editing this node is granted
+    And I should get false when asking the node authorization service if editing this node is granted
 
   @Isolated @fixtures
   Scenario: Anonymous users are not granted to edit the events node's description property
@@ -75,7 +75,7 @@ Feature: Privilege to restrict editing of nodes
       | Workspace  |
       | user-admin |
     Then I should not be granted to set the "description" property to "Even cooler event!"
-    And I should get FALSE when asking the node authorization service if editing the "description" property is granted
+    And I should get false when asking the node authorization service if editing the "description" property is granted
 
   @Isolated @fixtures
   Scenario: Administrators are granted to set properties on service node
@@ -84,7 +84,7 @@ Feature: Privilege to restrict editing of nodes
       | Workspace  |
       | user-admin |
     Then I should be granted to set the "title" property to "ServiceDessertGermany"
-    And I should get TRUE when asking the node authorization service if editing the "title" property is granted
+    And I should get true when asking the node authorization service if editing the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Administrators are granted to set attributes on the service node
@@ -93,7 +93,7 @@ Feature: Privilege to restrict editing of nodes
       | Workspace  |
       | user-admin |
     Then I should be granted to set any of the node's attributes
-    And I should get TRUE when asking the node authorization service if editing this node is granted
+    And I should get true when asking the node authorization service if editing this node is granted
 
   @Isolated @fixtures
   Scenario: Administrators are granted to edit the events node's description property
@@ -102,4 +102,4 @@ Feature: Privilege to restrict editing of nodes
       | Workspace  |
       | user-admin |
     Then I should be granted to set the "description" property to "Even cooler event!"
-    And I should get TRUE when asking the node authorization service if editing the "description" property is granted
+    And I should get true when asking the node authorization service if editing the "description" property is granted
