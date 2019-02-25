@@ -1,29 +1,28 @@
 prototype(Neos.Neos:MenuDataItem) < prototype(Neos.Fusion:Component) {
-  currentDocumentNode = ${documentNode}
-  menuItemNode = ${this.menuItemNode}
+  currentDocumentNode = null
+  menuItemNode = null
   rootline = ${q(this.currentDocumentNode).parents().get()}
-  entryLevel = 0
 
   renderer = Neos.Fusion:DataStructure {
-    @if.renderHiddenOrVisible = ${!q(props.menuItemNode).property('_hiddenInIndex') || props.renderHiddenInIndex}
+    @if.renderHiddenOrVisible = ${props.renderHiddenInIndex || !q(props.menuItemNode).property('_hiddenInIndex')}
 
     state = Neos.Fusion:Case {
-      current {
+      isCurrent {
         condition = ${props.menuItemNode == props.currentDocumentNode}
         renderer = 'current'
       }
 
-      absent {
+      isAbsent {
         condition = ${props.menuItemNode == null}
         renderer = 'absent'
       }
 
-      active {
+      isActive {
         condition = ${Array.indexOf(props.rootline, props.menuItemNode) != -1}
         renderer = 'active'
       }
 
-      normal {
+      default {
         condition = ${true}
         renderer = 'normal'
       }
@@ -34,9 +33,12 @@ prototype(Neos.Neos:MenuDataItem) < prototype(Neos.Fusion:Component) {
     label = ${q(props.menuItemNode).property('_label')}
 
     subItems = Neos.Neos:MenuData {
-      @if.renderLevel = ${props.currentLevel < (props.entryLevel + props.maximumLevel)}
+      @if.renderLevel = ${props.lastLevel ? props.currentLevel < props.lastLevel : props.currentLevel < (props.entryLevel + props.maximumLevels)}
       itemCollection = ${q(props.menuItemNode).children('[instanceof Neos.Neos:Document]').get()}
-      startingPoint = ${props.currentLevel + 1}
+      currentLevel = ${props.currentLevel + 1}
+      renderHiddenInIndex = ${props.renderHiddenInIndex}
+      entryLevel = ${props.entryLevel}
+      lastLevel = ${props.lastLevel}
     }
 
     menuLevel = ${props.currentLevel}

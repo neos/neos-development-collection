@@ -5,8 +5,15 @@ prototype(Neos.Neos:MenuData) < prototype(Neos.Fusion:Component) {
   startingPoint = ${node}
   entryLevel = ${this.startingPoint ? 0 : 1}
   maximumLevels = 2
+  lastLevel = 0
   renderHiddenInIndex = false
+  filter = ''
   // currentLevel = ${q(this.node).parentsUntil(this.startingPoint).count()}
+
+  nodeLevelInSite = ${q(this.startingPoint).property('_depth') - q(site).property('_depth')}
+  rootline = ${q(this.startingPoint).parents().get()}
+  absoluteDepth = ${this.entryLevel > 0 ? this.entryLevel : ((this.nodeLevelInSite + this.entryLevel) < 1 ? 1 : this.nodeLevelInSite + this.entryLevel + 1)}
+  parentNode = ${this.entryLevel > 0 ? q(this.startingPoint).parents().get(this.absoluteDepth - 2) : q(node).parent().get(0)}
 
   filter = Neos.Fusion:Loop {
     items = ${this.filter}
@@ -24,18 +31,17 @@ prototype(Neos.Neos:MenuData) < prototype(Neos.Fusion:Component) {
     @glue = ','
   }
 
-  items = ${this.itemCollection ? this.itemCollection : q(documentNode).children('[instanceof Neos.Neos:Document]')}
-  // items = ${this.itemCollection}
+  items = ${this.itemCollection ? this.itemCollection : q(this.parentNode).children('[instanceof Neos.Neos:Document]').get()}
 
   renderer = Neos.Fusion:Map {
     items = ${props.items}
     itemRenderer = Neos.Neos:MenuDataItem {
       menuItemNode = ${item}
       startingPoint = ${props.startingPoint}
-      currentLevel = ${props.entryLevel}
+      currentLevel = 1
       renderHiddenInIndex = ${props.renderHiddenInIndex}
+      entryLevel = ${props.entryLevel}
+      lastLevel = ${props.lastLevel}
     }
-
-    @if.foo = ${props.currentLevel >= entryLevel}
   }
 }
