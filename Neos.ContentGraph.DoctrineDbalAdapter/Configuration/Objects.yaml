@@ -1,0 +1,9 @@
+Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector:
+  properties:
+    'processedEventsCache':
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_ContentGraph_ProcessedEvents

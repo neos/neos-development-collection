@@ -29,6 +29,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
@@ -50,6 +51,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\EventBus\EventBus;
@@ -59,7 +61,6 @@ use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Features context
@@ -135,6 +136,11 @@ trait EventSourcedTrait
      * @var EventBus
      */
     private $eventBus;
+
+    /**
+     * @var CommandResult
+     */
+    protected $lastCommandOrEventResult;
 
     /**
      * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
@@ -279,8 +285,11 @@ trait EventSourcedTrait
     protected function publishEvent($eventType, StreamName $streamName, $eventPayload)
     {
         $event = $this->eventNormalizer->denormalize($eventPayload, $eventType);
+        $event = EventWithIdentifier::create($event);
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
+        $events = DomainEvents::withSingleEvent($event);
+        $eventStore->commit($streamName, $events);
+        $this->lastCommandOrEventResult = CommandResult::fromPublishedEvents($events);
     }
 
     /**
@@ -302,20 +311,6 @@ trait EventSourcedTrait
         return $eventPayload;
     }
 
-    protected function replaceUuidIdentifiers($identifierString): string
-    {
-        return preg_replace_callback(
-            '#\[[0-9a-zA-Z\-]+\]#',
-            function ($matches) {
-                if ($matches[0] === '[ROOT]') {
-                    return RootNodeIdentifiers::rootNodeAggregateIdentifier();
-                }
-                return (string)Uuid::uuid5('00000000-0000-0000-0000-000000000000', $matches[0]);
-            },
-            $identifierString
-        );
-    }
-
     /**
      * @When /^the command CreateRootNodeAggregateWithNode is executed with payload:$/
      * @param TableNode $payloadTable
@@ -328,7 +323,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
         $command = CreateRootNodeAggregateWithNode::fromArray($commandArguments);
 
-        $this->getNodeAggregateCommandHandler()
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
             ->handleCreateRootNodeAggregateWithNode($command);
     }
 
@@ -418,7 +413,7 @@ trait EventSourcedTrait
         /** @var NodeCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
-        $commandHandler->handleRemoveNodeAggregate($command);
+        $this->lastCommandOrEventResult = $commandHandler->handleRemoveNodeAggregate($command);
     }
 
     /**
@@ -449,7 +444,7 @@ trait EventSourcedTrait
         /** @var NodeCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
-        $commandHandler->handleRemoveNodesFromAggregate($command);
+        $this->lastCommandOrEventResult = $commandHandler->handleRemoveNodesFromAggregate($command);
     }
 
     /**
@@ -482,7 +477,7 @@ trait EventSourcedTrait
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
-        $commandHandler->handleCreateNodeGeneralization($command);
+        $this->lastCommandOrEventResult = $commandHandler->handleCreateNodeGeneralization($command);
     }
 
     /**
@@ -555,13 +550,13 @@ trait EventSourcedTrait
         $command = $commandClassName::fromArray($commandArguments);
 
         $commandHandler = $this->getObjectManager()->get($commandHandlerClassName);
-        $commandHandler->$commandHandlerMethod($command);
+
+        $this->lastCommandOrEventResult = $commandHandler->$commandHandlerMethod($command);
 
         // @todo check whether this is necessary at all
         if (isset($commandArguments['rootNodeAggregateIdentifier'])) {
             $this->rootNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($commandArguments['rootNodeAggregateIdentifier']);
         }
-        $this->eventBus->flush();
     }
 
     /**
@@ -796,7 +791,11 @@ trait EventSourcedTrait
      */
     public function theGraphProjectionIsFullyUpToDate()
     {
-        $this->eventBus->flush();
+        if ($this->lastCommandOrEventResult === null) {
+            throw new \RuntimeException('lastCommandOrEventResult not filled; so I cannot block!');
+        }
+        $this->lastCommandOrEventResult->blockUntilProjectionsAreUpToDate();
+        $this->lastCommandOrEventResult = null;
     }
 
     /**

@@ -14,10 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
 
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Migration\Filters\DimensionValues;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;

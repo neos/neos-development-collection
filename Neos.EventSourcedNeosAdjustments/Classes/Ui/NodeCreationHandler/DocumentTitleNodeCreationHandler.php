@@ -59,7 +59,7 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                 $node->getOriginDimensionSpacePoint(),
                 'uriPathSegment',
                 new PropertyValue($data['title'], 'string')
-            ));
+            ))->blockUntilProjectionsAreUpToDate();
             // TODO: re-enable line below
             // $node->setProperty('uriPathSegment', $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node, (isset($data['title']) ? $data['title'] : null)));
         }

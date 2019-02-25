@@ -24,3 +24,14 @@ Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGr
       object: 'Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface'
     2:
       object: 'Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper'
+
+
+Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector:
+  properties:
+    'processedEventsCache':
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_EventSourcedContentRepository_ProcessedWorkspaceEvents

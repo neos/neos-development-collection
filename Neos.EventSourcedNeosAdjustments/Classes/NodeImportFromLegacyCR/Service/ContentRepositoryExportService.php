@@ -35,6 +35,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
@@ -42,9 +43,9 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
+use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventBus\EventBus;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
@@ -71,12 +72,6 @@ class ContentRepositoryExportService
      * @var InterDimensionalVariationGraph
      */
     protected $interDimensionalFallbackGraph;
-
-    /**
-     * @Flow\Inject
-     * @var EventBus
-     */
-    protected $eventBus;
 
     /**
      * @var Connection
@@ -124,6 +119,11 @@ class ContentRepositoryExportService
 
     private $alreadyCreatedNodeAggregateIdentifiers;
 
+    /**
+     * @var CommandResult
+     */
+    private $commandResult;
+
 
     public function injectEntityManager(DoctrineObjectManager $entityManager)
     {
@@ -141,6 +141,7 @@ class ContentRepositoryExportService
             SET foreign_key_checks = 0;
             
             TRUNCATE neos_eventsourcing_eventstore_events;
+            TRUNCATE neos_eventsourcing_eventlistener_appliedeventslog;
             
             TRUNCATE neos_contentrepository_projection_workspace_v1;
             TRUNCATE neos_contentgraph_hierarchyrelation;
@@ -161,6 +162,7 @@ class ContentRepositoryExportService
         $this->contentStreamIdentifier = ContentStreamIdentifier::create();
         $this->sitesRootNodeIdentifier = NodeIdentifier::create();
         $this->nodeAggregateIdentifierForSitesNode = NodeAggregateIdentifier::create();
+        $this->commandResult = CommandResult::createEmpty();
 
         $streamName = $this->contentStreamName();
         $event = new ContentStreamWasCreated(
@@ -201,7 +203,7 @@ class ContentRepositoryExportService
         }
         var_dump("NODE DATAS IN NEXT ITER: " . count($nodeDatasToExportAtNextIteration));
 
-        $this->eventBus->flush();
+        $this->commandResult->blockUntilProjectionsAreUpToDate();
     }
 
     protected function exportNodeData(NodeData $nodeData, DimensionSpacePoint $dimensionRestriction = null, &$nodeDatasToExportAtNextIteration)
@@ -457,7 +459,15 @@ class ContentRepositoryExportService
 
     private function commitEvent(StreamName $streamName, DomainEventInterface $event): void
     {
+        $event = EventWithIdentifier::create($event);
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
+        $publishedEvents = DomainEvents::withSingleEvent($event);
+        $eventStore->commit($streamName, $publishedEvents);
+
+        $this->commandResult = $this->commandResult->merge(
+            CommandResult::fromPublishedEvents(
+                $publishedEvents
+            )
+        );
     }
 }

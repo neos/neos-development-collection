@@ -60,7 +60,7 @@ class CreateAfter extends AbstractCreate
                 null,
                 $subject->getNodeAggregateIdentifier(), // TODO notfully correct I THINK, but for first tests it seems to work.
                 RelationDistributionStrategy::gatherAll()
-            ));
+            ))->blockUntilProjectionsAreUpToDate();
 
             $this->updateWorkspaceInfo();
         }

@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
@@ -35,6 +36,10 @@ use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\EventSourcing\Event\Decorator\DomainEventWithIdentifierInterface;
+use Neos\EventSourcing\Event\DomainEvents;
+use Neos\EventSourcing\EventListener\AfterInvokeInterface;
+use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -43,7 +48,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class GraphProjector implements ProjectorInterface
+class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 {
     const RELATION_DEFAULT_OFFSET = 128;
 
@@ -58,6 +63,25 @@ class GraphProjector implements ProjectorInterface
      * @var DbalClient
      */
     protected $client;
+
+    /**
+     * @Flow\Inject
+     * @var VariableFrontend
+     */
+    protected $processedEventsCache;
+
+    public function hasProcessed(DomainEvents $events): bool
+    {
+        foreach ($events as $event) {
+            if (!$event instanceof DomainEventWithIdentifierInterface) {
+                throw new \RuntimeException(sprintf('The CommandResult contains an event "%s" that does not implement the %s interface', get_class($event), DomainEventWithIdentifierInterface::class), 1550314769);
+            }
+            if (!$this->processedEventsCache->has(md5($event->getIdentifier()))) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * @Flow\Signal
@@ -76,6 +100,7 @@ class GraphProjector implements ProjectorInterface
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
         });
+        $this->processedEventsCache->flush();
     }
 
     /**
@@ -1072,5 +1097,10 @@ insert into neos_contentgraph_restrictionedge
     protected function getDatabaseConnection(): Connection
     {
         return $this->client->getConnection();
+    }
+
+    public function afterInvoke(EventEnvelope $eventEnvelope): void
+    {
+        $this->processedEventsCache->set(md5($eventEnvelope->getRawEvent()->getIdentifier()), true);
     }
 }

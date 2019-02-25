@@ -12,19 +12,32 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
 use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
+use Neos\EventSourcing\Event\Decorator\DomainEventWithIdentifierInterface;
+use Neos\EventSourcing\Event\DomainEvents;
+use Neos\EventSourcing\EventListener\AfterInvokeInterface;
+use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 
 /**
  * Workspace Projector
+ * @Flow\Scope("singleton")
  */
-final class WorkspaceProjector implements ProjectorInterface
+class WorkspaceProjector implements ProjectorInterface, AfterInvokeInterface
 {
     private const TABLE_NAME = 'neos_contentrepository_projection_workspace_v1';
+
+    /**
+     * @Flow\Inject
+     * @var VariableFrontend
+     */
+    protected $processedEventsCache;
 
     /**
      * @var \Doctrine\DBAL\Connection
@@ -85,5 +98,29 @@ final class WorkspaceProjector implements ProjectorInterface
         $this->dbal->transactional(function () {
             $this->dbal->exec('TRUNCATE ' . self::TABLE_NAME);
         });
+    }
+
+    /**
+     * Called after a listener method is invoked
+     *
+     * @param EventEnvelope $eventEnvelope
+     * @return void
+     */
+    public function afterInvoke(EventEnvelope $eventEnvelope): void
+    {
+        $this->processedEventsCache->set(md5($eventEnvelope->getRawEvent()->getIdentifier()), true);
+    }
+
+    public function hasProcessed(DomainEvents $events): bool
+    {
+        foreach ($events as $event) {
+            if (!$event instanceof DomainEventWithIdentifierInterface) {
+                throw new \RuntimeException(sprintf('The CommandResult contains an event "%s" that does not implement the %s interface', get_class($event), DomainEventWithIdentifierInterface::class), 1550314769);
+            }
+            if (!$this->processedEventsCache->has(md5($event->getIdentifier()))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

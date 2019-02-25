@@ -117,11 +117,11 @@ final class EditorContentStreamZookeeper
                         $userIdentifier,
                         $editorsNewContentStreamIdentifier,
                         $userIdentifier
-                    ));
+                    ))->blockUntilProjectionsAreUpToDate();
                 } else {
                     $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
                         $workspace->getWorkspaceName()
-                    ));
+                    ))->blockUntilProjectionsAreUpToDate();
                 }
             }
         }

@@ -13,6 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 
@@ -41,26 +43,33 @@ final class ContentStreamCommandHandler
 
     /**
      * @param Command\CreateContentStream $command
+     * @return CommandResult
      * @throws ContentStreamAlreadyExists
      */
-    public function handleCreateContentStream(Command\CreateContentStream $command)
+    public function handleCreateContentStream(Command\CreateContentStream $command): CommandResult
     {
         $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName();
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $event = new Event\ContentStreamWasCreated(
-            $command->getContentStreamIdentifier(),
-            $command->getInitiatingUserIdentifier()
+        $events = DomainEvents::withSingleEvent(
+            EventWithIdentifier::create(
+                new Event\ContentStreamWasCreated(
+                    $command->getContentStreamIdentifier(),
+                    $command->getInitiatingUserIdentifier()
+                )
+            )
         );
-        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
+        $eventStore->commit($streamName, $events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
      * @param Command\ForkContentStream $command
+     * @return CommandResult
      * @throws ContentStreamAlreadyExists
      * @throws ContentStreamDoesNotExistYet
      */
-    public function handleForkContentStream(Command\ForkContentStream $command)
+    public function handleForkContentStream(Command\ForkContentStream $command): CommandResult
     {
         $this->requireContentStreamToExist($command->getSourceContentStreamIdentifier());
         $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
@@ -71,12 +80,17 @@ final class ContentStreamCommandHandler
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName();
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
 
-        $event = new Event\ContentStreamWasForked(
-            $command->getContentStreamIdentifier(),
-            $command->getSourceContentStreamIdentifier(),
-            $sourceContentStreamVersion
+        $events = DomainEvents::withSingleEvent(
+            EventWithIdentifier::create(
+                new Event\ContentStreamWasForked(
+                    $command->getContentStreamIdentifier(),
+                    $command->getSourceContentStreamIdentifier(),
+                    $sourceContentStreamVersion
+                )
+            )
         );
-        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
+        $eventStore->commit($streamName, $events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
 
