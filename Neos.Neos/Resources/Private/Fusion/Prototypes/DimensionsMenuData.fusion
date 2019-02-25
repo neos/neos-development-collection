@@ -1,0 +1,3 @@
+prototype(Neos.Neos:DimensionsMenuData) {
+  @class = 'Neos\\Neos\\Fusion\\DimensionsMenuDataImplementation'
+}

@@ -1,0 +1,10 @@
+prototype(Neos.Neos:MenuData) {
+  @class = 'Neos\\Neos\\Fusion\\MenuDataImplementation'
+
+  node = null
+  itemCollection = null
+  startingPoint = ${node}
+  entryLevel = ${this.startingPoint ? 0 : 1}
+  maximumLevels = 2
+  renderHiddenInIndex = false
+}
