@@ -2,7 +2,7 @@
 #
 prototype(Neos.Neos:BreadcrumbMenu) < prototype(Neos.Neos:Menu) {
 	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/BreadcrumbMenu.html'
-	itemCollection = ${q(node).add(q(node).parents('[instanceof Neos.Neos:Document]')).get()}
+	items = Neos.Neos:BreadcrumbMenuData
 
 	attributes.class = 'breadcrumb'
 }
