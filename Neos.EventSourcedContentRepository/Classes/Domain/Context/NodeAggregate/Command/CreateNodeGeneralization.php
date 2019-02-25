@@ -22,33 +22,32 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
  *
  * Copy a node to a generalized dimension space point respecting further generalization mechanisms
  */
-final class CreateNodeGeneralization
+final class CreateNodeGeneralization implements \JsonSerializable
 {
     /**
      * @var ContentStreamIdentifier
      */
-    protected $contentStreamIdentifier;
+    private $contentStreamIdentifier;
 
     /**
      * @var NodeAggregateIdentifier
      */
-    protected $nodeAggregateIdentifier;
+    private $nodeAggregateIdentifier;
 
     /**
      * @var DimensionSpacePoint
      */
-    protected $sourceDimensionSpacePoint;
+    private $sourceDimensionSpacePoint;
 
     /**
      * @var DimensionSpacePoint
      */
-    protected $targetDimensionSpacePoint;
+    private $targetDimensionSpacePoint;
 
     /**
      * @var NodeIdentifier
      */
-    protected $generalizationIdentifier;
-
+    private $generalizationIdentifier;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -57,18 +56,24 @@ final class CreateNodeGeneralization
      * @param DimensionSpacePoint $targetDimensionSpacePoint
      * @param NodeIdentifier $generalizationIdentifier
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $sourceDimensionSpacePoint,
-        DimensionSpacePoint $targetDimensionSpacePoint,
-        NodeIdentifier $generalizationIdentifier
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $sourceDimensionSpacePoint, DimensionSpacePoint $targetDimensionSpacePoint, NodeIdentifier $generalizationIdentifier)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
         $this->targetDimensionSpacePoint = $targetDimensionSpacePoint;
         $this->generalizationIdentifier = $generalizationIdentifier;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            new DimensionSpacePoint($array['sourceDimensionSpacePoint']),
+            new DimensionSpacePoint($array['targetDimensionSpacePoint']),
+            NodeIdentifier::fromString($array['generalizationIdentifier'])
+        );
     }
 
     /**
@@ -109,5 +114,16 @@ final class CreateNodeGeneralization
     public function getGeneralizationIdentifier(): NodeIdentifier
     {
         return $this->generalizationIdentifier;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'sourceDimensionSpacePoint' => $this->sourceDimensionSpacePoint,
+            'targetDimensionSpacePoint' => $this->targetDimensionSpacePoint,
+            'generalizationIdentifier' => $this->generalizationIdentifier,
+        ];
     }
 }

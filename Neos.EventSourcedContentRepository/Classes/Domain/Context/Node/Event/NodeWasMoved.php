@@ -16,12 +16,15 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\ReferencePosition;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Node was moved after, into or before another node event
+ *
+ * @Flow\Proxy(false)
  */
-final class NodeWasMoved implements EventInterface, CopyableAcrossContentStreamsInterface
+final class NodeWasMoved implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**

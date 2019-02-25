@@ -12,8 +12,11 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * Description for a workspace
+ * @Flow\Proxy(false)
  */
 class WorkspaceDescription implements \JsonSerializable
 {

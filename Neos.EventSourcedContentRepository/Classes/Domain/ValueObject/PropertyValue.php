@@ -12,8 +12,11 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * Property value with type
+ * @Flow\Proxy(false)
  */
 final class PropertyValue implements \JsonSerializable
 {
@@ -35,6 +38,17 @@ final class PropertyValue implements \JsonSerializable
     {
         $this->value = $value;
         $this->type = $type;
+    }
+
+    public static function fromArray(array $valueAndType): self
+    {
+        if (!array_key_exists('value', $valueAndType)) {
+            throw new \InvalidArgumentException('Missing array key "value"', 1546524597);
+        }
+        if (!array_key_exists('type', $valueAndType)) {
+            throw new \InvalidArgumentException('Missing array key "type"', 1546524609);
+        }
+        return new static($valueAndType['value'], $valueAndType['type']);
     }
 
     /**

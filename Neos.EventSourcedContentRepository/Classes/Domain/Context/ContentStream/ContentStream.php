@@ -14,9 +14,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregate;
 use Neos\EventSourcing\EventStore;
+use Neos\EventSourcing\EventStore\StreamName;
 
 /**
  * A content stream to write events into
@@ -28,22 +28,22 @@ final class ContentStream
     /**
      * @var ContentStreamIdentifier
      */
-    protected $identifier;
+    private $identifier;
+
+    /**
+     * @var StreamName
+     */
+    private $streamName;
 
     /**
      * @var EventStore\EventStoreManager
      */
-    protected $eventStoreManager;
+    private $eventStoreManager;
 
     /**
      * @var EventStore\EventStore
      */
-    protected $eventStore;
-
-    /**
-     * @var NodeEventPublisher
-     */
-    protected $nodeEventPublisher;
+    private $eventStore;
 
     /**
      * The node aggregate registry
@@ -54,28 +54,30 @@ final class ContentStream
      */
     protected $nodeAggregates;
 
-    public function __construct(ContentStreamIdentifier $identifier, EventStore\EventStoreManager $eventStoreManager, NodeEventPublisher $nodeEventPublisher)
+
+    public function __construct(ContentStreamIdentifier $identifier, EventStore\EventStoreManager $eventStoreManager)
     {
         $this->identifier = $identifier;
+        $this->streamName = StreamName::fromString('Neos.ContentRepository:ContentStream:' . $this->identifier);
         $this->eventStoreManager = $eventStoreManager;
         $this->eventStore = $this->eventStoreManager->getEventStoreForStreamName($this->getStreamName());
-        $this->nodeEventPublisher = $nodeEventPublisher;
     }
 
     public function getNodeAggregate(NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate
     {
         if (!isset($this->nodeAggregates[(string)$nodeAggregateIdentifier])) {
-            $nodeAggregateStreamName = $this->getStreamName() . ':NodeAggregate:' . $nodeAggregateIdentifier;
+            $nodeAggregateStreamName = StreamName::fromString($this->getStreamName() . ':NodeAggregate:' . $nodeAggregateIdentifier);
             $eventStore = $this->eventStoreManager->getEventStoreForStreamName($nodeAggregateStreamName);
-            $this->nodeAggregates[(string)$nodeAggregateIdentifier] = new NodeAggregate($nodeAggregateIdentifier, $eventStore, $nodeAggregateStreamName, $this->nodeEventPublisher);
+            $this->nodeAggregates[(string)$nodeAggregateIdentifier] = new NodeAggregate($nodeAggregateIdentifier, $eventStore, $nodeAggregateStreamName);
         }
 
         return $this->nodeAggregates[(string)$nodeAggregateIdentifier];
     }
 
-    public function getStreamName(): string
+
+    public function getStreamName(): StreamName
     {
-        return 'Neos.ContentRepository:ContentStream:' . $this->identifier;
+        return $this->streamName;
     }
 
     public function getIdentifier(): ContentStreamIdentifier
@@ -85,7 +87,8 @@ final class ContentStream
 
     public function getVersion(): int
     {
-        return $this->eventStore->getStreamVersion(new EventStore\StreamNameFilter($this->getStreamName()));
+        // TODO hack!! The new Event Store does not have a getStreamVersion() method any longer - we should probably use the reconstitution version from an aggregate instead
+        return count(iterator_to_array($this->eventStore->load($this->streamName))) - 1;
     }
 
     public function __toString(): string

@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 
-final class SetNodeProperty
+final class SetNodeProperty implements \JsonSerializable
 {
 
     /**
@@ -53,18 +53,24 @@ final class SetNodeProperty
      * @param string $propertyName
      * @param PropertyValue $value
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $originDimensionSpacePoint,
-        string $propertyName,
-        PropertyValue $value
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, string $propertyName, PropertyValue $value)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->propertyName = $propertyName;
         $this->value = $value;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            new DimensionSpacePoint($array['originDimensionSpacePoint']),
+            $array['propertyName'],
+            new PropertyValue($array['value']['value'], $array['value']['type'])
+        );
     }
 
     /**
@@ -105,5 +111,16 @@ final class SetNodeProperty
     public function getValue(): PropertyValue
     {
         return $this->value;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
+            'propertyName' => $this->propertyName,
+            'value' => $this->value,
+        ];
     }
 }

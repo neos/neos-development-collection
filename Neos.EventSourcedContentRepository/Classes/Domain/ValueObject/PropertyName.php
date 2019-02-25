@@ -12,29 +12,39 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
+/**
+ * @Flow\Proxy(false)
+ */
 final class PropertyName implements \JsonSerializable
 {
     /**
      * @var string
      */
-    private $name;
+    private $value;
 
-    public function __construct(string $name)
+    private function __construct(string $value)
     {
-        if ($name === '') {
+        if ($value === '') {
             throw new \InvalidArgumentException('Property name must not be empty.', 1519745994);
         }
 
-        $this->name = $name;
+        $this->value = $value;
+    }
+
+    public static function fromString(string $value): self
+    {
+        return new static($value);
     }
 
     public function jsonSerialize()
     {
-        return $this->name;
+        return $this->value;
     }
 
     public function __toString()
     {
-        return $this->name;
+        return $this->value;
     }
 }

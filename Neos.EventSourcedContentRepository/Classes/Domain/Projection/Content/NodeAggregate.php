@@ -49,7 +49,7 @@ final class NodeAggregate
      * @param NodeName $nodeName
      * @param array $nodes
      */
-    public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, NodeName $nodeName, array $nodes)
+    public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, ?NodeName $nodeName, array $nodes)
     {
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
@@ -74,9 +74,9 @@ final class NodeAggregate
     }
 
     /**
-     * @return NodeName
+     * @return NodeName|null
      */
-    public function getNodeName(): NodeName
+    public function getNodeName(): ?NodeName
     {
         return $this->nodeName;
     }

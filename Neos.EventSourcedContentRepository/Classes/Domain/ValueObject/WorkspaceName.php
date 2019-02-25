@@ -13,11 +13,14 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 use Neos\Cache\CacheAwareInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Name of a workspace.
  *
  * Implements CacheAwareInterface because of Fusion Runtime caching and Routing
+ *
+ * @Flow\Proxy(false)
  */
 final class WorkspaceName implements \JsonSerializable, CacheAwareInterface
 {

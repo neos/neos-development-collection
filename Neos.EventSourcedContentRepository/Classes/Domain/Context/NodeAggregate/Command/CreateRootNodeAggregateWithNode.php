@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
@@ -22,7 +23,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  * A root node has no variants and no origin dimension space point but occupies the whole allowed dimension subspace.
  * It also has no auto created child nodes.
  */
-final class CreateRootNodeAggregateWithNode
+final class CreateRootNodeAggregateWithNode implements \JsonSerializable
 {
     /**
      * @var ContentStreamIdentifier
@@ -56,6 +57,19 @@ final class CreateRootNodeAggregateWithNode
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            NodeTypeName::fromString($array['nodeTypeName']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
+        );
+    }
+
+    /**
+     * @return ContentStreamIdentifier
+     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
@@ -74,5 +88,15 @@ final class CreateRootNodeAggregateWithNode
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'nodeTypeName' => $this->nodeTypeName,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+        ];
     }
 }

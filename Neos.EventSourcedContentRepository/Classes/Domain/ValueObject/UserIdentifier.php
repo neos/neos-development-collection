@@ -12,19 +12,43 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Utility\Algorithms;
+
 /**
  * User Identifier
+ * @Flow\Proxy(false)
  */
-final class UserIdentifier extends AbstractIdentifier
+final class UserIdentifier implements \JsonSerializable
 {
-    const SYSTEM_USER_IDENTIFIER = '00000000-0000-0000-0000-000000000000';
+    const SYSTEM_USER_IDENTIFIER = 'system';
+
+    /**
+     * @var string
+     */
+    private $value;
+
+    private function __construct(string $value)
+    {
+        $this->value = $value;
+    }
+
+    public static function create(): self
+    {
+        return new static(Algorithms::generateUUID());
+    }
 
     /**
      * Creates a special user identifier which refers to the virtual "system" user.
      */
-    public static function forSystemUser()
+    public static function forSystemUser(): self
     {
-        return self::fromString(self::SYSTEM_USER_IDENTIFIER);
+        return new static(self::SYSTEM_USER_IDENTIFIER);
+    }
+
+    public static function fromString(string $value): self
+    {
+        return new static($value);
     }
 
     /**
@@ -32,6 +56,16 @@ final class UserIdentifier extends AbstractIdentifier
      */
     public function isSystemUser(): bool
     {
-        return $this->uuid === self::SYSTEM_USER_IDENTIFIER;
+        return $this->value === self::SYSTEM_USER_IDENTIFIER;
+    }
+
+    public function jsonSerialize(): string
+    {
+        return $this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 }

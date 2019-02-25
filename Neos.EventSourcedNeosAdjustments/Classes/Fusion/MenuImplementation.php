@@ -238,7 +238,7 @@ class MenuImplementation extends AbstractMenuImplementation
                 });
         } else {
             $traversedHierarchy = [];
-            $this->getSubgraph()->traverseHierarchy($traversalStartingPoint, HierarchyTraversalDirection::up(), $this->getNodeTypeConstraints()->withExplicitlyDisallowedNodeType(new NodeTypeName('Neos.Neos:Sites')),
+            $this->getSubgraph()->traverseHierarchy($traversalStartingPoint, HierarchyTraversalDirection::up(), $this->getNodeTypeConstraints()->withExplicitlyDisallowedNodeType(NodeTypeName::fromString('Neos.Neos:Sites')),
                 function (NodeInterface $traversedNode) use (&$traversedHierarchy) {
                     $traversedHierarchy[] = $traversedNode;
                     return true;

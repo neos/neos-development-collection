@@ -67,7 +67,7 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
-     * @throws \Throwable
+     * @throws \Exception
      */
     public function reset(): void
     {
@@ -93,7 +93,7 @@ class GraphProjector implements ProjectorInterface
      */
     final public function whenRootNodeAggregateWithNodeWasCreated(Event\RootNodeAggregateWithNodeWasCreated $event)
     {
-        $nodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+        $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
             $event->getNodeAggregateIdentifier(),
@@ -107,7 +107,7 @@ class GraphProjector implements ProjectorInterface
             $node->addToDatabase($this->getDatabaseConnection());
             $this->connectHierarchy(
                 $event->getContentStreamIdentifier(),
-                new NodeRelationAnchorPoint('00000000-0000-0000-0000-000000000000'),
+                NodeRelationAnchorPoint::fromString('00000000-0000-0000-0000-000000000000'),
                 $node->relationAnchorPoint,
                 $event->getVisibleInDimensionSpacePoints(),
                 null
@@ -235,16 +235,19 @@ class GraphProjector implements ProjectorInterface
         NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
         NodeName $nodeName = null
     ): void {
-        $nodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+        $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
             $nodeAggregateIdentifier,
             $originDimensionSpacePoint->jsonSerialize(),
             $originDimensionSpacePoint->getHash(),
+            /*
             array_map(function (ContentRepository\ValueObject\PropertyValue $propertyValue) {
                 return $propertyValue->getValue();
-            }, $propertyDefaultValuesAndTypes->getValues()),
-            $nodeTypeName
+            }, $propertyDefaultValuesAndTypes->getValues()),*/
+            iterator_to_array($propertyDefaultValuesAndTypes),
+            $nodeTypeName,
+            $nodeName
         );
 
         // reconnect parent relations
@@ -714,15 +717,15 @@ insert into neos_contentgraph_restrictionedge
         $this->transactional(function () use ($event) {
             $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceDimensionSpacePoint());
 
-            $specializedNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+            $specializedNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
             $specializedNode = new NodeRecord(
                 $specializedNodeRelationAnchorPoint,
-                $event->getSpecializationIdentifier(),
                 $sourceNode->nodeAggregateIdentifier,
                 $event->getSpecializationLocation()->jsonSerialize(),
                 $event->getSpecializationLocation()->getHash(),
                 $sourceNode->properties,
-                $sourceNode->nodeTypeName
+                $sourceNode->nodeTypeName,
+                $sourceNode->nodeName
             );
             $specializedNode->addToDatabase($this->getDatabaseConnection());
 
@@ -760,15 +763,15 @@ insert into neos_contentgraph_restrictionedge
                 throw new \Exception('Seems someone tried to generalize a root node and I don\'t have a proper name yet', 1519995795);
             }
 
-            $generalizedNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+            $generalizedNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
             $generalizedNode = new NodeRecord(
                 $generalizedNodeRelationAnchorPoint,
-                $event->getGeneralizationIdentifier(),
                 $sourceNode->nodeAggregateIdentifier,
                 $event->getGeneralizationLocation()->jsonSerialize(),
                 $event->getGeneralizationLocation()->getHash(),
                 $sourceNode->properties,
-                $sourceNode->nodeTypeName
+                $sourceNode->nodeTypeName,
+                $sourceNode->nodeName
             );
             $generalizedNode->addToDatabase($this->getDatabaseConnection());
 
@@ -796,7 +799,7 @@ insert into neos_contentgraph_restrictionedge
     public function whenNodeInAggregateWasTranslated(NodeInAggregateWasTranslated $event)
     {
         $this->transactional(function () use ($event) {
-            $childNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+            $childNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
 
             $sourceNode = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getSourceNodeIdentifier(), $event->getContentStreamIdentifier());
             if ($sourceNode === null) {
@@ -806,12 +809,12 @@ insert into neos_contentgraph_restrictionedge
 
             $translatedNode = new NodeRecord(
                 $childNodeRelationAnchorPoint,
-                $event->getDestinationNodeIdentifier(),
                 $sourceNode->nodeAggregateIdentifier,
                 $event->getDimensionSpacePoint()->jsonSerialize(),
                 $event->getDimensionSpacePoint()->getHash(),
                 $sourceNode->properties,
-                $sourceNode->nodeTypeName
+                $sourceNode->nodeTypeName,
+                $sourceNode->nodeName
             );
             $parentNode = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getDestinationParentNodeIdentifier(), $event->getContentStreamIdentifier());
             if ($parentNode === null) {
@@ -821,13 +824,13 @@ insert into neos_contentgraph_restrictionedge
 
             $translatedNode->addToDatabase($this->getDatabaseConnection());
             $this->connectHierarchy(
+                $event->getContentStreamIdentifier(),
                 $parentNode->relationAnchorPoint,
                 $translatedNode->relationAnchorPoint,
+                $event->getVisibleInDimensionSpacePoints(),
                 // TODO: position on insert is still missing
                 null,
-                $sourceNode->nodeName,
-                $event->getContentStreamIdentifier(),
-                $event->getVisibleInDimensionSpacePoints()
+                $sourceNode->nodeName
             );
         });
     }
@@ -986,6 +989,7 @@ insert into neos_contentgraph_restrictionedge
     /**
      * @param callable $operations
      * @throws \Exception
+     * @throws \Throwable
      */
     protected function transactional(callable $operations): void
     {
@@ -993,7 +997,14 @@ insert into neos_contentgraph_restrictionedge
         $this->emitProjectionUpdated();
     }
 
-    protected function updateNodeWithCopyOnWrite($event, callable $operations)
+
+    /**
+     * @param ContentRepository\Context\Node\Event\CopyableAcrossContentStreamsInterface $event
+     * @param callable $operations
+     * @return mixed
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function updateNodeWithCopyOnWrite(ContentRepository\Context\Node\Event\CopyableAcrossContentStreamsInterface $event, callable $operations)
     {
         // TODO: do this copy on write on every modification op concerning nodes
 
@@ -1017,7 +1028,7 @@ insert into neos_contentgraph_restrictionedge
 
             // 1) fetch node, adjust properties, assign new Relation Anchor Point
             $copiedNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPointForNode);
-            $copiedNode->relationAnchorPoint = new NodeRelationAnchorPoint();
+            $copiedNode->relationAnchorPoint = NodeRelationAnchorPoint::create();
             $result = $operations($copiedNode);
             $copiedNode->addToDatabase($this->getDatabaseConnection());
 

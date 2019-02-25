@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
+use Neos\EventSourcing\EventStore\StreamName;
 
 /**
  * A node aggregate's event stream name
@@ -26,7 +27,7 @@ final class NodeAggregateEventStreamName
      */
     protected $eventStreamName;
 
-    public function __construct(string $eventStreamName)
+    protected function __construct(string $eventStreamName)
     {
         $this->eventStreamName = $eventStreamName;
     }
@@ -34,15 +35,15 @@ final class NodeAggregateEventStreamName
     public static function fromContentStreamIdentifierAndNodeAggregateIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): NodeAggregateEventStreamName {
+    ): self {
         $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
 
         return new NodeAggregateEventStreamName($contentStreamEventStreamName . ':NodeAggregate:' . $nodeAggregateIdentifier);
     }
 
-    public function getEventStreamName(): string
+    public function getEventStreamName(): StreamName
     {
-        return $this->eventStreamName;
+        return StreamName::fromString($this->eventStreamName);
     }
 
     public function __toString(): string

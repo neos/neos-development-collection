@@ -54,16 +54,22 @@ final class MoveNodesInAggregate
      * @param ReferencePosition $referencePosition
      * @param NodeAggregateIdentifier $referenceNodeAggregateIdentifier
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ReferencePosition $referencePosition,
-        NodeAggregateIdentifier $referenceNodeAggregateIdentifier
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, ReferencePosition $referencePosition, NodeAggregateIdentifier $referenceNodeAggregateIdentifier)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->referencePosition = $referencePosition;
         $this->referenceNodeAggregateIdentifier = $referenceNodeAggregateIdentifier;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            new ReferencePosition($array['referencePosition']),
+            NodeAggregateIdentifier::fromString($array['referenceNodeAggregateIdentifier'])
+        );
     }
 
     /**

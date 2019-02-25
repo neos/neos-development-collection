@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
@@ -16,15 +17,18 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A node aggregate with its initial node was auto created
+ *
+ * @Flow\Proxy(false)
  */
-final class NodeAggregateWithNodeWasAutoCreated implements EventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateWithNodeWasAutoCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * The content stream identifier the node aggregate and its node were created in
@@ -167,7 +171,7 @@ final class NodeAggregateWithNodeWasAutoCreated implements EventInterface, Copya
         return $this->succeedingNodeAggregateIdentifier;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeAggregateWithNodeWasAutoCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
     {
         return new NodeAggregateWithNodeWasAutoCreated(
             $targetContentStream,

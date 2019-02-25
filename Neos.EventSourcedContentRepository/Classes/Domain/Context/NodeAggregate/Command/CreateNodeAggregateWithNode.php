@@ -117,10 +117,10 @@ final class CreateNodeAggregateWithNode
         DimensionSpacePoint $originDimensionSpacePoint,
         UserIdentifier $initiatingUserIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
-        NodeName $nodeName = null,
-        PropertyValues $initialPropertyValues = null,
-        NodeAggregateIdentifiersByNodePaths $autoCreatedDescendantNodeAggregateIdentifiers = null
+        ?NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
+        ?NodeName $nodeName = null,
+        ?PropertyValues $initialPropertyValues = null,
+        ?NodeAggregateIdentifiersByNodePaths $autoCreatedDescendantNodeAggregateIdentifiers = null
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -130,8 +130,32 @@ final class CreateNodeAggregateWithNode
         $this->parentNodeAggregateIdentifier = $parentNodeAggregateIdentifier;
         $this->succeedingSiblingNodeAggregateIdentifier = $succeedingSiblingNodeAggregateIdentifier;
         $this->nodeName = $nodeName;
-        $this->initialPropertyValues = $initialPropertyValues ?: new PropertyValues([]);
+        $this->initialPropertyValues = $initialPropertyValues ?: PropertyValues::fromArray([]);
         $this->autoCreatedDescendantNodeAggregateIdentifiers = $autoCreatedDescendantNodeAggregateIdentifiers ?: new NodeAggregateIdentifiersByNodePaths([]);
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            NodeTypeName::fromString($array['nodeTypeName']),
+            new DimensionSpacePoint($array['originDimensionSpacePoint']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier']),
+            NodeAggregateIdentifier::fromString($array['parentNodeAggregateIdentifier']),
+            isset($array['succeedingSiblingNodeAggregateIdentifier'])
+                ? NodeAggregateIdentifier::fromString($array['succeedingSiblingNodeAggregateIdentifier'])
+                : null,
+            isset($array['nodeName'])
+                ? NodeName::fromString($array['nodeName'])
+                : null,
+            isset($array['initialPropertyValues'])
+                ? PropertyValues::fromArray($array['initialPropertyValues'])
+                : null,
+            isset($array['autoCreatedDescendantNodeAggregateIdentifiers'])
+                ? NodeAggregateIdentifiersByNodePaths::fromArray($array['autoCreatedDescendantNodeAggregateIdentifiers'])
+                : null
+        );
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier

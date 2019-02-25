@@ -13,11 +13,43 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain as ContentRepository;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Utility\Algorithms;
 
 /**
  * The node relation anchor value object
+ *
+ * @Flow\Proxy(false)
  */
-class NodeRelationAnchorPoint extends ContentRepository\ValueObject\AbstractIdentifier
+class NodeRelationAnchorPoint implements \JsonSerializable
 {
+    /**
+     * @var string
+     */
+    private $value;
+
+    private function __construct(string $value)
+    {
+        $this->value = $value;
+    }
+
+    public static function create(): self
+    {
+        return new static(Algorithms::generateUUID());
+    }
+
+    public static function fromString(string $value): self
+    {
+        return new static($value);
+    }
+
+    public function jsonSerialize(): string
+    {
+        return $this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
+    }
 }

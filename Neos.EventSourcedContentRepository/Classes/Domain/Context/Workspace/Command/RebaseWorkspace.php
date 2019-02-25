@@ -29,6 +29,13 @@ final class RebaseWorkspace
         $this->workspaceName = $workspaceName;
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            new WorkspaceName($array['workspaceName'])
+        );
+    }
+
     /**
      * @return WorkspaceName
      */

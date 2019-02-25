@@ -43,6 +43,14 @@ final class ForkContentStream
         $this->sourceContentStreamIdentifier = $sourceContentStreamIdentifier;
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            ContentStreamIdentifier::fromString($array['sourceContentStreamIdentifier'])
+        );
+    }
+
     /**
      * @return ContentStreamIdentifier
      */

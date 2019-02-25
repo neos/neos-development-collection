@@ -28,7 +28,7 @@ use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStream;
 use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
-use Neos\EventSourcing\EventStore\StreamNameFilter;
+use Neos\EventSourcing\EventStore\StreamName;
 
 /**
  * The node aggregate
@@ -44,17 +44,12 @@ final class NodeAggregate
     /**
      * @var NodeAggregateIdentifier
      */
-    protected $identifier;
+    private $identifier;
 
     /**
      * @var EventStore
      */
-    protected $eventStore;
-
-    /**
-     * @var string
-     */
-    protected $streamName;
+    private $eventStore;
 
     /**
      * @var EventStream
@@ -62,16 +57,15 @@ final class NodeAggregate
     protected $eventStream;
 
     /**
-     * @var NodeEventPublisher
+     * @var StreamName
      */
-    protected $nodeEventPublisher;
+    private $streamName;
 
-    public function __construct(NodeAggregateIdentifier $identifier, EventStore $eventStore, string $streamName, NodeEventPublisher $nodeEventPublisher)
+    public function __construct(NodeAggregateIdentifier $identifier, EventStore $eventStore, StreamName $streamName)
     {
         $this->identifier = $identifier;
         $this->eventStore = $eventStore;
         $this->streamName = $streamName;
-        $this->nodeEventPublisher = $nodeEventPublisher;
     }
 
     /**
@@ -239,8 +233,8 @@ final class NodeAggregate
 
         $eventStream = $this->getEventStream();
         if ($eventStream) {
-            foreach ($eventStream as $eventAndRawEvent) {
-                $event = $eventAndRawEvent->getEvent();
+            foreach ($eventStream as $eventEnvelope) {
+                $event = $eventEnvelope->getDomainEvent();
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
                         /** @var NodeAggregateWithNodeWasCreated $event */
@@ -269,8 +263,8 @@ final class NodeAggregate
 
         $eventStream = $this->getEventStream();
         if ($eventStream) {
-            foreach ($eventStream as $eventAndRawEvent) {
-                $event = $eventAndRawEvent->getEvent();
+            foreach ($eventStream as $eventEnvelope) {
+                $event = $eventEnvelope->getDomainEvent();
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
                         /** @var NodeAggregateWithNodeWasCreated $event */
@@ -304,8 +298,8 @@ final class NodeAggregate
         $dimensionSpacePointOccupied = false;
         $eventStream = $this->getEventStream();
         if ($eventStream) {
-            foreach ($eventStream as $eventAndRawEvent) {
-                $event = $eventAndRawEvent->getEvent();
+            foreach ($eventStream as $eventEnvelope) {
+                $event = $eventEnvelope->getDomainEvent();
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
                         /** @var NodeAggregateWithNodeWasCreated $event */
@@ -395,29 +389,28 @@ final class NodeAggregate
         return $this->identifier;
     }
 
-    public function getStreamName(): string
+    public function getStreamName(): StreamName
     {
         return $this->streamName;
     }
 
-    protected function traverseEventStream(callable $callback): void
+    private function traverseEventStream(callable $callback): void
     {
-        foreach ($this->getEventStream() as $eventAndRawEvent) {
-            $event = $eventAndRawEvent->getEvent();
-            $callback($event);
+        $eventStream = $this->getEventStream();
+        if (!is_null($eventStream)) {
+            foreach ($this->getEventStream() as $eventAndRawEvent) {
+                $event = $eventAndRawEvent->getEvent();
+                $callback($event);
+            }
         }
     }
 
-    protected function getEventStream(): EventStream
+    private function getEventStream(): ?EventStream
     {
-        if (is_null($this->eventStream)) {
-            try {
-                $this->eventStream = $this->eventStore->get(new StreamNameFilter($this->streamName));
-            } catch (EventStreamNotFoundException $eventStreamNotFound) {
-                $this->eventStream = new EventStream(new \ArrayIterator());
-            }
+        try {
+            return $this->eventStore->load($this->streamName);
+        } catch (EventStreamNotFoundException $eventStreamNotFound) {
+            return null;
         }
-
-        return $this->eventStream;
     }
 }

@@ -13,7 +13,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
-use Neos\ContentRepository\Migration\Filters\NodeName;
 
 /**
  * An assignment of NodeAggregateIdentifiers to NodePaths
@@ -34,13 +33,23 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
     public function __construct(array $nodeAggregateIdentifiers)
     {
         foreach ($nodeAggregateIdentifiers as $nodePath => $nodeAggregateIdentifier) {
-            $nodePath = new NodePath($nodePath);
+            $nodePath = NodePath::fromString($nodePath);
             if (!$nodeAggregateIdentifier instanceof NodeAggregateIdentifier) {
                 throw new \InvalidArgumentException('NodeAggregateIdentifiersByNodePaths objects can only be composed of NodeAggregateIdentifiers.', 1541751553);
             }
 
             $this->nodeAggregateIdentifiers[(string) $nodePath] = $nodeAggregateIdentifier;
         }
+    }
+
+    public static function fromArray(array $array): self
+    {
+        $nodeAggregateIdentifiers = [];
+        foreach ($array as $rawNodePath => $rawNodeAggregateIdentifier) {
+            $nodeAggregateIdentifiers[$rawNodePath] = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
+        }
+
+        return new NodeAggregateIdentifiersByNodePaths($nodeAggregateIdentifiers);
     }
 
     public function merge(NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers): NodeAggregateIdentifiersByNodePaths

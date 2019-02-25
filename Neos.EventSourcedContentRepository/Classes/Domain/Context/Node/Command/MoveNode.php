@@ -29,7 +29,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
  *
  * This is only allowed if both nodes exist and the new parent aggregate's type allows children of the given aggregate's type
  */
-final class MoveNode
+final class MoveNode implements \JsonSerializable
 {
     /**
      * @var ContentStreamIdentifier
@@ -70,20 +70,35 @@ final class MoveNode
      * @param NodeAggregateIdentifier|null $newSucceedingSiblingNodeAggregateIdentifier
      * @param RelationDistributionStrategy $relationDistributionStrategy
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier,
-        RelationDistributionStrategy $relationDistributionStrategy
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier, RelationDistributionStrategy $relationDistributionStrategy)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newParentNodeAggregateIdentifier = $newParentNodeAggregateIdentifier;
         $this->newSucceedingSiblingNodeAggregateIdentifier = $newSucceedingSiblingNodeAggregateIdentifier;
         $this->relationDistributionStrategy = $relationDistributionStrategy;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        if ($array['relationDistributionStrategy'] === RelationDistributionStrategy::STRATEGY_SCATTER) {
+            $relationDistributionStrategy = RelationDistributionStrategy::scatter();
+        } elseif ($array['relationDistributionStrategy'] === RelationDistributionStrategy::STRATEGY_GATHER_ALL) {
+            $relationDistributionStrategy = RelationDistributionStrategy::gatherAll();
+        } elseif ($array['relationDistributionStrategy'] === RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS) {
+            $relationDistributionStrategy = RelationDistributionStrategy::gatherSpecializations();
+        } else {
+            throw new \InvalidArgumentException(sprintf('unknown RelationDistributionStrategy "%s"', $array['relationDistributionStrategy']), 1545566059);
+        }
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            new DimensionSpacePoint($array['dimensionSpacePoint']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            isset($array['newParentNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newParentNodeAggregateIdentifier']) : null,
+            isset($array['newSucceedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newSucceedingSiblingNodeAggregateIdentifier']) : null,
+            $relationDistributionStrategy
+        );
     }
 
 
@@ -133,5 +148,17 @@ final class MoveNode
     public function getRelationDistributionStrategy(): RelationDistributionStrategy
     {
         return $this->relationDistributionStrategy;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'newParentNodeAggregateIdentifier' => $this->newParentNodeAggregateIdentifier,
+            'newSucceedingSiblingNodeAggregateIdentifier' => $this->newSucceedingSiblingNodeAggregateIdentifier,
+            'relationDistributionStrategy' => $this->relationDistributionStrategy,
+        ];
     }
 }

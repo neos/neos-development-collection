@@ -16,7 +16,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
-final class ChangeNodeName
+final class ChangeNodeName implements \JsonSerializable
 {
 
     /**
@@ -41,14 +41,20 @@ final class ChangeNodeName
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeName $newNodeName
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $nodeIdentifier,
-        NodeName $newNodeName
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeName $newNodeName)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->newNodeName = $newNodeName;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeIdentifier::fromString($array['nodeIdentifier']),
+            NodeName::fromString($array['newNodeName'])
+        );
     }
 
     /**
@@ -73,5 +79,14 @@ final class ChangeNodeName
     public function getNewNodeName(): NodeName
     {
         return $this->newNodeName;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeIdentifier' => $this->nodeIdentifier,
+            'newNodeName' => $this->newNodeName,
+        ];
     }
 }

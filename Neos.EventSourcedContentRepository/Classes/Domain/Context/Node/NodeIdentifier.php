@@ -30,44 +30,33 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 final class NodeIdentifier implements CacheAwareInterface, \JsonSerializable
 {
     /**
-     * @var NodeAggregateIdentifier
-     */
-    protected $nodeAggregateIdentifier;
-
-    /**
      * @var ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
+
+    /**
+     * @var NodeAggregateIdentifier
+     */
+    protected $nodeAggregateIdentifier;
 
     /**
      * @var DimensionSpacePoint
      */
     protected $originDimensionSpacePoint;
 
-    public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $originDimensionSpacePoint)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint)
     {
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
     }
 
-    /**
-     * @param string $serializedNodeIdentifier
-     * @return NodeIdentifier
-     * @throws \Exception
-     */
-    public static function fromJsonString(string $serializedNodeIdentifier): NodeIdentifier
+    public static function fromArray(array $array): self
     {
-        $jsonArray = json_decode($serializedNodeIdentifier, true);
-
-        if (!isset($jsonArray['nodeAggregateIdentifier']) || !isset($jsonArray['contentStreamIdentifier']) || !isset($jsonArray['originDimensionSpacePoint'])) {
-            throw new \InvalidArgumentException($serializedNodeIdentifier . ' is no valid serialization of a node identifier.', 1549227649);
-        }
-
         return new NodeIdentifier(
-            new NodeAggregateIdentifier($jsonArray['nodeAggregateIdentifier']),
-            new ContentStreamIdentifier($jsonArray['contentStreamIdentifier']),
-            DimensionSpacePoint::fromJsonString($jsonArray['originDimensionSpacePoint'])
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            new DimensionSpacePoint($array['originDimensionSpacePoint'])
         );
     }
 

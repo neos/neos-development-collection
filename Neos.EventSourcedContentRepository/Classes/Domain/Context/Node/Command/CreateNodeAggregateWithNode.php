@@ -17,12 +17,16 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\Node;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
 /**
- * AddNodeToAggregate command
+ * CreateNodeAggregateWithNode command
+ *
+ * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
+ * The node will be appended as child node of the given `parentNodeIdentifier` which must be visible in the given
+ * `dimensionSpacePoint`.
  */
-final class AddNodeToAggregate implements \JsonSerializable
+final class CreateNodeAggregateWithNode implements \JsonSerializable
 {
 
     /**
@@ -36,6 +40,11 @@ final class AddNodeToAggregate implements \JsonSerializable
     private $nodeAggregateIdentifier;
 
     /**
+     * @var NodeTypeName
+     */
+    private $nodeTypeName;
+
+    /**
      * Location of the new node in the dimension space
      *
      * @var DimensionSpacePoint
@@ -43,8 +52,6 @@ final class AddNodeToAggregate implements \JsonSerializable
     private $dimensionSpacePoint;
 
     /**
-     * Node identifier of the new node
-     *
      * @var NodeIdentifier
      */
     private $nodeIdentifier;
@@ -60,19 +67,21 @@ final class AddNodeToAggregate implements \JsonSerializable
     private $nodeName;
 
     /**
-     * AddNodeToAggregate constructor.
+     * CreateNodeAggregateWithNode constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeIdentifier $parentNodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier New node aggregate identifier
+     * @param NodeTypeName $nodeTypeName
+     * @param DimensionSpacePoint $dimensionSpacePoint The dimension space point of the node, will be used to calculate a set of dimension points from the configured generalizations
+     * @param NodeIdentifier $nodeIdentifier New node identifier
+     * @param NodeIdentifier $parentNodeIdentifier Parent node of the created node
      * @param NodeName $nodeName
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeIdentifier $nodeIdentifier, NodeIdentifier $parentNodeIdentifier, NodeName $nodeName)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, DimensionSpacePoint $dimensionSpacePoint, NodeIdentifier $nodeIdentifier, NodeIdentifier $parentNodeIdentifier, NodeName $nodeName)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->nodeTypeName = $nodeTypeName;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->parentNodeIdentifier = $parentNodeIdentifier;
@@ -84,6 +93,7 @@ final class AddNodeToAggregate implements \JsonSerializable
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            NodeTypeName::fromString($array['nodeTypeName']),
             new DimensionSpacePoint($array['dimensionSpacePoint']),
             NodeIdentifier::fromString($array['nodeIdentifier']),
             NodeIdentifier::fromString($array['parentNodeIdentifier']),
@@ -105,6 +115,14 @@ final class AddNodeToAggregate implements \JsonSerializable
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
+    }
+
+    /**
+     * @return NodeTypeName
+     */
+    public function getNodeTypeName(): NodeTypeName
+    {
+        return $this->nodeTypeName;
     }
 
     /**
@@ -144,6 +162,7 @@ final class AddNodeToAggregate implements \JsonSerializable
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'nodeTypeName' => $this->nodeTypeName,
             'dimensionSpacePoint' => $this->dimensionSpacePoint,
             'nodeIdentifier' => $this->nodeIdentifier,
             'parentNodeIdentifier' => $this->parentNodeIdentifier,

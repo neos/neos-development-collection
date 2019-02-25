@@ -7,10 +7,10 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
   Background:
     Given I have no content dimensions
     And the command CreateWorkspace is executed with payload:
-      | Key                     | Value         | Type |
-      | workspaceName           | live          |      |
-      | contentStreamIdentifier | cs-identifier | Uuid |
-      | rootNodeIdentifier      | rn-identifier | Uuid |
+      | Key                     | Value           |
+      | workspaceName           | "live"          |
+      | contentStreamIdentifier | "cs-identifier" |
+      | rootNodeIdentifier      | "rn-identifier" |
     And I have the following NodeTypes configuration:
     """
     Neos.ContentRepository:Root: {}
@@ -19,38 +19,40 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
         text:
           type: string
     """
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                     | Value                                  | Type |
-      | contentStreamIdentifier | cs-identifier                          | Uuid |
-      | nodeAggregateIdentifier | na-identifier                          | Uuid |
-      | nodeTypeName            | Neos.ContentRepository.Testing:Content |      |
-      | nodeIdentifier          | node-identifier                        | Uuid |
-      | parentNodeIdentifier    | rn-identifier                          | Uuid |
-      | nodeName                | text1                                  |      |
+    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                     | Value                                    |
+      | contentStreamIdentifier | "cs-identifier"                          |
+      | nodeAggregateIdentifier | "na-identifier"                          |
+      | nodeTypeName            | "Neos.ContentRepository.Testing:Content" |
+      | nodeIdentifier          | "node-identifier"                        |
+      | parentNodeIdentifier    | "rn-identifier"                          |
+      | nodeName                | "text1"                                  |
 
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                     | Value                                  | Type |
-      | contentStreamIdentifier | cs-identifier                          | Uuid |
-      | nodeAggregateIdentifier | cna-identifier                         | Uuid |
-      | nodeTypeName            | Neos.ContentRepository.Testing:Content |      |
-      | nodeIdentifier          | cnode-identifier                       | Uuid |
-      | parentNodeIdentifier    | node-identifier                        | Uuid |
-      | nodeName                | text2                                  |      |
+    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                     | Value                                    |
+      | contentStreamIdentifier | "cs-identifier"                          |
+      | nodeAggregateIdentifier | "cna-identifier"                         |
+      | nodeTypeName            | "Neos.ContentRepository.Testing:Content" |
+      | nodeIdentifier          | "cnode-identifier"                       |
+      | parentNodeIdentifier    | "node-identifier"                        |
+      | nodeName                | "text2"                                  |
+
+    And the graph projection is fully up to date
 
     And the command "HideNode" is executed with payload:
-      | Key                          | Value         | Type |
-      | contentStreamIdentifier      | cs-identifier | Uuid |
-      | nodeAggregateIdentifier      | na-identifier | Uuid |
-      | affectedDimensionSpacePoints | [{}]          | json |
+      | Key                          | Value           |
+      | contentStreamIdentifier      | "cs-identifier" |
+      | nodeAggregateIdentifier      | "na-identifier" |
+      | affectedDimensionSpacePoints | [{}]            |
 
   Scenario: on ForkContentStream, the hidden nodes in the target content stream should still be invisible.
     When the command "ForkContentStream" is executed with payload:
-      | Key                           | Value              | Type |
-      | sourceContentStreamIdentifier | cs-identifier      | Uuid |
-      | contentStreamIdentifier       | user-cs-identifier | Uuid |
+      | Key                           | Value                |
+      | sourceContentStreamIdentifier | "cs-identifier"      |
+      | contentStreamIdentifier       | "user-cs-identifier" |
     And the graph projection is fully up to date
 
-    When I am in content stream "[user-cs-identifier]" and Dimension Space Point {}
+    When I am in content stream "user-cs-identifier" and Dimension Space Point {}
 
-    Then I expect a node identified by aggregate identifier "[na-identifier]" not to exist in the subgraph
-    Then I expect a node identified by aggregate identifier "[cna-identifier]" not to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "na-identifier" not to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "cna-identifier" not to exist in the subgraph

@@ -8,12 +8,15 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A named reference from source- to destination-node was created
+ *
+ * @Flow\Proxy(false)
  */
-final class NodeReferencesWereSet implements EventInterface, CopyableAcrossContentStreamsInterface
+final class NodeReferencesWereSet implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**

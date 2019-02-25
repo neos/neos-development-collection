@@ -25,7 +25,7 @@ use Neos\EventSourcedContentRepository\Exception;
  * NOTE: If the last edge pointing to a node is removed, the corresponding node is removed as well (as it
  * is not reachable anymore).
  */
-final class RemoveNodesFromAggregate
+final class RemoveNodesFromAggregate implements \JsonSerializable
 {
 
     /**
@@ -60,6 +60,15 @@ final class RemoveNodesFromAggregate
         }
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            new DimensionSpacePointSet($array['dimensionSpacePointSet'])
+        );
+    }
+
     /**
      * @return ContentStreamIdentifier
      */
@@ -82,5 +91,14 @@ final class RemoveNodesFromAggregate
     public function getDimensionSpacePointSet(): DimensionSpacePointSet
     {
         return $this->dimensionSpacePointSet;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'dimensionSpacePointSet' => $this->dimensionSpacePointSet,
+        ];
     }
 }

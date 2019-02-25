@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\EventSourcing\EventStore\StreamName;
 
 /**
  * A content stream's event stream name
@@ -24,19 +25,19 @@ final class ContentStreamEventStreamName
      */
     protected $eventStreamName;
 
-    public function __construct(string $eventStreamName)
+    protected function __construct(string $eventStreamName)
     {
         $this->eventStreamName = $eventStreamName;
     }
 
-    public static function fromContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ContentStreamEventStreamName
+    public static function fromContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): self
     {
         return new ContentStreamEventStreamName('Neos.ContentRepository:ContentStream:' . $contentStreamIdentifier);
     }
 
-    public function getEventStreamName(): string
+    public function getEventStreamName(): StreamName
     {
-        return $this->eventStreamName;
+        return StreamName::fromString($this->eventStreamName);
     }
 
     public function __toString(): string

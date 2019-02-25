@@ -18,42 +18,45 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\EventSourcing\Event\DomainEventInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A node generalization was created
+ *
+ * @Flow\Proxy(false)
  */
-final class NodeGeneralizationWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
+final class NodeGeneralizationWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
      */
-    protected $contentStreamIdentifier;
+    private $contentStreamIdentifier;
 
     /**
      * @var NodeAggregateIdentifier
      */
-    protected $nodeAggregateIdentifier;
+    private $nodeAggregateIdentifier;
 
     /**
      * @var DimensionSpacePoint
      */
-    protected $sourceDimensionSpacePoint;
+    private $sourceDimensionSpacePoint;
 
     /**
      * @var NodeIdentifier
      */
-    protected $generalizationIdentifier;
+    private $generalizationIdentifier;
 
     /**
      * @var DimensionSpacePoint
      */
-    protected $generalizationLocation;
+    private $generalizationLocation;
 
     /**
      * @var DimensionSpacePointSet
      */
-    protected $generalizationVisibility;
+    private $generalizationVisibility;
 
 
     /**

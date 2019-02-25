@@ -65,6 +65,17 @@ final class CreateRootWorkspace
         $this->contentStreamIdentifier = $contentStreamIdentifier;
     }
 
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            new WorkspaceName($array['workspaceName']),
+            new WorkspaceTitle($array['workspaceTitle']),
+            new WorkspaceDescription($array['workspaceDescription']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier']),
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier'])
+        );
+    }
+
     /**
      * @return WorkspaceName
      */

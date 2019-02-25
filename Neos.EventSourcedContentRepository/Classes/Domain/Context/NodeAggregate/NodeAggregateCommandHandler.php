@@ -170,11 +170,7 @@ final class NodeAggregateCommandHandler
             $this->requireNodeAggregateToCurrentlyNotExist($command->getContentStreamIdentifier(), $nodeAggregateIdentifier);
         }
 
-        $propertyValues = [];
-        foreach ($nodeType->getDefaultValuesForProperties() as $rawPropertyName => $propertyValue) {
-            $propertyValues[$rawPropertyName] = new PropertyValue($propertyValue, $nodeType->getPropertyType($rawPropertyName));
-        }
-        $defaultPropertyValues = new PropertyValues($propertyValues);
+        $defaultPropertyValues = PropertyValues::fromArray($nodeType->getDefaultValuesForProperties());
         $initialPropertyValues = $defaultPropertyValues->merge($command->getInitialPropertyValues());
 
         $nodeAggregate->createWithNode(
@@ -221,8 +217,8 @@ final class NodeAggregateCommandHandler
         NodePath $nodePath = null
     ) {
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawNodeName => $childNodeType) {
-            $nodeName = new NodeName($rawNodeName);
-            $childNodePath = $nodePath ? $nodePath->appendPathSegment($nodeName) : new NodePath((string) $nodeName);
+            $nodeName = NodeName::fromString($rawNodeName);
+            $childNodePath = $nodePath ? $nodePath->appendPathSegment($nodeName) : NodePath::fromString((string) $nodeName);
             $childNodeAggregateIdentifier = $nodeAggregateIdentifiers->getNodeAggregateIdentifier($childNodePath);
             if (!$childNodeAggregateIdentifier) {
                 throw new \Exception('Child node aggregate identifier for auto created child node at path ' . $nodePath . ' has not been initialized.', 1541763465);
@@ -231,16 +227,12 @@ final class NodeAggregateCommandHandler
                 throw new NodeTypeIsOfTypeRoot('Node type "' . $nodeType . '" for auto created child node "' . $childNodeAggregateIdentifier . '" is of type root.', 1541767062);
             }
 
-            $defaultPropertyValues = [];
-            foreach ($childNodeType->getDefaultValuesForProperties() as $rawPropertyName => $propertyValue) {
-                $defaultPropertyValues[$rawPropertyName] = new PropertyValue($propertyValue, $childNodeType->getPropertyType($rawPropertyName));
-            }
-            $initialPropertyValues = new PropertyValues($defaultPropertyValues);
+            $initialPropertyValues = PropertyValues::fromArray($childNodeType->getDefaultValuesForProperties());
 
             $nodeAggregate = $this->getNodeAggregate($contentStreamIdentifier, $childNodeAggregateIdentifier);
             $nodeAggregate->autoCreateWithNode(
                 $contentStreamIdentifier,
-                new NodeTypeName($childNodeType->getName()),
+                NodeTypeName::fromString($childNodeType->getName()),
                 $originDimensionSpacePoint,
                 $visibleDimensionSpacePoints,
                 $parentNodeAggregateIdentifier,
@@ -270,10 +262,10 @@ final class NodeAggregateCommandHandler
     protected function populateNodeAggregateIdentifiers(NodeType $nodeType, NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers, NodePath $childPath = null): NodeAggregateIdentifiersByNodePaths
     {
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawChildName => $childNodeType) {
-            $childName = new NodeName($rawChildName);
-            $childPath = $childPath ? $childPath->appendPathSegment($childName) : new NodePath((string) $childName);
+            $childName = NodeName::fromString($rawChildName);
+            $childPath = $childPath ? $childPath->appendPathSegment($childName) : NodePath::fromString((string) $childName);
             if (!$nodeAggregateIdentifiers->getNodeAggregateIdentifier($childPath)) {
-                $nodeAggregateIdentifiers = $nodeAggregateIdentifiers->add($childPath, new NodeAggregateIdentifier());
+                $nodeAggregateIdentifiers = $nodeAggregateIdentifiers->add($childPath, NodeAggregateIdentifier::create());
             }
         }
 

@@ -143,13 +143,13 @@ class NodeRecord
     public static function fromDatabaseRow(array $databaseRow): NodeRecord
     {
         return new static(
-            new NodeRelationAnchorPoint($databaseRow['relationanchorpoint']),
-            new NodeAggregateIdentifier($databaseRow['nodeaggregateidentifier']),
+            NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
+            NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
             json_decode($databaseRow['origindimensionspacepoint'], true),
             $databaseRow['origindimensionspacepointhash'],
             json_decode($databaseRow['properties'], true),
-            new NodeTypeName($databaseRow['nodetypename']),
-            isset($databaseRow['name']) ? new NodeName($databaseRow['name']) : null
+            NodeTypeName::fromString($databaseRow['nodetypename']),
+            isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null
         );
     }
 }

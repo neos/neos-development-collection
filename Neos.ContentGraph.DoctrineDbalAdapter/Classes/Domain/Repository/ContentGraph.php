@@ -228,7 +228,7 @@ final class ContentGraph implements ContentGraphInterface
             $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
         }
 
-        return new NodeAggregate($nodeAggregateIdentifier, new NodeTypeName($rawNodeTypeName), new NodeName($rawNodeName), $nodes);
+        return new NodeAggregate($nodeAggregateIdentifier, NodeTypeName::fromString($rawNodeTypeName), NodeName::fromString($rawNodeName), $nodes);
     }
 
     /**
@@ -262,38 +262,33 @@ final class ContentGraph implements ContentGraphInterface
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findParentAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
     {
-        $nodeIdentifiers = [];
-        foreach ($this->findNodesByNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier) as $node) {
-            $nodeIdentifiers[] = (string)$node->getNodeIdentifier();
-        }
-
         $connection = $this->client->getConnection();
 
         $query = 'SELECT p.*, ph.name, ph.contentstreamidentifier, ph.dimensionspacepoint FROM neos_contentgraph_node p
                       INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint 
-                      WHERE c.nodeidentifier IN (:nodeIdentifiers)
-                      AND ph.contentstreamidentifier = :contentStreamIdentifier
+                      WHERE ph.contentstreamidentifier = :contentStreamIdentifier
                       AND ch.contentstreamidentifier = :contentStreamIdentifier';
+        $query = 'SELECT p.* FROM neos_contentgraph_node p';
         $parameters = [
-            'nodeIdentifiers' => $nodeIdentifiers,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
         ];
-        $types['nodeIdentifiers'] = Connection::PARAM_STR_ARRAY;
 
         $parentAggregates = [];
         $rawNodeTypeNames = [];
         $rawNodeNames = [];
         $nodesByAggregate = [];
-        foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $nodeRow) {
+        \Neos\Flow\var_dump($parameters);
+        \Neos\Flow\var_dump($connection->executeQuery($query, $parameters)->fetchAll(), 'parents');
+        exit();
+        foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $nodeRow) {
+            \Neos\Flow\var_dump($nodeRow, 'row');
             $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
-            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['nodeidentifier']] = $this->nodeFactory->mapNodeRowToNode($nodeRow, null);
+            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['dimensionspacepointhash']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
             if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
@@ -307,9 +302,9 @@ final class ContentGraph implements ContentGraphInterface
         }
         foreach ($nodesByAggregate as $rawNodeAggregateIdentifier => $nodes) {
             $parentAggregates[$rawNodeAggregateIdentifier] = new NodeAggregate(
-                new NodeAggregateIdentifier($rawNodeAggregateIdentifier),
-                new NodeTypeName($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
-                new NodeName($rawNodeNames[$rawNodeAggregateIdentifier]),
+                NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
+                NodeTypeName::fromString($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
+                isset($rawNodeNames[$rawNodeAggregateIdentifier]) ? NodeName::fromString($rawNodeNames[$rawNodeAggregateIdentifier]) : null,
                 $nodesByAggregate[$rawNodeAggregateIdentifier]
             );
         }
@@ -325,8 +320,6 @@ final class ContentGraph implements ContentGraphInterface
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
     {
@@ -341,22 +334,21 @@ final class ContentGraph implements ContentGraphInterface
                       INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint 
-                      WHERE p.nodeidentifier IN (:nodeIdentifiers)
+                      WHERE p.nodeaggregateidentifier = :nodeAggregateIdentifier
                       AND ph.contentstreamidentifier = :contentStreamIdentifier
                       AND ch.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
-            'nodeIdentifiers' => $nodeIdentifiers,
-            'contentStreamIdentifier' => $contentStreamIdentifier
+            'nodeAggregateIdentifier' => (string) $nodeAggregateIdentifier,
+            'contentStreamIdentifier' => (string) $contentStreamIdentifier
         ];
-        $types['nodeIdentifiers'] = Connection::PARAM_STR_ARRAY;
 
         $childAggregates = [];
         $rawNodeTypeNames = [];
         $rawNodeNames = [];
         $nodesByAggregate = [];
-        foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $nodeRow) {
+        foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $nodeRow) {
             $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
-            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['nodeidentifier']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
+            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['dimensionspacepointhash']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
             if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
@@ -370,9 +362,9 @@ final class ContentGraph implements ContentGraphInterface
         }
         foreach ($nodesByAggregate as $rawNodeAggregateIdentifier => $nodes) {
             $childAggregates[$rawNodeAggregateIdentifier] = new NodeAggregate(
-                new NodeAggregateIdentifier($rawNodeAggregateIdentifier),
-                new NodeTypeName($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
-                new NodeName($rawNodeNames[$rawNodeAggregateIdentifier]),
+                NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
+                NodeTypeName::fromString($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
+                isset($rawNodeNames[$rawNodeAggregateIdentifier]) ? NodeName::fromString($rawNodeNames[$rawNodeAggregateIdentifier]) : null,
                 $nodesByAggregate[$rawNodeAggregateIdentifier]
             );
         }

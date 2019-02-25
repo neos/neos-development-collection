@@ -50,8 +50,8 @@ class NodeAggregate
     public static function fromDatabaseRow(array $databaseRow)
     {
         return new static(
-            new NodeAggregateIdentifier($databaseRow['nodeaggregateidentifier']),
-            new NodeTypeName($databaseRow['nodetypename'])
+            NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
+            NodeTypeName::fromString($databaseRow['nodetypename'])
         );
     }
 }
