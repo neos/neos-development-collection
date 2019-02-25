@@ -20,7 +20,7 @@ use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
  * - dimension (optional, string): name of the dimension which this menu should be limited to. Example: "language".
  * - presets (optional, array): If set, the presets are not loaded from the Settings, but instead taken from this property. Must be used with "dimension" set.
  */
-class DimensionsMenuImplementation extends AbstractMenuImplementation
+class DimensionsMenuDataImplementation extends AbstractMenuDataImplementation
 {
 
     /**
