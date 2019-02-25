@@ -1,9 +1,10 @@
 prototype(Neos.Neos:MenuData) {
   @class = 'Neos\\Neos\\Fusion\\MenuDataImplementation'
 
-  node = null
+  node = ${node}
+  filter = 'Neos.Neos:Document'
   itemCollection = null
-  startingPoint = ${node}
+  startingPoint = null
   entryLevel = ${this.startingPoint ? 0 : 1}
   maximumLevels = 2
   renderHiddenInIndex = false
