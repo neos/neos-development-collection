@@ -2,12 +2,15 @@
 #
 prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
 	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/Menu.html'
-	node = ${node}
 
 	entryLevel = ${this.startingPoint ? 0 : 1}
 	maximumLevels = 2
-
+	startingPoint = null
+	lastLevel = null
 	filter = 'Neos.Neos:Document'
+	renderHiddenInIndex = false
+	itemCollection = null
+
 	attributes = Neos.Fusion:Attributes
 
 	active.attributes = Neos.Fusion:Attributes {
@@ -21,23 +24,24 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
 	}
 
   @context {
-    itemCollection = ${this.itemCollection}
-    entryLevel = ${this.entryLevel}
-    startingPoint = ${this.startingPoint}
-    maximumLevels = ${this.maximumLevels}
-    filter = ${this.filter}
-    renderHiddenInIndex = ${this.renderHiddenInIndex}
-  }
+		entryLevel = ${this.entryLevel}
+		maximumLevels = ${this.maximumLevels}
+		startingPoint = ${this.startingPoint}
+		lastLevel = ${this.lastLevel}
+		filter = ${this.filter}
+		renderHiddenInIndex = ${this.renderHiddenInIndex}
+		itemCollection = ${this.itemCollection}
+	}
 
-  items = Neos.Neos:MenuData {
-    node = ${node}
-    itemCollection = ${itemCollection}
-    entryLevel = ${entryLevel}
-    startingPoint = ${startingPoint}
-    maximumLevels = ${maximumLevels}
-    filter = ${filter}
-    renderHiddenInIndex = ${renderHiddenInIndex}
-  }
+	items = Neos.Neos:MenuData {
+		entryLevel = ${entryLevel}
+		maximumLevels = ${maximumLevels}
+		startingPoint = ${startingPoint}
+		lastLevel = ${lastLevel}
+		filter = ${filter}
+		renderHiddenInIndex = ${renderHiddenInIndex}
+		itemCollection = ${itemCollection}
+	}
 
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ContextDependentHandler'
 
