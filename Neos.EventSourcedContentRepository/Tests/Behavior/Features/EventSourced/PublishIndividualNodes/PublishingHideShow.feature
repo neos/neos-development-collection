@@ -1,12 +1,19 @@
 @fixtures
 Feature: Publishing hide/show scenario of nodes
 
-  Publishing an individual node works
   Node structure is as follows:
   - rn-identifier (root node)
-  -- na-identifier (name=text1)
+  -- na-identifier (name=text1) <== this one is modified
   --- cna-identifier (name=text2)
-  -- na2-identifier (name=image)
+  -- na2-identifier (name=image) <== this one is modified
+
+  The setup is always as follows:
+  - we modify two nodes using a certain command (e.g. HideNode) in the USER workspace
+  - we publish one of them
+  - we check that the user workspace still sees both nodes as hidden; and the live workspace only sees one of the changes.
+
+  We do the same for other commands. This way, we ensure that both the command works generally;
+  and the matchesNodeAddress() address of the command is actually implemented somehow properly.
 
 
   Background:
@@ -60,20 +67,24 @@ Feature: Publishing hide/show scenario of nodes
       | propertyDefaultValuesAndTypes | {"image": {"type": "image", "value": "Initial image"}} |
     And the graph projection is fully up to date
 
-    # Create user workspace
-    And the command CreateWorkspace is executed with payload:
+  Scenario: (HideNode) It is possible to publish hiding of a node.
+    Given the command CreateWorkspace is executed with payload:
       | Key                     | Value             |
       | workspaceName           | "user-test"       |
       | baseWorkspaceName       | "live"            |
       | contentStreamIdentifier | "cs-2-identifier" |
     And the graph projection is fully up to date
 
-  Scenario: It is possible to publish hiding of a node.
-    # Hide "na"-Node
+    # SETUP: hide two nodes in USER workspace
     Given the command "HideNode" is executed with payload:
       | Key                          | Value             |
       | contentStreamIdentifier      | "cs-2-identifier" |
       | nodeAggregateIdentifier      | "na-identifier"   |
+      | affectedDimensionSpacePoints | [{}]              |
+    Given the command "HideNode" is executed with payload:
+      | Key                          | Value             |
+      | contentStreamIdentifier      | "cs-2-identifier" |
+      | nodeAggregateIdentifier      | "na2-identifier"  |
       | affectedDimensionSpacePoints | [{}]              |
     And the graph projection is fully up to date
 
@@ -86,5 +97,59 @@ Feature: Publishing hide/show scenario of nodes
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "na-identifier" not to exist in the subgraph
     Then I expect a node identified by aggregate identifier "cna-identifier" not to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "na2-identifier" to exist in the subgraph
 
-  # TODO: show node again
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "na-identifier" not to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "cna-identifier" not to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "na2-identifier" not to exist in the subgraph
+
+
+  Scenario: (ShowNode) It is possible to publish showing of a node.
+    # BEFORE: ensure two nodes are hidden in live (and user WS)
+    Given the command "HideNode" is executed with payload:
+      | Key                          | Value           |
+      | contentStreamIdentifier      | "cs-identifier" |
+      | nodeAggregateIdentifier      | "na-identifier" |
+      | affectedDimensionSpacePoints | [{}]            |
+    Given the command "HideNode" is executed with payload:
+      | Key                          | Value            |
+      | contentStreamIdentifier      | "cs-identifier"  |
+      | nodeAggregateIdentifier      | "na2-identifier" |
+      | affectedDimensionSpacePoints | [{}]             |
+    Given the command CreateWorkspace is executed with payload:
+      | Key                     | Value             |
+      | workspaceName           | "user-test"       |
+      | baseWorkspaceName       | "live"            |
+      | contentStreamIdentifier | "cs-2-identifier" |
+    And the graph projection is fully up to date
+
+    # SETUP: show two nodes in USER workspace
+    Given the command "ShowNode" is executed with payload:
+      | Key                          | Value             |
+      | contentStreamIdentifier      | "cs-2-identifier" |
+      | nodeAggregateIdentifier      | "na-identifier"   |
+      | affectedDimensionSpacePoints | [{}]              |
+    Given the command "ShowNode" is executed with payload:
+      | Key                          | Value             |
+      | contentStreamIdentifier      | "cs-2-identifier" |
+      | nodeAggregateIdentifier      | "na2-identifier"  |
+      | affectedDimensionSpacePoints | [{}]              |
+    And the graph projection is fully up to date
+
+    When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
+      | Key           | Value                                                                                                                   |
+      | workspaceName | "user-test"                                                                                                             |
+      | nodeAddresses | [{"nodeAggregateIdentifier": "na-identifier", "contentStreamIdentifier": "cs-2-identifier", "dimensionSpacePoint": {}}] |
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "na-identifier" to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "cna-identifier" to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "na2-identifier" not to exist in the subgraph
+
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "na-identifier" to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "cna-identifier" to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "na2-identifier" to exist in the subgraph
+
