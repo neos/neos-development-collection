@@ -22,7 +22,7 @@ prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Neos:Menu) {
 		includeAllPresets = ${this.includeAllPresets}
 	}
 
-	items = Neos.Neos:DimensionsMenuData {
+	items = Neos.Neos:DimensionsMenuItems {
 		includeAllPresets = ${includeAllPresets}
 		dimension = ${dimension}
 		presets = ${presets}

@@ -1,5 +1,5 @@
-prototype(Neos.Neos:MenuData) {
-	@class = 'Neos\\Neos\\Fusion\\MenuDataImplementation'
+prototype(Neos.Neos:MenuItems) {
+	@class = 'Neos\\Neos\\Fusion\\MenuItemsImplementation'
 
 	node = ${node}
 	entryLevel = ${this.startingPoint ? 0 : 1}

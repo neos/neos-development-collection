@@ -33,7 +33,7 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
 		itemCollection = ${this.itemCollection}
 	}
 
-	items = Neos.Neos:MenuData {
+	items = Neos.Neos:MenuItems {
 		entryLevel = ${entryLevel}
 		maximumLevels = ${maximumLevels}
 		startingPoint = ${startingPoint}
