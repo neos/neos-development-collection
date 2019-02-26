@@ -41,6 +41,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
@@ -88,6 +89,12 @@ final class WorkspaceCommandHandler
      * @var ReadSideMemoryCacheManager
      */
     protected $readSideMemoryCacheManager;
+
+    /**
+     * @Flow\Inject
+     * @var ContentGraphInterface
+     */
+    protected $contentGraph;
 
     /**
      * @param CreateWorkspace $command
@@ -467,7 +474,7 @@ final class WorkspaceCommandHandler
 
         foreach ($originalCommands as $originalCommand) {
             // TODO: the Node Address Bounded Context MUST be moved to the CR core. This is the smoking gun why we need this ;)
-            if (self::commandMatchesNodeAddresses($originalCommand, $command->getNodeAddresses())) {
+            if ($this->commandMatchesNodeAddresses($originalCommand, $command->getNodeAddresses())) {
                 $matchingCommands[] = $originalCommand;
             } else {
                 $remainingCommands[] = $originalCommand;
@@ -532,10 +539,29 @@ final class WorkspaceCommandHandler
      * @return bool
      * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    private static function commandMatchesNodeAddresses(object $command, array $nodeAddresses): bool
+    private function commandMatchesNodeAddresses(object $command, array $nodeAddresses): bool
     {
+        if ($command instanceof ChangeNodeName) {
+            // TODO: HACK as long as ChangeNodeName does not work with NodeAggregateIdentifier. As soon as ChangeNodeName includes NodeAggregateIdentifier, it can simply implement MatchableWithNodeAddressInterface; and this block can be removed.
+            $node = $this->contentGraph->findNodeByIdentifierInContentStream($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
+            foreach ($nodeAddresses as $nodeAddress) {
+                var_dump((string)$nodeAddress->getDimensionSpacePoint());
+                var_dump((string)$nodeAddress->getContentStreamIdentifier());
+                var_dump((string)$nodeAddress->getNodeAggregateIdentifier());
+
+                if (
+                    (string)$node->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
+                    && $node->getOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
+                    && $node->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         if (!$command instanceof MatchableWithNodeAddressInterface) {
-            throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($command)));
+            throw new \Exception(sprintf('Command %s needs to implememt MatchableWithNodeAddressInterface in order to be published individually.', get_class($command)));
         }
 
         foreach ($nodeAddresses as $nodeAddress) {

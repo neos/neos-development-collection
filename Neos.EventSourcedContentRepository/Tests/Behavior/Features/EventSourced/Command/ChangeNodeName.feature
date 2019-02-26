@@ -45,3 +45,31 @@ Feature: Change node name
       | contentStreamIdentifier | "c75ae6a2-7254-4d42-a31b-a629e264069d" |
       | nodeIdentifier          | "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" |
       | newNodeName             | "text2"                                |
+
+
+  Scenario: Change node name actually updates projection
+    Given the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
+      | Key                           | Value                                    |
+      | contentStreamIdentifier       | "c75ae6a2-7254-4d42-a31b-a629e264069d"   |
+      | nodeAggregateIdentifier       | "35411439-94d1-4bd4-8fac-0646856c6a1f"   |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
+      | dimensionSpacePoint           | {}                                       |
+      | visibleInDimensionSpacePoints | [{}]                                     |
+      | nodeIdentifier                | "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81"   |
+      | parentNodeIdentifier          | "5387cb08-2aaf-44dc-a8a1-483497aa0a03"   |
+      | nodeName                      | "text1"                                  |
+      | propertyDefaultValuesAndTypes | {}                                       |
+    And the graph projection is fully up to date
+    When the command "ChangeNodeName" is executed with payload:
+      | Key                     | Value                                  |
+      | contentStreamIdentifier | "c75ae6a2-7254-4d42-a31b-a629e264069d" |
+      | nodeIdentifier          | "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" |
+      | newNodeName             | "text1modified"                        |
+    And the graph projection is fully up to date
+
+    When I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {}
+    Then I expect the node aggregate "root" to have the following child nodes:
+      | Name          | NodeIdentifier                       |
+      | text1modified | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81 |
+
+

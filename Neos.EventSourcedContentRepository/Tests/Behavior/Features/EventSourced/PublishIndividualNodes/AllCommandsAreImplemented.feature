@@ -3,7 +3,7 @@ Feature: Publishing hide/show scenario of nodes
 
   Node structure is as follows:
   - rn-identifier (root node)
-  -- na-identifier (name=text1) <== this one is modified
+  -- na-identifier (name=text1) <== this one is modified and published
   --- cna-identifier (name=text2)
   -- na2-identifier (name=image) <== this one is modified
 
@@ -152,4 +152,44 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect a node identified by aggregate identifier "na-identifier" to exist in the subgraph
     Then I expect a node identified by aggregate identifier "cna-identifier" to exist in the subgraph
     Then I expect a node identified by aggregate identifier "na2-identifier" to exist in the subgraph
+
+
+  Scenario: (ChangeNodeName) It is possible to publish changing the node name.
+    Given the command CreateWorkspace is executed with payload:
+      | Key                     | Value             |
+      | workspaceName           | "user-test"       |
+      | baseWorkspaceName       | "live"            |
+      | contentStreamIdentifier | "cs-2-identifier" |
+    And the graph projection is fully up to date
+
+    # SETUP: change two node names in USER workspace
+    Given the command "ChangeNodeName" is executed with payload:
+      | Key                     | Value             |
+      | contentStreamIdentifier | "cs-2-identifier" |
+      | nodeIdentifier          | "node-identifier" |
+      | newNodeName             | "text1mod"        |
+    Given the command "ChangeNodeName" is executed with payload:
+      | Key                     | Value                  |
+      | contentStreamIdentifier | "cs-2-identifier"      |
+      | nodeIdentifier          | "imagenode-identifier" |
+      | newNodeName             | "imagemod"             |
+    And the graph projection is fully up to date
+
+    When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
+      | Key           | Value                                                                                                                   |
+      | workspaceName | "user-test"                                                                                                             |
+      | nodeAddresses | [{"nodeAggregateIdentifier": "na-identifier", "contentStreamIdentifier": "cs-2-identifier", "dimensionSpacePoint": {}}] |
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    Then I expect the node aggregate "root" to have the following child nodes:
+      | Name     | NodeIdentifier       |
+      | text1mod | node-identifier      |
+      | image    | imagenode-identifier |
+
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
+    Then I expect the node aggregate "root" to have the following child nodes:
+      | Name     | NodeIdentifier       |
+      | text1mod | node-identifier      |
+      | imagemod | imagenode-identifier |
 
