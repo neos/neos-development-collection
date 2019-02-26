@@ -205,7 +205,7 @@ class BackendServiceController extends ActionController
                 $workspaceName,
                 $nodeAddresses
             );
-            $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace($command);
+            $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
 
             $success = new Success();
             $success->setMessage(sprintf('Published %d change(s) to %s.', count($nodeContextPaths), $targetWorkspaceName));

@@ -154,6 +154,29 @@ trait BrowserTrait
     }
 
     /**
+     * @When /^I publish the following nodes to "(.*)" workspace:$/
+     */
+    public function iPublishTheFollowingNodes(string $targetWorkspaceName, TableNode $nodesToPublish)
+    {
+        $nodeContextPaths = [];
+        foreach ($nodesToPublish->getHash() as $singleChange) {
+            $nodeContextPaths[] = $this->replacePlaceholders($singleChange['Subject Node Address']);
+        }
+
+        $server = [
+            'HTTP_X_FLOW_CSRFTOKEN' => $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
+        ];
+        $payload = [
+            'nodeContextPaths' => $nodeContextPaths,
+            'targetWorkspaceName' => $targetWorkspaceName
+        ];
+
+        $this->currentResponse = $this->browser->request(new \Neos\Flow\Http\Uri('http://localhost/neos/ui-services/publish'), 'POST', $payload, [], $server);
+        $this->currentRequest = $this->browser->getLastRequest();
+        Assert::assertEquals(200, $this->currentResponse->getStatusCode(), 'Status code wrong. Full response was: ' . $this->currentResponse->getBody()->getContents());
+    }
+
+    /**
      * @Then /^the feedback contains "([^"]*)"$/
      */
     public function theFeedbackContains($feedbackType)
