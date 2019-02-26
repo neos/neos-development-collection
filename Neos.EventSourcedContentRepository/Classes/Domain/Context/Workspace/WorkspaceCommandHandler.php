@@ -28,6 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProper
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
@@ -533,50 +534,15 @@ final class WorkspaceCommandHandler
      */
     private static function commandMatchesNodeAddresses(object $command, array $nodeAddresses): bool
     {
-        // TODO: use a more clever dispatching mechanism than the hard coded switch!!
-        // TODO: add all commands!!
-        switch (get_class($command)) {
-            //case AddNodeToAggregate::class:
-            //    $this->nodeCommandHandler->handleAddNodeToAggregate($command);
-            //    break;
-            //case ChangeNodeName::class:
-            //    $this->nodeCommandHandler->handleChangeNodeName($command);
-            //    break;
-            //case CreateNodeAggregateWithNode::class:
-            //    $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
-            //    break;
-            //case CreateRootNode::class:
-            //    $this->nodeCommandHandler->handleCreateRootNode($command);
-            //    break;
-            //case MoveNode::class:
-            //    $this->nodeCommandHandler->handleMoveNode($command);
-            //    break;
-            case SetNodeProperty::class:
-                /* @var $command \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty */
-                foreach ($nodeAddresses as $nodeAddress) {
-                    if (
-                        (string)$command->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-                        && $command->getOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
-                        && $command->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
-                    ) {
-                        return true;
-                    }
-                }
-                return false;
-                break;
-            //case HideNode::class:
-            //    $this->nodeCommandHandler->handleHideNode($command);
-            //    break;
-            //case ShowNode::class:
-            //    $this->nodeCommandHandler->handleShowNode($command);
-            //    break;
-            //case TranslateNodeInAggregate::class:
-            //    $this->nodeCommandHandler->handleTranslateNodeInAggregate($command);
-            //    break;
-            default:
-                throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($command)));
+        if (!$command instanceof MatchableWithNodeAddressInterface) {
+            throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($command)));
         }
 
+        foreach ($nodeAddresses as $nodeAddress) {
+            if ($command->matchesNodeAddress($nodeAddress)) {
+                return true;
+            }
+        }
         return false;
     }
 }

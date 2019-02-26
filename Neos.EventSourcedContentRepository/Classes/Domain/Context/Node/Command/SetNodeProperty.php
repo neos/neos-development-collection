@@ -16,9 +16,12 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressTrait;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
-final class SetNodeProperty implements \JsonSerializable, CopyableAcrossContentStreamsInterface
+final class SetNodeProperty implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
 
     /**
@@ -133,6 +136,15 @@ final class SetNodeProperty implements \JsonSerializable, CopyableAcrossContentS
             $this->originDimensionSpacePoint,
             $this->propertyName,
             $this->value
+        );
+    }
+
+    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    {
+        return (
+            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
+            && $this->getOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
+            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
         );
     }
 }
