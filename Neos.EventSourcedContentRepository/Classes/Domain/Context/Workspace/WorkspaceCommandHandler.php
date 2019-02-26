@@ -45,14 +45,12 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventBus\EventBus;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Property\PropertyMapper;
 
 /**
  * WorkspaceCommandHandler
@@ -85,16 +83,7 @@ final class WorkspaceCommandHandler
 
     /**
      * @Flow\Inject
-     * @var PropertyMapper
      */
-    protected $propertyMapper;
-
-    /**
-     * @Flow\Inject
-     * @var EventBus
-     */
-    protected $eventBus;
-
 
     /**
      * @param CreateWorkspace $command
@@ -228,6 +217,8 @@ final class WorkspaceCommandHandler
             )
         );
 
+        $commandResult->blockUntilProjectionsAreUpToDate();
+
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
         // TODO: "Workspace was rebased" is probably the wrong name. We can rebase a content stream,
@@ -242,8 +233,7 @@ final class WorkspaceCommandHandler
         );
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         $eventStore->commit($streamName, $events);
-        $commandResult = $commandResult->merge(CommandResult::fromPublishedEvents($events));
-        return $commandResult;
+        return CommandResult::fromPublishedEvents($events);
     }
 
     private function publishContentStream(ContentStreamIdentifier $contentStreamIdentifier, ContentStreamIdentifier $baseContentStreamIdentifier): CommandResult
@@ -478,10 +468,7 @@ final class WorkspaceCommandHandler
                 $matchingContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier()
             )
-        );
-
-        $this->eventBus->flush();
-        sleep(1);
+        )->blockUntilProjectionsAreUpToDate();
 
         foreach ($matchingCommands as $matchingCommand) {
             /* @var $matchingCommand \Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface */
