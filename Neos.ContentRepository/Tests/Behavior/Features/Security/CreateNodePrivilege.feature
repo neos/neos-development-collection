@@ -46,7 +46,7 @@ Feature: Privilege to restrict creation of nodes
       | Workspace |
       | live      |
     Then I should not be granted to create a new "mynewtext" child node of type "Neos.NodeTypes:Text"
-    And I should get FALSE when asking the node authorization service if creating a new "mynewtext" child node of type "Neos.NodeTypes:Text" is granted
+    And I should get false when asking the node authorization service if creating a new "mynewtext" child node of type "Neos.NodeTypes:Text" is granted
 
   @Isolated @fixtures
   Scenario: creating image nodes under service is granted to everybody
@@ -55,7 +55,7 @@ Feature: Privilege to restrict creation of nodes
       | Workspace |
       | live      |
     Then I should be granted to create a new "mynewimage" child node of type "Neos.NodeTypes:Image"
-    And I should get TRUE when asking the node authorization service if creating a new "mynewimage" child node of type "Neos.NodeTypes:Image" is granted
+    And I should get true when asking the node authorization service if creating a new "mynewimage" child node of type "Neos.NodeTypes:Image" is granted
 
   @Isolated @fixtures
   Scenario: creating text nodes under service is granted to administrators
@@ -64,7 +64,7 @@ Feature: Privilege to restrict creation of nodes
       | Workspace |
       | live      |
     Then I should be granted to create a new "mynewtext" child node of type "Neos.NodeTypes:Text"
-    And I should get TRUE when asking the node authorization service if creating a new "mynewtext" child node of type "Neos.NodeTypes:Text" is granted
+    And I should get true when asking the node authorization service if creating a new "mynewtext" child node of type "Neos.NodeTypes:Text" is granted
 
   @Isolated @fixtures
   Scenario: creating text nodes under service is denied to everybody
@@ -83,7 +83,7 @@ Feature: Privilege to restrict creation of nodes
       | Workspace |
       | live      |
     Then I should be granted to create a new "mynewtext" child node of type "Neos.NodeTypes:Text"
-    And I should get TRUE when asking the node authorization service if creating a new "mynewtext" child node of type "Neos.NodeTypes:Text" is granted
+    And I should get true when asking the node authorization service if creating a new "mynewtext" child node of type "Neos.NodeTypes:Text" is granted
 
   @Isolated @fixtures
   Scenario: creating text nodes under company is denied to everybody
