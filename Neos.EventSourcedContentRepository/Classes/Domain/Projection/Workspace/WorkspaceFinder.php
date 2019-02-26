@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineFinder;
 use Neos\Flow\Annotations as Flow;
 
@@ -21,8 +22,14 @@ use Neos\Flow\Annotations as Flow;
  * Workspace Finder
  * @Flow\Scope("singleton")
  */
-final class WorkspaceFinder extends AbstractDoctrineFinder
+final class WorkspaceFinder
 {
+
+    /**
+     * @Flow\Inject
+     * @var DbalClient
+     */
+    protected $client;
 
     /**
      * @var array
@@ -42,7 +49,24 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
     {
         // TODO consider re-introducing runtime cache
         #if (!isset($this->cachedWorkspacesByName[(string)$name])) {
-        $this->cachedWorkspacesByName[(string)$name] = $this->__call('findOneByWorkspaceName', [(string)$name]);
+
+        $connection = $this->client->getConnection();
+        $workspaceRow = $connection->executeQuery(
+            '
+                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                WHERE workspaceName = :workspaceName
+            ',
+            [
+                ':workspaceName' => (string)$name
+            ]
+        )->fetch();
+
+        if ($workspaceRow === false) {
+            return null;
+        }
+
+        $workspace = Workspace::fromDatabaseRow($workspaceRow);
+        $this->cachedWorkspacesByName[(string)$name] = $workspace;
         #}
         return $this->cachedWorkspacesByName[(string)$name];
     }
@@ -55,7 +79,23 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
     {
         // TODO consider re-introducing runtime cache
         #if (!isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
-        $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier] = $this->__call('findOneByCurrentContentStreamIdentifier', [(string)$contentStreamIdentifier]);
+        $connection = $this->client->getConnection();
+        $workspaceRow = $connection->executeQuery(
+            '
+                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                WHERE currentContentStreamIdentifier = :currentContentStreamIdentifier
+            ',
+            [
+                ':currentContentStreamIdentifier' => (string)$contentStreamIdentifier
+            ]
+        )->fetch();
+
+        if ($workspaceRow === false) {
+            return null;
+        }
+
+        $workspace = Workspace::fromDatabaseRow($workspaceRow);
+        $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier] = $workspace;
         #}
         return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
     }
@@ -68,10 +108,20 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
     public function findByPrefix(WorkspaceName $prefix): array
     {
         $result = [];
-        $query = $this->createQuery();
-        foreach ($query->matching(
-            $query->like('workspaceName', (string) $prefix . '%')
-        )->execute() as $similarlyNamedWorkspace) {
+
+        $connection = $this->client->getConnection();
+        $workspaceRows = $connection->executeQuery(
+            '
+                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                WHERE workspaceName LIKE :workspaceNameLike
+            ',
+            [
+                ':workspaceNameLike' => (string) $prefix . '%'
+            ]
+        )->fetchAll();
+
+        foreach ($workspaceRows as $workspaceRow) {
+            $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
             /** @var Workspace $similarlyNamedWorkspace */
             $result[(string) $similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
         }
@@ -79,22 +129,12 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
         return $result;
     }
 
+
+
     // TODO consider re-introducing runtime cache
 //    public function resetCache()
 //    {
 //        $this->cachedWorkspacesByName = [];
 //        $this->cachedWorkspacesByContentStreamIdentifier = [];
 //    }
-
-    public function getContentStreamIdentifierForWorkspace(WorkspaceName $workspaceName): ContentStreamIdentifier
-    {
-        $query = $this->createQuery();
-        $query
-            ->getQueryBuilder()
-            ->select('e.currentContentStreamIdentifier')
-            ->where('e.workspaceName = :workspaceName')
-            ->setParameter('workspaceName', $workspaceName);
-        $result = $query->execute()->getFirst();
-        return ContentStreamIdentifier::fromString($result['currentContentStreamIdentifier']);
-    }
 }
