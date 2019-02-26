@@ -866,7 +866,7 @@ Render a menu with items for nodes. Extends :ref:`Neos_Fusion__Template`.
 :active.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for active state
 :current.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for current state
 
-.. note:: The ``items`` of the ``Menu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuData` which
+.. note:: The ``items`` of the ``Menu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
    you can use directly aswell.
 
 Menu item properties:
@@ -923,7 +923,7 @@ Example::
 
 	breadcrumb = Neos.Neos:BreadcrumbMenu
 
-.. note:: The ``items`` of the ``BreadcrumbMenu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuData` which
+.. note:: The ``items`` of the ``BreadcrumbMenu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
    you can use directly aswell.
 
 .. _Neos_Neos__DimensionMenu:
@@ -956,7 +956,7 @@ In the template for the menu, each ``item`` has the following properties:
 
 .. note:: The ``DimensionMenu`` is an alias to ``DimensionsMenu``, available for compatibility reasons only.
 
-.. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuData` which
+.. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuItems` which
    you can use directly aswell.
 
 Examples
@@ -1010,10 +1010,10 @@ found, it is used.
 Only if the current node is not available at all (even after considering default presets with their fallback rules),
 no node be assigned (so no link will be created and the items will have the ``absent`` state.)
 
-.. _Neos_Neos__MenuData:
+.. _Neos_Neos__MenuItems:
 
-Neos.Neos:MenuData
-------------------
+Neos.Neos:MenuItems
+-------------------
 
 Render a hierarchical data structure of menu items for nodes.
 
@@ -1025,31 +1025,31 @@ Render a hierarchical data structure of menu items for nodes.
 :renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
 :itemCollection: (array) Explicitly set the Node items for the menu (alternative to ``startingPoints`` and levels)
 
-MenuData item properties:
+MenuItems item properties:
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
 :originalNode: (Node) Original node for the item
 :state: (string) Menu state of the item: ``'normal'``, ``'current'`` (the current node) or ``'active'`` (ancestor of current node)
 :label: (string) Full label of the node
-:menuLevel: (integer) Menu level the item is rendered on
+:menuLevel: (integer) Men^u level the item is rendered on
 
 Examples:
 ^^^^^^^^^
 
 ::
 
-	menuItems = Neos.Neos:MenuData {
+	menuItems = Neos.Neos:MenuItems {
 		entryLevel = 1
 		maximumLevels = 3
 	}
 
-MenuData including site node:
-"""""""""""""""""""""""""""""
+MenuItems including site node:
+""""""""""""""""""""""""""""""
 
 ::
 
-	menuItems = Neos.Neos:MenuData {
+	menuItems = Neos.Neos:MenuItems {
 		itemCollection = ${q(site).add(q(site).children('[instanceof Neos.Neos:Document]')).get()}
 	}
 
@@ -1058,27 +1058,27 @@ Menu with custom starting point:
 
 ::
 
-	menuItems = Neos.Neos:MenuData {
+	menuItems = Neos.Neos:MenuItems {
 		entryLevel = 2
 		maximumLevels = 1
 		startingPoint = ${q(site).children('[uriPathSegment="metamenu"]').get(0)}
 	}
 
-.. _Neos_Neos__BreadcrumbMenuData:
+.. _Neos_Neos__BreadcrumbMenuItems:
 
-Neos.Neos:BreadcrumbMenuData
-----------------------------
+Neos.Neos:BreadcrumbMenuItems
+-----------------------------
 
-Create a list of of menu-items for a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__MenuData`.
+Create a list of of menu-items for a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__MenuItems`.
 
 Example::
 
-	breadcrumbItems = Neos.Neos:BreadcrumbMenuData
+	breadcrumbItems = Neos.Neos:BreadcrumbMenuItems
 
-.. _Neos_Neos__DimensionsMenuData:
+.. _Neos_Neos__DimensionsMenuItems:
 
-Neos.Neos:DimensionsMenuData
-----------------------------
+Neos.Neos:DimensionsMenuItems
+-----------------------------
 
 Create a list of menu-items for other node variants (e.g. variants of the current node in other dimensions) by using this Fusion object.
 
@@ -1107,21 +1107,21 @@ Examples
 
 Minimal Example, outputting a menu with all configured dimension combinations::
 
-	variantMenuItems = Neos.Neos:DimensionsMenuData
+	variantMenuItems = Neos.Neos:DimensionsMenuItems
 
 This example will create two menus, one for the 'language' and one for the 'country' dimension::
 
-	languageMenuItems = Neos.Neos:DimensionsMenuData {
+	languageMenuItems = Neos.Neos:DimensionsMenuItems {
 		dimension = 'language'
 	}
-	countryMenuItems = Neos.Neos:DimensionsMenuData {
+	countryMenuItems = Neos.Neos:DimensionsMenuItems {
 		dimension = 'country'
 	}
 
 If you only want to render a subset of the available presets or manually define a specific order for a menu,
 you can override the "presets"::
 
-	languageMenuItems = Neos.Neos:DimensionsMenuData {
+	languageMenuItems = Neos.Neos:DimensionsMenuItems {
 		dimension = 'language'
 		presets = ${['en_US', 'de_DE']} # no matter how many languages are defined, only these two are displayed.
 	}
@@ -1137,7 +1137,7 @@ situation with two independent menus for country and language, where the followi
 If the user selects UK, only english will be linked in the language selector. German is only available again, if the
 user switches back to Germany first. This can be changed by setting the ``includeAllPresets`` option::
 
-	languageMenuItems = Neos.Neos:DimensionsMenuData {
+	languageMenuItems = Neos.Neos:DimensionsMenuItems {
 		dimension = 'language'
 		includeAllPresets = true
 	}

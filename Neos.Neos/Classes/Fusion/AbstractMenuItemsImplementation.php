@@ -21,7 +21,7 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
  * Main Options:
  *  - renderHiddenInIndex: if true, hidden-in-index nodes will be shown in the menu. false by default.
  */
-abstract class AbstractMenuDataImplementation extends AbstractFusionObject
+abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
 {
     const STATE_NORMAL = 'normal';
     const STATE_CURRENT = 'current';

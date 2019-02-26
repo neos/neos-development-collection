@@ -18,7 +18,7 @@ use Neos\Fusion\Exception;
 /**
  * A Fusion MenuData object
  */
-class MenuDataImplementation extends AbstractMenuDataImplementation
+class MenuItemsImplementation extends AbstractMenuItemsImplementation
 {
     /**
      * Hard limit for the maximum number of levels supported by this menu

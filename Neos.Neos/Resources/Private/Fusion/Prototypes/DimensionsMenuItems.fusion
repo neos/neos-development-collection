@@ -1,5 +1,5 @@
-prototype(Neos.Neos:DimensionsMenuData) < prototype(Neos.Neos:MenuData)  {
- @class = 'Neos\\Neos\\Fusion\\DimensionsMenuDataImplementation'
+prototype(Neos.Neos:DimensionsMenuItems) < prototype(Neos.Neos:MenuItems)  {
+ @class = 'Neos\\Neos\\Fusion\\DimensionsMenuItemsImplementation'
 
 	node = ${node}
 
