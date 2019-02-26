@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
 
 /*
@@ -115,19 +116,38 @@ final class WorkspaceFinder
                 WHERE workspaceName LIKE :workspaceNameLike
             ',
             [
-                ':workspaceNameLike' => (string) $prefix . '%'
+                ':workspaceNameLike' => (string)$prefix . '%'
             ]
         )->fetchAll();
 
         foreach ($workspaceRows as $workspaceRow) {
             $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
             /** @var Workspace $similarlyNamedWorkspace */
-            $result[(string) $similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
+            $result[(string)$similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
         }
 
         return $result;
     }
 
+    public function findOneByWorkspaceOwner(string $owner): ?Workspace
+    {
+        $connection = $this->client->getConnection();
+        $workspaceRow = $connection->executeQuery(
+            '
+                SELECT * FROM neos_contentrepository_projection_workspace_v1
+                WHERE workspaceOwner = :workspaceOwner
+            ',
+            [
+                ':workspaceOwner' => $owner
+            ]
+        )->fetch();
+
+        if ($workspaceRow === false) {
+            return null;
+        }
+
+        return Workspace::fromDatabaseRow($workspaceRow);
+    }
 
 
     // TODO consider re-introducing runtime cache
