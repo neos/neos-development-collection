@@ -318,4 +318,52 @@ Feature: Publishing hide/show scenario of nodes
       | Key               | Value                               |
       | referenceProperty | ["na-identifier", "na2-identifier"] |
 
+  Scenario: (CreateNodeAggregateWithNode) It is possible to publish new nodes
+    Given the command CreateWorkspace is executed with payload:
+      | Key                     | Value             |
+      | workspaceName           | "user-test"       |
+      | baseWorkspaceName       | "live"            |
+      | contentStreamIdentifier | "cs-2-identifier" |
+    And the graph projection is fully up to date
 
+    # SETUP: set two new nodes in USER workspace
+    When the command "CreateNodeAggregateWithNode" is executed with payload:
+      | Key                     | Value                                    |
+      | contentStreamIdentifier | "cs-2-identifier"                        |
+      | nodeAggregateIdentifier | "new1-agg"                               |
+      | nodeTypeName            | "Neos.ContentRepository.Testing:Content" |
+      | dimensionSpacePoint     | {}                                       |
+      | nodeIdentifier          | "new"                                    |
+      | parentNodeIdentifier    | "rn-identifier"                          |
+      | nodeName                | "foo"                                    |
+    When the command "CreateNodeAggregateWithNode" is executed with payload:
+      | Key                     | Value                                    |
+      | contentStreamIdentifier | "cs-2-identifier"                        |
+      | nodeAggregateIdentifier | "new2-agg"                               |
+      | nodeTypeName            | "Neos.ContentRepository.Testing:Content" |
+      | dimensionSpacePoint     | {}                                       |
+      | nodeIdentifier          | "new2"                                   |
+      | parentNodeIdentifier    | "rn-identifier"                          |
+      | nodeName                | "foo2"                                   |
+    And the graph projection is fully up to date
+
+    When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
+      | Key           | Value                                                                                                                   |
+      | workspaceName | "user-test"                                                                                                             |
+      | nodeAddresses | [{"nodeAggregateIdentifier": "new1-agg", "contentStreamIdentifier": "cs-2-identifier", "dimensionSpacePoint": {}}] |
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "new1-agg" to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "new2-agg" not to exist in the subgraph
+
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "new1-agg" to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "new2-agg" to exist in the subgraph
+
+
+  # TODO: implement MoveNode testcase
+  # TODO: implement MoveNodesInAggregate testcase
+  # TODO: implement TranslateNodeInAggregate testcase
+  # TODO: implement CreateNodeSpecialization testcase
+  # TODO: implement CreateNodeGeneralization testcase

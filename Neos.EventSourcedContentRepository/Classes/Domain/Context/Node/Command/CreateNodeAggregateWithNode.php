@@ -19,6 +19,8 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
 /**
  * CreateNodeAggregateWithNode command
@@ -27,7 +29,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContent
  * The node will be appended as child node of the given `parentNodeIdentifier` which must be visible in the given
  * `dimensionSpacePoint`.
  */
-final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface
+final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
 
     /**
@@ -181,6 +183,15 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
             $this->nodeIdentifier,
             $this->parentNodeIdentifier,
             $this->nodeName
+        );
+    }
+
+    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    {
+        return (
+            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
+            && $this->getDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
+            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
         );
     }
 }
