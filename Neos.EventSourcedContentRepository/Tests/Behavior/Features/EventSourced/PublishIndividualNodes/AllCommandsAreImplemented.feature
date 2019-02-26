@@ -268,3 +268,54 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect a node identified by aggregate identifier "na2-identifier" not to exist in the subgraph
 
 
+  Scenario: (SetNodeReferences) It is possible to publish setting node references
+    Given the command CreateWorkspace is executed with payload:
+      | Key                     | Value             |
+      | workspaceName           | "user-test"       |
+      | baseWorkspaceName       | "live"            |
+      | contentStreamIdentifier | "cs-2-identifier" |
+    And the graph projection is fully up to date
+
+    # SETUP: set two node references in USER workspace
+    When the command "SetNodeReferences" is executed with payload:
+      | Key                                 | Value               |
+      | contentStreamIdentifier             | "cs-2-identifier"   |
+      | nodeIdentifier                      | "node-identifier"   |
+      | propertyName                        | "referenceProperty" |
+      | destinationNodeAggregateIdentifiers | ["na2-identifier"]  |
+    When the command "SetNodeReferences" is executed with payload:
+      | Key                                 | Value                  |
+      | contentStreamIdentifier             | "cs-2-identifier"      |
+      | nodeIdentifier                      | "imagenode-identifier" |
+      | propertyName                        | "referenceProperty"    |
+      | destinationNodeAggregateIdentifiers | ["na2-identifier"]     |
+    And the graph projection is fully up to date
+
+    When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
+      | Key           | Value                                                                                                                   |
+      | workspaceName | "user-test"                                                                                                             |
+      | nodeAddresses | [{"nodeAggregateIdentifier": "na-identifier", "contentStreamIdentifier": "cs-2-identifier", "dimensionSpacePoint": {}}] |
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    Then I expect the Node aggregate "na-identifier" to have the references:
+      | Key               | Value              |
+      | referenceProperty | ["na2-identifier"] |
+    Then I expect the Node aggregate "na2-identifier" to have the references:
+      | Key | Value |
+    And I expect the Node aggregate "na2-identifier" to be referenced by:
+      | Key               | Value             |
+      | referenceProperty | ["na-identifier"] |
+
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
+    Then I expect the Node aggregate "na-identifier" to have the references:
+      | Key               | Value              |
+      | referenceProperty | ["na2-identifier"] |
+    Then I expect the Node aggregate "na2-identifier" to have the references:
+      | Key               | Value              |
+      | referenceProperty | ["na2-identifier"] |
+    And I expect the Node aggregate "na2-identifier" to be referenced by:
+      | Key               | Value                               |
+      | referenceProperty | ["na-identifier", "na2-identifier"] |
+
+

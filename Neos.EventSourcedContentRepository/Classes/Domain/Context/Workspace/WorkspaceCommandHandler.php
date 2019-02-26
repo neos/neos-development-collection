@@ -27,6 +27,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
@@ -438,6 +439,9 @@ final class WorkspaceCommandHandler
             case ShowNode::class:
                 return $this->nodeCommandHandler->handleShowNode($command);
                 break;
+            case SetNodeReferences::class:
+                return $this->nodeCommandHandler->handleSetNodeReferences($command);
+                break;
             case TranslateNodeInAggregate::class:
                 return $this->nodeCommandHandler->handleTranslateNodeInAggregate($command);
                 break;
@@ -553,10 +557,21 @@ final class WorkspaceCommandHandler
             // TODO: HACK as long as ChangeNodeName does not work with NodeAggregateIdentifier. As soon as ChangeNodeName includes NodeAggregateIdentifier, it can simply implement MatchableWithNodeAddressInterface; and this block can be removed.
             $node = $this->contentGraph->findNodeByIdentifierInContentStream($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
             foreach ($nodeAddresses as $nodeAddress) {
-                var_dump((string)$nodeAddress->getDimensionSpacePoint());
-                var_dump((string)$nodeAddress->getContentStreamIdentifier());
-                var_dump((string)$nodeAddress->getNodeAggregateIdentifier());
+                if (
+                    (string)$node->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
+                    && $node->getOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
+                    && $node->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
+        if ($command instanceof SetNodeReferences) {
+            // TODO: HACK as long as SetNodeReferences does not work with NodeAggregateIdentifier. As soon as SetNodeReferences includes NodeAggregateIdentifier, it can simply implement MatchableWithNodeAddressInterface; and this block can be removed.
+            $node = $this->contentGraph->findNodeByIdentifierInContentStream($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
+            foreach ($nodeAddresses as $nodeAddress) {
                 if (
                     (string)$node->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
                     && $node->getOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
