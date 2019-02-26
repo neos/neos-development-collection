@@ -39,7 +39,7 @@ use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 use Neos\Utility\ObjectAccess;
-use PHPUnit\Framework\Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');

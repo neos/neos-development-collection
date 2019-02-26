@@ -51,7 +51,7 @@ Feature: Privilege to restrict reading of node properties
       | Workspace  |
       | user-admin |
     Then I should not be granted to get the "title" property
-    And I should get FALSE when asking the node authorization service if getting the "title" property is granted
+    And I should get false when asking the node authorization service if getting the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Anonymous users are granted to get title of service node
@@ -60,7 +60,7 @@ Feature: Privilege to restrict reading of node properties
       | Workspace  |
       | user-admin |
     Then I should be granted to get the "title" property
-    And I should get TRUE when asking the node authorization service if getting the "title" property is granted
+    And I should get true when asking the node authorization service if getting the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Administrators are granted to get title of service text nodes
@@ -69,7 +69,7 @@ Feature: Privilege to restrict reading of node properties
       | Workspace  |
       | user-admin |
     Then I should be granted to get the "title" property
-    And I should get TRUE when asking the node authorization service if getting the "title" property is granted
+    And I should get true when asking the node authorization service if getting the "title" property is granted
 
   @Isolated @fixtures
   Scenario: Anonymous users are not granted to get visibility options of document nodes
@@ -78,14 +78,14 @@ Feature: Privilege to restrict reading of node properties
       | Workspace  |
       | user-admin |
     Then I should not be granted to get the "hidden" property
-    And I should get FALSE when asking the node authorization service if getting the "hidden" property is granted
+    And I should get false when asking the node authorization service if getting the "hidden" property is granted
     And I should not be granted to get the "hiddenBeforeDateTime" property
-    And I should get FALSE when asking the node authorization service if getting the "hiddenBeforeDateTime" property is granted
+    And I should get false when asking the node authorization service if getting the "hiddenBeforeDateTime" property is granted
     And I should not be granted to get the "hiddenAfterDateTime" property
-    And I should get FALSE when asking the node authorization service if getting the "hiddenAfterDateTime" property is granted
+    And I should get false when asking the node authorization service if getting the "hiddenAfterDateTime" property is granted
     And I should not be granted to get the "hiddenInIndex" property
-    And I should get FALSE when asking the node authorization service if getting the "hiddenInIndex" property is granted
+    And I should get false when asking the node authorization service if getting the "hiddenInIndex" property is granted
     And I should be granted to get the "name" property
-    And I should get TRUE when asking the node authorization service if getting the "name" property is granted
+    And I should get true when asking the node authorization service if getting the "name" property is granted
     And I should be granted to get the "accessRoles" property
-    And I should get TRUE when asking the node authorization service if getting the "accessRoles" property is granted
+    And I should get true when asking the node authorization service if getting the "accessRoles" property is granted
