@@ -64,6 +64,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Exception;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\Decorator\EventDecoratorUtilities;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -113,11 +114,19 @@ final class NodeCommandHandler
     protected $graphProjector;
 
     /**
+     * @Flow\Inject
+     * @var ReadSideMemoryCacheManager
+     */
+    protected $readSideMemoryCacheManager;
+
+    /**
      * @param CreateNodeAggregateWithNode $command
      * @return CommandResult
      */
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
@@ -220,6 +229,8 @@ final class NodeCommandHandler
      */
     public function handleAddNodeToAggregate(AddNodeToAggregate $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
@@ -334,6 +345,8 @@ final class NodeCommandHandler
      */
     public function handleCreateRootNode(CreateRootNode $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
@@ -366,6 +379,8 @@ final class NodeCommandHandler
      */
     public function handleSetNodeProperty(SetNodeProperty $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
@@ -399,6 +414,8 @@ final class NodeCommandHandler
      */
     public function handleSetNodeReferences(SetNodeReferences $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
@@ -437,6 +454,8 @@ final class NodeCommandHandler
      */
     public function handleHideNode(HideNode $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
@@ -471,6 +490,8 @@ final class NodeCommandHandler
      */
     public function handleShowNode(ShowNode $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
@@ -504,6 +525,8 @@ final class NodeCommandHandler
      */
     public function handleMoveNode(MoveNode $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $command->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
@@ -655,6 +678,8 @@ final class NodeCommandHandler
      */
     public function handleChangeNodeName(ChangeNodeName $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $events = [];
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
@@ -689,6 +714,8 @@ final class NodeCommandHandler
      */
     public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
@@ -723,6 +750,8 @@ final class NodeCommandHandler
      */
     public function handleRemoveNodesFromAggregate(RemoveNodesFromAggregate $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         foreach ($command->getDimensionSpacePointSet()->getPoints() as $point) {
             $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($point, false);
             foreach ($specializations->getPoints() as $specialization) {
@@ -767,6 +796,8 @@ final class NodeCommandHandler
      */
     public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();

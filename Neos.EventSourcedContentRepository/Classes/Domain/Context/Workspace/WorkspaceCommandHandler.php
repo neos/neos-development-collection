@@ -43,6 +43,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\Worksp
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventEnvelope;
@@ -83,7 +84,9 @@ final class WorkspaceCommandHandler
 
     /**
      * @Flow\Inject
+     * @var ReadSideMemoryCacheManager
      */
+    protected $readSideMemoryCacheManager;
 
     /**
      * @param CreateWorkspace $command
@@ -93,6 +96,8 @@ final class WorkspaceCommandHandler
      */
     public function handleCreateWorkspace(CreateWorkspace $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $existingWorkspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf('The workspace %s already exists', $command->getWorkspaceName()), 1505830958921);
@@ -143,6 +148,8 @@ final class WorkspaceCommandHandler
      */
     public function handleCreateRootWorkspace(CreateRootWorkspace $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $existingWorkspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf('The workspace %s already exists', $command->getWorkspaceName()), 1505848624450);
@@ -196,6 +203,8 @@ final class WorkspaceCommandHandler
      */
     public function handlePublishWorkspace(PublishWorkspace $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
         if ($workspace === null) {
             throw new WorkspaceDoesNotExist(sprintf('The workspace %s does not exist', $command->getWorkspaceName()), 1513924741);
@@ -312,6 +321,8 @@ final class WorkspaceCommandHandler
      */
     public function handleRebaseWorkspace(RebaseWorkspace $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
         if ($workspace === null) {
             throw new WorkspaceDoesNotExist(sprintf('The source workspace %s does not exist', $command->getWorkspaceName()), 1513924741);
@@ -435,6 +446,8 @@ final class WorkspaceCommandHandler
      */
     public function handlePublishIndividualNodesFromWorkspace(Command\PublishIndividualNodesFromWorkspace $command)
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
         if ($workspace === null) {
             throw new WorkspaceDoesNotExist(sprintf('The source workspace %s does not exist', $command->getWorkspaceName()), 1513924741);
