@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
 
 /*
@@ -12,6 +13,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
@@ -55,5 +59,22 @@ final class PublishIndividualNodesFromWorkspace
     public function getNodeAddresses(): array
     {
         return $this->nodeAddresses;
+    }
+
+    public static function fromArray(array $array): self
+    {
+        $nodeAddresses = [];
+        foreach ($array['nodeAddresses'] as $nodeAddressArray) {
+            $nodeAddresses[] = new NodeAddress(
+                ContentStreamIdentifier::fromString($nodeAddressArray['contentStreamIdentifier']),
+                new DimensionSpacePoint($nodeAddressArray['dimensionSpacePoint']),
+                NodeAggregateIdentifier::fromString($nodeAddressArray['nodeAggregateIdentifier']),
+                null
+            );
+        }
+        return new static(
+            new WorkspaceName($array['workspaceName']),
+            $nodeAddresses
+        );
     }
 }

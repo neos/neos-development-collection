@@ -525,6 +525,12 @@ trait EventSourcedTrait
                     \Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
                     'handlePublishWorkspace'
                 ];
+            case 'PublishIndividualNodesFromWorkspace':
+                return [
+                    \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace::class,
+                    \Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
+                    'handlePublishIndividualNodesFromWorkspace'
+                ];
             case 'RebaseWorkspace':
                 return [
                     \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace::class,
@@ -841,6 +847,17 @@ trait EventSourcedTrait
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
+        $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
+    }
+
+    /**
+     * @Then /^I expect the Node Aggregate "([^"]*)" to have the properties:$/
+     */
+    public function iExpectTheNodeAggregateToHaveTheProperties($nodeAggregateIdentifier, TableNode $expectedProperties)
+    {
+        $this->currentNode = $this->contentGraphInterface
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
         $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
     }
 
