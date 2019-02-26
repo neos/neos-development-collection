@@ -15,7 +15,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
-use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineFinder;
 use Neos\Flow\Annotations as Flow;
 
 /**

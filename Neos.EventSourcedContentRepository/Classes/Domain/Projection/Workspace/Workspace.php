@@ -13,10 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Workspace Read Model
@@ -25,14 +23,12 @@ class Workspace
 {
 
     /**
-     * @ORM\Id
      * @var string
      */
     public $workspaceName;
 
     /**
      * @var string
-     * @ORM\Column(nullable=true)
      */
     public $baseWorkspaceName;
 
@@ -48,13 +44,11 @@ class Workspace
 
     /**
      * @var string
-     * @ORM\Column(nullable=true)
      */
     public $workspaceOwner;
 
     /**
      * @var string
-     * @ORM\Column(nullable=true)
      */
     public $currentContentStreamIdentifier;
 

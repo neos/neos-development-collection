@@ -13,9 +13,6 @@ namespace Neos\EventSourcedContentRepository\Service\Infrastructure;
  * source code.
  */
 
-use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\Flow\Annotations as Flow;
 

@@ -24,7 +24,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\ReferencePosition;
  * `referenceNodeAggregateIdentifier`. Each node in the node aggregate needs a suitable
  * (visible in dimension space point) reference node in the referenced node aggregate.
  */
-final class MoveNodesInAggregate implements  \JsonSerializable, CopyableAcrossContentStreamsInterface
+final class MoveNodesInAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
 
     /**
