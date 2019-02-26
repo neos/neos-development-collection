@@ -233,9 +233,11 @@ final class WorkspaceCommandHandler
         // TODO: "Workspace was rebased" is probably the wrong name. We can rebase a content stream,
         // but not really a workspace. We can just change the ContentStream for a workspace.
         $events = DomainEvents::withSingleEvent(
-            new WorkspaceWasRebased(
-                $command->getWorkspaceName(),
-                $newContentStream
+            EventWithIdentifier::create(
+                new WorkspaceWasRebased(
+                    $command->getWorkspaceName(),
+                    $newContentStream
+                )
             )
         );
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
@@ -256,10 +258,10 @@ final class WorkspaceCommandHandler
         // - ensure that no other changes have been done in the meantime in the base content stream
 
 
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($contentStreamName);
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($contentStreamName->getEventStreamName());
 
         /* @var $workspaceContentStream EventEnvelope[] */
-        $workspaceContentStream = iterator_to_array($eventStore->load($contentStreamName));
+        $workspaceContentStream = iterator_to_array($eventStore->load($contentStreamName->getEventStreamName()));
 
         $events = DomainEvents::createEmpty();
         foreach ($workspaceContentStream as $eventEnvelope) {
@@ -276,8 +278,8 @@ final class WorkspaceCommandHandler
         // TODO: maybe we should also emit a "WorkspaceWasPublished" event? But on which content stream?
         $contentStreamWasForked = self::extractSingleForkedContentStreamEvent($workspaceContentStream);
         try {
-            $eventStore = $this->eventStoreManager->getEventStoreForStreamName($baseWorkspaceContentStreamName);
-            $eventStore->commit($baseWorkspaceContentStreamName, $events, $contentStreamWasForked->getVersionOfSourceContentStream());
+            $eventStore = $this->eventStoreManager->getEventStoreForStreamName($baseWorkspaceContentStreamName->getEventStreamName());
+            $eventStore->commit($baseWorkspaceContentStreamName->getEventStreamName(), $events, $contentStreamWasForked->getVersionOfSourceContentStream());
             return CommandResult::fromPublishedEvents($events);
         } catch (ConcurrencyException $e) {
             throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf('The base workspace has been modified in the meantime; please rebase. Expected version %d of source content stream %s', $contentStreamWasForked->getVersionOfSourceContentStream(), $baseContentStreamIdentifier));
@@ -358,15 +360,17 @@ final class WorkspaceCommandHandler
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
         $events = DomainEvents::withSingleEvent(
-            new WorkspaceWasRebased(
-                $command->getWorkspaceName(),
-                $rebasedContentStream
+            EventWithIdentifier::create(
+                new WorkspaceWasRebased(
+                    $command->getWorkspaceName(),
+                    $rebasedContentStream
+                )
             )
         );
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         $eventStore->commit($streamName, $events);
 
-        return CommandResult::fromPublishedEvents(events);
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
