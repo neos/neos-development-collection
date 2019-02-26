@@ -24,6 +24,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateNodeAgg
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
@@ -438,6 +439,9 @@ final class WorkspaceCommandHandler
                 break;
             case TranslateNodeInAggregate::class:
                 return $this->nodeCommandHandler->handleTranslateNodeInAggregate($command);
+                break;
+            case RemoveNodeAggregate::class:
+                return $this->nodeCommandHandler->handleRemoveNodeAggregate($command);
                 break;
             default:
                 throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($command)));

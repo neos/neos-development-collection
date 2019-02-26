@@ -193,3 +193,38 @@ Feature: Publishing hide/show scenario of nodes
       | text1mod | node-identifier      |
       | imagemod | imagenode-identifier |
 
+  Scenario: (RemoveNodeAggregate) It is possible to publish a node removal
+    Given the command CreateWorkspace is executed with payload:
+      | Key                     | Value             |
+      | workspaceName           | "user-test"       |
+      | baseWorkspaceName       | "live"            |
+      | contentStreamIdentifier | "cs-2-identifier" |
+    And the graph projection is fully up to date
+
+    # SETUP: remove two nodes in USER workspace
+    When the command RemoveNodeAggregate was published with payload:
+      | Key                     | Value             |
+      | contentStreamIdentifier | "cs-2-identifier" |
+      | nodeAggregateIdentifier | "na-identifier"   |
+    When the command RemoveNodeAggregate was published with payload:
+      | Key                     | Value             |
+      | contentStreamIdentifier | "cs-2-identifier" |
+      | nodeAggregateIdentifier | "na2-identifier"   |
+    And the graph projection is fully up to date
+
+    When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
+      | Key           | Value                                                                                                                   |
+      | workspaceName | "user-test"                                                                                                             |
+      | nodeAddresses | [{"nodeAggregateIdentifier": "na-identifier", "contentStreamIdentifier": "cs-2-identifier", "dimensionSpacePoint": {}}] |
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "na-identifier" not to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "cna-identifier" not to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "na2-identifier" to exist in the subgraph
+
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "na-identifier" not to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "cna-identifier" not to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "na2-identifier" not to exist in the subgraph
+
