@@ -133,6 +133,8 @@ trait BrowserTrait
      */
     public function iSendTheFollowingChanges(TableNode $changeDefinition)
     {
+        $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
+
         $changes = [];
         foreach ($changeDefinition->getHash() as $singleChange) {
             $payload = json_decode($this->replacePlaceholders($singleChange['Payload']), true);
@@ -158,6 +160,8 @@ trait BrowserTrait
      */
     public function iPublishTheFollowingNodes(string $targetWorkspaceName, TableNode $nodesToPublish)
     {
+        $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
+
         $nodeContextPaths = [];
         foreach ($nodesToPublish->getHash() as $singleChange) {
             $nodeContextPaths[] = $this->replacePlaceholders($singleChange['Subject Node Address']);
