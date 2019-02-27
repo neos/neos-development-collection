@@ -220,6 +220,9 @@ trait EventSourcedTrait
         if (!isset($eventPayload['visibleInDimensionSpacePoints'])) {
             $eventPayload['visibleInDimensionSpacePoints'] = [[]];
         }
+        if (!isset($eventPayload['nodeName'])) {
+            $eventPayload['nodeName'] = null;
+        }
 
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);

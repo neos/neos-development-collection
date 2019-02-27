@@ -112,7 +112,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         DimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        NodeName $nodeName,
+        ?NodeName $nodeName,
         PropertyValues $initialPropertyValues,
         NodeAggregateIdentifier $succeedingNodeAggregateIdentifier = null
     ) {
@@ -157,7 +157,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         return $this->parentNodeAggregateIdentifier;
     }
 
-    public function getNodeName(): NodeName
+    public function getNodeName(): ?NodeName
     {
         return $this->nodeName;
     }

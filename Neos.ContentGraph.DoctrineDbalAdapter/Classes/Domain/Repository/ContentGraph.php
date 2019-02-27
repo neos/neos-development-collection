@@ -228,7 +228,7 @@ final class ContentGraph implements ContentGraphInterface
             $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
         }
 
-        return new NodeAggregate($nodeAggregateIdentifier, NodeTypeName::fromString($rawNodeTypeName), NodeName::fromString($rawNodeName), $nodes);
+        return new NodeAggregate($nodeAggregateIdentifier, NodeTypeName::fromString($rawNodeTypeName), $rawNodeName ? NodeName::fromString($rawNodeName) : null, $nodes);
     }
 
     /**
