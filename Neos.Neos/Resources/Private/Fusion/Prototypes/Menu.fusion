@@ -11,6 +11,8 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
 	renderHiddenInIndex = false
 	itemCollection = null
 
+	node = ${this.node}
+
 	attributes = Neos.Fusion:Attributes
 
 	active.attributes = Neos.Fusion:Attributes {
