@@ -14,7 +14,10 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * Name of a Node Type; e.g. "Neos.Neos:Content"
+ *
  * @Flow\Proxy(false)
+ * @api
  */
 final class NodeTypeName implements \JsonSerializable
 {

@@ -16,7 +16,10 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * The node path is a list of NodeNames. It can be either absolute or relative.
+ *
  * @Flow\Proxy(false)
+ * @api
  */
 final class NodePath implements \JsonSerializable
 {

@@ -14,7 +14,12 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * The list of node type constraints needed for various find() operations on the node tree.
+ *
+ * Never create an instance of this object by hand; rather use {@see \Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory}
+ *
  * @Flow\Proxy(false)
+ * @api
  */
 final class NodeTypeConstraints
 {

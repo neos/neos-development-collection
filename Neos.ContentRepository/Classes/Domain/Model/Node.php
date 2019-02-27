@@ -413,6 +413,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      *
      * @return string
      * @api
+     * @deprecated with version 4.3, use findNodePath() instead.
      */
     public function getPath()
     {
@@ -435,7 +436,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the name of this node
      *
      * @return string
-     * @api
+     * @deprecated with version 4.3, use getNodeName() instead.
      */
     public function getName()
     {
@@ -493,7 +494,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the identifier of this node
      *
      * @return string the node's UUID (unique within the workspace)
-     * @api
+     * @deprecated with version 4.3, use getNodeAggregateIdentifier() instead.
      */
     public function getIdentifier()
     {
@@ -540,7 +541,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the parent node of this node
      *
      * @return NodeInterface The parent node or NULL if this is the root node
-     * @api
+     * @deprecated with version 4.3, use findParentNode() instead.
      */
     public function getParent()
     {
@@ -563,7 +564,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Returns the parent node path
      *
      * @return string Absolute node path of the parent node
-     * @api
+     * @deprecated with version 4.3, use findParentNode()->findNodePath() instead.
      */
     public function getParentPath(): string
     {
@@ -1236,7 +1237,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * node type. For now it is just the first child node.
      *
      * @return NodeInterface|null The primary child node or NULL if no such node exists
-     * @api
+     * @deprecated with version 4.3, without any replacement.
      */
     public function getPrimaryChildNode(): ?NodeInterface
     {
@@ -1251,7 +1252,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
      * @param integer $offset An optional offset for the query
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
-     * @api
+     * @deprecated with version 4.3, use findChildNodes() instead.
      */
     public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null): array
     {
@@ -1287,7 +1288,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      *
      * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
      * @return boolean true if this node has child nodes, otherwise false
-     * @api
+     * @deprecated with version 4.3, use findChildNodes() instead and count the result
      */
     public function hasChildNodes($nodeTypeFilter = null): bool
     {

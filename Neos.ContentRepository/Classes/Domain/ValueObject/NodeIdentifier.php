@@ -16,7 +16,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Algorithms;
 
 /**
+ * The "Node Identifier" will be removed with the Event-Sourced CR in Neos 5.0; but some
+ * parts of the ES code still rely on it so far.
+ *
  * @Flow\Proxy(false)
+ * @deprecated
  */
 final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
 {

@@ -17,6 +17,8 @@ use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * The NodeAggregateIdentifier supersedes the Node Identifier from Neos <= 4.x.
+ *
  * @Flow\Proxy(false)
  */
 final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInterface

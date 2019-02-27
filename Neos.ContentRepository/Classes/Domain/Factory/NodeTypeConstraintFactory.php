@@ -17,6 +17,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
 /**
+ * Factory to build a NodeTypeConstraints object, which in turn is needed in
+ * TraversableNode::findChildNodes().
+ *
+ * This factory resolves node type inheritance to a flat node type list.
+ *
  * @Flow\Scope("singleton")
  */
 class NodeTypeConstraintFactory
