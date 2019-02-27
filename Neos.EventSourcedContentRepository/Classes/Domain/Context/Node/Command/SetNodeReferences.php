@@ -6,12 +6,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 /**
  * Create a named reference from source- to destination-node
  */
-final class SetNodeReferences implements \JsonSerializable
+final class SetNodeReferences implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -102,5 +103,15 @@ final class SetNodeReferences implements \JsonSerializable
             'propertyName' => $this->propertyName,
             'destinationNodeAggregateIdentifiers' => $this->destinationNodeAggregateIdentifiers,
         ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    {
+        return new SetNodeReferences(
+            $targetContentStream,
+            $this->nodeIdentifier,
+            $this->propertyName,
+            $this->destinationNodeAggregateIdentifiers
+        );
     }
 }

@@ -133,6 +133,8 @@ trait BrowserTrait
      */
     public function iSendTheFollowingChanges(TableNode $changeDefinition)
     {
+        $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
+
         $changes = [];
         foreach ($changeDefinition->getHash() as $singleChange) {
             $payload = json_decode($this->replacePlaceholders($singleChange['Payload']), true);
@@ -149,6 +151,31 @@ trait BrowserTrait
             'HTTP_X_FLOW_CSRFTOKEN' => $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
         ];
         $this->currentResponse = $this->browser->request(new \Neos\Flow\Http\Uri('http://localhost/neos/ui-services/change'), 'POST', ['changes' => $changes], [], $server);
+        $this->currentRequest = $this->browser->getLastRequest();
+        Assert::assertEquals(200, $this->currentResponse->getStatusCode(), 'Status code wrong. Full response was: ' . $this->currentResponse->getBody()->getContents());
+    }
+
+    /**
+     * @When /^I publish the following nodes to "(.*)" workspace:$/
+     */
+    public function iPublishTheFollowingNodes(string $targetWorkspaceName, TableNode $nodesToPublish)
+    {
+        $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
+
+        $nodeContextPaths = [];
+        foreach ($nodesToPublish->getHash() as $singleChange) {
+            $nodeContextPaths[] = $this->replacePlaceholders($singleChange['Subject Node Address']);
+        }
+
+        $server = [
+            'HTTP_X_FLOW_CSRFTOKEN' => $this->getObjectManager()->get(\Neos\Flow\Security\Context::class)->getCsrfProtectionToken(),
+        ];
+        $payload = [
+            'nodeContextPaths' => $nodeContextPaths,
+            'targetWorkspaceName' => $targetWorkspaceName
+        ];
+
+        $this->currentResponse = $this->browser->request(new \Neos\Flow\Http\Uri('http://localhost/neos/ui-services/publish'), 'POST', $payload, [], $server);
         $this->currentRequest = $this->browser->getLastRequest();
         Assert::assertEquals(200, $this->currentResponse->getStatusCode(), 'Status code wrong. Full response was: ' . $this->currentResponse->getBody()->getContents());
     }

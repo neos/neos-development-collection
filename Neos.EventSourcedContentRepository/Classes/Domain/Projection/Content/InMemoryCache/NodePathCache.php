@@ -23,20 +23,39 @@ final class NodePathCache
 {
     protected $nodePaths = [];
 
+    /**
+     * @var bool
+     */
+    protected $isEnabled;
+
+    public function __construct(bool $isEnabled)
+    {
+        $this->isEnabled = $isEnabled;
+    }
+
     public function contains(NodeAggregateIdentifier $nodeAggregateIdentifier): bool
     {
+        if ($this->isEnabled === false) {
+            return false;
+        }
         $key = (string)$nodeAggregateIdentifier;
         return isset($this->nodePaths[$key]);
     }
 
     public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, NodePath $nodePath): void
     {
+        if ($this->isEnabled === false) {
+            return;
+        }
         $key = (string)$nodeAggregateIdentifier;
         $this->nodePaths[$key] = $nodePath;
     }
 
     public function get(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodePath
     {
+        if ($this->isEnabled === false) {
+            return null;
+        }
         $key = (string)$nodeAggregateIdentifier;
 
         return $this->nodePaths[$key] ?? null;

@@ -13,11 +13,16 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
+use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePolicyService;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
@@ -32,7 +37,6 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\Neos\Service\UserService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 use Neos\Neos\Ui\Domain\Model\Feedback\Messages\Error;
 use Neos\Neos\Ui\Domain\Model\Feedback\Messages\Info;
@@ -40,7 +44,6 @@ use Neos\Neos\Ui\Domain\Model\Feedback\Messages\Success;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\Redirect;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\RemoveNode;
-use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\Neos\Ui\Domain\Service\NodeTreeBuilder;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -89,9 +92,9 @@ class BackendServiceController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var WorkspaceFinder
      */
-    protected $workspaceRepository;
+    protected $workspaceFinder;
 
     /**
      * @Flow\Inject
@@ -112,6 +115,18 @@ class BackendServiceController extends ActionController
     protected $nodePolicyService;
 
     /**
+     * @Flow\Inject
+     * @var NodeAddressFactory
+     */
+    protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceCommandHandler
+     */
+    protected $workspaceCommandHandler;
+
+    /**
      * Set the controller context on the feedback collection after the controller
      * has been initialized
      *
@@ -123,23 +138,6 @@ class BackendServiceController extends ActionController
     {
         parent::initializeController($request, $response);
         $this->feedbackCollection->setControllerContext($this->getControllerContext());
-    }
-
-    /**
-     * Helper method to inform the client, that new workspace information is available
-     *
-     * @param string $documentNodeContextPath
-     * @return void
-     */
-    protected function updateWorkspaceInfo(string $documentNodeContextPath)
-    {
-        $updateWorkspaceInfo = new UpdateWorkspaceInfo();
-        $documentNode = $this->nodeService->getNodeFromContextPath($documentNodeContextPath, null, null, true);
-        $updateWorkspaceInfo->setWorkspace(
-            $documentNode->getContext()->getWorkspace()
-        );
-
-        $this->feedbackCollection->add($updateWorkspaceInfo);
     }
 
     /**
@@ -198,20 +196,23 @@ class BackendServiceController extends ActionController
     public function publishAction(array $nodeContextPaths, string $targetWorkspaceName)
     {
         try {
-            $targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
-
+            $workspaceName = new WorkspaceName($this->userService->getPersonalWorkspaceName());
+            $nodeAddresses = [];
             foreach ($nodeContextPaths as $contextPath) {
-                $node = $this->nodeService->getNodeFromContextPath($contextPath, null, null, true);
-                $this->publishingService->publishNode($node, $targetWorkspace);
+                $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($contextPath);
             }
-
-            $this->publishingService->publishWorkspace($targetWorkspaceName);
+            $command = new PublishIndividualNodesFromWorkspace(
+                $workspaceName,
+                $nodeAddresses
+            );
+            $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
 
             $success = new Success();
             $success->setMessage(sprintf('Published %d change(s) to %s.', count($nodeContextPaths), $targetWorkspaceName));
 
-            $this->updateWorkspaceInfo($nodeContextPaths[0]);
+            $updateWorkspaceInfo = new UpdateWorkspaceInfo($workspaceName);
             $this->feedbackCollection->add($success);
+            $this->feedbackCollection->add($updateWorkspaceInfo);
 
             $this->persistenceManager->persistAll();
         } catch (\Exception $e) {
@@ -291,7 +292,7 @@ class BackendServiceController extends ActionController
     public function changeBaseWorkspaceAction(string $targetWorkspaceName, NodeInterface $documentNode)
     {
         try {
-            $targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
+            $targetWorkspace = $this->workspaceFinder->findOneByName($targetWorkspaceName);
             $userWorkspace = $this->userService->getPersonalWorkspace();
 
             if (count($this->workspaceService->getPublishableNodeInfo($userWorkspace)) > 0) {
@@ -300,7 +301,7 @@ class BackendServiceController extends ActionController
             }
 
             $userWorkspace->setBaseWorkspace($targetWorkspace);
-            $this->workspaceRepository->update($userWorkspace);
+            $this->workspaceFinder->update($userWorkspace);
 
             $success = new Success();
             $success->setMessage(sprintf('Switched base workspace to %s.', $targetWorkspaceName));

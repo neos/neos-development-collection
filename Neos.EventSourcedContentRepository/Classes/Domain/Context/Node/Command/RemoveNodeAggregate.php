@@ -14,8 +14,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
-final class RemoveNodeAggregate implements \JsonSerializable
+final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
 
     /**
@@ -69,5 +72,21 @@ final class RemoveNodeAggregate implements \JsonSerializable
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
         ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    {
+        return new RemoveNodeAggregate(
+            $targetContentStream,
+            $this->nodeAggregateIdentifier
+        );
+    }
+
+    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    {
+        return (
+            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
+            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+        );
     }
 }

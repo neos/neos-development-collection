@@ -27,28 +27,54 @@ final class NodeByNodeAggregateIdentifierCache
     protected $nonExistingNodeAggregateIdentifiers = [];
 
     /**
+     * @var bool
+     */
+    protected $isEnabled;
+
+    public function __construct(bool $isEnabled)
+    {
+        $this->isEnabled = $isEnabled;
+    }
+
+    /**
      * basically like "contains"
      */
     public function knowsAbout(NodeAggregateIdentifier $nodeAggregateIdentifier): bool
     {
+        if ($this->isEnabled === false) {
+            return false;
+        }
+
         $key = (string)$nodeAggregateIdentifier;
         return isset($this->nodes[$key]) || isset($this->nonExistingNodeAggregateIdentifiers[$key]);
     }
 
     public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeInterface $node): void
     {
+        if ($this->isEnabled === false) {
+            return;
+        }
+
         $key = (string)$nodeAggregateIdentifier;
         $this->nodes[$key] = $node;
     }
 
     public function rememberNonExistingNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): void
     {
+        if ($this->isEnabled === false) {
+            return;
+        }
+
         $key = (string)$nodeAggregateIdentifier;
         $this->nonExistingNodeAggregateIdentifiers[$key] = true;
     }
 
     public function get(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
     {
+        if ($this->isEnabled === false) {
+            return null;
+        }
+
         $key = (string)$nodeAggregateIdentifier;
         return $this->nodes[$key] ?? null;
     }

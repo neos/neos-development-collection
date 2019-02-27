@@ -147,7 +147,7 @@ trait EventSourcedTrait
      */
     public function beforeEventSourcedScenarioDispatcher()
     {
-        $this->contentGraphInterface->resetCache();
+        $this->contentGraphInterface->enableCache();
         $this->visibilityConstraints = VisibilityConstraints::frontend();
     }
 
@@ -244,10 +244,18 @@ trait EventSourcedTrait
     {
         $eventPayload = [];
         foreach ($payloadTable->getHash() as $line) {
-            $value = json_decode($line['Value'], true);
-            if ($value === null && json_last_error() !== JSON_ERROR_NONE) {
-                throw new \Exception(sprintf('The value "%s" is no valid JSON string', $line['Value']), 1546522626);
+            if (strpos($line['Value'], '$this->') === 0) {
+                // Special case: Referencing stuff from the context here
+                $propertyName = substr($line['Value'], strlen('$this->'));
+                $value = (string) $this->$propertyName;
+            } else {
+                // default case
+                $value = json_decode($line['Value'], true);
+                if ($value === null && json_last_error() !== JSON_ERROR_NONE) {
+                    throw new \Exception(sprintf('The value "%s" is no valid JSON string', $line['Value']), 1546522626);
+                }
             }
+
             $eventPayload[$line['Key']] = $value;
         }
         return $eventPayload;
@@ -516,6 +524,12 @@ trait EventSourcedTrait
                     \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace::class,
                     \Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
                     'handlePublishWorkspace'
+                ];
+            case 'PublishIndividualNodesFromWorkspace':
+                return [
+                    \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace::class,
+                    \Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
+                    'handlePublishIndividualNodesFromWorkspace'
                 ];
             case 'RebaseWorkspace':
                 return [
@@ -830,12 +844,20 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheProperties($nodeIdentifier, TableNode $expectedProperties)
     {
-        // TODO the following line is required in order to avoid cached results from previous calls
-        $this->contentGraphInterface->resetCache();
-
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
+        $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
+    }
+
+    /**
+     * @Then /^I expect the Node Aggregate "([^"]*)" to have the properties:$/
+     */
+    public function iExpectTheNodeAggregateToHaveTheProperties($nodeAggregateIdentifier, TableNode $expectedProperties)
+    {
+        $this->currentNode = $this->contentGraphInterface
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
         $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
     }
 
@@ -844,8 +866,6 @@ trait EventSourcedTrait
      */
     public function iExpectTheCurrentNodeToHaveTheProperties(TableNode $expectedProperties)
     {
-        // TODO hack: $this->currentNode might be stale, so we need to re-fetch it
-        $this->contentGraphInterface->resetCache();
         $this->currentNode = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());

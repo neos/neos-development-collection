@@ -405,11 +405,20 @@ final class ContentGraph implements ContentGraphInterface
         return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
-    public function resetCache()
+    public function enableCache(): void
     {
         if (is_array($this->subgraphs)) {
             foreach ($this->subgraphs as $subgraph) {
-                $subgraph->getInMemoryCache()->reset();
+                $subgraph->getInMemoryCache()->enable();
+            }
+        }
+    }
+
+    public function disableCache(): void
+    {
+        if (is_array($this->subgraphs)) {
+            foreach ($this->subgraphs as $subgraph) {
+                $subgraph->getInMemoryCache()->disable();
             }
         }
     }

@@ -97,7 +97,7 @@ final class EditorContentStreamZookeeper
             $user = $this->partyService->getAssignedPartyOfAccount($token->getAccount());
             if ($user instanceof User) {
                 /** @var Workspace $workspace */
-                $workspace = $this->workspaceFinder->findOneByWorkspaceOwner($user);
+                $workspace = $this->workspaceFinder->findOneByWorkspaceOwner($this->persistenceManager->getIdentifierByObject($user));
                 if (!$workspace) {
                     // @todo: find base workspace for user
                     $baseWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());

@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -29,7 +30,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
  *
  * This is only allowed if both nodes exist and the new parent aggregate's type allows children of the given aggregate's type
  */
-final class MoveNode implements \JsonSerializable
+final class MoveNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -160,5 +161,17 @@ final class MoveNode implements \JsonSerializable
             'newSucceedingSiblingNodeAggregateIdentifier' => $this->newSucceedingSiblingNodeAggregateIdentifier,
             'relationDistributionStrategy' => $this->relationDistributionStrategy,
         ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    {
+        return new MoveNode(
+            $targetContentStream,
+            $this->dimensionSpacePoint,
+            $this->nodeAggregateIdentifier,
+            $this->newParentNodeAggregateIdentifier,
+            $this->newSucceedingSiblingNodeAggregateIdentifier,
+            $this->relationDistributionStrategy
+        );
     }
 }

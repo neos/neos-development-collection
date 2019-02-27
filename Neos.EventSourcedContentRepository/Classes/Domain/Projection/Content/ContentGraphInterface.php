@@ -101,5 +101,15 @@ interface ContentGraphInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): DimensionSpacePointSet;
 
-    public function resetCache();
+
+    /**
+     * Enable all caches. All READ requests should enable the cache.
+     * By default, caches are enabled!
+     */
+    public function enableCache(): void;
+
+    /**
+     * Disable all caches. All WRITE requests should disable the cache.
+     */
+    public function disableCache(): void;
 }

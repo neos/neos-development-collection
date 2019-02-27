@@ -16,7 +16,11 @@ use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
+use Neos\Neos\Domain\Service\UserService as DomainUserService;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Service\UserService;
 
 /**
  * The Workspace helper for EEL contexts
@@ -28,6 +32,24 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceService
+     */
+    protected $workspaceService;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
+     * @Flow\Inject
+     * @var DomainUserService
+     */
+    protected $domainUserService;
 
     /**
      * @param ContentSubgraphInterface $contentSubgraph
@@ -45,6 +67,30 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
         }
 
         return $workspaceChain;
+    }
+
+    /**
+     * @param WorkspaceName $workspaceName
+     * @return array
+     */
+    public function getPublishableNodeInfo(WorkspaceName $workspaceName)
+    {
+        return $this->workspaceService->getPublishableNodeInfo($workspaceName);
+    }
+
+    public function getPersonalWorkspace()
+    {
+        $personalWorkspaceName = new WorkspaceName($this->userService->getPersonalWorkspaceName());
+        $personalWorkspace = $this->workspaceFinder->findOneByName($personalWorkspaceName);
+
+        return [
+            'name' => $personalWorkspace->getWorkspaceName(),
+            'publishableNodes' => $this->getPublishableNodeInfo($personalWorkspaceName),
+            'baseWorkspace' => $personalWorkspace->getBaseWorkspaceName(),
+            // TODO: FIX readonly flag!
+            //'readOnly' => !$this->domainUserService->currentUserCanPublishToWorkspace($baseWorkspace)
+            'readOnly' => false
+        ];
     }
 
     /**

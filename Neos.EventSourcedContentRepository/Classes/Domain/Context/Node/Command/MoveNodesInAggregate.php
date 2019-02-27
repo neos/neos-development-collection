@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\ReferencePosition;
 
 /**
@@ -23,7 +24,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\ReferencePosition;
  * `referenceNodeAggregateIdentifier`. Each node in the node aggregate needs a suitable
  * (visible in dimension space point) reference node in the referenced node aggregate.
  */
-final class MoveNodesInAggregate
+final class MoveNodesInAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -102,5 +103,25 @@ final class MoveNodesInAggregate
     public function getReferenceNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->referenceNodeAggregateIdentifier;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'referencePosition' => $this->referencePosition,
+            'referenceNodeAggregateIdentifier' => $this->referenceNodeAggregateIdentifier
+        ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    {
+        return new MoveNodesInAggregate(
+            $targetContentStream,
+            $this->nodeAggregateIdentifier,
+            $this->referencePosition,
+            $this->referenceNodeAggregateIdentifier
+        );
     }
 }

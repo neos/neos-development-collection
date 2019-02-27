@@ -31,18 +31,40 @@ final class NamedChildNodeByNodeIdentifierCache
      */
     protected $nodes = [];
 
+    /**
+     * @var bool
+     */
+    protected $isEnabled;
+
+    public function __construct(bool $isEnabled)
+    {
+        $this->isEnabled = $isEnabled;
+    }
+
     public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $nodeName, NodeInterface $node): void
     {
+        if ($this->isEnabled === false) {
+            return;
+        }
+
         $this->nodes[(string)$parentNodeAggregateIdentifier][(string)$nodeName] = $node;
     }
 
     public function contains(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $nodeName): bool
     {
+        if ($this->isEnabled === false) {
+            return false;
+        }
+
         return isset($this->nodes[(string)$parentNodeAggregateIdentifier][(string)$nodeName]);
     }
 
     public function get(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $nodeName): ?NodeInterface
     {
+        if ($this->isEnabled === false) {
+            return null;
+        }
+
         return $this->nodes[(string)$parentNodeAggregateIdentifier][(string)$nodeName] ?? null;
     }
 }
