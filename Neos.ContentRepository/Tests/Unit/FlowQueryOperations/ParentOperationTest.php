@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Service\Context;
@@ -55,6 +56,7 @@ class ParentOperationTest extends UnitTestCase
         $this->siteNode->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('site-identifier-uuid')));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
+        $this->siteNode->expects($this->any())->method('findParentNode')->will($this->throwException(new NodeException('No parent')));
         $this->firstLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
         $this->firstLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/first')));
         $this->secondLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
