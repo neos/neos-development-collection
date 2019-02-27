@@ -567,7 +567,6 @@ final class NodeAggregateCommandHandler
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $command->getSourceDimensionSpacePoint(),
-                        $command->getSpecializationIdentifier(),
                         $command->getTargetDimensionSpacePoint(),
                         $this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint(), true, $nodeAggregate->getOccupiedDimensionSpacePoints())
                     )

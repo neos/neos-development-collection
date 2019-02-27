@@ -462,6 +462,14 @@ final class ContentGraph implements ContentGraphInterface
         return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
+    public function countNodes(): int
+    {
+        $connection = $this->client->getConnection();
+        $query = 'SELECT COUNT(*) FROM neos_contentgraph_node';
+
+        return (int) $connection->executeQuery($query)->fetch()['COUNT(*)'];
+    }
+
     public function resetCache()
     {
         if (is_array($this->subgraphs)) {

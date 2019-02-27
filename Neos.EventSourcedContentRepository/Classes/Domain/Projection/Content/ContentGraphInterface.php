@@ -118,5 +118,7 @@ interface ContentGraphInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): DimensionSpacePointSet;
 
+    public function countNodes(): int;
+
     public function resetCache();
 }

@@ -88,4 +88,9 @@ final class NodeIdentifier implements CacheAwareInterface, \JsonSerializable
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint
         ];
     }
+
+    public function __toString(): string
+    {
+        return $this->getCacheEntryIdentifier();
+    }
 }

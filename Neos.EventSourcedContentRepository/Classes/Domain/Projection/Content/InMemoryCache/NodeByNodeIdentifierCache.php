@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier;
 
 /**
  * NodeIdentifier -> Node cache

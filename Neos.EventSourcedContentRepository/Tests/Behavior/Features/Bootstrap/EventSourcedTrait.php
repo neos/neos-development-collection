@@ -896,12 +896,22 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Then /^I expect the graph projection to consist of exactly (\d+) nodes$/
+     * @param int $expectedNumberOfNodes
+     */
+    public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes)
+    {
+        $actualNumberOfNodes = $this->contentGraph->countNodes();
+        Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content graph consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
+    }
+
+    /**
      * @Then /^I expect node aggregate identifier "([^"]*)" and path "([^"]*)" to lead to node (.*)$/
      * @param string $serializedNodeAggregateIdentifier
      * @param string $serializedNodePath
      * @param string $serializedNodeIdentifier
      */
-    public function IExpectNodeAggregateIdentifierAndPathToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath, string $serializedNodeIdentifier): void
+    public function iExpectNodeAggregateIdentifierAndPathToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath, string $serializedNodeIdentifier): void
     {
         $expectedNodeIdentifier = NodeIdentifier::fromArray(json_decode($serializedNodeIdentifier, true));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
@@ -920,7 +930,7 @@ trait EventSourcedTrait
      * @param string $serializedNodeAggregateIdentifier
      * @param string $serializedNodePath
      */
-    public function IExpectNodeAggregateIdentifierAndPathToLeadToNoNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath): void
+    public function iExpectNodeAggregateIdentifierAndPathToLeadToNoNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath): void
     {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
@@ -935,6 +945,7 @@ trait EventSourcedTrait
      * @Then /^I expect a node identified by aggregate identifier "([^"]*)" to exist in the subgraph$/
      * @param string $rawNodeAggregateIdentifier
      * @throws Exception
+     * @deprecated use iExpectNodeAggregateIdentifierAndPathToLeadToNode
      */
     public function iExpectANodeIdentifiedByAggregateIdentifierToExistInTheSubgraph(string $rawNodeAggregateIdentifier)
     {
@@ -947,6 +958,7 @@ trait EventSourcedTrait
     /**
      * @Then /^I expect a node identified by aggregate identifier "([^"]*)" not to exist in the subgraph$/
      * @param string $nodeAggregateIdentifier
+     * @deprecated use iExpectNodeAggregateIdentifierAndPathToLeadToNoNode
      */
     public function iExpectANodeIdentifiedByAggregateIdentifierNotToExistInTheSubgraph(string $nodeAggregateIdentifier)
     {

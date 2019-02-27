@@ -16,7 +16,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
@@ -44,11 +43,6 @@ final class NodeSpecializationWasCreated implements DomainEventInterface, Copyab
     private $sourceDimensionSpacePoint;
 
     /**
-     * @var NodeIdentifier
-     */
-    private $specializationIdentifier;
-
-    /**
      * @var DimensionSpacePoint
      */
     private $specializationLocation;
@@ -58,12 +52,10 @@ final class NodeSpecializationWasCreated implements DomainEventInterface, Copyab
      */
     private $specializationVisibility;
 
-
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param NodeIdentifier $specializationIdentifier
      * @param DimensionSpacePoint $specializationLocation
      * @param DimensionSpacePointSet $specializationVisibility
      */
@@ -71,14 +63,12 @@ final class NodeSpecializationWasCreated implements DomainEventInterface, Copyab
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $sourceDimensionSpacePoint,
-        NodeIdentifier $specializationIdentifier,
         DimensionSpacePoint $specializationLocation,
         DimensionSpacePointSet $specializationVisibility
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
-        $this->specializationIdentifier = $specializationIdentifier;
         $this->specializationLocation = $specializationLocation;
         $this->specializationVisibility = $specializationVisibility;
     }
@@ -109,14 +99,6 @@ final class NodeSpecializationWasCreated implements DomainEventInterface, Copyab
     }
 
     /**
-     * @return NodeIdentifier
-     */
-    public function getSpecializationIdentifier(): NodeIdentifier
-    {
-        return $this->specializationIdentifier;
-    }
-
-    /**
      * @return DimensionSpacePoint
      */
     public function getSpecializationLocation(): DimensionSpacePoint
@@ -143,7 +125,6 @@ final class NodeSpecializationWasCreated implements DomainEventInterface, Copyab
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->sourceDimensionSpacePoint,
-            $this->specializationIdentifier,
             $this->specializationLocation,
             $this->specializationVisibility
         );
