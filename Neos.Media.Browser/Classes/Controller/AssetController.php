@@ -240,7 +240,7 @@ class AssetController extends ActionController
             } elseif ($this->browserState->get('activeTag') !== null) {
                 $assetProxies = $assetProxyRepository->findByTag($this->browserState->get('activeTag'));
             } else {
-                $assetProxies = $activeAssetCollection === null ? $assetProxyRepository->findAll() : $assetProxyRepository->findAll();
+                $assetProxies = $assetProxyRepository->findAll();
             }
 
             $allCollectionsCount = $assetProxyRepository->countAll();

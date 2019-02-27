@@ -105,8 +105,9 @@ class NodeTypeTest extends UnitTestCase
         ],
         'Neos.ContentRepository.Testing:SubSubShortcut' => [
             'superTypes' => [
+                // SomeMixin placed explicitly before SubShortcut
+                'Neos.ContentRepository.Testing:SomeMixin' => true,
                 'Neos.ContentRepository.Testing:SubShortcut' => true,
-                'Neos.ContentRepository.Testing:SomeMixin' => true
             ],
             'ui' => [
                 'label' => 'Sub-Sub-Shortcut'
@@ -411,13 +412,13 @@ class NodeTypeTest extends UnitTestCase
         $this->assertSame('Sub-Sub-Sub-Shortcut', $nodeType->getLabel());
 
         $expectedProperties = [
-            'target' => [
-                'type' => 'string'
-            ],
             'someMixinProperty' => [
                 'type' => 'string',
                 'label' => 'Important hint'
-            ]
+            ],
+            'target' => [
+                'type' => 'string',
+            ],
         ];
         $this->assertSame($expectedProperties, $nodeType->getProperties());
     }

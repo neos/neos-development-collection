@@ -13,9 +13,11 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Exception\AccessDeniedException;
-use PHPUnit\Framework\Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -68,16 +70,12 @@ trait NodeAuthorizationTrait
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($propertyName)));
-        } else {
-            if ($expectedResult === 'true') {
-                if ($this->nodeAuthorizationService->isGrantedToEditNode($this->currentNodes[0], $propertyName) !== true) {
-                    Assert::fail('The node authorization service did not return true!');
-                }
-            } else {
-                if ($this->nodeAuthorizationService->isGrantedToEditNode($this->currentNodes[0], $propertyName) !== false) {
-                    Assert::fail('The node authorization service did not return false!');
-                }
+        } elseif ($expectedResult === 'true') {
+            if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== true) {
+                Assert::fail('The node authorization service did not return true!');
             }
+        } elseif ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== false) {
+            Assert::fail('The node authorization service did not return false!');
         }
     }
 
@@ -160,7 +158,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
+                $nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
                 $this->currentNodes[0]->setNodeType($nodeTypeManager->getNodeType('Neos.Neos:Node'));
                 if ($not === 'not') {
                     Assert::fail('NodeType should not be settable on the current node!');
@@ -241,7 +239,7 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeType)));
         } else {
             /** @var NodeTypeManager $nodeTypeManager */
-            $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
+            $nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
 
             try {
                 $this->currentNodes[0]->createNode($nodeName, $nodeTypeManager->getNodeType($nodeType));
@@ -269,7 +267,7 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeTypeName)));
         } else {
             /** @var NodeTypeManager $nodeTypeManager */
-            $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
+            $nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
             $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
 
             if ($expectedResult === 'true') {
@@ -345,7 +343,7 @@ trait NodeAuthorizationTrait
                 if ($not === 'not') {
                     Assert::fail('Name should not be settable on the current node!');
                 }
-            } catch (\Neos\Flow\Security\Exception\AccessDeniedException $exception) {
+            } catch (AccessDeniedException $exception) {
                 if ($not !== 'not') {
                     throw $exception;
                 }
@@ -411,7 +409,7 @@ trait NodeAuthorizationTrait
                 if ($not === 'not') {
                     Assert::fail('Property should not be gettable on the current node! But we could read the value: "' . $propertyValue . '"');
                 }
-            } catch (\Neos\Flow\Security\Exception\AccessDeniedException $exception) {
+            } catch (AccessDeniedException $exception) {
                 if ($not !== 'not') {
                     throw $exception;
                 }
@@ -426,16 +424,12 @@ trait NodeAuthorizationTrait
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($propertyName)));
-        } else {
-            if ($expectedResult === 'true') {
-                if ($this->nodeAuthorizationService->isGrantedToReadNodeProperty($this->currentNodes[0], $propertyName) !== true) {
-                    Assert::fail('The node authorization service did not return true!');
-                }
-            } else {
-                if ($this->nodeAuthorizationService->isGrantedToReadNodeProperty($this->currentNodes[0], $propertyName) !== false) {
-                    Assert::fail('The node authorization service did not return false!');
-                }
+        } elseif ($expectedResult === 'true') {
+            if ($this->nodeAuthorizationService->isGrantedToReadNodeProperty($this->currentNodes[0], $propertyName) !== true) {
+                Assert::fail('The node authorization service did not return true!');
             }
+        } elseif ($this->nodeAuthorizationService->isGrantedToReadNodeProperty($this->currentNodes[0], $propertyName) !== false) {
+            Assert::fail('The node authorization service did not return false!');
         }
     }
 
@@ -476,7 +470,7 @@ trait NodeAuthorizationTrait
                 if ($not === 'not') {
                     Assert::fail('Property should not be settable on the current node! But we could set the value of "' . $propertyName . '" to "' . $value . '"');
                 }
-            } catch (\Neos\Flow\Security\Exception\AccessDeniedException $exception) {
+            } catch (AccessDeniedException $exception) {
                 if ($not !== 'not') {
                     throw $exception;
                 }
@@ -491,16 +485,12 @@ trait NodeAuthorizationTrait
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($propertyName)));
-        } else {
-            if ($expectedResult === 'true') {
-                if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== true) {
-                    Assert::fail('The node authorization service did not return true!');
-                }
-            } else {
-                if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== false) {
-                    Assert::fail('The node authorization service did not return false!');
-                }
+        } elseif ($expectedResult === 'true') {
+            if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== true) {
+                Assert::fail('The node authorization service did not return true!');
             }
+        } elseif ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== false) {
+            Assert::fail('The node authorization service did not return false!');
         }
     }
 }
