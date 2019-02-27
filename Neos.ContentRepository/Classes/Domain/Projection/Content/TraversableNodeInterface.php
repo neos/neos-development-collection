@@ -91,7 +91,6 @@ interface TraversableNodeInterface extends NodeInterface
 
     /**
      * Retrieves and returns all nodes referenced by this node from its subgraph.
-     * If node type constraints are specified, only nodes of that type are returned.
      *
      * @return TraversableNodes
      */
