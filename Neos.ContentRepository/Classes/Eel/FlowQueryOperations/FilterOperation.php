@@ -89,7 +89,12 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     protected function matchesPropertyNameFilter($element, $propertyNameFilter)
     {
         /* @var NodeInterface $element */
-        return ((string)$element->getNodeName() === $propertyNameFilter);
+        try {
+            return ((string)$element->getNodeName() === $propertyNameFilter);
+        } catch (\InvalidArgumentException $e) {
+            // in case the Element has no valid node name, we do not match!
+            return false;
+        }
     }
 
     /**
