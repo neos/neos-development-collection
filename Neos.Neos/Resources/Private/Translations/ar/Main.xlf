@@ -149,82 +149,82 @@
 			<target xml:lang="ar" state="translated">لا يمكن نشر نظراً لفضاء العمل المستهدف للقراءة فقط</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
-			<target xml:lang="ar" state="needs-translation">Select target workspace</target></trans-unit>
+			<target xml:lang="ar" state="translated">حدد مساحة العمل المستهدفة</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="ar" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="ar" state="translated">النشر</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
 			<target xml:lang="ar" state="translated">تم النشر</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target xml:lang="ar" state="needs-translation">Toggle publish menu</target></trans-unit>
+			<target xml:lang="ar" state="translated">تبديل قائمة النشر</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target xml:lang="ar" state="needs-translation">Target workspace</target></trans-unit>
+			<target xml:lang="ar" state="translated">مساحة العمل المستهدفة</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target xml:lang="ar" state="needs-translation">Current workspace</target></trans-unit>
+			<target xml:lang="ar" state="translated">مساحة العمل الحالية</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
-			<target xml:lang="ar" state="needs-translation">Remove</target></trans-unit>
+			<target xml:lang="ar" state="translated">إزالة</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target xml:lang="ar" state="needs-translation">Refresh</target></trans-unit>
+			<target xml:lang="ar" state="translated">تحديث</target></trans-unit>
       <trans-unit id="save" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="ar" state="translated">حفظ</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target xml:lang="ar" state="needs-translation">Saving</target></trans-unit>
+			<target xml:lang="ar" state="translated">جاري الحفظ</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target xml:lang="ar" state="needs-translation">Saved</target></trans-unit>
+			<target xml:lang="ar" state="translated">تم الحفظ</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="ar" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="ar" state="translated">بحث</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target xml:lang="ar" state="needs-translation">Toggle inspector</target></trans-unit>
+			<target xml:lang="ar" state="translated">تبديل المراقب</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ar" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ar" state="translated">اسم المستخدم</target></trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
-			<target xml:lang="ar" state="needs-translation">You</target></trans-unit>
+			<target xml:lang="ar" state="translated">أنت</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="ar" state="needs-translation">[no title]</target></trans-unit>
+			<target xml:lang="ar" state="translated">[بلا عنوان]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="ar" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="ar" state="translated">التسمية</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Content Type</source>
-			<target xml:lang="ar" state="needs-translation">Content Type</target></trans-unit>
+			<target xml:lang="ar" state="translated">نوع المحتوى</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="ar" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="ar" state="translated">مسار</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative Path</source>
-			<target xml:lang="ar" state="needs-translation">Relative Path</target></trans-unit>
+			<target xml:lang="ar" state="translated">مسار نسبي</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target xml:lang="ar" state="needs-translation">Version</target></trans-unit>
+			<target xml:lang="ar" state="translated">الإصدار</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="ar" state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
-			<target xml:lang="ar" state="needs-translation">Asset</target></trans-unit>
+			<target xml:lang="ar" state="translated">الأصول</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target xml:lang="ar" state="needs-translation">Created</target></trans-unit>
+			<target xml:lang="ar" state="translated">أنشأت</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target xml:lang="ar" state="needs-translation">Last modification</target></trans-unit>
+			<target xml:lang="ar" state="translated">آخر تعديل</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target xml:lang="ar" state="needs-translation">Last publication</target></trans-unit>
+			<target xml:lang="ar" state="translated">المنشور الأخير</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="ar" state="translated">رمز التعريف</target></trans-unit>
@@ -742,7 +742,7 @@
 			<target xml:lang="ar" state="translated">انقل {source} إلى {target}</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target xml:lang="ar" state="needs-translation">Please select the position at which you want {source} inserted relative to {target}.</target></trans-unit>
+			<target xml:lang="ar" state="translated">الرجاء تحديد الموضع الذي تريد إدخال {source} فيه نسبة إلى {target}.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
 			<target xml:lang="ar" state="translated">إدراج</target></trans-unit>
@@ -799,7 +799,7 @@
 			<target xml:lang="ar" state="translated">إزالة التنسيق</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target xml:lang="ar" state="needs-translation">Outdent</target></trans-unit>
+			<target xml:lang="ar" state="translated">تحريك للأعلى</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
 			<target xml:lang="ar" state="translated">المسافة البادئة</target></trans-unit>
@@ -811,7 +811,7 @@
 			<target xml:lang="ar" state="translated">لم يتم العثور على تطابق</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target xml:lang="ar" state="needs-translation">Please enter ###CHARACTERS### more character</target></trans-unit>
+			<target xml:lang="ar" state="translated">الرجاء إدخال # # #CHARACTERS### أكثر من رمز</target></trans-unit>
     </body>
   </file>
 </xliff>

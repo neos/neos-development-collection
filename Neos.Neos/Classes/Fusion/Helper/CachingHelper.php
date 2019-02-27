@@ -74,6 +74,25 @@ class CachingHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Generate a `@cache` entry tag for a single node identifier. If a NodeInterface $contextNode is given the
+     * entry tag will respect the workspace hash.
+     *
+     * @param string $identifier
+     * @param NodeInterface|null $contextNode
+     * @return string
+     *
+     */
+    public function nodeTagForIdentifier(string $identifier, NodeInterface $contextNode = null): string
+    {
+        $workspaceTag = '';
+        if ($contextNode instanceof NodeInterface) {
+            $workspaceTag = $this->renderWorkspaceTagForContextNode($contextNode->getContext()->getWorkspace()->getName()) .'_';
+        }
+
+        return 'Node_' . $workspaceTag . $identifier;
+    }
+
+    /**
      * Generate an `@cache` entry tag for a node type
      * A cache entry with this tag will be flushed whenever a node
      * (for any variant) that is of the given node type(s)

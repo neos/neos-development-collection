@@ -1,4 +1,4 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Issues| |Translate| |Twitter|
+|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Issues| |Translate| |Twitter| |Pull Reminders|
 
 .. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/neos-development-collection
@@ -31,6 +31,9 @@
 .. |Twitter| image:: https://img.shields.io/twitter/follow/neoscms.svg?style=social
    :target: https://twitter.com/NeosCMS
    :alt: Twitter
+.. |Pull Reminders| image:: https://pullreminders.com/badge.svg
+   :target: https://pullreminders.com?ref=badge
+   :alt: Pull Reminders
 
 ---------------------------
 Neos development collection
