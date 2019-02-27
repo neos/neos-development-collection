@@ -62,7 +62,7 @@ final class TraversableNodes implements \IteratorAggregate, \Countable
                 return $index;
             }
         }
-        throw new \InvalidArgumentException('This node does not exist in this set', 1542901216);
+        throw new \InvalidArgumentException(sprintf('The node %s does not exist in this set', $subject->getNodeAggregateIdentifier()), 1542901216);
     }
 
     /**
@@ -75,7 +75,7 @@ final class TraversableNodes implements \IteratorAggregate, \Countable
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
         if ($referenceNodeIndex === 0) {
-            throw new \InvalidArgumentException('This node is the first node in the set', 1542902422);
+            throw new \InvalidArgumentException(sprintf('The node %s is the first node in the set, so there is no previous node.', $referenceNode->getNodeAggregateIdentifier()), 1542902422);
         }
         return $this->nodes[$referenceNodeIndex - 1];
     }
@@ -102,7 +102,7 @@ final class TraversableNodes implements \IteratorAggregate, \Countable
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
         if ($referenceNodeIndex === $this->count() - 1) {
-            throw new \InvalidArgumentException('This node is the last node in the set', 1542902858);
+            throw new \InvalidArgumentException(sprintf('The node %s is the last node in the set, so there is no next node.', $referenceNode->getNodeAggregateIdentifier()), 1542902858);
         }
         return $this->nodes[$referenceNodeIndex + 1];
     }
