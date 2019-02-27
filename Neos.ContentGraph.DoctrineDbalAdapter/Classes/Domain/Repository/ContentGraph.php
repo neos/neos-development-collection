@@ -312,7 +312,7 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return array
+     * @return array|NodeAggregate[]
      * @throws Domain\Context\Node\NodeAggregatesNameIsAmbiguous
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
@@ -320,11 +320,6 @@ final class ContentGraph implements ContentGraphInterface
      */
     public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
     {
-        $nodeIdentifiers = [];
-        foreach ($this->findNodesByNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier) as $node) {
-            $nodeIdentifiers[] = (string)$node->getNodeIdentifier();
-        }
-
         $connection = $this->client->getConnection();
 
         $query = 'SELECT c.*, ch.name, ch.contentstreamidentifier, ch.dimensionspacepoint FROM neos_contentgraph_node p
