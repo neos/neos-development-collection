@@ -14,7 +14,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventStreamName;
 use Neos\EventSourcing\EventStore;
 use Neos\EventSourcing\EventStore\StreamName;
 
@@ -41,6 +43,11 @@ final class ContentStream
     private $eventStoreManager;
 
     /**
+     * @var NodeEventPublisher
+     */
+    private $nodeEventPublisher;
+
+    /**
      * @var EventStore\EventStore
      */
     private $eventStore;
@@ -55,25 +62,25 @@ final class ContentStream
     protected $nodeAggregates;
 
 
-    public function __construct(ContentStreamIdentifier $identifier, EventStore\EventStoreManager $eventStoreManager)
+    public function __construct(ContentStreamIdentifier $identifier, EventStore\EventStoreManager $eventStoreManager, NodeEventPublisher $nodeEventPublisher)
     {
         $this->identifier = $identifier;
-        $this->streamName = StreamName::fromString('Neos.ContentRepository:ContentStream:' . $this->identifier);
+        $this->streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($identifier)->getEventStreamName();
         $this->eventStoreManager = $eventStoreManager;
         $this->eventStore = $this->eventStoreManager->getEventStoreForStreamName($this->getStreamName());
+        $this->nodeEventPublisher = $nodeEventPublisher;
     }
 
     public function getNodeAggregate(NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate
     {
         if (!isset($this->nodeAggregates[(string)$nodeAggregateIdentifier])) {
-            $nodeAggregateStreamName = StreamName::fromString($this->getStreamName() . ':NodeAggregate:' . $nodeAggregateIdentifier);
-            $eventStore = $this->eventStoreManager->getEventStoreForStreamName($nodeAggregateStreamName);
-            $this->nodeAggregates[(string)$nodeAggregateIdentifier] = new NodeAggregate($nodeAggregateIdentifier, $eventStore, $nodeAggregateStreamName);
+            $nodeAggregateEventStreamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier($this->identifier, $nodeAggregateIdentifier)->getEventStreamName();
+            $eventStore = $this->eventStoreManager->getEventStoreForStreamName($nodeAggregateEventStreamName);
+            $this->nodeAggregates[(string)$nodeAggregateIdentifier] = new NodeAggregate($nodeAggregateIdentifier, $nodeAggregateEventStreamName, $eventStore, $this->nodeEventPublisher);
         }
 
         return $this->nodeAggregates[(string)$nodeAggregateIdentifier];
     }
-
 
     public function getStreamName(): StreamName
     {

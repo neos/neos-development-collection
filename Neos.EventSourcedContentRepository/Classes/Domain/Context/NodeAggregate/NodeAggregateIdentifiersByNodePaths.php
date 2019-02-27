@@ -28,7 +28,7 @@ final class NodeAggregateIdentifiersByNodePaths implements \JsonSerializable
      *
      * @var array|NodeAggregateIdentifier[]
      */
-    protected $nodeAggregateIdentifiers;
+    protected $nodeAggregateIdentifiers = [];
 
     public function __construct(array $nodeAggregateIdentifiers)
     {

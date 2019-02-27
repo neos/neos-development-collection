@@ -386,7 +386,7 @@ final class ContentGraph implements ContentGraphInterface
                       INNER JOIN neos_contentgraph_node n ON h.parentnodeanchor = n.relationanchorpoint
                       INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = n.relationanchorpoint
                       WHERE n.nodeaggregateidentifier = :parentNodeAggregateIdentifier
-                      AND n.dimensionspacepointhash = :parentNodeDimensionSpacePoint
+                      AND n.origindimensionspacepointhash = :parentNodeDimensionSpacePoint
                       AND ph.contentstreamidentifier = :contentStreamIdentifier
                       AND h.contentstreamidentifier = :contentStreamIdentifier
                       AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)
@@ -398,8 +398,11 @@ final class ContentGraph implements ContentGraphInterface
             'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
             'nodeName' => (string) $nodeName
         ];
+        $types = [
+            'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+        ];
         $dimensionSpacePoints = [];
-        foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $hierarchyRelationData) {
+        foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $hierarchyRelationData) {
             $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['dimensionspacepoint'], true));
         }
 

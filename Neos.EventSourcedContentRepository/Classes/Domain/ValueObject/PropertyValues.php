@@ -61,6 +61,7 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
                 throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', PropertyValue::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
             }
         }
+
         return new static($values);
     }
 

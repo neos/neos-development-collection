@@ -126,19 +126,16 @@ final class NodeAggregateCommandHandler
 
     /**
      * @param CreateNodeAggregateWithNode $command
+     * @return CommandResult
      * @throws ContentStream\ContentStreamDoesNotExistYet If the given content stream does not exist yet
-     * @throws NodeAggregateCurrentlyExists If the node aggregate to be created already exists
      * @throws DimensionSpacePointNotFound If the given dimension space point is not in the allowed dimension space
-     * @throws NodeTypeNotFoundException If the given type does not exist
      * @throws NodeConstraintException If a node aggregate of that type is not allowed to be created as a descendant of its parents
-     * @throws DimensionSpacePointIsNotYetOccupied If the parent node is not visible in the given dimension space point
      * @throws NodeNameIsAlreadyOccupied If the given node name is already taken in any of the dimension space points the node will be visible in
-     * @throws NodeAggregateDoesNotCurrentlyExist If the parent node aggregate does not exist
+     * @throws NodeTypeNotFoundException If the given type does not exist
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
-     * @throws \Exception
      */
-    public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): void
+    public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
     {
         $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
         $this->requireDimensionSpacePointToExist($command->getOriginDimensionSpacePoint());
@@ -160,64 +157,63 @@ final class NodeAggregateCommandHandler
         $parentAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
         $visibleDimensionSpacePoints = $specializations->intersect($parentAggregate->getVisibleInDimensionSpacePoints());
 
-        $this->requireNodeNameToBeUnoccupied(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeName(),
-            $command->getParentNodeAggregateIdentifier(),
-            $command->getOriginDimensionSpacePoint(),
-            $visibleDimensionSpacePoints
-        );
+        if ($command->getNodeName()) {
+            $this->requireNodeNameToBeUnoccupied(
+                $command->getContentStreamIdentifier(),
+                $command->getNodeName(),
+                $command->getParentNodeAggregateIdentifier(),
+                $command->getOriginDimensionSpacePoint(),
+                $visibleDimensionSpacePoints
+            );
+        }
 
         $descendantNodeAggregateIdentifiers = $this->populateNodeAggregateIdentifiers($nodeType, $command->getAutoCreatedDescendantNodeAggregateIdentifiers());
 
-        foreach ($descendantNodeAggregateIdentifiers as $rawNodePath => $nodeAggregateIdentifier) {
-            $this->requireNodeAggregateToCurrentlyNotExist($command->getContentStreamIdentifier(), $nodeAggregateIdentifier);
+        foreach ($descendantNodeAggregateIdentifiers as $rawNodePath => $descendantNodeAggregateIdentifier) {
+            $this->requireNodeAggregateToCurrentlyNotExist($command->getContentStreamIdentifier(), $descendantNodeAggregateIdentifier);
         }
 
-        $defaultPropertyValues = PropertyValues::fromArray($nodeType->getDefaultValuesForProperties());
+        $defaultPropertyValues = $this->getDefaultPropertyValues($nodeType);
         $initialPropertyValues = $defaultPropertyValues->merge($command->getInitialPropertyValues());
 
-        $nodeAggregate->createWithNode(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeTypeName(),
-            $command->getOriginDimensionSpacePoint(),
+        $events = $nodeAggregate->createWithNode(
+            $command,
             $visibleDimensionSpacePoints,
-            $command->getParentNodeAggregateIdentifier(),
-            $command->getNodeName(),
             $initialPropertyValues
         );
 
         $this->handleAutoCreatedChildNodes(
-            $command->getContentStreamIdentifier(),
+            $command,
             $nodeType,
-            $command->getOriginDimensionSpacePoint(),
             $visibleDimensionSpacePoints,
             $command->getNodeAggregateIdentifier(),
-            $descendantNodeAggregateIdentifiers
+            $descendantNodeAggregateIdentifiers,
+            $events
         );
+
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param CreateNodeAggregateWithNode $command
      * @param NodeType $nodeType
-     * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param DimensionSpacePointSet $visibleDimensionSpacePoints
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers
+     * @param DomainEvents $events
      * @param NodePath|null $nodePath
      * @throws ContentStream\ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFoundException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
-     * @throws \Exception
      */
     protected function handleAutoCreatedChildNodes(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        CreateNodeAggregateWithNode $command,
         NodeType $nodeType,
-        DimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $visibleDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers,
+        DomainEvents& $events,
         NodePath $nodePath = null
     ) {
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawNodeName => $childNodeType) {
@@ -231,29 +227,41 @@ final class NodeAggregateCommandHandler
                 throw new NodeTypeIsOfTypeRoot('Node type "' . $nodeType . '" for auto created child node "' . $childNodeAggregateIdentifier . '" is of type root.', 1541767062);
             }
 
-            $initialPropertyValues = PropertyValues::fromArray($childNodeType->getDefaultValuesForProperties());
+            $initialPropertyValues = $this->getDefaultPropertyValues($childNodeType);
 
-            $nodeAggregate = $this->getNodeAggregate($contentStreamIdentifier, $childNodeAggregateIdentifier);
-            $nodeAggregate->autoCreateWithNode(
-                $contentStreamIdentifier,
+            $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $childNodeAggregateIdentifier);
+            $events = $events->appendEvents($nodeAggregate->autoCreateWithNode(
+                $command,
                 NodeTypeName::fromString($childNodeType->getName()),
-                $originDimensionSpacePoint,
                 $visibleDimensionSpacePoints,
                 $parentNodeAggregateIdentifier,
                 $nodeName,
                 $initialPropertyValues
-            );
+            ));
 
             $this->handleAutoCreatedChildNodes(
-                $contentStreamIdentifier,
+                $command,
                 $childNodeType,
-                $originDimensionSpacePoint,
                 $visibleDimensionSpacePoints,
                 $childNodeAggregateIdentifier,
                 $nodeAggregateIdentifiers,
+                $events,
                 $childNodePath
             );
         }
+    }
+
+    protected function getDefaultPropertyValues(NodeType $nodeType): PropertyValues
+    {
+        $rawDefaultPropertyValues = [];
+        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
+            $rawDefaultPropertyValues[$propertyName] = [
+                'type' => $nodeType->getPropertyType($propertyName),
+                'value' => $defaultValue
+            ];
+        }
+
+        return PropertyValues::fromArray($rawDefaultPropertyValues);
     }
 
     /**
@@ -261,7 +269,6 @@ final class NodeAggregateCommandHandler
      * @param NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers
      * @param NodePath|null $childPath
      * @return NodeAggregateIdentifiersByNodePaths
-     * @throws \Exception
      */
     protected function populateNodeAggregateIdentifiers(NodeType $nodeType, NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers, NodePath $childPath = null): NodeAggregateIdentifiersByNodePaths
     {
@@ -319,7 +326,7 @@ final class NodeAggregateCommandHandler
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @throws ContentStream\ContentStreamDoesNotExistYet
-     * @throws DimensionSpacePointIsNotYetOccupied
+     * @throws NodeTypeNotFoundException
      */
     protected function requireNodeAggregateToBeVisibleInDimensionSpacePoint(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -327,8 +334,11 @@ final class NodeAggregateCommandHandler
         DimensionSpacePoint $dimensionSpacePoint
     ): void {
         $nodeAggregate = $this->getNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier);
+        if ($this->nodeTypeManager->getNodeType((string) $nodeAggregate->getNodeTypeName())->isOfType('Neos.ContentRepository:Root')) {
+            return;
+        }
         if (!$nodeAggregate->isDimensionSpacePointOccupied($dimensionSpacePoint)) {
-            throw new DimensionSpacePointIsNotYetOccupied('Node aggregate "' . $nodeAggregateIdentifier . '" does not currently occupy dimension space point "' . $dimensionSpacePoint . '".', 1541678877);
+            throw new NodeAggregateIsCurrentlyNotVisibleInDimensionSpacePoint('Node aggregate "' . $nodeAggregateIdentifier . '" is currently not visible in dimension space point "' . $dimensionSpacePoint . '".', 1541678877);
         }
     }
 
@@ -354,7 +364,7 @@ final class NodeAggregateCommandHandler
             $parentOriginDimensionSpacePoint,
             $dimensionSpacePoints
         );
-        if (!empty($dimensionSpacePointsOccupiedByChildNodeName)) {
+        if (count($dimensionSpacePointsOccupiedByChildNodeName) > 0) {
             throw new NodeNameIsAlreadyOccupied('Child node name "' . $nodeName . '" is already occupied for parent "' . $parentNodeAggregateIdentifier . '" in dimension space points ' . $dimensionSpacePointsOccupiedByChildNodeName);
         }
     }
@@ -420,7 +430,7 @@ final class NodeAggregateCommandHandler
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
      */
-    protected function requireConstraintsImposedByAncestorsAreMet(ContentStreamIdentifier $contentStreamIdentifier, NodeType $nodeType, NodeName $nodeName, array $parentNodeAggregateIdentifiers): void
+    protected function requireConstraintsImposedByAncestorsAreMet(ContentStreamIdentifier $contentStreamIdentifier, NodeType $nodeType, ?NodeName $nodeName, array $parentNodeAggregateIdentifiers): void
     {
         foreach ($parentNodeAggregateIdentifiers as $parentAggregateIdentifier) {
             $parentAggregate = $this->getNodeAggregate($contentStreamIdentifier, $parentAggregateIdentifier);
@@ -429,7 +439,8 @@ final class NodeAggregateCommandHandler
                 if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
                     throw new NodeConstraintException('Node type "' . $nodeType . '" is not allowed for child nodes of type ' . $parentsNodeType->getName());
                 }
-                if ($parentsNodeType->hasAutoCreatedChildNode($nodeName)
+                if ($nodeName
+                    &&$parentsNodeType->hasAutoCreatedChildNode($nodeName)
                     && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)->getName() !== $nodeType->getName()) {
                     throw new NodeConstraintException('Node type "' . $nodeType . '" does not match configured "' . $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)->getName()
                         . '" for auto created child nodes for parent type "' . $parentsNodeType . '" with name "' . $nodeName . '"');

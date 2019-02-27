@@ -182,9 +182,9 @@ trait EventSourcedTrait
     public function theEventRootWorkspaceWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        $contentStreamIdentifier = ContentStreamIdentifier::fromString($this->replaceUuidIdentifiers($eventPayload['contentStreamIdentifier']));
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['currentContentStreamIdentifier']);
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
-        $this->publishEvent('Neos.EventSourcedContentRepository:RootNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:RootWorkspaceWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 
     /**
@@ -353,9 +353,12 @@ trait EventSourcedTrait
     public function theCommandCreateNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
         $command = CreateNodeAggregateWithNode::fromArray($commandArguments);
 
-        $this->getNodeAggregateCommandHandler()
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
             ->handleCreateNodeAggregateWithNode($command);
     }
 
@@ -568,13 +571,13 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
 
         if (!isset($commandArguments['workspaceTitle'])) {
-            $commandArguments['workspaceTitle'] = new WorkspaceTitle(ucfirst((string) $commandArguments['workspaceName']));
+            $commandArguments['workspaceTitle'] = $commandArguments['workspaceName'];
         }
         if (!isset($commandArguments['workspaceDescription'])) {
-            $commandArguments['workspaceDescription'] = new WorkspaceDescription('The workspace "' . $commandArguments['workspaceName'] . '".');
+            $commandArguments['workspaceDescription'] = 'The workspace "' . $commandArguments['workspaceName'] . '"';
         }
         if (!isset($commandArguments['initiatingUserIdentifier'])) {
-            $commandArguments['initiatingUserIdentifier'] = UserIdentifier::fromString($this->replaceUuidIdentifiers('[initiatingUserIdentifier]'));
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
         }
 
         $this->theCommandIsExecutedWithPayload('CreateWorkspace', null, $commandArguments);
@@ -590,16 +593,16 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
 
         if (!isset($commandArguments['workspaceTitle'])) {
-            $commandArguments['workspaceTitle'] = new WorkspaceTitle(ucfirst((string) $commandArguments['workspaceName']));
+            $commandArguments['workspaceTitle'] = ucfirst($commandArguments['workspaceName']);
         }
         if (!isset($commandArguments['workspaceDescription'])) {
-            $commandArguments['workspaceDescription'] = new WorkspaceDescription('The workspace "' . $commandArguments['workspaceName'] . '".');
+            $commandArguments['workspaceDescription'] = 'The workspace "' . $commandArguments['workspaceName'] . '"';
         }
         if (!isset($commandArguments['initiatingUserIdentifier'])) {
-            $commandArguments['initiatingUserIdentifier'] = UserIdentifier::fromString($this->replaceUuidIdentifiers('[initiatingUserIdentifier]'));
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
         }
         if (!isset($commandArguments['workspaceOwner'])) {
-            $commandArguments['workspaceOwner'] = UserIdentifier::fromString($this->replaceUuidIdentifiers('[workspaceOwner]'));
+            $commandArguments['workspaceOwner'] = 'workspace-owner';
         }
 
         $this->theCommandIsExecutedWithPayload('CreateRootWorkspace', null, $commandArguments);
@@ -863,7 +866,6 @@ trait EventSourcedTrait
      */
     public function iExpectANodeToExistInTheGraphProjection(string $nodeIdentifier)
     {
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $nodeIdentifier = NodeIdentifier::fromString($nodeIdentifier);
         $node = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
@@ -892,7 +894,6 @@ trait EventSourcedTrait
      */
     public function iExpectANodeWithIdentifierToExistInTheContentGraph(string $serializedNodeIdentifier)
     {
-        $serializedNodeIdentifier = $this->replaceUuidIdentifiers($serializedNodeIdentifier);
         $nodeIdentifier = NodeIdentifier::fromJsonString($serializedNodeIdentifier);
         $this->currentNode = $this->contentGraph->findNodeByIdentifier($nodeIdentifier);
         Assert::assertNotNull($this->currentNode, 'Node with aggregate identifier "' . $nodeIdentifier->getNodeAggregateIdentifier()
@@ -920,7 +921,6 @@ trait EventSourcedTrait
      */
     public function iExpectANodeIdentifiedByAggregateIdentifierNotToExistInTheSubgraph(string $nodeAggregateIdentifier)
     {
-        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $node = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
@@ -934,7 +934,7 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheFollowingChildNodes(string $rawNodeAggregateIdentifier, TableNode $expectedChildNodesTable)
     {
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($this->replaceUuidIdentifiers($rawNodeAggregateIdentifier));
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
         $subgraph = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
         $nodes = $subgraph
@@ -998,7 +998,6 @@ trait EventSourcedTrait
         // TODO the following line is required in order to avoid cached results from previous calls
         $this->contentGraph->resetCache();
 
-        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));

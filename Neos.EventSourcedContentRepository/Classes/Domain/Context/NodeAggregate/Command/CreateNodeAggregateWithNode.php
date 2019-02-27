@@ -27,7 +27,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  * The node will be appended as child node of the given `parentNodeIdentifier` which must be visible in the given
  * `dimensionSpacePoint`.
  */
-final class CreateNodeAggregateWithNode
+final class CreateNodeAggregateWithNode implements \JsonSerializable
 {
     /**
      * The identifier of the content stream this command is to be handled in
@@ -206,5 +206,21 @@ final class CreateNodeAggregateWithNode
     public function getAutoCreatedDescendantNodeAggregateIdentifiers(): ?NodeAggregateIdentifiersByNodePaths
     {
         return $this->autoCreatedDescendantNodeAggregateIdentifiers;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'nodeTypeName' => $this->nodeTypeName,
+            'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'parentNodeAggregateIdentifier' => $this->parentNodeAggregateIdentifier,
+            'succeedingSiblingNodeAggregateIdentifier' => $this->succeedingSiblingNodeAggregateIdentifier,
+            'nodeName' => $this->nodeName,
+            'initialPropertyValues' => $this->initialPropertyValues,
+            'autoCreatedDescendantNodeAggregateIdentifiers' => $this->autoCreatedDescendantNodeAggregateIdentifiers
+        ];
     }
 }
