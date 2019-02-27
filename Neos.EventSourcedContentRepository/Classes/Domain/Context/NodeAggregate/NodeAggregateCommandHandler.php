@@ -582,9 +582,11 @@ final class NodeAggregateCommandHandler
 
     /**
      * @param Command\CreateNodeGeneralization $command
-     * @throws DimensionSpacePointNotFound
+     * @return CommandResult
+     * @throws ContentStream\ContentStreamDoesNotExistYet
      * @throws DimensionSpacePointIsAlreadyOccupied
      * @throws DimensionSpacePointIsNotYetOccupied
+     * @throws DimensionSpacePointNotFound
      */
     public function handleCreateNodeGeneralization(Command\CreateNodeGeneralization $command): CommandResult
     {
@@ -604,7 +606,6 @@ final class NodeAggregateCommandHandler
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $command->getSourceDimensionSpacePoint(),
-                        $command->getGeneralizationIdentifier(),
                         $command->getTargetDimensionSpacePoint(),
                         $this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint(), true, $nodeAggregate->getVisibleInDimensionSpacePoints())
                     )
