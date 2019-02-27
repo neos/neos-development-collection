@@ -246,7 +246,7 @@ class AssetRepository extends Repository
     public function findOneByResourceSha1($sha1)
     {
         $query = $this->createQuery();
-        $query->matching($query->equals('resource.sha1', $sha1, false))->setLimit(1);
+        $query->matching($query->equals('resource.sha1', $sha1))->setLimit(1);
         return $query->execute()->getFirst();
     }
 
