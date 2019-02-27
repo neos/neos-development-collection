@@ -47,13 +47,28 @@ Feature: Change node aggregate type
       | initialPropertyValues         | {}                                              |
     And the graph projection is fully up to date
 
-  Scenario: Try to change to a non existing node type
+  #Scenario: Try to change the node aggregate type on a non-existing content stream
+  #  When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+  #    | Key                     | Value                                             |
+  #    | contentStreamIdentifier | "non-existing"                                    |
+  #    | nodeAggregateIdentifier | "sir-david-nodenborough"                          |
+  #    | newNodeTypeName         | "Neos.ContentRepository.Testing:ChildOfNodeTypeA" |
+  #  Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+
+  #Scenario: Try to change the type on a non-existing node aggregate
+  #  When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+  #    | Key                     | Value                                             |
+  #    | contentStreamIdentifier | "cs-identifier"                                   |
+  #    | nodeAggregateIdentifier | "nody-mc-nodeface"                                |
+  #    | newNodeTypeName         | "Neos.ContentRepository.Testing:ChildOfNodeTypeA" |
+  #  Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
+
+  Scenario: Try to change a node aggregate to a non existing type
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                     | Value                                      |
       | contentStreamIdentifier | "cs-identifier"                            |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"                         |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"                   |
       | newNodeTypeName         | "Neos.ContentRepository.Testing:Undefined" |
-      | strategy                | null                                       |
     Then the last command should have thrown an exception of type "NodeTypeNotFound"
 
   Scenario: Try to change to a node type disallowed by the parent node
@@ -73,15 +88,12 @@ Feature: Change node aggregate type
       | originDimensionSpacePoint     | {"language":"de"}                          |
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                   |
-      | nodeName                      | "nodea"                                    |
-      | initialPropertyValues         | {}                                         |
     And the graph projection is fully up to date
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                     | Value                                      |
       | contentStreamIdentifier | "cs-identifier"                            |
       | nodeAggregateIdentifier | "nody-mc-nodeface"                         |
       | newNodeTypeName         | "Neos.ContentRepository.Testing:NodeTypeB" |
-      | strategy                | null                                       |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change to a node type that is not allowed by the grand parent aggregate inside an autocreated parent aggregate
@@ -97,35 +109,30 @@ Feature: Change node aggregate type
               '*': TRUE
               'Neos.ContentRepository.Testing:NodeTypeB': FALSE
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                        |
       | contentStreamIdentifier       | "cs-identifier"                              |
-      | nodeAggregateIdentifier       | "auto-agg-identifier"                        |
+      | nodeAggregateIdentifier       | "autocreated-child"                          |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:AutoCreated" |
-      | dimensionSpacePoint           | {"language": "de"}                           |
+      | originDimensionSpacePoint     | {"language": "de"}                           |
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]     |
-      | nodeIdentifier                | "auto-identifier-de"                         |
-      | parentNodeIdentifier          | "parent-identifier-de"                       |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                     |
       | nodeName                      | "autocreated"                                |
-      | propertyDefaultValuesAndTypes | {}                                           |
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                      |
       | contentStreamIdentifier       | "cs-identifier"                            |
-      | nodeAggregateIdentifier       | "nodea-agg-identifier"                     |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
-      | dimensionSpacePoint           | {"language":"de"}                          |
+      | originDimensionSpacePoint     | {"language":"de"}                          |
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
-      | nodeIdentifier                | "nodea-identifier-de"                      |
-      | parentNodeIdentifier          | "auto-identifier-de"                       |
-      | nodeName                      | "nodea"                                    |
-      | propertyDefaultValuesAndTypes | {}                                         |
+      | parentNodeAggregateIdentifier | "autocreated-child"                        |
     And the graph projection is fully up to date
+
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                     | Value                                      |
       | contentStreamIdentifier | "cs-identifier"                            |
-      | nodeAggregateIdentifier | "nodea-agg-identifier"                     |
+      | nodeAggregateIdentifier | "nody-mc-nodeface"                         |
       | newNodeTypeName         | "Neos.ContentRepository.Testing:NodeTypeB" |
-      | strategy                | null                                       |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change the node type of an auto created child node to anything other than defined:
@@ -137,24 +144,22 @@ Feature: Change node aggregate type
         autocreated:
           type: 'Neos.ContentRepository.Testing:AutoCreated'
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                        |
       | contentStreamIdentifier       | "cs-identifier"                              |
-      | nodeAggregateIdentifier       | "auto-agg-identifier"                        |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:AutoCreated" |
-      | dimensionSpacePoint           | {"language": "de"}                           |
+      | originDimensionSpacePoint     | {"language":"de"}                            |
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]     |
-      | nodeIdentifier                | "auto-identifier-de"                         |
-      | parentNodeIdentifier          | "parent-identifier-de"                       |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                     |
       | nodeName                      | "autocreated"                                |
-      | propertyDefaultValuesAndTypes | {}                                           |
     And the graph projection is fully up to date
+
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                     | Value                                           |
       | contentStreamIdentifier | "cs-identifier"                                 |
-      | nodeAggregateIdentifier | "auto-agg-identifier"                           |
+      | nodeAggregateIdentifier | "nody-mc-nodeface"                              |
       | newNodeTypeName         | "Neos.ContentRepository.Testing:ParentNodeType" |
-      | strategy                | null                                            |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change to a node type that disallows already present children without a conflict resolution strategy
@@ -166,24 +171,20 @@ Feature: Change node aggregate type
           '*': TRUE
           'Neos.ContentRepository.Testing:NodeTypeA': FALSE
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                      |
       | contentStreamIdentifier       | "cs-identifier"                            |
-      | nodeAggregateIdentifier       | "nodea-agg-identifier"                     |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
-      | dimensionSpacePoint           | {"language":"de"}                          |
+      | originDimensionSpacePoint     | {"language":"de"}                          |
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
-      | nodeIdentifier                | "nodea-identifier-de"                      |
-      | parentNodeIdentifier          | "parent-identifier-de"                     |
-      | nodeName                      | "nodea"                                    |
-      | propertyDefaultValuesAndTypes | {}                                         |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                     |
     And the graph projection is fully up to date
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                     | Value                                            |
       | contentStreamIdentifier | "cs-identifier"                                  |
-      | nodeAggregateIdentifier | "parent-agg-identifier"                          |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"                         |
       | newNodeTypeName         | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
-      | strategy                | null                                             |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change to a node type that disallows already present grandchildren without a conflict resolution strategy
@@ -207,35 +208,29 @@ Feature: Change node aggregate type
               '*': TRUE
               'Neos.ContentRepository.Testing:NodeTypeA': FALSE
     """
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                        |
       | contentStreamIdentifier       | "cs-identifier"                              |
-      | nodeAggregateIdentifier       | "auto-agg-identifier"                        |
+      | nodeAggregateIdentifier       | "autocreated-child"                          |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:AutoCreated" |
-      | dimensionSpacePoint           | {"language": "de"}                           |
+      | originDimensionSpacePoint     | {"language":"de"}                            |
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]     |
-      | nodeIdentifier                | "auto-identifier-de"                         |
-      | parentNodeIdentifier          | "parent-identifier-de"                       |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                     |
       | nodeName                      | "autocreated"                                |
-      | propertyDefaultValuesAndTypes | {}                                           |
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                      |
       | contentStreamIdentifier       | "cs-identifier"                            |
-      | nodeAggregateIdentifier       | "nodea-agg-identifier"                     |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
-      | dimensionSpacePoint           | {"language":"de"}                          |
+      | originDimensionSpacePoint     | {"language":"de"}                          |
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
-      | nodeIdentifier                | "nodea-identifier-de"                      |
-      | parentNodeIdentifier          | "auto-identifier-de"                       |
-      | nodeName                      | "nodea"                                    |
-      | propertyDefaultValuesAndTypes | {}                                         |
+      | parentNodeAggregateIdentifier | "autocreated-child"                        |
     And the graph projection is fully up to date
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                     | Value                                            |
       | contentStreamIdentifier | "cs-identifier"                                  |
-      | nodeAggregateIdentifier | "parent-agg-identifier"                          |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"                         |
       | newNodeTypeName         | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
-      | strategy                | null                                             |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
 #  Scenario: Change node type

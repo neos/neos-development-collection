@@ -506,12 +506,8 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $command = new ChangeNodeAggregateType(
-            ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
-            NodeTypeName::fromString($commandArguments['newNodeTypeName']),
-            $commandArguments['strategy'] ? new NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy($commandArguments['strategy']) : null
-        );
+        $command = ChangeNodeAggregateType::fromArray($commandArguments);
+
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
