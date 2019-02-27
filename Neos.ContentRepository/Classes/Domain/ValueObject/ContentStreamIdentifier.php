@@ -17,6 +17,9 @@ use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * The ContentStreamIdentifier is the identifier for a Content Stream, which is
+ * a central concept in the Event-Sourced CR introduced with Neos 5.0.
+ *
  * @Flow\Proxy(false)
  */
 final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInterface

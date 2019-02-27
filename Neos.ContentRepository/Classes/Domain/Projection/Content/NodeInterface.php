@@ -22,11 +22,20 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 
 /**
- * The "new" Event-Sourced NodeInterface. Supersedes the old Neos\ContentRepository\Domain\Model\NodeInterface.
+ * This is a NEW interface, introduced in Neos 4.3.
  *
- * !! Reference resolving NOT in NodeInterface
+ * The new Event-Sourced core NodeInterface used for READING. It contains only information
+ * local to a node; i.e. all properties in this interface can be accessed extremely fast.
  *
- * Immutable. Read-only. Detached from storage.
+ * Most likely, you want to use {@see TraversableNodeInterface} instead, as it is more
+ * convenient to use for end-users, as it also contains node traversal operations.
+ *
+ * The NodeInterface is *immutable*, meaning its contents never change after creation.
+ * It is *only used for reading*.
+ *
+ * Starting with version 5.0 (when backed by the Event Sourced CR), it is
+ * *completely detached from storage*; so it will not auto-update after a property changed in
+ * storage.
  */
 interface NodeInterface extends CacheAwareInterface
 {

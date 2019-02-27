@@ -15,7 +15,11 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * The Node Name is the "path part" of the node; i.e. when accessing the node "/foo" via path,
+ * the node name is "foo".
+ *
  * @Flow\Proxy(false)
+ * @api
  */
 final class NodeName implements \JsonSerializable
 {

@@ -17,7 +17,9 @@ use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 
 /**
- * Interface for a Node
+ * Interface for a Node. This is the central interface for the Neos Content Repository
+ * up to version 4.X; it will be REMOVED in version 5.0 and is replaced
+ * by {@see Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface}.
  *
  * @api
  */
@@ -81,6 +83,7 @@ interface NodeInterface
      *
      * @return string
      * @api
+     * @deprecated with version 4.3, use getNodeName() instead.
      */
     public function getName();
 
@@ -297,6 +300,7 @@ interface NodeInterface
      *
      * @return string The absolute node path
      * @api
+     * @deprecated with version 4.3, use findNodePath() instead.
      */
     public function getPath();
 
@@ -351,7 +355,7 @@ interface NodeInterface
      * as it does not change even if all of the nodes content or its path changes.
      *
      * @return string the node's UUID
-     * @api
+     * @deprecated with version 4.3, use getNodeAggregateIdentifier() instead.
      */
     public function getIdentifier();
 
@@ -379,7 +383,7 @@ interface NodeInterface
      * Returns the parent node of this node
      *
      * @return NodeInterface The parent node or NULL if this is the root node
-     * @api
+     * @deprecated with version 4.3, use findParentNode() instead.
      */
     public function getParent();
 
@@ -387,7 +391,7 @@ interface NodeInterface
      * Returns the parent node path
      *
      * @return string Absolute node path of the parent node
-     * @api
+     * @deprecated with version 4.3, use findParentNode()->findNodePath() instead.
      */
     public function getParentPath();
 
@@ -446,7 +450,7 @@ interface NodeInterface
      * node type. For now it is just the first child node.
      *
      * @return NodeInterface The primary child node or NULL if no such node exists
-     * @api
+     * @deprecated with version 4.3, without any replacement.
      */
     public function getPrimaryChildNode();
 
@@ -458,7 +462,7 @@ interface NodeInterface
      * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
      * @param integer $offset An optional offset for the query
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
-     * @api
+     * @deprecated with version 4.3, use findChildNodes() instead.
      */
     public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null);
 
@@ -467,7 +471,7 @@ interface NodeInterface
      *
      * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
      * @return boolean true if this node has child nodes, otherwise false
-     * @api
+     * @deprecated with version 4.3, use findChildNodes() instead and count the result
      */
     public function hasChildNodes($nodeTypeFilter = null);
 

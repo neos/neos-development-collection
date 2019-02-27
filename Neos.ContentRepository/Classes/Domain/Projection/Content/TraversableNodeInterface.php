@@ -19,11 +19,24 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraph
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 /**
- * A convenience wrapper.
+ * This is a NEW interface, introduced in Neos 4.3; and it will become the main interface
+ * with Neos 5.0 to the CR.
  *
- * Immutable. Read-only. With traversal operations.
+ * The main convenience Event-Sourced NodeInterface used for READING; containing
+ * data accessors and traversal methods.
  *
- * !! Reference resolving happens HERE!
+ * All methods which are called `get*()` contain only information local to a node,
+ * so they can be accessed really quickly without any external lookup.
+ *
+ * All methods which are called `find*()` may involve some database querying to
+ * fetch their information.
+ *
+ * The TraversableNodeInterface is *immutable*, meaning its contents never change after creation.
+ * It is *only used for reading*.
+ *
+ * Starting with version 5.0 (when backed by the Event Sourced CR), it is
+ * *completely detached from storage*; so it will not auto-update after a property changed in
+ * storage.
  */
 interface TraversableNodeInterface extends NodeInterface
 {

@@ -15,6 +15,8 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * Internal list of root node identifiers needed at various internal places.
+ *
  * @Flow\Proxy(false)
  */
 final class RootNodeIdentifiers
