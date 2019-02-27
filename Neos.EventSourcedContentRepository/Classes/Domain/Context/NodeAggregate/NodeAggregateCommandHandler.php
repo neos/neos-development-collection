@@ -28,6 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateNameWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -375,6 +376,39 @@ final class NodeAggregateCommandHandler
         $this->checkConstraintsImposedOnAlreadyPresentDescendants($command);
 
         // TODO: continue implementing!
+    }
+
+    /**
+     * @param Command\ChangeNodeAggregateName $command
+     * @return CommandResult
+     */
+    public function handleChangeNodeAggregateName(Command\ChangeNodeAggregateName $command): CommandResult
+    {
+        // TODO: check if CS exists
+        // TODO: check if aggregate exists and delegate to it
+        // TODO: check if aggregate is root
+        $events = DomainEvents::fromArray([]);
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
+            $events = DomainEvents::withSingleEvent(
+                EventWithIdentifier::create(
+                    new NodeAggregateNameWasChanged(
+                        $command->getContentStreamIdentifier(),
+                        $command->getNodeAggregateIdentifier(),
+                        $command->getNewNodeName()
+                    )
+                )
+            );
+
+            $this->nodeEventPublisher->publishMany(
+                NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
+                    $command->getContentStreamIdentifier(),
+                    $command->getNodeAggregateIdentifier()
+                )->getEventStreamName(),
+                $events
+            );
+        });
+
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**

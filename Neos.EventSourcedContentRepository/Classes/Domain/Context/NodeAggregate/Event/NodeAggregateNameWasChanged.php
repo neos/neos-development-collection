@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,15 +13,16 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
  */
-final class NodeNameWasChanged implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateNameWasChanged implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -30,9 +31,9 @@ final class NodeNameWasChanged implements DomainEventInterface, CopyableAcrossCo
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
-    private $nodeIdentifier;
+    private $nodeAggregateIdentifier;
 
     /**
      * @var NodeName
@@ -43,16 +44,16 @@ final class NodeNameWasChanged implements DomainEventInterface, CopyableAcrossCo
      * NodeNameWasChanged constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeName $newNodeName
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $nodeIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeName $newNodeName
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newNodeName = $newNodeName;
     }
 
@@ -65,11 +66,11 @@ final class NodeNameWasChanged implements DomainEventInterface, CopyableAcrossCo
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
     }
 
     /**
@@ -82,9 +83,9 @@ final class NodeNameWasChanged implements DomainEventInterface, CopyableAcrossCo
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodeNameWasChanged(
+        return new NodeAggregateNameWasChanged(
             $targetContentStream,
-            $this->nodeIdentifier,
+            $this->nodeAggregateIdentifier,
             $this->newNodeName
         );
     }

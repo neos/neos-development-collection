@@ -31,7 +31,6 @@ use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ChangeNodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
@@ -44,7 +43,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNode
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereMoved;
@@ -648,42 +646,6 @@ final class NodeCommandHandler
          */
 
         return $nodeMoveMappings;
-    }
-
-
-    /**
-     * @param ChangeNodeName $command
-     * @return CommandResult
-     * @throws NodeException
-     */
-    public function handleChangeNodeName(ChangeNodeName $command): CommandResult
-    {
-        $events = [];
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-            /** @var NodeInterface $node */
-            $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
-
-            if ($node->getNodeType()->getName() === 'Neos.ContentRepository:Root') {
-                throw new NodeException('The root node cannot be renamed.', 1346778388);
-            }
-
-            $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
-                    new NodeNameWasChanged(
-                        $contentStreamIdentifier,
-                        $command->getNodeIdentifier(),
-                        $command->getNewNodeName()
-                    )
-                )
-            );
-
-            $this->nodeEventPublisher->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
-                $events
-            );
-        });
-        return CommandResult::fromPublishedEvents($events);
     }
 
     /**

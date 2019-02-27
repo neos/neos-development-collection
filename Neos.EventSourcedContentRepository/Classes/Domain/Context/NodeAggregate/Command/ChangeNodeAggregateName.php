@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,10 +13,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
-final class ChangeNodeName implements \JsonSerializable
+final class ChangeNodeAggregateName implements \JsonSerializable
 {
 
     /**
@@ -25,26 +25,19 @@ final class ChangeNodeName implements \JsonSerializable
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
-    private $nodeIdentifier;
+    private $nodeAggregateIdentifier;
 
     /**
      * @var NodeName
      */
     private $newNodeName;
 
-    /**
-     * SetNodeName constructor.
-     *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeName $newNodeName
-     */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeName $newNodeName)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeName $newNodeName)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newNodeName = $newNodeName;
     }
 
@@ -52,30 +45,21 @@ final class ChangeNodeName implements \JsonSerializable
     {
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeIdentifier::fromString($array['nodeIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeName::fromString($array['newNodeName'])
         );
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return NodeName
-     */
     public function getNewNodeName(): NodeName
     {
         return $this->newNodeName;
@@ -85,7 +69,7 @@ final class ChangeNodeName implements \JsonSerializable
     {
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeIdentifier' => $this->nodeIdentifier,
+            'nodeIdentifier' => $this->nodeAggregateIdentifier,
             'newNodeName' => $this->newNodeName,
         ];
     }

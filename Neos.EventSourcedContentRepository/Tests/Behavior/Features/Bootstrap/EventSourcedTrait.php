@@ -679,11 +679,11 @@ trait EventSourcedTrait
                     ContentStreamCommandHandler::class,
                     'handleForkContentStream'
                 ];
-            case 'ChangeNodeName':
+            case 'ChangeNodeAggregateName':
                 return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ChangeNodeName::class,
-                    NodeCommandHandler::class,
-                    'handleChangeNodeName'
+                    \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName::class,
+                    NodeAggregateCommandHandler::class,
+                    'handleChangeNodeAggregateName'
                 ];
             case 'SetNodeProperty':
                 return [

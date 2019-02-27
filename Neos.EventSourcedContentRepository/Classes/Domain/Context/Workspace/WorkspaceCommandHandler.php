@@ -18,7 +18,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ChangeNodeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
@@ -27,6 +27,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
@@ -67,6 +68,12 @@ final class WorkspaceCommandHandler
      * @var NodeCommandHandler
      */
     protected $nodeCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAggregateCommandHandler
+     */
+    protected $nodeAggregateCommandHandler;
 
     /**
      * @Flow\Inject
@@ -333,8 +340,8 @@ final class WorkspaceCommandHandler
                 case AddNodeToAggregate::class:
                     $this->nodeCommandHandler->handleAddNodeToAggregate($commandToRebase)->blockUntilProjectionsAreUpToDate();
                     break;
-                case ChangeNodeName::class:
-                    $this->nodeCommandHandler->handleChangeNodeName($commandToRebase)->blockUntilProjectionsAreUpToDate();
+                case ChangeNodeAggregateName::class:
+                    $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($commandToRebase)->blockUntilProjectionsAreUpToDate();
                     break;
                 case CreateNodeAggregateWithNode::class:
                     $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($commandToRebase)->blockUntilProjectionsAreUpToDate();
