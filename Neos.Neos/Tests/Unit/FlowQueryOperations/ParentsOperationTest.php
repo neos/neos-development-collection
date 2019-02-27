@@ -13,6 +13,7 @@ namespace Neos\Neos\Tests\Unit\FlowQueryOperations;
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Eel\FlowQueryOperations\ParentsOperation;
@@ -34,6 +35,7 @@ class ParentsOperationTest extends UnitTestCase
         $secondLevelNode = $this->createMock(TraversableNodeInterface::class);
 
         $siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/sites/site')));
+        $siteNode->expects($this->any())->method('findParentNode')->will($this->throwException(new NodeException('No parent')));
         $firstLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($siteNode));
         $firstLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/sites/site/first')));
         $secondLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($firstLevelNode));

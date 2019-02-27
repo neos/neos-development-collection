@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
@@ -64,8 +65,9 @@ class SiblingsOperation extends AbstractOperation
         }
 
         foreach ($flowQuery->getContext() as $contextNode) {
-            $parentNode = $contextNode->findParentNode();
-            if (!$parentNode instanceof TraversableNodeInterface) {
+            try {
+                $parentNode = $contextNode->findParentNode();
+            } catch (NodeException $e) {
                 continue;
             }
 
