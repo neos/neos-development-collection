@@ -35,12 +35,12 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
       | currentContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                    |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                          |
-      | nodeAggregateIdentifier       | "lady-eleonode-nodesworth"                                                                                                               |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"                                                                                                            |
+      | Key                           | Value                                                                                                                                   |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
+      | nodeAggregateIdentifier       | "lady-eleonode-nodesworth"                                                                                                              |
+      | nodeTypeName                  | "Neos.ContentRepository:Root"                                                                                                           |
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                                                                                   |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                                                                                  |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                   |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
