@@ -3,38 +3,37 @@ Feature: Reading of our Graph Projection
 
   Background:
     Given I have no content dimensions
+    And I have the following NodeTypes configuration:
+    """
+    'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository.Testing:Document': []
+    """
 
   Scenario: Single node connected to root
     Given the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                | Type                    |
-      | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d | ContentStreamIdentifier |
-      | nodeAggregateIdentifier       | sir-david-nodenborough               | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Root          | NodeTypeName            |
-      | visibleInDimensionSpacePoints | [[]]                                 | DimensionSpacePointSet  |
-      | initiatingUserIdentifier      | 00000000-0000-0000-0000-000000000000 | UserIdentifier          |
-
-    And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
+      | Key                           | Value                                |
+      | contentStreamIdentifier       | "cs-identifier" |
+      | nodeAggregateIdentifier       | "sir-david-nodenborough"               |
+      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
+      | visibleInDimensionSpacePoints | [{}]                                 |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                             |
-      | contentStreamIdentifier       | "c75ae6a2-7254-4d42-a31b-a629e264069d"                            |
-      | nodeAggregateIdentifier       | "35411439-94d1-4bd4-8fac-0646856c6a1f"                            |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes" |
+      | contentStreamIdentifier       | "cs-identifier"                            |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                            |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | dimensionSpacePoint           | {}                                                                |
       | visibleInDimensionSpacePoints | [{}]                                                              |
-      | nodeIdentifier                | "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81"                            |
-      | parentNodeIdentifier          | "00000000-0000-0000-0000-000000000000"                            |
+      | parentNodeAggregateIdentifier          | "sir-david-nodenborough"                            |
       | nodeName                      | "foo"                                                             |
       | propertyDefaultValuesAndTypes | {}                                                                |
 
     When the graph projection is fully up to date
-    And I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {}
+    Then I expect the graph projection to consist of exactly 2 nodes
+    And I expect a node with identifier {"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "cs-identifier", "originDimensionSpacePoint": {}} to exist in the content graph
+    And I expect a node with identifier {"nodeAggregateIdentifier": "nody-mc-nodeface", "contentStreamIdentifier": "cs-identifier", "originDimensionSpacePoint": {}} to exist in the content graph
 
-    Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
-    And I expect the node aggregate "00000000-0000-0000-0000-000000000000" to have the following child nodes:
-      | Name | NodeIdentifier                       |
-      | foo  | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81 |
-    And I expect the Node Aggregate "35411439-94d1-4bd4-8fac-0646856c6a1f" to resolve to node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81"
-    And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the type "Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes"
-    # TODO This doesn't perform any assertion
-    And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
-      | Key | Value |
-    And I expect the path "/foo" to lead to the node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81"
+    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    Then I expect the subgraph projection to consist of exactly 2 nodes
+    And I expect node aggregate identifier "sir-david-nodenborough" and path "" to lead to node {"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "cs-identifier", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "nody-mc-nodeface" and path "foo" to lead to node {"nodeAggregateIdentifier": "nody-mc-nodeface", "contentStreamIdentifier": "cs-identifier", "originDimensionSpacePoint": {}}
