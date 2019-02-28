@@ -9,15 +9,13 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | Identifier | Default | Values  | Generalizations |
       | market     | DE      | DE, CH  | CH->DE          |
       | language   | de      | de, gsw | gsw->de         |
-    And the command "CreateRootWorkspace" is executed with payload:
-      | Key                      | Value                                  |
-      | workspaceName            | "live"                                 |
-      | workspaceTitle           | "Live"                                 |
-      | workspaceDescription     | "The live workspace"                   |
-      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
-      | contentStreamIdentifier  | "c75ae6a2-7254-4d42-a31b-a629e264069d" |
-      | rootNodeIdentifier       | "5387cb08-2aaf-44dc-a8a1-483497aa0a03" |
-      | rootNodeTypeName         | "Neos.ContentRepository:Root"          |
+    And the event RootWorkspaceWasCreated was published with payload:
+      | Key                            | Value                                  |
+      | workspaceName                  | "live"                                 |
+      | workspaceTitle                 | "Live"                                 |
+      | workspaceDescription           | "The live workspace"                   |
+      | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
+      | currentContentStreamIdentifier | "cs-identifier"                        |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository.Testing:Document': []

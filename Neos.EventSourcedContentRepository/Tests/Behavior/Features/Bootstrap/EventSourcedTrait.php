@@ -24,6 +24,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\Fork
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
@@ -524,6 +525,36 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the command MoveNode is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandMoveNodeIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $command = MoveNode::fromArray($commandArguments);
+
+        /** @var NodeCommandHandler $commandHandler */
+        $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
+
+        $commandHandler->handleMoveNode($command);
+    }
+
+    /**
+     * @Given /^the command MoveNode is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandMoveNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandMoveNodeIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
      * @When /^the command "([^"]*)" is executed with payload:$/
      * @Given /^the command "([^"]*)" was executed with payload:$/
      * @param string $shortCommandName
@@ -700,7 +731,7 @@ trait EventSourcedTrait
                 ];
             case 'MoveNode':
                 return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode::class,
+                    MoveNode::class,
                     NodeCommandHandler::class,
                     'handleMoveNode'
                 ];

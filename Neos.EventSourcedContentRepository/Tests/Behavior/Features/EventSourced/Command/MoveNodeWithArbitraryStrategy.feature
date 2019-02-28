@@ -9,17 +9,9 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | Identifier | Default | Values  | Generalizations |
       | market     | DE      | DE, CH  | CH->DE          |
       | language   | de      | de, gsw | gsw->de         |
-    And the command "CreateRootWorkspace" is executed with payload:
-      | Key                      | Value                                  |
-      | workspaceName            | "live"                                 |
-      | workspaceTitle           | "Live"                                 |
-      | workspaceDescription     | "The live workspace"                   |
-      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
-      | contentStreamIdentifier  | "cs-identifier"                        |
-      | rootNodeIdentifier       | "rn-identifier"                        |
-      | rootNodeTypeName         | "Neos.ContentRepository:Root"          |
     And I have the following NodeTypes configuration:
     """
+    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:Content':
       constraints:
@@ -35,254 +27,184 @@ Feature: Move node to a new parent / within the current parent before a sibling 
               '*': TRUE
               'Neos.ContentRepository.Testing:Content': FALSE
     """
+    And the event RootWorkspaceWasCreated was published with payload:
+      | Key                            | Value                                  |
+      | workspaceName                  | "live"                                 |
+      | workspaceTitle                 | "Live"                                 |
+      | workspaceDescription           | "The live workspace"                   |
+      | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
+      | currentContentStreamIdentifier | "cs-identifier"                        |
+    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                                                                                                                    |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                          |
+      | nodeAggregateIdentifier       | "lady-eleonode-nodesworth"                                                                                                               |
+      | nodeTypeName                  | "Neos.ContentRepository:Root"                                                                                                            |
+      | visibleInDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                                                                                   |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                                                                                                                   |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                                                                      |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                               |
+      | originDimensionSpacePoint     | {"market":"DE", "language":"de"}                                                                                                        |
+      | visibleInDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                                                                                                              |
+      | nodeName                      | "document"                                                                                                                              |
 
   #Try to move a root node:
-  #  Root nodes cannot be moved via command because they don't have node aggregate identifiers.
-  #  Thus, we don't have to test for thrown exceptions here
+  #  todo: test me
 
   Scenario: Try to move a node in a non-existing dimension space point:
-    When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                                     |
-      | contentStreamIdentifier                     | "cs-identifier"                           |
-      | dimensionSpacePoint                         | {"market": "nope", "language": "neither"} |
-      | nodeAggregateIdentifier                     | "na-identifier"                           |
-      | newParentNodeAggregateIdentifier            | null                                      |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                                      |
-      | relationDistributionStrategy                | "scatter"                                 |
+    When the command MoveNode is executed with payload and exceptions are caught:
+      | Key                          | Value                                     |
+      | contentStreamIdentifier      | "cs-identifier"                           |
+      | dimensionSpacePoint          | {"market": "nope", "language": "neither"} |
+      | nodeAggregateIdentifier      | "nody-mc-nodeface"                        |
+      | relationDistributionStrategy | "scatter"                                 |
     Then the last command should have thrown an exception of type "NodeAggregateNotFound"
 
   Scenario: Try to move a non-existing node
-    When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              |
-      | contentStreamIdentifier                     | "cs-identifier"                    |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier                     | "na-identifier"                    |
-      | newParentNodeAggregateIdentifier            | null                               |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
-      | relationDistributionStrategy                | "scatter"                          |
+    When the command MoveNode is executed with payload and exceptions are caught:
+      | Key                          | Value                              |
+      | contentStreamIdentifier      | "cs-identifier"                    |
+      | dimensionSpacePoint          | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier      | "i-do-not-exist"                   |
+      | relationDistributionStrategy | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeAggregateNotFound"
 
   Scenario: Try to move existing node to a non-existing parent
-    Given the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:na-identifier" with payload:
-      | Key                           | Value                                                                                                                                           |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                 |
-      | nodeAggregateIdentifier       | "na-identifier"                                                                                                                                 |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                       |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                              |
-      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"},{"market": "DE", "language": "gsw"},{"market": "CH", "language": "de"},{"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "doc-identifier"                                                                                                                                |
-      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                 |
-      | nodeName                      | "document"                                                                                                                                      |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                              |
-    When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              |
-      | contentStreamIdentifier                     | "cs-identifier"                    |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier                     | "na-identifier"                    |
-      | newParentNodeAggregateIdentifier            | "non-existing-parent-identifier"   |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
-      | relationDistributionStrategy                | "scatter"                          |
+    When the command MoveNode is executed with payload and exceptions are caught:
+      | Key                              | Value                              |
+      | contentStreamIdentifier          | "cs-identifier"                    |
+      | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier          | "nody-mc-nodeface"                 |
+      | newParentNodeAggregateIdentifier | "non-existing-parent-identifier"   |
+      | relationDistributionStrategy     | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeAggregateNotFound"
 
   Scenario: Try to move a node to a parent that already has a child node of the same name
-    Given the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:413f8404-fae9-448b-8170-b6a4bea74213" with payload:
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "doc-agg-identifier"                                                                                                                               |
+      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                                                                                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "doc-identifier"                                                                                                                                   |
-      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
-      | nodeName                      | "document"                                                                                                                                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
-    And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:afbf2dec-cb77-4f7b-b252-0363e6a38770" with payload:
+      | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                                                                                                                         |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "cdoc-agg-identifier"                                                                                                                              |
+      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                                                                                                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "cdoc-identifier"                                                                                                                                  |
-      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
       | nodeName                      | "document"                                                                                                                                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
-    And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:6ce151a5-a4e1-4070-b4f1-95ba108f1db9" with payload:
-      | Key                           | Value                                                                                                                                              |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "gcdoc-agg-identifier"                                                                                                                             |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
-      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "gcdoc-identifier"                                                                                                                                 |
-      | parentNodeIdentifier          | "cdoc-identifier"                                                                                                                                  |
-      | nodeName                      | "document"                                                                                                                                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
     And the graph projection is fully up to date
-    When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              |
-      | contentStreamIdentifier                     | "cs-identifier"                    |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier                     | "gcdoc-agg-identifier"             |
-      | newParentNodeAggregateIdentifier            | "doc-agg-identifier"               |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
-      | relationDistributionStrategy                | "scatter"                          |
+    When the command MoveNode is executed with payload and exceptions are caught:
+      | Key                              | Value                              |
+      | contentStreamIdentifier          | "cs-identifier"                    |
+      | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier          | "nody-mc-nodeface"                 |
+      | newParentNodeAggregateIdentifier | "sir-david-nodenborough"           |
+      | relationDistributionStrategy     | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeExistsException"
 
   Scenario: Try to move a node to a parent whose node type does not allow child nodes of the node's type
-    Given the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:c8973421-c835-44dc-9e90-933c0672b096" with payload:
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "doc-agg-identifier"                                                                                                                               |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                                                                                           |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                           |
+      | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | nodeIdentifier                | "doc-identifier"                                                                                                                                   |
-      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
-      | nodeName                      | "document"                                                                                                                                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
-    And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:01a87ee4-cfc6-443b-9809-2568910b7e8f" with payload:
-      | Key                           | Value                                                                                                                                              |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "cdoc-agg-identifier"                                                                                                                              |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
-      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "cdoc-identifier"                                                                                                                                  |
-      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
-      | nodeName                      | "document"                                                                                                                                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
-    And the Event "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:a5c593f5-944b-47b0-b2dd-e399b85a6d85" with payload:
-      | Key                           | Value                                                                                                                                              |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "content-agg-identifier"                                                                                                                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                           |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
-      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "content-identifier"                                                                                                                               |
-      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
-      | nodeName                      | "content"                                                                                                                                          |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
+      | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                                                                                                                         |
     And the graph projection is fully up to date
-    When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              |
-      | contentStreamIdentifier                     | "cs-identifier"                    |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier                     | "cdoc-agg-identifier"              |
-      | newParentNodeAggregateIdentifier            | "content-agg-identifier"           |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
-      | relationDistributionStrategy                | "scatter"                          |
+    When the command MoveNode is executed with payload and exceptions are caught:
+      | Key                              | Value                              |
+      | contentStreamIdentifier          | "cs-identifier"                    |
+      | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier          | "nody-mc-nodeface"                 |
+      | newParentNodeAggregateIdentifier | "sir-david-nodenborough"           |
+      | relationDistributionStrategy     | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move a node to a parent whose parent's node type does not allow grand child nodes of the node's type
-    Given the Event NodeAggregateWithNodeWasCreated was published with payload:
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "doc-agg-identifier"                                                                                                                               |
+      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                                                                                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:DocumentWithAutoCreatedChildNode"                                                                                  |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | nodeIdentifier                | "doc-identifier"                                                                                                                                   |
-      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
+      | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                                                                                                                         |
       | nodeName                      | "document"                                                                                                                                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "autoc-agg-identifier"                                                                                                                             |
+      | nodeAggregateIdentifier       | "nodimus-prime"                                                                                                                                    |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                           |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "autoc-identifier"                                                                                                                                 |
-      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
       | nodeName                      | "autocreated"                                                                                                                                      |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "c-agg-identifier"                                                                                                                                 |
+      | nodeAggregateIdentifier       | "nodasaurus-rex"                                                                                                                                   |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                           |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "c-identifier"                                                                                                                                     |
-      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
       | nodeName                      | "content"                                                                                                                                          |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
     And the graph projection is fully up to date
-    When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              |
-      | contentStreamIdentifier                     | "cs-identifier"                    |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier                     | "c-agg-identifier"                 |
-      | newParentNodeAggregateIdentifier            | "autoc-agg-identifier"             |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
-      | relationDistributionStrategy                | "scatter"                          |
+    When the command MoveNode is executed with payload and exceptions are caught:
+      | Key                              | Value                              |
+      | contentStreamIdentifier          | "cs-identifier"                    |
+      | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier          | "nodasaurus-rex"                   |
+      | newParentNodeAggregateIdentifier | "nodimus-prime"                    |
+      | relationDistributionStrategy     | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move existing node to a non-existing succeeding sibling
-    Given the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                              |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "na-identifier"                                                                                                                                    |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
-      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "n-identifier"                                                                                                                                     |
-      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
-      | nodeName                      | "document"                                                                                                                                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
-    And the graph projection is fully up to date
-    When the command "MoveNode" is executed with payload and exceptions are caught:
+    Given the graph projection is fully up to date
+    When the command MoveNode is executed with payload and exceptions are caught:
       | Key                                         | Value                              |
       | contentStreamIdentifier                     | "cs-identifier"                    |
       | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier                     | "na-identifier"                    |
-      | newParentNodeAggregateIdentifier            | null                               |
+      | nodeAggregateIdentifier                     | "nody-mc-nodeface"                 |
       | newSucceedingSiblingNodeAggregateIdentifier | "nonexistent-agg-identifier"       |
       | relationDistributionStrategy                | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeAggregateNotFound"
 
   Scenario: Try to move an autogenerated child node to a new parent
-    Given the Event NodeAggregateWithNodeWasCreated was published with payload:
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "odoc-agg-identifier"                                                                                                                              |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
-      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "odoc-identifier"                                                                                                                                  |
-      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
-      | nodeName                      | "other-document"                                                                                                                                   |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
-    Given the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                              |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "doc-agg-identifier"                                                                                                                               |
+      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                                                                                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:DocumentWithAutoCreatedChildNode"                                                                                  |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "doc-identifier"                                                                                                                                   |
-      | parentNodeIdentifier          | "rn-identifier"                                                                                                                                    |
+      | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                                                                                                                         |
       | nodeName                      | "document"                                                                                                                                         |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "autoc-agg-identifier"                                                                                                                             |
+      | nodeAggregateIdentifier       | "nodimus-prime"                                                                                                                                    |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                           |
-      | dimensionSpacePoint           | {"market": "DE", "language": "de"}                                                                                                                 |
+      | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | nodeIdentifier                | "autoc-identifier"                                                                                                                                 |
-      | parentNodeIdentifier          | "doc-identifier"                                                                                                                                   |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
       | nodeName                      | "autocreated"                                                                                                                                      |
-      | propertyDefaultValuesAndTypes | {}                                                                                                                                                 |
     And the graph projection is fully up to date
-    When the command "MoveNode" is executed with payload and exceptions are caught:
-      | Key                                         | Value                              |
-      | contentStreamIdentifier                     | "cs-identifier"                    |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier                     | "autoc-agg-identifier"             |
-      | newParentNodeAggregateIdentifier            | "odoc-agg-identifier"              |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                               |
-      | relationDistributionStrategy                | "scatter"                          |
+    When the command MoveNode is executed with payload and exceptions are caught:
+      | Key                              | Value                              |
+      | contentStreamIdentifier          | "cs-identifier"                    |
+      | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
+      | nodeAggregateIdentifier          | "nodimus-prime"                    |
+      | newParentNodeAggregateIdentifier | "lady-eleonode-nodesworth"         |
+      | relationDistributionStrategy     | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeConstraintException"

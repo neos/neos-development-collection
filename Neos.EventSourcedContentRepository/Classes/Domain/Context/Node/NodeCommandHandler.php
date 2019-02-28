@@ -511,7 +511,6 @@ final class NodeCommandHandler
             if ($contentSubgraph === null) {
                 throw new Exception(sprintf('Content subgraph not found for content stream %s, %s', $command->getContentStreamIdentifier(), $command->getDimensionSpacePoint()), 1506074858);
             }
-            // this excludes root nodes as they do not have node aggregate identifiers
             $node = $contentSubgraph->findNodeByNodeAggregateIdentifier($command->getNodeAggregateIdentifier());
             $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
             if (!$nodeAggregate) {
