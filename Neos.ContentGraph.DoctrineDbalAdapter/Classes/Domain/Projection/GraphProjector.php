@@ -506,23 +506,32 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
         });
     }
 
+    /**
+     * @param NodeReferencesWereSet $event
+     * @throws \Throwable
+     */
     public function whenNodeReferencesWereSet(NodeReferencesWereSet $event)
     {
         $this->transactional(function () use ($event) {
             $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
             });
-            $nodeAnchorPoint = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+
+            $nodeAnchorPoint = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                $event->getSourceNodeAggregateIdentifier(),
+                $event->getSourceOriginDimensionSpacePoint(),
+                $event->getContentStreamIdentifier()
+            );
 
             // remove old
             $this->getDatabaseConnection()->delete('neos_contentgraph_referencerelation', [
                 'nodeanchorpoint' => $nodeAnchorPoint,
-                'name' => $event->getPropertyName()
+                'name' => $event->getReferenceName()
             ]);
 
             // set new
             foreach ($event->getDestinationNodeAggregateIdentifiers() as $position => $destinationNodeIdentifier) {
                 $this->getDatabaseConnection()->insert('neos_contentgraph_referencerelation', [
-                    'name' => $event->getPropertyName(),
+                    'name' => $event->getReferenceName(),
                     'position' => $position,
                     'nodeanchorpoint' => $nodeAnchorPoint,
                     'destinationnodeaggregateidentifier' => $destinationNodeIdentifier,
@@ -1031,20 +1040,29 @@ insert into neos_contentgraph_restrictionedge
      */
     protected function updateNodeWithCopyOnWrite(ContentRepository\Context\Node\Event\CopyableAcrossContentStreamsInterface $event, callable $operations)
     {
-        // TODO: do this copy on write on every modification op concerning nodes
-
         // TODO: does this always return a SINGLE anchor point??
-        if (method_exists($event, 'getNodeIdentifier')) {
-            // DEPRECATED case: NodeIdentifier
-            $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
-        } else {
-            $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream($event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint(), $event->getContentStreamIdentifier());
+        switch (get_class($event)) {
+            case NodeReferencesWereSet::class:
+                /** @var NodeReferencesWereSet $event */
+                $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                    $event->getSourceNodeAggregateIdentifier(),
+                    $event->getSourceOriginDimensionSpacePoint(),
+                    $event->getContentStreamIdentifier()
+                );
+                break;
+            default:
+                if (method_exists($event, 'getNodeIdentifier')) {
+                    // DEPRECATED case: NodeIdentifier
+                    $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+                } else {
+                    $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                        $event->getNodeAggregateIdentifier(),
+                        $event->getOriginDimensionSpacePoint(),
+                        $event->getContentStreamIdentifier()
+                    );
+                }
         }
-
-        if ($anchorPointForNode === null) {
-            // TODO Log error
-            throw new \Exception(sprintf('anchor point for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1519681260000);
-        }
+        // TODO: do this copy on write on every modification op concerning nodes
 
         $contentStreamIdentifiers = $this->projectionContentGraph->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPointForNode);
         if (count($contentStreamIdentifiers) > 1) {

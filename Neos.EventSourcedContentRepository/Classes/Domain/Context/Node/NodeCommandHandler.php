@@ -402,33 +402,23 @@ final class NodeCommandHandler
     {
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-            $nodeIdentifier = $command->getNodeIdentifier();
-
-            $node = $this->getNode($contentStreamIdentifier, $nodeIdentifier);
-
-            $dimensionSpacePointsSet = $this->calculateVisibilityForNewNodeInNodeAggregate(
-                $contentStreamIdentifier,
-                $node->getNodeAggregateIdentifier(),
-                $node->getDimensionSpacePoint()
-            );
-
             $events = DomainEvents::withSingleEvent(
                 EventWithIdentifier::create(
                     new NodeReferencesWereSet(
-                        $contentStreamIdentifier,
-                        $dimensionSpacePointsSet,
-                        $command->getNodeIdentifier(),
-                        $command->getPropertyName(),
-                        $command->getDestinationNodeAggregateIdentifiers()
+                        $command->getContentStreamIdentifier(),
+                        $command->getSourceNodeAggregateIdentifier(),
+                        $command->getSourceOriginDimensionSpacePoint(),
+                        $command->getDestinationNodeAggregateIdentifiers(),
+                        $command->getReferenceName()
                     )
                 )
             );
             $this->nodeEventPublisher->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
                 $events
             );
         });
+
         return CommandResult::fromPublishedEvents($events);
     }
 

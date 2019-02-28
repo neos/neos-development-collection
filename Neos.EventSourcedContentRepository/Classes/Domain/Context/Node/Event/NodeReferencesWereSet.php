@@ -3,36 +3,34 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A named reference from source- to destination-node was created
+ * A named reference from source to destination node was created
  *
  * @Flow\Proxy(false)
  */
 final class NodeReferencesWereSet implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
     private $contentStreamIdentifier;
 
     /**
-     * @var DimensionSpacePointSet
+     * @var NodeAggregateIdentifier
      */
-    private $dimensionSpacePointSet;
+    private $sourceNodeAggregateIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var DimensionSpacePoint
      */
-    private $nodeIdentifier;
+    private $sourceOriginDimensionSpacePoint;
 
     /**
      * @var NodeAggregateIdentifier[]
@@ -42,29 +40,22 @@ final class NodeReferencesWereSet implements DomainEventInterface, CopyableAcros
     /**
      * @var PropertyName
      */
-    private $propertyName;
+    private $referenceName;
 
     /**
-     * ReferenceBetweenNodesWasCreated constructor.
-     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
-     * @param NodeIdentifier $nodeIdentifier
-     * @param PropertyName $referenceNodeIdentifier
-     * @param array $destinationNodeIdentifiers
+     * @param NodeAggregateIdentifier $sourceNodeAggregateIdentifier
+     * @param DimensionSpacePoint $sourceOriginDimensionSpacePoint
+     * @param NodeAggregateIdentifier[] $destinationNodeAggregateIdentifiers
+     * @param PropertyName $referenceName
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePointSet $dimensionSpacePointSet,
-        NodeIdentifier $nodeIdentifier,
-        PropertyName $propertyName,
-        array $destinationNodeAggregateIdentifiers
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $sourceNodeAggregateIdentifier, DimensionSpacePoint $sourceOriginDimensionSpacePoint, array $destinationNodeAggregateIdentifiers, PropertyName $referenceName)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionSpacePointSet = $dimensionSpacePointSet;
-        $this->nodeIdentifier = $nodeIdentifier;
-        $this->propertyName = $propertyName;
+        $this->sourceNodeAggregateIdentifier = $sourceNodeAggregateIdentifier;
+        $this->sourceOriginDimensionSpacePoint = $sourceOriginDimensionSpacePoint;
         $this->destinationNodeAggregateIdentifiers = $destinationNodeAggregateIdentifiers;
+        $this->referenceName = $referenceName;
     }
 
     /**
@@ -76,23 +67,23 @@ final class NodeReferencesWereSet implements DomainEventInterface, CopyableAcros
     }
 
     /**
-     * @return DimensionSpacePointSet
+     * @return NodeAggregateIdentifier
      */
-    public function getDimensionSpacePointSet(): DimensionSpacePointSet
+    public function getSourceNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->dimensionSpacePointSet;
+        return $this->sourceNodeAggregateIdentifier;
     }
 
     /**
-     * @return NodeIdentifier
+     * @return DimensionSpacePoint
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getSourceOriginDimensionSpacePoint(): DimensionSpacePoint
     {
-        return $this->nodeIdentifier;
+        return $this->sourceOriginDimensionSpacePoint;
     }
 
     /**
-     * @return array
+     * @return NodeAggregateIdentifier[]
      */
     public function getDestinationNodeAggregateIdentifiers(): array
     {
@@ -102,21 +93,19 @@ final class NodeReferencesWereSet implements DomainEventInterface, CopyableAcros
     /**
      * @return PropertyName
      */
-    public function getPropertyName(): PropertyName
+    public function getReferenceName(): PropertyName
     {
-        return $this->propertyName;
+        return $this->referenceName;
     }
-
-
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
         return new NodeReferencesWereSet(
             $targetContentStream,
-            $this->dimensionSpacePointSet,
-            $this->nodeIdentifier,
-            $this->propertyName,
-            $this->destinationNodeAggregateIdentifiers
+            $this->sourceNodeAggregateIdentifier,
+            $this->sourceOriginDimensionSpacePoint,
+            $this->destinationNodeAggregateIdentifiers,
+            $this->referenceName
         );
     }
 }

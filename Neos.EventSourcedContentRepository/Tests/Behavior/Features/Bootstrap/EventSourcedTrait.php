@@ -27,6 +27,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
@@ -399,6 +400,9 @@ trait EventSourcedTrait
         if (!isset($commandArguments['initiatingUserIdentifier'])) {
             $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
         }
+        if (!isset($commandArguments['originDimensionSpacePoint'])) {
+            $commandArguments['originDimensionSpacePoint'] = [];
+        }
         $command = CreateNodeAggregateWithNode::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
@@ -432,7 +436,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
         $command = CreateNodeSpecialization::fromArray($commandArguments);
 
-        $this->getNodeAggregateCommandHandler()
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
             ->handleCreateNodeSpecialization($command);
     }
 
@@ -450,6 +454,36 @@ trait EventSourcedTrait
         }
     }
 
+    /**
+     * @Given /^the command SetNodeReferences is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandSetNodeReferencesIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['sourceOriginDimensionSpacePoint'])) {
+            $commandArguments['sourceOriginDimensionSpacePoint'] = [];
+        }
+        $command = SetNodeReferences::fromArray($commandArguments);
+
+        $this->lastCommandOrEventResult = $this->getNodeCommandHandler()
+            ->handleSetNodeReferences($command);
+    }
+
+    /**
+     * @Given /^the command SetNodeReferences is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandSetNodeReferencesIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandSetNodeReferencesIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
     /**
      * @Given /^the command RemoveNodeAggregate was published with payload:$/
      * @param TableNode $payloadTable
@@ -746,7 +780,7 @@ trait EventSourcedTrait
                 ];
             case 'SetNodeReferences':
                 return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences::class,
+                    SetNodeReferences::class,
                     NodeCommandHandler::class,
                     'handleSetNodeReferences'
                 ];
