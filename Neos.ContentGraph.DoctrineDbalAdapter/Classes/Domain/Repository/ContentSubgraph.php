@@ -809,7 +809,7 @@ order by level asc, position asc;')
         $query = new SqlQueryBuilder();
         $query->addToQuery('
 SELECT COUNT(*) FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = n.relationanchorpoint
+ JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE h.contentstreamidentifier = :contentStreamIdentifier
  AND h.dimensionspacepointhash = :dimensionSpacePointHash')
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
