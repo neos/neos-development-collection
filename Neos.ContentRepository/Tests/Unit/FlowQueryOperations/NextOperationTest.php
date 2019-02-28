@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
@@ -71,6 +72,7 @@ class NextOperationTest extends UnitTestCase
         $this->secondNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/second')));
         $this->thirdNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
         $this->thirdNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/third')));
+        $this->thirdNodeInLevel->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::create()));
     }
 
     /**

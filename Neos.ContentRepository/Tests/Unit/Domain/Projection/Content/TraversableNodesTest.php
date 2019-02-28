@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Projection\Content;
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -36,8 +37,11 @@ class TraversableNodesTest extends UnitTestCase
     public function setUp()
     {
         $this->mockNode1 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
+        $this->mockNode1->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::create()));
         $this->mockNode2 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
+        $this->mockNode2->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::create()));
         $this->mockNode3 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
+        $this->mockNode3->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::create()));
     }
 
     /**
