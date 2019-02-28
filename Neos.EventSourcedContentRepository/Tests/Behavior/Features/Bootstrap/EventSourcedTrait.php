@@ -29,6 +29,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAgg
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
@@ -309,6 +310,54 @@ trait EventSourcedTrait
     }
 
     /**
+     * @When /^the command CreateRootWorkspace is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandCreateRootWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['workspaceTitle'])) {
+            $commandArguments['workspaceTitle'] = ucfirst($commandArguments['workspaceName']);
+        }
+        if (!isset($commandArguments['workspaceDescription'])) {
+            $commandArguments['workspaceDescription'] = 'The workspace "' . $commandArguments['workspaceName'] . '"';
+        }
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
+        if (!isset($commandArguments['workspaceOwner'])) {
+            $commandArguments['workspaceOwner'] = 'workspace-owner';
+        }
+        $command = CreateRootWorkspace::fromArray($commandArguments);
+
+        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
+            ->handleCreateRootWorkspace($command);
+    }
+
+    /**
+     * @When /^the command CreateWorkspace is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandCreateWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        if (!isset($commandArguments['workspaceTitle'])) {
+            $commandArguments['workspaceTitle'] = $commandArguments['workspaceName'];
+        }
+        if (!isset($commandArguments['workspaceDescription'])) {
+            $commandArguments['workspaceDescription'] = 'The workspace "' . $commandArguments['workspaceName'] . '"';
+        }
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
+
+        $this->theCommandIsExecutedWithPayload('CreateWorkspace', null, $commandArguments);
+    }
+
+    /**
      * @When /^the command CreateRootNodeAggregateWithNode is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
@@ -321,6 +370,7 @@ trait EventSourcedTrait
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
             ->handleCreateRootNodeAggregateWithNode($command);
+        $this->rootNodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
     }
 
     /**
@@ -369,7 +419,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^the command CreateNodeSpecialization was published with payload:$/
+     * @Given /^the command CreateNodeSpecialization is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied
@@ -387,7 +437,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^the command CreateNodeSpecialization was published with payload and exceptions are caught:$/
+     * @Given /^the command CreateNodeSpecialization is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */
@@ -585,53 +635,6 @@ trait EventSourcedTrait
     }
 
     /**
-     * @When /^the command CreateWorkspace is executed with payload:$/
-     * @param TableNode $payloadTable
-     * @throws Exception
-     */
-    public function theCommandCreateWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-
-        if (!isset($commandArguments['workspaceTitle'])) {
-            $commandArguments['workspaceTitle'] = $commandArguments['workspaceName'];
-        }
-        if (!isset($commandArguments['workspaceDescription'])) {
-            $commandArguments['workspaceDescription'] = 'The workspace "' . $commandArguments['workspaceName'] . '"';
-        }
-        if (!isset($commandArguments['initiatingUserIdentifier'])) {
-            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
-
-        $this->theCommandIsExecutedWithPayload('CreateWorkspace', null, $commandArguments);
-    }
-
-    /**
-     * @When /^the command CreateRootWorkspace is executed with payload:$/
-     * @param TableNode $payloadTable
-     * @throws Exception
-     */
-    public function theCommandCreateRootWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-
-        if (!isset($commandArguments['workspaceTitle'])) {
-            $commandArguments['workspaceTitle'] = ucfirst($commandArguments['workspaceName']);
-        }
-        if (!isset($commandArguments['workspaceDescription'])) {
-            $commandArguments['workspaceDescription'] = 'The workspace "' . $commandArguments['workspaceName'] . '"';
-        }
-        if (!isset($commandArguments['initiatingUserIdentifier'])) {
-            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
-        }
-        if (!isset($commandArguments['workspaceOwner'])) {
-            $commandArguments['workspaceOwner'] = 'workspace-owner';
-        }
-
-        $this->theCommandIsExecutedWithPayload('CreateRootWorkspace', null, $commandArguments);
-    }
-
-    /**
      * @When /^the command "([^"]*)" is executed with payload and exceptions are caught:$/
      */
     public function theCommandIsExecutedWithPayloadAndExceptionsAreCaught($shortCommandName, TableNode $payloadTable)
@@ -665,7 +668,7 @@ trait EventSourcedTrait
         switch ($shortCommandName) {
             case 'CreateRootWorkspace':
                 return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace::class,
+                    CreateRootWorkspace::class,
                     WorkspaceCommandHandler::class,
                     'handleCreateRootWorkspace'
                 ];
@@ -1393,10 +1396,26 @@ trait EventSourcedTrait
             ->findNodeByPath($nodePath, RootNodeIdentifiers::rootNodeAggregateIdentifier());
     }
 
+    protected function getWorkspaceCommandHandler(): WorkspaceCommandHandler
+    {
+        /** @var WorkspaceCommandHandler $commandHandler */
+        $commandHandler = $this->getObjectManager()->get(WorkspaceCommandHandler::class);
+
+        return $commandHandler;
+    }
+
     protected function getNodeAggregateCommandHandler(): NodeAggregateCommandHandler
     {
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
+
+        return $commandHandler;
+    }
+
+    protected function getNodeCommandHandler(): NodeCommandHandler
+    {
+        /** @var NodeCommandHandler $commandHandler */
+        $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
         return $commandHandler;
     }

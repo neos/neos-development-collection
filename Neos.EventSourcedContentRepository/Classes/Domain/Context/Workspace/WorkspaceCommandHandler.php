@@ -154,6 +154,7 @@ final class WorkspaceCommandHandler
      * @param CreateRootWorkspace $command
      * @return CommandResult
      * @throws WorkspaceAlreadyExists
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamAlreadyExists
      */
     public function handleCreateRootWorkspace(CreateRootWorkspace $command): CommandResult
     {
@@ -187,15 +188,6 @@ final class WorkspaceCommandHandler
 
         $eventStore->commit($streamName, $events);
         $commandResult = $commandResult->merge(CommandResult::fromPublishedEvents($events));
-
-        $commandResult = $commandResult->merge($this->nodeCommandHandler->handleCreateRootNode(
-            new CreateRootNode(
-                $contentStreamIdentifier,
-                $command->getRootNodeIdentifier(),
-                $command->getRootNodeTypeName(),
-                $command->getInitiatingUserIdentifier()
-            )
-        ));
 
         return $commandResult;
     }

@@ -52,7 +52,7 @@ Feature: Create node specialization
       | nodeName                      | "child-document"                    |
 
   Scenario: Try to create a node specialization in a non existing dimension space point
-    When the command CreateNodeSpecialization was published with payload and exceptions are caught:
+    When the command CreateNodeSpecialization is executed with payload and exceptions are caught:
       | Key                       | Value                                   |
       | contentStreamIdentifier   | "cs-identifier"                         |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"                |
@@ -70,7 +70,7 @@ Feature: Create node specialization
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"de"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"         |
 
-    When the command CreateNodeSpecialization was published with payload and exceptions are caught:
+    When the command CreateNodeSpecialization is executed with payload and exceptions are caught:
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "nodasaurus-rex"                  |
@@ -87,7 +87,7 @@ Feature: Create node specialization
       | specializationLocation    | {"market":"CH", "language":"gsw"}   |
       | specializationVisibility  | [{"market":"CH", "language":"gsw"}] |
 
-    When the command CreateNodeSpecialization was published with payload and exceptions are caught:
+    When the command CreateNodeSpecialization is executed with payload and exceptions are caught:
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
@@ -104,7 +104,7 @@ Feature: Create node specialization
       | specializationLocation    | {"market":"CH", "language":"gsw"}   |
       | specializationVisibility  | [{"market":"CH", "language":"gsw"}] |
 
-    When the command CreateNodeSpecialization was published with payload and exceptions are caught:
+    When the command CreateNodeSpecialization is executed with payload and exceptions are caught:
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
@@ -140,7 +140,7 @@ Feature: Create node specialization
       | specializationLocation    | {"market":"CH", "language":"de"}   |
       | specializationVisibility  | [{"market":"CH", "language":"de"}] |
     And the graph projection is fully up to date
-    When the command CreateNodeSpecialization was published with payload and exceptions are caught:
+    When the command CreateNodeSpecialization is executed with payload and exceptions are caught:
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "nodasaurus-rex"                  |
@@ -149,7 +149,7 @@ Feature: Create node specialization
     Then the last command should have thrown an exception of type "ParentsNodeAggregateNotVisibleInDimensionSpacePoint"
 
   Scenario: Create a node specialization in a dimension space point without further specializations
-    When the command CreateNodeSpecialization was published with payload:
+    When the command CreateNodeSpecialization is executed with payload:
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
@@ -183,7 +183,7 @@ Feature: Create node specialization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
 
   Scenario: Create a node specialization in a dimension space point with further specializations
-    When the command CreateNodeSpecialization was published with payload:
+    When the command CreateNodeSpecialization is executed with payload:
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |

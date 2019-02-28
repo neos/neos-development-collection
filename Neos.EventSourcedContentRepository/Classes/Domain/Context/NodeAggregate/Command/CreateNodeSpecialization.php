@@ -50,8 +50,12 @@ final class CreateNodeSpecialization implements \JsonSerializable
      * @param DimensionSpacePoint $sourceDimensionSpacePoint
      * @param DimensionSpacePoint $targetDimensionSpacePoint
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $sourceDimensionSpacePoint, DimensionSpacePoint $targetDimensionSpacePoint)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $sourceDimensionSpacePoint,
+        DimensionSpacePoint $targetDimensionSpacePoint
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;

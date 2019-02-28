@@ -113,7 +113,7 @@ Feature: Remove Nodes from Aggregate
 
 
   Scenario: (1.A.b) In LIVE workspace, removing a node WITHOUT children does not lead to removal of the node in the parent dimension
-    When the command CreateNodeSpecialization was published with payload:
+    When the command CreateNodeSpecialization is executed with payload:
       | Key                       | Value                 |
       | contentStreamIdentifier   | "live-cs-identifier"  |
       | nodeAggregateIdentifier   | "cdoc-agg-identifier" |
@@ -160,7 +160,7 @@ Feature: Remove Nodes from Aggregate
 
 
   Scenario: (1.B.b) In LIVE workspace, removing a node WITH children does not lead to removal of the node in the parent dimension
-    When the command CreateNodeSpecialization was published with payload:
+    When the command CreateNodeSpecialization is executed with payload:
       | Key                       | Value                |
       | contentStreamIdentifier   | "live-cs-identifier" |
       | nodeAggregateIdentifier   | "doc-agg-identifier" |
@@ -222,7 +222,7 @@ Feature: Remove Nodes from Aggregate
 
 
   Scenario: (2.A.b) In USER workspace, removing a node WITHOUT children does not lead to removal of the node in the parent dimension
-    When the command CreateNodeSpecialization was published with payload:
+    When the command CreateNodeSpecialization is executed with payload:
       | Key                       | Value                 |
       | contentStreamIdentifier   | "live-cs-identifier"  |
       | nodeAggregateIdentifier   | "cdoc-agg-identifier" |
@@ -306,7 +306,7 @@ Feature: Remove Nodes from Aggregate
 
 
   Scenario: (2.B.b) In USER workspace, removing a node WITH children does not lead to removal of the node in the parent dimension
-    When the command CreateNodeSpecialization was published with payload:
+    When the command CreateNodeSpecialization is executed with payload:
       | Key                       | Value                |
       | contentStreamIdentifier   | "live-cs-identifier" |
       | nodeAggregateIdentifier   | "doc-agg-identifier" |
