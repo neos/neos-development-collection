@@ -81,15 +81,11 @@ class FusionView extends AbstractView
         $currentSiteNode = $this->getCurrentSiteNode();
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
-        if ($currentNode instanceof LegacyNodeInterface) {
-            $dimensions = $currentNode->getContext()->getDimensions();
-            if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
-                $currentLocale = new Locale($dimensions['language'][0]);
-                $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-                $this->i18nService->getConfiguration()->setFallbackRule(['strict' => false, 'order' => array_reverse($dimensions['language'])]);
-            }
-        } else {
-            // TODO: special case for Language DimensionSpacePoint!
+        $dimensions = $currentNode->getContext()->getDimensions();
+        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
+            $currentLocale = new Locale($dimensions['language'][0]);
+            $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
+            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => false, 'order' => array_reverse($dimensions['language'])]);
         }
 
         $fusionRuntime->pushContextArray([
