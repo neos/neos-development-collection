@@ -100,14 +100,10 @@ final class NodeAggregateCommandHandler
 
     /**
      * @param CreateRootNodeAggregateWithNode $command
+     * @return CommandResult
      * @throws ContentStream\ContentStreamDoesNotExistYet
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     * @throws NodeTypeNotFound
-     * @throws NodeTypeIsNotOfTypeRoot
-     * @throws \Exception
      */
-    public function handleCreateRootNodeAggregateWithNode(CreateRootNodeAggregateWithNode $command): void
+    public function handleCreateRootNodeAggregateWithNode(CreateRootNodeAggregateWithNode $command): CommandResult
     {
         $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
 
@@ -116,12 +112,12 @@ final class NodeAggregateCommandHandler
             throw new NodeTypeIsNotOfTypeRoot('Node type "' . $nodeType . '" for root node "' . $command->getNodeAggregateIdentifier() . '" is not of type root.', 1541765701);
         }
 
-        $nodeAggregate->createRootWithNode(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeTypeName(),
-            $this->allowedDimensionSubspace,
-            $command->getInitiatingUserIdentifier()
+        $events = $nodeAggregate->createRootWithNode(
+            $command,
+            $this->allowedDimensionSubspace
         );
+
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**

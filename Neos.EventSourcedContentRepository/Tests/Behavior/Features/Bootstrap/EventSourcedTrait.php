@@ -310,9 +310,8 @@ trait EventSourcedTrait
     /**
      * @When /^the command CreateRootNodeAggregateWithNode is executed with payload:$/
      * @param TableNode $payloadTable
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
      * @throws Exception
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
     public function theCommandCreateRootNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable)
     {
@@ -906,6 +905,45 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Then /^I expect the subgraph projection to consist of exactly (\d+) nodes$/
+     * @param int $expectedNumberOfNodes
+     */
+    public function iExpectTheSubgraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes)
+    {
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        $actualNumberOfNodes = $subgraph->countNodes();
+        Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content subgraph consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
+    }
+
+    /**
+     * @Then /^I expect node aggregate identifier "([^"]*)" to lead to node (.*)$/
+     * @param string $serializedNodeAggregateIdentifier
+     * @param string $serializedNodeIdentifier
+     */
+    public function iExpectNodeAggregateIdentifierToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodeIdentifier): void
+    {
+        $expectedNodeIdentifier = NodeIdentifier::fromArray(json_decode($serializedNodeIdentifier, true));
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
+        Assert::assertInstanceOf(NodeInterface::class, $nodeByAggregateIdentifier, 'No node could be found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
+        Assert::assertEquals($expectedNodeIdentifier, $nodeByAggregateIdentifier->getNodeIdentifier(), 'Node identifiers did not match');
+    }
+
+    /**
+     * @Then /^I expect node aggregate identifier "([^"]*)" to lead to no node$/
+     * @param string $serializedNodeAggregateIdentifier
+     */
+    public function iExpectNodeAggregateIdentifierToLeadToNoNode(string $serializedNodeAggregateIdentifier): void
+    {
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
+        Assert::assertNull($nodeByAggregateIdentifier, 'A node was found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
+    }
+
+    /**
      * @Then /^I expect node aggregate identifier "([^"]*)" and path "([^"]*)" to lead to node (.*)$/
      * @param string $serializedNodeAggregateIdentifier
      * @param string $serializedNodePath
@@ -916,9 +954,7 @@ trait EventSourcedTrait
         $expectedNodeIdentifier = NodeIdentifier::fromArray(json_decode($serializedNodeIdentifier, true));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
-        $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
-        Assert::assertInstanceOf(NodeInterface::class, $nodeByAggregateIdentifier, 'No node could be found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
-        Assert::assertEquals($expectedNodeIdentifier, $nodeByAggregateIdentifier->getNodeIdentifier(), 'Node identifiers did not match');
+        $this->iExpectNodeAggregateIdentifierToLeadToNode($serializedNodeAggregateIdentifier, $serializedNodeIdentifier);
 
         $nodeByPath = $subgraph->findNodeByPath($serializedNodePath, $this->rootNodeAggregateIdentifier);
         Assert::assertInstanceOf(NodeInterface::class, $nodeByPath, 'No node could be found by path "' . $serializedNodePath . '"" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
@@ -934,8 +970,7 @@ trait EventSourcedTrait
     {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
-        $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
-        Assert::assertNull($nodeByAggregateIdentifier, 'A node was found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
+        $this->iExpectNodeAggregateIdentifierToLeadToNoNode($serializedNodeAggregateIdentifier);
 
         $nodeByPath = $subgraph->findNodeByPath($serializedNodePath, $this->rootNodeAggregateIdentifier);
         Assert::assertNull($nodeByPath, 'A node was found by path "' . $serializedNodePath . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');

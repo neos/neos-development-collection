@@ -133,5 +133,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
      */
     public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
 
+    public function countNodes(): int;
+
     public function getInMemoryCache(): InMemoryCache;
 }

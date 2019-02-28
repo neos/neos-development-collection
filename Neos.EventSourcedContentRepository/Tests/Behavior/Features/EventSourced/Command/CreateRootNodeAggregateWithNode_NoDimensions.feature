@@ -14,71 +14,72 @@ Feature: Create a root node aggregate
     'Neos.ContentRepository.Testing:NonRoot': []
     """
     And the event RootWorkspaceWasCreated was published with payload:
-      | Key                            | Value                                | Type                    |
-      | workspaceName                  | live                                 | WorkspaceName           |
-      | workspaceTitle                 | Live                                 | WorkspaceTitle          |
-      | workspaceDescription           | The live workspace                   | WorkspaceDescription    |
-      | initiatingUserIdentifier       | 00000000-0000-0000-0000-000000000000 | UserIdentifier          |
-      | currentContentStreamIdentifier | c75ae6a2-7254-4d42-a31b-a629e264069d | ContentStreamIdentifier |
+      | Key                            | Value                                  |
+      | workspaceName                  | "live"                                 |
+      | workspaceTitle                 | "Live"                                 |
+      | workspaceDescription           | "The live workspace"                   |
+      | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
+      | currentContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                | Type                    |
-      | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d | ContentStreamIdentifier |
-      | nodeAggregateIdentifier       | sir-david-nodenborough               | NodeAggregateIdentifier |
-      | nodeTypeName                  | Neos.ContentRepository:Root          | NodeTypeName            |
-      | visibleInDimensionSpacePoints | [{}]                                 | DimensionSpacePointSet  |
-      | initiatingUserIdentifier      | 00000000-0000-0000-0000-000000000000 | UserIdentifier          |
+      | Key                           | Value                                  |
+      | contentStreamIdentifier       | "cs-identifier"                        |
+      | nodeAggregateIdentifier       | "sir-david-nodenborough"               |
+      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
+      | visibleInDimensionSpacePoints | [{}]                                   |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
 
   Scenario: Try to create a root node aggregate in a content stream that currently does not exist:
     When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                      | Value                                | Type                    |
-      | contentStreamIdentifier  | 00000000-0000-0000-0000-000000000000 | ContentStreamIdentifier |
-      | nodeAggregateIdentifier  | nody-mc-nodeface                     | NodeAggregateIdentifier |
-      | nodeTypeName             | Neos.ContentRepository:Root          | NodeTypeName            |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 | UserIdentifier          |
+      | Key                      | Value                                  |
+      | contentStreamIdentifier  | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateIdentifier  | "nody-mc-nodeface"                     |
+      | nodeTypeName             | "Neos.ContentRepository:Root"          |
+      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
 
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to create a root node aggregate in a content stream where it is already present:
     When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                      | Value                                | Type                    |
-      | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d | ContentStreamIdentifier |
-      | nodeAggregateIdentifier  | sir-david-nodenborough               | NodeAggregateIdentifier |
-      | nodeTypeName             | Neos.ContentRepository:Root          | NodeTypeName            |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 | UserIdentifier          |
+      | Key                      | Value                                  |
+      | contentStreamIdentifier  | "cs-identifier"                        |
+      | nodeAggregateIdentifier  | "sir-david-nodenborough"               |
+      | nodeTypeName             | "Neos.ContentRepository:Root"          |
+      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
 
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyExists"
 
   Scenario: Try to create a root node aggregate of a non-root node type:
     When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                      | Value                                  | Type                    |
-      | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d   | ContentStreamIdentifier |
-      | nodeAggregateIdentifier  | nody-mc-nodeface                       | NodeAggregateIdentifier |
-      | nodeTypeName             | Neos.ContentRepository.Testing:NonRoot | NodeTypeName            |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000   | UserIdentifier          |
+      | Key                      | Value                                    |
+      | contentStreamIdentifier  | "cs-identifier"                          |
+      | nodeAggregateIdentifier  | "nody-mc-nodeface"                       |
+      | nodeTypeName             | "Neos.ContentRepository.Testing:NonRoot" |
+      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000"   |
 
     Then the last command should have thrown an exception of type "NodeTypeIsNotOfTypeRoot"
 
   Scenario: Create a root node aggregate using valid payload without dimensions
     When the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                      | Value                                | Type                    |
-      | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d | ContentStreamIdentifier |
-      | nodeAggregateIdentifier  | nody-mc-nodeface                     | NodeAggregateIdentifier |
-      | nodeTypeName             | Neos.ContentRepository:Root          | NodeTypeName            |
-      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 | UserIdentifier          |
+      | Key                      | Value                                  |
+      | contentStreamIdentifier  | "cs-identifier"                        |
+      | nodeAggregateIdentifier  | "nody-mc-nodeface"                     |
+      | nodeTypeName             | "Neos.ContentRepository:Root"          |
+      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
 
-    Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:nody-mc-nodeface"
+    Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
     And event at index 0 is of type "Neos.EventSourcedContentRepository:RootNodeAggregateWithNodeWasCreated" with payload:
-      | Key                           | Expected                             | Type                    | AssertionType |
-      | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d | ContentStreamIdentifier |               |
-      | nodeAggregateIdentifier       | nody-mc-nodeface                     | NodeAggregateIdentifier |               |
-      | nodeTypeName                  | Neos.ContentRepository:Root          | NodeTypeName            |               |
-      | visibleInDimensionSpacePoints | [[]]                                 |                         | json          |
-      | initiatingUserIdentifier      | 00000000-0000-0000-0000-000000000000 | UserIdentifier          |               |
+      | Key                           | Expected                               |
+      | contentStreamIdentifier       | "cs-identifier"                        |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                     |
+      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
+      | visibleInDimensionSpacePoints | [[]]                                   |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
 
     When the graph projection is fully up to date
-    Then I expect a node with identifier {"nodeAggregateIdentifier": "nody-mc-nodeface", contentStreamIdentifier: "c75ae6a2-7254-4d42-a31b-a629e264069d", "originDimensionSpacePoint": {}} to exist in the content graph
-    And I expect a node with identifier {"nodeAggregateIdentifier": "sir-david-nodenborough", contentStreamIdentifier: "c75ae6a2-7254-4d42-a31b-a629e264069d", "originDimensionSpacePoint": {}} to exist in the content graph
+    Then I expect the graph projection to consist of exactly 2 nodes
+    And I expect a node with identifier {"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "cs-identifier", "originDimensionSpacePoint": {}} to exist in the content graph
+    And I expect a node with identifier {"nodeAggregateIdentifier": "nody-mc-nodeface", "contentStreamIdentifier": "cs-identifier", "originDimensionSpacePoint": {}} to exist in the content graph
 
-    When I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
-    And I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
+    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node {"nodeAggregateIdentifier": "sir-david-nodenborough", "contentStreamIdentifier": "cs-identifier", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node {"nodeAggregateIdentifier": "nody-mc-nodeface", "contentStreamIdentifier": "cs-identifier", "originDimensionSpacePoint": {}}

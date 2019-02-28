@@ -800,6 +800,24 @@ order by level asc, position asc;')
         return $subtreesByNodeIdentifier['ROOT'];
     }
 
+    /**
+     * @return int
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function countNodes(): int
+    {
+        $query = new SqlQueryBuilder();
+        $query->addToQuery('
+SELECT COUNT(*) FROM neos_contentgraph_node n
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = n.relationanchorpoint
+ WHERE h.contentstreamidentifier = :contentStreamIdentifier
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash')
+            ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+
+        return (int) $query->execute($this->getDatabaseConnection())->fetch()['COUNT(*)'];
+    }
+
     public function getInMemoryCache(): InMemoryCache
     {
         return $this->inMemoryCache;

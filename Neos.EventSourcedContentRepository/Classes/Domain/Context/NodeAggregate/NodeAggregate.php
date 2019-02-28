@@ -21,6 +21,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
@@ -100,33 +101,40 @@ final class NodeAggregate
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeTypeName $nodeTypeName
+     * @param CreateRootNodeAggregateWithNode $command
      * @param DimensionSpacePointSet $visibleDimensionSpacePoints
-     * @param UserIdentifier $initiatingUserIdentifier
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
+     * @return DomainEvents
+     * @throws NodeAggregateCurrentlyExists
      */
     public function createRootWithNode(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeTypeName $nodeTypeName,
-        DimensionSpacePointSet $visibleDimensionSpacePoints,
-        UserIdentifier $initiatingUserIdentifier
-    ): void {
+        CreateRootNodeAggregateWithNode $command,
+        DimensionSpacePointSet $visibleDimensionSpacePoints
+    ): DomainEvents {
         if ($this->existsCurrently()) {
             throw new NodeAggregateCurrentlyExists('Root node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541781941);
         }
 
-        $this->nodeEventPublisher->publish(
-            $this->getStreamName(),
-            new RootNodeAggregateWithNodeWasCreated(
-                $contentStreamIdentifier,
-                $this->identifier,
-                $nodeTypeName,
-                $visibleDimensionSpacePoints,
-                $initiatingUserIdentifier
-            )
-        );
+        $events = DomainEvents::createEmpty();
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, $visibleDimensionSpacePoints, &$events) {
+            $events = DomainEvents::withSingleEvent(
+                EventWithIdentifier::create(
+                    new RootNodeAggregateWithNodeWasCreated(
+                        $command->getContentStreamIdentifier(),
+                        $this->identifier,
+                        $command->getNodeTypeName(),
+                        $visibleDimensionSpacePoints,
+                        $command->getInitiatingUserIdentifier()
+                    )
+                )
+            );
+
+            $this->nodeEventPublisher->publishMany(
+                $this->streamName,
+                $events
+            );
+        });
+
+        return $events;
     }
 
     /**
