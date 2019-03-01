@@ -1015,7 +1015,7 @@ no node be assigned (so no link will be created and the items will have the ``ab
 Neos.Neos:MenuItems
 -------------------
 
-Render a hierarchical data structure of menu items for nodes.
+Create a list of menu-items items for nodes.
 
 :entryLevel: (integer) Start the menu at the given depth
 :maximumLevels: (integer) Restrict the maximum depth of items in the menu (relative to ``entryLevel``)
