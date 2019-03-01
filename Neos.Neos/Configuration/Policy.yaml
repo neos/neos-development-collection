@@ -27,7 +27,10 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\LoginController->(index|tokenLogin|authenticate)Action()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
 
     'Neos.Neos:Backend.GeneralAccess':
-      matcher: 'method(Neos\Neos\Controller\Backend\BackendController->(index|switchSite|xliffAsJson)Action()) || method(Neos\Neos\Controller\Backend\ModuleController->indexAction()) || method(Neos\Neos\Controller\LoginController->logoutAction()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->logoutAction()) || method(Neos\Neos\Controller\Module\AbstractModuleController->indexAction()) || method(Neos\Neos\Service\Controller\AbstractServiceController->errorAction())'
+      matcher: 'method(Neos\Neos\Controller\Backend\BackendController->(switchSite|xliffAsJson)Action()) || method(Neos\Neos\Controller\Backend\ModuleController->indexAction()) || method(Neos\Neos\Controller\LoginController->logoutAction()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->logoutAction()) || method(Neos\Neos\Controller\Module\AbstractModuleController->indexAction()) || method(Neos\Neos\Service\Controller\AbstractServiceController->errorAction())'
+
+    'Neos.Neos:Backend.Redirect':
+      matcher: 'method(Neos\Neos\Controller\Backend\BackendController->indexAction())'
 
     #
     # Content access and publishing
@@ -154,7 +157,9 @@ roles:
       -
         privilegeTarget: 'Neos.Neos:WidgetControllers'
         permission: GRANT
-
+      -
+        privilegeTarget: 'Neos.Neos:Backend.Redirect'
+        permission: GRANT
 
   'Neos.Neos:LivePublisher':
     privileges:
