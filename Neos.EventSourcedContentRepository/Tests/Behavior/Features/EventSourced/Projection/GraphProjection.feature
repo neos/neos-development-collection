@@ -11,22 +11,21 @@ Feature: Reading of our Graph Projection
 
   Scenario: Single node connected to root
     Given the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                |
-      | contentStreamIdentifier       | "cs-identifier" |
+      | Key                           | Value                                  |
+      | contentStreamIdentifier       | "cs-identifier"                        |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"               |
       | nodeTypeName                  | "Neos.ContentRepository:Root"          |
-      | visibleInDimensionSpacePoints | [{}]                                 |
+      | visibleInDimensionSpacePoints | [{}]                                   |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                             |
-      | contentStreamIdentifier       | "cs-identifier"                            |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                            |
+      | Key                           | Value                                     |
+      | contentStreamIdentifier       | "cs-identifier"                           |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | dimensionSpacePoint           | {}                                                                |
-      | visibleInDimensionSpacePoints | [{}]                                                              |
-      | parentNodeAggregateIdentifier          | "sir-david-nodenborough"                            |
-      | nodeName                      | "foo"                                                             |
-      | propertyDefaultValuesAndTypes | {}                                                                |
+      | originDimensionSpacePoint     | {}                                        |
+      | visibleInDimensionSpacePoints | [{}]                                      |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
+      | nodeName                      | "foo"                                     |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 2 nodes
