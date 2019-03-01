@@ -16,7 +16,7 @@ use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\Exception;
 
 /**
- * A Fusion MenuData object
+ * A Fusion MenuItems object
  */
 class MenuItemsImplementation extends AbstractMenuItemsImplementation
 {

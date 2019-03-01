@@ -16,7 +16,7 @@ use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
- * Base class for Menu and DimensionsMenu
+ * Base class for MenuItems and DimensionsMenuItems
  *
  * Main Options:
  *  - renderHiddenInIndex: if true, hidden-in-index nodes will be shown in the menu. false by default.
