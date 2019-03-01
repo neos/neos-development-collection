@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Neos\Domain\Model\Site;
@@ -61,6 +62,12 @@ class BackendController extends ActionController
     protected $currentSession;
 
     /**
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
+
+    /**
      * Default action of the backend controller.
      *
      * @return void
@@ -68,7 +75,7 @@ class BackendController extends ActionController
     public function indexAction()
     {
         $redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->request);
-        if ($redirectionUri === null) {
+        if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess') || $redirectionUri === null) {
             $redirectionUri = $this->uriBuilder->uriFor('index', array(), 'Login', 'Neos.Neos');
         }
         $this->redirectToUri($redirectionUri);

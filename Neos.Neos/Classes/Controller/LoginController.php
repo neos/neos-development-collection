@@ -18,6 +18,7 @@ use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
@@ -69,6 +70,12 @@ class LoginController extends AbstractAuthenticationController
     protected $loginTokenCache;
 
     /**
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
+
+    /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="session.name")
      * @var string
      */
@@ -115,7 +122,7 @@ class LoginController extends AbstractAuthenticationController
         if ($this->securityContext->getInterceptedRequest() || $unauthorized) {
             $this->response->setStatus(401);
         }
-        if ($this->authenticationManager->isAuthenticated()) {
+        if ($this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             $this->redirect('index', 'Backend\Backend');
         }
         $currentDomain = $this->domainRepository->findOneByActiveRequest();
