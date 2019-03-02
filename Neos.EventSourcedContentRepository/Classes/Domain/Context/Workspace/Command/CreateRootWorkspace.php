@@ -49,15 +49,19 @@ final class CreateRootWorkspace
     private $contentStreamIdentifier;
 
     /**
-     * CreateRootWorkspace constructor.
      * @param WorkspaceName $workspaceName
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
      * @param UserIdentifier $initiatingUserIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifier)
-    {
+    public function __construct(
+        WorkspaceName $workspaceName,
+        WorkspaceTitle $workspaceTitle,
+        WorkspaceDescription $workspaceDescription,
+        UserIdentifier $initiatingUserIdentifier,
+        ContentStreamIdentifier $contentStreamIdentifier
+    ) {
         $this->workspaceName = $workspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;

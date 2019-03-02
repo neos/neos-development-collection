@@ -19,7 +19,7 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Node was removed event
+ * A node was removed from its aggregate
  *
  * @Flow\Proxy(false)
  */

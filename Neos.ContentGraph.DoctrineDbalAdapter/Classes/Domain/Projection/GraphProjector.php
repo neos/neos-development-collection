@@ -745,6 +745,7 @@ insert into neos_contentgraph_restrictionedge
     /**
      * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationWasCreated $event
      * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodeSpecializationWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeSpecializationWasCreated $event): void
     {
@@ -783,6 +784,7 @@ insert into neos_contentgraph_restrictionedge
     /**
      * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationWasCreated $event
      * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodeGeneralizationWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeGeneralizationWasCreated $event): void
     {

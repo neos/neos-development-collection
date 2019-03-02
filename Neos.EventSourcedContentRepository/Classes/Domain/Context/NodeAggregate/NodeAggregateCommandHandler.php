@@ -533,6 +533,7 @@ final class NodeAggregateCommandHandler
     /**
      * @param Command\CreateNodeSpecialization $command
      * @return CommandResult
+     * @throws ContentStream\ContentStreamDoesNotExistYet
      * @throws DimensionSpacePointIsAlreadyOccupied
      * @throws DimensionSpacePointIsNotYetOccupied
      * @throws DimensionSpacePointNotFound

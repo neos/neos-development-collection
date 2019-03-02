@@ -49,8 +49,13 @@ final class NodeReferencesWereSet implements DomainEventInterface, CopyableAcros
      * @param NodeAggregateIdentifier[] $destinationNodeAggregateIdentifiers
      * @param PropertyName $referenceName
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $sourceNodeAggregateIdentifier, DimensionSpacePoint $sourceOriginDimensionSpacePoint, array $destinationNodeAggregateIdentifiers, PropertyName $referenceName)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
+        DimensionSpacePoint $sourceOriginDimensionSpacePoint,
+        array $destinationNodeAggregateIdentifiers,
+        PropertyName $referenceName
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->sourceNodeAggregateIdentifier = $sourceNodeAggregateIdentifier;
         $this->sourceOriginDimensionSpacePoint = $sourceOriginDimensionSpacePoint;

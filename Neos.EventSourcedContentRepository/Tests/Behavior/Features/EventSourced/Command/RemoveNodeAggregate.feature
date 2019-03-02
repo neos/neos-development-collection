@@ -20,16 +20,16 @@ Feature: Remove NodeAggregate
       | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
       | contentStreamIdentifier  | "live-cs-identifier"                   |
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                  |
-      | contentStreamIdentifier       | "live-cs-identifier"                        |
-      | nodeAggregateIdentifier       | "lady-eleonode-nodesworth"             |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
+      | Key                      | Value                                  |
+      | contentStreamIdentifier  | "live-cs-identifier"                   |
+      | nodeAggregateIdentifier  | "lady-eleonode-nodesworth"             |
+      | nodeTypeName             | "Neos.ContentRepository:Root"          |
+      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
     # We have to add another node since root nodes are in all dimension space points and thus cannot be varied
     # Node /document
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "live-cs-identifier"                           |
+      | contentStreamIdentifier       | "live-cs-identifier"                      |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
@@ -40,7 +40,7 @@ Feature: Remove NodeAggregate
     # Node /document/child-document
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "live-cs-identifier"                           |
+      | contentStreamIdentifier       | "live-cs-identifier"                      |
       | nodeAggregateIdentifier       | "nodimus-prime"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
@@ -48,11 +48,11 @@ Feature: Remove NodeAggregate
       | parentNodeAggregateIdentifier | "nody-mc-nodeface"                        |
       | nodeName                      | "child-document"                          |
     And the command CreateNodeSpecialization is executed with payload:
-      | Key                       | Value              |
-      | contentStreamIdentifier   | "live-cs-identifier"    |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface" |
-      | sourceDimensionSpacePoint | {"language":"de"}  |
-      | targetDimensionSpacePoint | {"language":"gsw"} |
+      | Key                       | Value                |
+      | contentStreamIdentifier   | "live-cs-identifier" |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
+      | sourceDimensionSpacePoint | {"language":"de"}    |
+      | targetDimensionSpacePoint | {"language":"gsw"}   |
     And the graph projection is fully up to date
 
   ########################
