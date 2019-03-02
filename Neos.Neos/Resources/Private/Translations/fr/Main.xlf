@@ -658,9 +658,15 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target xml:lang="fr" state="translated">Votre connexion a expiré. S'il vous plaît vous connecter à nouveau.</target><alt-trans><target xml:lang="fr">Votre session a expiré. Veuillez vous reconnecter.</target></alt-trans></trans-unit>
       <!-- Error handlers -->
+      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
+				<source>Welcome to Neos</source>
+			<target xml:lang="fr" state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
 			<target xml:lang="fr" state="translated">Allez dans l'assistant de configuration</target></trans-unit>
+      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
+				<source>Technical Information</source>
+			<target xml:lang="fr" state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
 			<target xml:lang="fr" state="translated">Page d'accueil manquante</target></trans-unit>
@@ -673,12 +679,12 @@
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
 			<target xml:lang="fr" state="translated">Erreur de la base de données</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
-				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="fr" state="translated">Désolé, nous avons détecté une erreur avec votre base de données. Vérifiez vos fichiers journaux dans Data/Logs/ * pour plus d'informations.</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
-				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="fr" state="translated">Vous pouvez configurer ou vérifier votre configuration de base de données dans l'assistant d'installation.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
+				<source>There is no database connection yet or the Neos database schema has not been created.</source>
+			<target xml:lang="fr" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+				<source>Run the setup to configure your database.</source>
+			<target xml:lang="fr" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target xml:lang="fr" state="translated">Page introuvable</target></trans-unit>
