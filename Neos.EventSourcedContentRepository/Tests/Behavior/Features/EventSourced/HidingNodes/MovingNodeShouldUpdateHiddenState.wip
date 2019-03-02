@@ -1,6 +1,7 @@
 @fixtures
 Feature: Moving a node should update the hidden state accordingly.
 
+  # todo add this once moving nodes is properly implemented
   This is actually two cases:
 
   - moving a node INTO a parent node which is hidden -> node should automatically be hidden.

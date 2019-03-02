@@ -312,7 +312,7 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
         NodeTypeConstraints $nodeTypeConstraints = null
     ): int {
         $query = new SqlQueryBuilder();
-        $query->addToQuery('SELECT COUNT(c.nodeidentifier) FROM neos_contentgraph_node p
+        $query->addToQuery('SELECT COUNT(*) FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeaggregateidentifier = :parentNodeNodeAggregateIdentifier
@@ -699,11 +699,11 @@ WHERE
     }
 
     /**
-     * @param array $menuLevelNodeIdentifiers
+     * @param array $entryNodeAggregateIdentifiers
      * @param int $maximumLevels
-     * @param ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @return mixed|void
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function findSubtrees(
         array $entryNodeAggregateIdentifiers,
@@ -726,7 +726,7 @@ with recursive tree as (
      	h.dimensionspacepoint,
 
      	-- see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-     	CAST("ROOT" AS CHAR(50)) as parentNodeIdentifier,
+     	CAST("ROOT" AS CHAR(50)) as parentNodeAggregateIdentifier,
      	0 as level,
      	0 as position
      from
@@ -749,7 +749,7 @@ union
         h.name,
         h.dimensionspacepoint,
 
-     	p.nodeidentifier as parentNodeIdentifier,
+     	p.nodeaggregateidentifier as parentNodeAggregateIdentifier,
      	p.level + 1 as level,
      	h.position
      from
@@ -788,13 +788,13 @@ order by level asc, position asc;')
 
         foreach ($result as $nodeData) {
             $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
-            if (!isset($subtreesByNodeIdentifier[$nodeData['parentNodeIdentifier']])) {
+            if (!isset($subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']])) {
                 throw new \Exception('TODO: must not happen');
             }
 
             $subtree = new Subtree($nodeData['level'], $node);
-            $subtreesByNodeIdentifier[$nodeData['parentNodeIdentifier']]->add($subtree);
-            $subtreesByNodeIdentifier[$nodeData['nodeidentifier']] = $subtree;
+            $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']]->add($subtree);
+            $subtreesByNodeIdentifier[$nodeData['nodeaggregateidentifier']] = $subtree;
         }
 
         return $subtreesByNodeIdentifier['ROOT'];

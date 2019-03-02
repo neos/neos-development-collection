@@ -282,6 +282,24 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the event NodeReferencesWereSet was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theEventNodeReferencesWereSetWasPublishedWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['sourceNodeAggregateIdentifier']);
+        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier
+        );
+
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeReferencesWereSet', $streamName->getEventStreamName(), $eventPayload);
+    }
+
+    /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
      * @param $eventType
      * @param $streamName
@@ -1109,7 +1127,7 @@ trait EventSourcedTrait
         Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'ContentSubgraph::findChildNodes: Child Node Count does not match');
         foreach ($expectedChildNodesTable->getHash() as $index => $row) {
             Assert::assertEquals($row['Name'], (string)$nodes[$index]->getNodeName(), 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeName());
-            Assert::assertEquals($row['NodeAggregateIdentifier'], (string)$nodes[$index]->getNodeAggregateIdentifier(), 'ContentSubgraph::findChildNodes: Node identifier in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeAggregateIdentifier() . ' Expected: ' . $row['NodeIdentifier']);
+            Assert::assertEquals($row['NodeAggregateIdentifier'], (string)$nodes[$index]->getNodeAggregateIdentifier(), 'ContentSubgraph::findChildNodes: Node identifier in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeAggregateIdentifier() . ' Expected: ' . $row['NodeAggregateIdentifier']);
         }
     }
 
@@ -1360,17 +1378,15 @@ trait EventSourcedTrait
 
         foreach ($expectedRows as $i => $expectedRow) {
             Assert::assertEquals($expectedRow['Level'], $flattenedSubtree[$i]->getLevel(), 'Level does not match in index ' . $i);
-            if ($expectedRow['NodeAggregateIdentifier'] === 'root') {
-                Assert::assertNull($flattenedSubtree[$i]->getNode(), 'root node was not correct at index ' . $i);
-            } else {
-                Assert::assertEquals($expectedRow['NodeAggregateIdentifier'], (string)$flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier(), 'NodeAggregateIdentifier does not match in index ' . $i . ', expected: ' . $expectedRow['NodeAggregateIdentifier'] . ', actual: ' . $flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier());
-            }
+            Assert::assertEquals($expectedRow['NodeAggregateIdentifier'], (string)$flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier(), 'NodeAggregateIdentifier does not match in index ' . $i . ', expected: ' . $expectedRow['NodeAggregateIdentifier'] . ', actual: ' . $flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier());
         }
     }
 
     private static function flattenSubtreeForComparison(SubtreeInterface $subtree, array &$result)
     {
-        $result[] = $subtree;
+        if ($subtree->getNode()) {
+            $result[] = $subtree;
+        }
         foreach ($subtree->getChildren() as $childSubtree) {
             self::flattenSubtreeForComparison($childSubtree, $result);
         }

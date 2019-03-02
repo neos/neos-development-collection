@@ -3,21 +3,17 @@ Feature: Hide Node
 
   Hiding a node works.
   Node structure is as follows:
-  - rn-identifier (root node)
-  -- na-identifier (name=text1) <== HIDDEN!
-  --- cna-identifier (name=text2)
-  --- refna-identifier (name=ref) <== a Reference node with a reference to "cna-identifier"
+  - lady-eleonode-rootford (root node)
+  -- text-1 (name=text1) <== HIDDEN!
+  --- text-2 (name=text2)
+  --- referencing-node (name=ref) <== a Reference node with a reference to "text-2"
 
   Background:
     Given I have no content dimensions
-    And the command CreateWorkspace is executed with payload:
-      | Key                     | Value           |
-      | workspaceName           | "live"          |
-      | contentStreamIdentifier | "cs-identifier" |
-      | rootNodeIdentifier      | "rn-identifier" |
     And I have the following NodeTypes configuration:
     """
     Neos.ContentRepository:Root: {}
+    'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:Content':
       properties:
         text:
@@ -27,155 +23,146 @@ Feature: Hide Node
         ref:
           type: reference
     """
+    And the event RootWorkspaceWasCreated was published with payload:
+      | Key                            | Value                                  |
+      | workspaceName                  | "live"                                 |
+      | workspaceTitle                 | "Live"                                 |
+      | workspaceDescription           | "The live workspace"                   |
+      | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
+      | currentContentStreamIdentifier | "cs-identifier"                        |
+    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                  |
+      | contentStreamIdentifier       | "cs-identifier"                        |
+      | nodeAggregateIdentifier       | "lady-eleonode-rootford"               |
+      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
+      | visibleInDimensionSpacePoints | [{}]                                   |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                     | Value                                  | Type |
-      | contentStreamIdentifier | cs-identifier                          | Uuid |
-      | nodeAggregateIdentifier | na-identifier                          | Uuid |
-      | nodeTypeName            | Neos.ContentRepository.Testing:Content |      |
-      | nodeIdentifier          | node-identifier                        | Uuid |
-      | parentNodeIdentifier    | rn-identifier                          | Uuid |
-      | nodeName                | text1                                  |      |
+      | Key                           | Value                                    |
+      | contentStreamIdentifier       | "cs-identifier"                          |
+      | nodeAggregateIdentifier       | "text-1"                                 |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint     | {}                                       |
+      | visibleInDimensionSpacePoints | [{}]                                     |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
+      | nodeName                      | "text1"                                  |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                     | Value                                    |
-      | contentStreamIdentifier | "cs-identifier"                          |
-      | nodeAggregateIdentifier | "na-identifier"                          |
-      | nodeTypeName            | "Neos.ContentRepository.Testing:Content" |
-      | nodeIdentifier          | "node-identifier"                        |
-      | parentNodeIdentifier    | "rn-identifier"                          |
-      | nodeName                | "text1"                                  |
-
+      | Key                           | Value                                    |
+      | contentStreamIdentifier       | "cs-identifier"                          |
+      | nodeAggregateIdentifier       | "text-2"                                 |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint     | {}                                       |
+      | visibleInDimensionSpacePoints | [{}]                                     |
+      | parentNodeAggregateIdentifier | "text-1"                                 |
+      | nodeName                      | "text2"                                  |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                     | Value                                  | Type |
-      | contentStreamIdentifier | cs-identifier                          | Uuid |
-      | nodeAggregateIdentifier | cna-identifier                         | Uuid |
-      | nodeTypeName            | Neos.ContentRepository.Testing:Content |      |
-      | nodeIdentifier          | cnode-identifier                       | Uuid |
-      | parentNodeIdentifier    | node-identifier                        | Uuid |
-      | nodeName                | text2                                  |      |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                     | Value                                    |
-      | contentStreamIdentifier | "cs-identifier"                          |
-      | nodeAggregateIdentifier | "cna-identifier"                         |
-      | nodeTypeName            | "Neos.ContentRepository.Testing:Content" |
-      | nodeIdentifier          | "cnode-identifier"                       |
-      | parentNodeIdentifier    | "node-identifier"                        |
-      | nodeName                | "text2"                                  |
-
-    # create the "ref" node
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                     | Value                                              |
-      | contentStreamIdentifier | "cs-identifier"                                    |
-      | nodeAggregateIdentifier | "refna-identifier"                                 |
-      | nodeTypeName            | "Neos.ContentRepository.Testing:NodeWithReference" |
-      | nodeIdentifier          | "refnode-identifier"                               |
-      | parentNodeIdentifier    | "node-identifier"                                  |
-      | nodeName                | "ref"                                              |
-    And the graph projection is fully up to date
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                     | Value                                            | Type |
-      | contentStreamIdentifier | cs-identifier                                    | Uuid |
-      | nodeAggregateIdentifier | refna-identifier                                 | Uuid |
-      | nodeTypeName            | Neos.ContentRepository.Testing:NodeWithReference |      |
-      | nodeIdentifier          | refnode-identifier                               | Uuid |
-      | parentNodeIdentifier    | node-identifier                                  | Uuid |
-      | nodeName                | ref                                              |      |
-    And the command "SetNodeReferences" is executed with payload:
-      | Key                                 | Value                |
-      | contentStreamIdentifier             | "cs-identifier"      |
-      | nodeIdentifier                      | "refnode-identifier" |
-      | propertyName                        | "ref"                |
-      | destinationNodeAggregateIdentifiers | ["cna-identifier"]   |
+      | Key                           | Value                                    |
+      | contentStreamIdentifier       | "cs-identifier"                          |
+      | nodeAggregateIdentifier       | "referencing-node"                       |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint     | {}                                       |
+      | visibleInDimensionSpacePoints | [{}]                                     |
+      | parentNodeAggregateIdentifier | "text-1"                                 |
+      | nodeName                      | "referencing"                            |
+    And the event NodeReferencesWereSet was published with payload:
+      | Key                                 | Value              |
+      | contentStreamIdentifier             | "cs-identifier"    |
+      | sourceNodeAggregateIdentifier       | "referencing-node" |
+      | sourceOriginDimensionSpacePoint     | {}                 |
+      | destinationNodeAggregateIdentifiers | ["text-2"]         |
+      | referenceName                       | "ref"              |
     And the graph projection is fully up to date
 
   Scenario: Hide a node generates the correct events
     When the command "HideNode" is executed with payload:
       | Key                          | Value           |
       | contentStreamIdentifier      | "cs-identifier" |
-      | nodeAggregateIdentifier      | "na-identifier" |
+      | nodeAggregateIdentifier      | "text-1"        |
       | affectedDimensionSpacePoints | [{}]            |
 
     Then I expect exactly 7 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 6 is of type "Neos.EventSourcedContentRepository:NodeWasHidden" with payload:
       | Key                          | Expected        |
       | contentStreamIdentifier      | "cs-identifier" |
-      | nodeAggregateIdentifier      | "na-identifier" |
+      | nodeAggregateIdentifier      | "text-1"        |
       | affectedDimensionSpacePoints | [[]]            |
 
   Scenario: Hiding a node means it is invisible with the various traversal methods
     When the command "HideNode" is executed with payload:
       | Key                          | Value           |
       | contentStreamIdentifier      | "cs-identifier" |
-      | nodeAggregateIdentifier      | "na-identifier" |
+      | nodeAggregateIdentifier      | "text-1"        |
       | affectedDimensionSpacePoints | [{}]            |
-
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
     # findNodeByNodeAggregateIdentifier
-    Then I expect a node identified by aggregate identifier "na-identifier" not to exist in the subgraph
-    # findNodeByIdentifier
-    Then I expect a node "node-identifier" not to exist in the graph projection
+    Then I expect a node identified by aggregate identifier "text-1" not to exist in the subgraph
+    # findNodeByIdentifier: does not support visibility constraints
     # findChildNodes
     # countChildNodes
-    Then I expect the node aggregate "root" to have the following child nodes:
+    Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
       | Name | NodeIdentifier |
       # no child nodes as they are hidden
     # findParentNode
-    When I go to the parent node of node aggregate "cna-identifier"
+    When I go to the parent node of node aggregate "text-2"
     Then I do not find any node
     # traverseHierarchy is covered by "findChildNodes" and "findParentNode"
     # findParentNodeByNodeAggregateIdentifier
-    When I go to the parent node of node aggregate "cna-identifier"
+    When I go to the parent node of node aggregate "text-2"
     Then I do not find any node
     # findNodeByPath
     # findChildNodeConnectedThroughEdgeName
-    Then I expect the path "/text1" to lead to no node
-    Then I expect the path "/text1/text2" to lead to no node
+    And I expect the path "/text1" to lead to no node
+    And I expect the path "/text1/text2" to lead to no node
     # findReferencedNodes
-    Then I expect the Node aggregate "refna-identifier" to have the references:
+    And I expect the node aggregate "referencing-node" to have the references:
       | Key | Value |
       | ref | []    |
     # findSubtree
-    Then the subtree for node aggregate "na-identifier" with node types "" and 5 levels deep should be:
+    And the subtree for node aggregate "text-1" with node types "" and 5 levels deep should be:
       | Level | NodeAggregateIdentifier |
-      | 0     | root                    |
 
-    ######################################################
-    # Second part of Scenario: No visibility restrictions
-    ######################################################
-    When VisibilityConstraints are set to "withoutRestrictions"
+  Scenario: Hiding a node means it is visible with the various traversal methods when visibility restrictions are ignored
+    When the command "HideNode" is executed with payload:
+      | Key                          | Value           |
+      | contentStreamIdentifier      | "cs-identifier" |
+      | nodeAggregateIdentifier      | "text-1"        |
+      | affectedDimensionSpacePoints | [{}]            |
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    And VisibilityConstraints are set to "withoutRestrictions"
 
     # findNodeByNodeAggregateIdentifier
-    Then I expect a node identified by aggregate identifier "na-identifier" to exist in the subgraph
-    # findNodeByIdentifier
-    Then I expect a node "node-identifier" to exist in the graph projection
+    Then I expect a node identified by aggregate identifier "text-1" to exist in the subgraph
+    # findNodeByIdentifier: does not support visibility constraints
     # findChildNodes
     # countChildNodes
-    Then I expect the node aggregate "root" to have the following child nodes:
-      | Name  | NodeIdentifier  |
-      | text1 | node-identifier |
+    Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
+      | Name  | NodeAggregateIdentifier  |
+      | text1 | text-1                   |
     # findParentNode
-    When I go to the parent node of node aggregate "cna-identifier"
-    Then I find a node with node aggregate "na-identifier"
+    When I go to the parent node of node aggregate "text-2"
+    Then I find a node with node aggregate "text-1"
     # traverseHierarchy is covered by "findChildNodes" and "findParentNode"
     # findParentNodeByNodeAggregateIdentifier
-    When I go to the parent node of node aggregate "cna-identifier"
-    Then I find a node with node aggregate "na-identifier"
+    When I go to the parent node of node aggregate "text-2"
+    Then I find a node with node aggregate "text-1"
     # findNodeByPath
     # findChildNodeConnectedThroughEdgeName
-    Then I expect the path "/text1" to lead to the node "node-identifier"
-    Then I expect the path "/text1/text2" to lead to the node "cnode-identifier"
+    And I expect node aggregate identifier "text-1" and path "text1" to lead to node {"contentStreamIdentifier": "cs-identifier","nodeAggregateIdentifier": "text-1", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "text-2" and path "text1/text2" to lead to node {"contentStreamIdentifier": "cs-identifier","nodeAggregateIdentifier": "text-2", "originDimensionSpacePoint": {}}
     # findReferencedNodes
-    Then I expect the Node aggregate "refna-identifier" to have the references:
-      | Key | Value              |
-      | ref | ["cna-identifier"] |
+    And I expect the node aggregate "referencing-node" to have the references:
+      | Key | Value      |
+      | ref | ["text-2"] |
     # findSubtree
-    Then the subtree for node aggregate "na-identifier" with node types "" and 5 levels deep should be:
+    And the subtree for node aggregate "text-1" with node types "" and 5 levels deep should be:
       | Level | NodeAggregateIdentifier |
-      | 0     | root                    |
-      | 0     | na-identifier           |
-      | 1     | cna-identifier          |
-      | 1     | refna-identifier        |
+      | 0     | text-1                  |
+      | 1     | text-2                  |
+      | 1     | referencing-node        |
 
     # TODO: findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName
 
@@ -187,7 +174,7 @@ Feature: Hide Node
     When the command "HideNode" is executed with payload:
       | Key                          | Value              |
       | contentStreamIdentifier      | "cs-identifier"    |
-      | nodeAggregateIdentifier      | "refna-identifier" |
+      | nodeAggregateIdentifier      | "referencing-node" |
       | affectedDimensionSpacePoints | [{}]               |
 
     And the graph projection is fully up to date
@@ -195,7 +182,7 @@ Feature: Hide Node
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
 
     # findReferencingNodes
-    Then I expect the Node aggregate "cna-identifier" to be referenced by:
+    Then I expect the node aggregate "text-2" to be referenced by:
       | Key | Value |
       | ref | []    |
 
@@ -205,9 +192,9 @@ Feature: Hide Node
     When VisibilityConstraints are set to "withoutRestrictions"
 
     # findReferencingNodes
-    Then I expect the Node aggregate "cna-identifier" to be referenced by:
+    Then I expect the node aggregate "text-2" to be referenced by:
       | Key | Value                |
-      | ref | ["refna-identifier"] |
+      | ref | ["referencing-node"] |
 
 
   Scenario: Hide a non-existing node should throw an exception
@@ -222,7 +209,7 @@ Feature: Hide Node
     When the command "HideNode" is executed with payload and exceptions are caught:
       | Key                          | Value                |
       | contentStreamIdentifier      | "cs-identifier"      |
-      | nodeAggregateIdentifier      | "na-identifier"      |
+      | nodeAggregateIdentifier      | "text-1"             |
       | affectedDimensionSpacePoints | [{"language": "de"}] |
     Then the last command should have thrown an exception of type "NodeNotFoundException"
 
@@ -230,7 +217,7 @@ Feature: Hide Node
     When the command "HideNode" is executed with payload:
       | Key                          | Value           |
       | contentStreamIdentifier      | "cs-identifier" |
-      | nodeAggregateIdentifier      | "na-identifier" |
+      | nodeAggregateIdentifier      | "text-1"        |
       | affectedDimensionSpacePoints | [{}]            |
 
     And the graph projection is fully up to date
@@ -238,20 +225,20 @@ Feature: Hide Node
     When the command "ShowNode" is executed with payload:
       | Key                          | Value           |
       | contentStreamIdentifier      | "cs-identifier" |
-      | nodeAggregateIdentifier      | "na-identifier" |
+      | nodeAggregateIdentifier      | "text-1"        |
       | affectedDimensionSpacePoints | [{}]            |
 
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node identified by aggregate identifier "na-identifier" to exist in the subgraph
+    Then I expect a node identified by aggregate identifier "text-1" to exist in the subgraph
 
 
   Scenario: Removing a previously-hidden node clears the hidden restriction
     When the command "HideNode" is executed with payload:
       | Key                          | Value           |
       | contentStreamIdentifier      | "cs-identifier" |
-      | nodeAggregateIdentifier      | "na-identifier" |
+      | nodeAggregateIdentifier      | "text-1"        |
       | affectedDimensionSpacePoints | [{}]            |
 
     And the graph projection is fully up to date
@@ -259,7 +246,7 @@ Feature: Hide Node
     And the command RemoveNodeAggregate was published with payload:
       | Key                     | Value           |
       | contentStreamIdentifier | "cs-identifier" |
-      | nodeAggregateIdentifier | "na-identifier" |
+      | nodeAggregateIdentifier | "text-1"        |
 
   # TODO: Creating, Removing, Creating a NodeAggregate should actually WORK and not throw an error!!!
 
@@ -267,7 +254,7 @@ Feature: Hide Node
 #    When the command "CreateNodeAggregateWithNode" is executed with payload:
 #      | Key                     | Value                                    |
 #      | contentStreamIdentifier | "cs-identifier"                          |
-#      | nodeAggregateIdentifier | "na-identifier"                          |
+#      | nodeAggregateIdentifier | "text-1"                          |
 #      | dimensionSpacePoint     | {}                                       |
 #      | nodeTypeName            | "Neos.ContentRepository.Testing:Content" |
 #      | nodeIdentifier          | "node-identifier"                        |
@@ -277,4 +264,4 @@ Feature: Hide Node
 #    And the graph projection is fully up to date
 #
 #    When I am in the active content stream of workspace "live" and Dimension Space Point {}
-#    Then I expect a node identified by aggregate identifier "na-identifier" to exist in the subgraph
+#    Then I expect a node identified by aggregate identifier "text-1" to exist in the subgraph
