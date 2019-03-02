@@ -1,8 +1,8 @@
 @fixtures
 Feature: Translate node in aggregate
 
-  As a user of the CR I want to create a copy of a node in an aggregate in another dimension space point as a
-  translation.
+  As a user of the CR I want to create a copy of a node in an aggregate in another dimension space point as an
+  alternative (neither generalization nor specialization).
 
   Background:
     Given I have the following content dimensions:
