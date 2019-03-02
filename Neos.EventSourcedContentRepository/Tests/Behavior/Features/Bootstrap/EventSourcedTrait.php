@@ -382,13 +382,16 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
 
         if (!isset($commandArguments['workspaceTitle'])) {
-            $commandArguments['workspaceTitle'] = $commandArguments['workspaceName'];
+            $commandArguments['workspaceTitle'] = ucfirst($commandArguments['workspaceName']);
         }
         if (!isset($commandArguments['workspaceDescription'])) {
             $commandArguments['workspaceDescription'] = 'The workspace "' . $commandArguments['workspaceName'] . '"';
         }
         if (!isset($commandArguments['initiatingUserIdentifier'])) {
             $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
+        if (!isset($commandArguments['workspaceOwner'])) {
+            $commandArguments['workspaceOwner'] = 'owner-identifier';
         }
 
         $this->theCommandIsExecutedWithPayload('CreateWorkspace', null, $commandArguments);

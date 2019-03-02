@@ -17,112 +17,109 @@ Feature: Workspace based content publishing
         text:
           type: string
     """
-
-    And the command CreateWorkspace is executed with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                     | Value           |
       | workspaceName           | "live"          |
       | contentStreamIdentifier | "cs-identifier" |
-      | rootNodeIdentifier      | "rn-identifier" |
-
-    And the Event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                     | Value                                    |
-      | contentStreamIdentifier | "cs-identifier"                          |
-      | nodeAggregateIdentifier | "na-identifier"                          |
-      | nodeTypeName            | "Neos.ContentRepository.Testing:Content" |
-      | nodeIdentifier          | "node-identifier"                        |
-      | parentNodeIdentifier    | "rn-identifier"                          |
-      | nodeName                | "root"                                    |
-
+    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                         |
+      | contentStreamIdentifier       | "cs-identifier"               |
+      | nodeAggregateIdentifier       | "lady-eleonode-rootford"      |
+      | nodeTypeName                  | "Neos.ContentRepository:Root" |
+      | visibleInDimensionSpacePoints | [{}]                          |
+      | initiatingUserIdentifier      | "initiating-user-identifier"  |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                    |
+      | contentStreamIdentifier       | "cs-identifier"                          |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                       |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint     | {}                                       |
+      | visibleInDimensionSpacePoints | [{}]                                     |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
+      | nodeName                      | "child"                                  |
     And the graph projection is fully up to date
 
-    When the command "SetNodeProperty" is executed with payload:
+    And the command "SetNodeProperty" is executed with payload:
       | Key                       | Value                                |
       | contentStreamIdentifier   | "cs-identifier"                      |
-      | nodeAggregateIdentifier   | "na-identifier"                      |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                   |
       | originDimensionSpacePoint | {}                                   |
       | propertyName              | "text"                               |
       | value                     | {"value":"Original","type":"string"} |
-
     And the command CreateWorkspace is executed with payload:
-      | Key                     | Value             |
-      | workspaceName           | "user-test"       |
-      | baseWorkspaceName       | "live"            |
-      | contentStreamIdentifier | "cs-2-identifier" |
-
+      | Key                     | Value                |
+      | workspaceName           | "user-test"          |
+      | baseWorkspaceName       | "live"               |
+      | contentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
 
-
   Scenario: Basic events are emitted
-
     # LIVE workspace
-    Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 0 is of type "Neos.EventSourcedContentRepository:ContentStreamWasCreated" with payload:
-      | Key                      | Expected                   |
-      | contentStreamIdentifier  | "cs-identifier"            |
-      | initiatingUserIdentifier | "initiatingUserIdentifier" |
+      | Key                      | Expected                     |
+      | contentStreamIdentifier  | "cs-identifier"              |
+      | initiatingUserIdentifier | "initiating-user-identifier" |
 
     # Event 1 is the root Node Created event (we can skip this here, it is tested somewhere else); Event 2 is the SetProperty
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:Workspace:live"
     And event at index 0 is of type "Neos.EventSourcedContentRepository:RootWorkspaceWasCreated" with payload:
-      | Key                            | Expected                   |
-      | workspaceName                  | "live"                     |
-      | workspaceTitle                 | "Live"                     |
-      | workspaceDescription           | "The workspace \"live\"."  |
-      | initiatingUserIdentifier       | "initiatingUserIdentifier" |
-      | currentContentStreamIdentifier | "cs-identifier"            |
+      | Key                            | Expected                     |
+      | workspaceName                  | "live"                       |
+      | workspaceTitle                 | "Live"                       |
+      | workspaceDescription           | "The workspace \"live\""     |
+      | initiatingUserIdentifier       | "initiating-user-identifier" |
+      | currentContentStreamIdentifier | "cs-identifier"              |
 
     # USER workspace
-    Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:ContentStream:cs-2-identifier"
+    Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:ContentStream:user-cs-identifier"
     And event at index 0 is of type "Neos.EventSourcedContentRepository:ContentStreamWasForked" with payload:
-      | Key                           | Expected          |
-      | contentStreamIdentifier       | "cs-2-identifier" |
-      | sourceContentStreamIdentifier | "cs-identifier"   |
+      | Key                           | Expected             |
+      | contentStreamIdentifier       | "user-cs-identifier" |
+      | sourceContentStreamIdentifier | "cs-identifier"      |
 
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:Workspace:user-test"
     And event at index 0 is of type "Neos.EventSourcedContentRepository:WorkspaceWasCreated" with payload:
-      | Key                            | Expected                       |
-      | workspaceName                  | "user-test"                    |
-      | baseWorkspaceName              | "live"                         |
-      | workspaceTitle                 | "User-test"                    |
-      | workspaceDescription           | "The workspace \"user-test\"." |
-      | initiatingUserIdentifier       | "initiatingUserIdentifier"     |
-      | currentContentStreamIdentifier | "cs-2-identifier"              |
-      | workspaceOwner                 | "workspaceOwner"               |
+      | Key                            | Expected                      |
+      | workspaceName                  | "user-test"                   |
+      | baseWorkspaceName              | "live"                        |
+      | workspaceTitle                 | "User-test"                   |
+      | workspaceDescription           | "The workspace \"user-test\"" |
+      | initiatingUserIdentifier       | "initiating-user-identifier"  |
+      | currentContentStreamIdentifier | "user-cs-identifier"          |
+      | workspaceOwner                 | "owner-identifier"            |
 
   Scenario: modify the property in the nested workspace and publish afterwards works
-
     When the command "SetNodeProperty" is executed with payload:
       | Key                       | Value                                |
-      | contentStreamIdentifier   | "cs-2-identifier"                    |
-      | nodeAggregateIdentifier   | "na-identifier"                      |
+      | contentStreamIdentifier   | "user-cs-identifier"                 |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                   |
       | originDimensionSpacePoint | {}                                   |
       | propertyName              | "text"                               |
       | value                     | {"value":"Modified","type":"string"} |
-
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node "node-identifier" to exist in the graph projection
-    And I expect the Node "node-identifier" to have the properties:
+    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
+    And I expect this node to have the properties:
       | Key  | Value    |
       | text | Original |
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
-    Then I expect a node "node-identifier" to exist in the graph projection
-    And I expect the Node "node-identifier" to have the properties:
+    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
+    And I expect this node to have the properties:
       | Key  | Value    |
       | text | Modified |
 
     # PUBLISHING
-    And the command "PublishWorkspace" is executed with payload:
+    When the command "PublishWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
-
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node "node-identifier" to exist in the graph projection
-    And I expect the Node "node-identifier" to have the properties:
+    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
+    And I expect this node to have the properties:
       | Key  | Value    |
       | text | Modified |
 
@@ -130,24 +127,20 @@ Feature: Workspace based content publishing
 
     When the command "SetNodeProperty" is executed with payload:
       | Key                       | Value                                                  |
-      | contentStreamIdentifier   | "cs-2-identifier"                                      |
-      | nodeAggregateIdentifier   | "na-identifier"                                        |
+      | contentStreamIdentifier   | "user-cs-identifier"                                   |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                     |
       | originDimensionSpacePoint | {}                                                     |
       | propertyName              | "text"                                                 |
       | value                     | {"value":"Modified in user workspace","type":"string"} |
-
     And the graph projection is fully up to date
-
-    When the command "SetNodeProperty" is executed with payload:
+    And the command "SetNodeProperty" is executed with payload:
       | Key                       | Value                                                  |
       | contentStreamIdentifier   | "cs-identifier"                                        |
-      | nodeAggregateIdentifier   | "na-identifier"                                        |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                     |
       | originDimensionSpacePoint | {}                                                     |
       | propertyName              | "text"                                                 |
       | value                     | {"value":"Modified in live workspace","type":"string"} |
-
     And the graph projection is fully up to date
-
 
     # PUBLISHING without rebase: error
     When the command "PublishWorkspace" is executed with payload and exceptions are caught:
@@ -160,21 +153,16 @@ Feature: Workspace based content publishing
     When the command "RebaseWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
-
     And the graph projection is fully up to date
 
     And the command "PublishWorkspace" is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
-
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node "node-identifier" to exist in the graph projection
-    And I expect the Node "node-identifier" to have the properties:
+
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
+    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
       | Key  | Value                      |
       | text | Modified in user workspace |
-
-
-
-
