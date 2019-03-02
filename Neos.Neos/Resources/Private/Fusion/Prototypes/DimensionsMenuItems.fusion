@@ -1,8 +1,6 @@
 prototype(Neos.Neos:DimensionsMenuItems) < prototype(Neos.Neos:MenuItems)  {
  @class = 'Neos\\Neos\\Fusion\\DimensionsMenuItemsImplementation'
 
-	node = ${node}
-
 	# if documents which are hidden in index should be rendered or not
 	renderHiddenInIndex = true
 
