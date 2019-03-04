@@ -100,14 +100,15 @@ class AssetCollection
      * Add one asset to the asset collection
      *
      * @param Asset $asset
-     * @return boolean
+     * @return bool
      */
-    public function addAsset(Asset $asset)
+    public function addAsset(Asset $asset): bool
     {
-        if ($this->assets->contains($asset) === false) {
+        if ($asset->getAssetCollections()->contains($this) === false) {
             $this->assets->add($asset);
             return true;
         }
+
         return false;
     }
 
@@ -115,11 +116,11 @@ class AssetCollection
      * Remove one asset from the asset collection
      *
      * @param Asset $asset
-     * @return boolean
+     * @return bool
      */
-    public function removeAsset(Asset $asset)
+    public function removeAsset(Asset $asset): bool
     {
-        if ($this->assets->contains($asset) === true) {
+        if ($asset->getAssetCollections()->contains($this) === false) {
             $this->assets->removeElement($asset);
             return true;
         }
