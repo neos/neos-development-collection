@@ -1601,7 +1601,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $referenceNodeDimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($referenceNodeDimensions);
         $thisDimensions = $this->getDimensions();
         $thisNodeDimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($thisDimensions);
-        if ($detachedCopy === false && $referenceNodeDimensionsHash !== $thisNodeDimensionsHash && $referenceNode->getContext()->getNodeByIdentifier($this->getIdentifier()) === null) {
+        if ($detachedCopy === false && $referenceNode->getIdentifier() === $this->getParent()->getIdentifier() && $referenceNodeDimensionsHash !== $thisNodeDimensionsHash && $referenceNode->getContext()->getNodeByIdentifier($this->getIdentifier()) === null) {
             // If the target dimensions are different than this one, and there is no node shadowing this one in the target dimension yet, we use the same
             // node identifier, effectively creating a new node variant.
             $identifier = $this->getIdentifier();
