@@ -18,7 +18,7 @@ Feature: Copy node with dimension support
     And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
-  Scenario: Copying a non-aggregate node creates a node variant in the other dimension if the node does not exist in the target dimension.
+  Scenario: Copying a non-aggregate node on different parent nodes creates not a node variant.
     When I get a node by path "/sites/content-repository/company/main/two-col/column0/text0" with the following context:
       | Language   | Workspace  |
       | en, mul_ZZ | user-admin |
@@ -32,8 +32,24 @@ Feature: Copy node with dimension support
     When I get a node by identifier "864b6a8c-6442-11e4-8791-14109fd7a2dd" with the following context:
       | Language   | Workspace  |
       | de, mul_ZZ | user-admin |
-    Then I should have one node
+    Then I should have 0 nodes
 
+  @fixtures
+  Scenario: Copying a non-aggregate node on same parent node creates a node variant in the other dimension if the node does not exist in the target dimension.
+    When I get a node by path "/sites/content-repository/company/main/two-col/column0/text0" with the following context:
+      | Language   | Workspace  |
+      | en, mul_ZZ | user-admin |
+    And I copy the node into path "/sites/content-repository/company/main/two-col/column0" with the following context:
+      | Language   | Workspace  |
+      | de, mul_ZZ | user-admin |
+    When I get a node by path "/sites/content-repository/company/main/two-col/column0/text0-1" with the following context:
+      | Language   | Workspace  |
+      | de, mul_ZZ | user-admin |
+    Then I should have one node
+    When I get a node by identifier "864b6a8c-6442-11e4-8791-14109fd7a2dd" with the following context:
+      | Language   | Workspace  |
+      | de, mul_ZZ | user-admin |
+    Then I should have one node
 
   @fixtures
   Scenario: Copying a non-aggregate node does a detached copy if the node exists already in the target dimension
