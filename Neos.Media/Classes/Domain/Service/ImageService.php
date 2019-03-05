@@ -87,12 +87,13 @@ class ImageService
     /**
      * @param PersistentResource $originalResource
      * @param array $adjustments
+     * @param string $format
      * @return array resource, width, height as keys
      * @throws ImageFileException
      * @throws InvalidConfigurationException
      * @throws Exception
      */
-    public function processImage(PersistentResource $originalResource, array $adjustments)
+    public function processImage(PersistentResource $originalResource, array $adjustments, string $format = null)
     {
         $additionalOptions = [];
         $adjustmentsApplied = false;
@@ -112,7 +113,7 @@ class ImageService
 
         $resourceUri = $originalResource->createTemporaryLocalCopy();
 
-        $resultingFileExtension = $originalResource->getFileExtension();
+        $resultingFileExtension = $format ?: $originalResource->getFileExtension();
         $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.' . $resultingFileExtension;
 
         if (!file_exists($resourceUri)) {
@@ -176,7 +177,7 @@ class ImageService
             unlink($transformedImageTemporaryPathAndFilename);
 
             $pathInfo = UnicodeFunctions::pathinfo($originalResource->getFilename());
-            $resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $imageSize->getWidth(), $imageSize->getHeight(), $pathInfo['extension']));
+            $resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $imageSize->getWidth(), $imageSize->getHeight(), $resultingFileExtension));
         } else {
             $originalResourceStream = $originalResource->getStream();
             $resource = $this->resourceManager->importResource($originalResourceStream, $originalResource->getCollectionName());
