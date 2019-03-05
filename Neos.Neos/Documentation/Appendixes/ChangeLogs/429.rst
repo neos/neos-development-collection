@@ -1,0 +1,44 @@
+`4.2.9 (2019-03-05) <https://github.com/neos/neos-development-collection/releases/tag/4.2.9>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Improve performance in findOneByResourceSha1 <https://github.com/neos/neos-development-collection/pull/2383>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+AssetRepository::findOneByResourceSha1 forced case innsensitivity on the
+SHA1 hash of the resource, so the query builder uses MySQL "LOWER"
+function in its generated query, and as such the index cannot be used
+in the intended way. Now we are just relying on sha1 to create lower
+cased hash values.
+
+* Packages: ``Media``
+
+`BUGFIX: Improve performance in assetCollection operations <https://github.com/neos/neos-development-collection/pull/2376>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+This changes how it is checked if an asset is contained
+in an asset collection in order to improve performance.
+
+It changes the complexity of O(n) while n is the amount of assets in an asset collection to O(n) where n is the amount of collections of an asset with the assumption that an asset has far less collections than a collection has assets.
+
+close #2375 
+
+* Packages: ``BaseMixins`` ``Media`` ``Neos``
+
+`BUGFIX: Avoid server-error when invalid/deleted identifiers are passed to the node service <https://github.com/neos/neos-development-collection/pull/2365>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+When invalid node-identifiers, are passed to the node-service it mapped the list of identifier to the getNodeByIdentifier call, which rightly returned null. This is triggered especially in the LinkEditor when nodes are referenced that have been deleted in the meantime.
+
+Since the result was not filtered the list containing a mix of null-values and nodeInterfaces is passed to the template of the nodeService where an error is triggered inside the `neos:node.closestDocument` view helper. 
+
+This error in turn triggers the ui showing a red error box with the html content of the server-error that confused editors and is not helpful at all. 
+
+The fix applies array_filter to the nodes array to avoid passing `null` nodes to the template.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.2.8...4.2.9>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
