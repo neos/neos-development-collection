@@ -75,7 +75,7 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
                 )
             ];
 
-            $processedImageInfo = $this->imageService->processImage($thumbnail->getOriginalAsset()->getResource(), $adjustments);
+            $processedImageInfo = $this->imageService->processImage($thumbnail->getOriginalAsset()->getResource(), $adjustments, $thumbnail->getConfigurationValue('format'));
 
             $thumbnail->setResource($processedImageInfo['resource']);
             $thumbnail->setWidth($processedImageInfo['width']);
