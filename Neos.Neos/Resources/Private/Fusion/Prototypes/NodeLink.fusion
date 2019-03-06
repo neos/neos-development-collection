@@ -1,0 +1,37 @@
+# Renders an <a> tag based on Neos.Neos:NodeUri pointing to a node
+# The link text is the node label, unless overridden
+#
+prototype(Neos.Neos:NodeLink) < prototype(Neos.Fusion:Tag) {
+  node = null
+  additionalParams = Neos.Fusion:RawArray
+  arguments = Neos.Fusion:RawArray
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
+  addQueryString = false
+  absolute = false
+  baseNodeName = 'documentNode'
+
+  @context {
+    node = ${this.node}
+    additionalParams = ${this.additionalParams}
+    arguments = ${this.arguments}
+    argumentsToBeExcludedFromQueryString = ${this.argumentsToBeExcludedFromQueryString}
+    addQueryString = ${this.addQueryString}
+    absolute = ${this.absolute}
+    baseNodeName = ${this.baseNodeName}
+  }
+
+  tagName = 'a'
+  attributes {
+    href = Neos.Neos:NodeUri {
+      node = ${node}
+      additionalParams = ${additionalParams}
+      arguments = ${arguments}
+      argumentsToBeExcludedFromQueryString = ${argumentsToBeExcludedFromQueryString}
+      addQueryString = ${addQueryString}
+      absolute = ${absolute}
+      baseNodeName = ${baseNodeName}
+    }
+  }
+
+  content = ${node.label}
+}
