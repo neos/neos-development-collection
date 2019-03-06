@@ -66,10 +66,7 @@ class ThumbnailConfiguration
      */
     protected static $loggedDeprecation = false;
 
-    /**
-     * @var array<string>
-     */
-    protected static $allowedFormats = ['jpg', 'jpeg', 'gif', 'png', 'wbmp', 'xbm', 'webp', 'bmp'];
+
 
     /**
      * @param integer $width Desired width of the image
@@ -92,7 +89,7 @@ class ThumbnailConfiguration
         $this->allowUpScaling = $allowUpScaling ? (boolean)$allowUpScaling : false;
         $this->quality = $quality ? (integer)$quality : null;
         $this->async = $async ? (boolean)$async : false;
-        $this->format = in_array($format, self::$allowedFormats) ? $format : null;
+        $this->format = $format ? (string)$format : null;
     }
 
     /**
