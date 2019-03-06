@@ -108,6 +108,16 @@ class Thumbnail implements ImageInterface
     }
 
     /**
+     * Post persistence lifecycle callback
+     *
+     * @ORM\PostPersist
+     */
+    public function onPostPersist()
+    {
+        $this->emitThumbnailPersisted($this);
+    }
+
+    /**
      * Returns the Asset this thumbnail is derived from
      *
      * @return ImageInterface
@@ -219,6 +229,17 @@ class Thumbnail implements ImageInterface
      * @return void
      */
     protected function emitThumbnailCreated(Thumbnail $thumbnail)
+    {
+    }
+
+    /**
+     * Signals that a thumbnail was persisted.
+     *
+     * @Flow\Signal
+     * @param Thumbnail $thumbnail
+     * @return void
+     */
+    protected function emitThumbnailPersisted(Thumbnail $thumbnail)
     {
     }
 }
