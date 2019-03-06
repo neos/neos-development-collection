@@ -118,7 +118,7 @@ class ImageService
 
         $resourceUri = $originalResource->createTemporaryLocalCopy();
 
-        $resultingFileExtension = ($format && in_array($format, self::$allowedFormats)) ? $format : $originalResource->getFileExtension();
+        $resultingFileExtension = ($format !== null && in_array($format, self::$allowedFormats, true)) ? $format : $originalResource->getFileExtension();
         $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.' . $resultingFileExtension;
 
         if (!file_exists($resourceUri)) {
