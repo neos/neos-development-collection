@@ -134,7 +134,7 @@ class ImageUriImplementation extends AbstractFusionObject
      *
      * @return string|null
      */
-    public function getFormat()
+    public function getFormat(): ?string
     {
         return $this->fusionValue('format');
     }
