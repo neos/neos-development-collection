@@ -76,6 +76,11 @@ class ImageService
     protected $settings;
 
     /**
+     * @var array<string>
+     */
+    protected static $allowedFormats = ['jpg', 'jpeg', 'gif', 'png', 'wbmp', 'xbm', 'webp', 'bmp'];
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -113,7 +118,7 @@ class ImageService
 
         $resourceUri = $originalResource->createTemporaryLocalCopy();
 
-        $resultingFileExtension = $format ?: $originalResource->getFileExtension();
+        $resultingFileExtension = ($format && in_array($format, self::$allowedFormats)) ? $format : $originalResource->getFileExtension();
         $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.' . $resultingFileExtension;
 
         if (!file_exists($resourceUri)) {
