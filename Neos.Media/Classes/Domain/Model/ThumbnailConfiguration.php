@@ -66,8 +66,6 @@ class ThumbnailConfiguration
      */
     protected static $loggedDeprecation = false;
 
-
-
     /**
      * @param integer $width Desired width of the image
      * @param integer $maximumWidth Desired maximum width of the image
@@ -175,7 +173,7 @@ class ThumbnailConfiguration
     /**
      * @return string|null
      */
-    public function getFormat()
+    public function getFormat(): ?string
     {
         return $this->format;
     }
