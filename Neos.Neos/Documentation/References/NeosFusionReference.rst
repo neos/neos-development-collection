@@ -1037,7 +1037,9 @@ Get a URI to a (thumbnail) image for an asset.
 :maximumHeight: (integer) Desired maximum width of the image
 :allowCropping: (boolean) Whether the image should be cropped if the given sizes would hurt the aspect ratio, defaults to ``FALSE``
 :allowUpScaling: (boolean) Whether the resulting image size might exceed the size of the original image, defaults to ``FALSE``
-:async (boolean): Return asynchronous image URI in case the requested image does not exist already, defaults to ``FALSE``
+:async: (boolean) Return asynchronous image URI in case the requested image does not exist already, defaults to ``FALSE``
+:quality: (integer) Image quality, from 0 to 100
+:format: (string) Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
 :preset: (string) Preset used to determine image configuration, if set all other resize attributes will be ignored
 
 Example::

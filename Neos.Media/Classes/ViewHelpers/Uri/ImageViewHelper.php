@@ -74,8 +74,8 @@ class ImageViewHelper extends AbstractViewHelper
      * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
      * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
      * @param string $preset Preset used to determine image configuration
-     * @param integer $quality Quality of the image
-     * @param string $format Format for the image, if not specified same as source
+     * @param integer $quality Image quality, from 0 to 100
+     * @param string $format Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
      * @return string the relative image path, to be used as src attribute for <img /> tags
      */
     public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null, $quality = null, $format = null)
