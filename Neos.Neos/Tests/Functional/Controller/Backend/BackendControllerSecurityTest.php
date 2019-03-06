@@ -43,15 +43,32 @@ class BackendControllerSecurityTest extends FunctionalTestCase
 
         $account = $this->authenticateRoles(['Neos.Neos:Administrator']);
         $account->setAccountIdentifier('admin');
-        $this->browser->request('http://localhost/neos/login');
+        $this->browser->request('http://localhost/neos');
+
+        $this->assertSame(200, $this->browser->getLastResponse()->getStatusCode());
     }
 
     /**
      * @test
      */
-    public function indexActionIsDeniedForEverybody()
+    public function indexActionIsRedirectsToLoginIfNotAuthenticated()
     {
+        $this->browser->setFollowRedirects(false);
         $this->browser->request('http://localhost/neos/');
-        self::assertSame(403, $this->browser->getLastResponse()->getStatusCode());
+        $this->assertSame(303, $this->browser->getLastResponse()->getStatusCode());
+        $this->assertSame('http://localhost/neos/login', $this->browser->getLastResponse()->getHeader('Location'));
+    }
+
+    /**
+     * @test
+     */
+    public function indexActionIsRedirectsToLoginIfNoBackendAccess()
+    {
+        $account = $this->authenticateRoles(['Neos.Flow:Customer']);
+        $account->setAccountIdentifier('customer');
+        $this->browser->setFollowRedirects(false);
+        $this->browser->request('http://localhost/neos/');
+        $this->assertSame(303, $this->browser->getLastResponse()->getStatusCode());
+        $this->assertSame('http://localhost/neos/login', $this->browser->getLastResponse()->getHeader('Location'));
     }
 }

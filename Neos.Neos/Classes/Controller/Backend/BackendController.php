@@ -80,7 +80,7 @@ class BackendController extends ActionController
     {
         $redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->request);
         if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess') || $redirectionUri === null) {
-            $redirectionUri = $this->uriBuilder->uriFor('index', [], 'Login', 'Neos.Neos');
+            $redirectionUri = $this->uriBuilder->reset()->setCreateAbsoluteUri(true)->uriFor('index', [], 'Login', 'Neos.Neos');
         }
         $this->redirectToUri($redirectionUri);
     }
