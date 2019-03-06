@@ -56,6 +56,10 @@ Neos:
 
     thumbnailGenerators:
 
+      Neos\Media\Domain\Model\ThumbnailGenerator\ConvertImageThumbnailGenerator:
+        supportedExtensions:
+          - tiff
+        targetExtension: jpg
       Neos\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator:
         resolution: 120
         supportedExtensions:

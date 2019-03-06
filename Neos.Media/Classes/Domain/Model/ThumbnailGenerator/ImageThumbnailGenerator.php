@@ -75,7 +75,7 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
                 )
             ];
 
-            $processedImageInfo = $this->imageService->processImage($thumbnail->getOriginalAsset()->getResource(), $adjustments, $thumbnail->getConfigurationValue('format'));
+            $processedImageInfo = $this->imageService->processImage($thumbnail->getOriginalAsset()->getResource(), $adjustments, $this->getTargetFormat($thumbnail));
 
             $thumbnail->setResource($processedImageInfo['resource']);
             $thumbnail->setWidth($processedImageInfo['width']);
@@ -85,5 +85,14 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
             $message = sprintf('Unable to generate thumbnail for the given image (filename: %s, SHA1: %s)', $thumbnail->getOriginalAsset()->getResource()->getFilename(), $thumbnail->getOriginalAsset()->getResource()->getSha1());
             throw new Exception\NoThumbnailAvailableException($message, 1433109654, $exception);
         }
+    }
+
+    /**
+     * @param Thumbnail $thumbnail
+     * @return string|null
+     */
+    protected function getTargetFormat(Thumbnail $thumbnail): ?string
+    {
+        return $thumbnail->getConfigurationValue('format');
     }
 }
