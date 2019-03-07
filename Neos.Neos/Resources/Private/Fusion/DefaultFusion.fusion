@@ -9,6 +9,9 @@ include: Prototypes/Shortcut.fusion
 include: Prototypes/BreadcrumbMenu.fusion
 include: Prototypes/DimensionsMenu.fusion
 include: Prototypes/Menu.fusion
+include: Prototypes/MenuItems.fusion
+include: Prototypes/BreadcrumbMenuItems.fusion
+include: Prototypes/DimensionsMenuItems.fusion
 include: Prototypes/Plugin.fusion
 include: Prototypes/PluginView.fusion
 include: Prototypes/ConvertUris.fusion
