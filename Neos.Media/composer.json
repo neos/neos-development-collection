@@ -6,7 +6,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/imagine": "^3.0.2",
+        "neos/imagine": "^3.1.0",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/fluid-adaptor": "*",

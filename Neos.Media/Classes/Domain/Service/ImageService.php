@@ -76,6 +76,11 @@ class ImageService
     protected $settings;
 
     /**
+     * @var array<string>
+     */
+    protected static $allowedFormats = ['jpg', 'jpeg', 'gif', 'png', 'wbmp', 'xbm', 'webp', 'bmp'];
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -87,12 +92,13 @@ class ImageService
     /**
      * @param PersistentResource $originalResource
      * @param array $adjustments
+     * @param string $format
      * @return array resource, width, height as keys
      * @throws ImageFileException
      * @throws InvalidConfigurationException
      * @throws Exception
      */
-    public function processImage(PersistentResource $originalResource, array $adjustments)
+    public function processImage(PersistentResource $originalResource, array $adjustments, string $format = null)
     {
         $additionalOptions = [];
         $adjustmentsApplied = false;
@@ -112,7 +118,7 @@ class ImageService
 
         $resourceUri = $originalResource->createTemporaryLocalCopy();
 
-        $resultingFileExtension = $originalResource->getFileExtension();
+        $resultingFileExtension = ($format !== null && in_array($format, self::$allowedFormats, true)) ? $format : $originalResource->getFileExtension();
         $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.' . $resultingFileExtension;
 
         if (!file_exists($resourceUri)) {
@@ -176,7 +182,7 @@ class ImageService
             unlink($transformedImageTemporaryPathAndFilename);
 
             $pathInfo = UnicodeFunctions::pathinfo($originalResource->getFilename());
-            $resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $imageSize->getWidth(), $imageSize->getHeight(), $pathInfo['extension']));
+            $resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $imageSize->getWidth(), $imageSize->getHeight(), $resultingFileExtension));
         } else {
             $originalResourceStream = $originalResource->getStream();
             $resource = $this->resourceManager->importResource($originalResourceStream, $originalResource->getCollectionName());
@@ -219,6 +225,7 @@ class ImageService
             );
         }
         $defaultOptions['jpeg_quality'] = $quality;
+        $defaultOptions['webp_quality'] = $quality;
         // png_compression_level should be an integer between 0 and 9 and inverse to the quality level given. So quality 100 should result in compression 0.
         $defaultOptions['png_compression_level'] = (9 - ceil($quality * 9 / 100));
 

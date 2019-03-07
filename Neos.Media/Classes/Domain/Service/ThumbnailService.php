@@ -204,7 +204,8 @@ class ThumbnailService
             isset($presetConfiguration['allowCropping']) ? $presetConfiguration['allowCropping'] : false,
             isset($presetConfiguration['allowUpScaling']) ? $presetConfiguration['allowUpScaling'] : false,
             $async,
-            isset($presetConfiguration['quality']) ? $presetConfiguration['quality'] : null
+            isset($presetConfiguration['quality']) ? $presetConfiguration['quality'] : null,
+            isset($presetConfiguration['format']) ? $presetConfiguration['format'] : null
         );
         return $thumbnailConfiguration;
     }
