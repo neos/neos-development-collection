@@ -57,6 +57,11 @@ class ThumbnailConfiguration
     protected $async;
 
     /**
+     * @var string
+     */
+    protected $format;
+
+    /**
      * @var boolean
      */
     protected static $loggedDeprecation = false;
@@ -69,9 +74,10 @@ class ThumbnailConfiguration
      * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
      * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
      * @param integer $quality Quality of the processed image
+     * @param string $format Format for the image, only jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported.
      * @param boolean $async Whether the thumbnail can be generated asynchronously
      */
-    public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $quality = null)
+    public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $quality = null, $format = null)
     {
         $this->width = $width ? (integer)$width : null;
         $this->maximumWidth = $maximumWidth ? (integer)$maximumWidth : null;
@@ -81,6 +87,7 @@ class ThumbnailConfiguration
         $this->allowUpScaling = $allowUpScaling ? (boolean)$allowUpScaling : false;
         $this->quality = $quality ? (integer)$quality : null;
         $this->async = $async ? (boolean)$async : false;
+        $this->format = $format ? (string)$format : null;
     }
 
     /**
@@ -164,6 +171,14 @@ class ThumbnailConfiguration
     }
 
     /**
+     * @return string|null
+     */
+    public function getFormat(): ?string
+    {
+        return $this->format;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -175,7 +190,8 @@ class ThumbnailConfiguration
             'maximumHeight' => $this->getMaximumHeight(),
             'ratioMode' => $this->getRatioMode(),
             'allowUpScaling' => $this->isUpScalingAllowed(),
-            'quality' => $this->getQuality()
+            'quality' => $this->getQuality(),
+            'format' => $this->getFormat()
         ], function ($value) {
             return $value !== null;
         });
