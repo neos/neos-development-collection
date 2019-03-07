@@ -17,7 +17,8 @@ use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\Thumbnail;
 
 /**
- * A system-generated preview version of an Image
+ * A system-generated preview version of an Image with enforced format conversion
+ * to a configured targetFormat
  */
 class ConvertImageThumbnailGenerator extends ImageThumbnailGenerator
 {
@@ -42,8 +43,11 @@ class ConvertImageThumbnailGenerator extends ImageThumbnailGenerator
     }
 
     /**
+     * Determine whether a specific target format is required, returns the expected file extension
+     * as string or null if the same format as source should be used.
+     *
      * @param Thumbnail $thumbnail
-     * @return string|null
+     * @return string|null The file extension the generated image shall recieve
      */
     protected function getTargetFormat(Thumbnail $thumbnail): ?string
     {
