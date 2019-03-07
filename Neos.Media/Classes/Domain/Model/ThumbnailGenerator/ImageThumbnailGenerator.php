@@ -75,7 +75,8 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
                 )
             ];
 
-            $processedImageInfo = $this->imageService->processImage($thumbnail->getOriginalAsset()->getResource(), $adjustments, $this->getTargetFormat($thumbnail));
+            $targetFormat = $this->getTargetFormat($thumbnail);
+            $processedImageInfo = $this->imageService->processImage($thumbnail->getOriginalAsset()->getResource(), $adjustments, $targetFormat);
 
             $thumbnail->setResource($processedImageInfo['resource']);
             $thumbnail->setWidth($processedImageInfo['width']);
@@ -88,8 +89,11 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
     }
 
     /**
+     * Determine whether a specific target format is required, returns the expected file extension
+     * as string or null if the same format as source should be used.
+     *
      * @param Thumbnail $thumbnail
-     * @return string|null
+     * @return string|null The file extension the generated image shall recieve
      */
     protected function getTargetFormat(Thumbnail $thumbnail): ?string
     {
