@@ -203,6 +203,7 @@ class SiteImportService
             // so the workspace and site node are persisted before we import any nodes to it.
             $rootNode->getContext()->getWorkspace();
             $this->persistenceManager->persistAll();
+
             $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
             if ($sitesNode === null) {
                 $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));

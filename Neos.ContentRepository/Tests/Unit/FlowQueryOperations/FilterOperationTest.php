@@ -10,9 +10,11 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Eel\FlowQueryOperations\FilterOperation;
 
 /**
@@ -23,17 +25,18 @@ class FilterOperationTest extends UnitTestCase
     /**
      * @test
      */
-    public function filterWithIdentifierUsesNodeIdentifier()
+    public function filterWithIdentifierUsesNodeAggregateIdentifier()
     {
-        $node1 = $this->createMock(NodeInterface::class);
-        $node2 = $this->createMock(NodeInterface::class);
-        $node2->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-identifier-uuid'));
+        $node1 = $this->createMock(TraversableNodeInterface::class);
+        $node1->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('node1-identifier-uuid')));
+        $node2 = $this->createMock(TraversableNodeInterface::class);
+        $node2->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('node2-identifier-uuid')));
 
         $context = [$node1, $node2];
         $q = new FlowQuery($context);
 
         $operation = new FilterOperation();
-        $operation->evaluate($q, ['#node-identifier-uuid']);
+        $operation->evaluate($q, ['#node2-identifier-uuid']);
 
         $this->assertEquals([$node2], $q->getContext());
     }
@@ -43,8 +46,8 @@ class FilterOperationTest extends UnitTestCase
      */
     public function filterWithNodeInstanceIsSupported()
     {
-        $node1 = $this->createMock(NodeInterface::class);
-        $node2 = $this->createMock(NodeInterface::class);
+        $node1 = $this->createMock(TraversableNodeInterface::class);
+        $node2 = $this->createMock(TraversableNodeInterface::class);
 
         $context = [$node1, $node2];
         $q = new FlowQuery($context);

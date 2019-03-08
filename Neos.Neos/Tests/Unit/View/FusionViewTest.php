@@ -10,6 +10,8 @@ namespace Neos\Neos\Tests\Unit\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Security\Context;
@@ -19,7 +21,6 @@ use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\Core\Runtime;
 
 /**
@@ -64,7 +65,7 @@ class FusionViewTest extends UnitTestCase
 
         $mockNode = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $this->mockContextualizedNode = $this->getMockBuilder(Node::class)->setMethods(['getContext'])->setConstructorArgs([$mockNode, $this->mockContext])->getMock();
-        $mockSiteNode = $this->createMock(NodeInterface::class);
+        $mockSiteNode = $this->createMock(TraversableNodeInterface::class);
 
         $this->mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
         $this->mockContext->expects($this->any())->method('getDimensions')->will($this->returnValue([]));
@@ -130,7 +131,7 @@ class FusionViewTest extends UnitTestCase
 
         $mockNode = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $mockContextualizedNode = $this->getMockBuilder(Node::class)->setMethods(['getContext'])->setConstructorArgs([$mockNode, $mockContext])->getMock();
-        $mockSiteNode = $this->createMock(NodeInterface::class);
+        $mockSiteNode = $this->createMock(TraversableNodeInterface::class);
 
         $mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
         $mockContext->expects($this->any())->method('getDimensions')->will($this->returnValue([]));

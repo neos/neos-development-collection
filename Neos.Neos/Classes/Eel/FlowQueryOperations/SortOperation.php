@@ -11,10 +11,9 @@ namespace Neos\Neos\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "sort" operation working on ContentRepository nodes.
@@ -22,7 +21,6 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
  */
 class SortOperation extends AbstractOperation
 {
-
     /**
      * {@inheritdoc}
      *
@@ -51,10 +49,11 @@ class SortOperation extends AbstractOperation
      *
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation.
-     * @return mixed
+     * @throws \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
+        /** @var array|NodeInterface[] $nodes */
         $nodes = $flowQuery->getContext();
 
         // Check sort property
@@ -76,7 +75,6 @@ class SortOperation extends AbstractOperation
         $nodesByIdentifier = [];
 
         // Determine the property value to sort by
-        /** @var Node $node */
         foreach ($nodes as $node) {
             if ($sortProperty[0] === '_') {
                 $propertyValue = \Neos\Utility\ObjectAccess::getPropertyPath($node, substr($sortProperty, 1));
