@@ -61,20 +61,18 @@ class RouteCacheAspect
                 'invisibleContentShown' => true
             ]);
 
+            /** @var NodeInterface $node */
             $node = $context->getNode($contextPathPieces['nodePath']);
             if (!$node instanceof NodeInterface) {
                 return;
             }
 
             $values['node-identifier'] = $node->getIdentifier();
-            $node = $node->getParent();
 
             $values['node-parent-identifier'] = [];
-            while ($node !== null) {
+            while ($node = $node->getParent()) {
                 $values['node-parent-identifier'][] = $node->getIdentifier();
-                $node = $node->getParent();
             }
-
             $joinPoint->setMethodArgument('values', $values);
         });
     }

@@ -11,10 +11,10 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "has" operation working on NodeInterface. Reduce the set of matched elements
@@ -47,7 +47,7 @@ class HasOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -56,6 +56,8 @@ class HasOperation extends AbstractOperation
      * @param FlowQuery $flowQuery
      * @param array $arguments
      * @return void
+     * @throws FizzleException
+     * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -88,13 +90,13 @@ class HasOperation extends AbstractOperation
                 throw new FizzleException('supplied argument for has operation not supported', 1332489625);
             }
             foreach ($elements as $element) {
-                if ($element instanceof NodeInterface) {
+                if ($element instanceof TraversableNodeInterface) {
                     $parentsQuery = new FlowQuery([$element]);
-                    /** @var NodeInterface $parent */
                     foreach ($parentsQuery->parents([])->get() as $parent) {
-                        /** @var NodeInterface $contextElement */
+                        /** @var TraversableNodeInterface $parent */
                         foreach ($context as $contextElement) {
-                            if ($contextElement->getIdentifier() === $parent->getIdentifier()) {
+                            /** @var TraversableNodeInterface $contextElement */
+                            if ($contextElement === $parent) {
                                 $filteredContext[] = $contextElement;
                             }
                         }

@@ -11,9 +11,10 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "parents" operation working on ContentRepository nodes. It iterates over all
@@ -44,7 +45,7 @@ class ParentsOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -53,22 +54,26 @@ class ParentsOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws NodeException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $output = [];
-        $outputNodePaths = [];
+        $parents = [];
+        $parentNodeAggregateIdentifiers = [];
+        /* @var TraversableNodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            while ($contextNode->getParent() !== null) {
-                $contextNode = $contextNode->getParent();
-                if (!isset($outputNodePaths[$contextNode->getPath()])) {
-                    $output[] = $contextNode;
-                    $outputNodePaths[$contextNode->getPath()] = true;
+            $node = $contextNode;
+            while (!$node->isRoot()) {
+                $node = $node->findParentNode();
+                if (isset($parentNodeAggregateIdentifiers[(string)$node->getNodeAggregateIdentifier()])) {
+                    continue;
                 }
+                $parents[] = $node;
+                $parentNodeAggregateIdentifiers[(string)$node->getNodeAggregateIdentifier()] = true;
             }
         }
 
-        $flowQuery->setContext($output);
+        $flowQuery->setContext($parents);
 
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $flowQuery->pushOperation('filter', $arguments);

@@ -11,10 +11,10 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "closest" operation working on ContentRepository nodes. For each node in the context,
@@ -45,7 +45,7 @@ class ClosestOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -54,6 +54,8 @@ class ClosestOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws FlowQueryException
+     * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -71,7 +73,8 @@ class ClosestOperation extends AbstractOperation
             $contextNodeQuery->pushOperation('add', [$parentsQuery->parents($arguments[0])->get()]);
 
             foreach ($contextNodeQuery as $result) {
-                $output[$result->getPath()] = $result;
+                /* @var TraversableNodeInterface $result */
+                $output[(string)$result->getNodeAggregateIdentifier()] = $result;
             }
         }
 

@@ -11,12 +11,14 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Utility\Files;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
@@ -34,6 +36,12 @@ class FusionService
      * @var Parser
      */
     protected $fusionParser;
+
+    /**
+     * @Flow\Inject
+     * @var SiteRepository
+     */
+    protected $siteRepository;
 
     /**
      * @Flow\Inject
@@ -104,13 +112,13 @@ class FusionService
     /**
      * Create a runtime for the given site node
      *
-     * @param NodeInterface $currentSiteNode
+     * @param TraversableNodeInterface $currentSiteNode
      * @param ControllerContext $controllerContext
      * @return Runtime
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
      */
-    public function createRuntime(NodeInterface $currentSiteNode, ControllerContext $controllerContext)
+    public function createRuntime(TraversableNodeInterface $currentSiteNode, ControllerContext $controllerContext)
     {
         $fusionObjectTree = $this->getMergedFusionObjectTree($currentSiteNode);
         $fusionRuntime = new Runtime($fusionObjectTree, $controllerContext);
@@ -120,15 +128,14 @@ class FusionService
     /**
      * Returns a merged Fusion object tree in the context of the given nodes
      *
-     * @param NodeInterface $startNode Node marking the starting point
+     * @param TraversableNodeInterface $startNode Node marking the starting point (i.e. the "Site" node)
      * @return array The merged object tree as of the given node
      * @throws \Neos\Neos\Domain\Exception
      * @throws \Neos\Fusion\Exception
      */
-    public function getMergedFusionObjectTree(NodeInterface $startNode)
+    public function getMergedFusionObjectTree(TraversableNodeInterface $startNode)
     {
-        $contentContext = $startNode->getContext();
-        $siteResourcesPackageKey = $contentContext->getCurrentSite()->getSiteResourcesPackageKey();
+        $siteResourcesPackageKey = $this->getSiteForSiteNode($startNode)->getSiteResourcesPackageKey();
 
         $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
         $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);
@@ -141,6 +148,15 @@ class FusionService
         $mergedFusionCode .= $this->getFusionIncludes($this->appendFusionIncludes);
 
         return $this->fusionParser->parse($mergedFusionCode, $siteRootFusionPathAndFilename);
+    }
+
+    /**
+     * @param TraversableNodeInterface $siteNode
+     * @return Site
+     */
+    protected function getSiteForSiteNode(TraversableNodeInterface $siteNode)
+    {
+        return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
     }
 
     /**

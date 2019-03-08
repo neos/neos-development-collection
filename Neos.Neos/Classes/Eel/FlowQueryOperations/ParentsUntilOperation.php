@@ -11,9 +11,11 @@ namespace Neos\Neos\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Neos\Domain\Service\SiteService;
 
 /**
  * "parentsUntil" operation working on ContentRepository nodes. It iterates over all
@@ -45,7 +47,7 @@ class ParentsUntilOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -54,28 +56,29 @@ class ParentsUntilOperation extends AbstractOperation
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
      * @return void
+     * @throws \Neos\Eel\Exception
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = [];
-        $outputNodePaths = [];
+        $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $siteNode = $contextNode->getContext()->getCurrentSiteNode();
-            $parentNodes = $this->getParents($contextNode, $siteNode);
+            /** @var TraversableNodeInterface $contextNode */
+            $parentNodes = $this->getParents($contextNode);
             if (isset($arguments[0]) && !empty($arguments[0] && isset($parentNodes[0]))) {
                 $untilQuery = new FlowQuery([$parentNodes[0]]);
                 $untilQuery->pushOperation('closest', [$arguments[0]]);
-                $until = $untilQuery->get();
-            }
+                $until = $untilQuery->get()[0] ?? null;
 
-            if (isset($until) && is_array($until) && !empty($until) && isset($until[0])) {
-                $parentNodes = $this->getNodesUntil($parentNodes, $until[0]);
+                if ($until) {
+                    $parentNodes = $this->getNodesUntil($parentNodes, $until);
+                }
             }
 
             if (is_array($parentNodes)) {
                 foreach ($parentNodes as $parentNode) {
-                    if ($parentNode !== null && !isset($outputNodePaths[$parentNode->getPath()])) {
-                        $outputNodePaths[$parentNode->getPath()] = true;
+                    if ($parentNode !== null && !isset($outputNodeAggregateIdentifiers[(string) $parentNode->getNodeAggregateIdentifier()])) {
+                        $outputNodeAggregateIdentifiers[(string) $parentNode->getNodeAggregateIdentifier()] = true;
                         $output[] = $parentNode;
                     }
                 }
@@ -89,33 +92,47 @@ class ParentsUntilOperation extends AbstractOperation
         }
     }
 
-    protected function getParents(NodeInterface $contextNode, NodeInterface $siteNode)
+    /**
+     * @param TraversableNodeInterface $contextNode
+     * @return array|TraversableNodeInterface[]
+     * @todo Compare to node type Neos.Neos:Site instead of path once it is available
+     */
+    protected function getParents(TraversableNodeInterface $contextNode): array
     {
-        $parents = [];
-        while ($contextNode !== $siteNode && $contextNode->getParent() !== null) {
-            $contextNode = $contextNode->getParent();
-            $parents[] = $contextNode;
-        }
-        return $parents;
+        $ancestors = [];
+        $node = $contextNode;
+        do {
+            try {
+                $node = $node->findParentNode();
+            } catch (NodeException $exception) {
+                break;
+            }
+            if ($node->findNodePath() === SiteService::SITES_ROOT_PATH) {
+                break;
+            }
+            $ancestors[] = $node;
+        } while (true);
+        return $ancestors;
     }
 
     /**
-     * @param array $parentNodes the parent nodes
-     * @param NodeInterface $until
-     * @return array
+     * @param array|TraversableNodeInterface $parentNodes the parent nodes
+     * @param TraversableNodeInterface $until
+     * @return array|TraversableNodeInterface[]
      */
-    protected function getNodesUntil($parentNodes, NodeInterface $until)
+    protected function getNodesUntil(array $parentNodes, TraversableNodeInterface $until): array
     {
         $count = count($parentNodes) - 1;
 
         for ($i = $count; $i >= 0; $i--) {
-            if ($parentNodes[$i]->getPath() === $until->getPath()) {
+            if ($parentNodes[$i] === $until) {
                 unset($parentNodes[$i]);
                 return array_values($parentNodes);
             } else {
                 unset($parentNodes[$i]);
             }
         }
+
         return array_values($parentNodes);
     }
 }

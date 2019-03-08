@@ -98,6 +98,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
 
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $contentContext = $this->contextFactory->create(['workspaceName' => 'live']);
+        /** @var SiteImportService $siteImportService */
         $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile($this->fixtureFileName, $contentContext);
         $this->persistenceManager->persistAll();

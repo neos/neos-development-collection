@@ -10,12 +10,13 @@ namespace Neos\Neos\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodePath;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Eel\FlowQueryOperations\ParentsOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Service\Context;
 
 /**
  * Testcase for the FlowQuery ParentsOperation
@@ -24,21 +25,21 @@ class ParentsOperationTest extends UnitTestCase
 {
     /**
      * @test
+     * @throws \ReflectionException
+     * @throws \Neos\Eel\Exception
      */
     public function parentsWillReturnTheSiteNodeAsRootLevelParent()
     {
-        $siteNode = $this->createMock(NodeInterface::class);
-        $firstLevelNode = $this->createMock(NodeInterface::class);
-        $secondLevelNode = $this->createMock(NodeInterface::class);
+        $siteNode = $this->createMock(TraversableNodeInterface::class);
+        $firstLevelNode = $this->createMock(TraversableNodeInterface::class);
+        $secondLevelNode = $this->createMock(TraversableNodeInterface::class);
 
-        $siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
-        $mockContext = $this->getMockBuilder(\Neos\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
-        $mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($siteNode));
-        $firstLevelNode->expects($this->any())->method('getParent')->will($this->returnValue($siteNode));
-        $firstLevelNode->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));
-        $secondLevelNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
-        $secondLevelNode->expects($this->any())->method('getParent')->will($this->returnValue($firstLevelNode));
-        $secondLevelNode->expects($this->any())->method('getPath')->will($this->returnValue('/site/first/second'));
+        $siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/sites/site')));
+        $siteNode->expects($this->any())->method('findParentNode')->will($this->throwException(new NodeException('No parent')));
+        $firstLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($siteNode));
+        $firstLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/sites/site/first')));
+        $secondLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($firstLevelNode));
+        $secondLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/sites/site/first/second')));
 
         $context = [$secondLevelNode];
         $q = new FlowQuery($context);
@@ -46,28 +47,7 @@ class ParentsOperationTest extends UnitTestCase
         $operation = new ParentsOperation();
         $operation->evaluate($q, []);
 
-        $output = $q->getContext();
-        $this->assertEquals([$siteNode, $firstLevelNode], $output);
-    }
-
-    /**
-     * @test
-     */
-    public function canEvaluateChecksForContentContext()
-    {
-        $operation = new ParentsOperation();
-
-        $mockNode = $this->createMock(NodeInterface::class);
-        $mockContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
-        $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
-        $context = [$mockNode];
-
-        $this->assertTrue($operation->canEvaluate($context), 'Must accept ContentContext');
-
-        $mockNode = $this->createMock(NodeInterface::class);
-        $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
-        $context = [$mockNode];
-        $this->assertFalse($operation->canEvaluate($context), 'Must not accept Context');
+        $ancestors = $q->getContext();
+        $this->assertEquals([$siteNode, $firstLevelNode], $ancestors);
     }
 }
