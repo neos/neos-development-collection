@@ -9,13 +9,13 @@ prototype(Neos.Neos:NodeUri) {
     subgraph = ${subgraph}
 }
 
-prototype(Neos.Neos:DimensionsMenu) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\DimensionsMenuImplementation'
+prototype(Neos.Neos:DimensionsMenuItems) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\DimensionsMenuItemsImplementation'
     subgraph = ${subgraph}
 }
 
-prototype(Neos.Neos:Menu) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\MenuImplementation'
+prototype(Neos.Neos:MenuItems) {
+    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\MenuItemsImplementation'
     subgraph = ${subgraph}
 }
 prototype(Neos.NodeTypes.Navigation:Navigation) {
