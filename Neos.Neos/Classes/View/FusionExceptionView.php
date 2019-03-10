@@ -17,6 +17,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Mvc\View\AbstractView;
+use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Fusion\Core\Runtime as FusionRuntime;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -35,7 +36,6 @@ use Neos\Flow\Mvc\Controller\Arguments;
 
 class FusionExceptionView extends AbstractView implements ViewInterface
 {
-
     /**
      * This contains the supported options, their default values, descriptions and types.
      * @var array
@@ -93,7 +93,8 @@ class FusionExceptionView extends AbstractView implements ViewInterface
 
     /**
      * @return string
-     * @throws \Neos\Flow\Security\Exception
+     * @throws \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
+     * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
      */
     public function render()
@@ -173,7 +174,9 @@ class FusionExceptionView extends AbstractView implements ViewInterface
     /**
      * @param NodeInterface $currentSiteNode
      * @param ControllerContext $controllerContext
-     * @return \Neos\Fusion\Core\Runtime
+     * @return FusionRuntime
+     * @throws \Neos\Fusion\Exception
+     * @throws \Neos\Neos\Domain\Exception
      */
     protected function getFusionRuntime(NodeInterface $currentSiteNode, ControllerContext  $controllerContext): \Neos\Fusion\Core\Runtime
     {
