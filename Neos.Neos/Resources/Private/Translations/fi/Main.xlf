@@ -658,9 +658,15 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target xml:lang="fi" state="translated">Kirjautuminen on vanhentunut. Kirjaudu sisään uudelleen.</target></trans-unit>
       <!-- Error handlers -->
+      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
+				<source>Welcome to Neos</source>
+			<target xml:lang="fi" state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
 			<target xml:lang="fi" state="translated">Mene asennukseen</target></trans-unit>
+      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
+				<source>Technical Information</source>
+			<target xml:lang="fi" state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
 			<target xml:lang="fi" state="translated">Puuttuva Kotisivu</target></trans-unit>
@@ -673,12 +679,12 @@
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
 			<target xml:lang="fi" state="translated">Tietokantavirhe</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
-				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="fi" state="translated">Virhe tietokannassa. Tarkista lokitiedostot sijainnissa Data/Logs/* saadaksesi lisätietoja.</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
-				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="fi" state="translated">Määritä tai tarkista asennuksen tietokanta-asetukset.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
+				<source>There is no database connection yet or the Neos database schema has not been created.</source>
+			<target xml:lang="fi" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+				<source>Run the setup to configure your database.</source>
+			<target xml:lang="fi" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target xml:lang="fi" state="translated">Sivua ei löydy</target></trans-unit>
