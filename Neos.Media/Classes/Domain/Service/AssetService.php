@@ -30,6 +30,7 @@ use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
+use Neos\Media\Domain\ValueObject\Configuration\ImageVariantPreset;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\ThumbnailServiceException;
 use /** @noinspection PhpUndefinedClassInspection */
@@ -91,6 +92,30 @@ class AssetService
      * @var ImageService
      */
     protected $imageService;
+
+    /**
+     * @Flow\InjectConfiguration(path="imageVariantPresets", package="Neos.Media")
+     * @var array
+     */
+    protected $imageVariantPresetsConfiguration = [];
+
+    /**
+     * @var ImageVariantPreset[]
+     */
+    private $imageVariantPresets = [];
+
+    /**
+     * @return ImageVariantPreset[]
+     */
+    public function getImageVariantPresets(): array
+    {
+        if ($this->imageVariantPresets === [] && $this->imageVariantPresetsConfiguration !== []) {
+            foreach ($this->imageVariantPresetsConfiguration as $identifier => $configuration) {
+                $this->imageVariantPresets[$identifier] = ImageVariantPreset::fromConfiguration($configuration);
+            }
+        }
+        return $this->imageVariantPresets;
+    }
 
     /**
      * Returns the repository for an asset
