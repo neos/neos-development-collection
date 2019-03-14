@@ -12,21 +12,17 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A root node aggregate and its initial node were created
- *
  * @Flow\Proxy(false)
  */
-final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateTypeWasChanged implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -41,32 +37,21 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
     /**
      * @var NodeTypeName
      */
-    protected $nodeTypeName;
+    private $newNodeTypeName;
 
     /**
-     * Root nodes are by definition visible in *all* dimension space points; so we need to include the full list here.
-     *
-     * @var DimensionSpacePointSet
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeTypeName $newNodeTypeName
      */
-    private $visibleInDimensionSpacePoints;
-
-    /**
-     * @var UserIdentifier
-     */
-    private $initiatingUserIdentifier;
-
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeTypeName $nodeTypeName,
-        DimensionSpacePointSet $visibleInDimensionSpacePoints,
-        UserIdentifier $initiatingUserIdentifier
+        NodeTypeName $newNodeTypeName
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->nodeTypeName = $nodeTypeName;
-        $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
-        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->newNodeTypeName = $newNodeTypeName;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -79,29 +64,17 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
         return $this->nodeAggregateIdentifier;
     }
 
-    public function getNodeTypeName(): NodeTypeName
+    public function getNewNodeTypeName(): NodeTypeName
     {
-        return $this->nodeTypeName;
+        return $this->newNodeTypeName;
     }
 
-    public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
     {
-        return $this->visibleInDimensionSpacePoints;
-    }
-
-    public function getInitiatingUserIdentifier(): UserIdentifier
-    {
-        return $this->initiatingUserIdentifier;
-    }
-
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): RootNodeAggregateWithNodeWasCreated
-    {
-        return new RootNodeAggregateWithNodeWasCreated(
+        return new NodeAggregateTypeWasChanged(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
-            $this->nodeTypeName,
-            $this->visibleInDimensionSpacePoints,
-            $this->initiatingUserIdentifier
+            $this->newNodeTypeName
         );
     }
 }

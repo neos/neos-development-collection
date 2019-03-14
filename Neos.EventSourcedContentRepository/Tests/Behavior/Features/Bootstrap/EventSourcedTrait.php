@@ -784,8 +784,8 @@ trait EventSourcedTrait
                 ];
             case 'CreateNodeAggregateWithNode':
                 return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode::class,
-                    NodeCommandHandler::class,
+                    \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode::class,
+                    NodeAggregateCommandHandler::class,
                     'handleCreateNodeAggregateWithNode'
                 ];
             case 'ForkContentStream':
@@ -1191,9 +1191,6 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheProperties(string $nodeIdentifier, TableNode $expectedProperties)
     {
-        // TODO the following line is required in order to avoid cached results from previous calls
-        $this->contentGraph->resetCache();
-
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
@@ -1202,10 +1199,12 @@ trait EventSourcedTrait
 
     /**
      * @Then /^I expect the Node Aggregate "([^"]*)" to have the properties:$/
+     * @param $nodeAggregateIdentifier
+     * @param TableNode $expectedProperties
      */
     public function iExpectTheNodeAggregateToHaveTheProperties($nodeAggregateIdentifier, TableNode $expectedProperties)
     {
-        $this->currentNode = $this->contentGraphInterface
+        $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
         $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);

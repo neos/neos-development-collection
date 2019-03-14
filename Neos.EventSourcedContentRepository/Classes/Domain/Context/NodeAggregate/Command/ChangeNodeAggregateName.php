@@ -16,10 +16,11 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
-final class ChangeNodeAggregateName implements \JsonSerializable, CopyableAcrossContentStreamsInterface
+final class ChangeNodeAggregateName implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -70,17 +71,25 @@ final class ChangeNodeAggregateName implements \JsonSerializable, CopyableAcross
     {
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeIdentifier' => $this->nodeAggregateIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'newNodeName' => $this->newNodeName,
         ];
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
     {
-        return new ChangeNodeName(
+        return new ChangeNodeAggregateName(
             $targetContentStream,
-            $this->nodeIdentifier,
+            $this->nodeAggregateIdentifier,
             $this->newNodeName
+        );
+    }
+
+    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    {
+        return (
+            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
+            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
         );
     }
 }

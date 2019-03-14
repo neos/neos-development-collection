@@ -417,6 +417,19 @@ final class WorkspaceCommandHandler
         return $commands;
     }
 
+    /**
+     * @param $command
+     * @return CommandResult
+     * @throws \Neos\ContentRepository\Exception\NodeConstraintException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeNameIsAlreadyOccupied
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet
+     * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
     private function applyCommand($command): CommandResult
     {
         // TODO: use a more clever dispatching mechanism than the hard coded switch!!
@@ -425,11 +438,11 @@ final class WorkspaceCommandHandler
             case AddNodeToAggregate::class:
                 return $this->nodeCommandHandler->handleAddNodeToAggregate($command);
                 break;
-            case ChangeNodeName::class:
-                return $this->nodeCommandHandler->handleChangeNodeName($command);
+            case ChangeNodeAggregateName::class:
+                return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($command);
                 break;
             case CreateNodeAggregateWithNode::class:
-                return $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
+                return $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command);
                 break;
             case CreateRootNode::class:
                 return $this->nodeCommandHandler->handleCreateRootNode($command);
@@ -467,8 +480,14 @@ final class WorkspaceCommandHandler
      * This method is like a combined Rebase and Publish!
      *
      * @param Command\PublishIndividualNodesFromWorkspace $command
+     * @return CommandResult
      * @throws BaseWorkspaceDoesNotExist
+     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
      * @throws WorkspaceDoesNotExist
+     * @throws \Neos\ContentRepository\Exception\NodeException
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamAlreadyExists
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
+     * @throws \Exception
      */
     public function handlePublishIndividualNodesFromWorkspace(Command\PublishIndividualNodesFromWorkspace $command)
     {
@@ -556,40 +575,10 @@ final class WorkspaceCommandHandler
      * @param object $command
      * @param NodeAddress[] $nodeAddresses
      * @return bool
-     * @throws \Neos\ContentRepository\Exception\NodeException
+     * @throws \Exception
      */
     private function commandMatchesNodeAddresses(object $command, array $nodeAddresses): bool
     {
-        if ($command instanceof ChangeNodeName) {
-            // TODO: HACK as long as ChangeNodeName does not work with NodeAggregateIdentifier. As soon as ChangeNodeName includes NodeAggregateIdentifier, it can simply implement MatchableWithNodeAddressInterface; and this block can be removed.
-            $node = $this->contentGraph->findNodeByIdentifierInContentStream($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
-            foreach ($nodeAddresses as $nodeAddress) {
-                if (
-                    (string)$node->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-                    && $node->getOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
-                    && $node->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
-                ) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        if ($command instanceof SetNodeReferences) {
-            // TODO: HACK as long as SetNodeReferences does not work with NodeAggregateIdentifier. As soon as SetNodeReferences includes NodeAggregateIdentifier, it can simply implement MatchableWithNodeAddressInterface; and this block can be removed.
-            $node = $this->contentGraph->findNodeByIdentifierInContentStream($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
-            foreach ($nodeAddresses as $nodeAddress) {
-                if (
-                    (string)$node->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-                    && $node->getOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
-                    && $node->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
-                ) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         if (!$command instanceof MatchableWithNodeAddressInterface) {
             throw new \Exception(sprintf('Command %s needs to implememt MatchableWithNodeAddressInterface in order to be published individually.', get_class($command)));
         }

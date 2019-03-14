@@ -120,8 +120,6 @@ interface ContentGraphInterface
 
     public function countNodes(): int;
 
-    public function resetCache();
-
     /**
      * Enable all caches. All READ requests should enable the cache.
      * By default, caches are enabled!

@@ -7,12 +7,14 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
 /**
  * Create a named reference from source to destination node
  */
-final class SetNodeReferences implements \JsonSerializable, CopyableAcrossContentStreamsInterface
+final class SetNodeReferences implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -124,13 +126,23 @@ final class SetNodeReferences implements \JsonSerializable, CopyableAcrossConten
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new SetNodeReferences(
-            $targetContentStream,
-            $this->nodeIdentifier,
-            $this->propertyName,
-            $this->destinationNodeAggregateIdentifiers
+            $targetContentStreamIdentifier,
+            $this->sourceNodeAggregateIdentifier,
+            $this->sourceOriginDimensionSpacePoint,
+            $this->destinationNodeAggregateIdentifiers,
+            $this->referenceName
+        );
+    }
+
+    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    {
+        return (
+            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
+                && $this->getSourceOriginDimensionSpacePoint() === (string)$nodeAddress->getDimensionSpacePoint()
+                && $this->getSourceNodeAggregateIdentifier() === (string)$nodeAddress->getNodeAggregateIdentifier()
         );
     }
 }

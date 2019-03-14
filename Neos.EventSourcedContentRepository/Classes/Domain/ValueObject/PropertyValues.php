@@ -78,6 +78,16 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
         return count($this->values);
     }
 
+    public function getPlainValues(): array
+    {
+        $values = [];
+        foreach ($this->values as $propertyName => $propertyValue) {
+            $values[$propertyName] = $propertyValue->getValue();
+        }
+
+        return $values;
+    }
+
     public function jsonSerialize(): array
     {
         return $this->values;

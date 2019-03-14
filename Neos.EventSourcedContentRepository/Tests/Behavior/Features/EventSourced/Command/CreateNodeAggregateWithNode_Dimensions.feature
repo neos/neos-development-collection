@@ -45,7 +45,7 @@ Feature: Create node aggregate with node
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
 
-    Then I expect exactly 1 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
+    Then I expect exactly 1 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
     And event at index 0 is of type "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" with payload:
       | Key                           | Expected                                                          |
       | contentStreamIdentifier       | "cs-identifier"                                                   |

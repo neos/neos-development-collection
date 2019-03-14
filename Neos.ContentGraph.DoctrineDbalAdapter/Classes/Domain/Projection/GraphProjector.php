@@ -91,7 +91,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function reset(): void
     {
@@ -114,7 +114,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
     /**
      * @param Event\RootNodeAggregateWithNodeWasCreated $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     final public function whenRootNodeAggregateWithNodeWasCreated(Event\RootNodeAggregateWithNodeWasCreated $event)
     {
@@ -142,7 +142,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
     /**
      * @param Event\NodeAggregateWithNodeWasCreated $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
     {
@@ -169,10 +169,10 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     }
 
     /**
-     * @param Event\NodeNameWasChanged $event
-     * @throws \Exception
+     * @param Event\NodeAggregateNameWasChanged $event
+     * @throws \Throwable
      */
-    final public function whenNodeNameWasChanged(Event\NodeNameWasChanged $event)
+    final public function whenNodeAggregateNameWasChanged(Event\NodeAggregateNameWasChanged $event)
     {
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeUpdate('
@@ -182,11 +182,11 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                 SET
                   h.name = :newName
                 WHERE
-                    n.nodeidentifier = :nodeIdentifier
+                    n.nodeaggregateidentifier = :nodeAggregateIdentifier
                     and h.contentstreamidentifier = :contentStreamIdentifier
             ', [
                 'newName' => (string)$event->getNewNodeName(),
-                'nodeIdentifier' => (string)$event->getNodeIdentifier(),
+                'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
                 'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
             ]);
         });
@@ -232,7 +232,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
     /**
      * @param NodeWasAddedToAggregate $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     final public function whenNodeWasAddedToAggregate(NodeWasAddedToAggregate $event)
     {
@@ -290,11 +290,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
             $nodeAggregateIdentifier,
             $originDimensionSpacePoint->jsonSerialize(),
             $originDimensionSpacePoint->getHash(),
-            /*
-            array_map(function (ContentRepository\ValueObject\PropertyValue $propertyValue) {
-                return $propertyValue->getValue();
-            }, $propertyDefaultValuesAndTypes->getValues()),*/
-            iterator_to_array($propertyDefaultValuesAndTypes),
+            $propertyDefaultValuesAndTypes->getPlainValues(),
             $nodeTypeName,
             $nodeName
         );
@@ -459,7 +455,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
     /**
      * @param ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function whenContentStreamWasForked(ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event)
     {
@@ -519,7 +515,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
     /**
      * @param NodePropertyWasSet $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodePropertyWasSet(NodePropertyWasSet $event)
     {
@@ -566,7 +562,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
     /**
      * @param NodeWasHidden $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodeWasHidden(NodeWasHidden $event)
     {
@@ -633,7 +629,7 @@ insert into neos_contentgraph_restrictionedge
 
     /**
      * @param NodeWasShown $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodeWasShown(NodeWasShown $event)
     {
@@ -642,6 +638,12 @@ insert into neos_contentgraph_restrictionedge
         });
     }
 
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePointSet $affectedDimensionSpacePoints
+     * @throws \Doctrine\DBAL\DBALException
+     */
     private function removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
     {
         $this->getDatabaseConnection()->executeUpdate('
@@ -707,6 +709,11 @@ insert into neos_contentgraph_restrictionedge
             ]);
     }
 
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @throws \Doctrine\DBAL\DBALException
+     */
     private function removeAllRestrictionEdgesUnderneathNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
     {
         $this->getDatabaseConnection()->executeUpdate('
@@ -856,6 +863,10 @@ insert into neos_contentgraph_restrictionedge
         });
     }
 
+    /**
+     * @param NodeInAggregateWasTranslated $event
+     * @throws \Throwable
+     */
     public function whenNodeInAggregateWasTranslated(NodeInAggregateWasTranslated $event)
     {
         $this->transactional(function () use ($event) {
@@ -964,7 +975,7 @@ insert into neos_contentgraph_restrictionedge
 
     /**
      * @param NodesWereRemovedFromAggregate $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodesWereRemovedFromAggregate(NodesWereRemovedFromAggregate $event)
     {
@@ -981,7 +992,7 @@ insert into neos_contentgraph_restrictionedge
 
     /**
      * @param NodeAggregateWasRemoved $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event)
     {
@@ -997,6 +1008,10 @@ insert into neos_contentgraph_restrictionedge
         });
     }
 
+    /**
+     * @param HierarchyRelation $inboundRelation
+     * @throws \Doctrine\DBAL\DBALException
+     */
     protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(HierarchyRelation $inboundRelation)
     {
         $inboundRelation->removeFromDatabase($this->getDatabaseConnection());
@@ -1057,14 +1072,14 @@ insert into neos_contentgraph_restrictionedge
         $this->emitProjectionUpdated();
     }
 
-
     /**
-     * @param ContentRepository\Context\Node\Event\CopyableAcrossContentStreamsInterface $event
+     * @param ContentRepository\Context\Node\CopyableAcrossContentStreamsInterface $event
      * @param callable $operations
      * @return mixed
      * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
      */
-    protected function updateNodeWithCopyOnWrite(ContentRepository\Context\Node\Event\CopyableAcrossContentStreamsInterface $event, callable $operations)
+    protected function updateNodeWithCopyOnWrite(ContentRepository\Context\Node\CopyableAcrossContentStreamsInterface $event, callable $operations)
     {
         // TODO: does this always return a SINGLE anchor point??
         switch (get_class($event)) {
@@ -1143,6 +1158,10 @@ insert into neos_contentgraph_restrictionedge
         return $this->client->getConnection();
     }
 
+    /**
+     * @param EventEnvelope $eventEnvelope
+     * @throws \Neos\Cache\Exception
+     */
     public function afterInvoke(EventEnvelope $eventEnvelope): void
     {
         $this->processedEventsCache->set(md5($eventEnvelope->getRawEvent()->getIdentifier()), true);

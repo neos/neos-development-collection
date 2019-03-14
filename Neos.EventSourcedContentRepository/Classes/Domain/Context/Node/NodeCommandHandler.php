@@ -115,31 +115,6 @@ final class NodeCommandHandler
     protected $readSideMemoryCacheManager;
 
     /**
-     * @param CreateNodeAggregateWithNode $command
-     * @return CommandResult
-     */
-    public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
-    {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        $events = null;
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
-            $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
-
-            $events = $this->nodeAggregateWithNodeWasCreatedFromCommand($command);
-
-            foreach ($events as $event) {
-                /** @var NodeAggregateWithNodeWasCreated $undecoratedEvent */
-                $undecoratedEvent = EventDecoratorUtilities::extractUndecoratedEvent($event);
-                // TODO Use a node aggregate aggregate and let that one publish the events
-                $streamName = StreamName::fromString($contentStreamStreamName . ':NodeAggregate:' . $undecoratedEvent->getNodeAggregateIdentifier());
-                $this->nodeEventPublisher->publish($streamName, $event, ExpectedVersion::NO_STREAM);
-            }
-        });
-        return CommandResult::fromPublishedEvents($events);
-    }
-
-    /**
      * Create events for adding a node aggregate with node, including all auto-created child node aggregates with nodes (recursively)
      *
      * @param CreateNodeAggregateWithNode $command
@@ -387,7 +362,8 @@ final class NodeCommandHandler
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node exists
-            $this->assertNodeWithOriginDimensionSpacePointExists($contentStreamIdentifier, $command->getNodeAggregateIdentifier(), $command->getOriginDimensionSpacePoint());
+            // @todo: this must also work when creating a copy on write
+            #$this->assertNodeWithOriginDimensionSpacePointExists($contentStreamIdentifier, $command->getNodeAggregateIdentifier(), $command->getOriginDimensionSpacePoint());
 
             $events = DomainEvents::withSingleEvent(
                 EventWithIdentifier::create(

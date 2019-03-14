@@ -16,9 +16,12 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
 /**
  * CreateNodeAggregateWithNode command
@@ -27,7 +30,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  * The node will be appended as child node of the given `parentNodeIdentifier` which must be visible in the given
  * `dimensionSpacePoint`.
  */
-final class CreateNodeAggregateWithNode implements \JsonSerializable
+final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * The identifier of the content stream this command is to be handled in
@@ -222,5 +225,30 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable
             'initialPropertyValues' => $this->initialPropertyValues,
             'autoCreatedDescendantNodeAggregateIdentifiers' => $this->autoCreatedDescendantNodeAggregateIdentifiers
         ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    {
+        return new CreateNodeAggregateWithNode(
+            $targetContentStreamIdentifier,
+            $this->nodeAggregateIdentifier,
+            $this->nodeTypeName,
+            $this->originDimensionSpacePoint,
+            $this->initiatingUserIdentifier,
+            $this->parentNodeAggregateIdentifier,
+            $this->succeedingSiblingNodeAggregateIdentifier,
+            $this->nodeName,
+            $this->initialPropertyValues,
+            $this->autoCreatedDescendantNodeAggregateIdentifiers
+        );
+    }
+
+    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    {
+        return (
+            (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
+                && (string)$this->nodeAggregateIdentifier === (string)$nodeAddress->getNodeAggregateIdentifier()
+                && $this->originDimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint())
+        );
     }
 }

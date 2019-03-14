@@ -182,23 +182,19 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param Domain\Service\Context|null $context
      * @return NodeAggregate|null
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findNodeAggregateByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        Domain\Service\Context $context = null
+        NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeAggregate {
         $connection = $this->client->getConnection();
 
         $query = 'SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
-                      INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                      JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                       WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
                       AND h.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
@@ -211,8 +207,8 @@ final class ContentGraph implements ContentGraphInterface
             return null;
         }
 
-        $rawNodeTypeName = null;
-        $rawNodeName = null;
+        $rawNodeTypeName = '';
+        $rawNodeName = '';
         $nodes = [];
         foreach ($nodeRows as $nodeRow) {
             if (!$rawNodeTypeName) {
@@ -225,7 +221,7 @@ final class ContentGraph implements ContentGraphInterface
             } elseif ($nodeRow['name'] !== $rawNodeName) {
                 throw new Domain\Context\Node\NodeAggregatesNameIsAmbiguous('Node aggregate "' . $nodeAggregateIdentifier . '" has an ambiguous name.', 1519919025);
             }
-            $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
+            $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
         }
 
         return new NodeAggregate($nodeAggregateIdentifier, NodeTypeName::fromString($rawNodeTypeName), $rawNodeName ? NodeName::fromString($rawNodeName) : null, $nodes);

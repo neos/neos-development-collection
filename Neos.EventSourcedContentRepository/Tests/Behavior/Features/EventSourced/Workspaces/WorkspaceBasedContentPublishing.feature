@@ -164,16 +164,16 @@ Feature: Workspace based content publishing
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
+    And I expect this node to have the properties:
       | Key  | Value                      |
       | text | Modified in user workspace |
-
 
   Scenario: modify the property in the nested workspace, publish, modify again and publish again (e.g. a workspace can be re-used after publishing for other changes)
 
     When the command "SetNodeProperty" is executed with payload:
       | Key                       | Value                                |
-      | contentStreamIdentifier   | "cs-2-identifier"                    |
-      | nodeAggregateIdentifier   | "na-identifier"                      |
+      | contentStreamIdentifier   | "user-cs-identifier"                 |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                   |
       | originDimensionSpacePoint | {}                                   |
       | propertyName              | "text"                               |
       | value                     | {"value":"Modified","type":"string"} |
@@ -190,7 +190,7 @@ Feature: Workspace based content publishing
     When the command "SetNodeProperty" is executed with payload:
       | Key                       | Value                                     |
       | contentStreamIdentifier   | $this->contentStreamIdentifier            |
-      | nodeAggregateIdentifier   | "na-identifier"                           |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                        |
       | originDimensionSpacePoint | {}                                        |
       | propertyName              | "text"                                    |
       | value                     | {"value":"Modified anew","type":"string"} |
@@ -204,7 +204,7 @@ Feature: Workspace based content publishing
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
-    Then I expect a node "node-identifier" to exist in the graph projection
-    And I expect the Node "node-identifier" to have the properties:
+    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
+    And I expect this node to have the properties:
       | Key  | Value         |
       | text | Modified anew |
