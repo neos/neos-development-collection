@@ -60,4 +60,30 @@ class AssetServiceTest extends UnitTestCase
         $repository = $mockAssetService->_call('getRepository', $mockAsset);
         $this->assertInstanceOf($expectedRepositoryClassName, $repository);
     }
+
+    /**
+     * @test
+     */
+    public function getImageVariantPresetsReturnsConfiguration(): void
+    {
+        $configuration = [
+            'Flownative.Demo:Preset1' => [
+                'label' => 'Demo Preset 1',
+                'variants' => []
+            ],
+            'Flownative.Demo:Preset2' => [
+                'label' => 'Demo Preset 2',
+                'variants' => []
+            ]
+        ];
+
+        $assetService = new AssetService();
+        $this->inject($assetService, 'imageVariantPresetsConfiguration', $configuration);
+
+        $presets = $assetService->getImageVariantPresets();
+        self::assertArrayHasKey('Flownative.Demo:Preset1', $presets);
+        self::assertSame($configuration['Flownative.Demo:Preset1']['label'], (string)$presets['Flownative.Demo:Preset1']->label());
+        self::assertArrayHasKey('Flownative.Demo:Preset2', $presets);
+        self::assertSame($configuration['Flownative.Demo:Preset2']['label'], (string)$presets['Flownative.Demo:Preset2']->label());
+    }
 }

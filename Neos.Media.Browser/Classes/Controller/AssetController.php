@@ -41,6 +41,7 @@ use Neos\Media\Domain\Model\AssetSource\Neos\NeosAssetProxy;
 use Neos\Media\Domain\Model\AssetSource\SupportsCollectionsInterface;
 use Neos\Media\Domain\Model\AssetSource\SupportsSortingInterface;
 use Neos\Media\Domain\Model\AssetSource\SupportsTaggingInterface;
+use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -143,6 +144,12 @@ class AssetController extends ActionController
      * @var AssetSourceInterface[]
      */
     protected $assetSources = [];
+
+    /**
+     * @Flow\InjectConfiguration(path="imageProfiles", package="Neos.Media")
+     * @var array
+     */
+    protected $imageProfilesConfiguration;
 
     /**
      * @return void
@@ -374,10 +381,47 @@ class AssetController extends ActionController
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
                 'contentPreview' => $contentPreview,
-                'assetSource' => $assetSource
+                'assetSource' => $assetSource,
+                'variantsTabFeatureEnabled' => $this->settings['features']['variantsTab']['enable']
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Asset not found');
+        } catch (AssetSourceConnectionExceptionInterface $e) {
+            $this->view->assign('connectionError', $e);
+        }
+    }
+
+    /**
+     * @param string $assetSourceIdentifier
+     * @param string $assetProxyIdentifier
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
+     */
+    public function variantsAction(string $assetSourceIdentifier, string $assetProxyIdentifier)
+    {
+        if (!isset($this->assetSources[$assetSourceIdentifier])) {
+            throw new \RuntimeException('Given asset source is not configured.', 1509632166);
+        }
+
+        $assetSource = $this->assetSources[$assetSourceIdentifier];
+        $assetProxyRepository = $assetSource->getAssetProxyRepository();
+
+        $imageProfiles = $this->imageProfilesConfiguration;
+
+        try {
+            $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
+            $asset = $this->persistenceManager->getObjectByIdentifier($assetProxy->getLocalAssetIdentifier(), Asset::class);
+
+            $originalAsset = ($asset instanceof AssetVariantInterface ? $asset->getOriginalAsset() : $asset);
+
+            $this->view->assignMultiple([
+                'assetProxy' => $assetProxy,
+                'asset' => $originalAsset,
+                'assetSource' => $assetSource,
+                'imageProfiles' => $imageProfiles
+            ]);
+        } catch (AssetNotFoundExceptionInterface $e) {
+            $this->throwStatus(404, 'Original asset not found');
         } catch (AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
         }
