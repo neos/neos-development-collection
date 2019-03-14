@@ -182,7 +182,6 @@ final class ContentGraph implements ContentGraphInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeAggregate|null
-     * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
@@ -209,21 +208,105 @@ final class ContentGraph implements ContentGraphInterface
         $rawNodeTypeName = '';
         $rawNodeName = '';
         $nodes = [];
+        $occupiedDimensionSpacePoints = [];
+        $coveredDimensionSpacePoints = [];
+
+        $processedDimensionSpacePoints = [];
         foreach ($nodeRows as $nodeRow) {
-            if (!$rawNodeTypeName) {
-                $rawNodeTypeName = $nodeRow['nodetypename'];
-            } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeName) {
-                throw new Domain\Context\Node\NodeAggregatesTypeIsAmbiguous('Node aggregate "' . $nodeAggregateIdentifier . '" has an ambiguous type.', 1519815810);
+            if (!isset($processedDimensionSpacePoints[$nodeRow['origindimensionspacepointhash']])) {
+                $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
+                $occupiedDimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
+                if (empty($rawNodeAggregateIdentifier)) {
+                    $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
+                }
+                if (empty($rawNodeTypeName)) {
+                    $rawNodeTypeName = $nodeRow['nodetypename'];
+                }
+                if (empty($rawNodeName)) {
+                    $rawNodeName = $nodeRow['name'];
+                }
             }
-            if (!$rawNodeName) {
-                $rawNodeName = $nodeRow['name'];
-            } elseif ($nodeRow['name'] !== $rawNodeName) {
-                throw new Domain\Context\Node\NodeAggregatesNameIsAmbiguous('Node aggregate "' . $nodeAggregateIdentifier . '" has an ambiguous name.', 1519919025);
-            }
-            $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
+            $coveredDimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
         }
 
-        return new NodeAggregate($nodeAggregateIdentifier, NodeTypeName::fromString($rawNodeTypeName), $rawNodeName ? NodeName::fromString($rawNodeName) : null, $nodes);
+        return new NodeAggregate(
+            $nodeAggregateIdentifier,
+            NodeTypeName::fromString($rawNodeTypeName),
+            $rawNodeName ? NodeName::fromString($rawNodeName) : null,
+            $nodes,
+            new DimensionSpacePointSet($occupiedDimensionSpacePoints),
+            new DimensionSpacePointSet($coveredDimensionSpacePoints)
+        );
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
+     * @param DimensionSpacePoint $childOriginDimensionSpacePoint
+     * @return NodeAggregate|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     */
+    public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $childNodeAggregateIdentifier,
+        DimensionSpacePoint $childOriginDimensionSpacePoint
+    ): ?NodeAggregate {
+        $connection = $this->client->getConnection();
+
+        $query = 'SELECT p.*, ph.name, ph.contentstreamidentifier, ph.dimensionspacepoint FROM neos_contentgraph_node p
+                      INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
+                      INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
+                      INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint 
+                      WHERE c.nodeaggregateidentifier = :childNodeAggregateIdentifier
+                      AND ph.contentstreamidentifier = :contentStreamIdentifier
+                      AND ch.contentstreamidentifier = :contentStreamIdentifier
+                      AND ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash';
+
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
+            'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->getHash(),
+        ];
+
+        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
+        if (empty($nodeRows)) {
+            return null;
+        }
+
+        $rawNodeAggregateIdentifier = '';
+        $rawNodeTypeName = '';
+        $rawNodeName = '';
+        $nodes = [];
+        $occupiedDimensionSpacePoints = [];
+        $coveredDimensionSpacePoints = [];
+
+        $processedDimensionSpacePoints = [];
+        foreach ($nodeRows as $nodeRow) {
+            if (!isset($processedDimensionSpacePoints[$nodeRow['origindimensionspacepointhash']])) {
+                $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
+                $occupiedDimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
+                if (empty($rawNodeAggregateIdentifier)) {
+                    $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
+                }
+                if (empty($rawNodeTypeName)) {
+                    $rawNodeTypeName = $nodeRow['nodetypename'];
+                }
+                if (empty($rawNodeName)) {
+                    $rawNodeName = $nodeRow['name'];
+                }
+            }
+            $coveredDimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
+        }
+
+        return new NodeAggregate(
+            NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
+            NodeTypeName::fromString($rawNodeTypeName),
+            $rawNodeName ? NodeName::fromString($rawNodeName) : null,
+            $nodes,
+            new DimensionSpacePointSet($occupiedDimensionSpacePoints),
+            new DimensionSpacePointSet($coveredDimensionSpacePoints)
+        );
     }
 
     /**

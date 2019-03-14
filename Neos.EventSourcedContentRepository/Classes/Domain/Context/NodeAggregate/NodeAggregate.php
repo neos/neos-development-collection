@@ -42,7 +42,7 @@ use Neos\EventSourcing\EventStore\StreamName;
  *
  * The aggregate enforces that each dimension space point can only ever be occupied by one of its nodes.
  */
-final class NodeAggregate
+final class NodeAggregate implements ReadableNodeAggregateInterface
 {
     /**
      * @var NodeAggregateIdentifier
@@ -87,7 +87,7 @@ final class NodeAggregate
      */
     public function requireDimensionSpacePointToBeOccupied(DimensionSpacePoint $dimensionSpacePoint)
     {
-        if (!$this->isDimensionSpacePointOccupied($dimensionSpacePoint)) {
+        if (!$this->occupiesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new DimensionSpacePointIsNotYetOccupied('The source dimension space point "' . $dimensionSpacePoint . '" is not yet occupied',
                 1521312039);
         }
@@ -99,7 +99,7 @@ final class NodeAggregate
      */
     public function requireDimensionSpacePointToBeUnoccupied(DimensionSpacePoint $dimensionSpacePoint)
     {
-        if ($this->isDimensionSpacePointOccupied($dimensionSpacePoint)) {
+        if ($this->occupiesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new DimensionSpacePointIsAlreadyOccupied('The target dimension space point "' . $dimensionSpacePoint . '" is already occupied',
                 1521314881);
         }
@@ -343,7 +343,7 @@ final class NodeAggregate
         return $this->getVisibleInDimensionSpacePoints()->contains($dimensionSpacePoint);
     }
 
-    public function isDimensionSpacePointOccupied(DimensionSpacePoint $dimensionSpacePoint): bool
+    public function occupiesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         $dimensionSpacePointOccupied = false;
         $eventStream = $this->getEventStream();
@@ -396,7 +396,7 @@ final class NodeAggregate
         return $parentIdentifiers;
     }
 
-    public function getNodeTypeName(): ?NodeTypeName
+    public function getNodeTypeName(): NodeTypeName
     {
         $nodeTypeName = null;
         $this->traverseEventStream(function (DomainEventInterface $event) use (&$nodeTypeName) {
@@ -466,5 +466,18 @@ final class NodeAggregate
         } catch (EventStreamNotFoundException $eventStreamNotFound) {
             return null;
         }
+    }
+
+    /**
+     * A node aggregate covers a dimension space point if any node is visible in it
+     * in that is has an incoming edge in it.
+     *
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return bool
+     */
+    public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
+    {
+        // TODO: Implement coversDimensionSpacePoint() method.
+        return false;
     }
 }

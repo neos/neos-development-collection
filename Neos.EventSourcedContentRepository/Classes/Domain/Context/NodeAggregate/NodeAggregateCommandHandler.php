@@ -24,6 +24,7 @@ use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
@@ -138,7 +139,7 @@ final class NodeAggregateCommandHandler
      * @throws NodeTypeNotFoundException If the given type does not exist
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @throws NodeAggregatesTypeIsAmbiguous
      */
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
     {
@@ -305,14 +306,34 @@ final class NodeAggregateCommandHandler
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate
+     * @throws NodeAggregatesTypeIsAmbiguous
+     * @throws NodeAggregateCurrentlyDoesNotExist
+     */
+    protected function requireProjectedNodeAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate {
+        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
+
+        if (!$nodeAggregate) {
+            throw new NodeAggregateCurrentlyDoesNotExist('Node aggregate "' . $nodeAggregateIdentifier . '" does currently not exist.', 1541678486);
+        }
+
+        return $nodeAggregate;
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @throws ContentStream\ContentStreamDoesNotExistYet
-     * @throws NodeAggregateDoesNotCurrentlyExist
+     * @throws NodeAggregateCurrentlyDoesNotExist
      */
     protected function requireNodeAggregateToCurrentlyExist(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): void
     {
         $nodeAggregate = $this->getNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier);
         if (!$nodeAggregate->existsCurrently()) {
-            throw new NodeAggregateDoesNotCurrentlyExist('Node aggregate "' . $nodeAggregateIdentifier . '" does currently not exist.', 1541678486);
+            throw new NodeAggregateCurrentlyDoesNotExist('Node aggregate "' . $nodeAggregateIdentifier . '" does currently not exist.', 1541678486);
         }
     }
 
@@ -330,29 +351,28 @@ final class NodeAggregateCommandHandler
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @throws ContentStream\ContentStreamDoesNotExistYet
-     * @throws NodeTypeNotFoundException
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @param ReadableNodeAggregateInterface $nodeAggregate
      */
-    protected function requireNodeAggregateToBeVisibleInDimensionSpacePoint(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+    protected function requireNodeAggregateToBeNotOfTypeRoot(ReadableNodeAggregateInterface $nodeAggregate): void
+    {
+        $nodeType = $this->getNodeType($nodeAggregate->getNodeTypeName());
+        if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
+            throw new NodeTypeIsOfTypeRoot('Node type "' . $nodeAggregate->getNodeTypeName() . '" is of type root.', 1552583824);
+        }
+    }
+
+    /**
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
+     */
+    protected function requireNodeAggregateToCoverDimensionSpacePoint(
+        ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
     ): void {
-        return;
-        $projectedNodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
-        //$nodeAggregate = $this->getNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier);
-        if ($this->nodeTypeManager->getNodeType((string) $projectedNodeAggregate->getNodeTypeName())->isOfType('Neos.ContentRepository:Root')) {
-            return;
+        if (!$nodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
+            throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" is currently not visible in dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1541678877);
         }
-        /*
-         * @todo re-add me once node aggregates can answer this
-        if (!$projectedNodeAggregate->isDimensionSpacePointOccupied($dimensionSpacePoint)) {
-            throw new NodeAggregateIsCurrentlyNotVisibleInDimensionSpacePoint('Node aggregate "' . $nodeAggregateIdentifier . '" is currently not visible in dimension space point "' . $dimensionSpacePoint . '".', 1541678877);
-        }*/
     }
 
     /**
@@ -387,7 +407,7 @@ final class NodeAggregateCommandHandler
      * @throws NodeTypeNotFound
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @throws NodeAggregatesTypeIsAmbiguous
      */
     public function handleChangeNodeAggregateType(Command\ChangeNodeAggregateType $command)
     {
@@ -491,7 +511,7 @@ final class NodeAggregateCommandHandler
      * @param Command\ChangeNodeAggregateType $command
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @throws NodeAggregatesTypeIsAmbiguous
      * @return void
      */
     protected function checkConstraintsImposedByAncestors(Command\ChangeNodeAggregateType $command): void
@@ -508,7 +528,7 @@ final class NodeAggregateCommandHandler
                 && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())->getName() !== (string)$command->getNewNodeTypeName()) {
                 throw new NodeConstraintException('Cannot change type of auto created child node' . $nodeAggregate->getNodeName() . ' to ' . $command->getNewNodeTypeName());
             }
-            foreach ($this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $parentAggregate->getNodeAggregateIdentifier()) as $grandParentAggregate) {
+            foreach ($this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $parentAggregate->getIdentifier()) as $grandParentAggregate) {
                 $grandParentsNodeType = $this->nodeTypeManager->getNodeType((string)$grandParentAggregate->getNodeTypeName());
                 if ($parentAggregate->getNodeName()
                     && $grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->getNodeName())
@@ -540,7 +560,7 @@ final class NodeAggregateCommandHandler
             }
 
             if ($childAggregate->getNodeName() && $newNodeType->hasAutoCreatedChildNode($childAggregate->getNodeName())) {
-                foreach ($this->contentGraph->findChildAggregates($command->getContentStreamIdentifier(), $childAggregate->getNodeAggregateIdentifier()) as $grandChildAggregate) {
+                foreach ($this->contentGraph->findChildAggregates($command->getContentStreamIdentifier(), $childAggregate->getIdentifier()) as $grandChildAggregate) {
                     $grandChildsNodeType = $this->nodeTypeManager->getNodeType((string)$grandChildAggregate->getNodeTypeName());
                     if ($childAggregate->getNodeName() && !$newNodeType->allowsGrandchildNodeType((string)$childAggregate->getNodeName(), $grandChildsNodeType)) {
                         if (!$command->getStrategy()) {
@@ -551,6 +571,40 @@ final class NodeAggregateCommandHandler
                 }
             }
         }
+    }
+
+    /**
+     * @param Command\CreateNodeVariant $command
+     * @return CommandResult
+     * @throws ContentStream\ContentStreamDoesNotExistYet
+     * @throws NodeAggregateCurrentlyExists
+     * @throws DimensionSpacePointNotFound
+     * @throws NodeAggregatesTypeIsAmbiguous
+     * @throws DimensionSpacePointIsNotYetOccupied
+     * @throws DimensionSpacePointIsAlreadyOccupied
+     * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
+     */
+    public function handleCreateNodeVariant(Command\CreateNodeVariant $command): CommandResult
+    {
+        $this->readSideMemoryCacheManager->disableCache();
+
+        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $this->requireDimensionSpacePointToExist($command->getSourceDimensionSpacePoint());
+        $this->requireDimensionSpacePointToExist($command->getTargetDimensionSpacePoint());
+        $this->requireNodeAggregateToBeNotOfTypeRoot($nodeAggregate);
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->getSourceDimensionSpacePoint());
+        $this->requireNodeAggregateToNotOccupyDimensionSpacePoint($nodeAggregate, $command->getTargetDimensionSpacePoint());
+
+        $parentNodeAggregate = $this->contentGraph->findParentNodeAggregateByChildOriginDimensionSpacePoint(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier(),
+            $command->getSourceDimensionSpacePoint()
+        );
+        $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getTargetDimensionSpacePoint());
+
+        $events = DomainEvents::createEmpty();
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
@@ -639,6 +693,42 @@ final class NodeAggregateCommandHandler
         });
 
         return CommandResult::fromPublishedEvents($events);
+    }
+
+    /**
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @throws DimensionSpacePointIsNotYetOccupied
+     */
+    protected function requireNodeAggregateToOccupyDimensionSpacePoint(ReadableNodeAggregateInterface $nodeAggregate, DimensionSpacePoint $dimensionSpacePoint)
+    {
+        if (!$nodeAggregate->occupiesDimensionSpacePoint($dimensionSpacePoint)) {
+            throw new DimensionSpacePointIsNotYetOccupied('Dimension space point ' . json_encode($dimensionSpacePoint) . ' is not yet occupied by node aggregate "' . $nodeAggregate->getIdentifier() . '"', 1552595396);
+        }
+    }
+
+    /**
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @throws DimensionSpacePointIsAlreadyOccupied
+     */
+    protected function requireNodeAggregateToNotOccupyDimensionSpacePoint(ReadableNodeAggregateInterface $nodeAggregate, DimensionSpacePoint $dimensionSpacePoint)
+    {
+        if ($nodeAggregate->occupiesDimensionSpacePoint($dimensionSpacePoint)) {
+            throw new DimensionSpacePointIsAlreadyOccupied('Dimension space point ' . json_encode($dimensionSpacePoint) . ' is already occupied by node aggregate "' . $nodeAggregate->getIdentifier() . '"', 1552595441);
+        }
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @throws ContentStream\ContentStreamDoesNotExistYet
+     */
+    protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier): void
+    {
+        $contentStream = $this->contentStreamRepository->findContentStream($contentStreamIdentifier);
+        if (!$contentStream) {
+            throw new ContentStream\ContentStreamDoesNotExistYet('Content stream "' . $contentStreamIdentifier . " does not exist yet.", 1521386692);
+        }
     }
 
     /**
