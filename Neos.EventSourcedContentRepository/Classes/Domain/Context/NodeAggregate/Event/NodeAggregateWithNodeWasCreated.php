@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*

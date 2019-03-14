@@ -29,7 +29,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
-
 /**
  * The Doctrine DBAL adapter content graph
  *
