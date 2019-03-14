@@ -39,7 +39,7 @@ use Neos\Flow\Annotations as Flow;
  * - values (optional, array): If set, only the given dimension values for the given dimension will be evaluated
  * - includeAllPresets (optional, bool): If set, generalizations in the other dimensions will be evaluated additionally if necessary to fetch a result for a given dimension value
  */
-class DimensionsMenuImplementation extends AbstractMenuImplementation
+class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
     /**
      * @Flow\Inject

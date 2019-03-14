@@ -15,8 +15,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 
-final class ChangeNodeAggregateName implements \JsonSerializable
+final class ChangeNodeAggregateName implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -72,5 +73,14 @@ final class ChangeNodeAggregateName implements \JsonSerializable
             'nodeIdentifier' => $this->nodeAggregateIdentifier,
             'newNodeName' => $this->newNodeName,
         ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    {
+        return new ChangeNodeName(
+            $targetContentStream,
+            $this->nodeIdentifier,
+            $this->newNodeName
+        );
     }
 }

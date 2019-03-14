@@ -14,6 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Fusion\Exception as FusionException;
+use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Fusion\FusionObjects\TemplateImplementation;
 
 /**
@@ -22,7 +23,7 @@ use Neos\Fusion\FusionObjects\TemplateImplementation;
  * Main Options:
  *  - renderHiddenInIndex: if TRUE, hidden-in-index nodes will be shown in the menu. FALSE by default.
  */
-abstract class AbstractMenuImplementation extends TemplateImplementation
+abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
 {
     const STATE_NORMAL = 'normal';
     const STATE_CURRENT = 'current';
@@ -91,6 +92,16 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
         }
 
         return $this->items;
+    }
+
+    /**
+     * Returns the items as result of the fusion object.
+     *
+     * @return array
+     */
+    public function evaluate()
+    {
+        return $this->getItems();
     }
 
     /**

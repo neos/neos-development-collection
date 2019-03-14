@@ -24,20 +24,42 @@ final class AllChildNodesByNodeIdentifierCache
 {
     protected $childNodes = [];
 
-    public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, array $allChildNodes)
+    /**
+     * @var bool
+     */
+    protected $isEnabled;
+
+    public function __construct(bool $isEnabled)
     {
+        $this->isEnabled = $isEnabled;
+    }
+
+    public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, array $allChildNodes): void
+    {
+        if ($this->isEnabled === false) {
+            return;
+        }
+
         $key = (string)$parentNodeAggregateIdentifier;
         $this->childNodes[$key] = $allChildNodes;
     }
 
-    public function contains(NodeAggregateIdentifier $parentNodeAggregateIdentifier)
+    public function contains(NodeAggregateIdentifier $parentNodeAggregateIdentifier): bool
     {
+        if ($this->isEnabled === false) {
+            return false;
+        }
+
         $key = (string)$parentNodeAggregateIdentifier;
         return isset($this->childNodes[$key]);
     }
 
     public function findChildNodes(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
     {
+        if ($this->isEnabled === false) {
+            return [];
+        }
+
         $key = (string)$parentNodeAggregateIdentifier;
         $result = [];
 

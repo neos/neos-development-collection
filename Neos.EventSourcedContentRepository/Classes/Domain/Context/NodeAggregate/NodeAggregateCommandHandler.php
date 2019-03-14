@@ -37,6 +37,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 
@@ -82,13 +83,20 @@ final class NodeAggregateCommandHandler
      */
     protected $nodeEventPublisher;
 
+    /**
+     * @var ReadSideMemoryCacheManager
+     */
+    protected $readSideMemoryCacheManager;
+
+
     public function __construct(
         ContentStream\ContentStreamRepository $contentStreamRepository,
         NodeTypeManager $nodeTypeManager,
         DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         ContentGraphInterface $contentGraph,
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        NodeEventPublisher $nodeEventPublisher
+        NodeEventPublisher $nodeEventPublisher,
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager
     ) {
         $this->contentStreamRepository = $contentStreamRepository;
         $this->nodeTypeManager = $nodeTypeManager;
@@ -96,6 +104,7 @@ final class NodeAggregateCommandHandler
         $this->contentGraph = $contentGraph;
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
         $this->nodeEventPublisher = $nodeEventPublisher;
+        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
     }
 
     /**
@@ -374,6 +383,8 @@ final class NodeAggregateCommandHandler
      */
     public function handleChangeNodeAggregateType(Command\ChangeNodeAggregateType $command)
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         if (!$this->nodeTypeManager->hasNodeType((string)$command->getNewNodeTypeName())) {
             throw new NodeTypeNotFound('The given node type "' . $command->getNewNodeTypeName() . '" is unknown to the node type manager', 1520009174);
         }
@@ -541,6 +552,8 @@ final class NodeAggregateCommandHandler
      */
     public function handleCreateNodeSpecialization(Command\CreateNodeSpecialization $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
 
         $this->requireDimensionSpacePointToExist($command->getTargetDimensionSpacePoint());
@@ -586,6 +599,8 @@ final class NodeAggregateCommandHandler
      */
     public function handleCreateNodeGeneralization(Command\CreateNodeGeneralization $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
 
         $this->requireDimensionSpacePointToExist($command->getTargetDimensionSpacePoint());

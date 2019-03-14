@@ -27,28 +27,54 @@ final class NodeByNodeIdentifierCache
     protected $nonExistingNodeIdentifiers = [];
 
     /**
+     * @var bool
+     */
+    protected $isEnabled;
+
+    public function __construct(bool $isEnabled)
+    {
+        $this->isEnabled = $isEnabled;
+    }
+
+    /**
      * basically like "contains"
      */
     public function knowsAbout(NodeIdentifier $nodeIdentifier): bool
     {
+        if ($this->isEnabled === false) {
+            return false;
+        }
+
         $key = (string)$nodeIdentifier;
         return isset($this->nodes[$key]) || isset($this->nonExistingNodeIdentifiers[$key]);
     }
 
     public function add(NodeIdentifier $nodeIdentifier, NodeInterface $node): void
     {
+        if ($this->isEnabled === false) {
+            return;
+        }
+
         $key = (string)$nodeIdentifier;
         $this->nodes[$key] = $node;
     }
 
     public function rememberNonExistingNodeIdentifier(NodeIdentifier $nodeIdentifier): void
     {
+        if ($this->isEnabled === false) {
+            return;
+        }
+
         $key = (string)$nodeIdentifier;
         $this->nonExistingNodeIdentifiers[$key] = true;
     }
 
     public function get(NodeIdentifier $nodeIdentifier): ?NodeInterface
     {
+        if ($this->isEnabled === false) {
+            return null;
+        }
+
         $key = (string)$nodeIdentifier;
         return $this->nodes[$key] ?? null;
     }

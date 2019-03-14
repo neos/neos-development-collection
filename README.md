@@ -113,7 +113,7 @@ The resulting `composer.json` file should look something like this:
         }
     ],
     "require": {
-        "neos/neos-development-collection": "dev-event-sourced-patch as dev-master",
+        "neos/neos-development-collection": "dev-master",
         "neos/flow-development-collection": "dev-master",
         "neos/demo": "@dev",
 

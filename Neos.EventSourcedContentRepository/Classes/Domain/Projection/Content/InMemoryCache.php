@@ -58,7 +58,24 @@ final class InMemoryCache
 
     public function __construct()
     {
-        $this->reset();
+        // we start with an enabled cache.
+        $this->enable();
+    }
+
+    /**
+     * Enable all caches. All READ requests should enable the cache.
+     */
+    public function enable(): void
+    {
+        $this->reset(true);
+    }
+
+    /**
+     * Disable all caches. All WRITE requests should work with disabled cache.
+     */
+    public function disable(): void
+    {
+        $this->reset(false);
     }
 
     /**
@@ -107,13 +124,16 @@ final class InMemoryCache
     }
 
 
-    public function reset()
+    /**
+     * @param bool $isEnabled if TRUE, the caches work; if FALSE, they do not store anything.
+     */
+    private function reset(bool $isEnabled): void
     {
-        $this->nodePathCache = new NodePathCache();
-        $this->nodeByNodeIdentifierCache = new NodeByNodeIdentifierCache();
-        $this->nodeByNodeAggregateIdentifierCache = new NodeByNodeAggregateIdentifierCache();
-        $this->allChildNodesByNodeIdentifierCache = new AllChildNodesByNodeIdentifierCache();
-        $this->namedChildNodeByNodeIdentifierCache = new NamedChildNodeByNodeIdentifierCache();
-        $this->parentNodeIdentifierByChildNodeIdentifierCache = new ParentNodeIdentifierByChildNodeIdentifierCache();
+        $this->nodePathCache = new NodePathCache($isEnabled);
+        $this->nodeByNodeIdentifierCache = new NodeByNodeIdentifierCache($isEnabled);
+        $this->nodeByNodeAggregateIdentifierCache = new NodeByNodeAggregateIdentifierCache($isEnabled);
+        $this->allChildNodesByNodeIdentifierCache = new AllChildNodesByNodeIdentifierCache($isEnabled);
+        $this->namedChildNodeByNodeIdentifierCache = new NamedChildNodeByNodeIdentifierCache($isEnabled);
+        $this->parentNodeIdentifierByChildNodeIdentifierCache = new ParentNodeIdentifierByChildNodeIdentifierCache($isEnabled);
     }
 }

@@ -120,11 +120,11 @@ class PublishingService
         $command = new RebaseWorkspace(
             $workspaceName
         );
-        $this->workspaceCommandHandler->handleRebaseWorkspace($command);
+        $this->workspaceCommandHandler->handleRebaseWorkspace($command)->blockUntilProjectionsAreUpToDate();
 
         $command = new PublishWorkspace(
             $workspaceName
         );
-        $this->workspaceCommandHandler->handlePublishWorkspace($command);
+        $this->workspaceCommandHandler->handlePublishWorkspace($command)->blockUntilProjectionsAreUpToDate();
     }
 }

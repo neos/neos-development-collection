@@ -25,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A Fusion Menu object
  */
-class MenuImplementation extends AbstractMenuImplementation
+class MenuItemsImplementation extends AbstractMenuItemsImplementation
 {
     /**
      * @Flow\Inject
@@ -107,7 +107,10 @@ class MenuImplementation extends AbstractMenuImplementation
     public function getMaximumLevels()
     {
         if ($this->maximumLevels === null) {
-            $this->maximumLevels = min($this->fusionValue('maximumLevels'), self::MAXIMUM_LEVELS_LIMIT);
+            $this->maximumLevels = $this->fusionValue('maximumLevels');
+            if ($this->maximumLevels > self::MAXIMUM_LEVELS_LIMIT) {
+                $this->maximumLevels = self::MAXIMUM_LEVELS_LIMIT;
+            }
         }
 
         return $this->maximumLevels;
@@ -121,7 +124,10 @@ class MenuImplementation extends AbstractMenuImplementation
     public function getLastLevel(): int
     {
         if ($this->lastLevel === null) {
-            $this->lastLevel = min($this->fusionValue('lastLevel') ?? self::MAXIMUM_LEVELS_LIMIT, self::MAXIMUM_LEVELS_LIMIT);
+            $this->lastLevel = $this->fusionValue('lastLevel');
+            if ($this->lastLevel > self::MAXIMUM_LEVELS_LIMIT) {
+                $this->lastLevel = self::MAXIMUM_LEVELS_LIMIT;
+            }
         }
 
         return $this->lastLevel;

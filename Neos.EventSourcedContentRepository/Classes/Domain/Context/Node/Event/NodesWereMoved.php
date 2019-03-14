@@ -7,6 +7,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 
 /**
  * Nodes were moved in a content stream as defined in the node move mappings

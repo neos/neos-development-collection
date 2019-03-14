@@ -648,46 +648,48 @@ WHERE
     {
         $cache = $this->inMemoryCache->getNodePathCache();
 
-        if (!$cache->contains($nodeAggregateIdentifier)) {
-            $result = $this->getDatabaseConnection()->executeQuery(
-                '
-                -- ContentSubgraph::findNodePath
-                with recursive nodePath as (
-                SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_node n
-                     INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-                     AND h.contentstreamidentifier = :contentStreamIdentifier
-                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                     AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
- 
-                UNION
-                
-                    SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_hierarchyrelation h
-                        INNER JOIN nodePath as np ON h.childnodeanchor = np.parentnodeanchor
-                        WHERE
-                            h.contentstreamidentifier = :contentStreamIdentifier
-                            AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                      
-            )
-            select * from nodePath',
-                [
-                    'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                    'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                    'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
-                ]
-            )->fetchAll();
-
-            $nodePathSegments = [];
-
-            foreach ($result as $r) {
-                $nodePathSegments[] = $r['name'];
-            }
-
-            $nodePathSegments = array_reverse($nodePathSegments);
-            $nodePath = NodePath::fromPathSegments($nodePathSegments);
-            $cache->add($nodeAggregateIdentifier, $nodePath);
+        if ($cache->contains($nodeAggregateIdentifier)) {
+            return $cache->get($nodeAggregateIdentifier);
         }
 
-        return $cache->get($nodeAggregateIdentifier);
+        $result = $this->getDatabaseConnection()->executeQuery(
+            '
+            -- ContentSubgraph::findNodePath
+            with recursive nodePath as (
+            SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_node n
+                 INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                 AND h.contentstreamidentifier = :contentStreamIdentifier
+                 AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                 AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
+
+            UNION
+            
+                SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_hierarchyrelation h
+                    INNER JOIN nodePath as np ON h.childnodeanchor = np.parentnodeanchor
+                    WHERE
+                        h.contentstreamidentifier = :contentStreamIdentifier
+                        AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                  
+        )
+        select * from nodePath',
+            [
+                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
+            ]
+        )->fetchAll();
+
+        $nodePathSegments = [];
+
+        foreach ($result as $r) {
+            $nodePathSegments[] = $r['name'];
+        }
+
+        $nodePathSegments = array_reverse($nodePathSegments);
+        $nodePath = NodePath::fromPathSegments($nodePathSegments);
+        $cache->add($nodeAggregateIdentifier, $nodePath);
+
+        return $nodePath;
     }
 
     public function jsonSerialize(): array

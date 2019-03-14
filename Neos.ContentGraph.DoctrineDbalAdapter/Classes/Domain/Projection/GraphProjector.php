@@ -169,6 +169,30 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     }
 
     /**
+     * @param Event\NodeNameWasChanged $event
+     * @throws \Exception
+     */
+    final public function whenNodeNameWasChanged(Event\NodeNameWasChanged $event)
+    {
+        $this->transactional(function () use ($event) {
+            $this->getDatabaseConnection()->executeUpdate('
+                UPDATE neos_contentgraph_hierarchyrelation h
+                inner join neos_contentgraph_node n on
+                    h.childnodeanchor = n.relationanchorpoint
+                SET
+                  h.name = :newName
+                WHERE
+                    n.nodeidentifier = :nodeIdentifier
+                    and h.contentstreamidentifier = :contentStreamIdentifier
+            ', [
+                'newName' => (string)$event->getNewNodeName(),
+                'nodeIdentifier' => (string)$event->getNodeIdentifier(),
+                'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+            ]);
+        });
+    }
+
+    /**
      * Copy the restriction edges from the parent Node to the newly created child node;
      * so that newly created nodes inherit the visibility constraints of the parent.
      * @param ContentStreamIdentifier $contentStreamIdentifier

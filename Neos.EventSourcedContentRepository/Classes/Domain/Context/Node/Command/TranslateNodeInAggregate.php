@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 
 /**
  * Translate node in aggregate command
@@ -24,7 +25,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
  *
  * The node aggregate of the parent of the given node needs to have a visible node in the given dimension space point.
  */
-final class TranslateNodeInAggregate implements \JsonSerializable
+final class TranslateNodeInAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -136,5 +137,16 @@ final class TranslateNodeInAggregate implements \JsonSerializable
             'dimensionSpacePoint' => $this->dimensionSpacePoint,
             'destinationParentNodeIdentifier' => $this->destinationParentNodeIdentifier,
         ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    {
+        return new TranslateNodeInAggregate(
+            $targetContentStream,
+            $this->sourceNodeIdentifier,
+            $this->destinationNodeIdentifier,
+            $this->dimensionSpacePoint,
+            $this->destinationParentNodeIdentifier
+        );
     }
 }

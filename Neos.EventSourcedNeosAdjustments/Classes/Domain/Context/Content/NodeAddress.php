@@ -58,7 +58,7 @@ final class NodeAddress
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param WorkspaceName $workspaceName
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, WorkspaceName $workspaceName)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, ?WorkspaceName $workspaceName)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -102,7 +102,7 @@ final class NodeAddress
     /**
      * @return WorkspaceName
      */
-    public function getWorkspaceName(): WorkspaceName
+    public function getWorkspaceName(): ?WorkspaceName
     {
         return $this->workspaceName;
     }

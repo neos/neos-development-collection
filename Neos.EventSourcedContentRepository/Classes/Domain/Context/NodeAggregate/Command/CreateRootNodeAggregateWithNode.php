@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
@@ -15,6 +16,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
@@ -23,7 +25,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
  * A root node has no variants and no origin dimension space point but occupies the whole allowed dimension subspace.
  * It also has no auto created child nodes.
  */
-final class CreateRootNodeAggregateWithNode implements \JsonSerializable
+final class CreateRootNodeAggregateWithNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -98,5 +100,15 @@ final class CreateRootNodeAggregateWithNode implements \JsonSerializable
             'nodeTypeName' => $this->nodeTypeName,
             'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
         ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    {
+        return new CreateRootNode(
+            $targetContentStream,
+            $this->nodeIdentifier,
+            $this->nodeTypeName,
+            $this->initiatingUserIdentifier
+        );
     }
 }

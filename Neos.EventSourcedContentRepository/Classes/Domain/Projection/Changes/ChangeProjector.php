@@ -18,13 +18,10 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -84,56 +81,28 @@ class ChangeProjector implements ProjectorInterface
         $this->markAsMoved($event->getContentStreamIdentifier(), $event->getNodeIdentifier());
     }*/
 
-    public function whenWorkspaceWasRebased(WorkspaceWasRebased $event)
-    {
-        $this->transactional(function () use ($event) {
-            $workspaces = $this->workspaceFinder->findAll();
-            $workspaceContentStreamIdentifiers = [];
-            foreach ($workspaces as $workspace) {
-                if ($workspace->getBaseWorkspaceName() !== null) {
-                    $workspaceContentStreamIdentifiers[] = $workspace->getCurrentContentStreamIdentifier();
-                }
-            }
-
-            $this->getDatabaseConnection()->executeQuery('
-                DELETE FROM neos_contentrepository_projection_change
-WHERE contentStreamIdentifier NOT IN (:contentStreamIdentifier)',
-                [
-                    ':contentStreamIdentifier' => $workspaceContentStreamIdentifiers
-                ],
-                [
-                    ':contentStreamIdentifier' => Connection::PARAM_STR_ARRAY
-                ]);
-
-            $workspace = $this->workspaceFinder->findOneByName($event->getWorkspaceName());
-            if ($workspace instanceof Workspace) {
-                $this->getDatabaseConnection()->delete('neos_contentrepository_projection_change', [
-                    'contentStreamIdentifier' => (string)$workspace->getCurrentContentStreamIdentifier()
-                ]);
-            }
-        });
-    }
-
     protected function markAsChanged(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint)
     {
         $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
-            if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() !== null) {
-                $change = $this->getChange($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint);
-                if ($change === null) {
-                    $change = new Change(
-                        $contentStreamIdentifier,
-                        $nodeAggregateIdentifier,
-                        $originDimensionSpacePoint,
+            if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
+                // Workspace is the live workspace (has no base workspace); we do not need to do anything
+                return;
+            }
+            $change = $this->getChange($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint);
+            if ($change === null) {
+                $change = new Change(
+                    $contentStreamIdentifier,
+                    $nodeAggregateIdentifier,
+                    $originDimensionSpacePoint,
 
-                        true,
-                        false
-                    );
-                    $change->addToDatabase($this->getDatabaseConnection());
-                } else {
-                    $change->changed = true;
-                    $change->updateToDatabase($this->getDatabaseConnection());
-                }
+                    true,
+                    false
+                );
+                $change->addToDatabase($this->getDatabaseConnection());
+            } else {
+                $change->changed = true;
+                $change->updateToDatabase($this->getDatabaseConnection());
             }
         });
     }
@@ -142,21 +111,23 @@ WHERE contentStreamIdentifier NOT IN (:contentStreamIdentifier)',
     {
         $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
-            if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() !== null) {
-                $change = $this->getChange($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint);
-                if ($change === null) {
-                    $change = new Change(
-                        $contentStreamIdentifier,
-                        $nodeAggregateIdentifier,
-                        $originDimensionSpacePoint,
-                        false,
-                        true
-                    );
-                    $change->addToDatabase($this->getDatabaseConnection());
-                } else {
-                    $change->moved = true;
-                    $change->updateToDatabase($this->getDatabaseConnection());
-                }
+            if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
+                // Workspace is the live workspace (has no base workspace); we do not need to do anything
+                return;
+            }
+            $change = $this->getChange($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint);
+            if ($change === null) {
+                $change = new Change(
+                    $contentStreamIdentifier,
+                    $nodeAggregateIdentifier,
+                    $originDimensionSpacePoint,
+                    false,
+                    true
+                );
+                $change->addToDatabase($this->getDatabaseConnection());
+            } else {
+                $change->moved = true;
+                $change->updateToDatabase($this->getDatabaseConnection());
             }
         });
     }

@@ -12,7 +12,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcing\Event\Decorator\EventDecoratorUtilities;
 use Neos\EventSourcing\Event\Decorator\EventWithMetadata;
 use Neos\EventSourcing\Event\DomainEventInterface;

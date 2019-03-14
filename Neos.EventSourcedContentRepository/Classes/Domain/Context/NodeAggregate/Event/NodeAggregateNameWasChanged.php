@@ -18,6 +18,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 
 /**
  * @Flow\Proxy(false)

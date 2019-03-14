@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStoreManager;
@@ -33,11 +34,17 @@ final class ContentStreamCommandHandler
      */
     protected $eventStoreManager;
 
+    /**
+     * @var ReadSideMemoryCacheManager
+     */
+    protected $readSideMemoryCacheManager;
 
-    public function __construct(ContentStreamRepository $contentStreamRepository, EventStoreManager $eventStoreManager)
+
+    public function __construct(ContentStreamRepository $contentStreamRepository, EventStoreManager $eventStoreManager, ReadSideMemoryCacheManager $readSideMemoryCacheManager)
     {
         $this->contentStreamRepository = $contentStreamRepository;
         $this->eventStoreManager = $eventStoreManager;
+        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
     }
 
 
@@ -48,6 +55,8 @@ final class ContentStreamCommandHandler
      */
     public function handleCreateContentStream(Command\CreateContentStream $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName();
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
@@ -71,6 +80,8 @@ final class ContentStreamCommandHandler
      */
     public function handleForkContentStream(Command\ForkContentStream $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $this->requireContentStreamToExist($command->getSourceContentStreamIdentifier());
         $this->requireContentStreamToNotExistYet($command->getContentStreamIdentifier());
 

@@ -15,8 +15,8 @@
       }
   ],
   "require": {
-      "neos/neos-development-collection": "dev-event-sourced-patch as dev-master",
-      "neos/flow-development-collection": "dev-browser-fix-relative-locations as dev-master",
+      "neos/neos-development-collection": "dev-master",
+      "neos/flow-development-collection": "dev-master",
 
       "neos/contentrepository-development-collection": "dev-master",
       "neos/content-repository-dimensionspace": "dev-master",

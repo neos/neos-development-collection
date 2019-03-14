@@ -59,6 +59,11 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
         $this->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->clearState();
         // FIXME: FeedbackCollection is a really ugly, hacky SINGLETON; so it needs to be RESET!
         $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
+
+        // The UserService has a runtime cache - which we need to reset as well as our users get new IDs.
+        // Did I already mention I LOVE in memory caches? ;-) ;-) ;-)
+        $userService = $this->getObjectManager()->get(\Neos\Neos\Domain\Service\UserService::class);
+        \Neos\Utility\ObjectAccess::setProperty($userService, 'runtimeUserCache', [], true);
     }
 
     /**
