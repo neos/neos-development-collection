@@ -37,7 +37,7 @@ class ImageController extends AssetController
     protected $importedAssetRepository;
 
     /**
-     * List existing immages
+     * List existing images
      *
      * @param string $view
      * @param string $sortBy
