@@ -45,8 +45,11 @@ final class AspectRatio
      */
     public static function fromString(string $ratio): self
     {
+        if (preg_match('/^\d+:\d+$/', $ratio) !== 1) {
+            throw new \InvalidArgumentException(sprintf('Invalid aspect ratio specified ("%s").', $ratio), 1552641724);
+        }
         [$width, $height] = explode(':', $ratio);
-        return new self($width, $height);
+        return new self((int)$width, (int)$height);
     }
 
     /**
