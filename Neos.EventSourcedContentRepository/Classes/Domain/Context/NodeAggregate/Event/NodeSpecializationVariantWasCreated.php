@@ -25,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodeSpecializationWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeSpecializationVariantWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -117,11 +117,11 @@ final class NodeSpecializationWasCreated implements DomainEventInterface, Copyab
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
-     * @return NodeSpecializationWasCreated
+     * @return NodeSpecializationVariantWasCreated
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeSpecializationWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeSpecializationVariantWasCreated
     {
-        return new NodeSpecializationWasCreated(
+        return new NodeSpecializationVariantWasCreated(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->sourceDimensionSpacePoint,

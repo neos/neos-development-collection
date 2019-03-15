@@ -605,6 +605,21 @@ final class NodeAggregateCommandHandler
 
         $specializations = $this->interDimensionalVariationGraph->getIndexedSpecializations($command->getSourceDimensionSpacePoint());
         if ($specializations->contains($command->getTargetDimensionSpacePoint())) {
+            $excludedSet = new DimensionSpacePointSet([]);
+            foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()) as $occupiedSpecialization) {
+                $excludedSet = $excludedSet->getUnion($this->interDimensionalVariationGraph->getSpecializationSet($occupiedSpecialization));
+            }
+            $event = new Event\NodeSpecializationVariantWasCreated(
+                $command->getContentStreamIdentifier(),
+                $command->getNodeAggregateIdentifier(),
+                $command->getSourceDimensionSpacePoint(),
+                $command->getTargetDimensionSpacePoint(),
+                $this->interDimensionalVariationGraph->getSpecializationSet(
+                    $command->getTargetDimensionSpacePoint(),
+                    true,
+                    $excludedSet
+                )
+            );
         } else {
             $generalizations = $this->interDimensionalVariationGraph->getIndexedGeneralizations($command->getSourceDimensionSpacePoint());
             if ($generalizations->contains($command->getTargetDimensionSpacePoint())) {
@@ -671,7 +686,7 @@ final class NodeAggregateCommandHandler
         $this->nodeEventPublisher->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
             $events = DomainEvents::withSingleEvent(
                 EventWithIdentifier::create(
-                    new Event\NodeSpecializationWasCreated(
+                    new Event\NodeSpecializationVariantWasCreated(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $command->getSourceDimensionSpacePoint(),

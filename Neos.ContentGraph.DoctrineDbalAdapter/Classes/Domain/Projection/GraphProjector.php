@@ -774,11 +774,11 @@ insert into neos_contentgraph_restrictionedge
     }
 
     /**
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationWasCreated $event
+     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated $event
      * @throws \Exception
      * @throws \Throwable
      */
-    public function whenNodeSpecializationWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeSpecializationWasCreated $event): void
+    public function whenNodeSpecializationVariantWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceDimensionSpacePoint());

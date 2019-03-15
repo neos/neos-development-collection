@@ -284,8 +284,8 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
                         /** @var Event\NodeAggregateWithNodeWasCreated $event */
                         $occupiedDimensionSpacePoints[$event->getOriginDimensionSpacePoint()->getHash()] = $event->getOriginDimensionSpacePoint();
                         break;
-                    case Event\NodeSpecializationWasCreated::class:
-                        /** @var Event\NodeSpecializationWasCreated $event */
+                    case Event\NodeSpecializationVariantWasCreated::class:
+                        /** @var Event\NodeSpecializationVariantWasCreated $event */
                         $occupiedDimensionSpacePoints[$event->getSpecializationLocation()->getHash()] = $event->getSpecializationLocation();
                         break;
                     case Event\NodeGeneralizationVariantWasCreated::class:
@@ -317,8 +317,8 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
                             $visibleInDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
                         }
                         break;
-                    case Event\NodeSpecializationWasCreated::class:
-                        /** @var Event\NodeSpecializationWasCreated $event */
+                    case Event\NodeSpecializationVariantWasCreated::class:
+                        /** @var Event\NodeSpecializationVariantWasCreated $event */
                         foreach ($event->getSpecializationVisibility()->getPoints() as $visibleDimensionSpacePoint) {
                             $visibleInDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
                         }
@@ -355,8 +355,8 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
                         /** @var NodeAggregateWithNodeWasCreated $event */
                         $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getOriginDimensionSpacePoint()->equals($dimensionSpacePoint);
                         break;
-                    case Event\NodeSpecializationWasCreated::class:
-                        /** @var Event\NodeSpecializationWasCreated $event */
+                    case Event\NodeSpecializationVariantWasCreated::class:
+                        /** @var Event\NodeSpecializationVariantWasCreated $event */
                         $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getSpecializationLocation()->equals($dimensionSpacePoint);
                         break;
                     case Event\NodeGeneralizationVariantWasCreated::class:

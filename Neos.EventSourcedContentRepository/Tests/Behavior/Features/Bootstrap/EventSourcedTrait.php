@@ -270,6 +270,23 @@ trait EventSourcedTrait
 
         $this->publishEvent('Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
+
+    /**
+     * @Given /^the event NodeSpecializationVariantWasCreated was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theEventNodeSpecializationVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
+        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier
+        );
+
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 
     /**
