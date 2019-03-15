@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Domain\ValueObject\Configuration;
 
 /*
@@ -22,7 +24,7 @@ final class ImageVariantPreset
     private $label;
 
     /**
-     * @var array
+     * @var Variant[]
      */
     private $variants = [];
 

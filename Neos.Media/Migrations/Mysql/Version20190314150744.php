@@ -13,9 +13,9 @@ class Version20190314150744 extends AbstractMigration
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
-        return '';
+        return 'Introduce variant presets';
     }
 
     /**

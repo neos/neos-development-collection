@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Domain\ValueObject\Configuration;
 
 /*
@@ -58,8 +60,10 @@ final class Variant
             $configuration['description'] ?? null
         );
 
-        foreach ($configuration['adjustments'] as $adjustmentIdentifier => $adjustmentConfiguration) {
-            $variant->adjustments[$adjustmentIdentifier] = Adjustment::fromConfiguration($adjustmentIdentifier, $adjustmentConfiguration);
+        if (isset($configuration['adjustments'])) {
+            foreach ($configuration['adjustments'] as $adjustmentIdentifier => $adjustmentConfiguration) {
+                $variant->adjustments[$adjustmentIdentifier] = Adjustment::fromConfiguration($adjustmentIdentifier, $adjustmentConfiguration);
+            }
         }
 
         return $variant;
@@ -71,7 +75,7 @@ final class Variant
     private function setIdentifier(string $identifier): void
     {
         if (preg_match('/^[a-zA-Z]+$/', $identifier) !== 1) {
-            throw new \InvalidArgumentException('Invalid variant identifier.', 1546958006);
+            throw new \InvalidArgumentException(sprintf('Invalid variant identifier "%s".', $identifier), 1546958006);
         }
         $this->identifier = $identifier;
     }
