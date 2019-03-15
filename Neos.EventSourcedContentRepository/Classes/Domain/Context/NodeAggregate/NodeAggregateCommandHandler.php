@@ -30,6 +30,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateN
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateNameWasChanged;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePeerVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -635,6 +636,17 @@ final class NodeAggregateCommandHandler
                     )
                 );
             } else {
+                $event = new Event\NodePeerVariantWasCreated(
+                    $command->getContentStreamIdentifier(),
+                    $command->getNodeAggregateIdentifier(),
+                    $command->getSourceDimensionSpacePoint(),
+                    $command->getTargetDimensionSpacePoint(),
+                    $this->interDimensionalVariationGraph->getSpecializationSet(
+                        $command->getTargetDimensionSpacePoint(),
+                        true,
+                        $nodeAggregate->getOccupiedDimensionSpacePoints()
+                    )
+                );
             }
         }
 
@@ -651,6 +663,7 @@ final class NodeAggregateCommandHandler
 
             $this->nodeEventPublisher->publishMany($streamName->getEventStreamName(), $events);
         });
+
         return CommandResult::fromPublishedEvents($events);
     }
 

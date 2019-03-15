@@ -23,7 +23,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class NodeAlternativeWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -113,11 +113,11 @@ final class NodeAlternativeWasCreated implements DomainEventInterface, CopyableA
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
-     * @return NodeAlternativeWasCreated
+     * @return NodePeerVariantWasCreated
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeAlternativeWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodePeerVariantWasCreated
     {
-        return new NodeAlternativeWasCreated(
+        return new NodePeerVariantWasCreated(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->sourceDimensionSpacePoint,
