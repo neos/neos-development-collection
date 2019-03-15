@@ -21,11 +21,11 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A node generalization was created
+ * A node generalization variant was created
  *
  * @Flow\Proxy(false)
  */
-final class NodeGeneralizationWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeGeneralizationVariantWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -116,11 +116,11 @@ final class NodeGeneralizationWasCreated implements DomainEventInterface, Copyab
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
-     * @return NodeGeneralizationWasCreated
+     * @return NodeGeneralizationVariantWasCreated
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeGeneralizationWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeGeneralizationVariantWasCreated
     {
-        return new NodeGeneralizationWasCreated(
+        return new NodeGeneralizationVariantWasCreated(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->sourceDimensionSpacePoint,

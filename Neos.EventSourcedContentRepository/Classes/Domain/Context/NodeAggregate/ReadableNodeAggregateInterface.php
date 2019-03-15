@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
@@ -34,6 +35,8 @@ interface ReadableNodeAggregateInterface
      */
     public function occupiesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool;
 
+    public function getOccupiedDimensionSpacePoints(): DimensionSpacePointSet;
+
     /**
      * A node aggregate covers a dimension space point if any node is visible in it
      * in that is has an incoming edge in it.
@@ -42,4 +45,6 @@ interface ReadableNodeAggregateInterface
      * @return bool
      */
     public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool;
+
+    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet;
 }

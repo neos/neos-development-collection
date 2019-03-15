@@ -813,11 +813,11 @@ insert into neos_contentgraph_restrictionedge
     }
 
     /**
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationWasCreated $event
+     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated $event
      * @throws \Exception
      * @throws \Throwable
      */
-    public function whenNodeGeneralizationWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeGeneralizationWasCreated $event): void
+    public function whenNodeGeneralizationVariantWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceDimensionSpacePoint());

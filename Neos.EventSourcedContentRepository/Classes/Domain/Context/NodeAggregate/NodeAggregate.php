@@ -288,8 +288,8 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
                         /** @var Event\NodeSpecializationWasCreated $event */
                         $occupiedDimensionSpacePoints[$event->getSpecializationLocation()->getHash()] = $event->getSpecializationLocation();
                         break;
-                    case Event\NodeGeneralizationWasCreated::class:
-                        /** @var Event\NodeGeneralizationWasCreated $event */
+                    case Event\NodeGeneralizationVariantWasCreated::class:
+                        /** @var Event\NodeGeneralizationVariantWasCreated $event */
                         $occupiedDimensionSpacePoints[$event->getGeneralizationLocation()->getHash()] = $event->getGeneralizationLocation();
                         break;
                     default:
@@ -323,8 +323,8 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
                             $visibleInDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
                         }
                         break;
-                    case Event\NodeGeneralizationWasCreated::class:
-                        /** @var Event\NodeGeneralizationWasCreated $event */
+                    case Event\NodeGeneralizationVariantWasCreated::class:
+                        /** @var Event\NodeGeneralizationVariantWasCreated $event */
                         foreach ($event->getGeneralizationVisibility()->getPoints() as $visibleDimensionSpacePoint) {
                             $visibleInDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
                         }
@@ -359,8 +359,8 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
                         /** @var Event\NodeSpecializationWasCreated $event */
                         $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getSpecializationLocation()->equals($dimensionSpacePoint);
                         break;
-                    case Event\NodeGeneralizationWasCreated::class:
-                        /** @var Event\NodeGeneralizationWasCreated $event */
+                    case Event\NodeGeneralizationVariantWasCreated::class:
+                        /** @var Event\NodeGeneralizationVariantWasCreated $event */
                         $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getGeneralizationLocation()->equals($dimensionSpacePoint);
                         break;
                     default:
@@ -477,7 +477,11 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
      */
     public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
     {
-        // TODO: Implement coversDimensionSpacePoint() method.
-        return false;
+        return $this->getVisibleInDimensionSpacePoints()->contains($dimensionSpacePoint);
+    }
+
+    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->getVisibleInDimensionSpacePoints();
     }
 }

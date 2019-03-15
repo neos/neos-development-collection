@@ -104,9 +104,19 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         return $this->nodes;
     }
 
+    public function getOccupiedDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->occupiedDimensionSpacePoints;
+    }
+
     public function occupiesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         return $this->occupiedDimensionSpacePoints->contains($dimensionSpacePoint);
+    }
+
+    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->coveredDimensionSpacePoints;
     }
 
     public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool

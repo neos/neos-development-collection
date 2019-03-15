@@ -603,7 +603,39 @@ final class NodeAggregateCommandHandler
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getTargetDimensionSpacePoint());
 
-        $events = DomainEvents::createEmpty();
+        $specializations = $this->interDimensionalVariationGraph->getIndexedSpecializations($command->getSourceDimensionSpacePoint());
+        if ($specializations->contains($command->getTargetDimensionSpacePoint())) {
+        } else {
+            $generalizations = $this->interDimensionalVariationGraph->getIndexedGeneralizations($command->getSourceDimensionSpacePoint());
+            if ($generalizations->contains($command->getTargetDimensionSpacePoint())) {
+                $event = new Event\NodeGeneralizationVariantWasCreated(
+                    $command->getContentStreamIdentifier(),
+                    $command->getNodeAggregateIdentifier(),
+                    $command->getSourceDimensionSpacePoint(),
+                    $command->getTargetDimensionSpacePoint(),
+                    $this->interDimensionalVariationGraph->getSpecializationSet(
+                        $command->getTargetDimensionSpacePoint(),
+                        true,
+                        $nodeAggregate->getCoveredDimensionSpacePoints()
+                    )
+                );
+            } else {
+            }
+        }
+
+        $events = null;
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, $event, &$events) {
+            $events = DomainEvents::withSingleEvent(
+                EventWithIdentifier::create($event)
+            );
+
+            $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
+                $command->getContentStreamIdentifier(),
+                $command->getNodeAggregateIdentifier()
+            );
+
+            $this->nodeEventPublisher->publishMany($streamName->getEventStreamName(), $events);
+        });
         return CommandResult::fromPublishedEvents($events);
     }
 
@@ -679,7 +711,7 @@ final class NodeAggregateCommandHandler
         $this->nodeEventPublisher->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
             $events = DomainEvents::withSingleEvent(
                 EventWithIdentifier::create(
-                    new Event\NodeGeneralizationWasCreated(
+                    new Event\NodeGeneralizationVariantWasCreated(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $command->getSourceDimensionSpacePoint(),
