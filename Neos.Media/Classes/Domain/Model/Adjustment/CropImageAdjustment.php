@@ -17,6 +17,7 @@ use Imagine\Image\Box;
 use Imagine\Image\Point;
 use Imagine\Image\ImageInterface as ImagineImageInterface;
 use Neos\Media\Domain\Model\ImageInterface;
+use Neos\Media\Domain\ValueObject\Configuration\AspectRatio;
 
 /**
  * An adjustment for cropping an image
@@ -54,15 +55,22 @@ class CropImageAdjustment extends AbstractImageAdjustment
     protected $height;
 
     /**
+     * @var string
+     * @ORM\Column(nullable = true)
+     */
+    protected $aspectRatioAsString;
+
+    /**
      * Sets height
      *
      * @param integer $height
      * @return void
      * @api
      */
-    public function setHeight($height): void
+    public function setHeight(int $height = null): void
     {
         $this->height = $height;
+        $this->aspectRatioAsString = null;
     }
 
     /**
@@ -83,9 +91,10 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setWidth($width): void
+    public function setWidth(int $width = null): void
     {
         $this->width = $width;
+        $this->aspectRatioAsString = null;
     }
 
     /**
@@ -106,9 +115,10 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setX($x): void
+    public function setX(int $x = null): void
     {
         $this->x = $x;
+        $this->aspectRatioAsString = null;
     }
 
     /**
@@ -129,9 +139,10 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setY($y): void
+    public function setY(int $y = null): void
     {
         $this->y = $y;
+        $this->aspectRatioAsString = null;
     }
 
     /**
@@ -146,6 +157,65 @@ class CropImageAdjustment extends AbstractImageAdjustment
     }
 
     /**
+     * This setter accepts strings in order to make configuration / mapping of settings easier.
+     *
+     * @param AspectRatio | string | null $aspectRatio
+     */
+    public function setAspectRatio($aspectRatio = null): void
+    {
+        if ($aspectRatio === null) {
+            $this->aspectRatioAsString = null;
+            return;
+        }
+        if (!$aspectRatio instanceof AspectRatio && !is_string($aspectRatio)) {
+            throw new \InvalidArgumentException(sprintf('Aspect ratio must be either AspectRatio or string, %s given.', gettype($aspectRatio)), 1552652570);
+        }
+        if (is_string($aspectRatio)) {
+            $aspectRatio = AspectRatio::fromString($aspectRatio);
+        }
+
+        $this->aspectRatioAsString = (string)$aspectRatio;
+        $this->x = null;
+        $this->y = null;
+        $this->width = null;
+        $this->height = null;
+    }
+
+    /**
+     * @return AspectRatio|null
+     */
+    public function getAspectRatio(): ?AspectRatio
+    {
+        return $this->aspectRatioAsString ? AspectRatio::fromString($this->aspectRatioAsString) : null;
+    }
+
+    /**
+     * Calculates the actual position and dimensions of the cropping area based on the given image
+     * dimensions and desired aspect ratio.
+     *
+     * @param int $originalWidth Width of the original image
+     * @param int $originalHeight Height of the original image
+     * @param AspectRatio $desiredAspectRatio The desired aspect ratio
+     * @return array Returns an array containing x, y, width and height
+     */
+    public static function calculateDimensionsByAspectRatio(int $originalWidth, int $originalHeight, AspectRatio $desiredAspectRatio): array
+    {
+        $newWidth = $originalWidth;
+        $newHeight = round($originalWidth / $desiredAspectRatio->getRatio());
+        $newX = 0;
+        $newY = round(($originalHeight - $newHeight) / 2);
+
+        if ($newHeight > $originalHeight) {
+            $newHeight = $originalHeight;
+            $newY = 0;
+            $newWidth = round($originalHeight * $desiredAspectRatio->getRatio());
+            $newX = round(($originalWidth - $newWidth) / 2);
+        }
+
+        return [$newX, $newY, $newWidth, $newHeight];
+    }
+
+    /**
      * Check if this Adjustment can or should be applied to its ImageVariant.
      *
      * @param ImagineImageInterface $image
@@ -153,16 +223,18 @@ class CropImageAdjustment extends AbstractImageAdjustment
      */
     public function canBeApplied(ImagineImageInterface $image): bool
     {
-        if (
+        if ($this->aspectRatioAsString !== null) {
+            $desiredAspectRatio = AspectRatio::fromString($this->aspectRatioAsString);
+            $originalAspectRatio = new AspectRatio($image->getSize()->getWidth(), $image->getSize()->getHeight());
+            return $originalAspectRatio->getRatio() !== $desiredAspectRatio->getRatio();
+        }
+
+        return !(
             $this->x === 0 &&
             $this->y === 0 &&
             $image->getSize()->getWidth() === $this->width &&
             $image->getSize()->getHeight() === $this->height
-        ) {
-            return false;
-        }
-
-        return true;
+        );
     }
 
     /**
@@ -174,8 +246,19 @@ class CropImageAdjustment extends AbstractImageAdjustment
      */
     public function applyToImage(ImagineImageInterface $image): ImagineImageInterface
     {
-        $point = new Point($this->x, $this->y);
-        $box = new Box($this->width, $this->height);
+        $desiredAspectRatio = $this->getAspectRatio();
+        if ($desiredAspectRatio !== null) {
+            $originalWidth = $image->getSize()->getWidth();
+            $originalHeight = $image->getSize()->getHeight();
+
+            [$newX, $newY, $newWidth, $newHeight] = self::calculateDimensionsByAspectRatio($originalWidth, $originalHeight, $desiredAspectRatio);
+
+            $point = new Point($newX, $newY);
+            $box = new Box($newWidth, $newHeight);
+        } else {
+            $point = new Point($this->x, $this->y);
+            $box = new Box($this->width, $this->height);
+        }
         return $image->crop($point, $box);
     }
 
