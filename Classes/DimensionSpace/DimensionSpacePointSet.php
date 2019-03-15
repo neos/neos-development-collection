@@ -112,8 +112,23 @@ final class DimensionSpacePointSet implements \JsonSerializable, \IteratorAggreg
         // not going to happen
     }
 
-    public function intersect(DimensionSpacePointSet $other): DimensionSpacePointSet
+    public function getIntersection(DimensionSpacePointSet $other): DimensionSpacePointSet
     {
         return new DimensionSpacePointSet(array_intersect_key($this->points, $other->getPoints()));
+    }
+
+    public function getUnion(DimensionSpacePointSet $other): DimensionSpacePointSet
+    {
+        return new DimensionSpacePointSet(array_merge($this->points, $other->getPoints()));
+    }
+
+    /**
+     * @param DimensionSpacePointSet $other
+     * @return DimensionSpacePointSet
+     * @deprecated use getIntersection() instead
+     */
+    public function intersect(DimensionSpacePointSet $other): DimensionSpacePointSet
+    {
+        return $this->getIntersection($other);
     }
 }
