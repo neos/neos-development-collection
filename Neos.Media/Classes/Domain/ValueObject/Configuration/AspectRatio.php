@@ -15,6 +15,10 @@ namespace Neos\Media\Domain\ValueObject\Configuration;
 
 final class AspectRatio
 {
+    public const ORIENTATION_LANDSCAPE = 'landscape';
+    public const ORIENTATION_PORTRAIT = 'portrait';
+    public const ORIENTATION_SQUARE = 'square';
+
     /**
      * @var int
      */
@@ -49,7 +53,7 @@ final class AspectRatio
             throw new \InvalidArgumentException(sprintf('Invalid aspect ratio specified ("%s").', $ratio), 1552641724);
         }
         [$width, $height] = explode(':', $ratio);
-        return new self((int)$width, (int)$height);
+        return new static((int)$width, (int)$height);
     }
 
     /**
@@ -73,7 +77,43 @@ final class AspectRatio
      */
     public function getRatio(): float
     {
-        return $this->width > $this->height ? $this->width / $this->height : $this->height / $this->width;
+        return $this->width / $this->height;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrientation(): string
+    {
+        $ratio = $this->getRatio();
+        if ($ratio === (float)1) {
+            return self::ORIENTATION_SQUARE;
+        }
+        return $ratio > 1 ? self::ORIENTATION_LANDSCAPE : self::ORIENTATION_PORTRAIT;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOrientationLandscape(): bool
+    {
+        return $this->getOrientation() === self::ORIENTATION_LANDSCAPE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOrientationPortrait(): bool
+    {
+        return $this->getOrientation() === self::ORIENTATION_PORTRAIT;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOrientationSquare(): bool
+    {
+        return $this->getOrientation() === self::ORIENTATION_SQUARE;
     }
 
     /**

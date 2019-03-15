@@ -92,4 +92,43 @@ class AspectRatioTest extends UnitTestCase
     {
         AspectRatio::fromString($invalidString);
     }
+
+    /**
+     * @return array
+     */
+    public function aspectRatiosAndOrientations(): array
+    {
+        return [
+            ['4:3', AspectRatio::ORIENTATION_LANDSCAPE],
+            ['3:4', AspectRatio::ORIENTATION_PORTRAIT],
+            ['16:9', AspectRatio::ORIENTATION_LANDSCAPE],
+            ['9:16', AspectRatio::ORIENTATION_PORTRAIT],
+            ['1:1', AspectRatio::ORIENTATION_SQUARE],
+            ['8:8', AspectRatio::ORIENTATION_SQUARE]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider aspectRatiosAndOrientations
+     * @param string $aspectRatioAsString
+     * @param string $expectedOrientation
+     */
+    public function getOrientationReturnsCorrectValue(string $aspectRatioAsString, string $expectedOrientation): void
+    {
+        $aspectRatio = AspectRatio::fromString($aspectRatioAsString);
+        self::assertSame($expectedOrientation, $aspectRatio->getOrientation());
+
+        switch ($expectedOrientation) {
+            case AspectRatio::ORIENTATION_LANDSCAPE:
+                self::assertTrue($aspectRatio->isOrientationLandscape());
+            break;
+            case AspectRatio::ORIENTATION_PORTRAIT:
+                self::assertTrue($aspectRatio->isOrientationPortrait());
+            break;
+            case AspectRatio::ORIENTATION_SQUARE:
+                self::assertTrue($aspectRatio->isOrientationSquare());
+            break;
+        }
+    }
 }
