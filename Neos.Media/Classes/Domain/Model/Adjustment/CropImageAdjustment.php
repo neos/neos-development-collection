@@ -60,7 +60,7 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setHeight($height)
+    public function setHeight($height): void
     {
         $this->height = $height;
     }
@@ -68,10 +68,10 @@ class CropImageAdjustment extends AbstractImageAdjustment
     /**
      * Returns height
      *
-     * @return integer
+     * @return integer|null
      * @api
      */
-    public function getHeight()
+    public function getHeight(): ?int
     {
         return $this->height;
     }
@@ -83,7 +83,7 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setWidth($width)
+    public function setWidth($width): void
     {
         $this->width = $width;
     }
@@ -94,7 +94,7 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @return integer
      * @api
      */
-    public function getWidth()
+    public function getWidth(): ?int
     {
         return $this->width;
     }
@@ -106,7 +106,7 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setX($x)
+    public function setX($x): void
     {
         $this->x = $x;
     }
@@ -117,7 +117,7 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @return integer
      * @api
      */
-    public function getX()
+    public function getX(): ?int
     {
         return $this->x;
     }
@@ -129,7 +129,7 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @return void
      * @api
      */
-    public function setY($y)
+    public function setY($y): void
     {
         $this->y = $y;
     }
@@ -140,7 +140,7 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @return integer
      * @api
      */
-    public function getY()
+    public function getY(): ?int
     {
         return $this->y;
     }
@@ -149,16 +149,16 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * Check if this Adjustment can or should be applied to its ImageVariant.
      *
      * @param ImagineImageInterface $image
-     * @return boolean
+     * @return bool
      */
-    public function canBeApplied(ImagineImageInterface $image)
+    public function canBeApplied(ImagineImageInterface $image): bool
     {
         if (
             $this->x === 0 &&
             $this->y === 0 &&
             $image->getSize()->getWidth() === $this->width &&
             $image->getSize()->getHeight() === $this->height
-            ) {
+        ) {
             return false;
         }
 
@@ -172,7 +172,7 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @return ImagineImageInterface
      * @internal Should never be used outside of the media package. Rely on the ImageService to apply your adjustments.
      */
-    public function applyToImage(ImagineImageInterface $image)
+    public function applyToImage(ImagineImageInterface $image): ImagineImageInterface
     {
         $point = new Point($this->x, $this->y);
         $box = new Box($this->width, $this->height);
@@ -185,7 +185,7 @@ class CropImageAdjustment extends AbstractImageAdjustment
      * @param ImageInterface $image
      * @return void
      */
-    public function refit(ImageInterface $image)
+    public function refit(ImageInterface $image): void
     {
         $this->x = 0;
         $this->y = 0;

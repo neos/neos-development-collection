@@ -11,7 +11,10 @@ namespace Neos\Media\Tests\Unit\Domain\Model\Adjustment;
  * source code.
  */
 
+use Imagine\Gd\Imagine;
+use Imagine\Image\Box;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 
 /**
  * Test case for the Crop Image Adjustment
@@ -19,9 +22,45 @@ use Neos\Flow\Tests\UnitTestCase;
 class CropImageAdjustmentTest extends UnitTestCase
 {
     /**
+     * @test
+     */
+    public function canBeAppliedReturnsTrueIfCropClippingIsSmallerThanTheImage(): void
+    {
+        $imagine = new Imagine();
+        $size  = new Box(1600, 900);
+        $image = $imagine->create($size);
+
+        $cropImageAdjustment = new CropImageAdjustment();
+        $cropImageAdjustment->setX(100);
+        $cropImageAdjustment->setY(100);
+        $cropImageAdjustment->setWidth(900);
+        $cropImageAdjustment->setHeight(400);
+
+        self::assertTrue($cropImageAdjustment->canBeApplied($image));
+    }
+
+    /**
+     * @test
+     */
+    public function canBeAppliedReturnsFalseIfCropClippingIsTheFullImage(): void
+    {
+        $imagine = new Imagine();
+        $size  = new Box(1600, 900);
+        $image = $imagine->create($size);
+
+        $cropImageAdjustment = new CropImageAdjustment();
+        $cropImageAdjustment->setX(0);
+        $cropImageAdjustment->setY(0);
+        $cropImageAdjustment->setWidth(1600);
+        $cropImageAdjustment->setHeight(900);
+
+        self::assertFalse($cropImageAdjustment->canBeApplied($image));
+    }
+
+    /**
      * @return array
      */
-    public function imageCropRefitDataProvider()
+    public function imageCropRefitDataProvider(): array
     {
         return [
             [
@@ -63,26 +102,34 @@ class CropImageAdjustmentTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider imageCropRefitDataProvider
+     * @param int $cropX
+     * @param int $cropY
+     * @param int $cropWidth
+     * @param int $cropHeight
+     * @param int $newImageWidth
+     * @param int $newImageHeight
+     * @param int $expectedX
+     * @param int $expectedY
+     * @param int $expectedWidth
+     * @param int $expectedHeight
      */
-    public function refitFitsCropPropertionWithinImageSizeConstraints($cropX, $cropY, $cropWidth, $cropHeight, $newImageWidth, $newImageHeight, $expectedX, $expectedY, $expectedWidth, $expectedHeight)
+    public function refitFitsCropPropertyWithinImageSizeConstraints(int $cropX, int $cropY, int $cropWidth, int $cropHeight, int $newImageWidth, int $newImageHeight, int $expectedX, int $expectedY, int $expectedWidth, int $expectedHeight): void
     {
-        $mockImage = $this->getMockBuilder(\Neos\Media\Domain\Model\Image::class)->disableOriginalConstructor()->getMock();
-        $mockImage->expects($this->any())->method('getWidth')->will($this->returnValue($newImageWidth));
-        $mockImage->expects($this->any())->method('getHeight')->will($this->returnValue($newImageHeight));
+        $imagine = new Imagine();
+        $size  = new Box($newImageWidth, $newImageHeight);
+        $image = $imagine->create($size);
 
-        $mockCropImageAdjustment = $this->getAccessibleMock(\Neos\Media\Domain\Model\Adjustment\CropImageAdjustment::class, ['dummy'], [], '', false);
-        $mockCropImageAdjustment->_set('x', $cropX);
-        $mockCropImageAdjustment->_set('y', $cropY);
-        $mockCropImageAdjustment->_set('width', $cropWidth);
-        $mockCropImageAdjustment->_set('height', $cropHeight);
+        $cropImageAdjustment = new CropImageAdjustment();
+        $cropImageAdjustment->setX($cropX);
+        $cropImageAdjustment->setY($cropY);
+        $cropImageAdjustment->setWidth($cropWidth);
+        $cropImageAdjustment->setHeight($cropHeight);
 
-        $mockCropImageAdjustment->refit($mockImage);
+        $cropImageAdjustment->refit($image);
 
-        $this->assertEquals($expectedX, $mockCropImageAdjustment->getX());
-        $this->assertEquals($expectedY, $mockCropImageAdjustment->getY());
-        $this->assertEquals($expectedWidth, $mockCropImageAdjustment->getWidth());
-        $this->assertEquals($expectedHeight, $mockCropImageAdjustment->getHeight());
+        $this->assertEquals($expectedX, $cropImageAdjustment->getX());
+        $this->assertEquals($expectedY, $cropImageAdjustment->getY());
+        $this->assertEquals($expectedWidth, $cropImageAdjustment->getWidth());
+        $this->assertEquals($expectedHeight, $cropImageAdjustment->getHeight());
     }
 }
