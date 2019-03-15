@@ -406,8 +406,6 @@ class AssetController extends ActionController
         $assetSource = $this->assetSources[$assetSourceIdentifier];
         $assetProxyRepository = $assetSource->getAssetProxyRepository();
 
-        $imageProfiles = $this->imageProfilesConfiguration;
-
         try {
             $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
             $asset = $this->persistenceManager->getObjectByIdentifier($assetProxy->getLocalAssetIdentifier(), Asset::class);
@@ -418,7 +416,7 @@ class AssetController extends ActionController
                 'assetProxy' => $assetProxy,
                 'asset' => $originalAsset,
                 'assetSource' => $assetSource,
-                'imageProfiles' => $imageProfiles
+                'imageProfiles' => $this->imageProfilesConfiguration
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Original asset not found');
