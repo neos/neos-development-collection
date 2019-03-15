@@ -62,7 +62,6 @@ final class Adjustment
         );
 
         $adjustment->options = $configuration['options'] ?? [];
-        $adjustment->editableOptions = $configuration['editableOptions'] ?? [];
         return $adjustment;
     }
 
@@ -99,13 +98,5 @@ final class Adjustment
     public function options(): array
     {
         return $this->options;
-    }
-
-    /**
-     * @return array
-     */
-    public function editableOptions(): array
-    {
-        return $this->editableOptions;
     }
 }

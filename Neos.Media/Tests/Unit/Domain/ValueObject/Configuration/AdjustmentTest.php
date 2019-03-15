@@ -69,11 +69,7 @@ class AdjustmentTest extends UnitTestCase
                 'aspectRatio' => [
                     'width' => 16,
                     'height' => 9
-                ],
-                'boosts' => []
-            ],
-            'editableOptions' => [
-                'boosts' => true
+                ]
             ]
         ];
 
@@ -81,6 +77,5 @@ class AdjustmentTest extends UnitTestCase
         self::assertSame('wide', $adjustment->identifier());
         self::assertSame(CropImageAdjustment::class, $adjustment->type());
         self::assertSame($configuration['options'], $adjustment->options());
-        self::assertSame($configuration['editableOptions'], $adjustment->editableOptions());
     }
 }
