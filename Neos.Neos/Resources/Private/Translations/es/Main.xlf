@@ -8,10 +8,10 @@
 			<target xml:lang="es-ES" state="translated">Autopublicar</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="es-ES" state="translated">Autopublicar en {0}</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Autopublicar a {0}</target><alt-trans><target xml:lang="es-ES">Autopublicar en {0}</target></alt-trans></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target xml:lang="es-ES" state="translated">Revisar los cambios</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Revisar cambios</target><alt-trans><target xml:lang="es-ES">Revisar los cambios</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="es-ES" state="translated">Aplicar</target></trans-unit>
@@ -29,7 +29,7 @@
 			<target xml:lang="es-ES" state="translated">Elegir</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="es-ES" state="translated">Escriba para buscar</target><alt-trans><target xml:lang="es-ES">Escribe para buscar</target></alt-trans></trans-unit>
+			<target xml:lang="es-ES" state="translated">Tipo de búsqueda</target><alt-trans><target xml:lang="es-ES">Escriba para buscar</target></alt-trans><alt-trans><target xml:lang="es-ES">Escribe para buscar</target></alt-trans></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="es-ES" state="translated">Contenido</target></trans-unit>
@@ -38,10 +38,10 @@
 			<target xml:lang="es-ES" state="translated">Nodo</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target xml:lang="es-ES" state="translated">Vista de contenido</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Vista del contenido</target><alt-trans><target xml:lang="es-ES">Vista de contenido</target></alt-trans></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="es-ES" state="translated">Crear después</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Crear después de</target><alt-trans><target xml:lang="es-ES">Crear después</target></alt-trans></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target xml:lang="es-ES" state="translated">Crear nuevo</target><alt-trans><target xml:lang="es-ES">Crear nueva</target></alt-trans></trans-unit>
@@ -86,10 +86,10 @@
 			<target xml:lang="es-ES" state="translated">Ocultar</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="es-ES" state="translated">Mostrar Nuevamente</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Mostrar</target><alt-trans><target xml:lang="es-ES">Mostrar Nuevamente</target></alt-trans></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="es-ES" state="translated">dentro</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">en</target><alt-trans><target xml:lang="es-ES">dentro</target></alt-trans></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
 			<target xml:lang="es-ES" state="translated">antes</target></trans-unit>
@@ -140,7 +140,7 @@
 			<target xml:lang="es-ES" state="translated">Publicar</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="es-ES" state="translated">Publicar en {0}</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Publicar a {0}</target><alt-trans><target xml:lang="es-ES">Publicar en {0}</target></alt-trans></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
 			<target xml:lang="es-ES" state="translated">Publicar todos los cambios de la página actual</target></trans-unit>
@@ -149,7 +149,7 @@
 			<target xml:lang="es-ES" state="translated">No puedes publicarlo, porque el espacio de trabajo de destino es de solo lectura</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
-			<target xml:lang="es-ES" state="translated">Selecciona el espacio de trabajo de destino</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Seleccionar espacio de trabajo de destino</target><alt-trans><target xml:lang="es-ES">Selecciona el espacio de trabajo de destino</target></alt-trans></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
 			<target xml:lang="es-ES" state="translated">Publicando</target></trans-unit>
@@ -158,7 +158,7 @@
 			<target xml:lang="es-ES" state="translated">Publicado</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target xml:lang="es-ES" state="translated">Ocultar menú de publicación</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Ocultar/Mostrar menú de publicación</target><alt-trans><target xml:lang="es-ES">Ocultar menú de publicación</target></alt-trans></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
 			<target xml:lang="es-ES" state="translated">Espacio de trabajo de destino</target></trans-unit>
