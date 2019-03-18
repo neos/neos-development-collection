@@ -9,6 +9,14 @@ map.basicLoop = Neos.Fusion:Map {
 	}
 }
 
+map.basicLoopWithContentRenderer = Neos.Fusion:Map {
+  items = ${items}
+  itemName = 'element'
+  content = Neos.Fusion:TestRenderer {
+    test = ${element}
+  }
+}
+
 map.basicLoopOtherContextVariables = Neos.Fusion:Map {
   items = ${items}
 	itemName = 'element'

@@ -31,6 +31,17 @@ class MapTest extends AbstractFusionObjectTest
     /**
      * @test
      */
+    public function basicCollectionWorksWithContentRenderer()
+    {
+        $view = $this->buildView();
+        $view->assign('items', ['element1', 'element2']);
+        $view->setFusionPath('map/basicLoopWithContentRenderer');
+        $this->assertEquals(['Xelement1','Xelement2'], $view->render());
+    }
+
+    /**
+     * @test
+     */
     public function basicCollectionWorksAndPreservesKeys()
     {
         $view = $this->buildView();
