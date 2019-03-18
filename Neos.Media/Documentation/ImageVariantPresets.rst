@@ -16,6 +16,32 @@ This feature is currently in beta, therefore the API and functionality may chang
 mainly intended to be combined with further mechanisms, such as automatic image analysis which can set the optimal
 clipping for an image crop adjustment.
 
+Variants vs. Thumbnails
+-----------------------
+The concept of variants and thumbnails are quite similar, but suit different purposes. It's important to know
+which concept to choose for a specific use case, therefore let's take a quick look at the differences:
+
+An asset, or more specifically, an image, is either imported, uploaded or created. This is what we also call
+the "original asset". The binary data of this asset is exactly the same which was imported in the first place
+and it never changes.
+
+An original asset can have any number of variants. Variants are, as the name suggests, variants of an original
+which can have one or multiple adjustments applied. For example, there may be a variant which only shows a
+part of the image (by using a "crop adjustment") or one which is a black and white version of the original
+(using a "grayscale adjustment"). These variants are persistent and can be used like an original asset. The
+main difference to an original is that
+
+1. they can be modified
+2. they are automatically deleted when the original is deleted
+
+Finally, thumbnails are automatically generated previews of an original asset or a variant. They are used to
+make the representation of an asset more suitable for a specific case, for example by resizing an image to
+a specific size instead of using the original. Thumbnails are ephemeral, which means that they are created
+and destroyed automatically, and not manually by an editor.
+
+Based on these concepts, you should use image variant presets, if you want to automate a task which would
+usually been carried out by an editor.
+
 Configuration
 -------------
 
