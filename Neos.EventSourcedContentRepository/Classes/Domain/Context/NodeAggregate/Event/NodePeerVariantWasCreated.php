@@ -43,32 +43,32 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
     /**
      * @var DimensionSpacePoint
      */
-    private $alternativeLocation;
+    private $peerLocation;
 
     /**
      * @var DimensionSpacePointSet
      */
-    private $alternativeVisibility;
+    private $peerVisibility;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param DimensionSpacePoint $alternativeLocation
-     * @param DimensionSpacePointSet $alternativeVisibility
+     * @param DimensionSpacePoint $peerLocation
+     * @param DimensionSpacePointSet $peerVisibility
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $sourceDimensionSpacePoint,
-        DimensionSpacePoint $alternativeLocation,
-        DimensionSpacePointSet $alternativeVisibility
+        DimensionSpacePoint $peerLocation,
+        DimensionSpacePointSet $peerVisibility
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
-        $this->alternativeLocation = $alternativeLocation;
-        $this->alternativeVisibility = $alternativeVisibility;
+        $this->peerLocation = $peerLocation;
+        $this->peerVisibility = $peerVisibility;
     }
 
     /**
@@ -98,17 +98,17 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
     /**
      * @return DimensionSpacePoint
      */
-    public function getAlternativeLocation(): DimensionSpacePoint
+    public function getPeerLocation(): DimensionSpacePoint
     {
-        return $this->alternativeLocation;
+        return $this->peerLocation;
     }
 
     /**
      * @return DimensionSpacePointSet
      */
-    public function getAlternativeVisibility(): DimensionSpacePointSet
+    public function getPeerVisibility(): DimensionSpacePointSet
     {
-        return $this->alternativeVisibility;
+        return $this->peerVisibility;
     }
 
     /**
@@ -121,8 +121,8 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->sourceDimensionSpacePoint,
-            $this->alternativeLocation,
-            $this->alternativeVisibility
+            $this->peerLocation,
+            $this->peerVisibility
         );
     }
 }

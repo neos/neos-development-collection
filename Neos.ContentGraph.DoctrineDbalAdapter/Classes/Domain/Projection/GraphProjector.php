@@ -864,6 +864,41 @@ insert into neos_contentgraph_restrictionedge
     }
 
     /**
+     * @param Event\NodePeerVariantWasCreated $event
+     * @throws \Throwable
+     */
+    public function whenNodePeerVariantWasCreated(Event\NodePeerVariantWasCreated $event)
+    {
+        $this->transactional(function () use ($event) {
+            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceDimensionSpacePoint());
+            $sourceParentNode = $this->projectionContentGraph->findParentNode(new ContentRepository\Context\Node\NodeIdentifier(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getSourceDimensionSpacePoint()
+            ));
+            $peerNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getPeerLocation());
+
+            foreach ($event->getPeerVisibility() as $coveredDimensionSpacePoint) {
+                // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
+                $peerParentNode = $this->projectionContentGraph->getNodeInAggregate(
+                    $event->getContentStreamIdentifier(),
+                    $sourceParentNode->nodeAggregateIdentifier,
+                    $coveredDimensionSpacePoint
+                );
+
+                $this->connectHierarchy(
+                    $event->getContentStreamIdentifier(),
+                    $peerParentNode->relationAnchorPoint,
+                    $peerNode->relationAnchorPoint,
+                    new DimensionSpacePointSet([$coveredDimensionSpacePoint]),
+                    null, // @todo fetch appropriate sibling
+                    $sourceNode->nodeName
+                );
+            }
+        });
+    }
+
+    /**
      * @param NodeInAggregateWasTranslated $event
      * @throws \Throwable
      */
@@ -1059,6 +1094,29 @@ insert into neos_contentgraph_restrictionedge
         );
         $newHierarchyRelation->addToDatabase($this->getDatabaseConnection());
         $hierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
+    }
+
+    /**
+     * @param NodeRecord $sourceNode
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return NodeRecord
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function copyNodeToDimensionSpacePoint(NodeRecord $sourceNode, DimensionSpacePoint $dimensionSpacePoint): NodeRecord
+    {
+        $copyRelationAnchorPoint = NodeRelationAnchorPoint::create();
+        $copy = new NodeRecord(
+            $copyRelationAnchorPoint,
+            $sourceNode->nodeAggregateIdentifier,
+            $dimensionSpacePoint->jsonSerialize(),
+            $dimensionSpacePoint->getHash(),
+            $sourceNode->properties,
+            $sourceNode->nodeTypeName,
+            $sourceNode->nodeName
+        );
+        $copy->addToDatabase($this->getDatabaseConnection());
+
+        return $copy;
     }
 
     /**

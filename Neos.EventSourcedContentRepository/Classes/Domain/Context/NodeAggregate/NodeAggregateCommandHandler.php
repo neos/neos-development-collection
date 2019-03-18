@@ -28,13 +28,17 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsA
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateNameWasChanged;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePeerVariantWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
@@ -307,14 +311,14 @@ final class NodeAggregateCommandHandler
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate
+     * @return NodeAggregate
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyDoesNotExist
      */
     protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): \Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate {
+    ): NodeAggregate {
         $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         if (!$nodeAggregate) {
@@ -604,13 +608,14 @@ final class NodeAggregateCommandHandler
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getTargetDimensionSpacePoint());
 
+        $events = [];
         $specializations = $this->interDimensionalVariationGraph->getIndexedSpecializations($command->getSourceDimensionSpacePoint());
         if ($specializations->contains($command->getTargetDimensionSpacePoint())) {
             $excludedSet = new DimensionSpacePointSet([]);
             foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()) as $occupiedSpecialization) {
                 $excludedSet = $excludedSet->getUnion($this->interDimensionalVariationGraph->getSpecializationSet($occupiedSpecialization));
             }
-            $event = new Event\NodeSpecializationVariantWasCreated(
+            $events[] = new Event\NodeSpecializationVariantWasCreated(
                 $command->getContentStreamIdentifier(),
                 $command->getNodeAggregateIdentifier(),
                 $command->getSourceDimensionSpacePoint(),
@@ -621,10 +626,11 @@ final class NodeAggregateCommandHandler
                     $excludedSet
                 )
             );
+            /** @var NodeSpecializationVariantWasCreated[] $events */
         } else {
             $generalizations = $this->interDimensionalVariationGraph->getIndexedGeneralizations($command->getSourceDimensionSpacePoint());
             if ($generalizations->contains($command->getTargetDimensionSpacePoint())) {
-                $event = new Event\NodeGeneralizationVariantWasCreated(
+                $events[] = new Event\NodeGeneralizationVariantWasCreated(
                     $command->getContentStreamIdentifier(),
                     $command->getNodeAggregateIdentifier(),
                     $command->getSourceDimensionSpacePoint(),
@@ -635,36 +641,64 @@ final class NodeAggregateCommandHandler
                         $nodeAggregate->getCoveredDimensionSpacePoints()
                     )
                 );
+                /** @var NodeGeneralizationVariantWasCreated[] $events */
             } else {
-                $event = new Event\NodePeerVariantWasCreated(
-                    $command->getContentStreamIdentifier(),
-                    $command->getNodeAggregateIdentifier(),
-                    $command->getSourceDimensionSpacePoint(),
+                $peerVisibility = $this->interDimensionalVariationGraph->getSpecializationSet(
                     $command->getTargetDimensionSpacePoint(),
-                    $this->interDimensionalVariationGraph->getSpecializationSet(
-                        $command->getTargetDimensionSpacePoint(),
-                        true,
-                        $nodeAggregate->getOccupiedDimensionSpacePoints()
-                    )
+                    true,
+                    $nodeAggregate->getOccupiedDimensionSpacePoints()
                 );
+
+                $this->collectNodePeerVariantsThatWillHaveBeenCreated($command, $nodeAggregate, $peerVisibility, $events);
+                /** @var NodePeerVariantWasCreated[] $events */
             }
         }
 
-        $events = null;
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, $event, &$events) {
-            $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create($event)
-            );
+        $publishedEvents = DomainEvents::createEmpty();
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, $events, &$publishedEvents) {
+            foreach ($events as $event) {
+                $domainEvents = DomainEvents::withSingleEvent(
+                    EventWithIdentifier::create($event)
+                );
 
-            $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-                $command->getContentStreamIdentifier(),
-                $command->getNodeAggregateIdentifier()
-            );
+                $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
+                    $event->getContentStreamIdentifier(),
+                    $event->getNodeAggregateIdentifier()
+                );
 
-            $this->nodeEventPublisher->publishMany($streamName->getEventStreamName(), $events);
+                $this->nodeEventPublisher->publishMany($streamName->getEventStreamName(), $domainEvents);
+
+                $publishedEvents = $publishedEvents->appendEvents($domainEvents);
+            }
         });
 
-        return CommandResult::fromPublishedEvents($events);
+        return CommandResult::fromPublishedEvents($publishedEvents);
+    }
+
+    protected function collectNodePeerVariantsThatWillHaveBeenCreated(
+        CreateNodeVariant $command,
+        ReadableNodeAggregateInterface $nodeAggregate,
+        DimensionSpacePointSet $peerVisibility,
+        array& $events
+    ) {
+        $events[] = new Event\NodePeerVariantWasCreated(
+            $command->getContentStreamIdentifier(),
+            $nodeAggregate->getIdentifier(),
+            $command->getSourceDimensionSpacePoint(),
+            $command->getTargetDimensionSpacePoint(),
+            $peerVisibility
+        );
+
+        $nodeType = $this->getNodeType($nodeAggregate->getNodeTypeName());
+        foreach ($nodeType->getAutoCreatedChildNodes() as $nodeName => $nodeTypeName) {
+            $childNodeAggregate = $this->contentGraph->findChildNodeAggregateByName(
+                $command->getContentStreamIdentifier(),
+                $nodeAggregate->getIdentifier(),
+                NodeName::fromString($nodeName)
+            );
+
+            $this->collectNodePeerVariantsThatWillHaveBeenCreated($command, $childNodeAggregate, $peerVisibility, $events);
+        }
     }
 
     /**

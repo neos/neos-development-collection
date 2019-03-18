@@ -14,12 +14,14 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
@@ -108,6 +110,49 @@ final class NodeFactory
         return $node;
     }
 
+    /**
+     * @param array $nodeRows
+     * @return ContentProjection\NodeAggregate
+     * @throws \Exception
+     */
+    public function mapNodeRowsToNodeAggregate(array $nodeRows): ContentProjection\NodeAggregate
+    {
+        $rawNodeAggregateIdentifier = '';
+        $rawNodeTypeName = '';
+        $rawNodeName = '';
+        $nodes = [];
+        $occupiedDimensionSpacePoints = [];
+        $coveredDimensionSpacePoints = [];
+
+        $processedDimensionSpacePoints = [];
+        foreach ($nodeRows as $nodeRow) {
+            if (!isset($processedDimensionSpacePoints[$nodeRow['origindimensionspacepointhash']])) {
+                $nodes[] = $this->mapNodeRowToNode($nodeRow);
+                $occupiedDimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
+                if (empty($rawNodeAggregateIdentifier)) {
+                    $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
+                } elseif ($rawNodeAggregateIdentifier !== $nodeRow['nodeaggregateidentifier']) {
+                    throw new NodeAggregateIsAmbiguous('Node aggregate is ambiguous', 1552691226);
+                }
+                if (empty($rawNodeTypeName)) {
+                    $rawNodeTypeName = $nodeRow['nodetypename'];
+                }
+                if (empty($rawNodeName)) {
+                    $rawNodeName = $nodeRow['name'];
+                }
+            }
+            $coveredDimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
+        }
+
+        return new ContentProjection\NodeAggregate(
+            NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
+            NodeTypeName::fromString($rawNodeTypeName),
+            $rawNodeName ? NodeName::fromString($rawNodeName) : null,
+            $nodes,
+            new DimensionSpacePointSet($occupiedDimensionSpacePoints),
+            new DimensionSpacePointSet($coveredDimensionSpacePoints)
+        );
+    }
 
     protected function getNodeInterfaceImplementationClassName(NodeType $nodeType): string
     {

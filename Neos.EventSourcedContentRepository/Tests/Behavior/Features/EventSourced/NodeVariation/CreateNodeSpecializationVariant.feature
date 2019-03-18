@@ -3,6 +3,8 @@ Feature: Create node generalization
 
   As a user of the CR I want to create a copy of a node within an aggregate to a more specialized dimension space point.
 
+  #todo: auto created child nodes
+
   Background:
     Given I have the following content dimensions:
       | Identifier | Default | Values      | Generalizations |

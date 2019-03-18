@@ -93,29 +93,29 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param NodeIdentifier $childNodeIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier $childNodeIdentifier
      * @return NodeRecord|null
      * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
      */
-    public function findParentNode(NodeIdentifier $childNodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): ?NodeRecord
+    public function findParentNode(\Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier $childNodeIdentifier): ?NodeRecord
     {
         $params = [
-            'childNodeIdentifier' => (string)$childNodeIdentifier,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
+            'contentStreamIdentifier' => (string)$childNodeIdentifier->getContentStreamIdentifier(),
+            'childNodeAggregateIdentifier' => (string)$childNodeIdentifier->getNodeAggregateIdentifier(),
+            'originDimensionSpacePointHash' => $childNodeIdentifier->getOriginDimensionSpacePoint()->getHash()
         ];
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
- INNER JOIN neos_contentgraph_hierarchyrelation hp ON hp.childnodeanchor = p.relationanchorpoint
- WHERE c.nodeidentifier = :childNodeIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier
- AND hp.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash = :dimensionSpacePointHash
- AND hp.dimensionspacepointhash = :dimensionSpacePointHash',
+            'SELECT p.*, ph.contentstreamidentifier, ph.name FROM neos_contentgraph_node p
+ INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
+ INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
+ INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint
+ WHERE c.nodeaggregateidentifier = :childNodeAggregateIdentifier
+ AND c.origindimensionspacepointhash = :originDimensionSpacePointHash
+ AND ch.contentstreamidentifier = :contentStreamIdentifier
+ AND ch.dimensionspacepointhash = :originDimensionSpacePointHash
+ AND ph.contentstreamidentifier = :contentStreamIdentifier
+ AND ph.dimensionspacepointhash = :originDimensionSpacePointHash',
             $params
         )->fetch();
 

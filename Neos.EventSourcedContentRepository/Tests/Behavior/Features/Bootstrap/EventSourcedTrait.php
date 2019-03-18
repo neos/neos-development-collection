@@ -290,6 +290,24 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the event NodePeerVariantWasCreated was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theEventNodePeerVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
+        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier
+        );
+
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodePeerVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
+    }
+
+    /**
      * @Given /^the event NodePropertyWasSet was published with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception

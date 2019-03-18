@@ -254,14 +254,19 @@ final class ContentGraph implements ContentGraphInterface
     ): ?NodeAggregate {
         $connection = $this->client->getConnection();
 
-        $query = 'SELECT p.*, ph.name, ph.contentstreamidentifier, ph.dimensionspacepoint FROM neos_contentgraph_node p
-                      INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
-                      INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
-                      INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint 
-                      WHERE c.nodeaggregateidentifier = :childNodeAggregateIdentifier
-                      AND ph.contentstreamidentifier = :contentStreamIdentifier
-                      AND ch.contentstreamidentifier = :contentStreamIdentifier
-                      AND ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash';
+        $query = 'SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
+                      INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                      WHERE n.nodeaggregateidentifier = (
+                          SELECT p.nodeaggregateidentifier FROM neos_contentgraph_node p
+                          INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
+                          INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint
+                          WHERE ch.contentstreamidentifier = :contentStreamIdentifier
+                          AND ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash
+                          AND c.nodeaggregateidentifier = :childNodeAggregateIdentifier
+                          AND c.origindimensionspacepointhash = :childOriginDimensionSpacePointHash
+                      )
+                      AND h.contentstreamidentifier = :contentStreamIdentifier
+            ';
 
         $parameters = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
@@ -348,7 +353,7 @@ final class ContentGraph implements ContentGraphInterface
         $query = 'SELECT p.*, ph.name, ph.contentstreamidentifier, ph.dimensionspacepoint FROM neos_contentgraph_node p
                       INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
-                      INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint 
+                      INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint
                       WHERE c.nodeaggregateidentifier = :nodeAggregateIdentifier
                       AND ph.contentstreamidentifier = :contentStreamIdentifier
                       AND ch.contentstreamidentifier = :contentStreamIdentifier';
@@ -403,7 +408,7 @@ final class ContentGraph implements ContentGraphInterface
         $query = 'SELECT c.*, ch.name, ch.contentstreamidentifier, ch.dimensionspacepoint FROM neos_contentgraph_node p
                       INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
-                      INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint 
+                      INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint
                       WHERE p.nodeaggregateidentifier = :nodeAggregateIdentifier
                       AND ph.contentstreamidentifier = :contentStreamIdentifier
                       AND ch.contentstreamidentifier = :contentStreamIdentifier';
@@ -440,6 +445,49 @@ final class ContentGraph implements ContentGraphInterface
         }
 
         return $childAggregates;
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param NodeName $name
+     * @return NodeAggregate|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws Domain\Context\NodeAggregate\ChildNodeAggregateIsAmbiguous
+     * @throws \Exception
+     */
+    public function findChildNodeAggregateByName(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeName $name
+    ): ?NodeAggregate {
+        $connection = $this->client->getConnection();
+
+        $query = 'SELECT c.*, ch.name, ch.contentstreamidentifier, ch.dimensionspacepoint FROM neos_contentgraph_node p
+                      INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
+                      INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
+                      INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint
+                      WHERE p.nodeaggregateidentifier = :parentNodeAggregateIdentifier
+                      AND ph.contentstreamidentifier = :contentStreamIdentifier
+                      AND ch.name = :relationName
+                      AND ch.contentstreamidentifier = :contentStreamIdentifier';
+
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
+            'relationName' => (string)$name
+        ];
+
+        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
+        if (empty($nodeRows)) {
+            return null;
+        }
+
+        try {
+            return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows);
+        } catch (Domain\Context\NodeAggregate\NodeAggregateIsAmbiguous $e) {
+            throw new Domain\Context\NodeAggregate\ChildNodeAggregateIsAmbiguous('Child node aggregate with name "' . $name . '" for parent node aggregate "' . $parentNodeAggregateIdentifier . '" is ambiguous.', 1552691409, $e);
+        }
     }
 
     /**

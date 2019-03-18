@@ -100,6 +100,18 @@ interface ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param NodeName $name
+     * @return NodeAggregate|null
+     */
+    public function findChildNodeAggregateByName(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeName $name
+    ): ?NodeAggregate;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeName $nodeName
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param DimensionSpacePoint $parentNodeOriginDimensionSpacePoints
