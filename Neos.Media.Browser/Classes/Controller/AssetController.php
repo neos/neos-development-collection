@@ -182,7 +182,8 @@ class AssetController extends ActionController
             'filter' => $this->browserState->get('filter'),
             'activeTag' => $this->browserState->get('activeTag'),
             'activeAssetCollection' => $this->browserState->get('activeAssetCollection'),
-            'assetSources' => $this->assetSources
+            'assetSources' => $this->assetSources,
+            'variantsTabFeatureEnabled' => $this->settings['features']['variantsTab']['enable']
         ]);
     }
 
@@ -381,8 +382,7 @@ class AssetController extends ActionController
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
                 'contentPreview' => $contentPreview,
-                'assetSource' => $assetSource,
-                'variantsTabFeatureEnabled' => $this->settings['features']['variantsTab']['enable']
+                'assetSource' => $assetSource
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Asset not found');
@@ -394,10 +394,11 @@ class AssetController extends ActionController
     /**
      * @param string $assetSourceIdentifier
      * @param string $assetProxyIdentifier
+     * @param string $overviewAction
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
      */
-    public function variantsAction(string $assetSourceIdentifier, string $assetProxyIdentifier)
+    public function variantsAction(string $assetSourceIdentifier, string $assetProxyIdentifier, string $overviewAction): void
     {
         if (!isset($this->assetSources[$assetSourceIdentifier])) {
             throw new \RuntimeException('Given asset source is not configured.', 1509632166);
@@ -416,7 +417,8 @@ class AssetController extends ActionController
                 'assetProxy' => $assetProxy,
                 'asset' => $originalAsset,
                 'assetSource' => $assetSource,
-                'imageProfiles' => $this->imageProfilesConfiguration
+                'imageProfiles' => $this->imageProfilesConfiguration,
+                'overviewAction' => $overviewAction
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Original asset not found');

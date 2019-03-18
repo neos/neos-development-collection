@@ -8,7 +8,7 @@
 
     <ul class="neos-nav neos-nav-tabs" role="tablist">
         <li role="presentation">
-            <f:link.action action="edit" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}">Overview</f:link.action>
+            <f:link.action action="{overviewAction}" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}">Overview</f:link.action>
         </li>
         <li role="presentation" class="neos-active">
             <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}">Variants</f:link.action>
