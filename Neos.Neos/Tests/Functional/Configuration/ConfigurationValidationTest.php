@@ -49,6 +49,6 @@ class ConfigurationValidationTest extends FlowConfigurationValidationTest
     protected $configurationPackageKeys = [
         'Neos.Flow', 'Neos.FluidAdaptor', 'Neos.Eel', 'Neos.Kickstart',
         'Neos.ContentRepository', 'Neos.Neos', 'Neos.Fusion', 'Neos.Media',
-        'Neos.Media.Browser', 'Neos.NodeTypes'
+        'Neos.Media.Browser'
     ];
 }
