@@ -14,11 +14,11 @@ namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\ValueObject\Configuration\Adjustment;
-use Neos\Media\Domain\ValueObject\Configuration\ImageVariantPreset;
+use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 use Neos\Media\Domain\ValueObject\Configuration\Label;
 use Neos\Media\Domain\ValueObject\Configuration\Variant;
 
-class ImageVariantPresetTest extends UnitTestCase
+class VariantPresetTest extends UnitTestCase
 {
     /**
      * @test
@@ -26,7 +26,7 @@ class ImageVariantPresetTest extends UnitTestCase
     public function imageVariantLabelCanBeRetrieved(): void
     {
         $label = new Label('Demo Preset 1');
-        $preset = new ImageVariantPreset($label);
+        $preset = new VariantPreset($label);
         self::assertSame($label, $preset->label());
     }
 
@@ -61,7 +61,7 @@ class ImageVariantPresetTest extends UnitTestCase
             ]
         ];
 
-        $preset = ImageVariantPreset::fromConfiguration($configuration);
+        $preset = VariantPreset::fromConfiguration($configuration);
 
         $variants = $preset->variants();
         self::assertCount(1, $variants);

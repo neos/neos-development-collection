@@ -1,5 +1,5 @@
 =====================
-Image Variant Presets
+Variant Presets
 =====================
 
 Introduction
@@ -8,7 +8,7 @@ Introduction
 Neos Media provides a way to automatically generate variants of an original, based on configuration. This allows
 for creating images with different aspect ratios, or other adjustments, without further action of an editor.
 
-For example, you may want to generate a square and a wide variant of a given original in order to use them on
+For example, you may want to generate a square and a wide variant of a given original image in order to use them on
 your website. Using Fusion, you can access a specific variant generated through a preset, by referring to the
 preset's identifier and the variant name.
 
@@ -45,14 +45,14 @@ usually been carried out by an editor.
 Configuration
 -------------
 
-Image variant presets are defined in a Settings.yaml of a given package or distribution. Each preset defines one
+Variant presets are defined in a Settings.yaml of a given package or distribution. Each preset defines one
 or more variants to be generated. Each variant can have one or more adjustments automatically applied.
 
 The following example shows the required structure and possible fields of the presets configuration:
 
 .. code-block:: yaml
 ```yaml
-    imageVariantPresets:
+    variantPresets:
       'Flownative.Demo:Preset1':
         label: 'Demo Preset 1'
         variants:

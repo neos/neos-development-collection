@@ -1,12 +1,12 @@
 # Configuration Value Objects
 
 This namespace contains classes for value objects which are used to parse
-image variant presets from settings.
+variant presets from settings.
 
 The following example shows the structure of these settings:
 
 ```yaml
-    imageVariantPresets:
+    variantPresets:
       'Flownative.Demo:Preset1':
         label: 'Demo Preset 1'
         variants:

@@ -16,7 +16,7 @@ namespace Neos\Media\Domain\ValueObject\Configuration;
 /**
  * A Value Object for storing configuration of an Image Variant Preset
  */
-final class ImageVariantPreset
+final class VariantPreset
 {
     /**
      * @var Label
@@ -38,17 +38,17 @@ final class ImageVariantPreset
 
     /**
      * @param array $configuration
-     * @return ImageVariantPreset
+     * @return VariantPreset
      */
-    public static function fromConfiguration(array $configuration): ImageVariantPreset
+    public static function fromConfiguration(array $configuration): VariantPreset
     {
-        $imageVariantPreset = new static(
+        $variantPreset = new static(
             new Label($configuration['label'])
         );
         foreach ($configuration['variants'] as $variantIdentifier => $variantConfiguration) {
-            $imageVariantPreset->variants[$variantIdentifier] = Variant::fromConfiguration($variantIdentifier, $variantConfiguration);
+            $variantPreset->variants[$variantIdentifier] = Variant::fromConfiguration($variantIdentifier, $variantConfiguration);
         }
-        return $imageVariantPreset;
+        return $variantPreset;
     }
 
     /**
