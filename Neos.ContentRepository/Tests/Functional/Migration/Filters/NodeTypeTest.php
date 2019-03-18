@@ -53,28 +53,28 @@ class NodeTypeTest extends FunctionalTestCase
     {
         return [
             'nodeTypeOnly' => [
-                'nodeType' => 'Neos.NodeTypes:Page',
+                'nodeType' => 'Neos.ContentRepository.Testing:Page',
                 'withSubTypes' => false,
                 'exclude' => false,
-                'expected' => 'n0_.nodetype IN (\'Neos.NodeTypes:Page\')',
+                'expected' => 'n0_.nodetype IN (\'Neos.ContentRepository.Testing:Page\')',
             ],
             'nodeTypeAndSubTypes' => [
-                'nodeType' => 'Neos.NodeTypes:Page',
+                'nodeType' => 'Neos.ContentRepository.Testing:Page',
                 'withSubTypes' => true,
                 'exclude' => false,
-                'expected' => 'n0_.nodetype IN (\'Neos.NodeTypes:Page\', \'Neos.Demo:Homepage\')',
+                'expected' => 'n0_.nodetype IN (\'Neos.ContentRepository.Testing:Page\', \'Neos.ContentRepository.Testing:Chapter\', \'Neos.ContentRepository.Testing:PageWithConfiguredLabel\')',
             ],
             'nodeTypeExclude' => [
-                'nodeType' => 'Neos.NodeTypes:Page',
+                'nodeType' => 'Neos.ContentRepository.Testing:Page',
                 'withSubTypes' => false,
                 'exclude' => true,
-                'expected' => 'NOT (n0_.nodetype IN (\'Neos.NodeTypes:Page\'))',
+                'expected' => 'NOT (n0_.nodetype IN (\'Neos.ContentRepository.Testing:Page\'))',
             ],
             'nodeTypeExcludeAndSubTypes' => [
-                'nodeType' => 'Neos.NodeTypes:Page',
+                'nodeType' => 'Neos.ContentRepository.Testing:Page',
                 'withSubTypes' => true,
                 'exclude' => true,
-                'expected' => 'NOT (n0_.nodetype IN (\'Neos.NodeTypes:Page\', \'Neos.Demo:Homepage\'))',
+                'expected' => 'NOT (n0_.nodetype IN (\'Neos.ContentRepository.Testing:Page\', \'Neos.ContentRepository.Testing:Chapter\', \'Neos.ContentRepository.Testing:PageWithConfiguredLabel\'))',
             ],
         ];
     }
