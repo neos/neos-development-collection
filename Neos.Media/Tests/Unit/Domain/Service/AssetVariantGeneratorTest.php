@@ -74,7 +74,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
      */
     public function createVariantCreatesVariantAccordingToPreset(): void
     {
-        $imageVariantPresetsConfiguration = [
+        $variantPresetsConfiguration = [
             'Flownative.Demo:Preset' => [
                 'label' => 'Demo Preset',
                 'variants' => [
@@ -90,7 +90,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
             ]
         ];
 
-        $assetService = $this->mockAssetService($imageVariantPresetsConfiguration);
+        $assetService = $this->mockAssetService($variantPresetsConfiguration);
         $asset = $this->mockImage();
 
         $assetVariantGenerator = $this->mockAssetVariantGenerator([], $assetService);
@@ -116,7 +116,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
      */
     public function createVariantThrowsExceptionOnUnknownAdjustmentType(): void
     {
-        $imageVariantPresetsConfiguration = [
+        $variantPresetsConfiguration = [
             'Flownative.Demo:Preset' => [
                 'label' => 'Demo Preset',
                 'variants' => [
@@ -132,7 +132,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
             ]
         ];
 
-        $assetService = $this->mockAssetService($imageVariantPresetsConfiguration);
+        $assetService = $this->mockAssetService($variantPresetsConfiguration);
         $asset = $this->mockImage();
 
         $assetVariantGenerator = $this->mockAssetVariantGenerator([], $assetService);
@@ -144,13 +144,13 @@ class AssetVariantGeneratorTest extends UnitTestCase
     // TEST HELPER METHODS
 
     /**
-     * @param array $imageVariantPresetsConfiguration
+     * @param array $variantPresetsConfiguration
      * @return AssetService
      */
-    private function mockAssetService(array $imageVariantPresetsConfiguration = []): AssetService
+    private function mockAssetService(array $variantPresetsConfiguration = []): AssetService
     {
-        if ($imageVariantPresetsConfiguration === []) {
-            $imageVariantPresetsConfiguration = [
+        if ($variantPresetsConfiguration === []) {
+            $variantPresetsConfiguration = [
                 'Flownative.Demo:Preset1' => [
                     'label' => 'Demo Preset 1',
                     'variants' => [
@@ -181,7 +181,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
         }
 
         $assetService = new AssetService();
-        $this->inject($assetService, 'imageVariantPresetsConfiguration', $imageVariantPresetsConfiguration);
+        $this->inject($assetService, 'variantPresetsConfiguration', $variantPresetsConfiguration);
         return $assetService;
     }
 

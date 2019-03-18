@@ -51,7 +51,7 @@ class AssetVariantGenerator
         }
 
         $createdVariants = [];
-        foreach ($this->assetService->getImageVariantPresets() as $presetIdentifier => $preset) {
+        foreach ($this->assetService->getVariantPresets() as $presetIdentifier => $preset) {
             foreach ($preset->variants() as $variantConfiguration) {
                 $createdVariants[$presetIdentifier] = $this->createVariant($asset, $presetIdentifier, $variantConfiguration);
                 $asset->addVariant($createdVariants[$presetIdentifier]);

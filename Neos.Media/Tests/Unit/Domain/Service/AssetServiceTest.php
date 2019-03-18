@@ -64,7 +64,7 @@ class AssetServiceTest extends UnitTestCase
     /**
      * @test
      */
-    public function getImageVariantPresetsReturnsConfiguration(): void
+    public function getVariantPresetsReturnsConfiguration(): void
     {
         $configuration = [
             'Flownative.Demo:Preset1' => [
@@ -78,9 +78,9 @@ class AssetServiceTest extends UnitTestCase
         ];
 
         $assetService = new AssetService();
-        $this->inject($assetService, 'imageVariantPresetsConfiguration', $configuration);
+        $this->inject($assetService, 'variantPresetsConfiguration', $configuration);
 
-        $presets = $assetService->getImageVariantPresets();
+        $presets = $assetService->getVariantPresets();
         self::assertArrayHasKey('Flownative.Demo:Preset1', $presets);
         self::assertSame($configuration['Flownative.Demo:Preset1']['label'], (string)$presets['Flownative.Demo:Preset1']->label());
         self::assertArrayHasKey('Flownative.Demo:Preset2', $presets);
