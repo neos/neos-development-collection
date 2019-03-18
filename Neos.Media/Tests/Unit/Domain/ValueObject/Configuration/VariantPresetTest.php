@@ -14,6 +14,7 @@ namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\ValueObject\Configuration\Adjustment;
+use Neos\Media\Domain\ValueObject\Configuration\AssetClass;
 use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 use Neos\Media\Domain\ValueObject\Configuration\Label;
 use Neos\Media\Domain\ValueObject\Configuration\Variant;
@@ -37,6 +38,7 @@ class VariantPresetTest extends UnitTestCase
     {
         $configuration = [
             'label' => 'Demo Preset 1 👋',
+            'assetClasses' => ['Image'],
             'variants' => [
                 'wide' => [
                     'label' => 'Wide',
@@ -62,6 +64,11 @@ class VariantPresetTest extends UnitTestCase
         ];
 
         $preset = VariantPreset::fromConfiguration($configuration);
+
+        $assetClasses = $preset->assetClasses();
+        self::assertCount(1, $assetClasses);
+        self::assertContainsOnlyInstancesOf(AssetClass::class, $assetClasses);
+        self::assertSame((string)reset($assetClasses), 'Image');
 
         $variants = $preset->variants();
         self::assertCount(1, $variants);
