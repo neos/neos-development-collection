@@ -18,6 +18,7 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ResourceManagement\Exception;
 use Neos\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\ValueObject\Configuration;
@@ -46,6 +47,10 @@ class AssetVariantGenerator
      */
     public function createVariants(AssetInterface $asset): array
     {
+        // Currently only Image Variants are supported. Other asset classes can be supported, as soon as there is a common
+        // interface for creating and adding variants.
+        //
+        // If multiple asset classes are supported, the "assetClasses" property of a variant preset needs to be checked here.
         if (!$asset instanceof Image) {
             return [];
         }
@@ -62,7 +67,7 @@ class AssetVariantGenerator
     }
 
     /**
-     * @param Image $imageAsset
+     * @param Image $originalAsset
      * @param string $presetIdentifier
      * @param Configuration\Variant $variantConfiguration
      * @return ImageVariant
@@ -70,9 +75,8 @@ class AssetVariantGenerator
      * @throws Exception
      * @throws ImageFileException
      * @throws InvalidConfigurationException
-     * @throws \Exception
      */
-    protected function createVariant(Image $imageAsset, string $presetIdentifier, Configuration\Variant $variantConfiguration): ImageVariant
+    protected function createVariant(Image $originalAsset, string $presetIdentifier, Configuration\Variant $variantConfiguration): AssetVariantInterface
     {
         $adjustments = [];
         foreach ($variantConfiguration->adjustments() as $adjustmentConfiguration) {
@@ -91,7 +95,7 @@ class AssetVariantGenerator
             $adjustments[] = $adjustment;
         }
 
-        $imageVariant = $this->createImageVariant($imageAsset);
+        $imageVariant = $this->createImageVariant($originalAsset);
         $imageVariant->setPresetIdentifier($presetIdentifier);
         $imageVariant->setPresetVariantName($variantConfiguration->identifier());
 
@@ -105,7 +109,6 @@ class AssetVariantGenerator
     /**
      * @param Image $imageAsset
      * @return ImageVariant
-     * @throws \Exception
      */
     protected function createImageVariant(Image $imageAsset): ImageVariant
     {

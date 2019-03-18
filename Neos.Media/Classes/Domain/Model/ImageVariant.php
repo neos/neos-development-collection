@@ -80,7 +80,6 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      * Constructs a new Image Variant based on the given original
      *
      * @param Image $originalAsset The original Image asset this variant is derived from
-     * @throws \Exception
      */
     public function __construct(Image $originalAsset)
     {
@@ -89,7 +88,11 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
         $this->thumbnails = new ArrayCollection();
         $this->adjustments = new ArrayCollection();
         $this->tags = new ArrayCollection();
-        $this->lastModified = new \DateTime();
+        try {
+            $this->lastModified = new \DateTime();
+        } catch (\Exception $e) {
+            // This won't happen, because we create DateTime without any parameters.
+        }
     }
 
     /**

@@ -14,7 +14,7 @@ namespace Neos\Media\Domain\ValueObject\Configuration;
  */
 
 /**
- * A Value Object for storing configuration of an Image Variant Preset
+ * A Value Object for storing configuration of a Variant Preset
  */
 final class VariantPreset
 {
@@ -22,6 +22,11 @@ final class VariantPreset
      * @var Label
      */
     private $label;
+
+    /**
+     * @var AssetClass[]
+     */
+    private $assetClasses = [];
 
     /**
      * @var Variant[]
@@ -45,6 +50,11 @@ final class VariantPreset
         $variantPreset = new static(
             new Label($configuration['label'])
         );
+        if (isset($configuration['assetClasses'])) {
+            foreach ($configuration['assetClasses'] as $assetClassAsString) {
+                $variantPreset->assetClasses[] = new AssetClass($assetClassAsString);
+            }
+        }
         foreach ($configuration['variants'] as $variantIdentifier => $variantConfiguration) {
             $variantPreset->variants[$variantIdentifier] = Variant::fromConfiguration($variantIdentifier, $variantConfiguration);
         }
@@ -57,6 +67,14 @@ final class VariantPreset
     public function label(): Label
     {
         return $this->label;
+    }
+
+    /**
+     * @return array
+     */
+    public function assetClasses(): array
+    {
+        return $this->assetClasses;
     }
 
     /**
