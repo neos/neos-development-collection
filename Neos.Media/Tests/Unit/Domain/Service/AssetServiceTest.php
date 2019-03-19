@@ -69,10 +69,12 @@ class AssetServiceTest extends UnitTestCase
         $configuration = [
             'Flownative.Demo:Preset1' => [
                 'label' => 'Demo Preset 1',
+                'mediaTypePatterns' => ['image\/.*'],
                 'variants' => []
             ],
             'Flownative.Demo:Preset2' => [
                 'label' => 'Demo Preset 2',
+                'mediaTypePatterns' => ['image\/.*'],
                 'variants' => []
             ]
         ];

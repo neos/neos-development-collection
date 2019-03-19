@@ -24,9 +24,9 @@ final class VariantPreset
     private $label;
 
     /**
-     * @var AssetClass[]
+     * @var MediaTypePattern[]
      */
-    private $assetClasses = [];
+    private $mediaTypePatterns = [];
 
     /**
      * @var Variant[]
@@ -50,10 +50,11 @@ final class VariantPreset
         $variantPreset = new static(
             new Label($configuration['label'])
         );
-        if (isset($configuration['assetClasses'])) {
-            foreach ($configuration['assetClasses'] as $assetClassAsString) {
-                $variantPreset->assetClasses[] = new AssetClass($assetClassAsString);
-            }
+        if (!isset($configuration['mediaTypePatterns'])) {
+            throw new \InvalidArgumentException(sprintf('Missing mediaTypePatterns definition in configuration for variant preset %s.', $configuration['label']), 1552995185);
+        }
+        foreach ($configuration['mediaTypePatterns'] as $mediaTypeAsString) {
+            $variantPreset->mediaTypePatterns[] = new MediaTypePattern($mediaTypeAsString);
         }
         foreach ($configuration['variants'] as $variantIdentifier => $variantConfiguration) {
             $variantPreset->variants[$variantIdentifier] = Variant::fromConfiguration($variantIdentifier, $variantConfiguration);
@@ -70,11 +71,27 @@ final class VariantPreset
     }
 
     /**
-     * @return array
+     * Checks if any of the defined media type patterns matches the given concrete media type.
+     *
+     * @param string $mediaType
+     * @return bool
      */
-    public function assetClasses(): array
+    public function matchesMediaType(string $mediaType): bool
     {
-        return $this->assetClasses;
+        foreach ($this->mediaTypePatterns as $mediaTypePattern) {
+            if ($mediaTypePattern->matches($mediaType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return MediaTypePattern[]
+     */
+    public function mediaTypePatterns(): array
+    {
+        return $this->mediaTypePatterns;
     }
 
     /**

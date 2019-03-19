@@ -55,6 +55,7 @@ The following example shows the required structure and possible fields of the pr
     variantPresets:
       'Flownative.Demo:Preset1':
         label: 'Demo Preset 1'
+        mediaTypePatterns: ['image\/(jpe?g|png)', 'image\/vnd\.adobe\.photoshop']
         variants:
           'wide':
             label: 'Wide'
