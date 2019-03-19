@@ -535,7 +535,7 @@
 			<target xml:lang="de" state="translated">Ausgewählte Pakete aktivieren</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
-			<target xml:lang="de" state="translated">Websites Verwaltung</target><alt-trans><target xml:lang="de">Seitenverwaltung</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Websites Verwaltung</target><alt-trans><target xml:lang="de">Website-Verwaltung</target></alt-trans><alt-trans><target xml:lang="de">Websites-Verwaltung</target></alt-trans><alt-trans><target xml:lang="de">Seitenverwaltung</target></alt-trans></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="de" state="translated">Das Modul zur Website-Verwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target><alt-trans><target xml:lang="de">Das Modul zur Websiteverwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target></alt-trans></trans-unit>
