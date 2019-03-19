@@ -10,7 +10,6 @@ namespace Neos\Neos\Tests\Functional;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
@@ -57,7 +56,6 @@ abstract class AbstractNodeTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->markSkippedIfNodeTypesPackageIsNotInstalled();
 
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $contentContext = $this->contextFactory->create(['workspaceName' => 'live']);
@@ -91,13 +89,5 @@ abstract class AbstractNodeTest extends FunctionalTestCase
 
         $this->inject($this->contextFactory, 'contextInstances', []);
         $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', []);
-    }
-
-    protected function markSkippedIfNodeTypesPackageIsNotInstalled()
-    {
-        $packageManager = $this->objectManager->get(PackageManagerInterface::class);
-        if (!$packageManager->isPackageAvailable('Neos.NodeTypes')) {
-            $this->markTestSkipped('This test needs the Neos.NodeTypes package.');
-        }
     }
 }
