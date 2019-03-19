@@ -87,6 +87,32 @@ root {
 	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\PageHandler'
 }
 
+# The error matcher used to render errors that are configured for fusion rendering
+#
+# The matcher receives the context values `exception`, `renderingOptions`, `statusCode`,
+# `statusMessage` and `referenceCode`.
+#
+# By default the standard error template is rendered, but by extending the matcher
+# custom rendering can be implemented
+#
+error = Neos.Fusion:Case {
+	default {
+	@position = 'end 9999'
+	condition = true
+	renderer = Neos.Fusion:Template {
+		templatePath = 'resource://Neos.Neos/Private/Templates/Error/Index.html'
+		layoutRootPath = 'resource://Neos.Neos/Private/Layouts/'
+
+		exception = ${exception}
+		renderingOptions = ${renderingOptions}
+		statusCode = ${statusCode}
+		statusMessage = ${statusMessage}
+		referenceCode = ${referenceCode}
+	}
+	}
+}
+
+
 # Extension of the GlobalCacheIdentifiers prototype
 #
 # We add the names of workspaces of the current workspace chain (for example, "user-john,some-workspace,live") to the list
