@@ -77,6 +77,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
         $variantPresetsConfiguration = [
             'Flownative.Demo:Preset' => [
                 'label' => 'Demo Preset',
+                'mediaTypePatterns' => ['image\/.*'],
                 'variants' => [
                     'wide' => [
                         'label' => 'Wide',
@@ -95,7 +96,6 @@ class AssetVariantGeneratorTest extends UnitTestCase
 
         $assetVariantGenerator = $this->mockAssetVariantGenerator([], $assetService);
         $createdVariants = $assetVariantGenerator->createVariants($asset);
-
         self::assertArrayHasKey('Flownative.Demo:Preset', $createdVariants);
 
         $variant = $createdVariants['Flownative.Demo:Preset'];
@@ -119,6 +119,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
         $variantPresetsConfiguration = [
             'Flownative.Demo:Preset' => [
                 'label' => 'Demo Preset',
+                'mediaTypePatterns' => ['image\/.*'],
                 'variants' => [
                     'wide' => [
                         'label' => 'Wide',
@@ -153,6 +154,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
             $variantPresetsConfiguration = [
                 'Flownative.Demo:Preset1' => [
                     'label' => 'Demo Preset 1',
+                    'mediaTypePatterns' => ['image\/.*'],
                     'variants' => [
                         'wide' => [
                             'label' => 'Wide',
@@ -166,6 +168,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
                 ],
                 'Flownative.Demo:Preset2' => [
                     'label' => 'Demo Preset 2',
+                    'mediaTypePatterns' => ['image\/.*'],
                     'variants' => [
                         'wide' => [
                             'label' => 'Wide',
@@ -215,9 +218,12 @@ class AssetVariantGeneratorTest extends UnitTestCase
      */
     private function mockImage()
     {
-        return $this->getMockBuilder(Image::class)
+        $mock = $this->getMockBuilder(Image::class)
             ->setConstructorArgs([$this->createMock(PersistentResource::class)])
-            ->setMethods(['refresh', 'renderResource'])
+            ->setMethods(['refresh', 'renderResource', 'getMediaType'])
             ->getMock();
+        $mock->method('getMediaType')->willReturn('image/jpeg');
+
+        return $mock;
     }
 }

@@ -50,16 +50,17 @@ class AssetVariantGenerator
         // Currently only Image Variants are supported. Other asset classes can be supported, as soon as there is a common
         // interface for creating and adding variants.
         //
-        // If multiple asset classes are supported, the "assetClasses" property of a variant preset needs to be checked here.
         if (!$asset instanceof Image) {
             return [];
         }
 
         $createdVariants = [];
         foreach ($this->assetService->getVariantPresets() as $presetIdentifier => $preset) {
-            foreach ($preset->variants() as $variantConfiguration) {
-                $createdVariants[$presetIdentifier] = $this->createVariant($asset, $presetIdentifier, $variantConfiguration);
-                $asset->addVariant($createdVariants[$presetIdentifier]);
+            if ($preset->matchesMediaType($asset->getMediaType())) {
+                foreach ($preset->variants() as $variantConfiguration) {
+                    $createdVariants[$presetIdentifier] = $this->createVariant($asset, $presetIdentifier, $variantConfiguration);
+                    $asset->addVariant($createdVariants[$presetIdentifier]);
+                }
             }
         }
 
