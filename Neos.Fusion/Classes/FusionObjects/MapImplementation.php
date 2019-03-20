@@ -84,6 +84,13 @@ class MapImplementation extends AbstractFusionObject
         $itemKey = $this->getItemKey();
         $iterationName = $this->getIterationName();
         $collectionTotalCount = count($collection);
+
+        $itemRenderPath = $this->path . '/itemRenderer';
+        $fallbackRenderPath =  $this->path . '/content';
+        if ($this->runtime->canRender($itemRenderPath) === false && $this->runtime->canRender($fallbackRenderPath)) {
+            $itemRenderPath = $fallbackRenderPath;
+        }
+
         foreach ($collection as $collectionKey => $collectionElement) {
             $context = $this->runtime->getCurrentContext();
             $context[$itemName] = $collectionElement;
@@ -95,7 +102,7 @@ class MapImplementation extends AbstractFusionObject
             }
 
             $this->runtime->pushContextArray($context);
-            $result[$collectionKey] =  $this->runtime->render($this->path . '/itemRenderer');
+            $result[$collectionKey] =  $this->runtime->render($itemRenderPath);
             $this->runtime->popContext();
             $this->numberOfRenderedNodes++;
         }
