@@ -598,8 +598,14 @@
 			<trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
 			</trans-unit>
+			<trans-unit id="sites.noSitesAvailable" xml:space="preserve">
+				<source>No sites available</source>
+			</trans-unit>
 			<trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+			</trans-unit>
+			<trans-unit id="sites.new" xml:space="preserve">
+				<source>New site</source>
 			</trans-unit>
 
 			<trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
@@ -610,6 +616,19 @@
 			</trans-unit>
 			<trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
+			</trans-unit>
+
+			<trans-unit id="domainform.domainData" xml:space="preserve">
+				<source>Domain data</source>
+			</trans-unit>
+			<trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
+				<source>e.g. www.neos.io</source>
+			</trans-unit>
+			<trans-unit id="domainform.state" xml:space="preserve">
+				<source>State</source>
+			</trans-unit>
+			<trans-unit id="domainform.create" xml:space="preserve">
+				<source>Create</source>
 			</trans-unit>
 
 			<trans-unit id="configuration.label" xml:space="preserve">
