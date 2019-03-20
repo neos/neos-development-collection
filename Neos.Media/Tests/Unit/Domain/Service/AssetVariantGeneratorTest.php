@@ -77,7 +77,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
         $variantPresetsConfiguration = [
             'Flownative.Demo:Preset' => [
                 'label' => 'Demo Preset',
-                'mediaTypePatterns' => ['image\/.*'],
+                'mediaTypePatterns' => ['~image/.*~'],
                 'variants' => [
                     'wide' => [
                         'label' => 'Wide',
@@ -119,7 +119,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
         $variantPresetsConfiguration = [
             'Flownative.Demo:Preset' => [
                 'label' => 'Demo Preset',
-                'mediaTypePatterns' => ['image\/.*'],
+                'mediaTypePatterns' => ['~image/.*~'],
                 'variants' => [
                     'wide' => [
                         'label' => 'Wide',
@@ -154,7 +154,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
             $variantPresetsConfiguration = [
                 'Flownative.Demo:Preset1' => [
                     'label' => 'Demo Preset 1',
-                    'mediaTypePatterns' => ['image\/.*'],
+                    'mediaTypePatterns' => ['~image/.*~'],
                     'variants' => [
                         'wide' => [
                             'label' => 'Wide',
@@ -168,7 +168,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
                 ],
                 'Flownative.Demo:Preset2' => [
                     'label' => 'Demo Preset 2',
-                    'mediaTypePatterns' => ['image\/.*'],
+                    'mediaTypePatterns' => ['~image/.*~'],
                     'variants' => [
                         'wide' => [
                             'label' => 'Wide',
