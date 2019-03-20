@@ -58,7 +58,7 @@ class AssetRepository extends Repository
      *
      * @param string $searchTerm
      * @param array $tags
-     * @param AssetCollection $assetCollection *
+     * @param AssetCollection $assetCollection
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
