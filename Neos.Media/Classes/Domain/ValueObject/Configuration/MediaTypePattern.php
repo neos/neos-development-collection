@@ -29,13 +29,13 @@ final class MediaTypePattern
     public function __construct(string $mediaTypePattern)
     {
         try {
-            preg_match("/$mediaTypePattern/", 'foo');
+            preg_match($mediaTypePattern, 'foo');
         } catch (\Throwable $exception) {
             $message = str_replace('preg_match():', '', $exception->getMessage());
-            throw new \InvalidArgumentException(sprintf('Failed parsing the media type pattern "/%s/": %s', $mediaTypePattern, $message), 1552988339);
+            throw new \InvalidArgumentException(sprintf('Failed parsing the media type pattern "%s": %s', $mediaTypePattern, $message), 1552988339);
         }
-        if (strpos($mediaTypePattern, 'image\/') !== 0) {
-            throw new \InvalidArgumentException(sprintf('Invalid media type pattern "%s": Currently only patterns starting with "image\/" are supported.', $mediaTypePattern), 1552991434);
+        if (strpos($mediaTypePattern, 'image/') === false && strpos($mediaTypePattern, 'image\/') === false) {
+            throw new \InvalidArgumentException(sprintf('Invalid media type pattern "%s": Currently only patterns starting with "image/" are supported.', $mediaTypePattern), 1552991434);
         }
         $this->mediaTypePattern = $mediaTypePattern;
     }
@@ -46,7 +46,7 @@ final class MediaTypePattern
      */
     public function matches(string $mediaType): bool
     {
-        return preg_match("/$this->mediaTypePattern/", $mediaType) === 1;
+        return preg_match($this->mediaTypePattern, $mediaType) === 1;
     }
 
     /**

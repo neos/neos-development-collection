@@ -38,7 +38,7 @@ class VariantPresetTest extends UnitTestCase
     {
         $configuration = [
             'label' => 'Demo Preset 1 👋',
-            'mediaTypePatterns' => ['image\/*'],
+            'mediaTypePatterns' => ['~image/.+~'],
             'variants' => [
                 'wide' => [
                     'label' => 'Wide',
@@ -68,7 +68,7 @@ class VariantPresetTest extends UnitTestCase
         $mediaTypePatterns = $preset->mediaTypePatterns();
         self::assertCount(1, $mediaTypePatterns);
         self::assertContainsOnlyInstancesOf(MediaTypePattern::class, $mediaTypePatterns);
-        self::assertSame((string)reset($mediaTypePatterns), 'image\/*');
+        self::assertSame((string)reset($mediaTypePatterns), '~image/.+~');
 
         $variants = $preset->variants();
         self::assertCount(1, $variants);

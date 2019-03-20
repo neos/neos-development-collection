@@ -22,8 +22,8 @@ class MediaTypePatternTest extends UnitTestCase
     public function validMediaTypePatterns(): array
     {
         return [
-            ['image\/.*'],
-            ['image\/jpe?g']
+            ['/image\/.*/'],
+            ['|image/jpe?g|']
         ];
     }
 
@@ -67,7 +67,7 @@ class MediaTypePatternTest extends UnitTestCase
      */
     public function matchesChecksIfMediaTypeMatchesPattern(): void
     {
-        $mediaTypePattern = new MediaTypePattern('image\/(jpe?g|png)');
+        $mediaTypePattern = new MediaTypePattern('~image/(jpe?g|png)~');
 
         self::assertTrue($mediaTypePattern->matches('image/jpeg'));
         self::assertTrue($mediaTypePattern->matches('image/jpg'));

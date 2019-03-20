@@ -9,7 +9,7 @@ The following example shows the structure of these settings:
     variantPresets:
       'Flownative.Demo:Preset1':
         label: 'Demo Preset 1'
-        mediaTypePatterns: ['image\/jpe?g', 'image\/png']
+        mediaTypePatterns: ['~image/jpe?g~', '~image/png~']
         variants:
           'wide':
             label: 'Wide'

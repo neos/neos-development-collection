@@ -48,6 +48,11 @@ Configuration
 Variant presets are defined in a Settings.yaml of a given package or distribution. Each preset defines one
 or more variants to be generated. Each variant can have one or more adjustments automatically applied.
 
+For each preset, one or more media type patterns must be defined. These patterns are regular expressions
+which are use to match against the concrete IANA media type of a given asset. The configured variants are
+only created when at least one of the media type patterns matches. Note that you need to specify a complete
+regular expression, including delimiters ("~" in the example below).
+
 The following example shows the required structure and possible fields of the presets configuration:
 
 .. code-block:: yaml
@@ -55,7 +60,7 @@ The following example shows the required structure and possible fields of the pr
     variantPresets:
       'Flownative.Demo:Preset1':
         label: 'Demo Preset 1'
-        mediaTypePatterns: ['image\/(jpe?g|png)', 'image\/vnd\.adobe\.photoshop']
+        mediaTypePatterns: ['~image/(jpe?g|png)~', '~image/vnd\.adobe\.photoshop~']
         variants:
           'wide':
             label: 'Wide'
