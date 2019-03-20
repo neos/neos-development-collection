@@ -30,12 +30,9 @@ use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
-use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\ThumbnailServiceException;
-use /** @noinspection PhpUndefinedClassInspection */
-    /** @noinspection PhpUndefinedNamespaceInspection */
-    Neos\RedirectHandler\Storage\RedirectStorageInterface;
+use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use Neos\Utility\Arrays;
 
 /**
@@ -92,30 +89,6 @@ class AssetService
      * @var ImageService
      */
     protected $imageService;
-
-    /**
-     * @Flow\InjectConfiguration(path="variantPresets", package="Neos.Media")
-     * @var array
-     */
-    protected $variantPresetsConfiguration = [];
-
-    /**
-     * @var VariantPreset[]
-     */
-    private $variantPresets = [];
-
-    /**
-     * @return VariantPreset[]
-     */
-    public function getVariantPresets(): array
-    {
-        if ($this->variantPresets === [] && $this->variantPresetsConfiguration !== []) {
-            foreach ($this->variantPresetsConfiguration as $identifier => $configuration) {
-                $this->variantPresets[$identifier] = VariantPreset::fromConfiguration($configuration);
-            }
-        }
-        return $this->variantPresets;
-    }
 
     /**
      * Returns the repository for an asset

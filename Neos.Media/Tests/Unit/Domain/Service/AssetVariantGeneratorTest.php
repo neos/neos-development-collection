@@ -20,7 +20,6 @@ use Neos\Media\Domain\Model\Document;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Model\Video;
-use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\AssetVariantGenerator;
 
 /**
@@ -30,15 +29,40 @@ class AssetVariantGeneratorTest extends UnitTestCase
 {
     /**
      * @test
+     */
+    public function getVariantPresetsReturnsConfiguration(): void
+    {
+        $configuration = [
+            'Flownative.Demo:Preset1' => [
+                'label' => 'Demo Preset 1',
+                'mediaTypePatterns' => ['~image/.*~'],
+                'variants' => []
+            ],
+            'Flownative.Demo:Preset2' => [
+                'label' => 'Demo Preset 2',
+                'mediaTypePatterns' => ['~image/.*~'],
+                'variants' => []
+            ]
+        ];
+
+        $assetVariantGenerator = new AssetVariantGenerator();
+        $this->inject($assetVariantGenerator, 'variantPresetsConfiguration', $configuration);
+
+        $presets = $assetVariantGenerator->getVariantPresets();
+        self::assertArrayHasKey('Flownative.Demo:Preset1', $presets);
+        self::assertSame($configuration['Flownative.Demo:Preset1']['label'], (string)$presets['Flownative.Demo:Preset1']->label());
+        self::assertArrayHasKey('Flownative.Demo:Preset2', $presets);
+        self::assertSame($configuration['Flownative.Demo:Preset2']['label'], (string)$presets['Flownative.Demo:Preset2']->label());
+    }
+
+    /**
+     * @test
      * @throws
      */
     public function variantsAreCreatedAccordingToPreset(): void
     {
-        $assetService = $this->mockAssetService();
         $asset = $this->mockImage();
-
-        $assetVariantGenerator = $this->mockAssetVariantGenerator([], $assetService);
-
+        $assetVariantGenerator = $this->mockAssetVariantGenerator([]);
         $variants = $assetVariantGenerator->createVariants($asset);
         self::assertCount(2, $variants);
     }
@@ -49,9 +73,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
      */
     public function noVariantsAreCreatedForUnsupportedAssetTypes(): void
     {
-        $assetService = $this->mockAssetService();
-
-        $assetVariantGenerator = $this->mockAssetVariantGenerator(['createVariant'], $assetService);
+        $assetVariantGenerator = $this->mockAssetVariantGenerator(['createVariant']);
 
         $documentAsset = $this->createMock(Document::class);
         assert($documentAsset instanceof AssetInterface);
@@ -91,14 +113,13 @@ class AssetVariantGeneratorTest extends UnitTestCase
             ]
         ];
 
-        $assetService = $this->mockAssetService($variantPresetsConfiguration);
         $asset = $this->mockImage();
 
-        $assetVariantGenerator = $this->mockAssetVariantGenerator([], $assetService);
+        $assetVariantGenerator = $this->mockAssetVariantGenerator([], $variantPresetsConfiguration);
         $createdVariants = $assetVariantGenerator->createVariants($asset);
-        self::assertArrayHasKey('Flownative.Demo:Preset', $createdVariants);
+        self::assertArrayHasKey('Flownative.Demo:Preset:wide', $createdVariants);
 
-        $variant = $createdVariants['Flownative.Demo:Preset'];
+        $variant = $createdVariants['Flownative.Demo:Preset:wide'];
         self::assertInstanceOf(ImageVariant::class, $variant);
         self::assertSame(1, $variant->getAdjustments()->count());
         self::assertCount(1, $asset->getVariants());
@@ -133,10 +154,9 @@ class AssetVariantGeneratorTest extends UnitTestCase
             ]
         ];
 
-        $assetService = $this->mockAssetService($variantPresetsConfiguration);
         $asset = $this->mockImage();
 
-        $assetVariantGenerator = $this->mockAssetVariantGenerator([], $assetService);
+        $assetVariantGenerator = $this->mockAssetVariantGenerator([], $variantPresetsConfiguration);
         $assetVariantGenerator->createVariants($asset);
     }
 
@@ -145,10 +165,11 @@ class AssetVariantGeneratorTest extends UnitTestCase
     // TEST HELPER METHODS
 
     /**
+     * @param array $methods
      * @param array $variantPresetsConfiguration
-     * @return AssetService
+     * @return AssetVariantGenerator|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function mockAssetService(array $variantPresetsConfiguration = []): AssetService
+    private function mockAssetVariantGenerator(array $methods, array $variantPresetsConfiguration = [])
     {
         if ($variantPresetsConfiguration === []) {
             $variantPresetsConfiguration = [
@@ -183,23 +204,12 @@ class AssetVariantGeneratorTest extends UnitTestCase
             ];
         }
 
-        $assetService = new AssetService();
-        $this->inject($assetService, 'variantPresetsConfiguration', $variantPresetsConfiguration);
-        return $assetService;
-    }
-
-    /**
-     * @param array $methods
-     * @param AssetService $assetService
-     * @return AssetVariantGenerator|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function mockAssetVariantGenerator(array $methods, AssetService $assetService)
-    {
         $methods[] = 'createImageVariant';
 
         $mock = $this->createPartialMock(AssetVariantGenerator::class, $methods);
-        $this->inject($mock, 'assetService', $assetService);
         $that = $this;
+
+        $this->inject($mock, 'variantPresetsConfiguration', $variantPresetsConfiguration);
 
         $mock->method('createImageVariant')->willReturnCallback(
             function (Image $imageAsset) use ($that) {

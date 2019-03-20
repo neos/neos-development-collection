@@ -22,6 +22,7 @@ use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\ValueObject\Configuration;
+use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 use Neos\Media\Exception\AssetVariantGeneratorException;
 use Neos\Media\Exception\ImageFileException;
 use Neos\Utility\ObjectAccess;
@@ -36,6 +37,30 @@ class AssetVariantGenerator
      * @var AssetService
      */
     protected $assetService;
+
+    /**
+     * @Flow\InjectConfiguration(path="variantPresets", package="Neos.Media")
+     * @var array
+     */
+    protected $variantPresetsConfiguration = [];
+
+    /**
+     * @var VariantPreset[]
+     */
+    protected $variantPresets = [];
+
+    /**
+     * @return VariantPreset[]
+     */
+    public function getVariantPresets(): array
+    {
+        if ($this->variantPresets === [] && $this->variantPresetsConfiguration !== []) {
+            foreach ($this->variantPresetsConfiguration as $identifier => $configuration) {
+                $this->variantPresets[$identifier] = VariantPreset::fromConfiguration($configuration);
+            }
+        }
+        return $this->variantPresets;
+    }
 
     /**
      * @param AssetInterface $asset
@@ -55,11 +80,11 @@ class AssetVariantGenerator
         }
 
         $createdVariants = [];
-        foreach ($this->assetService->getVariantPresets() as $presetIdentifier => $preset) {
+        foreach ($this->getVariantPresets() as $presetIdentifier => $preset) {
             if ($preset->matchesMediaType($asset->getMediaType())) {
-                foreach ($preset->variants() as $variantConfiguration) {
-                    $createdVariants[$presetIdentifier] = $this->createVariant($asset, $presetIdentifier, $variantConfiguration);
-                    $asset->addVariant($createdVariants[$presetIdentifier]);
+                foreach ($preset->variants() as $variantIdentifier => $variantConfiguration) {
+                    $createdVariants[$presetIdentifier . ':' . $variantIdentifier] = $this->createVariant($asset, $presetIdentifier, $variantConfiguration);
+                    $asset->addVariant($createdVariants[$presetIdentifier . ':' . $variantIdentifier]);
                 }
             }
         }
