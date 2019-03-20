@@ -38,3 +38,4 @@ Neos:
       Translation: 'Neos\Flow\I18n\EelHelper\TranslationHelper'
       Type: 'Neos\Eel\Helper\TypeHelper'
       I18n: 'Neos\Flow\I18n\EelHelper\TranslationHelper'
+      File: 'Neos\Eel\Helper\FileHelper'
