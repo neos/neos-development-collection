@@ -734,7 +734,15 @@ HELPTEXT;
                     continue;
                 }
                 $nodeType = $node->getNodeType();
-                $undefinedProperties = array_diff(array_keys($node->getProperties()), array_keys($nodeType->getProperties()));
+
+                $nodeTypePropertyNames = array_keys($nodeType->getProperties());
+                $undefinedProperties = [];
+
+                foreach ($node->getProperties() as $propertyName => $propertyValue) {
+                    if (!in_array($propertyName, $nodeTypePropertyNames)) {
+                        $undefinedProperties[] = $propertyName;
+                    }
+                }
                 if ($undefinedProperties !== []) {
                     $nodesWithUndefinedPropertiesNodes[$node->getIdentifier()] = ['node' => $node, 'undefinedProperties' => $undefinedProperties];
                     foreach ($undefinedProperties as $undefinedProperty) {
