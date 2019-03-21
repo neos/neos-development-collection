@@ -1,0 +1,52 @@
+{namespace m=Neos\Media\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="EditImage"/>
+
+<f:section name="Title">Edit view</f:section>
+
+<f:section name="Content">
+
+    <ul class="neos-nav neos-nav-tabs" role="tablist">
+        <li role="presentation">
+            <f:link.action action="{overviewAction}" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}">Overview</f:link.action>
+        </li>
+        <li role="presentation" class="neos-active">
+            <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier}">Variants</f:link.action>
+        </li>
+    </ul>
+
+    <div class="neos-tab-content">
+        <div role="tabpanel" class="neos-tab-pane neos-active">
+            <h2>Original</h2>
+            <div class="neos-img-container">
+                <img src="{m:uri.image(image: asset)}" alt="" width="250" height="250"/>
+            </div>
+            <div class="neos-img-label">
+                <span class="neos-caption asset-label">{asset.width}px x {asset.height}px</span>
+            </div>
+            <h2>Variants</h2>
+            <ul class="neos-thumbnails asset-list">
+            <f:for each="{asset.variants}" as="assetVariant">
+                <li class="asset" data-asset-identifier="{assetVariant -> f:format.identifier()}" data-local-asset-identifier="{assetVariant -> f:format.identifier()}">
+                    <div class="neos-img-container">
+                        <img src="{m:uri.image(image: assetVariant)}" alt="" width="250" height="250"/>
+                    </div>
+                    <div class="neos-img-label">
+                        <span class="neos-caption asset-label">
+                            {assetVariant.width}px x {assetVariant.height}px
+                        <f:if condition="{assetVariant.presetIdentifier}">
+                            <br />{assetVariant.presetIdentifier}: {assetVariant.presetVariantName}
+                        </f:if>
+                        </span>
+                    </div>
+                </li>
+            </f:for>
+            </ul>
+        </div>
+    </div>
+
+</f:section>
+
+<f:section name="Scripts">
+    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/select.js')}"></script>
+</f:section>

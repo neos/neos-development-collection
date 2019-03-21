@@ -18,6 +18,11 @@ Neos:
         - 'resource://Neos.Neos/Public/Styles/Neos.css'
         - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
 
+      # By default, disable the beta feature "variants tab":
+      features:
+        variantsTab:
+          enable: false
+
   Flow:
     security:
       authentication:

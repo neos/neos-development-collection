@@ -14,6 +14,7 @@ namespace Neos\Media\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManagerInterface;
@@ -30,6 +31,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Media\Exception\AssetServiceException;
+use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use Neos\Utility\Arrays;
 
@@ -115,6 +117,8 @@ class AssetService
      * @param ActionRequest $request Request argument must be provided for asynchronous thumbnails
      * @return array|null Array with keys "width", "height" and "src" if the thumbnail generation work or null
      * @throws AssetServiceException
+     * @throws ThumbnailServiceException
+     * @throws MissingActionNameException
      */
     public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, ActionRequest $request = null)
     {
