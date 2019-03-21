@@ -5,6 +5,17 @@
 <f:section name="Title">Show view</f:section>
 
 <f:section name="Content">
+        <f:if condition="{variantsTabFeatureEnabled} && {assetProxy.localAssetIdentifier}">
+            <ul class="neos-nav neos-nav-tabs" role="tablist">
+                <li role="presentation" class="neos-active">
+                    <a href="#" role="tab">Overview</a>
+                </li>
+                <li role="presentation">
+                    <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier, overviewAction: 'show'}">Variants</f:link.action>
+                </li>
+            </ul>
+        </f:if>
+
         <div class="neos-row-fluid">
             <div class="neos-span6 neos-image-inputs">
                 <fieldset>

@@ -11,20 +11,20 @@ namespace Neos\Media\Domain\Model;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Neos\Flow\Annotations as Flow;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ResourceManagement\Exception;
-use Neos\Media\Exception\ImageFileException;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Utility\TypeHandling;
 use Neos\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 use Neos\Media\Domain\Service\ImageService;
+use Neos\Media\Exception\ImageFileException;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\TypeHandling;
 
 /**
  * A user defined variant (working copy) of an original Image asset
@@ -63,6 +63,20 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
     protected $name = '';
 
     /**
+     * @var string
+     * @ORM\Column(nullable=true)
+     * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
+     */
+    protected $presetIdentifier;
+
+    /**
+     * @var string
+     * @ORM\Column(nullable=true)
+     * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
+     */
+    protected $presetVariantName;
+
+    /**
      * Constructs a new Image Variant based on the given original
      *
      * @param Image $originalAsset The original Image asset this variant is derived from
@@ -74,7 +88,11 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
         $this->thumbnails = new ArrayCollection();
         $this->adjustments = new ArrayCollection();
         $this->tags = new ArrayCollection();
-        $this->lastModified = new \DateTime();
+        try {
+            $this->lastModified = new \DateTime();
+        } catch (\Exception $e) {
+            // This won't happen, because we create DateTime without any parameters.
+        }
     }
 
     /**
@@ -275,6 +293,42 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
     }
 
     /**
+     * Sets the identifier of the image variant preset which created this variant (if any)
+     *
+     * @param string $presetIdentifier For example: 'Acme.Demo:Preset1'
+     */
+    public function setPresetIdentifier(string $presetIdentifier): void
+    {
+        $this->presetIdentifier = $presetIdentifier;
+    }
+
+    /**
+     * Returns the identifier of the image variant preset which created this variant (if any)
+     *
+     * @return string|null
+     */
+    public function getPresetIdentifier(): ?string
+    {
+        return $this->presetIdentifier;
+    }
+
+    /**
+     * @param string $presetVariantName
+     */
+    public function setPresetVariantName(string $presetVariantName): void
+    {
+        $this->presetVariantName = $presetVariantName;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPresetVariantName(): ?string
+    {
+        return $this->presetVariantName;
+    }
+
+    /**
      * Adds the given adjustment to the list of adjustments applied to this image variant.
      *
      * If an adjustment of the given type already exists, the existing one will be overridden by the new one.
@@ -284,6 +338,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      * @throws Exception
      * @throws ImageFileException
      * @throws InvalidConfigurationException
+     * @throws \Exception
      */
     public function addAdjustment(ImageAdjustmentInterface $adjustment): void
     {
@@ -301,13 +356,13 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      * @throws Exception
      * @throws ImageFileException
      * @throws InvalidConfigurationException
+     * @throws \Exception
      */
     public function addAdjustments(array $adjustments): void
     {
         foreach ($adjustments as $adjustment) {
             $this->applyAdjustment($adjustment);
         }
-
         $this->refresh();
     }
 
@@ -317,6 +372,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
      *
      * @param ImageAdjustmentInterface $adjustment
      * @return void
+     * @throws \Exception
      */
     protected function applyAdjustment(ImageAdjustmentInterface $adjustment): void
     {
@@ -362,6 +418,6 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
         $this->resource = $processedImageInfo['resource'];
         $this->width = $processedImageInfo['width'];
         $this->height = $processedImageInfo['height'];
-        $this->persistenceManager->whiteListObject($this->resource);
+        $this->persistenceManager->whitelistObject($this->resource);
     }
 }

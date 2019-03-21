@@ -1077,3 +1077,52 @@
   justify-content: space-between;
   padding-top: 16px;
 }
+.neos.media-browser .neos-nav-tabs {
+  *zoom: 1;
+  height: 28px;
+  margin-bottom: 8px;
+}
+.neos.media-browser .neos-nav-tabs:before, .neos.media-browser .neos-nav-tabs:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.neos.media-browser .neos-nav-tabs:after {
+  clear: both;
+}
+.neos.media-browser .neos-nav-tabs > li {
+  float: left;
+}
+.neos.media-browser .neos-nav-tabs > li > a {
+  padding-right: 12px;
+  padding-left: 12px;
+  margin-right: 2px;
+  line-height: 14px;
+}
+.neos.media-browser .neos-nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+.neos.media-browser .neos-nav-tabs > li {
+  margin-bottom: -1px;
+}
+.neos.media-browser .neos-nav-tabs > li > a {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  line-height: 20px;
+  border: 1px solid transparent;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+}
+.neos.media-browser .neos-nav-tabs > li > a:hover, .neos.media-browser .neos-nav-tabs > li > a:focus {
+  border-color: #eee #eee #ddd;
+}
+.neos.media-browser .neos-nav-tabs > .neos-active > a,
+.neos.media-browser .neos-nav-tabs > .neos-active > a:hover,
+.neos.media-browser .neos-nav-tabs > .neos-active > a:focus {
+  color: #555;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+  cursor: default;
+}

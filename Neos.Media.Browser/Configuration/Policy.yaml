@@ -4,7 +4,7 @@ privilegeTargets:
       matcher: 'method(Neos\Media\Browser\ViewHelpers\Controller\(Paginate)Controller->(index)Action())'
 
     'Neos.Media.Browser:ManageAssets':
-      matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(index|new|show|edit|update|initializeCreate|create|replaceAssetResource|updateAssetResource|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection|relatedNodes)Action())'
+      matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(index|new|show|edit|update|initializeCreate|create|replaceAssetResource|updateAssetResource|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection|relatedNodes|variants)Action())'
 
     'Neos.Media.Browser:AssetUsage':
       matcher: 'method(Neos\Media\Browser\Controller\UsageController->relatedNodesAction())'
