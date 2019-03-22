@@ -94,7 +94,7 @@ class DimensionPresetLinkProcessorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Neos\Http\Exception\InvalidDimensionPresetLinkProcessorException
+     * @expectedException \Neos\Neos\Http\ContentDimensionLinking\DimensionPresetLinkProcessorIsInvalid
      */
     public function resolveDimensionPresetLinkProcessorThrowsExceptionWithNotExistingLinkProcessorImplementationClassConfigured()
     {
@@ -109,7 +109,7 @@ class DimensionPresetLinkProcessorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Neos\Http\Exception\InvalidDimensionPresetLinkProcessorException
+     * @expectedException \Neos\Neos\Http\ContentDimensionLinking\DimensionPresetLinkProcessorIsInvalid
      */
     public function resolveDimensionPresetLinkProcessorThrowsExceptionWithImplementationClassNotImplementingTheLinkProcessorInterfaceConfigured()
     {

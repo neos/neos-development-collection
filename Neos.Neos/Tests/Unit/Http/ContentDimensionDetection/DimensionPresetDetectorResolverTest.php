@@ -94,7 +94,7 @@ class DimensionPresetDetectorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Neos\Http\Exception\InvalidDimensionPresetDetectorException
+     * @expectedException \Neos\Neos\Http\ContentDimensionDetection\DimensionPresetDetectorIsInvalid
      */
     public function resolveDimensionPresetDetectorThrowsExceptionWithNotExistingDetectorImplementationClassConfigured()
     {
@@ -109,7 +109,7 @@ class DimensionPresetDetectorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Neos\Http\Exception\InvalidDimensionPresetDetectorException
+     * @expectedException \Neos\Neos\Http\ContentDimensionDetection\DimensionPresetDetectorIsInvalid
      */
     public function resolveDimensionPresetDetectorThrowsExceptionWithImplementationClassNotImplementingTheDetectorInterfaceConfigured()
     {
