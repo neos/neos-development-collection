@@ -10,6 +10,7 @@ namespace Neos\Neos\Tests\Unit\Http\ContentDimensionDetection\Fixtures;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 use Neos\Neos\Http\ContentDimensionDetection\ContentDimensionPresetDetectorInterface;
@@ -26,7 +27,7 @@ final class ValidDummyDimensionPresetDetector implements ContentDimensionPresetD
      * @param array|null $overrideOptions
      * @return array|null
      */
-    public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null)
+    public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?array
     {
         return null;
     }
