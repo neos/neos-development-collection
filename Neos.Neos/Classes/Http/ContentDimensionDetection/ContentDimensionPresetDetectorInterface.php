@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Http\ContentDimensionDetection;
 
 /*
@@ -35,5 +37,5 @@ interface ContentDimensionPresetDetectorInterface
      * @param array $overrideOptions
      * @return array|null
      */
-    public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null);
+    public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?array;
 }

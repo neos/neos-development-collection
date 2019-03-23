@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Http\ContentDimensionDetection;
 
 /*
@@ -31,7 +33,7 @@ final class BackendUriDimensionPresetDetector implements ContentDimensionPresetD
      * @param array|null $overrideOptions
      * @return array|null
      */
-    public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null)
+    public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?array
     {
         $path = $componentContext->getHttpRequest()->getUri()->getPath();
         $path = '/' . \mb_substr($path, \mb_strpos($path, '@'));

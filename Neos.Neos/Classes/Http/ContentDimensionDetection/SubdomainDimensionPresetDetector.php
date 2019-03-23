@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Http\ContentDimensionDetection;
 
 /*
@@ -30,7 +32,7 @@ final class SubdomainDimensionPresetDetector implements ContentDimensionPresetDe
      * @param array|null $overrideOptions
      * @return array|null
      */
-    public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null)
+    public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?array
     {
         $host = $componentContext->getHttpRequest()->getUri()->getHost();
         foreach ($presets as $availablePreset) {

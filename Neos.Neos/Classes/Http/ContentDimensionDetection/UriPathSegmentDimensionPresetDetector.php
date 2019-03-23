@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Http\ContentDimensionDetection;
 
 /*
@@ -34,7 +36,7 @@ final class UriPathSegmentDimensionPresetDetector implements ContentDimensionPre
      * @param array|null $overrideOptions
      * @return array|null
      */
-    public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null)
+    public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?array
     {
         $options = $overrideOptions ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions) : $this->defaultOptions;
         $requestPath = $componentContext->getHttpRequest()->getUri()->getPath();
