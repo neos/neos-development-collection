@@ -48,6 +48,6 @@ final class UriPathSegmentDimensionPresetLinkProcessor implements ContentDimensi
         $pathSegmentPart = $options['offset'] > 0 ? $options['delimiter'] : '';
         $pathSegmentPart .= ($preset['resolutionValue'] ?? $preset['uriSegment']);
 
-        return $uriConstraints->withPathPrefix($pathSegmentPart . '/', true);
+        return $uriConstraints->withPathPrefix($pathSegmentPart, true);
     }
 }

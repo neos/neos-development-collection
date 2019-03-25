@@ -96,7 +96,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
             if ((!$this->supportEmptySegmentForDimensions || !$allUriPathSegmentDetectableDimensionPresetsAreDefault)
                 && $uriPathSegmentOffset > 0) {
                 $uriConstraints = $uriConstraints->merge($uriPathSegmentConstraints);
-                if ($node->getParentPath() !== SiteService::SITES_ROOT_PATH) {
+                if ($node->getParentPath() === SiteService::SITES_ROOT_PATH) {
                     $uriConstraints = $uriConstraints->withPathPrefix('/', true);
                 }
             }
