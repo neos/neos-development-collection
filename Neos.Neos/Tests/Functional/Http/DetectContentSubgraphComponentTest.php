@@ -19,7 +19,7 @@ use Neos\Neos\Http\ContentDimensionResolutionMode;
 use Neos\Neos\Http\DetectContentSubgraphComponent;
 
 /**
- * Test case for the BackendUriDimensionPresetDetector
+ * Test cases for the DetectContentSubgraphComponent
  */
 class DetectContentSubgraphComponentTest extends FunctionalTestCase
 {
@@ -98,107 +98,56 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         ]
     ];
 
-
-    /**
-     * @test
-     */
-    public function handleAddsCorrectSubgraphIdentityToComponentContextWithAllDimensionValuesGivenLiveWorkspaceAndDefaultDelimiter()
+    public function uriProvider(): array
     {
-        $uri = new Http\Uri('https://de.domain.com/sellerA_channelA/home.html');
-        $request = Http\Request::create($uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
-
-        $dimensionPresetSource = $this->objectManager->get(ContentDimensionPresetSourceInterface::class);
-        $dimensionPresetSource->setConfiguration($this->dimensionPresets);
-        $detectSubgraphComponent = new DetectContentSubgraphComponent();
-
-        $detectSubgraphComponent->handle($componentContext);
-        /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
-
-        $this->assertSame('live', $routeParameters->getValue('workspaceName'));
-        $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
-        $this->assertSame(['de'], $detectedDimensions['language']);
-        $this->assertSame(['WORLD'], $detectedDimensions['market']);
-        $this->assertSame(['sellerA', 'default'], $detectedDimensions['seller']);
-        $this->assertSame(['channelA', 'default'], $detectedDimensions['channel']);
+        return [
+            ['https://de.domain.com/sellerA_channelA', '_', 'live', ['WORLD'], ['sellerA', 'default'], ['channelA', 'default'], ['de']],
+            ['https://de.domain.com/sellerA_channelA/', '_', 'live', ['WORLD'], ['sellerA', 'default'], ['channelA', 'default'], ['de']],
+            ['https://de.domain.com/sellerA_channelA/home.html', '_', 'live', ['WORLD'], ['sellerA', 'default'], ['channelA', 'default'], ['de']],
+            ['https://de.domain.com/sellerA-channelA/home.html', '-', 'live', ['WORLD'], ['sellerA', 'default'], ['channelA', 'default'], ['de']],
+            ['https://domain.com/home.html', '-', 'live', ['WORLD'], ['default'], ['default'], ['en']],
+            ['https://de.domain.co.uk/sellerA_channelA/home@user-me;language=en&market=DE,WORLD&seller=default&channel=default.html', '-', 'user-me', ['DE', 'WORLD'], ['default'], ['default'], ['en']],
+        ];
     }
 
     /**
      * @test
+     * @dataProvider uriProvider
+     * @param string $rawUri
+     * @param string $delimiter
+     * @param string $expectedWorkspaceName
+     * @param array $expectedMarketValues
+     * @param array $expectedSellerValues
+     * @param array $expectedChannelValues
+     * @param array $expectedLanguageValues
      */
-    public function handleAddsCorrectSubgraphIdentityToComponentContextWithAllDimensionValuesGivenLiveWorkspaceAndModifiedDelimiter()
-    {
-        $uri = new Http\Uri('https://de.domain.com/sellerA-channelA/home.html');
-        $request = Http\Request::create($uri);
+    public function handleAddsCorrectSubgraphIdentityToComponentContext(
+        string $rawUri,
+        string $delimiter,
+        string $expectedWorkspaceName,
+        array $expectedMarketValues,
+        array $expectedSellerValues,
+        array $expectedChannelValues,
+        array $expectedLanguageValues
+    ) {
+        $request = Http\Request::create(new Http\Uri($rawUri));
         $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
 
         $dimensionPresetSource = $this->objectManager->get(ContentDimensionPresetSourceInterface::class);
         $dimensionPresetSource->setConfiguration($this->dimensionPresets);
         $detectSubgraphComponent = new DetectContentSubgraphComponent();
 
-        $this->inject($detectSubgraphComponent, 'uriPathSegmentDelimiter', '-');
+        $this->inject($detectSubgraphComponent, 'uriPathSegmentDelimiter', $delimiter);
 
         $detectSubgraphComponent->handle($componentContext);
         /** @var RouteParameters $routeParameters */
         $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
 
-        $this->assertSame('live', $routeParameters->getValue('workspaceName'));
+        $this->assertSame($expectedWorkspaceName, $routeParameters->getValue('workspaceName'));
         $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
-        $this->assertSame(['de'], $detectedDimensions['language']);
-        $this->assertSame(['WORLD'], $detectedDimensions['market']);
-        $this->assertSame(['sellerA', 'default'], $detectedDimensions['seller']);
-        $this->assertSame(['channelA', 'default'], $detectedDimensions['channel']);
-    }
-
-    /**
-     * @test
-     */
-    public function handleAddsCorrectSubgraphIdentityToComponentContextWithMinimalDimensionValuesGivenLiveWorkspaceAndModifiedDelimiter()
-    {
-        $uri = new Http\Uri('https://domain.com/home.html');
-        $request = Http\Request::create($uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
-
-        $dimensionPresetSource = $this->objectManager->get(ContentDimensionPresetSourceInterface::class);
-        $dimensionPresetSource->setConfiguration($this->dimensionPresets);
-        $detectSubgraphComponent = new DetectContentSubgraphComponent();
-
-        $detectSubgraphComponent->handle($componentContext);
-        /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
-
-        $this->assertSame('live', $routeParameters->getValue('workspaceName'));
-        $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
-        $this->assertSame(['en'], $detectedDimensions['language']);
-        $this->assertSame(['WORLD'], $detectedDimensions['market']);
-        $this->assertSame(['default'], $detectedDimensions['seller']);
-        $this->assertSame(['default'], $detectedDimensions['channel']);
-    }
-
-
-    /**
-     * @test
-     */
-    public function handleAddsCorrectSubgraphIdentityToComponentContextWithDimensionValuesGivenButOverriddenViaContextPath()
-    {
-        $uri = new Http\Uri('https://de.domain.com/sellerA_channelA/home@user-me;language=en&market=GB,WORLD&seller=default&channel=default.html');
-        $request = Http\Request::create($uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
-
-        $dimensionPresetSource = $this->objectManager->get(ContentDimensionPresetSourceInterface::class);
-        $dimensionPresetSource->setConfiguration($this->dimensionPresets);
-        $detectSubgraphComponent = new DetectContentSubgraphComponent();
-
-        $detectSubgraphComponent->handle($componentContext);
-        /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
-
-        $this->assertSame('user-me', $routeParameters->getValue('workspaceName'));
-        $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
-        $this->assertSame(['en'], $detectedDimensions['language']);
-        $this->assertSame(['GB', 'WORLD'], $detectedDimensions['market']);
-        $this->assertSame(['default'], $detectedDimensions['seller']);
-        $this->assertSame(['default'], $detectedDimensions['channel']);
+        $this->assertSame($expectedMarketValues, $detectedDimensions['market']);
+        $this->assertSame($expectedSellerValues, $detectedDimensions['seller']);
+        $this->assertSame($expectedChannelValues, $detectedDimensions['channel']);
+        $this->assertSame($expectedLanguageValues, $detectedDimensions['language']);
     }
 }

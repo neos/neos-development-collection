@@ -102,33 +102,73 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
         ]
     ];
 
+    public function nodeDataProvider(): array
+    {
+        return [
+            [
+                '/sites/wat',
+                ['GB', 'WORLD'], ['sellerA', 'default'], ['channelA', 'default'], ['en'],
+                '', ['de.'], '.co.uk', ['.com', '.co.uk', '.de'], 'sellerA_channelA'
+            ],
+            [
+                '/sites/wat/home',
+                ['GB', 'WORLD'], ['sellerA', 'default'], ['channelA', 'default'], ['en'],
+                '', ['de.'], '.co.uk', ['.com', '.co.uk', '.de'], 'sellerA_channelA/'
+            ]
+        ];
+    }
+
     /**
      * @test
+     * @dataProvider nodeDataProvider
+     * @param string $nodePath
+     * @param array $marketValues
+     * @param array $sellerValues
+     * @param array $channelValues
+     * @param array $languageValues
+     * @param string $expectedHostPrefix
+     * @param array $expectedReplaceHostPrefixes
+     * @param string $expectedHostSuffix
+     * @param array $expectedReplaceHostSuffixes
+     * @param string $expectedPathPrefix
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws \Neos\Utility\Exception\PropertyNotAccessibleException
      */
-    public function resolveDimensionUriConstraintsExtractsUriConstraintsFromSubgraph()
-    {
+    public function resolveDimensionUriConstraintsExtractsUriConstraintsFromSubgraph(
+        string $nodePath,
+        array $marketValues,
+        array $sellerValues,
+        array $channelValues,
+        array $languageValues,
+        string $expectedHostPrefix,
+        array $expectedReplaceHostPrefixes,
+        string $expectedHostSuffix,
+        array $expectedReplaceHostSuffixes,
+        string $expectedPathPrefix
+    ) {
         $uriProcessor = new ContentSubgraphUriProcessor();
 
         $dimensionPresetSource = $this->objectManager->get(ContentDimensionPresetSourceInterface::class);
         $dimensionPresetSource->setConfiguration($this->dimensionPresets);
 
-        $workspace = new Workspace('live');
+        $workspaceName = 'live';
+        $workspace = new Workspace($workspaceName);
         $node = new Node(
-            new NodeData('/sites/wat', $workspace),
+            new NodeData($nodePath, $workspace),
             new ContentContext(
-                'live',
+                $workspaceName,
                 new \DateTime(),
                 [
-                    'market' => ['GB', 'WORLD'],
-                    'seller' => ['sellerA', 'default'],
-                    'channel' => ['channelA', 'default'],
-                    'language' => ['en']
+                    'market' => $marketValues,
+                    'seller' => $sellerValues,
+                    'channel' => $channelValues,
+                    'language' => $languageValues
                 ],
                 [
-                    'market' => 'GB',
-                    'seller' => 'sellerA',
-                    'channel' => 'channelA',
-                    'language' => 'en'
+                    'market' => reset($marketValues),
+                    'seller' => reset($sellerValues),
+                    'channel' => reset($channelValues),
+                    'language' => reset($languageValues)
                 ], false, false, false
             )
         );
@@ -138,20 +178,20 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 
         $this->assertSame(
             [
-                'prefix' => '',
-                'replacePrefixes' => ['de.']
+                'prefix' => $expectedHostPrefix,
+                'replacePrefixes' => $expectedReplaceHostPrefixes
             ],
             $constraints['hostPrefix']
         );
         $this->assertSame(
             [
-                'suffix' => '.co.uk',
-                'replaceSuffixes' => ['.com', '.co.uk', '.de']
+                'suffix' => $expectedHostSuffix,
+                'replaceSuffixes' => $expectedReplaceHostSuffixes
             ],
             $constraints['hostSuffix']
         );
         $this->assertSame(
-            'sellerA_channelA',
+            $expectedPathPrefix,
             $constraints['pathPrefix']
         );
     }
