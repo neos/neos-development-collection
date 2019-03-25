@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Tests\Unit\Http\ContentDimensionDetection;
+namespace Neos\Neos\Tests\Unit\Http\ContentDimensionLinking;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -17,7 +17,7 @@ use Neos\Neos\Http\ContentDimensionResolutionMode;
 use Neos\Utility\ObjectAccess;
 
 /**
- * Test case for the SubdomainDimensionPresetLinkProcessor
+ * Test cases for the TopLevelDomainDimensionPresetLinkProcessor
  */
 class TopLevelDomainDimensionPresetLinkProcessorTest extends UnitTestCase
 {
@@ -28,25 +28,37 @@ class TopLevelDomainDimensionPresetLinkProcessorTest extends UnitTestCase
         'resolution' => [
             'mode' => ContentDimensionResolutionMode::RESOLUTION_MODE_TOPLEVELDOMAIN,
         ],
-        'defaultPreset' => 'en',
-        'allowEmptyValue' => true,
+        'defaultPreset' => 'GB',
+        'allowEmptyValue' => false,
         'presets' => [
-            'en' => [
-                'values' => ['en'],
-                'resolutionValue' => 'com'
+            'GB' => [
+                'values' => ['GB'],
+                'resolutionValue' => 'co.uk'
             ],
-            'fr' => [
-                'values' => ['fr'],
+            'FR' => [
+                'values' => ['FR'],
                 'resolutionValue' => 'fr'
             ]
         ]
     ];
 
+    public function hostSuffixProvider(): array
+    {
+        return [
+            ['GB', '.co.uk', ['.co.uk', '.fr']],
+            ['FR', '.fr', ['.co.uk', '.fr']]
+        ];
+    }
 
     /**
      * @test
+     * @dataProvider hostSuffixProvider
+     * @param string $presetKey
+     * @param string $expectedHostSuffix
+     * @param array $expectedReplaceSuffixes
+     * @throws \Neos\Utility\Exception\PropertyNotAccessibleException
      */
-    public function processUriConstraintsAddsHostSuffixWithReplacementsIfGiven()
+    public function processUriConstraintsAddsHostSuffixWithReplacementsIfGiven(string $presetKey, string $expectedHostSuffix, array $expectedReplaceSuffixes)
     {
         $linkProcessor = new TopLevelDomainDimensionPresetLinkProcessor();
         $uriConstraints = UriConstraints::create();
@@ -55,15 +67,15 @@ class TopLevelDomainDimensionPresetLinkProcessorTest extends UnitTestCase
             $uriConstraints,
             'market',
             $this->dimensionConfiguration,
-            $this->dimensionConfiguration['presets']['fr'],
+            $this->dimensionConfiguration['presets'][$presetKey],
             []
         );
         $constraints = ObjectAccess::getProperty($processedUriConstraints, 'constraints', true);
 
         $this->assertSame(
             [
-                'suffix' => '.fr',
-                'replaceSuffixes' => ['.com', '.fr']
+                'suffix' => $expectedHostSuffix,
+                'replaceSuffixes' => $expectedReplaceSuffixes
             ],
             $constraints['hostSuffix']
         );

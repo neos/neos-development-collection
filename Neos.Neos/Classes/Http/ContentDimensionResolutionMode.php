@@ -36,7 +36,7 @@ final class ContentDimensionResolutionMode implements \JsonSerializable
             && $mode !== self::RESOLUTION_MODE_TOPLEVELDOMAIN
             && $mode !== self::RESOLUTION_MODE_URIPATHSEGMENT
         ) {
-            throw new \InvalidArgumentException('Invalid content dimension resolution mode "' . $mode . '", must be one of the defined constants.', 1510778102);
+            throw new \DomainException('Invalid content dimension resolution mode "' . $mode . '", must be one of the defined constants.', 1510778102);
         }
 
         $this->mode = $mode;

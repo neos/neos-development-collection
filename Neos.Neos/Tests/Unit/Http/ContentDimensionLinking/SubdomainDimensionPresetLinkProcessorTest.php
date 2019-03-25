@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Tests\Unit\Http\ContentDimensionDetection;
+namespace Neos\Neos\Tests\Unit\Http\ContentDimensionLinking;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -39,6 +39,10 @@ class SubdomainDimensionPresetLinkProcessorTest extends UnitTestCase
                 'values' => ['de'],
                 'resolutionValue' => 'de'
             ],
+            'gsw' => [
+                'values' => ['gsw', 'de'],
+                'resolutionValue' => 'gsw.de'
+            ],
             'fr' => [
                 'values' => ['fr'],
                 'resolutionValue' => 'fr'
@@ -46,37 +50,24 @@ class SubdomainDimensionPresetLinkProcessorTest extends UnitTestCase
         ]
     ];
 
-
-    /**
-     * @test
-     */
-    public function processUriConstraintsAddsHostPrefixWithReplacementsIfGiven()
+    public function hostPrefixProvider(): array
     {
-        $linkProcessor = new SubdomainDimensionPresetLinkProcessor();
-        $uriConstraints = UriConstraints::create();
-
-        $processedUriConstraints = $linkProcessor->processUriConstraints(
-            $uriConstraints,
-            'language',
-            $this->dimensionConfiguration,
-            $this->dimensionConfiguration['presets']['fr'],
-            []
-        );
-        $constraints = ObjectAccess::getProperty($processedUriConstraints, 'constraints', true);
-
-        $this->assertSame(
-            [
-                'prefix' => 'fr.',
-                'replacePrefixes' => ['de.', 'fr.']
-            ],
-            $constraints['hostPrefix']
-        );
+        return [
+            ['fr', 'fr.', ['de.', 'gsw.de.', 'fr.']],
+            ['en', '', ['de.', 'gsw.de.', 'fr.']],
+            ['gsw', 'gsw.de.', ['de.', 'gsw.de.', 'fr.']]
+        ];
     }
 
     /**
      * @test
+     * @dataProvider hostPrefixProvider
+     * @param string $presetKey
+     * @param string $expectedHostPrefix
+     * @param array $expectedReplacePrefixes
+     * @throws \Neos\Utility\Exception\PropertyNotAccessibleException
      */
-    public function processUriConstraintsAddsEmptyHostPrefixWithReplacementsIfGiven()
+    public function processUriConstraintsAddsHostPrefixWithReplacementsIfGiven(string $presetKey, string $expectedHostPrefix, array $expectedReplacePrefixes)
     {
         $linkProcessor = new SubdomainDimensionPresetLinkProcessor();
         $uriConstraints = UriConstraints::create();
@@ -85,15 +76,15 @@ class SubdomainDimensionPresetLinkProcessorTest extends UnitTestCase
             $uriConstraints,
             'language',
             $this->dimensionConfiguration,
-            $this->dimensionConfiguration['presets']['en'],
+            $this->dimensionConfiguration['presets'][$presetKey],
             []
         );
         $constraints = ObjectAccess::getProperty($processedUriConstraints, 'constraints', true);
 
         $this->assertSame(
             [
-                'prefix' => '',
-                'replacePrefixes' => ['de.', 'fr.']
+                'prefix' => $expectedHostPrefix,
+                'replacePrefixes' => $expectedReplacePrefixes
             ],
             $constraints['hostPrefix']
         );

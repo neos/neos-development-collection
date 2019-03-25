@@ -16,7 +16,7 @@ use Neos\Neos\Http\ContentDimensionDetection;
 use Neos\Neos\Http\ContentDimensionResolutionMode;
 
 /**
- * Test case for the SubdomainDimensionPresetDetector
+ * Test case for the UriPathSegmentDimensionPresetDetector
  */
 class UriPathSegmentDimensionPresetDetectorTest extends UnitTestCase
 {
@@ -56,141 +56,52 @@ class UriPathSegmentDimensionPresetDetectorTest extends UnitTestCase
         ]
     ];
 
+    public function uriSegmentBasedUriAndPresetProvider(): array
+    {
+        return [
+            ['https://domain.com/en-GB', '-', 'GB', 'en'],
+            ['https://domain.com/en_GB', '_', 'GB', 'en'],
+            ['https://domain.com/en-GB@user-me', '-', 'GB', 'en'],
+            ['https://domain.com/wat', '-', null, null],
+            ['https://domain.com', '-', null, null]
+        ];
+    }
 
     /**
      * @test
+     * @dataProvider uriSegmentBasedUriAndPresetProvider
+     * @param string $rawUri
+     * @param string $delimiter
+     * @param string|null $expectedMarketPresetKey
+     * @param string|null $expectedLanguagePresetKey
      */
-    public function detectPresetDetectsPresetSerializedInComponentContextsFirstUriPathSegmentPart()
+    public function detectPresetDetectsPresetSerializedInComponentContextsFirstUriPathSegmentPart(string $rawUri, string $delimiter, ?string $expectedMarketPresetKey, ?string $expectedLanguagePresetKey)
     {
         $presetDetector = new ContentDimensionDetection\UriPathSegmentDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/en-GB'));
+        $httpRequest = Http\Request::create(new Http\Uri($rawUri));
         $httpResponse = new Http\Response();
         $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
 
-        $options = $this->dimensionConfiguration['language']['resolution']['options'];
-        $options['delimiter'] = '-';
+        $marketOptions = $this->dimensionConfiguration['market']['resolution']['options'];
+        $marketOptions['delimiter'] = $delimiter;
+        $this->assertSame($expectedMarketPresetKey ? $this->dimensionConfiguration['market']['presets'][$expectedMarketPresetKey] : null,
+            $presetDetector->detectPreset(
+                'market',
+                $this->dimensionConfiguration['market']['presets'],
+                $componentContext,
+                $marketOptions
+            )
+        );
 
-        $this->assertSame($this->dimensionConfiguration['language']['presets']['en'],
+        $languageOptions = $this->dimensionConfiguration['language']['resolution']['options'];
+        $languageOptions['delimiter'] = $delimiter;
+
+        $this->assertSame($expectedLanguagePresetKey ? $this->dimensionConfiguration['language']['presets'][$expectedLanguagePresetKey] : null,
             $presetDetector->detectPreset(
                 'language',
                 $this->dimensionConfiguration['language']['presets'],
                 $componentContext,
-                $options
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function detectPresetDetectsPresetSerializedInComponentContextsSecondUriPathSegmentPart()
-    {
-        $presetDetector = new ContentDimensionDetection\UriPathSegmentDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/en-GB'));
-        $httpResponse = new Http\Response();
-        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
-
-        $options = $this->dimensionConfiguration['market']['resolution']['options'];
-        $options['delimiter'] = '-';
-
-        $this->assertSame($this->dimensionConfiguration['market']['presets']['GB'],
-            $presetDetector->detectPreset(
-                'market',
-                $this->dimensionConfiguration['market']['presets'],
-                $componentContext,
-                $options
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function detectPresetDetectsPresetSerializedInComponentContextsBackendUrisFirstUriPathSegmentPart()
-    {
-        $presetDetector = new ContentDimensionDetection\UriPathSegmentDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/en-GB@user-me'));
-        $httpResponse = new Http\Response();
-        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
-
-        $options = $this->dimensionConfiguration['language']['resolution']['options'];
-        $options['delimiter'] = '-';
-
-        $this->assertSame($this->dimensionConfiguration['language']['presets']['en'],
-            $presetDetector->detectPreset(
-                'market',
-                $this->dimensionConfiguration['language']['presets'],
-                $componentContext,
-                $options
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function detectPresetDetectsPresetSerializedInComponentContextsBackendUrisSecondUriPathSegmentPart()
-    {
-        $presetDetector = new ContentDimensionDetection\UriPathSegmentDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/en-GB@user-me'));
-        $httpResponse = new Http\Response();
-        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
-
-        $options = $this->dimensionConfiguration['market']['resolution']['options'];
-        $options['delimiter'] = '-';
-
-        $this->assertSame($this->dimensionConfiguration['market']['presets']['GB'],
-            $presetDetector->detectPreset(
-                'market',
-                $this->dimensionConfiguration['market']['presets'],
-                $componentContext,
-                $options
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function detectPresetDoesNotDetectPresetFromComponentContextWithoutMatchingSerialization()
-    {
-        $presetDetector = new ContentDimensionDetection\TopLevelDomainDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/wat'));
-        $httpResponse = new Http\Response();
-        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
-
-        $options = $this->dimensionConfiguration['language']['resolution']['options'];
-        $options['delimiter'] = '-';
-
-        $this->assertSame(null,
-            $presetDetector->detectPreset(
-                'market',
-                $this->dimensionConfiguration['market']['presets'],
-                $componentContext,
-                $options
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function detectPresetDoesNotDetectPresetFromComponentContextWithoutUriPathSegment()
-    {
-        $presetDetector = new ContentDimensionDetection\TopLevelDomainDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.com'));
-        $httpResponse = new Http\Response();
-        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
-
-        $options = $this->dimensionConfiguration['language']['resolution']['options'];
-        $options['delimiter'] = '-';
-
-        $this->assertSame(null,
-            $presetDetector->detectPreset(
-                'market',
-                $this->dimensionConfiguration['market']['presets'],
-                $componentContext,
-                $options
+                $languageOptions
             )
         );
     }

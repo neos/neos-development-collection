@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Tests\Unit\Http\ContentDimensionDetection;
+namespace Neos\Neos\Tests\Unit\Http\ContentDimensionLinking;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -17,62 +17,38 @@ use Neos\Neos\Tests\Unit\Http\ContentDimensionLinking\Fixtures\InvalidDummyDimen
 use Neos\Neos\Tests\Unit\Http\ContentDimensionLinking\Fixtures\ValidDummyDimensionPresetLinkProcessor;
 
 /**
- * Test case for the DetectContentSubgraphComponent
+ * Test cases for the DimensionPresetLinkProcessorResolver
  */
 class DimensionPresetLinkProcessorResolverTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
-    public function resolveDimensionPresetLinkProcessorReturnsSubdomainLinkProcessorForMatchingResolutionMode()
+    public function resolutionModeProvider(): array
     {
-        $resolver = new ContentDimensionLinking\DimensionPresetLinkProcessorResolver();
-
-        $linkProcessor = $resolver->resolveDimensionPresetLinkProcessor('dimensionName', [
-            'resolution' => ['mode' => ContentDimensionResolutionMode::RESOLUTION_MODE_SUBDOMAIN],
-        ]);
-
-        $this->assertSame(ContentDimensionLinking\SubdomainDimensionPresetLinkProcessor::class, get_class($linkProcessor));
+        return [
+            [ContentDimensionResolutionMode::RESOLUTION_MODE_SUBDOMAIN, ContentDimensionLinking\SubdomainDimensionPresetLinkProcessor::class],
+            [ContentDimensionResolutionMode::RESOLUTION_MODE_TOPLEVELDOMAIN, ContentDimensionLinking\TopLevelDomainDimensionPresetLinkProcessor::class],
+            [ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT, ContentDimensionLinking\UriPathSegmentDimensionPresetLinkProcessor::class],
+            [null, ContentDimensionLinking\UriPathSegmentDimensionPresetLinkProcessor::class]
+        ];
     }
 
     /**
      * @test
+     * @dataProvider resolutionModeProvider
+     * @param string|null $resolutionMode
+     * @param string $expectedLinkProcessorClassName
      */
-    public function resolveDimensionPresetLinkProcessorReturnsTopLevelDomainLinkProcessorForMatchingResolutionMode()
+    public function resolveDimensionPresetLinkProcessorReturnsSubdomainLinkProcessorForMatchingResolutionMode(?string $resolutionMode, string $expectedLinkProcessorClassName)
     {
         $resolver = new ContentDimensionLinking\DimensionPresetLinkProcessorResolver();
 
-        $linkProcessor = $resolver->resolveDimensionPresetLinkProcessor('dimensionName', [
-            'resolution' => ['mode' => ContentDimensionResolutionMode::RESOLUTION_MODE_TOPLEVELDOMAIN],
-        ]);
+        $resolutionOptions = $resolutionMode
+            ? ['resolution' => ['mode' => $resolutionMode]]
+            : [];
 
-        $this->assertSame(ContentDimensionLinking\TopLevelDomainDimensionPresetLinkProcessor::class, get_class($linkProcessor));
-    }
-
-    /**
-     * @test
-     */
-    public function resolveDimensionPresetLinkProcessorReturnsUriPathSegmentLinkProcessorForMatchingResolutionMode()
-    {
-        $resolver = new ContentDimensionLinking\DimensionPresetLinkProcessorResolver();
-
-        $linkProcessor = $resolver->resolveDimensionPresetLinkProcessor('dimensionName', [
-            'resolution' => ['mode' => ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT],
-        ]);
-
-        $this->assertSame(ContentDimensionLinking\UriPathSegmentDimensionPresetLinkProcessor::class, get_class($linkProcessor));
-    }
-
-    /**
-     * @test
-     */
-    public function resolveDimensionPresetLinkProcessorReturnsUriPathSegmentLinkProcessorIfNothingWasConfigured()
-    {
-        $resolver = new ContentDimensionLinking\DimensionPresetLinkProcessorResolver();
-
-        $linkProcessor = $resolver->resolveDimensionPresetLinkProcessor('dimensionName', []);
-
-        $this->assertSame(ContentDimensionLinking\UriPathSegmentDimensionPresetLinkProcessor::class, get_class($linkProcessor));
+        $this->assertSame(
+            $expectedLinkProcessorClassName,
+            get_class($resolver->resolveDimensionPresetLinkProcessor('dimensionName', $resolutionOptions))
+        );
     }
 
     /**

@@ -44,56 +44,30 @@ class BackendUriDimensionPresetDetectorTest extends UnitTestCase
         ]
     ];
 
-
-    /**
-     * @test
-     */
-    public function detectPresetDetectsPresetFromComponentContextWithBackendUrlContainingSerializedPreset()
+    public function uriSegmentBasedUriAndPresetProvider(): array
     {
-        $presetDetector = new ContentDimensionDetection\BackendUriDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/@user-me;language=nl,de'));
-        $httpResponse = new Http\Response();
-        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
-
-        $this->assertSame($this->dimensionConfiguration['presets']['nl'],
-            $presetDetector->detectPreset(
-                'language',
-                $this->dimensionConfiguration['presets'],
-                $componentContext
-            )
-        );
+        return [
+            ['https://domain.com/@user-me', null],
+            ['https://domain.com/@user-me;language=sjn', null],
+            ['https://domain.com/@user-me;language=nl,de', 'nl'],
+            ['https://domain.com/de/@user-me;language=nl,de', 'nl']
+        ];
     }
 
     /**
      * @test
+     * @dataProvider uriSegmentBasedUriAndPresetProvider
+     * @param string $rawUri
+     * @param string $presetKey
      */
-    public function detectPresetDetectsNoPresetFromComponentContextWithBackendUrlNotContainingSerializedPreset()
+    public function detectPresetDetectsPresetFromBackendUri(string $rawUri, ?string $presetKey): void
     {
         $presetDetector = new ContentDimensionDetection\BackendUriDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/@user-me'));
+        $httpRequest = Http\Request::create(new Http\Uri($rawUri));
         $httpResponse = new Http\Response();
         $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
 
-        $this->assertSame(null,
-            $presetDetector->detectPreset(
-                'language',
-                $this->dimensionConfiguration['presets'],
-                $componentContext
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function detectPresetDetectsPresetFromComponentContextWithBackendUrlContainingSerializedPresetDifferentFromTheFrontendUrlPreset()
-    {
-        $presetDetector = new ContentDimensionDetection\BackendUriDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/fr_EU/@user-me;language=nl,de'));
-        $httpResponse = new Http\Response();
-        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
-
-        $this->assertSame($this->dimensionConfiguration['presets']['nl'],
+        $this->assertSame($presetKey ? $this->dimensionConfiguration['presets'][$presetKey] : null,
             $presetDetector->detectPreset(
                 'language',
                 $this->dimensionConfiguration['presets'],

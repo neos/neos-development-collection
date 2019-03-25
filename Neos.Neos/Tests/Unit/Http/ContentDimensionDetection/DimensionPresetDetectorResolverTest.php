@@ -17,62 +17,36 @@ use Neos\Neos\Tests\Unit\Http\ContentDimensionDetection\Fixtures\InvalidDummyDim
 use Neos\Neos\Tests\Unit\Http\ContentDimensionDetection\Fixtures\ValidDummyDimensionPresetDetector;
 
 /**
- * Test case for the DetectContentSubgraphComponent
+ * Test case for the DimensionPresetDetectorResolver
  */
 class DimensionPresetDetectorResolverTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
-    public function resolveDimensionPresetDetectorReturnsSubdomainDetectorForMatchingResolutionMode()
+    public function resolutionModeProvider(): array
     {
-        $resolver = new ContentDimensionDetection\DimensionPresetDetectorResolver();
-
-        $detector = $resolver->resolveDimensionPresetDetector('dimensionName', [
-            'resolution' => ['mode' => ContentDimensionResolutionMode::RESOLUTION_MODE_SUBDOMAIN],
-        ]);
-
-        $this->assertSame(ContentDimensionDetection\SubdomainDimensionPresetDetector::class, get_class($detector));
+        return [
+            [ContentDimensionResolutionMode::RESOLUTION_MODE_SUBDOMAIN, ContentDimensionDetection\SubdomainDimensionPresetDetector::class],
+            [ContentDimensionResolutionMode::RESOLUTION_MODE_TOPLEVELDOMAIN, ContentDimensionDetection\TopLevelDomainDimensionPresetDetector::class],
+            [ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT, ContentDimensionDetection\UriPathSegmentDimensionPresetDetector::class],
+            [null, ContentDimensionDetection\UriPathSegmentDimensionPresetDetector::class]
+        ];
     }
 
     /**
      * @test
+     * @dataProvider resolutionModeProvider
+     * @param string|null $resolutionMode
+     * @param string $expectedDetectorClassName
      */
-    public function resolveDimensionPresetDetectorReturnsTopLevelDomainDetectorForMatchingResolutionMode()
+    public function resolveDimensionPresetDetectorReturnsSubdomainDetectorForMatchingResolutionMode(?string $resolutionMode, string $expectedDetectorClassName)
     {
         $resolver = new ContentDimensionDetection\DimensionPresetDetectorResolver();
 
-        $detector = $resolver->resolveDimensionPresetDetector('dimensionName', [
-            'resolution' => ['mode' => ContentDimensionResolutionMode::RESOLUTION_MODE_TOPLEVELDOMAIN],
-        ]);
+        $resolutionOptions = $resolutionMode
+            ? ['resolution' => ['mode' => $resolutionMode]]
+            : [];
+        $detector = $resolver->resolveDimensionPresetDetector('dimensionName', $resolutionOptions);
 
-        $this->assertSame(ContentDimensionDetection\TopLevelDomainDimensionPresetDetector::class, get_class($detector));
-    }
-
-    /**
-     * @test
-     */
-    public function resolveDimensionPresetDetectorReturnsUriPathSegmentDetectorForMatchingResolutionMode()
-    {
-        $resolver = new ContentDimensionDetection\DimensionPresetDetectorResolver();
-
-        $detector = $resolver->resolveDimensionPresetDetector('dimensionName', [
-            'resolution' => ['mode' => ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT],
-        ]);
-
-        $this->assertSame(ContentDimensionDetection\UriPathSegmentDimensionPresetDetector::class, get_class($detector));
-    }
-
-    /**
-     * @test
-     */
-    public function resolveDimensionPresetDetectorReturnsUriPathSegmentDetectorIfNothingWasConfigured()
-    {
-        $resolver = new ContentDimensionDetection\DimensionPresetDetectorResolver();
-
-        $detector = $resolver->resolveDimensionPresetDetector('dimensionName', []);
-
-        $this->assertSame(ContentDimensionDetection\UriPathSegmentDimensionPresetDetector::class, get_class($detector));
+        $this->assertSame($expectedDetectorClassName, get_class($detector));
     }
 
     /**

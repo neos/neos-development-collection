@@ -17,7 +17,7 @@ use Neos\Neos\Http\ContentDimensionResolutionMode;
 use Neos\Utility\ObjectAccess;
 
 /**
- * Test case for the SubdomainDimensionPresetLinkProcessor
+ * Test cases for the UriPathSegmentDimensionPresetLinkProcessor
  */
 class UriPathSegmentDimensionPresetLinkProcessorTest extends UnitTestCase
 {
@@ -57,54 +57,63 @@ class UriPathSegmentDimensionPresetLinkProcessorTest extends UnitTestCase
         ],
     ];
 
-    /**
-     * @test
-     */
-    public function processUriConstraintsAddsFirstPathPrefix()
+    public function pathPrefixProvider(): array
     {
-        $linkProcessor = new UriPathSegmentDimensionPresetLinkProcessor();
-        $uriConstraints = UriConstraints::create();
-
-        $options = $this->dimensionConfiguration['language']['resolution']['options'];
-        $options['delimiter'] = '-';
-
-        $processedUriConstraints = $linkProcessor->processUriConstraints(
-            $uriConstraints,
-            'language',
-            $this->dimensionConfiguration['language'],
-            $this->dimensionConfiguration['language']['presets']['en'],
-            $options
-        );
-        $constraints = ObjectAccess::getProperty($processedUriConstraints, 'constraints', true);
-
-        $this->assertSame(
-            'en',
-            $constraints['pathPrefix']
-        );
+        return [
+            ['-', 'GB', 'en', 'en-GB'],
+            ['_', 'GB', 'en', 'en_GB'],
+            ['_', 'GB', null, 'GB'],
+            ['_', null, 'en', 'en']
+        ];
     }
 
     /**
      * @test
+     * @dataProvider pathPrefixProvider
+     * @param string $delimiter
+     * @param string $marketPresetKey
+     * @param string $languagePresetKey
+     * @param string $expectedPrefix
+     * @throws \Neos\Utility\Exception\PropertyNotAccessibleException
      */
-    public function processUriConstraintsAddsSecondPathPrefixWithGivenDelimiter()
+    public function processUriConstraintsAddsFirstPathPrefix(string $delimiter, ?string $marketPresetKey, ?string $languagePresetKey, string $expectedPrefix)
     {
         $linkProcessor = new UriPathSegmentDimensionPresetLinkProcessor();
         $uriConstraints = UriConstraints::create();
 
-        $options = $this->dimensionConfiguration['market']['resolution']['options'];
-        $options['delimiter'] = '-';
+        $offset = 0;
+        if ($languagePresetKey) {
+            $options = $this->dimensionConfiguration['language']['resolution']['options'];
+            $options['delimiter'] = $delimiter;
+            $options['offset'] = $offset;
+            $uriConstraints = $linkProcessor->processUriConstraints(
+                $uriConstraints,
+                'language',
+                $this->dimensionConfiguration['language'],
+                $this->dimensionConfiguration['language']['presets'][$languagePresetKey],
+                $options
+            );
+            $offset++;
+        }
 
-        $processedUriConstraints = $linkProcessor->processUriConstraints(
-            $uriConstraints,
-            'language',
-            $this->dimensionConfiguration['market'],
-            $this->dimensionConfiguration['market']['presets']['GB'],
-            $options
-        );
-        $constraints = ObjectAccess::getProperty($processedUriConstraints, 'constraints', true);
+        if ($marketPresetKey) {
+            $options = $this->dimensionConfiguration['market']['resolution']['options'];
+            $options['delimiter'] = $delimiter;
+            $options['offset'] = $offset;
+            $uriConstraints = $linkProcessor->processUriConstraints(
+                $uriConstraints,
+                'market',
+                $this->dimensionConfiguration['market'],
+                $this->dimensionConfiguration['market']['presets'][$marketPresetKey],
+                $options
+            );
+            $offset++;
+        }
+
+        $constraints = ObjectAccess::getProperty($uriConstraints, 'constraints', true);
 
         $this->assertSame(
-            '-GB',
+            $expectedPrefix,
             $constraints['pathPrefix']
         );
     }

@@ -16,7 +16,7 @@ use Neos\Neos\Http\ContentDimensionDetection;
 use Neos\Neos\Http\ContentDimensionResolutionMode;
 
 /**
- * Test case for the SubdomainDimensionPresetDetector
+ * Test case for the TopLevelDomainDimensionPresetDetector
  */
 class TopLevelDomainDimensionPresetDetectorTest extends UnitTestCase
 {
@@ -40,58 +40,31 @@ class TopLevelDomainDimensionPresetDetectorTest extends UnitTestCase
         ]
     ];
 
-
-    /**
-     * @test
-     */
-    public function detectPresetDetectsPresetFromComponentContextWithMatchingTopLevelDomain()
+    public function topLevelDomainBasedUriAndPresetProvider(): array
     {
-        $presetDetector = new ContentDimensionDetection\TopLevelDomainDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.de'));
-        $httpResponse = new Http\Response();
-        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
-
-        $this->assertSame($this->dimensionConfiguration['presets']['DE'],
-            $presetDetector->detectPreset(
-                'market',
-                $this->dimensionConfiguration['presets'],
-                $componentContext
-            )
-        );
+        return [
+            ['https://domain.de', 'DE'],
+            ['https://domain.co.uk', 'GB'],
+            ['https://domain.none', null]
+        ];
     }
 
     /**
      * @test
+     * @dataProvider topLevelDomainBasedUriAndPresetProvider
+     * @param string $rawUri
+     * @param string|null $expectedPresetKey
      */
-    public function detectPresetDetectsPresetFromComponentContextWithMatchingCompositeDomain()
+    public function detectPresetDetectsPresetFromComponentContextWithMatchingTopLevelDomain(string $rawUri, ?string $expectedPresetKey)
     {
         $presetDetector = new ContentDimensionDetection\TopLevelDomainDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.co.uk'));
+        $httpRequest = Http\Request::create(new Http\Uri($rawUri));
         $httpResponse = new Http\Response();
         $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
 
-        $this->assertSame($this->dimensionConfiguration['presets']['GB'],
+        $this->assertSame($expectedPresetKey ? $this->dimensionConfiguration['presets'][$expectedPresetKey] : null,
             $presetDetector->detectPreset(
                 'market',
-                $this->dimensionConfiguration['presets'],
-                $componentContext
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function detectPresetDetectsNoPresetFromComponentContextWithNotMatchingTopLevelDomain()
-    {
-        $presetDetector = new ContentDimensionDetection\TopLevelDomainDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.fr'));
-        $httpResponse = new Http\Response();
-        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
-
-        $this->assertSame(null,
-            $presetDetector->detectPreset(
-                'language',
                 $this->dimensionConfiguration['presets'],
                 $componentContext
             )

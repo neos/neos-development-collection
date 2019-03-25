@@ -40,56 +40,29 @@ class SubdomainDimensionPresetDetectorTest extends UnitTestCase
         ]
     ];
 
-
-    /**
-     * @test
-     */
-    public function detectPresetDetectsPresetFromComponentContextWithMatchingSubdomain()
+    public function subdomainBasedUriAndPresetProvider(): array
     {
-        $presetDetector = new ContentDimensionDetection\SubdomainDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://de.domain.com'));
-        $httpResponse = new Http\Response();
-        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
-
-        $this->assertSame($this->dimensionConfiguration['presets']['de'],
-            $presetDetector->detectPreset(
-                'language',
-                $this->dimensionConfiguration['presets'],
-                $componentContext
-            )
-        );
+        return [
+            ['https://domain.com', null],
+            ['https://de.domain.com', 'de'],
+            ['https://www.domain.com', null]
+        ];
     }
 
     /**
      * @test
+     * @dataProvider subdomainBasedUriAndPresetProvider
+     * @param string $rawUri
+     * @param string $expectedPresetKey
      */
-    public function detectPresetDetectsNoPresetFromComponentContextWithoutSubdomain()
+    public function detectPresetDetectsPresetFromUriWithSubdomain(string $rawUri, ?string $expectedPresetKey)
     {
         $presetDetector = new ContentDimensionDetection\SubdomainDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://domain.com'));
+        $httpRequest = Http\Request::create(new Http\Uri($rawUri));
         $httpResponse = new Http\Response();
         $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
 
-        $this->assertSame(null,
-            $presetDetector->detectPreset(
-                'language',
-                $this->dimensionConfiguration['presets'],
-                $componentContext
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function detectPresetDetectsNoPresetFromComponentContextWithNotMatchingSubdomain()
-    {
-        $presetDetector = new ContentDimensionDetection\SubdomainDimensionPresetDetector();
-        $httpRequest = Http\Request::create(new Http\Uri('https://www.domain.com'));
-        $httpResponse = new Http\Response();
-        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
-
-        $this->assertSame(null,
+        $this->assertSame($expectedPresetKey ? $this->dimensionConfiguration['presets'][$expectedPresetKey] : null,
             $presetDetector->detectPreset(
                 'language',
                 $this->dimensionConfiguration['presets'],

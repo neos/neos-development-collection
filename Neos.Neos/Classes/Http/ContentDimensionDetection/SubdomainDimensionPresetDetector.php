@@ -37,7 +37,8 @@ final class SubdomainDimensionPresetDetector implements ContentDimensionPresetDe
         $host = $componentContext->getHttpRequest()->getUri()->getHost();
         foreach ($presets as $availablePreset) {
             if (empty($availablePreset['resolutionValue'])) {
-                // we leave the decision about how to handle empty values to the detection component
+                // We cannot decide these here as any URI not matching any of the resolution values would match here.
+                // We thus leave the decision about how to handle empty values to the detection component
                 continue;
             }
             $valueLength = mb_strlen($availablePreset['resolutionValue']);
