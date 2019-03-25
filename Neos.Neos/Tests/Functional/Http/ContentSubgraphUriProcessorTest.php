@@ -151,7 +151,7 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             $constraints['hostSuffix']
         );
         $this->assertSame(
-            'sellerA_channelA/',
+            'sellerA_channelA',
             $constraints['pathPrefix']
         );
     }
