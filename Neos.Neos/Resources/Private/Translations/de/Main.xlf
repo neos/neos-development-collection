@@ -658,9 +658,15 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target xml:lang="de" state="translated">Ihr Login ist abgelaufen. Bitte melden Sie sich erneut an.</target></trans-unit>
       <!-- Error handlers -->
+      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
+				<source>Welcome to Neos</source>
+			<target xml:lang="de" state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
 			<target xml:lang="de" state="translated">Zum Setup</target></trans-unit>
+      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
+				<source>Technical Information</source>
+			<target xml:lang="de" state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
 			<target xml:lang="de" state="translated">Fehlende Startseite</target></trans-unit>
@@ -674,10 +680,10 @@
 				<source>Database Error</source>
 			<target xml:lang="de" state="translated">Datenbankfehler</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
-				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
+				<source>There is no database connection yet or the Neos database schema has not been created.</source>
 			<target xml:lang="de" state="translated">Es gibt noch keine Datenbankverbindung oder das Neos-Datenbankschema wurde noch nicht erstellt.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>You might want to configure or check your database configuration in the setup.</source>
+				<source>Run the setup to configure your database.</source>
 			<target xml:lang="de" state="translated">Führen Sie das Setup aus, um die Datenbank zu konfigurieren.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
