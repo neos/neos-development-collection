@@ -248,6 +248,17 @@ class ThumbnailService
     }
 
     /**
+     * Signals that a thumbnail was persisted.
+     *
+     * @Flow\Signal
+     * @param Thumbnail $thumbnail
+     * @return void
+     */
+    public function emitThumbnailPersisted(Thumbnail $thumbnail)
+    {
+    }
+
+    /**
      * Signals that a thumbnail was created.
      *
      * @Flow\Signal
