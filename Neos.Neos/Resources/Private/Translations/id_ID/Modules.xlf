@@ -613,9 +613,15 @@
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
 			<target xml:lang="id" state="translated">NamaPenyediaLayanan.KodeKunciPaketSaya</target><alt-trans><target xml:lang="id">VendorName.MyPackageKey</target></alt-trans><alt-trans><target xml:lang="id">VendorNama.MyPackageKey</target></alt-trans></trans-unit>
+      <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
+				<source>No sites available</source>
+			<target xml:lang="id" state="needs-translation">No sites available</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target xml:lang="id" state="translated">Paket &lt;em&gt;Neos Kickstarter&lt;/em&gt; belum terpasang, silakan memasangnya ke situs baru kickstart.</target><alt-trans><target xml:lang="id">Paket&lt;em&gt;Neos Kickstarter&lt;/em&gt;tidak terpasang, instal ke situs baru kickstart.</target></alt-trans></trans-unit>
+      <trans-unit id="sites.new" xml:space="preserve">
+				<source>New site</source>
+			<target xml:lang="id" state="needs-translation">New site</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target xml:lang="id" state="translated">Apakah Anda benar-benar ingin menghapus "{0}"? ini tidak dapat dipulihkan.</target><alt-trans><target xml:lang="id">Apakah Anda benar-benar ingin menghapus "{0}"? Tindakan ini tidak bisa dibatalkan.</target></alt-trans></trans-unit>
@@ -625,6 +631,18 @@
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
 			<target xml:lang="id" state="translated">Edit domain</target><alt-trans><target xml:lang="id">Sunting Domain</target></alt-trans></trans-unit>
+      <trans-unit id="domainform.domainData" xml:space="preserve">
+				<source>Domain data</source>
+			<target xml:lang="id" state="needs-translation">Domain data</target></trans-unit>
+      <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
+				<source>e.g. www.neos.io</source>
+			<target xml:lang="id" state="needs-translation">e.g. www.neos.io</target></trans-unit>
+      <trans-unit id="domainform.state" xml:space="preserve">
+				<source>State</source>
+			<target xml:lang="id" state="needs-translation">State</target></trans-unit>
+      <trans-unit id="domainform.create" xml:space="preserve">
+				<source>Create</source>
+			<target xml:lang="id" state="needs-translation">Create</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="id" state="translated">Konfigurasi</target></trans-unit>

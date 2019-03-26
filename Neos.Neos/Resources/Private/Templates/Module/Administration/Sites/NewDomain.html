@@ -2,11 +2,11 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
-	<h2>{neos:backend.translate(id: 'domain.new', value: 'New domain')}</h2>
+	<h2>{neos:backend.translate(id: 'domain.new', value: 'New domain', source: 'Modules')}</h2>
 </f:section>
 
 <f:section name="content">
 	<f:form action="createDomain" name="domain" object="{domain}">
-		<f:render partial="Module/Shared/DomainForm" arguments="{domain: domain, site: site, schemes: schemes, saveText: 'Create'}" />
+		<f:render partial="Module/Shared/DomainForm" arguments="{domain: domain, site: site, schemes: schemes, saveText: '{neos:backend.translate(id: \'domainform.create\', value: \'Create\', source: \'Modules\')}'}" />
 	</f:form>
 </f:section>

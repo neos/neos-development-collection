@@ -616,9 +616,15 @@
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve" approved="yes">
 				<source>VendorName.MyPackageKey</source>
 			<target xml:lang="ru" state="translated">НазваниеФирмы.КолонтитулПакета</target></trans-unit>
+      <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
+				<source>No sites available</source>
+			<target xml:lang="ru" state="needs-translation">No sites available</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="yes">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target xml:lang="ru" state="translated">Пакет &lt;em&gt;Neos Kickstarter&lt;/em&gt; не установлен, установите его для кикстарта новых сайтов.</target></trans-unit>
+      <trans-unit id="sites.new" xml:space="preserve">
+				<source>New site</source>
+			<target xml:lang="ru" state="needs-translation">New site</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target xml:lang="ru" state="translated">Вы действительно хотите удалить "{0}"? Это действие безвозвратное.</target></trans-unit>
@@ -628,6 +634,18 @@
       <trans-unit id="domain.edit" xml:space="preserve" approved="yes">
 				<source>Edit domain</source>
 			<target xml:lang="ru" state="translated">Править домен</target></trans-unit>
+      <trans-unit id="domainform.domainData" xml:space="preserve">
+				<source>Domain data</source>
+			<target xml:lang="ru" state="needs-translation">Domain data</target></trans-unit>
+      <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
+				<source>e.g. www.neos.io</source>
+			<target xml:lang="ru" state="needs-translation">e.g. www.neos.io</target></trans-unit>
+      <trans-unit id="domainform.state" xml:space="preserve">
+				<source>State</source>
+			<target xml:lang="ru" state="needs-translation">State</target></trans-unit>
+      <trans-unit id="domainform.create" xml:space="preserve">
+				<source>Create</source>
+			<target xml:lang="ru" state="needs-translation">Create</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target xml:lang="ru" state="translated">Конфигурация</target></trans-unit>

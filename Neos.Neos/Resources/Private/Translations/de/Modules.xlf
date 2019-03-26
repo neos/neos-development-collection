@@ -535,7 +535,7 @@
 			<target xml:lang="de" state="translated">Ausgewählte Pakete aktivieren</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
-			<target xml:lang="de" state="translated">Websites Verwaltung</target><alt-trans><target xml:lang="de">Seitenverwaltung</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Websites Verwaltung</target><alt-trans><target xml:lang="de">Website-Verwaltung</target></alt-trans><alt-trans><target xml:lang="de">Websites-Verwaltung</target></alt-trans><alt-trans><target xml:lang="de">Seitenverwaltung</target></alt-trans></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="de" state="translated">Das Modul zur Website-Verwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target><alt-trans><target xml:lang="de">Das Modul zur Websiteverwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target></alt-trans></trans-unit>
@@ -608,9 +608,15 @@
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
 			<target xml:lang="de" state="translated">Herstellername.MeinPaketschlüssel</target></trans-unit>
+      <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
+				<source>No sites available</source>
+			<target xml:lang="de" state="needs-translation">No sites available</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target xml:lang="de" state="translated">Das &lt;em&gt;Neos Kickstarter&lt;/em&gt;-Paket ist nicht installiert, installieren Sie es um eine neue Seite zu kickstarten.</target></trans-unit>
+      <trans-unit id="sites.new" xml:space="preserve">
+				<source>New site</source>
+			<target xml:lang="de" state="needs-translation">New site</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target xml:lang="de" state="translated">Möchten Sie wirklich "{0}" löschen? Diese Aktion kann nicht rückgängig gemacht werden.</target></trans-unit>
@@ -620,6 +626,18 @@
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
 			<target xml:lang="de" state="translated">Domain bearbeiten</target></trans-unit>
+      <trans-unit id="domainform.domainData" xml:space="preserve">
+				<source>Domain data</source>
+			<target xml:lang="de" state="needs-translation">Domain data</target></trans-unit>
+      <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
+				<source>e.g. www.neos.io</source>
+			<target xml:lang="de" state="needs-translation">e.g. www.neos.io</target></trans-unit>
+      <trans-unit id="domainform.state" xml:space="preserve">
+				<source>State</source>
+			<target xml:lang="de" state="needs-translation">State</target></trans-unit>
+      <trans-unit id="domainform.create" xml:space="preserve">
+				<source>Create</source>
+			<target xml:lang="de" state="needs-translation">Create</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target xml:lang="de" state="translated">Konfiguration</target></trans-unit>
