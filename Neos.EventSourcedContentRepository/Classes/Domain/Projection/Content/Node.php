@@ -20,7 +20,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier;
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
@@ -46,11 +45,6 @@ class Node implements NodeInterface
      * @var DimensionSpacePoint
      */
     protected $originDimensionSpacePoint;
-
-    /**
-     * @var NodeIdentifier
-     */
-    protected $nodeIdentifier;
 
     /**
      * @var NodeTypeName
@@ -92,21 +86,6 @@ class Node implements NodeInterface
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
         $this->properties = $properties;
-        $this->nodeIdentifier = new NodeIdentifier(
-            $this->contentStreamIdentifier,
-            $this->nodeAggregateIdentifier,
-            $this->originDimensionSpacePoint
-        );
-    }
-
-    /**
-     * Returns the node's composite identifier
-     *
-     * @return NodeIdentifier
-     */
-    public function getNodeIdentifier(): NodeIdentifier
-    {
-        return $this->nodeIdentifier;
     }
 
     /**
@@ -200,6 +179,7 @@ class Node implements NodeInterface
     {
         return isset($this->properties[$propertyName]);
     }
+
     /**
      * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
      * related to this object.
@@ -208,7 +188,11 @@ class Node implements NodeInterface
      */
     public function getCacheEntryIdentifier(): string
     {
-        return $this->nodeIdentifier->getCacheEntryIdentifier();
+        return sha1(json_encode([
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'originDimensionSpacePoint' => $this->originDimensionSpacePoint
+        ]));
     }
 
     public function getLabel(): string

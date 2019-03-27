@@ -747,22 +747,6 @@ final class NodeCommandHandler
         return $this->interDimensionalVariationGraph->getSpecializationSet($dimensionSpacePoint);
     }
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @return NodeInterface
-     * @throws NodeNotFoundException
-     */
-    private function getNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): NodeInterface
-    {
-        $node = $this->contentGraph->findNodeByIdentifierInContentStream($contentStreamIdentifier, $nodeIdentifier);
-        if ($node === null) {
-            throw new NodeNotFoundException(sprintf('Node %s not found', $nodeIdentifier), 1506074496);
-        }
-
-        return $node;
-    }
-
     private function assertNodeWithOriginDimensionSpacePointExists(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint): NodeInterface
     {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $originDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());

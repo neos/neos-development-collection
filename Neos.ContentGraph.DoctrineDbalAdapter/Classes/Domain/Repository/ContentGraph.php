@@ -16,7 +16,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -75,46 +74,17 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * Find a node by node identifier and content stream identifier
-     *
-     * Note: This does not pass the CR context to the node!!!
-     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @return NodeInterface|null
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
-     */
-    public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): ?NodeInterface
-    {
-        $connection = $this->client->getConnection();
-
-        // TODO: we get an arbitrary DimensionSpacePoint returned here -- and this is actually a problem I guess...
-        // TODO think through in detail
-        // HINT: we check the ContentStreamIdentifier on the EDGE; as this is where we actually find out whether the node exists in the content stream
-        $nodeRow = $connection->executeQuery(
-            'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint FROM neos_contentgraph_node n
-                  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-                  WHERE n.nodeidentifier = :nodeIdentifier
-                  AND h.contentstreamidentifier = :contentStreamIdentifier',
-            [
-                'nodeIdentifier' => (string)$nodeIdentifier,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier
-            ]
-        )->fetch();
-
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
-    }
-
-    /**
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $originDimensionSpacePoint
      * @return NodeInterface|null
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function findNodeByIdentifier(NodeIdentifier $nodeIdentifier): ?NodeInterface
-    {
+    public function findNodeByIdentifiers(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint
+    ): ?NodeInterface {
         $connection = $this->client->getConnection();
 
         // @todo remove fetching additional dimension space point once the matter is resolved
@@ -126,9 +96,9 @@ final class ContentGraph implements ContentGraphInterface
                   AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
                   AND h.contentstreamidentifier = :contentStreamIdentifier',
             [
-                'nodeAggregateIdentifier' => (string)$nodeIdentifier->getNodeAggregateIdentifier(),
-                'originDimensionSpacePointHash' => $nodeIdentifier->getOriginDimensionSpacePoint()->getHash(),
-                'contentStreamIdentifier' => (string)$nodeIdentifier->getContentStreamIdentifier()
+                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash(),
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier
             ]
         )->fetch();
 

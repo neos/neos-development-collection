@@ -21,7 +21,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier;
 
 /**
  * This class is purely for code organization of TraversableNode.
@@ -44,11 +43,6 @@ trait NodeInterfaceProxy
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->node->getContentStreamIdentifier();
-    }
-
-    public function getNodeIdentifier(): NodeIdentifier
-    {
-        return $this->node->getNodeIdentifier();
     }
 
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier

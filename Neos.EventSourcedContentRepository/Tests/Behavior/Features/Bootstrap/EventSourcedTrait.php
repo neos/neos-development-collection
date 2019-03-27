@@ -29,7 +29,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAgg
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
@@ -46,6 +45,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Tests\Behaviour\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -966,42 +966,18 @@ trait EventSourcedTrait
     }
 
     /**
-     * @deprecated use "a node aggregate"
-     * @Then /^I expect a node "([^"]*)" to exist in the graph projection$/
-     * @param string $nodeIdentifier
-     */
-    public function iExpectANodeToExistInTheGraphProjection(string $nodeIdentifier)
-    {
-        $nodeIdentifier = NodeIdentifier::fromString($nodeIdentifier);
-        $node = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier($nodeIdentifier);
-        Assert::assertNotNull($node, sprintf('Node "%s" was not found in the current Content Stream "%s" / Dimension Space Point "%s".', $nodeIdentifier, $this->contentStreamIdentifier, $this->dimensionSpacePoint->getHash()));
-    }
-
-    /**
-     * @deprecated use "a node aggregate"
-     * @Then /^I expect a node "([^"]*)" not to exist in the graph projection$/
-     * @param string $nodeIdentifier
-     */
-    public function iExpectANodeNotToExistInTheGraphProjection(string $nodeIdentifier)
-    {
-        $node = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
-        // we're not using assertNull here: If $node is not null, the
-        Assert::assertTrue($node === null, 'Node "' . $nodeIdentifier . '" was found in the current Content Stream / Dimension Space Point.');
-    }
-
-    /**
      * @Then /^I expect a node with identifier (.*) to exist in the content graph$/
      * @param string $serializedNodeIdentifier
      * @throws Exception
      */
     public function iExpectANodeWithIdentifierToExistInTheContentGraph(string $serializedNodeIdentifier)
     {
-        $nodeIdentifier = NodeIdentifier::fromArray(json_decode($serializedNodeIdentifier, true));
-        $this->currentNode = $this->contentGraph->findNodeByIdentifier($nodeIdentifier);
+        $nodeIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
+        $this->currentNode = $this->contentGraph->findNodeByIdentifiers(
+            $nodeIdentifier->getContentStreamIdentifier(),
+            $nodeIdentifier->getNodeAggregateIdentifier(),
+            $nodeIdentifier->getOriginDimensionSpacePoint()
+        );
         Assert::assertNotNull($this->currentNode, 'Node with aggregate identifier "' . $nodeIdentifier->getNodeAggregateIdentifier()
             . '" and originating in dimension space point "' . $nodeIdentifier->getOriginDimensionSpacePoint()
             . '" was not found in content stream "' . $nodeIdentifier->getContentStreamIdentifier() . '"'
@@ -1037,7 +1013,7 @@ trait EventSourcedTrait
      */
     public function iExpectNodeAggregateIdentifierToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodeIdentifier): void
     {
-        $expectedNodeIdentifier = NodeIdentifier::fromArray(json_decode($serializedNodeIdentifier, true));
+        $expectedNodeIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
@@ -1065,7 +1041,7 @@ trait EventSourcedTrait
      */
     public function iExpectNodeAggregateIdentifierAndPathToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath, string $serializedNodeIdentifier): void
     {
-        $expectedNodeIdentifier = NodeIdentifier::fromArray(json_decode($serializedNodeIdentifier, true));
+        $expectedNodeIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         $this->iExpectNodeAggregateIdentifierToLeadToNode($serializedNodeAggregateIdentifier, $serializedNodeIdentifier);
@@ -1165,7 +1141,7 @@ trait EventSourcedTrait
     {
         $node = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
+            ->findNodeByIdentifier(NodeDiscriminator::fromString($nodeIdentifier));
         Assert::assertEquals($nodeType, (string)$node->getNodeTypeName(), 'Node Type names do not match');
     }
 
@@ -1187,7 +1163,7 @@ trait EventSourcedTrait
     {
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
+            ->findNodeByIdentifier(NodeDiscriminator::fromString($nodeIdentifier));
         $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
     }
 
@@ -1296,7 +1272,7 @@ trait EventSourcedTrait
         if (!$this->rootNodeAggregateIdentifier) {
             throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }
-        $expectedIdentifier = NodeIdentifier::fromArray(json_decode($serializedNodeIdentifier, true));
+        $expectedIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByPath($nodePath, $this->rootNodeAggregateIdentifier);
