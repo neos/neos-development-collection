@@ -59,7 +59,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
      */
     protected $client;
 
-
     /**
      * @Flow\Inject
      * @var NodeTypeConstraintFactory
@@ -427,9 +426,6 @@ SELECT p.*, h.contentstreamidentifier, hp.name, hp.dimensionspacepoint FROM neos
         $node = $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
         if ($node) {
             $cache->add($childNodeAggregateIdentifier, $node->getNodeAggregateIdentifier());
-
-            // we also add the parent node to the NodeIdentifier => Node cache; as this might improve cache hit rates as well.
-            $this->inMemoryCache->getNodeByNodeIdentifierCache()->add($node->getNodeIdentifier(), $node);
         } else {
             $cache->rememberNonExistingParentNode($childNodeAggregateIdentifier);
         }
