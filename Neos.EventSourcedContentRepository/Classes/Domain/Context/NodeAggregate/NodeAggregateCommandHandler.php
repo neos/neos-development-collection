@@ -190,7 +190,7 @@ final class NodeAggregateCommandHandler
             $initialPropertyValues
         );
 
-        $this->handleAutoCreatedChildNodes(
+        $events = $this->handleAutoCreatedChildNodes(
             $command,
             $nodeType,
             $visibleDimensionSpacePoints,
@@ -210,6 +210,7 @@ final class NodeAggregateCommandHandler
      * @param NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers
      * @param DomainEvents $events
      * @param NodePath|null $nodePath
+     * @return DomainEvents
      * @throws ContentStream\ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFoundException
      * @throws \Neos\Flow\Property\Exception
@@ -221,7 +222,7 @@ final class NodeAggregateCommandHandler
         DimensionSpacePointSet $visibleDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers,
-        DomainEvents& $events,
+        DomainEvents $events,
         NodePath $nodePath = null
     ) {
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawNodeName => $childNodeType) {
@@ -247,7 +248,7 @@ final class NodeAggregateCommandHandler
                 $initialPropertyValues
             ));
 
-            $this->handleAutoCreatedChildNodes(
+            $events = $this->handleAutoCreatedChildNodes(
                 $command,
                 $childNodeType,
                 $visibleDimensionSpacePoints,
@@ -257,6 +258,8 @@ final class NodeAggregateCommandHandler
                 $childNodePath
             );
         }
+
+        return $events;
     }
 
     protected function getDefaultPropertyValues(NodeType $nodeType): PropertyValues
