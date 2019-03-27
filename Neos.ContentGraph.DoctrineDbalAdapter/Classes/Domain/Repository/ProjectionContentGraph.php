@@ -335,32 +335,6 @@ class ProjectionContentGraph
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $parentNodeIdentifier
-     * @param NodeIdentifier $childNodeIdentifier
-     * @return HierarchyRelation|null
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function findHierarchyRelation(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $parentNodeIdentifier, NodeIdentifier $childNodeIdentifier): ?HierarchyRelation
-    {
-        $relationData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
- INNER JOIN neos_contentgraph_node p ON h.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
- WHERE h.contentstreamidentifier = :contentStreamIdentifier 
- AND p.nodeidentifier = :parentNodeIdentifier
- AND c.nodeidentifier = :childNodeIdentifier',
-            [
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'parentNodeIdentifier' => (string)$parentNodeIdentifier,
-                'childNodeIdentifier' => (string)$childNodeIdentifier
-            ]
-        )->fetch();
-
-        return $relationData ? $this->mapRawDataToHierarchyRelation($relationData) : null;
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointSet
      * @return array|HierarchyRelation[]
