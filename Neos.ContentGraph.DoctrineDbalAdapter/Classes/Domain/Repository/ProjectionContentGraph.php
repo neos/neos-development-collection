@@ -56,43 +56,6 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param NodeIdentifier $nodeIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @return NodeRecord|null
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function getNode(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier): ?NodeRecord
-    {
-        $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
- WHERE n.nodeidentifier = :nodeIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier',
-            [
-                'nodeIdentifier' => (string)$nodeIdentifier,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            ]
-        )->fetch();
-
-        if (!$nodeRow) {
-            // Check for root node
-
-            $nodeRow = $this->getDatabaseConnection()->executeQuery(
-                'SELECT n.* FROM neos_contentgraph_node n
- WHERE n.nodeidentifier = :nodeIdentifier',
-                [
-                    'nodeIdentifier' => $nodeIdentifier
-                ]
-            )->fetch();
-
-            // We always allow root nodes
-            return $nodeRow && empty($nodeRow['dimensionspacepointhash']) ? NodeRecord::fromDatabaseRow($nodeRow) : null;
-        }
-
-        return NodeRecord::fromDatabaseRow($nodeRow);
-    }
-
-    /**
      * @param NodeIdentifier $childNodeIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
