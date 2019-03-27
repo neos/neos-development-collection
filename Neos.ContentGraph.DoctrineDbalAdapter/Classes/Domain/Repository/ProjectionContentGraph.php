@@ -56,36 +56,6 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param NodeIdentifier $childNodeIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return NodeRecord|null
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function findParentNode(NodeIdentifier $childNodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): ?NodeRecord
-    {
-        $params = [
-            'childNodeIdentifier' => (string)$childNodeIdentifier,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
-        ];
-        $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
- INNER JOIN neos_contentgraph_hierarchyrelation hp ON hp.childnodeanchor = p.relationanchorpoint
- WHERE c.nodeidentifier = :childNodeIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier
- AND hp.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash = :dimensionSpacePointHash
- AND hp.dimensionspacepointhash = :dimensionSpacePointHash',
-            $params
-        )->fetch();
-
-        return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
-    }
-
-    /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
