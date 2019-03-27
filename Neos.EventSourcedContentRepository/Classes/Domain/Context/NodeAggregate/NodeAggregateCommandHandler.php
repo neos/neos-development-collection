@@ -113,6 +113,8 @@ final class NodeAggregateCommandHandler
      */
     public function handleCreateRootNodeAggregateWithNode(CreateRootNodeAggregateWithNode $command): CommandResult
     {
+        $this->readSideMemoryCacheManager->disableCache();
+
         $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
 
         $nodeType = $this->getNodeType($command->getNodeTypeName());
