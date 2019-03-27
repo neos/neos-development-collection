@@ -82,37 +82,6 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param NodeIdentifier $nodeIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @return NodeRelationAnchorPoint|null
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     */
-    public function getAnchorPointForNodeAndContentStream(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier): ?NodeRelationAnchorPoint
-    {
-        $rows = $this->getDatabaseConnection()->executeQuery(
-            'SELECT DISTINCT n.relationanchorpoint FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
- WHERE n.nodeidentifier = :nodeIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier',
-            [
-                'nodeIdentifier' => (string)$nodeIdentifier,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            ]
-        )->fetchAll();
-
-        if (count($rows) > 1) {
-            throw new \Exception('TODO: I believe this shall not happen; but we need to think this through in detail if it does!!!');
-        }
-
-        if (count($rows) === 1) {
-            return NodeRelationAnchorPoint::fromString($rows[0]['relationanchorpoint']);
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param ContentStreamIdentifier $contentStreamIdentifier
