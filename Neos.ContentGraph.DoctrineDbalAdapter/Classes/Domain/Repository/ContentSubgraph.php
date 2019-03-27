@@ -149,50 +149,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
     }
 
     /**
-     * @param NodeIdentifier $nodeIdentifier
-     * @return NodeInterface|null
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
-     */
-    public function findNodeByIdentifier(NodeIdentifier $nodeIdentifier): ?NodeInterface
-    {
-        $cache = $this->inMemoryCache->getNodeByNodeIdentifierCache();
-        if ($cache->knowsAbout($nodeIdentifier)) {
-            return $cache->get($nodeIdentifier);
-        } else {
-            $query = new SqlQueryBuilder();
-            $query->addToQuery('
--- ContentSubgraph::findNodeByIdentifier
-SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
-    INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-    WHERE n.nodeidentifier = :nodeIdentifier
-    AND h.contentstreamidentifier = :contentStreamIdentifier       
-    AND h.dimensionspacepointhash = :dimensionSpacePointHash
-')
-                ->parameter('nodeIdentifier', (string)$nodeIdentifier)
-                ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-                ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
-
-            self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints);
-
-            $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
-
-            if (is_array($nodeRow)) {
-                $node = $this->nodeFactory->mapNodeRowToNode($nodeRow);
-                $cache->add($nodeIdentifier, $node);
-
-                return $node;
-            } else {
-                $cache->rememberNonExistingNodeIdentifier($nodeIdentifier);
-
-                return null;
-            }
-        }
-    }
-
-    /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
