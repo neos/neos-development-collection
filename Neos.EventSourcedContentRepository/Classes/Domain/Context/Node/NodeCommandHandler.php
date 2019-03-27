@@ -30,7 +30,6 @@ use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
@@ -195,120 +194,6 @@ final class NodeCommandHandler
 
         return $events;
     }*/
-
-    /**
-     * @param AddNodeToAggregate $command
-     * @return CommandResult
-     */
-    public function handleAddNodeToAggregate(AddNodeToAggregate $command): CommandResult
-    {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        $events = null;
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
-            $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
-
-            $events = $this->nodeWasAddedToAggregateFromCommand($command);
-
-            foreach ($events as $event) {
-                /** @var NodeAggregateWithNodeWasCreated $undecoratedEvent */
-                $undecoratedEvent = EventDecoratorUtilities::extractUndecoratedEvent($event);
-                // TODO Use a node aggregate aggregate and let that one publish the events
-                $this->nodeEventPublisher->publish(StreamName::fromString($contentStreamStreamName . ':NodeAggregate:' . $undecoratedEvent->getNodeAggregateIdentifier()), $event);
-            }
-        });
-        return CommandResult::fromPublishedEvents($events);
-    }
-
-    /**
-     * @param AddNodeToAggregate $command
-     * @param bool $checkParent
-     * @return DomainEvents
-     * @throws Exception
-     * @throws NodeNotFoundException
-     * @throws NodeAggregatesTypeIsAmbiguous
-     */
-    private function nodeWasAddedToAggregateFromCommand(AddNodeToAggregate $command, bool $checkParent = true): DomainEvents
-    {
-        $dimensionSpacePoint = $command->getDimensionSpacePoint();
-        $contentStreamIdentifier = $command->getContentStreamIdentifier();
-        $parentNodeIdentifier = $command->getParentNodeIdentifier();
-        $nodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
-        $nodeIdentifier = $command->getNodeIdentifier();
-
-        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
-        if ($nodeAggregate === null) {
-            throw new Exception(sprintf('Node aggregate with identifier %s not found in %s',
-                $nodeAggregateIdentifier, $contentStreamIdentifier), 1506587828);
-        }
-
-        $propertyDefaultValuesAndTypes = [];
-
-        $nodeTypeName = $nodeAggregate->getNodeTypeName();
-        $nodeType = $this->getNodeType($nodeTypeName);
-
-        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-            $propertyDefaultValuesAndTypes[$propertyName] = new PropertyValue($propertyValue,
-                $nodeType->getPropertyType($propertyName));
-        }
-
-        if ($checkParent) {
-            $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
-            if ($contentSubgraph === null) {
-                throw new Exception(sprintf('Content subgraph not found for content stream %s, %s',
-                    $contentStreamIdentifier, $dimensionSpacePoint), 1506440320);
-            }
-            $parentNode = $contentSubgraph->findNodeByIdentifier($parentNodeIdentifier);
-            if ($parentNode === null) {
-                throw new NodeNotFoundException(sprintf('Parent node %s not found for content stream %s, %s',
-                    (string)$parentNodeIdentifier, (string)$contentStreamIdentifier, (string)$dimensionSpacePoint),
-                    1506440451);
-            }
-        }
-
-        $visibleInDimensionSpacePoints = $this->calculateVisibilityForNewNodeInNodeAggregate(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier,
-            $dimensionSpacePoint
-        );
-
-        $events = DomainEvents::withSingleEvent(
-            EventWithIdentifier::create(
-                new NodeWasAddedToAggregate(
-                    $contentStreamIdentifier,
-                    $nodeAggregateIdentifier,
-                    $nodeTypeName,
-                    $dimensionSpacePoint,
-                    $visibleInDimensionSpacePoints,
-                    $nodeIdentifier,
-                    $parentNodeIdentifier,
-                    $command->getNodeName(),
-                    PropertyValues::fromArray($propertyDefaultValuesAndTypes)
-                )
-            )
-        );
-
-        foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
-            $childNodeName = NodeName::fromString($childNodeNameStr);
-            // TODO Check if it is okay to "guess" the existing node aggregate identifier, should already be handled by a soft constraint check above
-            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName, $nodeAggregateIdentifier);
-            $childNodeIdentifier = NodeIdentifier::create();
-            $childParentNodeIdentifier = $nodeIdentifier;
-
-            $events = $events->appendEvents(
-                $this->nodeWasAddedToAggregateFromCommand(new AddNodeToAggregate(
-                    $contentStreamIdentifier,
-                    $childNodeAggregateIdentifier,
-                    $dimensionSpacePoint,
-                    $childNodeIdentifier,
-                    $childParentNodeIdentifier,
-                    $childNodeName
-                ), false)
-            );
-        }
-
-        return $events;
-    }
 
     /**
      * CreateRootNode

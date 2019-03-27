@@ -776,12 +776,6 @@ trait EventSourcedTrait
                     \Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
                     'handleRebaseWorkspace'
                 ];
-            case 'AddNodeToAggregate':
-                return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate::class,
-                    NodeCommandHandler::class,
-                    'handleAddNodeToAggregate'
-                ];
             case 'CreateNodeAggregateWithNode':
                 return [
                     \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode::class,
