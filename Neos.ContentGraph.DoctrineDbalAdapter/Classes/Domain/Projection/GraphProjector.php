@@ -970,7 +970,6 @@ insert into neos_contentgraph_restrictionedge
      */
     protected function updateNodeWithCopyOnWrite(ContentRepository\Context\Node\CopyableAcrossContentStreamsInterface $event, callable $operations)
     {
-        // TODO: does this always return a SINGLE anchor point??
         switch (get_class($event)) {
             case NodeReferencesWereSet::class:
                 /** @var NodeReferencesWereSet $event */
@@ -992,7 +991,6 @@ insert into neos_contentgraph_restrictionedge
                     );
                 }
         }
-        // TODO: do this copy on write on every modification op concerning nodes
 
         $contentStreamIdentifiers = $this->projectionContentGraph->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPointForNode);
         if (count($contentStreamIdentifiers) > 1) {
