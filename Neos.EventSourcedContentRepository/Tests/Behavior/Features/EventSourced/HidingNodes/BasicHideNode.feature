@@ -123,6 +123,10 @@ Feature: Hide Node
     And the subtree for node aggregate "text-1" with node types "" and 5 levels deep should be:
       | Level | NodeAggregateIdentifier |
 
+  ######################################################
+  # Second part of Scenario: No visibility restrictions
+  ######################################################
+
   Scenario: Hiding a node means it is visible with the various traversal methods when visibility restrictions are ignored
     When the command "HideNode" is executed with payload:
       | Key                          | Value           |
