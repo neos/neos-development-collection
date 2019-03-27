@@ -84,29 +84,6 @@ class ProjectionContentGraph
     /**
      * @param NodeIdentifier $nodeIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @return NodeRecord|null
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function getNodeByNodeIdentifierAndContentStream(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier): ?NodeRecord
-    {
-        $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
- WHERE n.nodeidentifier = :nodeIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier',
-            [
-                'nodeIdentifier' => (string)$nodeIdentifier,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier
-            ]
-        )->fetch();
-
-        return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
-    }
-
-
-    /**
-     * @param NodeIdentifier $nodeIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @return NodeRelationAnchorPoint|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
