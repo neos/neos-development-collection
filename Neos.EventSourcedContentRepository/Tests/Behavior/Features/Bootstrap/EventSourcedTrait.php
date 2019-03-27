@@ -824,12 +824,6 @@ trait EventSourcedTrait
                     NodeCommandHandler::class,
                     'handleMoveNode'
                 ];
-            case 'TranslateNodeInAggregate':
-                return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate::class,
-                    NodeCommandHandler::class,
-                    'handleTranslateNodeInAggregate'
-                ];
             case 'SetNodeReferences':
                 return [
                     SetNodeReferences::class,

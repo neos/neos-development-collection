@@ -18,7 +18,6 @@ use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
@@ -863,48 +862,6 @@ insert into neos_contentgraph_restrictionedge
         });
     }
 
-    /**
-     * @param NodeInAggregateWasTranslated $event
-     * @throws \Throwable
-     */
-    public function whenNodeInAggregateWasTranslated(NodeInAggregateWasTranslated $event)
-    {
-        $this->transactional(function () use ($event) {
-            $childNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-
-            $sourceNode = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getSourceNodeIdentifier(), $event->getContentStreamIdentifier());
-            if ($sourceNode === null) {
-                // TODO Log error
-                return;
-            }
-
-            $translatedNode = new NodeRecord(
-                $childNodeRelationAnchorPoint,
-                $sourceNode->nodeAggregateIdentifier,
-                $event->getDimensionSpacePoint()->jsonSerialize(),
-                $event->getDimensionSpacePoint()->getHash(),
-                $sourceNode->properties,
-                $sourceNode->nodeTypeName,
-                $sourceNode->nodeName
-            );
-            $parentNode = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getDestinationParentNodeIdentifier(), $event->getContentStreamIdentifier());
-            if ($parentNode === null) {
-                // TODO Log error
-                return;
-            }
-
-            $translatedNode->addToDatabase($this->getDatabaseConnection());
-            $this->connectHierarchy(
-                $event->getContentStreamIdentifier(),
-                $parentNode->relationAnchorPoint,
-                $translatedNode->relationAnchorPoint,
-                $event->getVisibleInDimensionSpacePoints(),
-                // TODO: position on insert is still missing
-                null,
-                $sourceNode->nodeName
-            );
-        });
-    }
 
     /**
      * @param Event\NodesWereMoved $event

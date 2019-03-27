@@ -28,7 +28,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFr
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
@@ -461,9 +460,6 @@ final class WorkspaceCommandHandler
                 break;
             case SetNodeReferences::class:
                 return $this->nodeCommandHandler->handleSetNodeReferences($command);
-                break;
-            case TranslateNodeInAggregate::class:
-                return $this->nodeCommandHandler->handleTranslateNodeInAggregate($command);
                 break;
             case RemoveNodeAggregate::class:
                 return $this->nodeCommandHandler->handleRemoveNodeAggregate($command);
