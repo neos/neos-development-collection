@@ -925,32 +925,6 @@ insert into neos_contentgraph_restrictionedge
     }
 
     /**
-     * @param HierarchyRelation $hierarchyRelation
-     * @param NodeIdentifier $newParentNodeIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param int $position
-     * @throws \Exception
-     */
-    protected function assignHierarchyRelationToNewParent(HierarchyRelation $hierarchyRelation, NodeIdentifier $newParentNodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, int $position)
-    {
-        $newParentNode = $this->projectionContentGraph->getNode($newParentNodeIdentifier, $contentStreamIdentifier);
-        if (!$newParentNode) {
-            throw new \Exception(sprintf('new parent %s for hierarchy relation in content stream %s not found.', $newParentNodeIdentifier, $contentStreamIdentifier), 1519768028);
-        }
-        $newHierarchyRelation = new HierarchyRelation(
-            $newParentNode->relationAnchorPoint,
-            $hierarchyRelation->childNodeAnchor,
-            $hierarchyRelation->name,
-            $hierarchyRelation->contentStreamIdentifier,
-            $hierarchyRelation->dimensionSpacePoint,
-            $hierarchyRelation->dimensionSpacePointHash,
-            $position
-        );
-        $newHierarchyRelation->addToDatabase($this->getDatabaseConnection());
-        $hierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
-    }
-
-    /**
      * @param callable $operations
      * @throws \Exception
      * @throws \Throwable
