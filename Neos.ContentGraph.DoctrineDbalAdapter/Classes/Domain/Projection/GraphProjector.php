@@ -19,7 +19,6 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGra
 use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
@@ -226,37 +225,6 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
         ], [
             'visibleDimensionSpacePoints' => Connection::PARAM_STR_ARRAY
         ]);
-    }
-
-    /**
-     * @param NodeWasAddedToAggregate $event
-     * @throws \Throwable
-     */
-    final public function whenNodeWasAddedToAggregate(NodeWasAddedToAggregate $event)
-    {
-        $this->transactional(function () use ($event) {
-            $contentStreamIdentifier = $event->getContentStreamIdentifier();
-            $nodeAggregateIdentifier = $event->getNodeAggregateIdentifier();
-
-            $this->createNodeWithHierarchy(
-                $contentStreamIdentifier,
-                $nodeAggregateIdentifier,
-                $event->getNodeTypeName(),
-                $event->getNodeIdentifier(),
-                $event->getParentNodeIdentifier(),
-                $event->getDimensionSpacePoint(),
-                $event->getVisibleInDimensionSpacePoints(),
-                $event->getPropertyDefaultValuesAndTypes(),
-                $event->getNodeName()
-            );
-
-            $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
-                $event->getContentStreamIdentifier(),
-                $event->getParentNodeIdentifier(),
-                $event->getNodeAggregateIdentifier(),
-                $event->getVisibleInDimensionSpacePoints()
-            );
-        });
     }
 
     /**
