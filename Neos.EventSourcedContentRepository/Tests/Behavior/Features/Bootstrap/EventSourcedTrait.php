@@ -45,7 +45,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedContentRepository\Tests\Behaviour\Features\Helper\NodeDiscriminator;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
