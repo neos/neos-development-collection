@@ -980,10 +980,7 @@ insert into neos_contentgraph_restrictionedge
                 );
                 break;
             default:
-                if (method_exists($event, 'getNodeIdentifier')) {
-                    // DEPRECATED case: NodeIdentifier
-                    $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
-                } else {
+                if (method_exists($event, 'getNodeAggregateIdentifier')) {
                     $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                         $event->getNodeAggregateIdentifier(),
                         $event->getOriginDimensionSpacePoint(),
