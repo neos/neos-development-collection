@@ -1012,7 +1012,7 @@ trait EventSourcedTrait
 
         $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
         Assert::assertInstanceOf(NodeInterface::class, $nodeByAggregateIdentifier, 'No node could be found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
-        Assert::assertEquals($expectedNodeIdentifier, $nodeByAggregateIdentifier->getNodeIdentifier(), 'Node identifiers did not match');
+        Assert::assertEquals($expectedNodeIdentifier, NodeDiscriminator::fromNode($nodeByAggregateIdentifier), 'Node discriminators did not match');
     }
 
     /**
@@ -1042,7 +1042,7 @@ trait EventSourcedTrait
 
         $nodeByPath = $subgraph->findNodeByPath($serializedNodePath, $this->rootNodeAggregateIdentifier);
         Assert::assertInstanceOf(NodeInterface::class, $nodeByPath, 'No node could be found by path "' . $serializedNodePath . '"" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
-        Assert::assertEquals($expectedNodeIdentifier, $nodeByPath->getNodeIdentifier(), 'Node identifiers did not match');
+        Assert::assertEquals($expectedNodeIdentifier, NodeDiscriminator::fromNode($nodeByPath), 'Node discriminators did not match');
     }
 
     /**
@@ -1112,30 +1112,15 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the node aggregate "([^"]*)" to resolve to node "([^"]*)"$/
+     * @Then /^I expect the node "([^"]*)" to have the type "([^"]*)"$/
      * @param string $nodeAggregateIdentifier
-     * @param string $nodeIdentifier
+     * @param string $nodeType
      */
-    public function iExpectTheNodeAggregateToHaveTheNodes(string $nodeAggregateIdentifier, string $nodeIdentifier)
+    public function iExpectTheNodeToHaveTheType(string $nodeAggregateIdentifier, string $nodeType)
     {
         $node = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
-        Assert::assertNotNull($node, 'Node with ID "' . $nodeIdentifier . '" not found!');
-        Assert::assertEquals($nodeIdentifier, (string)$node->getNodeIdentifier(), 'Node ID does not match!');
-    }
-
-
-    /**
-     * @Then /^I expect the node "([^"]*)" to have the type "([^"]*)"$/
-     * @param string $nodeIdentifier
-     * @param string $nodeType
-     */
-    public function iExpectTheNodeToHaveTheType(string $nodeIdentifier, string $nodeType)
-    {
-        $node = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(NodeDiscriminator::fromString($nodeIdentifier));
         Assert::assertEquals($nodeType, (string)$node->getNodeTypeName(), 'Node Type names do not match');
     }
 
@@ -1150,14 +1135,14 @@ trait EventSourcedTrait
 
     /**
      * @Then /^I expect the node "([^"]*)" to have the properties:$/
-     * @param string $nodeIdentifier
+     * @param string $nodeAggregateIdentifier
      * @param TableNode $expectedProperties
      */
-    public function iExpectTheNodeToHaveTheProperties(string $nodeIdentifier, TableNode $expectedProperties)
+    public function iExpectTheNodeToHaveTheProperties(string $nodeAggregateIdentifier, TableNode $expectedProperties)
     {
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(NodeDiscriminator::fromString($nodeIdentifier));
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
         $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
     }
 
@@ -1271,7 +1256,7 @@ trait EventSourcedTrait
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByPath($nodePath, $this->rootNodeAggregateIdentifier);
         Assert::assertNotNull($this->currentNode, 'Did not find node at path "' . $nodePath . '"');
-        Assert::assertEquals((string) $expectedIdentifier, (string)$this->currentNode->getNodeIdentifier(), 'Node identifiers do not match.');
+        Assert::assertEquals($expectedIdentifier, NodeDiscriminator::fromNode($this->currentNode), 'Node discriminators do not match.');
     }
 
     /**

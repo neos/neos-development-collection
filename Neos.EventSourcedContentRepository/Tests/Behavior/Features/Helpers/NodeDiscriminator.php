@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Tests\Behaviour\Features\Helper;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 
@@ -44,7 +45,7 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
      */
     protected $originDimensionSpacePoint;
 
-    public function __construct(
+    private function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $originDimensionSpacePoint
@@ -60,6 +61,15 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['originDimensionSpacePoint'])
+        );
+    }
+
+    public static function fromNode(NodeInterface $node): self
+    {
+        return new NodeDiscriminator(
+            $node->getContentStreamIdentifier(),
+            $node->getNodeAggregateIdentifier(),
+            $node->getOriginDimensionSpacePoint()
         );
     }
 
