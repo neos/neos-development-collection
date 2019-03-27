@@ -341,6 +341,7 @@ final class NodeAggregateCommandHandler
      * @throws ContentStream\ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFoundException
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @todo implement me
      */
     protected function requireNodeAggregateToBeVisibleInDimensionSpacePoint(
         ContentStreamIdentifier $contentStreamIdentifier,
