@@ -27,7 +27,7 @@ class AfxDslImplementation implements DslInterface
         try {
             return AfxService::convertAfxToFusion($code);
         } catch (AfxException $afxException) {
-            throw new FusionException(sprintf('Error during AFX-parsing: %s', $afxException->getMessage()));
+            throw new Fusion\Exception(sprintf('Error during AFX-parsing: %s', $afxException->getMessage()));
         }
     }
 }
