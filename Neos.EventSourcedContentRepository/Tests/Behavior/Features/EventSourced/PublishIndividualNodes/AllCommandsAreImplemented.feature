@@ -292,7 +292,7 @@ Feature: Publishing hide/show scenario of nodes
     And the command "SetNodeReferences" is executed with payload:
       | Key                                 | Value                          |
       | contentStreamIdentifier             | "user-cs-identifier"           |
-      | sourceNodeAggregateIdentifier       | "nody-mc-nodeface"   |
+      | sourceNodeAggregateIdentifier       | "nody-mc-nodeface"             |
       | sourceOriginDimensionSpacePoint     | {}                             |
       | referenceName                       | "referenceProperty"            |
       | destinationNodeAggregateIdentifiers | ["sir-nodeward-nodington-iii"] |
@@ -308,8 +308,12 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect the node aggregate "sir-david-nodenborough" to have the references:
       | Key               | Value                          |
       | referenceProperty | ["sir-nodeward-nodington-iii"] |
+    Then I expect the node aggregate "nody-mc-nodeface" to have the references:
+      | Key               | Value |
+      | referenceProperty | []    |
     Then I expect the node aggregate "sir-nodeward-nodington-iii" to have the references:
-      | Key | Value |
+      | Key               | Value |
+      | referenceProperty | []    |
     And I expect the node aggregate "sir-nodeward-nodington-iii" to be referenced by:
       | Key               | Value                      |
       | referenceProperty | ["sir-david-nodenborough"] |
@@ -322,7 +326,7 @@ Feature: Publishing hide/show scenario of nodes
       | Key               | Value                          |
       | referenceProperty | ["sir-nodeward-nodington-iii"] |
     And I expect the node aggregate "sir-nodeward-nodington-iii" to be referenced by:
-      | Key               | Value                                                    |
+      | Key               | Value                                          |
       | referenceProperty | ["sir-david-nodenborough", "nody-mc-nodeface"] |
 
   Scenario: (CreateNodeAggregateWithNode) It is possible to publish new nodes
