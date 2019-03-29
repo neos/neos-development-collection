@@ -15,8 +15,8 @@ namespace Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception;
  */
 
 /**
- * The exception to be thrown if a dimension space point is tried to be used as a specialization of another one but isn't
+ * The exception to be thrown if two content subgraph variation weights are to be compared that cannot, e.g. if they compose of different dimension combinations
  */
-class DimensionSpacePointIsNoSpecializationException extends \DomainException
+class ContentSubgraphVariationWeightsAreIncomparable extends \DomainException
 {
 }
