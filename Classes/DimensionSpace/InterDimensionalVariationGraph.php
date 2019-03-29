@@ -347,4 +347,26 @@ class InterDimensionalVariationGraph
 
         return $this->primaryGeneralizations[$specialization->getHash()] ?? null;
     }
+
+    /**
+     * @param DimensionSpacePoint $subject
+     * @param DimensionSpacePoint $object
+     * @return VariantType
+     * @api
+     */
+    public function getVariantType(DimensionSpacePoint $subject, DimensionSpacePoint $object): VariantType
+    {
+        if (is_null($this->indexedGeneralizations)) {
+            $this->initializeVariations();
+        }
+
+        if (isset($this->indexedGeneralizations[$object->getHash()]) && $this->indexedGeneralizations[$object->getHash()]->contains($subject)) {
+            return VariantType::generalization();
+        }
+        if (isset($this->indexedSpecializations[$object->getHash()]) && $this->indexedSpecializations[$object->getHash()]->contains($subject)) {
+            return VariantType::specialization();
+        }
+
+        return VariantType::peer();
+    }
 }

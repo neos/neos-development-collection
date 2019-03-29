@@ -659,6 +659,23 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function getVariantTypeCorrectlyDeterminesTheVariantType()
+    {
+        $this->setUpVariationExample();
+
+        $specialization = new DimensionSpace\DimensionSpacePoint(['dimensionA' => 'value1.1', 'dimensionB' => 'value1']);
+        $generalization = new DimensionSpace\DimensionSpacePoint(['dimensionA' => 'value1', 'dimensionB' => 'value1']);
+        $peer = new DimensionSpace\DimensionSpacePoint(['dimensionA' => 'value1.2', 'dimensionB' => 'value1']);
+
+        $this->assertTrue($this->subject->getVariantType($specialization, $generalization)->equals(DimensionSpace\VariantType::specialization()));
+        $this->assertTrue($this->subject->getVariantType($generalization, $specialization)->equals(DimensionSpace\VariantType::generalization()));
+        $this->assertTrue($this->subject->getVariantType($specialization, $peer)->equals(DimensionSpace\VariantType::peer()));
+        $this->assertTrue($this->subject->getVariantType($peer, $specialization)->equals(DimensionSpace\VariantType::peer()));
+    }
+
+    /**
      * @param array|Dimension\ContentDimension[] $contentDimensions
      * @return Dimension\ContentDimensionSourceInterface
      * @throws \ReflectionException
