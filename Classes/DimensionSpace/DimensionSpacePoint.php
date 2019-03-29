@@ -211,7 +211,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
      */
     public function __toString(): string
     {
-        return 'dimension space point:' . json_encode($this->coordinates);
+        return json_encode($this);
     }
 
     /**
