@@ -663,7 +663,7 @@ class AssetController extends ActionController
      * @Flow\Validate(argumentName="label", type="Label")
      * @throws ForwardException
      */
-    public function createTagAction($label): void
+    public function createTagAction(string $label): void
     {
         $this->forward('create', 'Tag', 'Neos.Media.Browser', ['label' => $label]);
     }
