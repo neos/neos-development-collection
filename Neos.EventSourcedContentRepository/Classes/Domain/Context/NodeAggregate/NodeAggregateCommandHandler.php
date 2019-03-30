@@ -13,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralizationException;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralization;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
@@ -661,24 +661,24 @@ final class NodeAggregateCommandHandler
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePoint $generalization
-     * @throws DimensionSpacePointIsNoGeneralizationException
+     * @throws DimensionSpacePointIsNoGeneralization
      */
     protected function requireDimensionSpacePointToBeSpecialization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $generalization): void
     {
         if (!$this->interDimensionalVariationGraph->getSpecializationSet($generalization)->contains($dimensionSpacePoint)) {
-            throw new DimensionSpace\Exception\DimensionSpacePointIsNoSpecializationException($dimensionSpacePoint . ' is no specialization of ' . $generalization, 1519931770);
+            throw new DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization($dimensionSpacePoint . ' is no specialization of ' . $generalization, 1519931770);
         }
     }
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePoint $specialization
-     * @throws DimensionSpacePointIsNoGeneralizationException
+     * @throws DimensionSpacePointIsNoGeneralization
      */
     protected function requireDimensionSpacePointToBeGeneralization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $specialization): void
     {
         if (!$this->interDimensionalVariationGraph->getSpecializationSet($dimensionSpacePoint)->contains($specialization)) {
-            throw new DimensionSpace\Exception\DimensionSpacePointIsNoGeneralizationException($dimensionSpacePoint . ' is no generalization of ' . $dimensionSpacePoint, 1521367710);
+            throw new DimensionSpace\Exception\DimensionSpacePointIsNoGeneralization($dimensionSpacePoint . ' is no generalization of ' . $dimensionSpacePoint, 1521367710);
         }
     }
 
