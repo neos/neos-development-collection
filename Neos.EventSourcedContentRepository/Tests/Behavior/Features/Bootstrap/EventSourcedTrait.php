@@ -30,7 +30,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAgg
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
@@ -49,6 +48,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -851,12 +851,6 @@ trait EventSourcedTrait
                     \Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
                     'handleRebaseWorkspace'
                 ];
-            case 'AddNodeToAggregate':
-                return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate::class,
-                    NodeCommandHandler::class,
-                    'handleAddNodeToAggregate'
-                ];
             case 'CreateNodeAggregateWithNode':
                 return [
                     \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode::class,
@@ -898,12 +892,6 @@ trait EventSourcedTrait
                     MoveNode::class,
                     NodeCommandHandler::class,
                     'handleMoveNode'
-                ];
-            case 'TranslateNodeInAggregate':
-                return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate::class,
-                    NodeCommandHandler::class,
-                    'handleTranslateNodeInAggregate'
                 ];
             case 'SetNodeReferences':
                 return [
@@ -1133,8 +1121,12 @@ trait EventSourcedTrait
      */
     public function iExpectANodeWithIdentifierToExistInTheContentGraph(string $serializedNodeIdentifier)
     {
-        $nodeIdentifier = NodeIdentifier::fromArray(json_decode($serializedNodeIdentifier, true));
-        $this->currentNode = $this->contentGraph->findNodeByIdentifier($nodeIdentifier);
+        $nodeIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
+        $this->currentNode = $this->contentGraph->findNodeByIdentifiers(
+            $nodeIdentifier->getContentStreamIdentifier(),
+            $nodeIdentifier->getNodeAggregateIdentifier(),
+            $nodeIdentifier->getOriginDimensionSpacePoint()
+        );
         Assert::assertNotNull($this->currentNode, 'Node with aggregate identifier "' . $nodeIdentifier->getNodeAggregateIdentifier()
             . '" and originating in dimension space point "' . $nodeIdentifier->getOriginDimensionSpacePoint()
             . '" was not found in content stream "' . $nodeIdentifier->getContentStreamIdentifier() . '"'
@@ -1170,12 +1162,12 @@ trait EventSourcedTrait
      */
     public function iExpectNodeAggregateIdentifierToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodeIdentifier): void
     {
-        $expectedNodeIdentifier = NodeIdentifier::fromArray(json_decode($serializedNodeIdentifier, true));
+        $expectedNodeIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
         Assert::assertInstanceOf(NodeInterface::class, $nodeByAggregateIdentifier, 'No node could be found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
-        Assert::assertEquals($expectedNodeIdentifier, $nodeByAggregateIdentifier->getNodeIdentifier(), 'Node identifiers did not match');
+        Assert::assertEquals($expectedNodeIdentifier, NodeDiscriminator::fromNode($nodeByAggregateIdentifier), 'Node discriminators did not match');
     }
 
     /**
@@ -1198,14 +1190,14 @@ trait EventSourcedTrait
      */
     public function iExpectNodeAggregateIdentifierAndPathToLeadToNode(string $serializedNodeAggregateIdentifier, string $serializedNodePath, string $serializedNodeIdentifier): void
     {
-        $expectedNodeIdentifier = NodeIdentifier::fromArray(json_decode($serializedNodeIdentifier, true));
+        $expectedNodeIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         $this->iExpectNodeAggregateIdentifierToLeadToNode($serializedNodeAggregateIdentifier, $serializedNodeIdentifier);
 
         $nodeByPath = $subgraph->findNodeByPath($serializedNodePath, $this->rootNodeAggregateIdentifier);
         Assert::assertInstanceOf(NodeInterface::class, $nodeByPath, 'No node could be found by path "' . $serializedNodePath . '"" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
-        Assert::assertEquals($expectedNodeIdentifier, $nodeByPath->getNodeIdentifier(), 'Node identifiers did not match');
+        Assert::assertEquals($expectedNodeIdentifier, NodeDiscriminator::fromNode($nodeByPath), 'Node discriminators did not match');
     }
 
     /**
@@ -1275,30 +1267,15 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the node aggregate "([^"]*)" to resolve to node "([^"]*)"$/
+     * @Then /^I expect the node "([^"]*)" to have the type "([^"]*)"$/
      * @param string $nodeAggregateIdentifier
-     * @param string $nodeIdentifier
+     * @param string $nodeType
      */
-    public function iExpectTheNodeAggregateToHaveTheNodes(string $nodeAggregateIdentifier, string $nodeIdentifier)
+    public function iExpectTheNodeToHaveTheType(string $nodeAggregateIdentifier, string $nodeType)
     {
         $node = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
-        Assert::assertNotNull($node, 'Node with ID "' . $nodeIdentifier . '" not found!');
-        Assert::assertEquals($nodeIdentifier, (string)$node->getNodeIdentifier(), 'Node ID does not match!');
-    }
-
-
-    /**
-     * @Then /^I expect the node "([^"]*)" to have the type "([^"]*)"$/
-     * @param string $nodeIdentifier
-     * @param string $nodeType
-     */
-    public function iExpectTheNodeToHaveTheType(string $nodeIdentifier, string $nodeType)
-    {
-        $node = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
         Assert::assertEquals($nodeType, (string)$node->getNodeTypeName(), 'Node Type names do not match');
     }
 
@@ -1313,14 +1290,14 @@ trait EventSourcedTrait
 
     /**
      * @Then /^I expect the node "([^"]*)" to have the properties:$/
-     * @param string $nodeIdentifier
+     * @param string $nodeAggregateIdentifier
      * @param TableNode $expectedProperties
      */
-    public function iExpectTheNodeToHaveTheProperties(string $nodeIdentifier, TableNode $expectedProperties)
+    public function iExpectTheNodeToHaveTheProperties(string $nodeAggregateIdentifier, TableNode $expectedProperties)
     {
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
         $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
     }
 
@@ -1429,12 +1406,12 @@ trait EventSourcedTrait
         if (!$this->rootNodeAggregateIdentifier) {
             throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }
-        $expectedIdentifier = NodeIdentifier::fromArray(json_decode($serializedNodeIdentifier, true));
+        $expectedIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByPath($nodePath, $this->rootNodeAggregateIdentifier);
         Assert::assertNotNull($this->currentNode, 'Did not find node at path "' . $nodePath . '"');
-        Assert::assertEquals((string) $expectedIdentifier, (string)$this->currentNode->getNodeIdentifier(), 'Node identifiers do not match.');
+        Assert::assertEquals($expectedIdentifier, NodeDiscriminator::fromNode($this->currentNode), 'Node discriminators do not match.');
     }
 
     /**

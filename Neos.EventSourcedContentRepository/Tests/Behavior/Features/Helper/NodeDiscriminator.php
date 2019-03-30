@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
+namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,20 +14,21 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 
 /**
- * The node identifier value object
+ * The node discriminator value object
  *
  * Represents the identity of a specific node in the content graph and is thus composed of
- * * the node's aggregate's external identifier
  * * the content stream the node exists in
+ * * the node's aggregate's external identifier
  * * the dimension space point the node originates in within its aggregate
  *
  * @package Neos\EventSourcedContentRepository
  */
-final class NodeIdentifier implements CacheAwareInterface, \JsonSerializable
+final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
 {
     /**
      * @var ContentStreamIdentifier
@@ -44,8 +45,11 @@ final class NodeIdentifier implements CacheAwareInterface, \JsonSerializable
      */
     protected $originDimensionSpacePoint;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint)
-    {
+    private function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint
+    ) {
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
@@ -53,21 +57,30 @@ final class NodeIdentifier implements CacheAwareInterface, \JsonSerializable
 
     public static function fromArray(array $array): self
     {
-        return new NodeIdentifier(
+        return new NodeDiscriminator(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['originDimensionSpacePoint'])
         );
     }
 
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    public static function fromNode(NodeInterface $node): self
     {
-        return $this->nodeAggregateIdentifier;
+        return new NodeDiscriminator(
+            $node->getContentStreamIdentifier(),
+            $node->getNodeAggregateIdentifier(),
+            $node->getOriginDimensionSpacePoint()
+        );
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
+    }
+
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    {
+        return $this->nodeAggregateIdentifier;
     }
 
     public function getOriginDimensionSpacePoint(): DimensionSpacePoint
@@ -83,8 +96,8 @@ final class NodeIdentifier implements CacheAwareInterface, \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint
         ];
     }

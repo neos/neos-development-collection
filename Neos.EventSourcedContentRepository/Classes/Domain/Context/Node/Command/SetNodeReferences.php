@@ -141,8 +141,8 @@ final class SetNodeReferences implements \JsonSerializable, CopyableAcrossConten
     {
         return (
             (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-                && $this->getSourceOriginDimensionSpacePoint() === (string)$nodeAddress->getDimensionSpacePoint()
-                && $this->getSourceNodeAggregateIdentifier() === (string)$nodeAddress->getNodeAggregateIdentifier()
+                && (string)$this->getSourceOriginDimensionSpacePoint() === (string)$nodeAddress->getDimensionSpacePoint()
+                && (string)$this->getSourceNodeAggregateIdentifier() === (string)$nodeAddress->getNodeAggregateIdentifier()
         );
     }
 }

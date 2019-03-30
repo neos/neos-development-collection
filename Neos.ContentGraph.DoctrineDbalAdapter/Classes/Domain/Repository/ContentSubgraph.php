@@ -26,7 +26,6 @@ use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\Flow\Annotations as Flow;
@@ -59,7 +58,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
      * @var DbalClient
      */
     protected $client;
-
 
     /**
      * @Flow\Inject
@@ -146,50 +144,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function getDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->dimensionSpacePoint;
-    }
-
-    /**
-     * @param NodeIdentifier $nodeIdentifier
-     * @return NodeInterface|null
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
-     */
-    public function findNodeByIdentifier(NodeIdentifier $nodeIdentifier): ?NodeInterface
-    {
-        $cache = $this->inMemoryCache->getNodeByNodeIdentifierCache();
-        if ($cache->knowsAbout($nodeIdentifier)) {
-            return $cache->get($nodeIdentifier);
-        } else {
-            $query = new SqlQueryBuilder();
-            $query->addToQuery('
--- ContentSubgraph::findNodeByIdentifier
-SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
-    INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-    WHERE n.nodeidentifier = :nodeIdentifier
-    AND h.contentstreamidentifier = :contentStreamIdentifier       
-    AND h.dimensionspacepointhash = :dimensionSpacePointHash
-')
-                ->parameter('nodeIdentifier', (string)$nodeIdentifier)
-                ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-                ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
-
-            self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints);
-
-            $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
-
-            if (is_array($nodeRow)) {
-                $node = $this->nodeFactory->mapNodeRowToNode($nodeRow);
-                $cache->add($nodeIdentifier, $node);
-
-                return $node;
-            } else {
-                $cache->rememberNonExistingNodeIdentifier($nodeIdentifier);
-
-                return null;
-            }
-        }
     }
 
     /**
@@ -472,9 +426,6 @@ SELECT p.*, h.contentstreamidentifier, hp.name, hp.dimensionspacepoint FROM neos
         $node = $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
         if ($node) {
             $cache->add($childNodeAggregateIdentifier, $node->getNodeAggregateIdentifier());
-
-            // we also add the parent node to the NodeIdentifier => Node cache; as this might improve cache hit rates as well.
-            $this->inMemoryCache->getNodeByNodeIdentifierCache()->add($node->getNodeIdentifier(), $node);
         } else {
             $cache->rememberNonExistingParentNode($childNodeAggregateIdentifier);
         }

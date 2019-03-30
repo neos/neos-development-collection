@@ -16,7 +16,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
@@ -37,14 +36,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param callable $callback
      */
     public function traverseHierarchy(NodeInterface $startNode, HierarchyTraversalDirection $direction, NodeTypeConstraints $nodeTypeConstraints, callable $callback): void;
-
-    /**
-     * TODO: deprecate once NodeIdentifier was removed
-     *
-     * @param NodeIdentifier $nodeIdentifier
-     * @return NodeInterface|null
-     */
-    public function findNodeByIdentifier(NodeIdentifier $nodeIdentifier): ?NodeInterface;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier

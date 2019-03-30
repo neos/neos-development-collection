@@ -18,9 +18,7 @@ use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
@@ -31,7 +29,6 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
@@ -228,37 +225,6 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
         ], [
             'visibleDimensionSpacePoints' => Connection::PARAM_STR_ARRAY
         ]);
-    }
-
-    /**
-     * @param NodeWasAddedToAggregate $event
-     * @throws \Throwable
-     */
-    final public function whenNodeWasAddedToAggregate(NodeWasAddedToAggregate $event)
-    {
-        $this->transactional(function () use ($event) {
-            $contentStreamIdentifier = $event->getContentStreamIdentifier();
-            $nodeAggregateIdentifier = $event->getNodeAggregateIdentifier();
-
-            $this->createNodeWithHierarchy(
-                $contentStreamIdentifier,
-                $nodeAggregateIdentifier,
-                $event->getNodeTypeName(),
-                $event->getNodeIdentifier(),
-                $event->getParentNodeIdentifier(),
-                $event->getDimensionSpacePoint(),
-                $event->getVisibleInDimensionSpacePoints(),
-                $event->getPropertyDefaultValuesAndTypes(),
-                $event->getNodeName()
-            );
-
-            $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
-                $event->getContentStreamIdentifier(),
-                $event->getParentNodeIdentifier(),
-                $event->getNodeAggregateIdentifier(),
-                $event->getVisibleInDimensionSpacePoints()
-            );
-        });
     }
 
     /**
@@ -1139,7 +1105,6 @@ insert into neos_contentgraph_restrictionedge
      */
     protected function updateNodeWithCopyOnWrite(ContentRepository\Context\Node\CopyableAcrossContentStreamsInterface $event, callable $operations)
     {
-        // TODO: does this always return a SINGLE anchor point??
         switch (get_class($event)) {
             case NodeReferencesWereSet::class:
                 /** @var NodeReferencesWereSet $event */
@@ -1150,10 +1115,7 @@ insert into neos_contentgraph_restrictionedge
                 );
                 break;
             default:
-                if (method_exists($event, 'getNodeIdentifier')) {
-                    // DEPRECATED case: NodeIdentifier
-                    $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
-                } else {
+                if (method_exists($event, 'getNodeAggregateIdentifier')) {
                     $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                         $event->getNodeAggregateIdentifier(),
                         $event->getOriginDimensionSpacePoint(),
@@ -1161,7 +1123,6 @@ insert into neos_contentgraph_restrictionedge
                     );
                 }
         }
-        // TODO: do this copy on write on every modification op concerning nodes
 
         $contentStreamIdentifiers = $this->projectionContentGraph->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPointForNode);
         if (count($contentStreamIdentifiers) > 1) {

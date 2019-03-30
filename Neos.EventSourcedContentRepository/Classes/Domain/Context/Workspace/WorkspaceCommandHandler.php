@@ -18,7 +18,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\Fork
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
@@ -28,7 +27,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFr
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
@@ -435,9 +433,6 @@ final class WorkspaceCommandHandler
         // TODO: use a more clever dispatching mechanism than the hard coded switch!!
         // TODO: add all commands!!
         switch (get_class($command)) {
-            case AddNodeToAggregate::class:
-                return $this->nodeCommandHandler->handleAddNodeToAggregate($command);
-                break;
             case ChangeNodeAggregateName::class:
                 return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($command);
                 break;
@@ -461,9 +456,6 @@ final class WorkspaceCommandHandler
                 break;
             case SetNodeReferences::class:
                 return $this->nodeCommandHandler->handleSetNodeReferences($command);
-                break;
-            case TranslateNodeInAggregate::class:
-                return $this->nodeCommandHandler->handleTranslateNodeInAggregate($command);
                 break;
             case RemoveNodeAggregate::class:
                 return $this->nodeCommandHandler->handleRemoveNodeAggregate($command);
