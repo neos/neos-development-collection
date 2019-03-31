@@ -59,8 +59,6 @@ final class NodeFactory
      * @param array $nodeRow Node Row from projection (neos_contentgraph_node table)
      * @return NodeInterface
      * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
     public function mapNodeRowToNode(array $nodeRow): NodeInterface
     {
@@ -112,19 +110,23 @@ final class NodeFactory
 
     /**
      * @param array $nodeRows
-     * @return ContentProjection\NodeAggregate
+     * @return ContentProjection\NodeAggregate|null
      * @throws \Exception
      */
-    public function mapNodeRowsToNodeAggregate(array $nodeRows): ContentProjection\NodeAggregate
+    public function mapNodeRowsToNodeAggregate(array $nodeRows): ?ContentProjection\NodeAggregate
     {
+        if (empty($nodeRows)) {
+            return null;
+        }
+
         $rawNodeAggregateIdentifier = '';
         $rawNodeTypeName = '';
         $rawNodeName = '';
         $nodes = [];
         $occupiedDimensionSpacePoints = [];
         $coveredDimensionSpacePoints = [];
-
         $processedDimensionSpacePoints = [];
+
         foreach ($nodeRows as $nodeRow) {
             if (!isset($processedDimensionSpacePoints[$nodeRow['origindimensionspacepointhash']])) {
                 $nodes[] = $this->mapNodeRowToNode($nodeRow);
@@ -154,6 +156,55 @@ final class NodeFactory
         );
     }
 
+    /**
+     * @param array $nodeRows
+     * @return array|ContentProjection\NodeAggregate[]
+     * @throws \Exception
+     */
+    public function mapNodeRowsToNodeAggregates(array $nodeRows): array
+    {
+        $nodeAggregates = [];
+        $nodeTypeNames = [];
+        $nodeNames = [];
+        $nodesByAggregate = [];
+        $occupiedDimensionSpacePointsByNodeAggregate = [];
+        $coveredDimensionSpacePointsByNodeAggregate = [];
+        $processedDimensionSpacePointsByNodeAggregate = [];
+
+        foreach ($nodeRows as $nodeRow) {
+            $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
+            if (!isset($processedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][$nodeRow['origindimensionspacepointhash']])) {
+                $nodesByAggregate[$rawNodeAggregateIdentifier][] = $this->mapNodeRowToNode($nodeRow);
+                $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][] = DimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
+                if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
+                    $nodeTypeNames[$rawNodeAggregateIdentifier] = NodeTypeName::fromString($nodeRow['nodetypename']);
+                }
+                if (!isset($nodeNames[$rawNodeAggregateIdentifier])) {
+                    $nodeNames[$rawNodeAggregateIdentifier] = $nodeRow['name'] ? NodeName::fromString($nodeRow['name']) : null;
+                }
+            }
+            $coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][] = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
+        }
+
+        foreach ($nodesByAggregate as $rawNodeAggregateIdentifier => $nodes) {
+            $nodeAggregates[$rawNodeAggregateIdentifier] = new ContentProjection\NodeAggregate(
+                NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
+                $nodeTypeNames[$rawNodeAggregateIdentifier],
+                $nodeNames[$rawNodeAggregateIdentifier],
+                $nodesByAggregate[$rawNodeAggregateIdentifier],
+                new DimensionSpacePointSet($occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier]),
+                new DimensionSpacePointSet($coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier])
+            );
+        }
+
+        return $nodeAggregates;
+    }
+
+    /**
+     * @param NodeType $nodeType
+     * @return string
+     * @throws NodeConfigurationException
+     */
     protected function getNodeInterfaceImplementationClassName(NodeType $nodeType): string
     {
         $customClassName = $nodeType->getConfiguration('class');

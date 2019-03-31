@@ -157,21 +157,19 @@ final class NodeAggregateCommandHandler
         $nodeType = $this->getNodeType($command->getNodeTypeName());
         $this->requireAutoCreatedChildNodeTypesToExist($nodeType);
         $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $nodeType, $command->getNodeName(), [$command->getParentNodeAggregateIdentifier()]);
-        #$this->requireNodeAggregateToCurrentlyNotExist($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-        #$this->requireNodeAggregateToCurrentlyExist($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
+        $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $parentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
         if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
             throw new NodeTypeIsOfTypeRoot('Node type "' . $nodeType . '" for non-root node "' . $command->getNodeAggregateIdentifier() . '" is of type root.', 1541765806);
         }
 
         if ($command->getSucceedingSiblingNodeAggregateIdentifier()) {
-            $this->requireNodeAggregateToCurrentlyExist($command->getContentStreamIdentifier(), $command->getSucceedingSiblingNodeAggregateIdentifier());
+            $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getSucceedingSiblingNodeAggregateIdentifier());
         }
-        $this->requireNodeAggregateToBeVisibleInDimensionSpacePoint($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier(), $command->getOriginDimensionSpacePoint());
+        $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getOriginDimensionSpacePoint());
 
         $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($command->getOriginDimensionSpacePoint());
-        // $parentAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
-        $projectedParentAggregate = $this->contentGraph->findNodeAggregateByIdentifier($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
-        $visibleDimensionSpacePoints = $specializations; # $specializations->intersect($projectedParentAggregate->getVisibleInDimensionSpacePoints());
+        $visibleDimensionSpacePoints = $specializations->getIntersection($parentNodeAggregate->getCoveredDimensionSpacePoints());
 
         if ($command->getNodeName()) {
             $this->requireNodeNameToBeUnoccupied(
@@ -331,6 +329,23 @@ final class NodeAggregateCommandHandler
         }
 
         return $nodeAggregate;
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @throws NodeAggregatesTypeIsAmbiguous
+     * @throws NodeAggregateCurrentlyExists
+     */
+    protected function requireProjectedNodeAggregateToNotExist(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): void {
+        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
+
+        if ($nodeAggregate) {
+            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $nodeAggregateIdentifier . '" does currently not exist.', 1541687645);
+        }
     }
 
     /**
@@ -528,7 +543,7 @@ final class NodeAggregateCommandHandler
     {
         $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
         $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
-        foreach ($this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier()) as $parentAggregate) {
+        foreach ($this->contentGraph->findParentNodeAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier()) as $parentAggregate) {
             $parentsNodeType = $this->nodeTypeManager->getNodeType((string)$parentAggregate->getNodeTypeName());
             if (!$parentsNodeType->allowsChildNodeType($newNodeType)) {
                 throw new NodeConstraintException('Node type ' . $command->getNewNodeTypeName() . ' is not allowed below nodes of type ' . $parentAggregate->getNodeTypeName());
@@ -538,7 +553,7 @@ final class NodeAggregateCommandHandler
                 && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())->getName() !== (string)$command->getNewNodeTypeName()) {
                 throw new NodeConstraintException('Cannot change type of auto created child node' . $nodeAggregate->getNodeName() . ' to ' . $command->getNewNodeTypeName());
             }
-            foreach ($this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $parentAggregate->getIdentifier()) as $grandParentAggregate) {
+            foreach ($this->contentGraph->findParentNodeAggregates($command->getContentStreamIdentifier(), $parentAggregate->getIdentifier()) as $grandParentAggregate) {
                 $grandParentsNodeType = $this->nodeTypeManager->getNodeType((string)$grandParentAggregate->getNodeTypeName());
                 if ($parentAggregate->getNodeName()
                     && $grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->getNodeName())
@@ -560,7 +575,7 @@ final class NodeAggregateCommandHandler
     {
         $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
 
-        foreach ($this->contentGraph->findChildAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier()) as $childAggregate) {
+        foreach ($this->contentGraph->findChildNodeAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier()) as $childAggregate) {
             $childsNodeType = $this->nodeTypeManager->getNodeType((string)$childAggregate->getNodeTypeName());
             if (!$newNodeType->allowsChildNodeType($childsNodeType)) {
                 if (!$command->getStrategy()) {
@@ -570,7 +585,7 @@ final class NodeAggregateCommandHandler
             }
 
             if ($childAggregate->getNodeName() && $newNodeType->hasAutoCreatedChildNode($childAggregate->getNodeName())) {
-                foreach ($this->contentGraph->findChildAggregates($command->getContentStreamIdentifier(), $childAggregate->getIdentifier()) as $grandChildAggregate) {
+                foreach ($this->contentGraph->findChildNodeAggregates($command->getContentStreamIdentifier(), $childAggregate->getIdentifier()) as $grandChildAggregate) {
                     $grandChildsNodeType = $this->nodeTypeManager->getNodeType((string)$grandChildAggregate->getNodeTypeName());
                     if ($childAggregate->getNodeName() && !$newNodeType->allowsGrandchildNodeType((string)$childAggregate->getNodeName(), $grandChildsNodeType)) {
                         if (!$command->getStrategy()) {
@@ -907,10 +922,10 @@ final class NodeAggregateCommandHandler
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeAggregate
+     * @return \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregate
      * @throws ContentStream\ContentStreamDoesNotExistYet
      */
-    protected function getNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate
+    protected function getNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregate
     {
         $contentStream = $this->contentStreamRepository->findContentStream($contentStreamIdentifier);
         if (!$contentStream) {
