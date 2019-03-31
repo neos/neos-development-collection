@@ -25,6 +25,7 @@ Feature: Remove NodeAggregate
       | nodeAggregateIdentifier  | "lady-eleonode-nodesworth"             |
       | nodeTypeName             | "Neos.ContentRepository:Root"          |
       | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
+    And the graph projection is fully up to date
     # We have to add another node since root nodes are in all dimension space points and thus cannot be varied
     # Node /document
     And the command CreateNodeAggregateWithNode is executed with payload:
@@ -36,6 +37,7 @@ Feature: Remove NodeAggregate
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                |
       | nodeName                      | "document"                                |
+    And the graph projection is fully up to date
     # We also want to add a child node to make sure it is correctly removed when the parent is removed
     # Node /document/child-document
     And the command CreateNodeAggregateWithNode is executed with payload:
@@ -47,6 +49,7 @@ Feature: Remove NodeAggregate
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateIdentifier | "nody-mc-nodeface"                        |
       | nodeName                      | "child-document"                          |
+    And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key                       | Value                |
       | contentStreamIdentifier   | "live-cs-identifier" |

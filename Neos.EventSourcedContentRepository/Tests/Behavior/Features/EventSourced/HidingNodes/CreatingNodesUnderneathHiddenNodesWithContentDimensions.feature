@@ -53,7 +53,6 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
       | parentNodeAggregateIdentifier | "the-great-nodini"                       |
       | nodeName                      | "text2"                                  |
-    And the graph projection is fully up to date
     And the event NodeSpecializationVariantWasCreated was published with payload:
       | Key                       | Value                 |
       | contentStreamIdentifier   | "cs-identifier"       |
