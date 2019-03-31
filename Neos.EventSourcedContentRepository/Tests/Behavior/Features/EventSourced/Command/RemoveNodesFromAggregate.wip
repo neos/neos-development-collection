@@ -247,7 +247,7 @@ Feature: Remove Nodes from Aggregate
 
 
   Scenario: (2.A.b) In USER workspace, removing a node WITHOUT children does not lead to removal of the node in the parent dimension
-    When the command CreateNodeSpecialization is executed with payload:
+    When the command CreateNodeVariant is executed with payload:
       | Key                       | Value                 |
       | contentStreamIdentifier   | "live-cs-identifier"  |
       | nodeAggregateIdentifier   | "nodimus-prime"       |
@@ -331,7 +331,7 @@ Feature: Remove Nodes from Aggregate
 
 
   Scenario: (2.B.b) In USER workspace, removing a node WITH children does not lead to removal of the node in the parent dimension
-    When the command CreateNodeSpecialization is executed with payload:
+    When the command CreateNodeVariant is executed with payload:
       | Key                       | Value                |
       | contentStreamIdentifier   | "live-cs-identifier" |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"   |

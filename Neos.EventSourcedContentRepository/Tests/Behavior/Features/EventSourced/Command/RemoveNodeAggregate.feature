@@ -47,7 +47,7 @@ Feature: Remove NodeAggregate
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateIdentifier | "nody-mc-nodeface"                        |
       | nodeName                      | "child-document"                          |
-    And the command CreateNodeSpecialization is executed with payload:
+    And the command CreateNodeVariant is executed with payload:
       | Key                       | Value                |
       | contentStreamIdentifier   | "live-cs-identifier" |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"   |

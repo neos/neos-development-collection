@@ -54,7 +54,7 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | parentNodeAggregateIdentifier | "the-great-nodini"                       |
       | nodeName                      | "text2"                                  |
     And the graph projection is fully up to date
-    And the event NodeSpecializationWasCreated was published with payload:
+    And the event NodeSpecializationVariantWasCreated was published with payload:
       | Key                       | Value                 |
       | contentStreamIdentifier   | "cs-identifier"       |
       | nodeAggregateIdentifier   | "the-great-nodini"    |
@@ -70,7 +70,7 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
     And the graph projection is fully up to date
 
   Scenario: When a new node is added to an already existing aggregate underneath a hidden node, this one should be hidden as well
-    When the command CreateNodeSpecialization is executed with payload:
+    When the command CreateNodeVariant is executed with payload:
       | Key                       | Value               |
       | contentStreamIdentifier   | "cs-identifier"     |
       | nodeAggregateIdentifier   | "nodingers-cat"     |

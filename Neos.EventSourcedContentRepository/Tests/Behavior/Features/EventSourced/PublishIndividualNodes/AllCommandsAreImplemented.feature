@@ -373,6 +373,4 @@ Feature: Publishing hide/show scenario of nodes
 
   # TODO: implement MoveNode testcase
   # TODO: implement MoveNodesInAggregate testcase
-  # TODO: implement TranslateNodeInAggregate testcase
-  # TODO: implement CreateNodeSpecialization testcase
-  # TODO: implement CreateNodeGeneralization testcase
+  # TODO: implement CreateNodeVariant testcase
