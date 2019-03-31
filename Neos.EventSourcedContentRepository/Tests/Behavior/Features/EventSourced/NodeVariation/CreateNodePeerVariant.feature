@@ -297,6 +297,213 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
     And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
 
+  Scenario: Create peer variant of node to dimension space point with specializations that are partially occupied
+    Given the event NodePeerVariantWasCreated was published with payload:
+      | Key                       | Value                                                                                                                                   |
+      | contentStreamIdentifier   | "cs-identifier"                                                                                                                         |
+      | nodeAggregateIdentifier   | "madame-lanode"                                                                                                                         |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                                                                                        |
+      | peerLocation              | {"market":"DE", "language":"de"}                                                                                                        |
+      | peerVisibility            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+    And the event NodePeerVariantWasCreated was published with payload:
+      | Key                       | Value                                                                                                                                   |
+      | contentStreamIdentifier   | "cs-identifier"                                                                                                                         |
+      | nodeAggregateIdentifier   | "nodesis-prime"                                                                                                                         |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                                                                                        |
+      | peerLocation              | {"market":"DE", "language":"de"}                                                                                                        |
+      | peerVisibility            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+    And the event NodePeerVariantWasCreated was published with payload:
+      | Key                       | Value                                                                                                                                   |
+      | contentStreamIdentifier   | "cs-identifier"                                                                                                                         |
+      | nodeAggregateIdentifier   | "nodesis-mediocre"                                                                                                                         |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                                                                                        |
+      | peerLocation              | {"market":"DE", "language":"de"}                                                                                                        |
+      | peerVisibility            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+    And the graph projection is fully up to date
+
+    When the command CreateNodeVariant is executed with payload:
+      | Key                       | Value                            |
+      | contentStreamIdentifier   | "cs-identifier"                  |
+      | nodeAggregateIdentifier   | "madame-lanode"                  |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"} |
+      | targetDimensionSpacePoint | {"market":"DE", "language":"en"} |
+    Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:madame-lanode"
+    # The first event is NodeAggregateWithNodeWasCreated
+    # The second is the first above
+    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+      | Key                       | Expected                           |
+      | contentStreamIdentifier   | "cs-identifier"                    |
+      | nodeAggregateIdentifier   | "madame-lanode"                    |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}   |
+      | peerLocation              | {"market":"DE", "language":"en"}   |
+      | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+    And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-prime"
+    # The first event is NodeAggregateWithNodeWasCreated
+    # The second is the second above
+    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+      | Key                       | Expected                           |
+      | contentStreamIdentifier   | "cs-identifier"                    |
+      | nodeAggregateIdentifier   | "nodesis-prime"                    |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}   |
+      | peerLocation              | {"market":"DE", "language":"en"}   |
+      | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+    And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-mediocre"
+    # The first event is NodeAggregateWithNodeWasCreated
+    # The second is the third above
+    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+      | Key                       | Expected                           |
+      | contentStreamIdentifier   | "cs-identifier"                    |
+      | nodeAggregateIdentifier   | "nodesis-mediocre"                 |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}   |
+      | peerLocation              | {"market":"DE", "language":"en"}   |
+      | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+    And I expect exactly 1 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodette"
+    # No peer node creation for non-auto created child nodes
+
+    When the graph projection is fully up to date
+    Then I expect the graph projection to consist of exactly 15 nodes
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"en"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodette", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"de"}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}} to exist in the content graph
+
+    When I am in content stream "cs-identifier"
+    Then I expect the node aggregate "lady-eleonode-rootford" to exist
+    And I expect this node aggregate to occupy dimension space points [{}]
+    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"DE", "language":"fr"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"},{"market":"CH", "language":"fr"}]
+
+    And I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"}]
+    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+
+    And I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"}]
+    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+
+    And I expect the node aggregate "nodimus-prime" to exist
+    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"}]
+    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+
+    And I expect the node aggregate "nodimus-mediocre" to exist
+    And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"}]
+    And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+
+    And I expect the node aggregate "madame-lanode" to exist
+    And I expect this node aggregate to occupy dimension space points [{"market":"CH", "language":"fr"},{"market":"DE", "language":"de"},{"market":"DE", "language":"en"}]
+    And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"fr"},{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+
+    And I expect the node aggregate "nodette" to exist
+    And I expect this node aggregate to occupy dimension space points [{"market":"CH", "language":"fr"}]
+    And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"fr"}]
+
+    And I expect the node aggregate "nodesis-prime" to exist
+    And I expect this node aggregate to occupy dimension space points [{"market":"CH", "language":"fr"},{"market":"DE", "language":"de"},{"market":"DE", "language":"en"}]
+    And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"fr"},{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+
+    And I expect the node aggregate "nodesis-mediocre" to exist
+    And I expect this node aggregate to occupy dimension space points [{"market":"CH", "language":"fr"},{"market":"DE", "language":"de"},{"market":"DE", "language":"en"}]
+    And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"fr"},{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"en"}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
+    And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"de"}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
+    And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"gsw"}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
+    And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"fr"}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to no node
+    And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to no node
+    And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to no node
+    And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
+    And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to no node
+    And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to no node
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"en"}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
+    And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"de"}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
+    And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
+    And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"fr"}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to no node
+    And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
+    And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to no node
+    And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to no node
+    And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
+    And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodette", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
+    And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
+    And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
+
   Scenario: Create a peer node variant to a dimension space point with specializations and where the parent node aggregate is already specialized in
     Given the event NodePeerVariantWasCreated was published with payload:
       | Key                       | Value                                                               |
