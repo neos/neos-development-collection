@@ -628,50 +628,16 @@ final class NodeAggregateCommandHandler
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getTargetDimensionSpacePoint());
 
-        $events = [];
-        $specializations = $this->interDimensionalVariationGraph->getIndexedSpecializations($command->getSourceDimensionSpacePoint());
-        if ($specializations->contains($command->getTargetDimensionSpacePoint())) {
-            $excludedSet = new DimensionSpacePointSet([]);
-            foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()) as $occupiedSpecialization) {
-                $excludedSet = $excludedSet->getUnion($this->interDimensionalVariationGraph->getSpecializationSet($occupiedSpecialization));
-            }
-            $events[] = new Event\NodeSpecializationVariantWasCreated(
-                $command->getContentStreamIdentifier(),
-                $command->getNodeAggregateIdentifier(),
-                $command->getSourceDimensionSpacePoint(),
-                $command->getTargetDimensionSpacePoint(),
-                $this->interDimensionalVariationGraph->getSpecializationSet(
-                    $command->getTargetDimensionSpacePoint(),
-                    true,
-                    $excludedSet
-                )
-            );
-            /** @var NodeSpecializationVariantWasCreated[] $events */
-        } else {
-            $generalizations = $this->interDimensionalVariationGraph->getIndexedGeneralizations($command->getSourceDimensionSpacePoint());
-            if ($generalizations->contains($command->getTargetDimensionSpacePoint())) {
-                $events[] = new Event\NodeGeneralizationVariantWasCreated(
-                    $command->getContentStreamIdentifier(),
-                    $command->getNodeAggregateIdentifier(),
-                    $command->getSourceDimensionSpacePoint(),
-                    $command->getTargetDimensionSpacePoint(),
-                    $this->interDimensionalVariationGraph->getSpecializationSet(
-                        $command->getTargetDimensionSpacePoint(),
-                        true,
-                        $nodeAggregate->getCoveredDimensionSpacePoints()
-                    )
-                );
-                /** @var NodeGeneralizationVariantWasCreated[] $events */
-            } else {
-                $peerVisibility = $this->interDimensionalVariationGraph->getSpecializationSet(
-                    $command->getTargetDimensionSpacePoint(),
-                    true,
-                    $nodeAggregate->getOccupiedDimensionSpacePoints()
-                );
-
-                $this->collectNodePeerVariantsThatWillHaveBeenCreated($command, $nodeAggregate, $peerVisibility, $events);
-                /** @var NodePeerVariantWasCreated[] $events */
-            }
+        switch ($this->interDimensionalVariationGraph->getVariantType($command->getTargetDimensionSpacePoint(), $command->getSourceDimensionSpacePoint())->getType()) {
+            case DimensionSpace\VariantType::TYPE_SPECIALIZATION:
+                $events = $this->handleCreateNodeSpecializationVariant($command, $nodeAggregate);
+                break;
+            case DimensionSpace\VariantType::TYPE_GENERALIZATION:
+                $events = $this->handleCreateNodeGeneralizationVariant($command, $nodeAggregate);
+                break;
+            case DimensionSpace\VariantType::TYPE_PEER:
+            default:
+                $events = $this->handleCreateNodePeerVariant($command, $nodeAggregate);
         }
 
         $publishedEvents = DomainEvents::createEmpty();
@@ -695,11 +661,87 @@ final class NodeAggregateCommandHandler
         return CommandResult::fromPublishedEvents($publishedEvents);
     }
 
+    /**
+     * @param CreateNodeVariant $command
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @return array|Event\NodeSpecializationVariantWasCreated[]
+     */
+    protected function handleCreateNodeSpecializationVariant(CreateNodeVariant $command, ReadableNodeAggregateInterface $nodeAggregate): array
+    {
+        $specializations = $this->interDimensionalVariationGraph->getIndexedSpecializations($command->getSourceDimensionSpacePoint());
+        $excludedSet = new DimensionSpacePointSet([]);
+        foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()) as $occupiedSpecialization) {
+            $excludedSet = $excludedSet->getUnion($this->interDimensionalVariationGraph->getSpecializationSet($occupiedSpecialization));
+        }
+        $events[] = new Event\NodeSpecializationVariantWasCreated(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier(),
+            $command->getSourceDimensionSpacePoint(),
+            $command->getTargetDimensionSpacePoint(),
+            $this->interDimensionalVariationGraph->getSpecializationSet(
+                $command->getTargetDimensionSpacePoint(),
+                true,
+                $excludedSet
+            )
+        );
+
+        return $events;
+    }
+
+    /**
+     * @param Command\CreateNodeVariant $command
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @return array|Event\NodeGeneralizationVariantWasCreated[]
+     */
+    public function handleCreateNodeGeneralizationVariant(Command\CreateNodeVariant $command, ReadableNodeAggregateInterface $nodeAggregate): array
+    {
+        $specializations = $this->interDimensionalVariationGraph->getIndexedSpecializations($command->getTargetDimensionSpacePoint());
+        $excludedSet = new DimensionSpacePointSet([]);
+        foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()) as $occupiedSpecialization) {
+            $excludedSet = $excludedSet->getUnion($this->interDimensionalVariationGraph->getSpecializationSet($occupiedSpecialization));
+        }
+        $events[] = new Event\NodeGeneralizationVariantWasCreated(
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier(),
+            $command->getSourceDimensionSpacePoint(),
+            $command->getTargetDimensionSpacePoint(),
+            $this->interDimensionalVariationGraph->getSpecializationSet(
+                $command->getTargetDimensionSpacePoint(),
+                true,
+                $excludedSet
+            )
+        );
+
+        return $events;
+    }
+
+    /**
+     * @param Command\CreateNodeVariant $command
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @return array|Event\NodePeerVariantWasCreated[]
+     */
+    protected function handleCreateNodePeerVariant(Command\CreateNodeVariant $command, ReadableNodeAggregateInterface $nodeAggregate)
+    {
+        $specializations = $this->interDimensionalVariationGraph->getIndexedSpecializations($command->getTargetDimensionSpacePoint());
+        $excludedSet = new DimensionSpacePointSet([]);
+        foreach ($specializations->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints()) as $occupiedSpecialization) {
+            $excludedSet = $excludedSet->getUnion($this->interDimensionalVariationGraph->getSpecializationSet($occupiedSpecialization));
+        }
+        $peerVisibility = $this->interDimensionalVariationGraph->getSpecializationSet(
+            $command->getTargetDimensionSpacePoint(),
+            true,
+            $excludedSet
+        );
+        $events = [];
+
+        return $this->collectNodePeerVariantsThatWillHaveBeenCreated($command, $nodeAggregate, $peerVisibility, $events);
+    }
+
     protected function collectNodePeerVariantsThatWillHaveBeenCreated(
         CreateNodeVariant $command,
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $peerVisibility,
-        array& $events
+        array $events
     ) {
         $events[] = new Event\NodePeerVariantWasCreated(
             $command->getContentStreamIdentifier(),
@@ -717,48 +759,10 @@ final class NodeAggregateCommandHandler
                 NodeName::fromString($nodeName)
             );
 
-            $this->collectNodePeerVariantsThatWillHaveBeenCreated($command, $childNodeAggregate, $peerVisibility, $events);
+            $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated($command, $childNodeAggregate, $peerVisibility, $events);
         }
-    }
 
-    /**
-     * @param Command\CreateNodeGeneralization $command
-     * @return CommandResult
-     * @throws ContentStream\ContentStreamDoesNotExistYet
-     * @throws DimensionSpacePointIsAlreadyOccupied
-     * @throws DimensionSpacePointIsNotYetOccupied
-     * @throws DimensionSpacePointNotFound
-     */
-    public function handleCreateNodeGeneralization(Command\CreateNodeGeneralization $command): CommandResult
-    {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-
-        $this->requireDimensionSpacePointToExist($command->getTargetDimensionSpacePoint());
-        $this->requireDimensionSpacePointToBeGeneralization($command->getTargetDimensionSpacePoint(), $command->getSourceDimensionSpacePoint());
-
-        $nodeAggregate->requireDimensionSpacePointToBeOccupied($command->getSourceDimensionSpacePoint());
-        $nodeAggregate->requireDimensionSpacePointToBeUnoccupied($command->getTargetDimensionSpacePoint());
-
-        $events = null;
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
-            $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
-                    new Event\NodeGeneralizationVariantWasCreated(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNodeAggregateIdentifier(),
-                        $command->getSourceDimensionSpacePoint(),
-                        $command->getTargetDimensionSpacePoint(),
-                        $this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint(), true, $nodeAggregate->getVisibleInDimensionSpacePoints())
-                    )
-                )
-            );
-
-            $this->nodeEventPublisher->publishMany($nodeAggregate->getStreamName(), $events);
-        });
-
-        return CommandResult::fromPublishedEvents($events);
+        return $events;
     }
 
     /**

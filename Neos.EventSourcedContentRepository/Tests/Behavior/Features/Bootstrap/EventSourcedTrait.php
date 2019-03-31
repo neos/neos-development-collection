@@ -648,7 +648,7 @@ trait EventSourcedTrait
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
-        $this->lastCommandOrEventResult = $commandHandler->handleCreateNodeGeneralization($command);
+        $this->lastCommandOrEventResult = $commandHandler->handleCreateNodeGeneralizationVariant($command);
     }
 
     /**

@@ -29,7 +29,7 @@ Feature: Create node generalization
       | nodeTypeName                  | "Neos.ContentRepository:Root"                                                                                                                                                                             |
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | initiatingUserIdentifier      | "system-user"                                                                                                                                                                                             |
-    # We have to add another node since root nodes have no dimension space points and thus cannot be varied
+    # We have to add another node since root node aggregates do not support variation
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                                                                                     |
@@ -40,7 +40,7 @@ Feature: Create node generalization
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                                                                                                  |
       | nodeName                      | "document"                                                                                                                                                                                                |
-    # We also want to add a child node to make sure it is still reachable after creating a generalization of the parent
+    # We also want to add a child node to make sure it is still reachable after creating a specialization of the parent
     # Node /document/child-document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                                                                                     |
@@ -77,6 +77,7 @@ Feature: Create node generalization
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}} to exist in the content graph
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}} to exist in the content graph
 
+
     When I am in content stream "cs-identifier"
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to occupy dimension space points [{}]
@@ -89,6 +90,7 @@ Feature: Create node generalization
     And I expect the node aggregate "nody-mc-nodeface" to exist
     And I expect this node aggregate to occupy dimension space points [{"market":"DE", "language":"en"}]
     And I expect this node aggregate to cover dimension space points [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}]
+
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
@@ -187,7 +189,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
 
-  Scenario: Create specialization of node to dimension space point with specializations that are partially occupied and covered
+  Scenario: Create specialization of node to dimension space point with specializations that are partially occupied
     When the event NodeSpecializationVariantWasCreated was published with payload:
       | Key                       | Value                                                                |
       | contentStreamIdentifier   | "cs-identifier"                                                      |
@@ -264,3 +266,7 @@ Feature: Create node generalization
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"de"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+
+    # @todo test based on NodeSpecializationVariantWasCreated ({"market":"CH", "language":"DE"})
+    # and VirtualNodeVariantWasRemoved ({"market":"CH", "language":"gsw"})
+    # to test that explicitly removed virtual variants are not implicitly created again
