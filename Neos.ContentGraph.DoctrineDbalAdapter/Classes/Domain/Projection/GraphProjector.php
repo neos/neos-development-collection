@@ -837,11 +837,11 @@ insert into neos_contentgraph_restrictionedge
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceDimensionSpacePoint());
-            $sourceParentNode = $this->projectionContentGraph->findParentNode(new ContentRepository\Context\Node\NodeIdentifier(
+            $sourceParentNode = $this->projectionContentGraph->findParentNode(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getSourceDimensionSpacePoint()
-            ));
+            );
             $peerNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getPeerLocation());
 
             foreach ($event->getPeerVisibility() as $coveredDimensionSpacePoint) {
