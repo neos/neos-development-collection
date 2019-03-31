@@ -3,7 +3,7 @@ Feature: Create node variant
 
   As a user of the CR I want to create a copy of a node within an aggregate to another dimension space point.
 
-  #todo: test exception to be thrown when trying to directly create variants of tethered child nodes
+  #todo: test exception to be thrown when trying to directly create variants of tethered nodes
 
   Background:
     Given I have the following content dimensions:
@@ -117,7 +117,7 @@ Feature: Create node variant
       | targetDimensionSpacePoint | {"market":"DE", "language":"gsw"} |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsAlreadyOccupied"
 
-  Scenario: Try to create a variant to a target dimension space point that the node aggregate's parent in the source dimension point is not visible in
+  Scenario: Try to create a variant to a target dimension space point that the node aggregate's parent in the source dimension point does not cover
     When the command CreateNodeVariant is executed with payload and exceptions are caught:
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
