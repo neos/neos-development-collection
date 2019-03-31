@@ -809,30 +809,6 @@ final class NodeAggregateCommandHandler
     }
 
     /**
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param DimensionSpacePoint $generalization
-     * @throws DimensionSpacePointIsNoGeneralization
-     */
-    protected function requireDimensionSpacePointToBeSpecialization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $generalization): void
-    {
-        if (!$this->interDimensionalVariationGraph->getSpecializationSet($generalization)->contains($dimensionSpacePoint)) {
-            throw new DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization($dimensionSpacePoint . ' is no specialization of ' . $generalization, 1519931770);
-        }
-    }
-
-    /**
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param DimensionSpacePoint $specialization
-     * @throws DimensionSpacePointIsNoGeneralization
-     */
-    protected function requireDimensionSpacePointToBeGeneralization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $specialization): void
-    {
-        if (!$this->interDimensionalVariationGraph->getSpecializationSet($dimensionSpacePoint)->contains($specialization)) {
-            throw new DimensionSpace\Exception\DimensionSpacePointIsNoGeneralization($dimensionSpacePoint . ' is no generalization of ' . $dimensionSpacePoint, 1521367710);
-        }
-    }
-
-    /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $sourceDimensionSpacePoint
