@@ -181,7 +181,7 @@ final class NodeAggregateCommandHandler
             );
         }
 
-        $descendantNodeAggregateIdentifiers = $this->populateNodeAggregateIdentifiers($nodeType, $command->getAutoCreatedDescendantNodeAggregateIdentifiers());
+        $descendantNodeAggregateIdentifiers = $this->populateNodeAggregateIdentifiers($nodeType, $command->getTetheredDescendantNodeAggregateIdentifiers());
 
         foreach ($descendantNodeAggregateIdentifiers as $rawNodePath => $descendantNodeAggregateIdentifier) {
             $this->requireNodeAggregateToCurrentlyNotExist($command->getContentStreamIdentifier(), $descendantNodeAggregateIdentifier);

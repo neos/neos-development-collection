@@ -63,7 +63,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
     private $originDimensionSpacePoint;
 
     /**
-     * The intiating user's identifier
+     * The initiating user's identifier
      *
      * @var UserIdentifier
      */
@@ -102,16 +102,16 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
     private $initialPropertyValues;
 
     /**
-     * NodeAggregateIdentifiers for auto created descendants (optional).
+     * NodeAggregateIdentifiers for tethered descendants (optional).
      *
-     * If the given node type has auto created child nodes, you may predefine their node aggregate identifiers
+     * If the given node type declares tethered child nodes, you may predefine their node aggregate identifiers
      * using this assignment registry.
-     * Since auto created child nodes may have auto created child nodes themselves,
+     * Since tethered child nodes may have tethered child nodes themselves,
      * this registry is indexed using relative node paths to the node to create in the first place.
      *
      * @var NodeAggregateIdentifiersByNodePaths
      */
-    private $autoCreatedDescendantNodeAggregateIdentifiers;
+    private $tetheredDescendantNodeAggregateIdentifiers;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -123,7 +123,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
         ?NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
         ?NodeName $nodeName = null,
         ?PropertyValues $initialPropertyValues = null,
-        ?NodeAggregateIdentifiersByNodePaths $autoCreatedDescendantNodeAggregateIdentifiers = null
+        ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers = null
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -134,7 +134,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
         $this->succeedingSiblingNodeAggregateIdentifier = $succeedingSiblingNodeAggregateIdentifier;
         $this->nodeName = $nodeName;
         $this->initialPropertyValues = $initialPropertyValues ?: PropertyValues::fromArray([]);
-        $this->autoCreatedDescendantNodeAggregateIdentifiers = $autoCreatedDescendantNodeAggregateIdentifiers ?: new NodeAggregateIdentifiersByNodePaths([]);
+        $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers ?: new NodeAggregateIdentifiersByNodePaths([]);
     }
 
     public static function fromArray(array $array): self
@@ -155,8 +155,8 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
             isset($array['initialPropertyValues'])
                 ? PropertyValues::fromArray($array['initialPropertyValues'])
                 : null,
-            isset($array['autoCreatedDescendantNodeAggregateIdentifiers'])
-                ? NodeAggregateIdentifiersByNodePaths::fromArray($array['autoCreatedDescendantNodeAggregateIdentifiers'])
+            isset($array['tetheredDescendantNodeAggregateIdentifiers'])
+                ? NodeAggregateIdentifiersByNodePaths::fromArray($array['tetheredDescendantNodeAggregateIdentifiers'])
                 : null
         );
     }
@@ -206,9 +206,9 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
         return $this->initialPropertyValues;
     }
 
-    public function getAutoCreatedDescendantNodeAggregateIdentifiers(): ?NodeAggregateIdentifiersByNodePaths
+    public function getTetheredDescendantNodeAggregateIdentifiers(): ?NodeAggregateIdentifiersByNodePaths
     {
-        return $this->autoCreatedDescendantNodeAggregateIdentifiers;
+        return $this->tetheredDescendantNodeAggregateIdentifiers;
     }
 
     public function jsonSerialize(): array
@@ -223,7 +223,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
             'succeedingSiblingNodeAggregateIdentifier' => $this->succeedingSiblingNodeAggregateIdentifier,
             'nodeName' => $this->nodeName,
             'initialPropertyValues' => $this->initialPropertyValues,
-            'autoCreatedDescendantNodeAggregateIdentifiers' => $this->autoCreatedDescendantNodeAggregateIdentifiers
+            'tetheredDescendantNodeAggregateIdentifiers' => $this->tetheredDescendantNodeAggregateIdentifiers
         ];
     }
 
@@ -239,7 +239,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
             $this->succeedingSiblingNodeAggregateIdentifier,
             $this->nodeName,
             $this->initialPropertyValues,
-            $this->autoCreatedDescendantNodeAggregateIdentifiers
+            $this->tetheredDescendantNodeAggregateIdentifiers
         );
     }
 
