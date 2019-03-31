@@ -1054,34 +1054,6 @@ trait EventSourcedTrait
     }
 
     /**
-     * @deprecated use "a node aggregate"
-     * @Then /^I expect a node "([^"]*)" to exist in the graph projection$/
-     * @param string $nodeIdentifier
-     */
-    public function iExpectANodeToExistInTheGraphProjection(string $nodeIdentifier)
-    {
-        $nodeIdentifier = NodeIdentifier::fromString($nodeIdentifier);
-        $node = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier($nodeIdentifier);
-        Assert::assertNotNull($node, sprintf('Node "%s" was not found in the current Content Stream "%s" / Dimension Space Point "%s".', $nodeIdentifier, $this->contentStreamIdentifier, $this->dimensionSpacePoint->getHash()));
-    }
-
-    /**
-     * @deprecated use "a node aggregate"
-     * @Then /^I expect a node "([^"]*)" not to exist in the graph projection$/
-     * @param string $nodeIdentifier
-     */
-    public function iExpectANodeNotToExistInTheGraphProjection(string $nodeIdentifier)
-    {
-        $node = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByIdentifier(NodeIdentifier::fromString($nodeIdentifier));
-        // we're not using assertNull here: If $node is not null, the
-        Assert::assertTrue($node === null, 'Node "' . $nodeIdentifier . '" was found in the current Content Stream / Dimension Space Point.');
-    }
-
-    /**
      * @Then /^I expect a node with identifier (.*) to exist in the content graph$/
      * @param string $serializedNodeIdentifier
      * @throws Exception
