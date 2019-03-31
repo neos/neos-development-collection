@@ -722,54 +722,6 @@ final class NodeAggregateCommandHandler
     }
 
     /**
-     * @param Command\CreateNodeSpecialization $command
-     * @return CommandResult
-     * @throws ContentStream\ContentStreamDoesNotExistYet
-     * @throws DimensionSpacePointIsAlreadyOccupied
-     * @throws DimensionSpacePointIsNotYetOccupied
-     * @throws DimensionSpacePointNotFound
-     * @throws ParentsNodeAggregateNotVisibleInDimensionSpacePoint
-     */
-    public function handleCreateNodeSpecialization(Command\CreateNodeSpecialization $command): CommandResult
-    {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-
-        $this->requireDimensionSpacePointToExist($command->getTargetDimensionSpacePoint());
-        $this->requireDimensionSpacePointToBeSpecialization($command->getTargetDimensionSpacePoint(), $command->getSourceDimensionSpacePoint());
-
-        $nodeAggregate->requireDimensionSpacePointToBeOccupied($command->getSourceDimensionSpacePoint());
-        $nodeAggregate->requireDimensionSpacePointToBeUnoccupied($command->getTargetDimensionSpacePoint());
-
-        $this->requireParentNodesAggregateToBeVisibleInDimensionSpacePoint(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeAggregateIdentifier(),
-            $command->getSourceDimensionSpacePoint(),
-            $command->getTargetDimensionSpacePoint()
-        );
-
-        $events = null;
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
-            $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
-                    new Event\NodeSpecializationVariantWasCreated(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNodeAggregateIdentifier(),
-                        $command->getSourceDimensionSpacePoint(),
-                        $command->getTargetDimensionSpacePoint(),
-                        $this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint(), true, $nodeAggregate->getOccupiedDimensionSpacePoints())
-                    )
-                )
-            );
-
-            $this->nodeEventPublisher->publishMany($nodeAggregate->getStreamName(), $events);
-        });
-        return CommandResult::fromPublishedEvents($events);
-    }
-
-
-    /**
      * @param Command\CreateNodeGeneralization $command
      * @return CommandResult
      * @throws ContentStream\ContentStreamDoesNotExistYet

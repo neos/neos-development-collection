@@ -38,7 +38,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeSpecialization;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventStreamName;
@@ -538,38 +537,6 @@ trait EventSourcedTrait
     {
         try {
             $this->theCommandCreateNodeVariantIsExecutedWithPayload($payloadTable);
-        } catch (\Exception $exception) {
-            $this->lastCommandException = $exception;
-        }
-    }
-
-    /**
-     * @Given /^the command CreateNodeSpecialization is executed with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint
-     * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
-     * @throws Exception
-     */
-    public function theCommandCreateNodeSpecializationIsExecutedWithPayload(TableNode $payloadTable)
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-        $command = CreateNodeSpecialization::fromArray($commandArguments);
-
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateNodeSpecialization($command);
-    }
-
-    /**
-     * @Given /^the command CreateNodeSpecialization is executed with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
-     * @throws Exception
-     */
-    public function theCommandCreateNodeSpecializationIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
-    {
-        try {
-            $this->theCommandCreateNodeSpecializationIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
