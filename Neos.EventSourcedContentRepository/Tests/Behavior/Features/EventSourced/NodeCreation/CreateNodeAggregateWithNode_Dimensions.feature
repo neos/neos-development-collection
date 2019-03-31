@@ -11,7 +11,7 @@ Feature: Create node aggregate with node
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes':
+    'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes':
       properties:
         text:
           defaultValue: 'my default'
@@ -35,25 +35,25 @@ Feature: Create node aggregate with node
 
   Scenario:  Create node aggregate with node with content dimensions
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                                             |
-      | contentStreamIdentifier       | "cs-identifier"                                                   |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes" |
-      | originDimensionSpacePoint     | {"language": "de"}                                                |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                            |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                          |
+      | Key                           | Value                                                          |
+      | contentStreamIdentifier       | "cs-identifier"                                                |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                             |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
+      | originDimensionSpacePoint     | {"language": "de"}                                             |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                         |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and Dimension Space Point {"language": "de"}
 
     Then I expect exactly 1 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
     And event at index 0 is of type "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" with payload:
-      | Key                           | Expected                                                          |
-      | contentStreamIdentifier       | "cs-identifier"                                                   |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes" |
-      | originDimensionSpacePoint     | {"language": "de"}                                                |
-      | visibleInDimensionSpacePoints | [{"language":"de"},{"language":"ch"}]                             |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                          |
-      | initialPropertyValues         | {"text": {"value": "my default", "type": "string"}}               |
+      | Key                           | Expected                                                       |
+      | contentStreamIdentifier       | "cs-identifier"                                                |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                             |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
+      | originDimensionSpacePoint     | {"language": "de"}                                             |
+      | visibleInDimensionSpacePoints | [{"language":"de"},{"language":"ch"}]                          |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                       |
+      | initialPropertyValues         | {"text": {"value": "my default", "type": "string"}}            |
 
     And I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
