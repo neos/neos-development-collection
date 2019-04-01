@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Two column content</source>
-			<target xml:lang="vi" state="translated">Nội dung với hai cột</target></trans-unit>
+			<target state="translated">Nội dung với hai cột</target></trans-unit>
     </body>
   </file>
 </xliff>

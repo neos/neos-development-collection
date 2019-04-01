@@ -4,25 +4,25 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Page</source>
-			<target xml:lang="pl" state="translated">Strona</target></trans-unit>
+			<target state="translated">Strona</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="pl" state="translated">Tytuł</target></trans-unit>
+			<target state="translated">Tytuł</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve" approved="yes">
 				<source>Layout</source>
-			<target xml:lang="pl" state="translated">Układ</target></trans-unit>
+			<target state="translated">Układ</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve" approved="yes">
 				<source>Layout for this page only</source>
-			<target xml:lang="pl" state="translated">Układ tylko dla tej strony</target></trans-unit>
+			<target state="translated">Układ tylko dla tej strony</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="pl" state="translated">Dziedzicz z rodzica</target></trans-unit>
+			<target state="translated">Dziedzicz z rodzica</target></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve" approved="yes">
 				<source>Layout for subpages of this page</source>
-			<target xml:lang="pl" state="translated">Układ dla podstron tej strony</target></trans-unit>
+			<target state="translated">Układ dla podstron tej strony</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="pl" state="translated">Dziedzicz z rodzica</target></trans-unit>
+			<target state="translated">Dziedzicz z rodzica</target></trans-unit>
     </body>
   </file>
 </xliff>

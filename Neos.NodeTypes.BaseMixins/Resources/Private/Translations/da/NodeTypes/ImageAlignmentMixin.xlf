@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve" approved="yes">
 				<source>Alignment</source>
-			<target xml:lang="da" state="translated">Placering</target><alt-trans><target xml:lang="da">Justering</target></alt-trans></trans-unit>
+			<target state="translated">Placering</target><alt-trans><target>Justering</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Default</source>
-			<target xml:lang="da" state="translated">Standard</target></trans-unit>
+			<target state="translated">Standard</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve" approved="yes">
 				<source>Center</source>
-			<target xml:lang="da" state="translated">Centreret</target><alt-trans><target xml:lang="da">Center</target></alt-trans></trans-unit>
+			<target state="translated">Centreret</target><alt-trans><target>Center</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve" approved="yes">
 				<source>Left</source>
-			<target xml:lang="da" state="translated">Venstre</target></trans-unit>
+			<target state="translated">Venstre</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve" approved="yes">
 				<source>Right</source>
-			<target xml:lang="da" state="translated">Højre</target></trans-unit>
+			<target state="translated">Højre</target></trans-unit>
     </body>
   </file>
 </xliff>
