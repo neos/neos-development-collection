@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve" approved="yes">
 				<source>Alignment</source>
-			<target xml:lang="nl" state="translated">Uitlijning</target></trans-unit>
+			<target state="translated">Uitlijning</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Default</source>
-			<target xml:lang="nl" state="translated">Standaard</target></trans-unit>
+			<target state="translated">Standaard</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve" approved="yes">
 				<source>Center</source>
-			<target xml:lang="nl" state="translated">Gecentreerd</target></trans-unit>
+			<target state="translated">Gecentreerd</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve" approved="yes">
 				<source>Left</source>
-			<target xml:lang="nl" state="translated">Links</target></trans-unit>
+			<target state="translated">Links</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve" approved="yes">
 				<source>Right</source>
-			<target xml:lang="nl" state="translated">Rechts</target></trans-unit>
+			<target state="translated">Rechts</target></trans-unit>
     </body>
   </file>
 </xliff>

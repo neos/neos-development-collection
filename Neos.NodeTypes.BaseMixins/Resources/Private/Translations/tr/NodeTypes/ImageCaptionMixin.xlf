@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="properties.hasCaption" xml:space="preserve">
 				<source>Enable caption</source>
-			<target xml:lang="tr" state="translated">Başlığı etkinleştir</target></trans-unit>
+			<target state="translated">Başlığı etkinleştir</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="tr" state="translated"><![CDATA[<p>resim altyazısını buraya girin</p>]]></target><alt-trans><target xml:lang="tr"><![CDATA[<p>Altyazıyı buraya yazın</p>]]></target></alt-trans></trans-unit>
+			<target state="translated"><![CDATA[<p>resim altyazısını buraya girin</p>]]></target><alt-trans><target><![CDATA[<p>Altyazıyı buraya yazın</p>]]></target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

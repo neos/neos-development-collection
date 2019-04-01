@@ -4,25 +4,25 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Page</source>
-			<target xml:lang="ru" state="translated">Страница</target></trans-unit>
+			<target state="translated">Страница</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="ru" state="translated">Название</target></trans-unit>
+			<target state="translated">Название</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve" approved="yes">
 				<source>Layout</source>
-			<target xml:lang="ru" state="translated">Шаблон</target><alt-trans><target xml:lang="ru">Макет</target></alt-trans></trans-unit>
+			<target state="translated">Шаблон</target><alt-trans><target>Макет</target></alt-trans></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve" approved="yes">
 				<source>Layout for this page only</source>
-			<target xml:lang="ru" state="translated">Шаблон только для этой страницы</target><alt-trans><target xml:lang="ru">Макет только для этой страницы</target></alt-trans></trans-unit>
+			<target state="translated">Шаблон только для этой страницы</target><alt-trans><target>Макет только для этой страницы</target></alt-trans></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="ru" state="translated">Наследовать от родительского элемента</target><alt-trans><target xml:lang="ru">Наследовать от родительского объекта</target></alt-trans></trans-unit>
+			<target state="translated">Наследовать от родительского элемента</target><alt-trans><target>Наследовать от родительского объекта</target></alt-trans></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve" approved="yes">
 				<source>Layout for subpages of this page</source>
-			<target xml:lang="ru" state="translated">Шаблон дочерних страниц</target><alt-trans><target xml:lang="ru">Макет для подстраниц данной страницы</target></alt-trans></trans-unit>
+			<target state="translated">Шаблон дочерних страниц</target><alt-trans><target>Макет для подстраниц данной страницы</target></alt-trans></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="ru" state="translated">Наследовать от родительского элемента</target><alt-trans><target xml:lang="ru">Наследовать от родительского объекта</target></alt-trans></trans-unit>
+			<target state="translated">Наследовать от родительского элемента</target><alt-trans><target>Наследовать от родительского объекта</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

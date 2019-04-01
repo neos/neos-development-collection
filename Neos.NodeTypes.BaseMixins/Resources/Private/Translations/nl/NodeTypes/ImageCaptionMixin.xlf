@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="properties.hasCaption" xml:space="preserve" approved="yes">
 				<source>Enable caption</source>
-			<target xml:lang="nl" state="translated">Onderschrift inschakelen</target></trans-unit>
+			<target state="translated">Onderschrift inschakelen</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="nl" state="translated"><![CDATA[<p>Voer hier je tekst in</p>]]></target></trans-unit>
+			<target state="translated"><![CDATA[<p>Voer hier je tekst in</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>
