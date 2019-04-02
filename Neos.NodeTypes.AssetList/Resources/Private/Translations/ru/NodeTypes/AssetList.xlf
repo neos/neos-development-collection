@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Asset list</source>
-			<target xml:lang="ru" state="translated">Список медиа-ресурсов</target><alt-trans><target xml:lang="ru">Список активов</target></alt-trans><alt-trans><target xml:lang="ru">Список ресурсов</target></alt-trans><alt-trans><target xml:lang="ru">Список ассетов</target></alt-trans></trans-unit>
+			<target state="translated">Список медиа-ресурсов</target><alt-trans><target>Список активов</target></alt-trans><alt-trans><target>Список ресурсов</target></alt-trans><alt-trans><target>Список ассетов</target></alt-trans></trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve" approved="yes">
 				<source>Resources</source>
-			<target xml:lang="ru" state="translated">Ресурсы</target><alt-trans><target xml:lang="ru">Ассеты</target></alt-trans></trans-unit>
+			<target state="translated">Ресурсы</target><alt-trans><target>Ассеты</target></alt-trans></trans-unit>
       <trans-unit id="properties.assets" xml:space="preserve" approved="yes">
 				<source>Assets</source>
-			<target xml:lang="ru" state="translated">Медиа-ресурсы</target><alt-trans><target xml:lang="ru">Активы</target></alt-trans><alt-trans><target xml:lang="ru">Ассеты</target></alt-trans></trans-unit>
+			<target state="translated">Медиа-ресурсы</target><alt-trans><target>Активы</target></alt-trans><alt-trans><target>Ассеты</target></alt-trans></trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve" approved="yes">
 				<source>Empty asset list</source>
-			<target xml:lang="ru" state="translated">Пустой список медиа-ресурсов</target><alt-trans><target xml:lang="ru">Пустой список ассетов</target></alt-trans></trans-unit>
+			<target state="translated">Пустой список медиа-ресурсов</target><alt-trans><target>Пустой список ассетов</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="tabs.default" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="tr" state="translated">Genel</target></trans-unit>
+			<target state="translated">Genel</target></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="tr" state="translated">Meta veri</target></trans-unit>
+			<target state="translated">Meta veri</target></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="tr" state="translated">Meta veri</target></trans-unit>
+			<target state="translated">Meta veri</target></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="tr" state="translated">İlave bilgi</target></trans-unit>
+			<target state="translated">İlave bilgi</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="tr" state="translated">Türü değiştir</target></trans-unit>
+			<target state="translated">Türü değiştir</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="tr" state="translated">Tür</target></trans-unit>
+			<target state="translated">Tür</target></trans-unit>
     </body>
   </file>
 </xliff>

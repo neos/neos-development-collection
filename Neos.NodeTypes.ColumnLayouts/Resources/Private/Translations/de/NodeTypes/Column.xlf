@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
                 <source>Column</source>
-            <target xml:lang="de" state="translated">Spalte</target></trans-unit>
+            <target state="translated">Spalte</target></trans-unit>
       <trans-unit id="groups.column" xml:space="preserve" approved="yes">
                 <source>Columns</source>
-            <target xml:lang="de" state="translated">Spalten</target></trans-unit>
+            <target state="translated">Spalten</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve" approved="yes">
                 <source>Layout</source>
-            <target xml:lang="de" state="translated">Layout</target></trans-unit>
+            <target state="translated">Layout</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties._hidden" xml:space="preserve">
 				<source>Hide</source>
-			<target xml:lang="pt-BR" state="translated">Esconder</target></trans-unit>
+			<target state="translated">Esconder</target></trans-unit>
     </body>
   </file>
 </xliff>

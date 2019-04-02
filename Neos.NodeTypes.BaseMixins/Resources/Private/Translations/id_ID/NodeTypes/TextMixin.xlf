@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties.text.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter text here</p>]]></source>
-			<target xml:lang="id" state="translated"><![CDATA[<p>Tulis teks di sini</p>]]></target><alt-trans><target xml:lang="id"><![CDATA[<p>Enter text here</p>]]></target></alt-trans></trans-unit>
+			<target state="translated"><![CDATA[<p>Tulis teks di sini</p>]]></target><alt-trans><target><![CDATA[<p>Enter text here</p>]]></target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
