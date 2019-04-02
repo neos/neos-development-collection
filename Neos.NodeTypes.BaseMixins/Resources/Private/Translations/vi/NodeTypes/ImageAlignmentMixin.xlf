@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve">
 				<source>Alignment</source>
-			<target xml:lang="vi" state="translated">Canh lề</target></trans-unit>
+			<target state="translated">Canh lề</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Default</source>
-			<target xml:lang="vi" state="translated">Mặc định</target></trans-unit>
+			<target state="translated">Mặc định</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
 				<source>Center</source>
-			<target xml:lang="vi" state="translated">Giữa</target></trans-unit>
+			<target state="translated">Giữa</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve">
 				<source>Left</source>
-			<target xml:lang="vi" state="translated">Trái</target></trans-unit>
+			<target state="translated">Trái</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve">
 				<source>Right</source>
-			<target xml:lang="vi" state="translated">Phải</target></trans-unit>
+			<target state="translated">Phải</target></trans-unit>
     </body>
   </file>
 </xliff>
