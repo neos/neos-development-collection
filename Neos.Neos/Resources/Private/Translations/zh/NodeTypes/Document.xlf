@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="zh-CN" state="translated">文档</target></trans-unit>
+			<target state="translated">文档</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="zh-CN" state="translated">标题</target></trans-unit>
+			<target state="translated">标题</target></trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="zh-CN" state="translated">URL 路径段</target></trans-unit>
+			<target state="translated">URL 路径段</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="zh-CN" state="translated">在菜单中隐藏</target></trans-unit>
+			<target state="translated">在菜单中隐藏</target></trans-unit>
       <trans-unit id="creationDialog.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="zh-CN" state="translated">标题</target></trans-unit>
+			<target state="translated">标题</target></trans-unit>
     </body>
   </file>
 </xliff>

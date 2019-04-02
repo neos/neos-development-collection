@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Asset list</source>
-			<target xml:lang="pl" state="translated">Lista zasobów</target></trans-unit>
+			<target state="translated">Lista zasobów</target></trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve" approved="yes">
 				<source>Resources</source>
-			<target xml:lang="pl" state="translated">Zasoby</target></trans-unit>
+			<target state="translated">Zasoby</target></trans-unit>
       <trans-unit id="properties.assets" xml:space="preserve" approved="yes">
 				<source>Assets</source>
-			<target xml:lang="pl" state="translated">Zasoby</target></trans-unit>
+			<target state="translated">Zasoby</target></trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve" approved="yes">
 				<source>Empty asset list</source>
-			<target xml:lang="pl" state="translated">Pusta lista zadobów</target></trans-unit>
+			<target state="translated">Pusta lista zadobów</target></trans-unit>
     </body>
   </file>
 </xliff>
