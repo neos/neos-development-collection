@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>HTML</source>
-			<target xml:lang="el" state="translated">HTML</target></trans-unit>
+			<target state="translated">HTML</target></trans-unit>
       <trans-unit id="groups.html" xml:space="preserve">
 				<source>HTML</source>
-			<target xml:lang="el" state="translated">HTML</target></trans-unit>
+			<target state="translated">HTML</target></trans-unit>
       <trans-unit id="properties.source" xml:space="preserve">
 				<source>HTML Content</source>
-			<target xml:lang="el" state="translated">Περιεχόμενο HTML</target></trans-unit>
+			<target state="translated">Περιεχόμενο HTML</target></trans-unit>
       <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve">
 				<source>Edit HTML source</source>
-			<target xml:lang="el" state="translated">Επεξεργασία κώδικα HTML</target></trans-unit>
+			<target state="translated">Επεξεργασία κώδικα HTML</target></trans-unit>
     </body>
   </file>
 </xliff>
