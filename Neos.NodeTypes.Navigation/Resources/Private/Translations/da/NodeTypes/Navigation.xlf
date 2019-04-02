@@ -4,58 +4,58 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Menu</source>
-			<target xml:lang="da" state="translated">Menu</target></trans-unit>
+			<target state="translated">Menu</target></trans-unit>
       <trans-unit id="groups.options" xml:space="preserve" approved="yes">
 				<source>Options</source>
-			<target xml:lang="da" state="translated">Indstillinger</target></trans-unit>
+			<target state="translated">Indstillinger</target></trans-unit>
       <trans-unit id="properties.startLevel" xml:space="preserve" approved="yes">
 				<source>Starting Level</source>
-			<target xml:lang="da" state="translated">Startniveau</target><alt-trans><target xml:lang="da">Start niveau</target></alt-trans></trans-unit>
+			<target state="translated">Startniveau</target><alt-trans><target>Start niveau</target></alt-trans></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve" approved="yes">
 				<source>Four Levels Above Current Page</source>
-			<target xml:lang="da" state="translated">Fire niveauer over aktuel side</target><alt-trans><target xml:lang="da">Fire niveauer over Aktuel side</target></alt-trans></trans-unit>
+			<target state="translated">Fire niveauer over aktuel side</target><alt-trans><target>Fire niveauer over Aktuel side</target></alt-trans></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve" approved="yes">
 				<source>Three Levels Above Current Page</source>
-			<target xml:lang="da" state="translated">Tre niveauer over aktuel side</target><alt-trans><target xml:lang="da">Tre niveauer over Aktuel side</target></alt-trans></trans-unit>
+			<target state="translated">Tre niveauer over aktuel side</target><alt-trans><target>Tre niveauer over Aktuel side</target></alt-trans></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-2" xml:space="preserve" approved="yes">
 				<source>Two Levels Above Current Page</source>
-			<target xml:lang="da" state="translated">To niveauer over aktuel side</target><alt-trans><target xml:lang="da">To niveauer over Aktuel side</target></alt-trans></trans-unit>
+			<target state="translated">To niveauer over aktuel side</target><alt-trans><target>To niveauer over Aktuel side</target></alt-trans></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-1" xml:space="preserve" approved="yes">
 				<source>One Level Above Current Page</source>
-			<target xml:lang="da" state="translated">Ét niveau over aktuel side</target><alt-trans><target xml:lang="da">Ét niveau over Aktuel side</target></alt-trans></trans-unit>
+			<target state="translated">Ét niveau over aktuel side</target><alt-trans><target>Ét niveau over Aktuel side</target></alt-trans></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.0" xml:space="preserve" approved="yes">
 				<source>Same Level As Current Page</source>
-			<target xml:lang="da" state="translated">Samme niveau som aktuel side</target><alt-trans><target xml:lang="da">Samme niveau som Aktuel side</target></alt-trans></trans-unit>
+			<target state="translated">Samme niveau som aktuel side</target><alt-trans><target>Samme niveau som Aktuel side</target></alt-trans></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve" approved="yes">
 				<source>First Level Of Website</source>
-			<target xml:lang="da" state="translated">Første niveau af hjemmeside</target></trans-unit>
+			<target state="translated">Første niveau af hjemmeside</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.2" xml:space="preserve" approved="yes">
 				<source>Second Level Of Website</source>
-			<target xml:lang="da" state="translated">Andet niveau af hjemmeside</target></trans-unit>
+			<target state="translated">Andet niveau af hjemmeside</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.3" xml:space="preserve" approved="yes">
 				<source>Third Level Of Website</source>
-			<target xml:lang="da" state="translated">Tredje niveau af hjemmeside</target></trans-unit>
+			<target state="translated">Tredje niveau af hjemmeside</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.4" xml:space="preserve" approved="yes">
 				<source>Fourth Level Of Website</source>
-			<target xml:lang="da" state="translated">Fjerde niveau af hjemmeside</target></trans-unit>
+			<target state="translated">Fjerde niveau af hjemmeside</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.5" xml:space="preserve" approved="yes">
 				<source>Fifth Level Of Website</source>
-			<target xml:lang="da" state="translated">Femte niveau af hjemmeside</target></trans-unit>
+			<target state="translated">Femte niveau af hjemmeside</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.6" xml:space="preserve" approved="yes">
 				<source>Sixth Level Of Website</source>
-			<target xml:lang="da" state="translated">Sjette niveau af hjemmeside</target></trans-unit>
+			<target state="translated">Sjette niveau af hjemmeside</target></trans-unit>
       <trans-unit id="properties.selection" xml:space="preserve" approved="yes">
 				<source>Selection</source>
-			<target xml:lang="da" state="translated">Markering</target></trans-unit>
+			<target state="translated">Markering</target></trans-unit>
       <trans-unit id="properties.startingPoint" xml:space="preserve" approved="yes">
 				<source>Starting Point</source>
-			<target xml:lang="da" state="translated">Udgangspunkt</target></trans-unit>
+			<target state="translated">Udgangspunkt</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve" approved="yes">
 				<source>Maximum Levels</source>
-			<target xml:lang="da" state="translated">Maksimumsniveau</target><alt-trans><target xml:lang="da">Maksimum niveau</target></alt-trans></trans-unit>
+			<target state="translated">Maksimumsniveau</target><alt-trans><target>Maksimum niveau</target></alt-trans></trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve" approved="yes">
 				<source>Empty Menu</source>
-			<target xml:lang="da" state="translated">Menuen er tom</target><alt-trans><target xml:lang="da">Tom menu</target></alt-trans></trans-unit>
+			<target state="translated">Menuen er tom</target><alt-trans><target>Tom menu</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
