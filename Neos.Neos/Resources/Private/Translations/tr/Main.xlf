@@ -5,813 +5,813 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="tr" state="translated">Otomatik Yayın</target><alt-trans><target xml:lang="tr">Otomatik yayınlama</target></alt-trans></trans-unit>
+			<target state="translated">Otomatik Yayın</target><alt-trans><target>Otomatik yayınlama</target></alt-trans></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="tr" state="translated">{0} için otomatik yayınlama</target></trans-unit>
+			<target state="translated">{0} için otomatik yayınlama</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target xml:lang="tr" state="translated">Değişiklikleri gözden geçir</target></trans-unit>
+			<target state="translated">Değişiklikleri gözden geçir</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="tr" state="translated">Uygula</target></trans-unit>
+			<target state="translated">Uygula</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="tr" state="translated">Değişiklikleri uygula</target></trans-unit>
+			<target state="translated">Değişiklikleri uygula</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="tr" state="translated">İptal et</target></trans-unit>
+			<target state="translated">İptal et</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="tr" state="translated">Geri</target></trans-unit>
+			<target state="translated">Geri</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="tr" state="translated">Seç</target></trans-unit>
+			<target state="translated">Seç</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="tr" state="translated">Aranacak metni girin</target><alt-trans><target xml:lang="tr">Aramak için yazınız</target></alt-trans></trans-unit>
+			<target state="translated">Aranacak metni girin</target><alt-trans><target>Aramak için yazınız</target></alt-trans></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="tr" state="translated">İçerik</target></trans-unit>
+			<target state="translated">İçerik</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target xml:lang="tr" state="translated">Düğüm</target></trans-unit>
+			<target state="translated">Düğüm</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target xml:lang="tr" state="translated">İçerik Önizlemesi</target><alt-trans><target xml:lang="tr">İçerik görünümü</target></alt-trans></trans-unit>
+			<target state="translated">İçerik Önizlemesi</target><alt-trans><target>İçerik görünümü</target></alt-trans></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="tr" state="translated">Bundan sonra oluştur</target><alt-trans><target xml:lang="tr">Sonradan oluştur</target></alt-trans></trans-unit>
+			<target state="translated">Bundan sonra oluştur</target><alt-trans><target>Sonradan oluştur</target></alt-trans></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="tr" state="translated">Yeni Oluştur</target></trans-unit>
+			<target state="translated">Yeni Oluştur</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="tr" state="translated">Kapat</target></trans-unit>
+			<target state="translated">Kapat</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="tr" state="translated">Kopyala</target></trans-unit>
+			<target state="translated">Kopyala</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target xml:lang="tr" state="translated">Kes</target></trans-unit>
+			<target state="translated">Kes</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="tr" state="translated">Sil</target></trans-unit>
+			<target state="translated">Sil</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target xml:lang="tr" state="translated">Evet, bu öğeyi sil</target></trans-unit>
+			<target state="translated">Evet, bu öğeyi sil</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="tr" state="translated">Bu elemanı sil</target></trans-unit>
+			<target state="translated">Bu elemanı sil</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="tr" state="translated">Görmezden gel</target><alt-trans><target xml:lang="tr">Kullanma</target></alt-trans></trans-unit>
+			<target state="translated">Görmezden gel</target><alt-trans><target>Kullanma</target></alt-trans></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="tr" state="translated">Değişiklikleri iptal et</target></trans-unit>
+			<target state="translated">Değişiklikleri iptal et</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="tr" state="translated">Başlığı düzenle</target></trans-unit>
+			<target state="translated">Başlığı düzenle</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="tr" state="translated">Düzenle / önizleme</target></trans-unit>
+			<target state="translated">Düzenle / önizleme</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="tr" state="translated">Düzenle</target></trans-unit>
+			<target state="translated">Düzenle</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target xml:lang="tr" state="translated">Sakla / görünür yap</target></trans-unit>
+			<target state="translated">Sakla / görünür yap</target></trans-unit>
       <trans-unit id="hide" xml:space="preserve">
 				<source>Hide</source>
-			<target xml:lang="tr" state="translated">Gizle</target></trans-unit>
+			<target state="translated">Gizle</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="tr" state="translated">Göster</target></trans-unit>
+			<target state="translated">Göster</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="tr" state="translated">içine</target></trans-unit>
+			<target state="translated">içine</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="tr" state="translated">önce</target></trans-unit>
+			<target state="translated">önce</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="tr" state="translated">sonra</target></trans-unit>
+			<target state="translated">sonra</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="tr" state="translated">Yükleniyor</target></trans-unit>
+			<target state="translated">Yükleniyor</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target xml:lang="tr" state="translated">Yeni Sonra</target></trans-unit>
+			<target state="translated">Yeni Sonra</target></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target xml:lang="tr" state="translated">Yeni önce</target></trans-unit>
+			<target state="translated">Yeni önce</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
-			<target xml:lang="tr" state="translated">Yeni giriş</target></trans-unit>
+			<target state="translated">Yeni giriş</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="tr" state="translated">Git</target><alt-trans><target xml:lang="tr">Gezin</target></alt-trans></trans-unit>
+			<target state="translated">Git</target><alt-trans><target>Gezin</target></alt-trans></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="tr" state="translated">Yapıldı</target><alt-trans><target xml:lang="tr">Tamam</target></alt-trans></trans-unit>
+			<target state="translated">Yapıldı</target><alt-trans><target>Tamam</target></alt-trans></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="tr" state="translated">Sayfa</target></trans-unit>
+			<target state="translated">Sayfa</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="tr" state="translated">Yapıştır</target></trans-unit>
+			<target state="translated">Yapıştır</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target xml:lang="tr" state="translated">Sonrasına yapıştır</target></trans-unit>
+			<target state="translated">Sonrasına yapıştır</target></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
-			<target xml:lang="tr" state="translated">Öncesine yapıştır</target></trans-unit>
+			<target state="translated">Öncesine yapıştır</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
 				<source>Paste Into</source>
-			<target xml:lang="tr" state="translated">İçine yapıştır</target></trans-unit>
+			<target state="translated">İçine yapıştır</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="tr" state="translated">Şifre</target></trans-unit>
+			<target state="translated">Şifre</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="tr" state="translated">Önizleme</target></trans-unit>
+			<target state="translated">Önizleme</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target xml:lang="tr" state="translated">Yayımla</target></trans-unit>
+			<target state="translated">Yayımla</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="tr" state="translated">{0} 'a yayımla</target></trans-unit>
+			<target state="translated">{0} 'a yayımla</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="tr" state="translated">Geçerli sayfa için tüm değişiklikleri yayımla</target></trans-unit>
+			<target state="translated">Geçerli sayfa için tüm değişiklikleri yayımla</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="tr" state="translated">Hedef çalışma alanı salt okunur olduğundan yayımlanamıyor</target></trans-unit>
+			<target state="translated">Hedef çalışma alanı salt okunur olduğundan yayımlanamıyor</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
-			<target xml:lang="tr" state="translated">Hedef çalışma alanı seçin</target></trans-unit>
+			<target state="translated">Hedef çalışma alanı seçin</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="tr" state="translated">Yayımlanıyor</target></trans-unit>
+			<target state="translated">Yayımlanıyor</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target xml:lang="tr" state="translated">Yayımlandı</target></trans-unit>
+			<target state="translated">Yayımlandı</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target xml:lang="tr" state="translated">Yayımlama menüsünü aç/kapa</target></trans-unit>
+			<target state="translated">Yayımlama menüsünü aç/kapa</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target xml:lang="tr" state="translated">Hedef Çalışma Alanı</target></trans-unit>
+			<target state="translated">Hedef Çalışma Alanı</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target xml:lang="tr" state="translated">Mevcut çalışma alanı</target></trans-unit>
+			<target state="translated">Mevcut çalışma alanı</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
-			<target xml:lang="tr" state="translated">Kaldır</target></trans-unit>
+			<target state="translated">Kaldır</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target xml:lang="tr" state="translated">Yenile</target></trans-unit>
+			<target state="translated">Yenile</target></trans-unit>
       <trans-unit id="save" xml:space="preserve">
 				<source>Save</source>
-			<target xml:lang="tr" state="translated">Kaydet</target></trans-unit>
+			<target state="translated">Kaydet</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target xml:lang="tr" state="translated">Kaydediliyor</target></trans-unit>
+			<target state="translated">Kaydediliyor</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target xml:lang="tr" state="translated">Kaydedildi</target></trans-unit>
+			<target state="translated">Kaydedildi</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="tr" state="translated">Ara</target></trans-unit>
+			<target state="translated">Ara</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target xml:lang="tr" state="translated">Denetleyiciyi aç/kapa</target></trans-unit>
+			<target state="translated">Denetleyiciyi aç/kapa</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="tr" state="translated">Kullanıcı adı</target></trans-unit>
+			<target state="translated">Kullanıcı adı</target></trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
-			<target xml:lang="tr" state="translated">Siz</target></trans-unit>
+			<target state="translated">Siz</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="tr" state="translated">[başlık yok]</target></trans-unit>
+			<target state="translated">[başlık yok]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="tr" state="translated">Etiket</target></trans-unit>
+			<target state="translated">Etiket</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Content Type</source>
-			<target xml:lang="tr" state="translated">İçerik türü</target></trans-unit>
+			<target state="translated">İçerik türü</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="tr" state="translated">Yol</target></trans-unit>
+			<target state="translated">Yol</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative Path</source>
-			<target xml:lang="tr" state="translated">İlgili yollar</target></trans-unit>
+			<target state="translated">İlgili yollar</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target xml:lang="tr" state="translated">Sürüm</target></trans-unit>
+			<target state="translated">Sürüm</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
-			<target xml:lang="tr" state="translated">Bu işlem geri alınamaz.</target></trans-unit>
+			<target state="translated">Bu işlem geri alınamaz.</target></trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
-			<target xml:lang="tr" state="translated">Varlık</target></trans-unit>
+			<target state="translated">Varlık</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target xml:lang="tr" state="translated">Oluşturulma tarihi</target></trans-unit>
+			<target state="translated">Oluşturulma tarihi</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target xml:lang="tr" state="translated">Son düzenleme</target></trans-unit>
+			<target state="translated">Son düzenleme</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target xml:lang="tr" state="translated">Son yayımlanma</target></trans-unit>
+			<target state="translated">Son yayımlanma</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
-			<target xml:lang="tr" state="translated">Tanıtıcı</target></trans-unit>
+			<target state="translated">Tanıtıcı</target></trans-unit>
       <trans-unit id="name" xml:space="preserve">
 				<source>Name</source>
-			<target xml:lang="tr" state="translated">İsim</target></trans-unit>
+			<target state="translated">İsim</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="tr" state="translated">Çalışma alanı</target></trans-unit>
+			<target state="translated">Çalışma alanı</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve">
 				<source>Structure</source>
-			<target xml:lang="tr" state="translated">Yapı</target></trans-unit>
+			<target state="translated">Yapı</target></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
-			<target xml:lang="tr" state="translated">İçerik yapısını değiştir</target></trans-unit>
+			<target state="translated">İçerik yapısını değiştir</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
-			<target xml:lang="tr" state="translated">Süz</target></trans-unit>
+			<target state="translated">Süz</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
-			<target xml:lang="tr" state="translated">Menüyü aç/kapat</target></trans-unit>
+			<target state="translated">Menüyü aç/kapat</target></trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
-			<target xml:lang="tr" state="translated">Yükleme hatası!</target></trans-unit>
+			<target state="translated">Yükleme hatası!</target></trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
 				<source>You have to select a node</source>
-			<target xml:lang="tr" state="translated">Bir düğüm seçmelisiniz</target></trans-unit>
+			<target state="translated">Bir düğüm seçmelisiniz</target></trans-unit>
       <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
 				<source>The Root node cannot be deleted.</source>
-			<target xml:lang="tr" state="translated">Ana düğüm silinemiyor.</target></trans-unit>
+			<target state="translated">Ana düğüm silinemiyor.</target></trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
 				<source>You cannot copy this node</source>
-			<target xml:lang="tr" state="translated">Bu düğümü kopyalayamazsınız</target></trans-unit>
+			<target state="translated">Bu düğümü kopyalayamazsınız</target></trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
-			<target xml:lang="tr" state="translated">Bu düğümü kesemezsiniz</target></trans-unit>
+			<target state="translated">Bu düğümü kesemezsiniz</target></trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
 				<source>Content Dimensions</source>
-			<target xml:lang="tr" state="translated">İçerik boyutu</target></trans-unit>
+			<target state="translated">İçerik boyutu</target></trans-unit>
       <trans-unit id="site" xml:space="preserve">
 				<source>Site</source>
-			<target xml:lang="tr" state="translated">Site</target></trans-unit>
+			<target state="translated">Site</target></trans-unit>
       <trans-unit id="document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="tr" state="translated">Belge</target></trans-unit>
+			<target state="translated">Belge</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target xml:lang="tr" state="translated">Referans</target></trans-unit>
+			<target state="translated">Referans</target></trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
-			<target xml:lang="tr" state="translated">Sunucu</target></trans-unit>
+			<target state="translated">Sunucu</target></trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
-			<target xml:lang="tr" state="translated">Şema</target></trans-unit>
+			<target state="translated">Şema</target></trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
-			<target xml:lang="tr" state="translated">Port</target></trans-unit>
+			<target state="translated">Port</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="tr" state="translated">Birincil</target></trans-unit>
+			<target state="translated">Birincil</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="tr" state="translated">Paket</target></trans-unit>
+			<target state="translated">Paket</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
-			<target xml:lang="tr" state="translated">Devre dışı</target></trans-unit>
+			<target state="translated">Devre dışı</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="tr" state="translated">Kullanım dışı</target></trans-unit>
+			<target state="translated">Kullanım dışı</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="tr" state="translated">Aktif Değil</target></trans-unit>
+			<target state="translated">Aktif Değil</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target xml:lang="tr" state="translated">Düzenlemek için tıkla</target></trans-unit>
+			<target state="translated">Düzenlemek için tıkla</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="tr" state="translated">Devre dışı bırakmak için tıklayın</target></trans-unit>
+			<target state="translated">Devre dışı bırakmak için tıklayın</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="tr" state="translated">Aktif hale getirmek için tıklayın</target></trans-unit>
+			<target state="translated">Aktif hale getirmek için tıklayın</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target xml:lang="tr" state="translated">Silmek için tıklayın</target></trans-unit>
+			<target state="translated">Silmek için tıklayın</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="tr" state="translated">Yeni oluşturmak için tıklayın</target></trans-unit>
+			<target state="translated">Yeni oluşturmak için tıklayın</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="tr" state="translated">Durum</target></trans-unit>
+			<target state="translated">Durum</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="tr" state="translated">Aktif</target></trans-unit>
+			<target state="translated">Aktif</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="tr" state="translated">Alan adları</target></trans-unit>
+			<target state="translated">Alan adları</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="tr" state="translated">Alan adı</target></trans-unit>
+			<target state="translated">Alan adı</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="tr" state="translated">Evet, sil!</target></trans-unit>
+			<target state="translated">Evet, sil!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
-			<target xml:lang="tr" state="translated">Paket anahtarı</target></trans-unit>
+			<target state="translated">Paket anahtarı</target></trans-unit>
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
-			<target xml:lang="tr" state="translated">Açıklama</target></trans-unit>
+			<target state="translated">Açıklama</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target xml:lang="tr" state="needs-translation">Toggle content tree</target></trans-unit>
+			<target state="needs-translation">Toggle content tree</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target xml:lang="tr" state="needs-translation">Show publish options</target></trans-unit>
+			<target state="needs-translation">Show publish options</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target xml:lang="tr" state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target xml:lang="tr" state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target xml:lang="tr" state="needs-translation">Show preview</target></trans-unit>
+			<target state="needs-translation">Show preview</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="tr" state="translated">Genel</target></trans-unit>
+			<target state="translated">Genel</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
-			<target xml:lang="tr" state="translated">Yapı</target></trans-unit>
+			<target state="translated">Yapı</target></trans-unit>
       <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
 				<source>Plugins</source>
-			<target xml:lang="tr" state="translated">Eklentiler</target></trans-unit>
+			<target state="translated">Eklentiler</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="tr" state="translated">Sayfaya devam etmek için {0} 'a tıklayın.</target></trans-unit>
+			<target state="translated">Sayfaya devam etmek için {0} 'a tıklayın.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="tr" state="translated">Dosyayı görmek için {0} 'a tıklayın.</target></trans-unit>
+			<target state="translated">Dosyayı görmek için {0} 'a tıklayın.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="tr" state="translated">Linki açmak için {0} 'a tıklayın.</target></trans-unit>
+			<target state="translated">Linki açmak için {0} 'a tıklayın.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="tr" state="translated">(hiçbir hedef seçilmedi)</target></trans-unit>
+			<target state="translated">(hiçbir hedef seçilmedi)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="tr" state="translated">Bu, ilk alt sayfaya bir kısayoldur. &lt;br /&gt;Sayfaya devam etmek için {0} 'a tıklayın.</target></trans-unit>
+			<target state="translated">Bu, ilk alt sayfaya bir kısayoldur. &lt;br /&gt;Sayfaya devam etmek için {0} 'a tıklayın.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="tr" state="translated">Bu, üst sayfaya bir kısayoldur. &lt;br /&gt;Sayfaya devam etmek için {0} 'a tıklayın.</target></trans-unit>
+			<target state="translated">Bu, üst sayfaya bir kısayoldur. &lt;br /&gt;Sayfaya devam etmek için {0} 'a tıklayın.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="tr" state="translated">Tam Ekran</target></trans-unit>
+			<target state="translated">Tam Ekran</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
         <note>Deprecated, replaced by previewShortcutButton.title</note>
-			<target xml:lang="tr" state="translated">Sayfayı canlı çalışma alanında aç</target></trans-unit>
+			<target state="translated">Sayfayı canlı çalışma alanında aç</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
 				<source>Open page in target workspace</source>
-			<target xml:lang="tr" state="translated">Sayfayı hedef çalışma alanında aç</target></trans-unit>
+			<target state="translated">Sayfayı hedef çalışma alanında aç</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
-			<target xml:lang="tr" state="translated">Hepsini iptal et</target></trans-unit>
+			<target state="translated">Hepsini iptal et</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="tr" state="translated">Bütün değişiklikleri iptal et</target></trans-unit>
+			<target state="translated">Bütün değişiklikleri iptal et</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="tr" state="translated">Bu çalışma alanındaki tüm değişiklikleri iptal etmek istediğinizden emin misiniz?</target></trans-unit>
+			<target state="translated">Bu çalışma alanındaki tüm değişiklikleri iptal etmek istediğinizden emin misiniz?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
-			<target xml:lang="tr" state="translated">Tümünü yayımla</target></trans-unit>
+			<target state="translated">Tümünü yayımla</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="tr" state="translated">Tüm değişiklikleri yayımla</target></trans-unit>
+			<target state="translated">Tüm değişiklikleri yayımla</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="tr" state="translated">Tüm değişiklikleri yayımlamak istediğinizden emin misiniz?</target></trans-unit>
+			<target state="translated">Tüm değişiklikleri yayımlamak istediğinizden emin misiniz?</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
 				<source>Pending changes</source>
-			<target xml:lang="tr" state="translated">Bekleyen değişiklikler</target></trans-unit>
+			<target state="translated">Bekleyen değişiklikler</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="tr" state="translated">Kişisel çalışma alanınız şu anda yayınlanmamış değişiklikler içeriyor. Farklı hedef çalışma alanına geçmek için öncelikle değişiklikleri ya yayımlamalı ya da iptal etmelisiniz.</target></trans-unit>
+			<target state="translated">Kişisel çalışma alanınız şu anda yayınlanmamış değişiklikler içeriyor. Farklı hedef çalışma alanına geçmek için öncelikle değişiklikleri ya yayımlamalı ya da iptal etmelisiniz.</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="tr" state="translated">Lütfen değişikliklerinizi gözden geçirip yayınlayın veya iptal edin, sonrasında tekrar yeni bir hedef çalışma alanı seçin.</target></trans-unit>
+			<target state="translated">Lütfen değişikliklerinizi gözden geçirip yayınlayın veya iptal edin, sonrasında tekrar yeni bir hedef çalışma alanı seçin.</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="tr" state="translated">Düzenleme modları</target></trans-unit>
+			<target state="translated">Düzenleme modları</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target xml:lang="tr" state="translated">Merkezi Önizle</target></trans-unit>
+			<target state="translated">Merkezi Önizle</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="tr" state="translated">Hala değişiklikleriniz bulunmakta. Onları ne yapmak istersiniz?</target></trans-unit>
+			<target state="translated">Hala değişiklikleriniz bulunmakta. Onları ne yapmak istersiniz?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="tr" state="translated">Seçili öğe</target></trans-unit>
+			<target state="translated">Seçili öğe</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="tr" state="translated">Doğru şekilde doldurulmamış alanlar var.</target><alt-trans><target xml:lang="tr">Doğru şekilde doldurulmamış alanlar bulunmakta.</target></alt-trans></trans-unit>
+			<target state="translated">Doğru şekilde doldurulmamış alanlar var.</target><alt-trans><target>Doğru şekilde doldurulmamış alanlar bulunmakta.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="tr" state="translated">Hata ile işaretlenmiş alanlar henüz doğru şekilde doldurulmamış. Lütfen bu kısımları uygun şekilde tamamlayınız.</target></trans-unit>
+			<target state="translated">Hata ile işaretlenmiş alanlar henüz doğru şekilde doldurulmamış. Lütfen bu kısımları uygun şekilde tamamlayınız.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target xml:lang="tr" state="translated">Düzenlemeye devam et</target></trans-unit>
+			<target state="translated">Düzenlemeye devam et</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target xml:lang="tr" state="translated">At</target><alt-trans><target xml:lang="tr">Atmak</target></alt-trans></trans-unit>
+			<target state="translated">At</target><alt-trans><target>Atmak</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="tr" state="translated">Uygula</target></trans-unit>
+			<target state="translated">Uygula</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
-			<target xml:lang="tr" state="translated">Bir eklenti seçin</target></trans-unit>
+			<target state="translated">Bir eklenti seçin</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve">
 				<source>No plugin configured</source>
-			<target xml:lang="tr" state="translated">Hiçbir eklenti yapılandırılmamış</target></trans-unit>
+			<target state="translated">Hiçbir eklenti yapılandırılmamış</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
-			<target xml:lang="tr" state="translated">görüntü, sayfada gösteriliyor</target></trans-unit>
+			<target state="translated">görüntü, sayfada gösteriliyor</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
-			<target xml:lang="tr" state="translated">görüntü, mevcut sayfada gösteriliyor</target></trans-unit>
+			<target state="translated">görüntü, mevcut sayfada gösteriliyor</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
-			<target xml:lang="tr" state="translated">Tarih ayarlanmadı</target></trans-unit>
+			<target state="translated">Tarih ayarlanmadı</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
-			<target xml:lang="tr" state="translated">Kodu düzenle</target></trans-unit>
+			<target state="translated">Kodu düzenle</target></trans-unit>
       <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve">
 				<source>Paste a link, or type to search</source>
-			<target xml:lang="tr" state="translated">Bir bağlantı yapıştırın veya arama yapmak için yazın</target></trans-unit>
+			<target state="translated">Bir bağlantı yapıştırın veya arama yapmak için yazın</target></trans-unit>
       <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve">
 				<source>Unable to load sub node types of:</source>
-			<target xml:lang="tr" state="translated">Şu alt düğüm türleri yüklenemedi:</target></trans-unit>
+			<target state="translated">Şu alt düğüm türleri yüklenemedi:</target></trans-unit>
       <trans-unit id="content.inspector.groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="tr" state="translated">Türü değiştir</target></trans-unit>
+			<target state="translated">Türü değiştir</target></trans-unit>
       <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="tr" state="translated">İlave bilgi</target></trans-unit>
+			<target state="translated">İlave bilgi</target></trans-unit>
       <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="tr" state="translated">Netlik</target><alt-trans><target xml:lang="tr">Görünürlük</target></alt-trans></trans-unit>
+			<target state="translated">Netlik</target><alt-trans><target>Görünürlük</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
-			<target xml:lang="tr" state="translated">Belge ayarları</target></trans-unit>
+			<target state="translated">Belge ayarları</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
-			<target xml:lang="tr" state="translated">Yazının uzunluğu {minimum} ile {maximum} karakter arasında olmalıdır.</target></trans-unit>
+			<target state="translated">Yazının uzunluğu {minimum} ile {maximum} karakter arasında olmalıdır.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
 				<source>This field must contain at least {minimum} characters.</source>
-			<target xml:lang="tr" state="translated">Bu alan en az {minimum} karakter içermeli.</target></trans-unit>
+			<target state="translated">Bu alan en az {minimum} karakter içermeli.</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
 				<source>This text may not exceed {maximum} characters.</source>
-			<target xml:lang="tr" state="translated">Bu metin {maximum} karakteri aşamaz.</target></trans-unit>
+			<target state="translated">Bu metin {maximum} karakteri aşamaz.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="tr" state="translated">Sadece ingilizce harfler (a-z, ve noktalı harfler) kullanılabilir.</target><alt-trans><target xml:lang="tr">Sadece normal harfler (a-z, ve noktalı harfler) kullanılabilir.</target></alt-trans></trans-unit>
+			<target state="translated">Sadece ingilizce harfler (a-z, ve noktalı harfler) kullanılabilir.</target><alt-trans><target>Sadece normal harfler (a-z, ve noktalı harfler) kullanılabilir.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
-			<target xml:lang="tr" state="translated">Verilen başlık sayılabilir değildi.</target></trans-unit>
+			<target state="translated">Verilen başlık sayılabilir değildi.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
 				<source>The count must be between {minimum} and {maximum}.</source>
-			<target xml:lang="tr" state="translated">Sayaç {minimum} ile {maximum} arasında olmalıdır.</target></trans-unit>
+			<target state="translated">Sayaç {minimum} ile {maximum} arasında olmalıdır.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
 				<source>The given value was not a valid date.</source>
-			<target xml:lang="tr" state="translated">Verilen değer geçerli bir tarih değildi.</target></trans-unit>
+			<target state="translated">Verilen değer geçerli bir tarih değildi.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
 				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
-			<target xml:lang="tr" state="translated">Verilen tarih {formatEarliestDate} ile {formatLatestDate} arasında olmalıdır</target></trans-unit>
+			<target state="translated">Verilen tarih {formatEarliestDate} ile {formatLatestDate} arasında olmalıdır</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
 				<source>The given date must be after {formatEarliestDate}</source>
-			<target xml:lang="tr" state="translated">Verilen tarih {formatEarliestDate}'dan sonra olmalıdır</target></trans-unit>
+			<target state="translated">Verilen tarih {formatEarliestDate}'dan sonra olmalıdır</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
 				<source>The given date must be before {formatLatestDate}</source>
-			<target xml:lang="tr" state="translated">Verilen tarih {formatLatestDate}'den önce olmalıdır</target></trans-unit>
+			<target state="translated">Verilen tarih {formatLatestDate}'den önce olmalıdır</target></trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
 				<source>Please specify a valid email address.</source>
-			<target xml:lang="tr" state="translated">Lütfen geçerli bir e-posta adresi girin.</target></trans-unit>
+			<target state="translated">Lütfen geçerli bir e-posta adresi girin.</target></trans-unit>
       <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
 				<source>A valid float number is expected.</source>
-			<target xml:lang="tr" state="translated">Geçerli bir ondalık sayı bekleniyor.</target></trans-unit>
+			<target state="translated">Geçerli bir ondalık sayı bekleniyor.</target></trans-unit>
       <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve">
 				<source>A valid integer number is expected.</source>
-			<target xml:lang="tr" state="translated">Geçerli bir tamsayı bekleniyor.</target></trans-unit>
+			<target state="translated">Geçerli bir tamsayı bekleniyor.</target></trans-unit>
       <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
-			<target xml:lang="tr" state="translated">Yalnızca harfler, sayılar, boşluklar ve belirli noktalama işaretleri kabul edilir.</target></trans-unit>
+			<target state="translated">Yalnızca harfler, sayılar, boşluklar ve belirli noktalama işaretleri kabul edilir.</target></trans-unit>
       <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
 				<source>This property is required.</source>
-			<target xml:lang="tr" state="translated">Bu özellik gereklidir.</target></trans-unit>
+			<target state="translated">Bu özellik gereklidir.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve">
 				<source>A valid number is expected.</source>
-			<target xml:lang="tr" state="translated">Geçerli bir sayı bekleniyor.</target></trans-unit>
+			<target state="translated">Geçerli bir sayı bekleniyor.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
 				<source>Please enter a valid number between {minimum} and {maximum}</source>
-			<target xml:lang="tr" state="translated">Lütfen {minimum} ile {maximum} arasında, geçerli bir sayı girin</target></trans-unit>
+			<target state="translated">Lütfen {minimum} ile {maximum} arasında, geçerli bir sayı girin</target></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
 				<source>The given subject did not match the pattern ({pattern})</source>
-			<target xml:lang="tr" state="translated">Verilen konu şablon ({pattern}) ile eşleşmedi</target></trans-unit>
+			<target state="translated">Verilen konu şablon ({pattern}) ile eşleşmedi</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
 				<source>A valid string is expected.</source>
-			<target xml:lang="tr" state="translated">Geçerli bir dizi bekleniyor.</target></trans-unit>
+			<target state="translated">Geçerli bir dizi bekleniyor.</target></trans-unit>
       <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
 				<source>Valid text without any XML tags is expected.</source>
-			<target xml:lang="tr" state="translated">XML etiketleri bulundurmayan, geçerli bir metin bekleniyor.</target></trans-unit>
+			<target state="translated">XML etiketleri bulundurmayan, geçerli bir metin bekleniyor.</target></trans-unit>
       <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
 				<source>The given subject is not a valid UUID.</source>
-			<target xml:lang="tr" state="translated">Verilen konu geçerli bir UUID değil.</target></trans-unit>
+			<target state="translated">Verilen konu geçerli bir UUID değil.</target></trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
 				<source>Toggle content dimensions selector</source>
-			<target xml:lang="tr" state="translated">Içerik boyutu seçiciyi aç/kapa</target></trans-unit>
+			<target state="translated">Içerik boyutu seçiciyi aç/kapa</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
-			<target xml:lang="tr" state="translated">Önceden dolu bir belge ile mi yoksa boş bir belge ile başlansın?</target></trans-unit>
+			<target state="translated">Önceden dolu bir belge ile mi yoksa boş bir belge ile başlansın?</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
 				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
-			<target xml:lang="tr" state="translated">Bu {nodeTypeLabel} {currentDimensionChoiceText}'de henüz mevcut değildir.</target></trans-unit>
+			<target state="translated">Bu {nodeTypeLabel} {currentDimensionChoiceText}'de henüz mevcut değildir.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
-			<target xml:lang="tr" state="translated">Şuanda, boş bir {nodeTypeLabel} ile başlayarak veya {currentDocumentDimensionChoiceText}'daki {nodeTypeLabel}'dan şu anda görünür olan bütün içeriği kopyalayarak oluşturabilirsiniz.</target></trans-unit>
+			<target state="translated">Şuanda, boş bir {nodeTypeLabel} ile başlayarak veya {currentDocumentDimensionChoiceText}'daki {nodeTypeLabel}'dan şu anda görünür olan bütün içeriği kopyalayarak oluşturabilirsiniz.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
-			<target xml:lang="tr" state="translated">Ayrıca, üst belgeye sahip olmayan, seçili değişkende de var olmayan {numberOfNodesMissingInRootline} adet belge bulunmakta ve bu belgeler de oluşturulacak.</target></trans-unit>
+			<target state="translated">Ayrıca, üst belgeye sahip olmayan, seçili değişkende de var olmayan {numberOfNodesMissingInRootline} adet belge bulunmakta ve bu belgeler de oluşturulacak.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target xml:lang="tr" state="translated">Boş oluştur</target></trans-unit>
+			<target state="translated">Boş oluştur</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
-			<target xml:lang="tr" state="translated">Oluştur ve kopyala</target></trans-unit>
+			<target state="translated">Oluştur ve kopyala</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="tr" state="translated">İçerik</target></trans-unit>
+			<target state="translated">İçerik</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
-			<target xml:lang="tr" state="translated">Menü grubunu Aç/Kapat</target></trans-unit>
+			<target state="translated">Menü grubunu Aç/Kapat</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
-			<target xml:lang="tr" state="translated">Yapışkan menü modunu aç/kapa</target></trans-unit>
+			<target state="translated">Yapışkan menü modunu aç/kapa</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="tr" state="translated">Gerçekten silmek istiyor musunuz</target></trans-unit>
+			<target state="translated">Gerçekten silmek istiyor musunuz</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
-			<target xml:lang="tr" state="translated">Bu, öğeyi siler</target></trans-unit>
+			<target state="translated">Bu, öğeyi siler</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
-			<target xml:lang="tr" state="translated">ve onun çocukları</target><alt-trans><target xml:lang="tr">ve çocukları</target></alt-trans></trans-unit>
+			<target state="translated">ve onun çocukları</target><alt-trans><target>ve çocukları</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="tr" state="translated">Bu eylem çalışma alanı yönetiminde geri alınabilir.</target></trans-unit>
+			<target state="translated">Bu eylem çalışma alanı yönetiminde geri alınabilir.</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="tr" state="translated">Yükseklik</target></trans-unit>
+			<target state="translated">Yükseklik</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="tr" state="translated">Gerçekten silmek istiyor musunuz</target></trans-unit>
+			<target state="translated">Gerçekten silmek istiyor musunuz</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
-			<target xml:lang="tr" state="translated">bu öğe</target></trans-unit>
+			<target state="translated">bu öğe</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="tr" state="translated">Bu, öğeyi siler.</target><alt-trans><target xml:lang="tr">Bu, öğeyi silecektir.</target></alt-trans></trans-unit>
+			<target state="translated">Bu, öğeyi siler.</target><alt-trans><target>Bu, öğeyi silecektir.</target></alt-trans></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="tr" state="translated">Bu eylem çalışma alanı yönetiminde geri alınabilir.</target></trans-unit>
+			<target state="translated">Bu eylem çalışma alanı yönetiminde geri alınabilir.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="tr" state="translated">Medya</target></trans-unit>
+			<target state="translated">Medya</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
-			<target xml:lang="tr" state="translated">Kırp</target></trans-unit>
+			<target state="translated">Kırp</target></trans-unit>
       <trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="tr" state="translated">Genişlik</target></trans-unit>
+			<target state="translated">Genişlik</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="tr" state="translated">Gerekli özellik eksik: </target></trans-unit>
+			<target state="translated">Gerekli özellik eksik: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="tr" state="translated">Çalışma alanı</target></trans-unit>
+			<target state="translated">Çalışma alanı</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="tr" state="translated">Çalışma alanları</target></trans-unit>
+			<target state="translated">Çalışma alanları</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target xml:lang="tr" state="translated">Kaydetme sırasında bir hata oluştu</target></trans-unit>
+			<target state="translated">Kaydetme sırasında bir hata oluştu</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="tr" state="translated">Sorunu gidermeyi denemek için sayfayı yeniden yükleyin.</target></trans-unit>
+			<target state="translated">Sorunu gidermeyi denemek için sayfayı yeniden yükleyin.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
-			<target xml:lang="tr" state="translated">Arka planı yeniden yükle</target></trans-unit>
+			<target state="translated">Arka planı yeniden yükle</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target xml:lang="tr" state="translated">Yeniden yükle</target></trans-unit>
+			<target state="translated">Yeniden yükle</target></trans-unit>
       <!-- Edit / preview modes -->
       <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
 				<source>In-Place</source>
-			<target xml:lang="tr" state="translated">Yerinde</target></trans-unit>
+			<target state="translated">Yerinde</target></trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
-			<target xml:lang="tr" state="translated">Ham İçerik</target></trans-unit>
+			<target state="translated">Ham İçerik</target></trans-unit>
       <trans-unit id="rawContentMode" xml:space="preserve">
 				<source>Raw Content Mode</source>
-			<target xml:lang="tr" state="translated">Ham içerik modu</target></trans-unit>
+			<target state="translated">Ham içerik modu</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
-			<target xml:lang="tr" state="translated">Masaüstü</target></trans-unit>
+			<target state="translated">Masaüstü</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
-			<target xml:lang="tr" state="translated">Giriş</target></trans-unit>
+			<target state="translated">Giriş</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target xml:lang="tr" state="translated">Kimlik Doğrulanıyor</target><alt-trans><target xml:lang="tr">Authenticating</target></alt-trans></trans-unit>
+			<target state="translated">Kimlik Doğrulanıyor</target><alt-trans><target>Authenticating</target></alt-trans></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="tr" state="translated">Çıkış Yap</target></trans-unit>
+			<target state="translated">Çıkış Yap</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="tr" state="translated">Girilen kullanıcı adı veya parola yanlıştı</target></trans-unit>
+			<target state="translated">Girilen kullanıcı adı veya parola yanlıştı</target></trans-unit>
       <trans-unit id="login.expired" xml:space="preserve">
 				<source>Your login has expired. Please log in again.</source>
-			<target xml:lang="tr" state="translated">Oturumunuz zaman aşımına uğradı. Lütfen tekrar giriş yapın.</target></trans-unit>
+			<target state="translated">Oturumunuz zaman aşımına uğradı. Lütfen tekrar giriş yapın.</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
 				<source>Welcome to Neos</source>
-			<target xml:lang="tr" state="needs-translation">Welcome to Neos</target></trans-unit>
+			<target state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target xml:lang="tr" state="translated">Kurulum dosyasına gidin</target><alt-trans><target xml:lang="tr">Kuruluma gidin</target></alt-trans></trans-unit>
+			<target state="translated">Kurulum dosyasına gidin</target><alt-trans><target>Kuruluma gidin</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
 				<source>Technical Information</source>
-			<target xml:lang="tr" state="needs-translation">Technical Information</target></trans-unit>
+			<target state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="tr" state="translated">Eksik ana sayfa</target></trans-unit>
+			<target state="translated">Eksik ana sayfa</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="tr" state="translated">Hiçbir site tanımlanmadı, site bir ana sayfa içermiyor veya etkin site belirlenemedi.</target></trans-unit>
+			<target state="translated">Hiçbir site tanımlanmadı, site bir ana sayfa içermiyor veya etkin site belirlenemedi.</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="tr" state="translated">Sitenin alan adını ayarlamak veya kurulumda yeni bir site içe aktarmak isteyebilirsiniz.</target></trans-unit>
+			<target state="translated">Sitenin alan adını ayarlamak veya kurulumda yeni bir site içe aktarmak isteyebilirsiniz.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="tr" state="translated">Veri tabanı hatası</target></trans-unit>
+			<target state="translated">Veri tabanı hatası</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target xml:lang="tr" state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+			<target state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target xml:lang="tr" state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+			<target state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="tr" state="translated">Sayfa bulunamadı</target></trans-unit>
+			<target state="translated">Sayfa bulunamadı</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="tr" state="translated">Maalesef istediğiniz sayfa bulunamadı.</target></trans-unit>
+			<target state="translated">Maalesef istediğiniz sayfa bulunamadı.</target></trans-unit>
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
 				<source>Invalid NodeType</source>
-			<target xml:lang="tr" state="translated">Geçersiz Düğüm Türü</target></trans-unit>
+			<target state="translated">Geçersiz Düğüm Türü</target></trans-unit>
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target xml:lang="tr" state="translated">Burada oluşturulması beklenen NodeType yapılandırması kullanılamaz. Muhtemelen NodeType'ı yeniden adlandırdınız ve bir geçiş işlemi yapmadınız ya da sadece hatalı yazdınız.</target></trans-unit>
+			<target state="translated">Burada oluşturulması beklenen NodeType yapılandırması kullanılamaz. Muhtemelen NodeType'ı yeniden adlandırdınız ve bir geçiş işlemi yapmadınız ya da sadece hatalı yazdınız.</target></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
-			<target xml:lang="tr" state="translated">Düğüm oluşturulurken beklenmeyen hata oluştu</target></trans-unit>
+			<target state="translated">Düğüm oluşturulurken beklenmeyen hata oluştu</target></trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
-			<target xml:lang="tr" state="translated">Düğüm silinirken beklenmeyen hata oluştu</target></trans-unit>
+			<target state="translated">Düğüm silinirken beklenmeyen hata oluştu</target></trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
 				<source>Unexpected error while updating node</source>
-			<target xml:lang="tr" state="translated">Düğüm güncellenirken beklenmedik bir hata oluştu</target></trans-unit>
+			<target state="translated">Düğüm güncellenirken beklenmedik bir hata oluştu</target></trans-unit>
       <trans-unit id="error.node.move.unexpected" xml:space="preserve">
 				<source>Unexpected error while moving node</source>
-			<target xml:lang="tr" state="translated">Düğüm hareket ederken beklenmeyen hata</target></trans-unit>
+			<target state="translated">Düğüm hareket ederken beklenmeyen hata</target></trans-unit>
       <trans-unit id="error.nodeTree.load" xml:space="preserve">
 				<source>Node Tree loading error.</source>
-			<target xml:lang="tr" state="translated">Düğüm Ağacı yükleme hatası.</target></trans-unit>
+			<target state="translated">Düğüm Ağacı yükleme hatası.</target></trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="tr" state="translated">Girilen kullanıcı adı veya parola yanlıştı</target></trans-unit>
+			<target state="translated">Girilen kullanıcı adı veya parola yanlıştı</target></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target xml:lang="tr" state="translated">"{nodeType Name}" sayfa "{page Label}"</target></trans-unit>
+			<target state="translated">"{nodeType Name}" sayfa "{page Label}"</target></trans-unit>
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve">
 				<source>Nodes</source>
-			<target xml:lang="tr" state="translated">Düğümler</target></trans-unit>
+			<target state="translated">Düğümler</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
-			<target xml:lang="tr" state="translated">Göster</target></trans-unit>
+			<target state="translated">Göster</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
-			<target xml:lang="tr" state="translated">Bu düğüme genel bir URL aracılığıyla erişilemez</target></trans-unit>
+			<target state="translated">Bu düğüme genel bir URL aracılığıyla erişilemez</target></trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
-			<target xml:lang="tr" state="translated">Düğüm Özellikleri</target></trans-unit>
+			<target state="translated">Düğüm Özellikleri</target></trans-unit>
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
 				<source>Copy {source} to {target}</source>
-			<target xml:lang="tr" state="translated">{source}'ı, {target}'e kopyala</target><alt-trans><target xml:lang="tr">{source}'ı {target}'e kopyala</target></alt-trans></trans-unit>
+			<target state="translated">{source}'ı, {target}'e kopyala</target><alt-trans><target>{source}'ı {target}'e kopyala</target></alt-trans></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
-			<target xml:lang="tr" state="translated">{source}'ı, {target}'e taşı</target></trans-unit>
+			<target state="translated">{source}'ı, {target}'e taşı</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target xml:lang="tr" state="translated">Lütfen {source} öğesinin {target} ile ilişkili olarak yerleştirilmesini istediğiniz konumu seçin.</target></trans-unit>
+			<target state="translated">Lütfen {source} öğesinin {target} ile ilişkili olarak yerleştirilmesini istediğiniz konumu seçin.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
-			<target xml:lang="tr" state="translated">Ekle</target></trans-unit>
+			<target state="translated">Ekle</target></trans-unit>
       <trans-unit id="insertMode" xml:space="preserve">
 				<source>Insert mode</source>
-			<target xml:lang="tr" state="translated">Ekleme Modu</target></trans-unit>
+			<target state="translated">Ekleme Modu</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target xml:lang="tr" state="translated">Bir görünüm açısı seç</target></trans-unit>
+			<target state="translated">Bir görünüm açısı seç</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
-			<target xml:lang="tr" state="translated">Kalın</target></trans-unit>
+			<target state="translated">Kalın</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
 				<source>Italic</source>
-			<target xml:lang="tr" state="translated">İtalik / Eğik</target></trans-unit>
+			<target state="translated">İtalik / Eğik</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
 				<source>Underline</source>
-			<target xml:lang="tr" state="translated">Altıçizili</target></trans-unit>
+			<target state="translated">Altıçizili</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
-			<target xml:lang="tr" state="translated">Altsimge</target></trans-unit>
+			<target state="translated">Altsimge</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
-			<target xml:lang="tr" state="translated">Üstsimge</target></trans-unit>
+			<target state="translated">Üstsimge</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
-			<target xml:lang="tr" state="translated">Üstü Çizili</target></trans-unit>
+			<target state="translated">Üstü Çizili</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
-			<target xml:lang="tr" state="translated">Bağlantı</target></trans-unit>
+			<target state="translated">Bağlantı</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
-			<target xml:lang="tr" state="translated">Maddeli Liste</target></trans-unit>
+			<target state="translated">Maddeli Liste</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
 				<source>Unordered list</source>
-			<target xml:lang="tr" state="translated">Sırasız Liste</target></trans-unit>
+			<target state="translated">Sırasız Liste</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
 				<source>Align left</source>
-			<target xml:lang="tr" state="translated">Sola Hizala</target></trans-unit>
+			<target state="translated">Sola Hizala</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
 				<source>Align right</source>
-			<target xml:lang="tr" state="translated">Sağa Hizala</target></trans-unit>
+			<target state="translated">Sağa Hizala</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
 				<source>Align center</source>
-			<target xml:lang="tr" state="translated">Oraya Hizala</target></trans-unit>
+			<target state="translated">Oraya Hizala</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
 				<source>Align justify</source>
-			<target xml:lang="tr" state="translated">Geniş Hizala</target></trans-unit>
+			<target state="translated">Geniş Hizala</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
 				<source>Table</source>
-			<target xml:lang="tr" state="translated">Tablo</target></trans-unit>
+			<target state="translated">Tablo</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
 				<source>Remove format</source>
-			<target xml:lang="tr" state="translated">Biçimi Sil</target></trans-unit>
+			<target state="translated">Biçimi Sil</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target xml:lang="tr" state="translated">Girintiyi azalt</target></trans-unit>
+			<target state="translated">Girintiyi azalt</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target xml:lang="tr" state="translated">Girinti</target></trans-unit>
+			<target state="translated">Girinti</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="tr" state="translated">Yeni Oluştur</target></trans-unit>
+			<target state="translated">Yeni Oluştur</target></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
-			<target xml:lang="tr" state="translated">Eşleşme Bulunamadı</target></trans-unit>
+			<target state="translated">Eşleşme Bulunamadı</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target xml:lang="tr" state="translated">Lütfen ###CHARACTERS### daha karakter yazın</target></trans-unit>
+			<target state="translated">Lütfen ###CHARACTERS### daha karakter yazın</target></trans-unit>
     </body>
   </file>
 </xliff>

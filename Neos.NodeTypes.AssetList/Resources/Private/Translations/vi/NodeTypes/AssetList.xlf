@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Asset list</source>
-			<target xml:lang="vi" state="translated">Danh sách tài sản</target></trans-unit>
+			<target state="translated">Danh sách tài sản</target></trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve">
 				<source>Resources</source>
-			<target xml:lang="vi" state="translated">Tài nguyên</target><alt-trans><target xml:lang="vi">Mã nguồn</target></alt-trans></trans-unit>
+			<target state="translated">Tài nguyên</target><alt-trans><target>Mã nguồn</target></alt-trans></trans-unit>
       <trans-unit id="properties.assets" xml:space="preserve">
 				<source>Assets</source>
-			<target xml:lang="vi" state="translated">Tài sản</target></trans-unit>
+			<target state="translated">Tài sản</target></trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve">
 				<source>Empty asset list</source>
-			<target xml:lang="vi" state="needs-translation">Empty asset list</target></trans-unit>
+			<target state="needs-translation">Empty asset list</target></trans-unit>
     </body>
   </file>
 </xliff>
