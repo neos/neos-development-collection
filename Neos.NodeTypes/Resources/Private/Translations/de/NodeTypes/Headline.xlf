@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Headline</source>
-			<target xml:lang="de" state="translated">Titel</target><alt-trans><target xml:lang="de">Überschrift</target></alt-trans></trans-unit>
+			<target state="translated">Titel</target><alt-trans><target>Überschrift</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

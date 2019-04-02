@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="next" xml:space="preserve">
 				<source>next</source>
-			<target xml:lang="zh-TW" state="translated">下一頁</target></trans-unit>
+			<target state="translated">下一頁</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>previous</source>
-			<target xml:lang="zh-TW" state="translated">上一頁</target></trans-unit>
+			<target state="translated">上一頁</target></trans-unit>
     </body>
   </file>
 </xliff>

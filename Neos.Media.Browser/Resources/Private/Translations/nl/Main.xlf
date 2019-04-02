@@ -4,431 +4,431 @@
     <body>
       <trans-unit id="dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="nl" state="translated">Sleep een asset naar een collectie of tag om deze daaraan toe te voegen.</target></trans-unit>
+			<target state="translated">Sleep een asset naar een collectie of tag om deze daaraan toe te voegen.</target></trans-unit>
       <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
-			<target xml:lang="nl" state="translated">Het bestand "{0}" behouden</target></trans-unit>
+			<target state="translated">Het bestand "{0}" behouden</target></trans-unit>
       <trans-unit id="module.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
-			<target xml:lang="nl" state="translated">Media</target></trans-unit>
+			<target state="translated">Media</target></trans-unit>
       <trans-unit id="module.description" xml:space="preserve" approved="yes">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="nl" state="translated">Deze module stelt u in staat media bestanden waaronder afbeeldingen, video's, audio bestanden en documenten te beheren.</target></trans-unit>
+			<target state="translated">Deze module stelt u in staat media bestanden waaronder afbeeldingen, video's, audio bestanden en documenten te beheren.</target></trans-unit>
       <trans-unit id="field.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
-			<target xml:lang="nl" state="translated">Naam</target></trans-unit>
+			<target state="translated">Naam</target></trans-unit>
       <trans-unit id="field.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="nl" state="translated">Titel</target></trans-unit>
+			<target state="translated">Titel</target></trans-unit>
       <trans-unit id="field.label" xml:space="preserve" approved="yes">
 				<source>Label</source>
-			<target xml:lang="nl" state="translated">Label</target></trans-unit>
+			<target state="translated">Label</target></trans-unit>
       <trans-unit id="field.caption" xml:space="preserve" approved="yes">
 				<source>Caption</source>
-			<target xml:lang="nl" state="translated">Onderschrift</target></trans-unit>
+			<target state="translated">Onderschrift</target></trans-unit>
       <trans-unit id="field.copyrightnotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target xml:lang="nl" state="translated">Copyright melding</target></trans-unit>
+			<target state="translated">Copyright melding</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified</source>
-			<target xml:lang="nl" state="translated">Laatst bewerkt</target></trans-unit>
+			<target state="translated">Laatst bewerkt</target></trans-unit>
       <trans-unit id="field.fileSize" xml:space="preserve" approved="yes">
 				<source>File size</source>
-			<target xml:lang="nl" state="translated">Bestandsgrootte</target></trans-unit>
+			<target state="translated">Bestandsgrootte</target></trans-unit>
       <trans-unit id="field.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="nl" state="translated">Type</target></trans-unit>
+			<target state="translated">Type</target></trans-unit>
       <trans-unit id="field.tags" xml:space="preserve" approved="yes">
 				<source>Tags</source>
-			<target xml:lang="nl" state="translated">Tags</target></trans-unit>
+			<target state="translated">Tags</target></trans-unit>
       <trans-unit id="sortByName" xml:space="preserve" approved="yes">
 				<source>Sort by name</source>
-			<target xml:lang="nl" state="translated">Sorteer op naam</target></trans-unit>
+			<target state="translated">Sorteer op naam</target></trans-unit>
       <trans-unit id="sortByLastModified" xml:space="preserve" approved="yes">
 				<source>Sort by last modified</source>
-			<target xml:lang="nl" state="translated">Sorteer op laatst gewijzigd</target></trans-unit>
+			<target state="translated">Sorteer op laatst gewijzigd</target></trans-unit>
       <trans-unit id="sortby" xml:space="preserve">
 				<source>Sort by</source>
-			<target xml:lang="nl" state="translated">Sorteren op</target></trans-unit>
+			<target state="translated">Sorteren op</target></trans-unit>
       <trans-unit id="sortDirection" xml:space="preserve">
 				<source>Sort direction</source>
-			<target xml:lang="nl" state="translated">Sorteer volgorde</target></trans-unit>
+			<target state="translated">Sorteer volgorde</target></trans-unit>
       <trans-unit id="sortDirection.asc" xml:space="preserve">
 				<source>Ascending</source>
-			<target xml:lang="nl" state="translated">Oplopend</target></trans-unit>
+			<target state="translated">Oplopend</target></trans-unit>
       <trans-unit id="sortDirection.desc" xml:space="preserve">
 				<source>Descending</source>
-			<target xml:lang="nl" state="translated">Aflopend</target></trans-unit>
+			<target state="translated">Aflopend</target></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="nl" state="translated">Oplopend sorteren</target></trans-unit>
+			<target state="translated">Oplopend sorteren</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="nl" state="translated">Aflopend sorteren</target></trans-unit>
+			<target state="translated">Aflopend sorteren</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
-			<target xml:lang="nl" state="translated">Slepen en neerzetten op tag of collectie</target></trans-unit>
+			<target state="translated">Slepen en neerzetten op tag of collectie</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target xml:lang="nl" state="translated">Weergeven</target></trans-unit>
+			<target state="translated">Weergeven</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target xml:lang="nl" state="translated">Bekijk materiaal</target></trans-unit>
+			<target state="translated">Bekijk materiaal</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
-			<target xml:lang="nl" state="translated">Bestand bewerken</target><alt-trans><target xml:lang="nl">Asset bewerken</target></alt-trans></trans-unit>
+			<target state="translated">Bestand bewerken</target><alt-trans><target>Asset bewerken</target></alt-trans></trans-unit>
       <trans-unit id="deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
-			<target xml:lang="nl" state="translated">Bestand verwijderen</target><alt-trans><target xml:lang="nl">Asset verwijderen</target></alt-trans></trans-unit>
+			<target state="translated">Bestand verwijderen</target><alt-trans><target>Asset verwijderen</target></alt-trans></trans-unit>
       <trans-unit id="message.reallyDeleteAsset" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete asset "{0}"?</source>
-			<target xml:lang="nl" state="translated">Weet u zeker dat u bestand "{0}" wilt verwijderen?</target><alt-trans><target xml:lang="nl">Weet u zeker dat u asset "{0}" wilt verwijderen?</target></alt-trans></trans-unit>
+			<target state="translated">Weet u zeker dat u bestand "{0}" wilt verwijderen?</target><alt-trans><target>Weet u zeker dat u asset "{0}" wilt verwijderen?</target></alt-trans></trans-unit>
       <trans-unit id="message.reallyDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete collection "{0}"?</source>
-			<target xml:lang="nl" state="translated">Weet u zeker dat u collectie "{0}" wilt verwijderen?</target></trans-unit>
+			<target state="translated">Weet u zeker dat u collectie "{0}" wilt verwijderen?</target></trans-unit>
       <trans-unit id="message.reallyDeleteTag" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete tag "{0}"?</source>
-			<target xml:lang="nl" state="translated">Weet u zeker dat u tag "{0}" wilt verwijderen?</target></trans-unit>
+			<target state="translated">Weet u zeker dat u tag "{0}" wilt verwijderen?</target></trans-unit>
       <trans-unit id="message.willBeDeleted" xml:space="preserve" approved="yes">
 				<source>This will delete the asset.</source>
-			<target xml:lang="nl" state="translated">Dit verwijderd het bestand.</target><alt-trans><target xml:lang="nl">Dit verwijderd de asset.</target></alt-trans></trans-unit>
+			<target state="translated">Dit verwijderd het bestand.</target><alt-trans><target>Dit verwijderd de asset.</target></alt-trans></trans-unit>
       <trans-unit id="message.willDeleteCollection" xml:space="preserve" approved="yes">
 				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target xml:lang="nl" state="translated">Dit verwijderd de collectie, maar niet de bestanden die deze bevat.</target><alt-trans><target xml:lang="nl">Dit verwijderd de collectie, maar niet de assets die deze bevat.</target></alt-trans></trans-unit>
+			<target state="translated">Dit verwijderd de collectie, maar niet de bestanden die deze bevat.</target><alt-trans><target>Dit verwijderd de collectie, maar niet de assets die deze bevat.</target></alt-trans></trans-unit>
       <trans-unit id="message.willDeleteTag" xml:space="preserve" approved="yes">
 				<source>This will delete the tag, but not the assets that has it.</source>
-			<target xml:lang="nl" state="translated">Dit verwijderd de tag, maar niet de bestanden die deze gebruikt.</target><alt-trans><target xml:lang="nl">Dit verwijderd de tag, maar niet de assets die deze gebruikt.</target></alt-trans></trans-unit>
+			<target state="translated">Dit verwijderd de tag, maar niet de bestanden die deze gebruikt.</target><alt-trans><target>Dit verwijderd de tag, maar niet de assets die deze gebruikt.</target></alt-trans></trans-unit>
       <trans-unit id="message.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
-			<target xml:lang="nl" state="translated">Deze bewerking kan niet ongedaan worden gemaakt.</target></trans-unit>
+			<target state="translated">Deze bewerking kan niet ongedaan worden gemaakt.</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target xml:lang="nl" state="translated">Annuleren</target></trans-unit>
+			<target state="translated">Annuleren</target></trans-unit>
       <trans-unit id="replace" xml:space="preserve">
 				<source>Replace</source>
-			<target xml:lang="nl" state="translated">Vervang</target></trans-unit>
+			<target state="translated">Vervang</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="nl" state="translated">Vervang asset bron</target></trans-unit>
+			<target state="translated">Vervang asset bron</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
-			<target xml:lang="nl" state="translated">Sla op</target></trans-unit>
+			<target state="translated">Sla op</target></trans-unit>
       <trans-unit id="message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the asset</source>
-			<target xml:lang="nl" state="translated">Ja, verwijder het bestand</target><alt-trans><target xml:lang="nl">Ja, verwijder de asset</target></alt-trans></trans-unit>
+			<target state="translated">Ja, verwijder het bestand</target><alt-trans><target>Ja, verwijder de asset</target></alt-trans></trans-unit>
       <trans-unit id="message.confirmDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Yes, delete the collection</source>
-			<target xml:lang="nl" state="translated">Ja, verwijder de collectie</target></trans-unit>
+			<target state="translated">Ja, verwijder de collectie</target></trans-unit>
       <trans-unit id="message.confirmDeleteTag" xml:space="preserve" approved="yes">
 				<source>Yes, delete the tag</source>
-			<target xml:lang="nl" state="translated">Ja, verwijder de tag</target></trans-unit>
+			<target state="translated">Ja, verwijder de tag</target></trans-unit>
       <trans-unit id="thumbnail.editTitle" xml:space="preserve" approved="yes">
 				<source>Edit {0}</source>
-			<target xml:lang="nl" state="translated">Bewerk {0}</target></trans-unit>
+			<target state="translated">Bewerk {0}</target></trans-unit>
       <trans-unit id="search.title" xml:space="preserve" approved="yes">
 				<source>Search in assets</source>
-			<target xml:lang="nl" state="translated">Zoek binnen de bestanden</target><alt-trans><target xml:lang="nl">Zoek binnen assets</target></alt-trans></trans-unit>
+			<target state="translated">Zoek binnen de bestanden</target><alt-trans><target>Zoek binnen assets</target></alt-trans></trans-unit>
       <trans-unit id="search.placeholder" xml:space="preserve" approved="yes">
 				<source>Search</source>
-			<target xml:lang="nl" state="translated">Zoeken</target></trans-unit>
+			<target state="translated">Zoeken</target></trans-unit>
       <trans-unit id="search.itemCount" xml:space="preserve" approved="yes">
 				<source>{0} items</source>
-			<target xml:lang="nl" state="translated">{0} items</target></trans-unit>
+			<target state="translated">{0} items</target></trans-unit>
       <trans-unit id="search.foundMatches" xml:space="preserve" approved="yes">
 				<source>found matching "{0}"</source>
-			<target xml:lang="nl" state="translated">gevonden overeenkomende "{0}"</target></trans-unit>
+			<target state="translated">gevonden overeenkomende "{0}"</target></trans-unit>
       <trans-unit id="upload" xml:space="preserve" approved="yes">
 				<source>Upload</source>
-			<target xml:lang="nl" state="translated">Upload</target></trans-unit>
+			<target state="translated">Upload</target></trans-unit>
       <trans-unit id="filterOptions" xml:space="preserve" approved="yes">
 				<source>Filter options</source>
-			<target xml:lang="nl" state="translated">Filter opties</target><alt-trans><target xml:lang="nl">Filteropties</target></alt-trans></trans-unit>
+			<target state="translated">Filter opties</target><alt-trans><target>Filteropties</target></alt-trans></trans-unit>
       <trans-unit id="filter.title.all" xml:space="preserve" approved="yes">
 				<source>Display all asset types</source>
-			<target xml:lang="nl" state="translated">Alle bestandstypen weergeven</target><alt-trans><target xml:lang="nl">Alle asset types weergeven</target></alt-trans></trans-unit>
+			<target state="translated">Alle bestandstypen weergeven</target><alt-trans><target>Alle asset types weergeven</target></alt-trans></trans-unit>
       <trans-unit id="filter.title.images" xml:space="preserve" approved="yes">
 				<source>Only display image assets</source>
-			<target xml:lang="nl" state="translated">Alleen afbeeldingen weergeven</target><alt-trans><target xml:lang="nl">Alleen afbeelding assets weergeven</target></alt-trans></trans-unit>
+			<target state="translated">Alleen afbeeldingen weergeven</target><alt-trans><target>Alleen afbeelding assets weergeven</target></alt-trans></trans-unit>
       <trans-unit id="filter.title.documents" xml:space="preserve" approved="yes">
 				<source>Only display document assets</source>
-			<target xml:lang="nl" state="translated">Toon enkel documenten</target><alt-trans><target xml:lang="nl">Toon enkel document assets</target></alt-trans></trans-unit>
+			<target state="translated">Toon enkel documenten</target><alt-trans><target>Toon enkel document assets</target></alt-trans></trans-unit>
       <trans-unit id="filter.title.video" xml:space="preserve" approved="yes">
 				<source>Only display video assets</source>
-			<target xml:lang="nl" state="translated">Toon enkel videobestanden</target><alt-trans><target xml:lang="nl">Toon enkel video assets</target></alt-trans></trans-unit>
+			<target state="translated">Toon enkel videobestanden</target><alt-trans><target>Toon enkel video assets</target></alt-trans></trans-unit>
       <trans-unit id="filter.title.audio" xml:space="preserve" approved="yes">
 				<source>Only display audio assets</source>
-			<target xml:lang="nl" state="translated">Toon enkel audiobestanden</target><alt-trans><target xml:lang="nl">Toon enkel audio assets</target></alt-trans></trans-unit>
+			<target state="translated">Toon enkel audiobestanden</target><alt-trans><target>Toon enkel audio assets</target></alt-trans></trans-unit>
       <trans-unit id="filter.all" xml:space="preserve" approved="yes">
 				<source>All</source>
-			<target xml:lang="nl" state="translated">Alle</target></trans-unit>
+			<target state="translated">Alle</target></trans-unit>
       <trans-unit id="filter.images" xml:space="preserve" approved="yes">
 				<source>Images</source>
-			<target xml:lang="nl" state="translated">Afbeeldingen</target></trans-unit>
+			<target state="translated">Afbeeldingen</target></trans-unit>
       <trans-unit id="filter.documents" xml:space="preserve" approved="yes">
 				<source>Documents</source>
-			<target xml:lang="nl" state="translated">Documenten</target></trans-unit>
+			<target state="translated">Documenten</target></trans-unit>
       <trans-unit id="filter.video" xml:space="preserve" approved="yes">
 				<source>Video</source>
-			<target xml:lang="nl" state="translated">Video</target></trans-unit>
+			<target state="translated">Video</target></trans-unit>
       <trans-unit id="filter.audio" xml:space="preserve" approved="yes">
 				<source>Audio</source>
-			<target xml:lang="nl" state="translated">Audio</target></trans-unit>
+			<target state="translated">Audio</target></trans-unit>
       <trans-unit id="tooltip.sortOptions" xml:space="preserve" approved="yes">
 				<source>Sort options</source>
-			<target xml:lang="nl" state="translated">Sorteeropties</target></trans-unit>
+			<target state="translated">Sorteeropties</target></trans-unit>
       <trans-unit id="tooltip.listView" xml:space="preserve" approved="yes">
 				<source>List view</source>
-			<target xml:lang="nl" state="translated">Lijstweergave</target></trans-unit>
+			<target state="translated">Lijstweergave</target></trans-unit>
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
 				<source>Thumbnail view</source>
-			<target xml:lang="nl" state="translated">Miniatuurweergave</target></trans-unit>
+			<target state="translated">Miniatuurweergave</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target xml:lang="nl" state="translated">Verbindingsfout</target></trans-unit>
+			<target state="translated">Verbindingsfout</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target xml:lang="nl" state="translated">Media bron</target><alt-trans><target xml:lang="nl">Mediabron</target></alt-trans></trans-unit>
+			<target state="translated">Media bron</target><alt-trans><target>Mediabron</target></alt-trans></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target xml:lang="nl" state="translated">Media bronnen</target></trans-unit>
+			<target state="translated">Media bronnen</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
-			<target xml:lang="nl" state="translated">Collecties</target></trans-unit>
+			<target state="translated">Collecties</target></trans-unit>
       <trans-unit id="editCollections" xml:space="preserve" approved="yes">
 				<source>Edit collections</source>
-			<target xml:lang="nl" state="translated">Collecties bewerken</target></trans-unit>
+			<target state="translated">Collecties bewerken</target></trans-unit>
       <trans-unit id="editCollection" xml:space="preserve" approved="yes">
 				<source>Edit collection</source>
-			<target xml:lang="nl" state="translated">Collectie bewerken</target></trans-unit>
+			<target state="translated">Collectie bewerken</target></trans-unit>
       <trans-unit id="deleteCollection" xml:space="preserve" approved="yes">
 				<source>Delete collection</source>
-			<target xml:lang="nl" state="translated">Collectie verwijderen</target></trans-unit>
+			<target state="translated">Collectie verwijderen</target></trans-unit>
       <trans-unit id="createCollection" xml:space="preserve" approved="yes">
 				<source>Create collection</source>
-			<target xml:lang="nl" state="translated">Collectie aanmaken</target></trans-unit>
+			<target state="translated">Collectie aanmaken</target></trans-unit>
       <trans-unit id="newCollection.placeholder" xml:space="preserve" approved="yes">
 				<source>Enter collection title</source>
-			<target xml:lang="nl" state="translated">Voer collectie titel in</target></trans-unit>
+			<target state="translated">Voer collectie titel in</target></trans-unit>
       <trans-unit id="allCollections" xml:space="preserve" approved="yes">
 				<source>All collections</source>
-			<target xml:lang="nl" state="translated">Alle collecties</target></trans-unit>
+			<target state="translated">Alle collecties</target></trans-unit>
       <trans-unit id="tags" xml:space="preserve" approved="yes">
 				<source>Tags</source>
-			<target xml:lang="nl" state="translated">Tags</target></trans-unit>
+			<target state="translated">Tags</target></trans-unit>
       <trans-unit id="editTags" xml:space="preserve" approved="yes">
 				<source>Edit tags</source>
-			<target xml:lang="nl" state="translated">Bewerk tags</target></trans-unit>
+			<target state="translated">Bewerk tags</target></trans-unit>
       <trans-unit id="editTag" xml:space="preserve" approved="yes">
 				<source>Edit tag</source>
-			<target xml:lang="nl" state="translated">Bewerk tag</target></trans-unit>
+			<target state="translated">Bewerk tag</target></trans-unit>
       <trans-unit id="deleteTag" xml:space="preserve" approved="yes">
 				<source>Delete tag</source>
-			<target xml:lang="nl" state="translated">Verwijder tag</target></trans-unit>
+			<target state="translated">Verwijder tag</target></trans-unit>
       <trans-unit id="placeholder.createTag" xml:space="preserve">
 				<source>Enter tag label</source>
-			<target xml:lang="nl" state="translated">Voer het label van de tag in</target></trans-unit>
+			<target state="translated">Voer het label van de tag in</target></trans-unit>
       <trans-unit id="createTag" xml:space="preserve" approved="yes">
 				<source>Create tag</source>
-			<target xml:lang="nl" state="translated">Maak tag aan</target></trans-unit>
+			<target state="translated">Maak tag aan</target></trans-unit>
       <trans-unit id="tags.title.all" xml:space="preserve">
 				<source>All assets</source>
-			<target xml:lang="nl" state="translated">Alle assets</target></trans-unit>
+			<target state="translated">Alle assets</target></trans-unit>
       <trans-unit id="tags.all" xml:space="preserve" approved="yes">
 				<source>All</source>
-			<target xml:lang="nl" state="translated">Alle</target></trans-unit>
+			<target state="translated">Alle</target></trans-unit>
       <trans-unit id="untaggedAssets" xml:space="preserve" approved="yes">
 				<source>Untagged assets</source>
-			<target xml:lang="nl" state="translated">Bestanden zonder tag</target><alt-trans><target xml:lang="nl">Assets niet voorzien van tag</target></alt-trans></trans-unit>
+			<target state="translated">Bestanden zonder tag</target><alt-trans><target>Assets niet voorzien van tag</target></alt-trans></trans-unit>
       <trans-unit id="untagged" xml:space="preserve" approved="yes">
 				<source>Untagged</source>
-			<target xml:lang="nl" state="translated">Zonder tag</target></trans-unit>
+			<target state="translated">Zonder tag</target></trans-unit>
       <trans-unit id="maxUploadSize" xml:space="preserve" approved="yes">
 				<source>Max. upload size {0} per file</source>
-			<target xml:lang="nl" state="translated">Max. upload grootte {0} per bestand</target></trans-unit>
+			<target state="translated">Max. upload grootte {0} per bestand</target></trans-unit>
       <trans-unit id="dropFiles" xml:space="preserve" approved="yes">
 				<source>Drop files here</source>
-			<target xml:lang="nl" state="translated">Drop bestanden hier</target></trans-unit>
+			<target state="translated">Drop bestanden hier</target></trans-unit>
       <trans-unit id="clickToUpload" xml:space="preserve" approved="yes">
 				<source>or click to upload</source>
-			<target xml:lang="nl" state="translated">of klik om te uploaden</target></trans-unit>
+			<target state="translated">of klik om te uploaden</target></trans-unit>
       <trans-unit id="chooseFile" xml:space="preserve" approved="yes">
 				<source>Choose file</source>
-			<target xml:lang="nl" state="translated">Kies bestand</target></trans-unit>
+			<target state="translated">Kies bestand</target></trans-unit>
       <trans-unit id="noAssetsFound" xml:space="preserve" approved="yes">
 				<source>No Assets found.</source>
-			<target xml:lang="nl" state="translated">Geen bestanden gevonden.</target><alt-trans><target xml:lang="nl">Geen assets gevonden.</target></alt-trans></trans-unit>
+			<target state="translated">Geen bestanden gevonden.</target><alt-trans><target>Geen assets gevonden.</target></alt-trans></trans-unit>
       <trans-unit id="basics" xml:space="preserve" approved="yes">
 				<source>Basics</source>
-			<target xml:lang="nl" state="translated">Basis</target></trans-unit>
+			<target state="translated">Basis</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve" approved="yes">
 				<source>Delete</source>
-			<target xml:lang="nl" state="translated">Verwijderen</target><alt-trans><target xml:lang="nl">Verwijder</target></alt-trans></trans-unit>
+			<target state="translated">Verwijderen</target><alt-trans><target>Verwijder</target></alt-trans></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
 				<source>Click to delete</source>
-			<target xml:lang="nl" state="translated">Klik om te verwijderen</target></trans-unit>
+			<target state="translated">Klik om te verwijderen</target></trans-unit>
       <trans-unit id="save" xml:space="preserve" approved="yes">
 				<source>Save</source>
-			<target xml:lang="nl" state="translated">Sla op</target></trans-unit>
+			<target state="translated">Sla op</target></trans-unit>
       <trans-unit id="metadata" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target xml:lang="nl" state="translated">Metadata</target></trans-unit>
+			<target state="translated">Metadata</target></trans-unit>
       <trans-unit id="metadata.filename" xml:space="preserve" approved="yes">
 				<source>Filename</source>
-			<target xml:lang="nl" state="translated">Bestandsnaam</target></trans-unit>
+			<target state="translated">Bestandsnaam</target></trans-unit>
       <trans-unit id="metadata.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified (resource)</source>
-			<target xml:lang="nl" state="translated">Laatst bewerkt (resource)</target></trans-unit>
+			<target state="translated">Laatst bewerkt (resource)</target></trans-unit>
       <trans-unit id="metadata.fileSize" xml:space="preserve" approved="yes">
 				<source>File size</source>
-			<target xml:lang="nl" state="translated">Bestandsgrootte</target></trans-unit>
+			<target state="translated">Bestandsgrootte</target></trans-unit>
       <trans-unit id="metadata.dimensions" xml:space="preserve" approved="yes">
 				<source>Dimensions</source>
-			<target xml:lang="nl" state="translated">Dimensies</target></trans-unit>
+			<target state="translated">Dimensies</target></trans-unit>
       <trans-unit id="metadata.type" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target xml:lang="nl" state="translated">Type</target></trans-unit>
+			<target state="translated">Type</target></trans-unit>
       <trans-unit id="metadata.identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
-			<target xml:lang="nl" state="translated">Identifier</target></trans-unit>
+			<target state="translated">Identifier</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.Title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="nl" state="translated">Titel</target></trans-unit>
+			<target state="translated">Titel</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.Caption" xml:space="preserve" approved="yes">
 				<source>Caption</source>
-			<target xml:lang="nl" state="translated">Onderschrift</target></trans-unit>
+			<target state="translated">Onderschrift</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target xml:lang="nl" state="translated">Copyright melding</target></trans-unit>
+			<target state="translated">Copyright melding</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target xml:lang="nl" state="translated">Voorbeeld</target></trans-unit>
+			<target state="translated">Voorbeeld</target></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target xml:lang="nl" state="needs-translation">Download</target></trans-unit>
+			<target state="needs-translation">Download</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target xml:lang="nl" state="needs-translation">Next</target></trans-unit>
+			<target state="needs-translation">Next</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target xml:lang="nl" state="needs-translation">Previous</target></trans-unit>
+			<target state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
-			<target xml:lang="nl" state="translated">Kan het bestand niet uploaden</target></trans-unit>
+			<target state="translated">Kan het bestand niet uploaden</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target xml:lang="nl" state="translated">Geen bestand geselecteerd</target></trans-unit>
+			<target state="translated">Geen bestand geselecteerd</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="nl" state="translated">De bestandsgrootte van {0} groter is dan de toegestane limiet van {1}</target></trans-unit>
+			<target state="translated">De bestandsgrootte van {0} groter is dan de toegestane limiet van {1}</target></trans-unit>
       <trans-unit id="forTheFile" xml:space="preserve" approved="yes">
 				<source>for the file</source>
-			<target xml:lang="nl" state="translated">voor het bestand</target></trans-unit>
+			<target state="translated">voor het bestand</target></trans-unit>
       <trans-unit id="onlySomeFilesWereUploaded" xml:space="preserve" approved="yes">
 				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="nl" state="translated">Slechts enkele van de bestanden zijn geüpload. Vernieuw de pagina om die te zien.</target><alt-trans><target xml:lang="nl">Slechts enkele van de bestanden zijn geüpload. Vernieuw de pagina om te zien die.</target></alt-trans></trans-unit>
+			<target state="translated">Slechts enkele van de bestanden zijn geüpload. Vernieuw de pagina om die te zien.</target><alt-trans><target>Slechts enkele van de bestanden zijn geüpload. Vernieuw de pagina om te zien die.</target></alt-trans></trans-unit>
       <trans-unit id="taggingAssetsFailed" xml:space="preserve" approved="yes">
 				<source>Tagging the asset failed.</source>
-			<target xml:lang="nl" state="translated">Taggen van bestand is mislukt.</target><alt-trans><target xml:lang="nl">Taggen van asset is mislukt.</target></alt-trans></trans-unit>
+			<target state="translated">Taggen van bestand is mislukt.</target><alt-trans><target>Taggen van asset is mislukt.</target></alt-trans></trans-unit>
       <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve" approved="yes">
 				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="nl" state="translated">Het toevoegen van het bestand aan de collectie is niet gelukt.</target><alt-trans><target xml:lang="nl">Het toevoegen van de asset aan de collectie is niet gelukt.</target></alt-trans></trans-unit>
+			<target state="translated">Het toevoegen van het bestand aan de collectie is niet gelukt.</target><alt-trans><target>Het toevoegen van de asset aan de collectie is niet gelukt.</target></alt-trans></trans-unit>
       <trans-unit id="creating" xml:space="preserve" approved="yes">
 				<source>Creating</source>
-			<target xml:lang="nl" state="translated">Wordt aangemaakt</target></trans-unit>
+			<target state="translated">Wordt aangemaakt</target></trans-unit>
       <trans-unit id="deleteRelatedNodes" xml:space="preserve">
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="nl" state="translated">Bestand kon niet worden verwijderd, omdat het nog door nodes wordt gebruikt</target></trans-unit>
+			<target state="translated">Bestand kon niet worden verwijderd, omdat het nog door nodes wordt gebruikt</target></trans-unit>
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="nl" state="translated">{0} keer toegepast</target>
+          <target state="translated">{0} keer toegepast</target>
         </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="nl" state="translated">{0} keer toegepast</target>
+          <target state="translated">{0} keer toegepast</target>
         </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
-			<target xml:lang="nl" state="translated">Referenties naar "{asset}"</target></trans-unit>
+			<target state="translated">Referenties naar "{asset}"</target></trans-unit>
       <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="nl" state="translated">Vervang "{filename}"</target></trans-unit>
+			<target state="translated">Vervang "{filename}"</target></trans-unit>
       <trans-unit id="replaceAsset.description" xml:space="preserve">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-			<target xml:lang="nl" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+			<target state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
       <trans-unit id="replaceAsset.note" xml:space="preserve">
 				<source>Note</source>
-			<target xml:lang="nl" state="needs-translation">Note</target></trans-unit>
+			<target state="needs-translation">Note</target></trans-unit>
       <trans-unit id="replaceAsset.noteText" xml:space="preserve">
 				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-			<target xml:lang="nl" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+			<target state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
       <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
 				<source>Choose a new file</source>
-			<target xml:lang="nl" state="needs-translation">Choose a new file</target></trans-unit>
+			<target state="needs-translation">Choose a new file</target></trans-unit>
       <trans-unit id="replace.usageCount" xml:space="preserve">
 				<source>Currently the asset is used {usageCount} times.</source>
-			<target xml:lang="nl" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+			<target state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
       <trans-unit id="replace.allUsages" xml:space="preserve">
 				<source>Show all usages</source>
-			<target xml:lang="nl" state="needs-translation">Show all usages</target></trans-unit>
+			<target state="needs-translation">Show all usages</target></trans-unit>
       <trans-unit id="replace.notUsed" xml:space="preserve">
 				<source>Currently the asset is not in used anywhere on the website.</source>
-			<target xml:lang="nl" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+			<target state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
       <trans-unit id="replace.previewFile" xml:space="preserve">
 				<source>Preview current file</source>
-			<target xml:lang="nl" state="needs-translation">Preview current file</target></trans-unit>
+			<target state="needs-translation">Preview current file</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve" approved="yes">
 				<source>Could not replace asset</source>
-			<target xml:lang="nl" state="translated">Kon het bestand niet vervangen</target></trans-unit>
+			<target state="translated">Kon het bestand niet vervangen</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="nl" state="translated">Bestand "{0}" is vervangen.</target></trans-unit>
+			<target state="translated">Bestand "{0}" is vervangen.</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been updated.</source>
-			<target xml:lang="nl" state="translated">Bestand "{0}" is aangepast.</target></trans-unit>
+			<target state="translated">Bestand "{0}" is aangepast.</target></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been added.</source>
-			<target xml:lang="nl" state="translated">Bestand "{0}" is toegevoegd.</target></trans-unit>
+			<target state="translated">Bestand "{0}" is toegevoegd.</target></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve" approved="yes">
 				<source>Asset "{0}" has been deleted.</source>
-			<target xml:lang="nl" state="translated">Bestand "{0}" is verwijderd.</target></trans-unit>
+			<target state="translated">Bestand "{0}" is verwijderd.</target></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve" approved="yes">
 				<source>Asset could not be deleted.</source>
-			<target xml:lang="nl" state="translated">Het bestand kon niet worden verwijderd.</target></trans-unit>
+			<target state="translated">Het bestand kon niet worden verwijderd.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" already exists and was added to collection.</source>
-			<target xml:lang="nl" state="translated">Tag "{0}" bestond al en is toegevoegd aan de collectie.</target></trans-unit>
+			<target state="translated">Tag "{0}" bestond al en is toegevoegd aan de collectie.</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" has been created.</source>
-			<target xml:lang="nl" state="translated">Tag "{0}" is aangemaakt.</target></trans-unit>
+			<target state="translated">Tag "{0}" is aangemaakt.</target></trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" has been updated.</source>
-			<target xml:lang="nl" state="translated">Tag "{0}" is aangepast.</target></trans-unit>
+			<target state="translated">Tag "{0}" is aangepast.</target></trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" has been deleted.</source>
-			<target xml:lang="nl" state="translated">Tag "{0}" is verwijderd.</target></trans-unit>
+			<target state="translated">Tag "{0}" is verwijderd.</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve" approved="yes">
 				<source>Collection "{0}" has been created.</source>
-			<target xml:lang="nl" state="translated">Collectie "{0}" is aangemaakt.</target></trans-unit>
+			<target state="translated">Collectie "{0}" is aangemaakt.</target></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve" approved="yes">
 				<source>Collection "{0}" has been updated.</source>
-			<target xml:lang="nl" state="translated">Collectie "{0}" is aangepast.</target></trans-unit>
+			<target state="translated">Collectie "{0}" is aangepast.</target></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve" approved="yes">
 				<source>Collection "{0}" has been deleted.</source>
-			<target xml:lang="nl" state="translated">Collectie "{0}" is verwijderd.</target></trans-unit>
+			<target state="translated">Collectie "{0}" is verwijderd.</target></trans-unit>
       <trans-unit id="replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
-			<target xml:lang="nl" state="translated">Genereer een redirect van de originele locatie van het bestand naar de nieuwe locatie</target></trans-unit>
+			<target state="translated">Genereer een redirect van de originele locatie van het bestand naar de nieuwe locatie</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target xml:lang="nl" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target xml:lang="nl" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target state="needs-translation">No access to workspace "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target xml:lang="nl" state="needs-translation">No document node found for this node</target></trans-unit>
+			<target state="needs-translation">No document node found for this node</target></trans-unit>
     </body>
   </file>
 </xliff>
