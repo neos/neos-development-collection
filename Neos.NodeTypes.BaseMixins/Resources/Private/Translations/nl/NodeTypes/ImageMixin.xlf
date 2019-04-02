@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="groups.image" xml:space="preserve" approved="yes">
 				<source>Image</source>
-			<target xml:lang="nl" state="translated">Afbeelding</target></trans-unit>
+			<target state="translated">Afbeelding</target></trans-unit>
       <trans-unit id="properties.image" xml:space="preserve" approved="yes">
 				<source>Image</source>
-			<target xml:lang="nl" state="translated">Afbeelding</target></trans-unit>
+			<target state="translated">Afbeelding</target></trans-unit>
       <trans-unit id="properties.alternativeText" xml:space="preserve" approved="yes">
 				<source>Alternative text</source>
-			<target xml:lang="nl" state="translated">Alternatieve tekst</target></trans-unit>
+			<target state="translated">Alternatieve tekst</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="nl" state="translated">Titel</target></trans-unit>
+			<target state="translated">Titel</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="properties.hasCaption" xml:space="preserve">
 				<source>Enable caption</source>
-			<target xml:lang="tl" state="translated">Paganahin ang caption</target></trans-unit>
+			<target state="translated">Paganahin ang caption</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="tl" state="translated"><![CDATA[<p> Ipasok ang caption dito</p>]]></target></trans-unit>
+			<target state="translated"><![CDATA[<p> Ipasok ang caption dito</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

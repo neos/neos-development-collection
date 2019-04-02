@@ -4,25 +4,25 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Page</source>
-			<target xml:lang="de" state="translated">Seite</target></trans-unit>
+			<target state="translated">Seite</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="de" state="translated">Titel</target></trans-unit>
+			<target state="translated">Titel</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve" approved="yes">
 				<source>Layout</source>
-			<target xml:lang="de" state="translated">Layout</target></trans-unit>
+			<target state="translated">Layout</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve" approved="yes">
 				<source>Layout for this page only</source>
-			<target xml:lang="de" state="translated">Layout nur für diese Seite</target></trans-unit>
+			<target state="translated">Layout nur für diese Seite</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="de" state="translated">Vom Elternelement erben</target></trans-unit>
+			<target state="translated">Vom Elternelement erben</target></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve" approved="yes">
 				<source>Layout for subpages of this page</source>
-			<target xml:lang="de" state="translated">Layout für Unterseiten dieser Seite</target></trans-unit>
+			<target state="translated">Layout für Unterseiten dieser Seite</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="de" state="translated">Vom Elternelement erben</target></trans-unit>
+			<target state="translated">Vom Elternelement erben</target></trans-unit>
     </body>
   </file>
 </xliff>

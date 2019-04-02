@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve" approved="yes">
 				<source>Alignment</source>
-			<target xml:lang="ru" state="translated">Расположение</target><alt-trans><target xml:lang="ru">Выравнивание</target></alt-trans></trans-unit>
+			<target state="translated">Расположение</target><alt-trans><target>Выравнивание</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Default</source>
-			<target xml:lang="ru" state="translated">По умолчанию</target></trans-unit>
+			<target state="translated">По умолчанию</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve" approved="yes">
 				<source>Center</source>
-			<target xml:lang="ru" state="translated">По центру</target></trans-unit>
+			<target state="translated">По центру</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve" approved="yes">
 				<source>Left</source>
-			<target xml:lang="ru" state="translated">Слева</target><alt-trans><target xml:lang="ru">По левой стороне</target></alt-trans></trans-unit>
+			<target state="translated">Слева</target><alt-trans><target>По левой стороне</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve" approved="yes">
 				<source>Right</source>
-			<target xml:lang="ru" state="translated">Справа</target><alt-trans><target xml:lang="ru">справа</target></alt-trans><alt-trans><target xml:lang="ru">По правой стороне</target></alt-trans></trans-unit>
+			<target state="translated">Справа</target><alt-trans><target>справа</target></alt-trans><alt-trans><target>По правой стороне</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
