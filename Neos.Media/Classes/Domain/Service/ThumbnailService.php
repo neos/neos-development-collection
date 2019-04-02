@@ -117,7 +117,8 @@ class ThumbnailService
             $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
             $maximumHeight = ($configuration->getMaximumHeight() > $asset->getHeight()) ? $asset->getHeight() : $configuration->getMaximumHeight();
             if ($configuration->isUpScalingAllowed() === false
-                && $configuration->getQuality() !== null
+                && $configuration->getQuality() === null
+                && $configuration->getFormat() === null
                 && $maximumWidth === $asset->getWidth()
                 && $maximumHeight === $asset->getHeight()
             ) {
