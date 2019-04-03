@@ -4,25 +4,25 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Page</source>
-			<target xml:lang="lv" state="translated">Lapa</target></trans-unit>
+			<target state="translated">Lapa</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="lv" state="translated">Virsraksts</target></trans-unit>
+			<target state="translated">Virsraksts</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve" approved="yes">
 				<source>Layout</source>
-			<target xml:lang="lv" state="translated">Izkārtojums</target></trans-unit>
+			<target state="translated">Izkārtojums</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve" approved="yes">
 				<source>Layout for this page only</source>
-			<target xml:lang="lv" state="translated">Tikai šīs lapas šablons</target></trans-unit>
+			<target state="translated">Tikai šīs lapas šablons</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="lv" state="translated">Pārmantot no galvenā</target></trans-unit>
+			<target state="translated">Pārmantot no galvenā</target></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve" approved="yes">
 				<source>Layout for subpages of this page</source>
-			<target xml:lang="lv" state="translated">Šīs lapas pakārtoto lapu šablons</target></trans-unit>
+			<target state="translated">Šīs lapas pakārtoto lapu šablons</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="lv" state="translated">Pārmantot no galvenā</target></trans-unit>
+			<target state="translated">Pārmantot no galvenā</target></trans-unit>
     </body>
   </file>
 </xliff>

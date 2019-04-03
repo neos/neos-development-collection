@@ -8,6 +8,8 @@ prototype(Neos.Neos:ImageUri) {
 	allowCropping = false
 	allowUpScaling = false
 	async = false
+	quality = NULL
+	format = NULL
 	preset = NULL
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
@@ -31,6 +33,8 @@ prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
 	@context.allowCropping = ${this.allowCropping}
 	@context.allowUpScaling = ${this.allowUpScaling}
 	@context.async = ${this.async}
+	@context.quality = ${this.quality}
+	@context.format = ${this.format}
 	@context.preset = ${this.preset}
 
 	tagName = 'img'
@@ -44,6 +48,8 @@ prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
 			allowCropping = ${allowCropping}
 			allowUpScaling = ${allowUpScaling}
 			async = ${async}
+			quality = ${quality}
+			format = ${format}
 			preset = ${preset}
 		}
 	}

@@ -12,6 +12,7 @@ This version of the documentation covering Neos Media |release| has been rendere
    :maxdepth: 2
 
    Commands/index
+   VariantPresets
    ThumbnailPresets
    AsynchronousThumbnails
    ThumbnailGenerator/index

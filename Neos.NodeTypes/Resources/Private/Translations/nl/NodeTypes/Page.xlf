@@ -4,25 +4,25 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Page</source>
-			<target xml:lang="nl" state="translated">Pagina</target></trans-unit>
+			<target state="translated">Pagina</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="nl" state="translated">Titel</target></trans-unit>
+			<target state="translated">Titel</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve" approved="yes">
 				<source>Layout</source>
-			<target xml:lang="nl" state="translated">Layout</target></trans-unit>
+			<target state="translated">Layout</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve" approved="yes">
 				<source>Layout for this page only</source>
-			<target xml:lang="nl" state="translated">Lay-out voor enkel deze pagina</target></trans-unit>
+			<target state="translated">Lay-out voor enkel deze pagina</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="nl" state="translated">Overnemen van bovenliggende pagina</target><alt-trans><target xml:lang="nl">Overnemen van bovenliggende</target></alt-trans></trans-unit>
+			<target state="translated">Overnemen van bovenliggende pagina</target><alt-trans><target>Overnemen van bovenliggende</target></alt-trans></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve" approved="yes">
 				<source>Layout for subpages of this page</source>
-			<target xml:lang="nl" state="translated">Lay-out voor subpagina's van deze pagina</target></trans-unit>
+			<target state="translated">Lay-out voor subpagina's van deze pagina</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="nl" state="translated">Overnemen van bovenliggende pagina</target><alt-trans><target xml:lang="nl">Overnemen van bovenliggende</target></alt-trans></trans-unit>
+			<target state="translated">Overnemen van bovenliggende pagina</target><alt-trans><target>Overnemen van bovenliggende</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

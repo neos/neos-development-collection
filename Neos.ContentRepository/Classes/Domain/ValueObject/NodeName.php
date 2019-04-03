@@ -52,7 +52,7 @@ final class NodeName implements \JsonSerializable
 
     public static function fromString(string $value): self
     {
-        return new static($value);
+        return new static(strtolower($value));
     }
 
     /**

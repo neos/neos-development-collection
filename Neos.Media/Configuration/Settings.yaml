@@ -54,8 +54,14 @@ Neos:
         # A very cheap filter with reasonable quality would be "FILTER_BOX", alternative is "FILTER_CATROM".
         resizeFilter: '%\Imagine\Image\ImageInterface::FILTER_UNDEFINED%'
 
+    variantPresets: []
+
     thumbnailGenerators:
 
+      Neos\Media\Domain\Model\ThumbnailGenerator\ConvertImageThumbnailGenerator:
+        supportedExtensions:
+          - tiff
+        targetExtension: jpg
       Neos\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator:
         resolution: 120
         supportedExtensions:

@@ -117,7 +117,8 @@ class ThumbnailService
             $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
             $maximumHeight = ($configuration->getMaximumHeight() > $asset->getHeight()) ? $asset->getHeight() : $configuration->getMaximumHeight();
             if ($configuration->isUpScalingAllowed() === false
-                && $configuration->getQuality() !== null
+                && $configuration->getQuality() === null
+                && $configuration->getFormat() === null
                 && $maximumWidth === $asset->getWidth()
                 && $maximumHeight === $asset->getHeight()
             ) {
@@ -204,7 +205,8 @@ class ThumbnailService
             isset($presetConfiguration['allowCropping']) ? $presetConfiguration['allowCropping'] : false,
             isset($presetConfiguration['allowUpScaling']) ? $presetConfiguration['allowUpScaling'] : false,
             $async,
-            isset($presetConfiguration['quality']) ? $presetConfiguration['quality'] : null
+            isset($presetConfiguration['quality']) ? $presetConfiguration['quality'] : null,
+            isset($presetConfiguration['format']) ? $presetConfiguration['format'] : null
         );
         return $thumbnailConfiguration;
     }
@@ -245,6 +247,17 @@ class ThumbnailService
         }
 
         return $this->resourceManager->getPublicPackageResourceUriByPath($staticResource);
+    }
+
+    /**
+     * Signals that a thumbnail was persisted.
+     *
+     * @Flow\Signal
+     * @param Thumbnail $thumbnail
+     * @return void
+     */
+    public function emitThumbnailPersisted(Thumbnail $thumbnail)
+    {
     }
 
     /**

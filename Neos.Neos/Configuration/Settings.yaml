@@ -458,11 +458,11 @@ Neos:
         renderingGroups:
           notFoundExceptions:
             matchingStatusCodes:
+              - 403
               - 404
+              - 410
             options:
-              templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Index.html'
-              layoutRootPath: 'resource://Neos.Neos/Private/Layouts/'
-              format: html
+              viewClassName: \Neos\Neos\View\FusionExceptionView
           databaseConnectionExceptions:
             matchingExceptionClassNames:
               - Neos\Flow\Persistence\Doctrine\Exception\DatabaseException

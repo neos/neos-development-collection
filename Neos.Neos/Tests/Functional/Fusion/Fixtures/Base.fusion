@@ -3,6 +3,22 @@
 ################################
 
 # Definition of custom Fusion types
+prototype(Acme.Demo:Text) < prototype(Neos.Neos:Content) {
+  templatePath = ${fixturesDirectory + '/TextTemplate.html'}
+}
+
+prototype(Acme.Demo:Headline) < prototype(Neos.Neos:Content) {
+  templatePath = ${fixturesDirectory + '/HeadlineTemplate.html'}
+}
+
+prototype(Acme.Demo:Html) < prototype(Neos.Neos:Content) {
+  templatePath = ${fixturesDirectory + '/HtmlTemplate.html'}
+}
+
+prototype(Acme.Demo:AssetList) < prototype(Neos.Neos:Content) {
+  templatePath = ${fixturesDirectory + '/AssetListTemplate.html'}
+}
+
 prototype(Acme.Demo:ThreeColumn) < prototype(Neos.Neos:Content) {
 	templatePath = ${fixturesDirectory + '/ThreeColumnTemplate.html'}
 	left = Neos.Neos:ContentCollection

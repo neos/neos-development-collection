@@ -1,3 +1,10 @@
+'Acme.Demo:Page':
+  superTypes:
+    'Neos.Neos:Document': true
+  childNodes:
+    main:
+      type: 'Neos.Neos:ContentCollection'
+
 'Acme.Demo:ThreeColumn':
   superTypes:
     'Neos.NodeTypes:Column': true
@@ -28,6 +35,52 @@
   properties:
     text:
       type: 'string'
+
+'Acme.Demo:Headline':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: 'Headline content'
+  properties:
+    title:
+      type: string
+      ui:
+        inlineEditable: true
+
+'Acme.Demo:Text':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: 'Text content'
+    group: 'default'
+  properties:
+    text:
+      type: string
+      ui:
+        inlineEditable: true
+
+'Acme.Demo:Html':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: 'Html content'
+    group: 'default'
+  properties:
+    source:
+      type: string
+      ui:
+        inspector:
+          editor: 'Neos.Neos/Inspector/Editors/CodeEditor'
+
+'Acme.Demo:AssetList':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: 'Asset List content'
+    group: 'default'
+  properties:
+    assets:
+      type: array<Neos\Media\Domain\Model\Asset>
 
 'Neos.Neos.BackendSchemaControllerTest:Node':
   abstract: true

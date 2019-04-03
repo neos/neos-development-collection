@@ -233,13 +233,13 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         // Check for legacy tags wich are still supported
         $this->assertArrayHasKey('NodeType_Neos.Neos:Content', $tagsToFlush);
         $this->assertArrayHasKey('NodeType_Neos.Neos:Node', $tagsToFlush);
-        $this->assertArrayHasKey('NodeType_Neos.NodeTypes:Text', $tagsToFlush);
+        $this->assertArrayHasKey('NodeType_Acme.Demo:Text', $tagsToFlush);
 
         // Check for tags that respect the workspace hash
         foreach ($workspacesToTest as $name => $workspaceHash) {
             $this->assertArrayHasKey('NodeType_'.$workspaceHash.'_Neos.Neos:Content', $tagsToFlush, 'on workspace ' . $name);
             $this->assertArrayHasKey('NodeType_'.$workspaceHash.'_Neos.Neos:Node', $tagsToFlush, 'on workspace ' . $name);
-            $this->assertArrayHasKey('NodeType_'.$workspaceHash.'_Neos.NodeTypes:Text', $tagsToFlush, 'on workspace ' . $name);
+            $this->assertArrayHasKey('NodeType_'.$workspaceHash.'_Acme.Demo:Text', $tagsToFlush, 'on workspace ' . $name);
         }
     }
 

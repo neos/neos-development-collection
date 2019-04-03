@@ -4,25 +4,25 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="zh-TW" state="translated">頁面</target></trans-unit>
+			<target state="translated">頁面</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="zh-TW" state="translated">標題</target></trans-unit>
+			<target state="translated">標題</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
 				<source>Layout</source>
-			<target xml:lang="zh-TW" state="translated">版面</target></trans-unit>
+			<target state="translated">版面</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
 				<source>Layout for this page only</source>
-			<target xml:lang="zh-TW" state="translated">此版面僅使用於此頁面</target></trans-unit>
+			<target state="translated">此版面僅使用於此頁面</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Inherit from parent</source>
-			<target xml:lang="zh-TW" state="translated">繼承父頁面</target></trans-unit>
+			<target state="translated">繼承父頁面</target></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve">
 				<source>Layout for subpages of this page</source>
-			<target xml:lang="zh-TW" state="translated">子頁面也使用此版面</target></trans-unit>
+			<target state="translated">子頁面也使用此版面</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Inherit from parent</source>
-			<target xml:lang="zh-TW" state="translated">繼承父頁面</target></trans-unit>
+			<target state="translated">繼承父頁面</target></trans-unit>
     </body>
   </file>
 </xliff>

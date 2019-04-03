@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Shortcut</source>
-			<target xml:lang="ar" state="translated">إختصار</target></trans-unit>
+			<target state="translated">إختصار</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target xml:lang="ar" state="translated">خيارات الإختصار</target></trans-unit>
+			<target state="translated">خيارات الإختصار</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target xml:lang="ar" state="translated">خيارات الإختصار</target></trans-unit>
+			<target state="translated">خيارات الإختصار</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="ar" state="translated">وضع الهدف</target></trans-unit>
+			<target state="translated">وضع الهدف</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target xml:lang="ar" state="translated">الهدف</target></trans-unit>
+			<target state="translated">الهدف</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve">
 				<source>First child node</source>
-			<target xml:lang="ar" state="translated">أول عقده تابعة</target></trans-unit>
+			<target state="translated">أول عقده تابعة</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve">
 				<source>Parent node</source>
-			<target xml:lang="ar" state="translated">العقدة الأصل</target></trans-unit>
+			<target state="translated">العقدة الأصل</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve">
 				<source>Selected target</source>
-			<target xml:lang="ar" state="translated">الهدف المحدد</target></trans-unit>
+			<target state="translated">الهدف المحدد</target></trans-unit>
     </body>
   </file>
 </xliff>

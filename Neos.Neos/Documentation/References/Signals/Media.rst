@@ -3,7 +3,7 @@
 Media Signals Reference
 =======================
 
-This reference was automatically generated from code on 2019-02-06
+This reference was automatically generated from code on 2019-03-05
 
 
 .. _`Media Signals Reference: Asset (``Neos\Media\Domain\Model\Asset``)`:
