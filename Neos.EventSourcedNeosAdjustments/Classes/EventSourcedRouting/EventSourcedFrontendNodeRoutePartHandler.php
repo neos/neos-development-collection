@@ -259,10 +259,16 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             throw new NoWorkspaceException(sprintf('No workspace found for request path "%s"', $requestPath), 1346949318);
         }
 
+        // when we are in live workspace, we use the "frontend" visibility constraints,
+        // to ensure we re-use the same subgraph as the frontend rendering; and also re-use
+        // their in-memory runtime caches.
+        // This is safe because in live workspace, only "visible" nodes can be routed to.
+        $visibilityConstraints = $workspace->getWorkspaceName()->isLive() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
+
         return $this->contentGraph->getSubgraphByIdentifier(
             $workspace->getCurrentContentStreamIdentifier(),
             $this->getDimensionSpacePointFromParameters(),
-            VisibilityConstraints::withoutRestrictions()
+            $visibilityConstraints
         );
     }
 
@@ -350,7 +356,14 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             }
         }
         /** @var NodeAddress $nodeAddress */
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        // when we are in live workspace, we use the "frontend" visibility constraints,
+        // to ensure we re-use the same subgraph as the frontend rendering; and also re-use
+        // their in-memory runtime caches.
+        // This is safe because in live workspace, only "visible" nodes can be routed to.
+        $visibilityConstraints = $nodeAddress->isInLiveWorkspace() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
+
+
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), $visibilityConstraints);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
         if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {

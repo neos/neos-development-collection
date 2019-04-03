@@ -32,6 +32,8 @@ final class VisibilityConstraints
      */
     protected $invisibleContentShown = false;
 
+    protected static $currentDateTimeOnInitialization;
+
 
     private function __construct(\DateTimeImmutable $currentDateTime, bool $invisibleContentShown)
     {
@@ -62,11 +64,18 @@ final class VisibilityConstraints
 
     public static function withoutRestrictions(): VisibilityConstraints
     {
-        return new VisibilityConstraints(new \DateTimeImmutable(), true);
+        if (!self::$currentDateTimeOnInitialization) {
+            self::$currentDateTimeOnInitialization = new \DateTimeImmutable();
+        }
+        return new VisibilityConstraints(self::$currentDateTimeOnInitialization, true);
     }
 
     public static function frontend(): VisibilityConstraints
     {
-        return new VisibilityConstraints(new \DateTimeImmutable(), false);
+        if (!self::$currentDateTimeOnInitialization) {
+            self::$currentDateTimeOnInitialization = new \DateTimeImmutable();
+        }
+
+        return new VisibilityConstraints(self::$currentDateTimeOnInitialization, false);
     }
 }
