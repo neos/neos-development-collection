@@ -127,7 +127,7 @@ Feature: Create node generalization
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
       | sourceDimensionSpacePoint | {"market":"DE", "language":"de"}  |
       | targetDimensionSpacePoint | {"market":"DE", "language":"gsw"} |
-    Then the last command should have thrown an exception of type "DimensionSpacePointIsNoGeneralizationException"
+    Then the last command should have thrown an exception of type "DimensionSpacePointIsNoGeneralization"
 
   Scenario: Try to create a generalization of a node to an already occupied dimension space point
     Given the event NodeGeneralizationWasCreated was published with payload:

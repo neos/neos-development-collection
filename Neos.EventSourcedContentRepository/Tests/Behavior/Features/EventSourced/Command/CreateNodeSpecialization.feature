@@ -111,7 +111,7 @@ Feature: Create node specialization
       | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
       | targetDimensionSpacePoint | {"market":"DE", "language":"gsw"} |
       | specializationIdentifier  | "doc-identifier-de-gsw"           |
-    Then the last command should have thrown an exception of type "DimensionSpacePointIsNoSpecializationException"
+    Then the last command should have thrown an exception of type "DimensionSpacePointIsNoSpecialization"
 
   Scenario: Try to create a node specialization in a dimension space point the parent node's aggregate is not visible in
     Given the event NodeAggregateWithNodeWasCreated was published with payload:
