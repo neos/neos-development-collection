@@ -9,12 +9,12 @@
 .. |Latest Stable Version| image:: https://poser.pugx.org/neos/neos-development-collection/v/stable
    :target: https://packagist.org/packages/neos/neos-development-collection
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
-   :target: https://raw.githubusercontent.com/neos/neos/master/LICENSE
+   :target: https://raw.githubusercontent.com/neos/neos-development-collection/4.3/LICENSE
 .. |Docs| image:: https://img.shields.io/badge/documentation-master-blue.svg
-   :target: https://neos.readthedocs.org/en/latest/
+   :target: https://neos.readthedocs.org/en/4.3/
    :alt: Documentation
 .. |API| image:: https://img.shields.io/badge/API%20docs-master-blue.svg
-   :target: http://neos.github.io/neos/master/
+   :target: http://neos.github.io/neos/4.3/
    :alt: API Docs
 .. |Slack| image:: http://slack.neos.io/badge.svg
    :target: http://slack.neos.io
