@@ -12,17 +12,20 @@ namespace Neos\Media\Domain\Repository;
  */
 
 use Doctrine\ORM\Internal\Hydration\IterableResult;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Doctrine\Query;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
-use Neos\Flow\Persistence\Doctrine\Query;
-use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Service\AssetService;
+use Neos\Media\Exception\AssetServiceException;
 
 /**
  * A repository for Assets
@@ -55,8 +58,9 @@ class AssetRepository extends Repository
      *
      * @param string $searchTerm
      * @param array $tags
-     * @param AssetCollection $assetCollection*
+     * @param AssetCollection $assetCollection
      * @return QueryResultInterface
+     * @throws InvalidQueryException
      */
     public function findBySearchTermOrTags($searchTerm, array $tags = [], AssetCollection $assetCollection = null)
     {
@@ -82,6 +86,7 @@ class AssetRepository extends Repository
      * @param Tag $tag
      * @param AssetCollection $assetCollection
      * @return QueryResultInterface
+     * @throws InvalidQueryException
      */
     public function findByTag(Tag $tag, AssetCollection $assetCollection = null)
     {
@@ -98,6 +103,7 @@ class AssetRepository extends Repository
      * @param Tag $tag
      * @param AssetCollection $assetCollection
      * @return integer
+     * @throws NonUniqueResultException
      */
     public function countByTag(Tag $tag, AssetCollection $assetCollection = null)
     {
@@ -120,6 +126,7 @@ class AssetRepository extends Repository
 
     /**
      * @return QueryResultInterface
+     * @throws InvalidQueryException
      */
     public function findAll(AssetCollection $assetCollection = null)
     {
@@ -131,6 +138,7 @@ class AssetRepository extends Repository
 
     /**
      * @return integer
+     * @throws NonUniqueResultException
      */
     public function countAll()
     {
@@ -148,6 +156,7 @@ class AssetRepository extends Repository
      *
      * @param AssetCollection $assetCollection
      * @return QueryResultInterface
+     * @throws InvalidQueryException
      */
     public function findUntagged(AssetCollection $assetCollection = null)
     {
@@ -163,6 +172,7 @@ class AssetRepository extends Repository
      *
      * @param AssetCollection $assetCollection
      * @return integer
+     * @throws NonUniqueResultException
      */
     public function countUntagged(AssetCollection $assetCollection = null)
     {
@@ -185,6 +195,7 @@ class AssetRepository extends Repository
     /**
      * @param AssetCollection $assetCollection
      * @return QueryResultInterface
+     * @throws InvalidQueryException
      */
     public function findByAssetCollection(AssetCollection $assetCollection)
     {
@@ -199,6 +210,7 @@ class AssetRepository extends Repository
      *
      * @param AssetCollection $assetCollection
      * @return integer
+     * @throws NonUniqueResultException
      */
     public function countByAssetCollection(AssetCollection $assetCollection)
     {
@@ -216,6 +228,7 @@ class AssetRepository extends Repository
      * @param Query $query
      * @param AssetCollection $assetCollection
      * @return void
+     * @throws InvalidQueryException
      */
     protected function addAssetCollectionToQueryConstraints(Query $query, AssetCollection $assetCollection = null)
     {
@@ -245,7 +258,7 @@ class AssetRepository extends Repository
     public function findOneByResourceSha1($sha1)
     {
         $query = $this->createQuery();
-        $query->matching($query->equals('resource.sha1', $sha1, false))->setLimit(1);
+        $query->matching($query->equals('resource.sha1', $sha1))->setLimit(1);
         return $query->execute()->getFirst();
     }
 
@@ -294,6 +307,8 @@ class AssetRepository extends Repository
      *
      * @param AssetInterface $object
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws AssetServiceException
      */
     public function remove($object)
     {
@@ -309,6 +324,7 @@ class AssetRepository extends Repository
      *
      * @param AssetInterface $object
      * @return void
+     * @throws IllegalObjectTypeException
      */
     public function removeWithoutUsageChecks($object)
     {
@@ -318,6 +334,7 @@ class AssetRepository extends Repository
 
     /**
      * @param AssetInterface $object
+     * @throws IllegalObjectTypeException
      */
     public function add($object)
     {
@@ -327,6 +344,7 @@ class AssetRepository extends Repository
 
     /**
      * @param AssetInterface $object
+     * @throws IllegalObjectTypeException
      */
     public function update($object)
     {
