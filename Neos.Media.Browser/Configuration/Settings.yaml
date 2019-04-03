@@ -17,6 +17,7 @@ Neos:
       styles:
         - 'resource://Neos.Neos/Public/Styles/Neos.css'
         - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
+        - 'resource://Neos.Media.Browser/Public/Styles/Main.css'
 
       # By default, disable the beta feature "variants tab":
       features:
@@ -50,6 +51,7 @@ Neos:
             additionalResources:
               styleSheets:
                 - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
+                - 'resource://Neos.Media.Browser/Public/Styles/Main.css'
     userInterface:
       translation:
         autoInclude:

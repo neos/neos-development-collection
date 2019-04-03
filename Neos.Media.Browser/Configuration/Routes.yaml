@@ -27,3 +27,13 @@
     '@format': 'json'
     '@action': 'index'
   appendExceedingArguments: true
+
+-
+  name: 'ImageVariant Service'
+  uriPattern: 'neos/media/browser/image-variant(/{@action}).{@format}'
+  defaults:
+    '@package': 'Neos.Media.Browser'
+    '@controller': 'ImageVariant'
+    '@format': 'json'
+    '@action': 'index'
+  appendExceedingArguments: true
