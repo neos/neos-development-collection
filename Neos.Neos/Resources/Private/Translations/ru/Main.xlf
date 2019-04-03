@@ -335,7 +335,7 @@
 			<target state="translated">Описание</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target state="needs-translation">Toggle content tree</target></trans-unit>
+			<target state="translated">Переключить дерево контента</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
 			<target state="translated">Показать параметры публикации</target></trans-unit>
@@ -673,12 +673,12 @@
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
 				<source>Database Error</source>
 			<target state="translated">Ошибка базы данных</target></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target state="translated">К сожалению, мы обнаружили ошибку с вашей базой данных. Смотрите файлы журнала в Data/Logs/* для получения более подробной информации.</target><alt-trans><target>Обнаружена ошибка в вашей базе данных. Загляните в файлы журнала в Data/Logs/* для получения более подробной информации.</target></alt-trans></trans-unit>
-      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
+			<target state="translated">Пока нет соединения с базой данных или схема базы данных Neos не была создана.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target state="translated">Попробуйте настроить или проверить конфигурацию базы данных в программе установки.</target></trans-unit>
+			<target state="translated">Запустите установку для конфигурации базы данных.</target><alt-trans><target>Запустите установку для настройки базы данных.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
 			<target state="translated">Страница не найдена</target></trans-unit>
