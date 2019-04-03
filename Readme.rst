@@ -5,7 +5,7 @@
 .. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/neos-development-collection
 .. |StyleCI| image:: https://styleci.io/repos/40964014/shield?style=flat&branch=4.3
-   :target: https://styleci.io/repos/40964014
+   :target: https://styleci.io/repos/40964014&branch=4.3
 .. |Latest Stable Version| image:: https://poser.pugx.org/neos/neos-development-collection/v/stable
    :target: https://packagist.org/packages/neos/neos-development-collection
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
