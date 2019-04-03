@@ -16,7 +16,6 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
@@ -1921,15 +1920,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         throw new NodeMethodIsUnsupported('getContentStreamIdentifier is unsupported in the legacy Node API.', 1542893545);
-    }
-
-    /**
-     * @return NodeIdentifier
-     * @throws NodeMethodIsUnsupported
-     */
-    public function getNodeIdentifier(): NodeIdentifier
-    {
-        throw new NodeMethodIsUnsupported('getNodeIdentifier is unsupported in the legacy Node API. could be implemented if needed by returning flow_persistence_identifier of NodeData', 1542893550);
     }
 
     /**
