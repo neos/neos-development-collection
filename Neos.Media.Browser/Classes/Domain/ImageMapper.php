@@ -37,7 +37,7 @@ class ImageMapper
      */
     public function __construct(ImageInterface $image, ResourceManager $resourceManager, PersistenceManagerInterface $persistenceManager)
     {
-        $mappingResult = $this->mapImage($image,$resourceManager, $persistenceManager);
+        $mappingResult = $this->mapImage($image, $resourceManager, $persistenceManager);
         if ($image instanceof ImageVariant) {
             $mappingResult = array_merge($mappingResult, $this->mapVariant($image));
         }
