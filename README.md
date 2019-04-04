@@ -134,7 +134,7 @@ The resulting `composer.json` file should look something like this:
         "mikey179/vfsstream": "~1.6",
         "phpunit/phpunit": "~7.1.0",
         "symfony/css-selector": "~2.0",
-        "neos/behat": "dev-master"
+        "neos/behat": "~5.0.0"
     },
     "scripts": {
         "post-update-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
@@ -226,7 +226,7 @@ Neos:
 
 15. To set up Behavioral tests, do the following:
 
-    - install Behat: `composer require --dev --prefer-source --no-interaction flowpack/behat dev-master`
+    - install Behat: `composer require --dev --prefer-source --no-interaction neos/behat ~5.0.0`
     - clear the cache: `rm -Rf Data/Temporary; rm -Rf Build/Behat`
     - set up behat: `./flow behat:setup`
     - Create a new database for behat
