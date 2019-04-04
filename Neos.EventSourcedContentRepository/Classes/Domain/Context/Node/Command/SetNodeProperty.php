@@ -22,7 +22,6 @@ use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
 final class SetNodeProperty implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */

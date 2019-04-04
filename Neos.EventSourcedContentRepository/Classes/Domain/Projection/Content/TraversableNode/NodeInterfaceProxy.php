@@ -16,7 +16,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\Traversab
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
@@ -44,11 +43,6 @@ trait NodeInterfaceProxy
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->node->getContentStreamIdentifier();
-    }
-
-    public function getNodeIdentifier(): NodeIdentifier
-    {
-        return $this->node->getNodeIdentifier();
     }
 
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier

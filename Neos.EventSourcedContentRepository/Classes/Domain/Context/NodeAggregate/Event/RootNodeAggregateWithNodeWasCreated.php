@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -15,7 +15,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -23,21 +22,16 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Root node was created event
+ * A root node aggregate and its initial node were created
  *
  * @Flow\Proxy(false)
  */
-final class RootNodeWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
      */
     private $contentStreamIdentifier;
-
-    /**
-     * @var NodeIdentifier
-     */
-    private $nodeIdentifier;
 
     /**
      * @var NodeAggregateIdentifier
@@ -50,7 +44,7 @@ final class RootNodeWasCreated implements DomainEventInterface, CopyableAcrossCo
     protected $nodeTypeName;
 
     /**
-     * the root node is by definition visible in *all* dimension space points; so we need to include the full list here.
+     * Root nodes are by definition visible in *all* dimension space points; so we need to include the full list here.
      *
      * @var DimensionSpacePointSet
      */
@@ -61,84 +55,49 @@ final class RootNodeWasCreated implements DomainEventInterface, CopyableAcrossCo
      */
     private $initiatingUserIdentifier;
 
-    /**
-     * RootNodeWasCreated constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
-     * @param UserIdentifier $initiatingUserIdentifier
-     */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, DimensionSpacePointSet $visibleInDimensionSpacePoints, UserIdentifier $initiatingUserIdentifier)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeTypeName $nodeTypeName,
+        DimensionSpacePointSet $visibleInDimensionSpacePoints,
+        UserIdentifier $initiatingUserIdentifier
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNodeIdentifier(): NodeIdentifier
-    {
-        return $this->nodeIdentifier;
-    }
-
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * Getter for NodeTypeName
-     *
-     * @return NodeTypeName
-     */
     public function getNodeTypeName(): NodeTypeName
     {
         return $this->nodeTypeName;
     }
 
-    /**
-     * @return DimensionSpacePointSet
-     */
     public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
     {
         return $this->visibleInDimensionSpacePoints;
     }
 
-    /**
-     * @return UserIdentifier
-     */
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
     }
 
-    /**
-     * @param ContentStreamIdentifier $targetContentStream
-     * @return RootNodeWasCreated
-     */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): RootNodeAggregateWithNodeWasCreated
     {
-        return new RootNodeWasCreated(
+        return new RootNodeAggregateWithNodeWasCreated(
             $targetContentStream,
-            $this->nodeIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->visibleInDimensionSpacePoints,

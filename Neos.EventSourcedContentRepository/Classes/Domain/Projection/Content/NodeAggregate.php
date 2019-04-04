@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -49,12 +50,22 @@ final class NodeAggregate
      * @param NodeName $nodeName
      * @param array $nodes
      */
-    public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, NodeName $nodeName, array $nodes)
+    public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, ?NodeName $nodeName, array $nodes)
     {
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeName = $nodeName;
         $this->nodes = $nodes;
+    }
+
+    public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        $dimensionSpacePoints = [];
+        foreach ($this->nodes as $node) {
+            $dimensionSpacePoints[] = $node->getOriginDimensionSpacePoint();
+        }
+
+        return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
     /**
@@ -74,9 +85,9 @@ final class NodeAggregate
     }
 
     /**
-     * @return NodeName
+     * @return NodeName|null
      */
-    public function getNodeName(): NodeName
+    public function getNodeName(): ?NodeName
     {
         return $this->nodeName;
     }

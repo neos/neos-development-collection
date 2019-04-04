@@ -22,12 +22,11 @@ use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateRootNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -95,6 +94,12 @@ class ContentRepositoryExportService
 
     /**
      * @Flow\Inject
+     * @var NodeAggregateCommandHandler
+     */
+    protected $nodeAggregateCommandHandler;
+
+    /**
+     * @Flow\Inject
      * @var EventStoreManager
      */
     protected $eventStoreManager;
@@ -104,11 +109,6 @@ class ContentRepositoryExportService
      * @var ContentDimensionZookeeper
      */
     protected $contentDimensionZookeeper;
-
-    /**
-     * @var NodeIdentifier
-     */
-    protected $sitesRootNodeIdentifier;
 
     /**
      * @var NodeAggregateIdentifier
@@ -447,7 +447,7 @@ class ContentRepositoryExportService
     private function createRootNode()
     {
         $dimensionSpacePointSet = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
-        $event = new RootNodeWasCreated(
+        $event = new RootNodeAggregateWithNodeWasCreated(
             $this->contentStreamIdentifier,
             $this->sitesRootNodeIdentifier,
             RootNodeIdentifiers::rootNodeAggregateIdentifier(),

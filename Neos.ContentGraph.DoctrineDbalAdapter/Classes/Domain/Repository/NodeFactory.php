@@ -19,7 +19,6 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -80,8 +79,6 @@ final class NodeFactory
         $dimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
         $originDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
 
-        $nodeIdentifier = NodeIdentifier::fromString($nodeRow['nodeidentifier']);
-
         $properties = json_decode($nodeRow['properties'], true);
 
         // Reference and References "are no properties" anymore by definition; so Node does not know
@@ -99,7 +96,6 @@ final class NodeFactory
             $dimensionSpacePoint,
             NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
             $originDimensionSpacePoint,
-            $nodeIdentifier,
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : NodeName::unnamed(),

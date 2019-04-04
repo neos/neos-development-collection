@@ -20,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 
 /**
- * Node was removed event
+ * A node was removed from its aggregate
  *
  * @Flow\Proxy(false)
  */

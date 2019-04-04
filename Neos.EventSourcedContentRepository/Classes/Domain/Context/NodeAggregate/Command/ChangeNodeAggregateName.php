@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,39 +13,33 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
-final class ChangeNodeName implements \JsonSerializable, CopyableAcrossContentStreamsInterface
+final class ChangeNodeAggregateName implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
-    private $nodeIdentifier;
+    private $nodeAggregateIdentifier;
 
     /**
      * @var NodeName
      */
     private $newNodeName;
 
-    /**
-     * SetNodeName constructor.
-     *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeName $newNodeName
-     */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeName $newNodeName)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeName $newNodeName)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newNodeName = $newNodeName;
     }
 
@@ -53,30 +47,21 @@ final class ChangeNodeName implements \JsonSerializable, CopyableAcrossContentSt
     {
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeIdentifier::fromString($array['nodeIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeName::fromString($array['newNodeName'])
         );
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return NodeName
-     */
     public function getNewNodeName(): NodeName
     {
         return $this->newNodeName;
@@ -86,17 +71,25 @@ final class ChangeNodeName implements \JsonSerializable, CopyableAcrossContentSt
     {
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeIdentifier' => $this->nodeIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'newNodeName' => $this->newNodeName,
         ];
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
     {
-        return new ChangeNodeName(
+        return new ChangeNodeAggregateName(
             $targetContentStream,
-            $this->nodeIdentifier,
+            $this->nodeAggregateIdentifier,
             $this->newNodeName
+        );
+    }
+
+    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    {
+        return (
+            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
+            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
         );
     }
 }

@@ -13,25 +13,40 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Traversable;
 
 /**
  * @Flow\Proxy(false)
  */
 final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
+    /**
+     * @var array|PropertyValue[]
+     */
+    private $values = [];
 
     /**
-     * @var PropertyValue[]
+     * @var \ArrayIterator
      */
-    private $values;
+    protected $iterator;
 
-    /**
-     * @param PropertyValue[] values
-     */
     private function __construct(array $values)
     {
         $this->values = $values;
+        $this->iterator = new \ArrayIterator($this->values);
+    }
+
+    public function merge(PropertyValues $other): PropertyValues
+    {
+        return new PropertyValues(array_merge($this->values, $other->getValues()));
+    }
+
+    /**
+     * @return array|PropertyValue[]
+     * @param PropertyValue[] values
+     */
+    public function getValues(): array
+    {
+        return $this->values;
     }
 
     public static function fromArray(array $propertyValues): self
@@ -46,13 +61,14 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
                 throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', PropertyValue::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
             }
         }
+
         return new static($values);
     }
 
     /**
-     * @return PropertyValue[]|Traversable<PropertyValue>
+     * @return PropertyValue[]|\ArrayIterator<PropertyValue>
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->values);
     }
@@ -60,6 +76,16 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
     public function count(): int
     {
         return count($this->values);
+    }
+
+    public function getPlainValues(): array
+    {
+        $values = [];
+        foreach ($this->values as $propertyName => $propertyValue) {
+            $values[$propertyName] = $propertyValue->getValue();
+        }
+
+        return $values;
     }
 
     public function jsonSerialize(): array

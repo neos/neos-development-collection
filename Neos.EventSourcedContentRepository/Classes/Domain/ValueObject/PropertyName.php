@@ -19,7 +19,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class PropertyName implements \JsonSerializable
 {
-
     /**
      * @var string
      */

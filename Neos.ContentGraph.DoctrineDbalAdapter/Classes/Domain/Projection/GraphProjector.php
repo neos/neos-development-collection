@@ -17,7 +17,9 @@ use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
@@ -27,7 +29,6 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
@@ -87,7 +88,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function reset(): void
     {
@@ -101,6 +102,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
     /**
      * @return bool
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function isEmpty(): bool
     {
@@ -108,15 +110,14 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     }
 
     /**
-     * @param Event\RootNodeWasCreated $event
-     * @throws \Exception
+     * @param Event\RootNodeAggregateWithNodeWasCreated $event
+     * @throws \Throwable
      */
-    final public function whenRootNodeWasCreated(Event\RootNodeWasCreated $event)
+    final public function whenRootNodeAggregateWithNodeWasCreated(Event\RootNodeAggregateWithNodeWasCreated $event)
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $node = new Node(
+        $node = new NodeRecord(
             $nodeRelationAnchorPoint,
-            $event->getNodeIdentifier(),
             $event->getNodeAggregateIdentifier(),
             RootNodeIdentifiers::rootDimensionSpacePoint()->getCoordinates(),
             RootNodeIdentifiers::rootDimensionSpacePoint()->getHash(),
@@ -127,19 +128,18 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
         $this->transactional(function () use ($node, $event) {
             $node->addToDatabase($this->getDatabaseConnection());
             $this->connectHierarchy(
+                $event->getContentStreamIdentifier(),
                 NodeRelationAnchorPoint::fromString('00000000-0000-0000-0000-000000000000'),
                 $node->relationAnchorPoint,
-                null,
-                $node->nodeName,
-                $event->getContentStreamIdentifier(),
-                $event->getVisibleInDimensionSpacePoints()
+                $event->getVisibleInDimensionSpacePoints(),
+                null
             );
         });
     }
 
     /**
      * @param Event\NodeAggregateWithNodeWasCreated $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
     {
@@ -148,17 +148,17 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getNodeTypeName(),
-                $event->getNodeIdentifier(),
-                $event->getParentNodeIdentifier(),
-                $event->getDimensionSpacePoint(),
+                $event->getParentNodeAggregateIdentifier(),
+                $event->getOriginDimensionSpacePoint(),
                 $event->getVisibleInDimensionSpacePoints(),
-                $event->getPropertyDefaultValuesAndTypes(),
+                $event->getInitialPropertyValues(),
+                $event->getSucceedingNodeAggregateIdentifier(),
                 $event->getNodeName()
             );
 
             $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
                 $event->getContentStreamIdentifier(),
-                $event->getParentNodeIdentifier(),
+                $event->getParentNodeAggregateIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getVisibleInDimensionSpacePoints()
             );
@@ -166,10 +166,10 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     }
 
     /**
-     * @param Event\NodeNameWasChanged $event
-     * @throws \Exception
+     * @param Event\NodeAggregateNameWasChanged $event
+     * @throws \Throwable
      */
-    final public function whenNodeNameWasChanged(Event\NodeNameWasChanged $event)
+    final public function whenNodeAggregateNameWasChanged(Event\NodeAggregateNameWasChanged $event)
     {
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeUpdate('
@@ -179,11 +179,11 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                 SET
                   h.name = :newName
                 WHERE
-                    n.nodeidentifier = :nodeIdentifier
+                    n.nodeaggregateidentifier = :nodeAggregateIdentifier
                     and h.contentstreamidentifier = :contentStreamIdentifier
             ', [
                 'newName' => (string)$event->getNewNodeName(),
-                'nodeIdentifier' => (string)$event->getNodeIdentifier(),
+                'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
                 'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
             ]);
         });
@@ -192,10 +192,14 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     /**
      * Copy the restriction edges from the parent Node to the newly created child node;
      * so that newly created nodes inherit the visibility constraints of the parent.
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier
+     * @param DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
+     * @throws \Doctrine\DBAL\DBALException
      */
-    private function connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $parentNodeIdentifier, NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier, DimensionSpacePointSet $visibleDimensionsOfNewlyCreateNodeAggregate)
+    private function connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier, DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible)
     {
-        $parentNode = $this->projectionContentGraph->getNode($parentNodeIdentifier, $contentStreamIdentifier);
         $this->getDatabaseConnection()->executeUpdate('
                 INSERT INTO neos_contentgraph_restrictionedge (
                   contentstreamidentifier,
@@ -216,53 +220,22 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                         and r.affectednodeaggregateidentifier = :parentNodeAggregateIdentifier
             ', [
             'sourceContentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'visibleDimensionSpacePoints' => $visibleDimensionsOfNewlyCreateNodeAggregate->getPointHashes(),
-            'parentNodeAggregateIdentifier' => (string)$parentNode->nodeAggregateIdentifier
+            'visibleDimensionSpacePoints' => $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible->getPointHashes(),
+            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier
         ], [
             'visibleDimensionSpacePoints' => Connection::PARAM_STR_ARRAY
         ]);
     }
 
     /**
-     * @param Event\NodeWasAddedToAggregate $event
-     * @throws \Exception
-     */
-    final public function whenNodeWasAddedToAggregate(Event\NodeWasAddedToAggregate $event)
-    {
-        $this->transactional(function () use ($event) {
-            $contentStreamIdentifier = $event->getContentStreamIdentifier();
-            $nodeAggregateIdentifier = $event->getNodeAggregateIdentifier();
-
-            $this->createNodeWithHierarchy(
-                $contentStreamIdentifier,
-                $nodeAggregateIdentifier,
-                $event->getNodeTypeName(),
-                $event->getNodeIdentifier(),
-                $event->getParentNodeIdentifier(),
-                $event->getDimensionSpacePoint(),
-                $event->getVisibleInDimensionSpacePoints(),
-                $event->getPropertyDefaultValuesAndTypes(),
-                $event->getNodeName()
-            );
-
-            $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
-                $event->getContentStreamIdentifier(),
-                $event->getParentNodeIdentifier(),
-                $event->getNodeAggregateIdentifier(),
-                $event->getVisibleInDimensionSpacePoints()
-            );
-        });
-    }
-
-    /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeName $nodeTypeName
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeIdentifier $parentNodeIdentifier
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
      * @param PropertyValues $propertyDefaultValuesAndTypes
+     * @param NodeAggregateIdentifier|null $succeedingSiblingNodeAggregateIdentifier
      * @param NodeName $nodeName
      * @throws \Doctrine\DBAL\DBALException
      */
@@ -270,24 +243,22 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
-        NodeIdentifier $nodeIdentifier,
-        NodeIdentifier $parentNodeIdentifier,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         DimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
         PropertyValues $propertyDefaultValuesAndTypes,
-        NodeName $nodeName
-    ) {
+        NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
+        NodeName $nodeName = null
+    ): void {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $node = new Node(
+        $node = new NodeRecord(
             $nodeRelationAnchorPoint,
-            $nodeIdentifier,
             $nodeAggregateIdentifier,
             $originDimensionSpacePoint->jsonSerialize(),
             $originDimensionSpacePoint->getHash(),
-            array_map(function (ContentRepository\ValueObject\PropertyValue $propertyValue) {
-                return $propertyValue->getValue();
-            }, iterator_to_array($propertyDefaultValuesAndTypes)),
-            $nodeTypeName
+            $propertyDefaultValuesAndTypes->getPlainValues(),
+            $nodeTypeName,
+            $nodeName
         );
 
         // reconnect parent relations
@@ -304,22 +275,32 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
         if (!empty($missingParentRelations)) {
             // add yet missing parent relations
-            $designatedParentNode = $this->projectionContentGraph->getNode($parentNodeIdentifier, $contentStreamIdentifier);
+
             foreach ($missingParentRelations as $dimensionSpacePoint) {
                 $parentNode = $this->projectionContentGraph->getNodeInAggregate(
-                    $designatedParentNode->nodeAggregateIdentifier,
                     $contentStreamIdentifier,
+                    $parentNodeAggregateIdentifier,
                     $dimensionSpacePoint
                 );
 
-                $this->connectHierarchy(
-                    $parentNode->relationAnchorPoint,
-                    $nodeRelationAnchorPoint,
-                    null,
-                    $nodeName,
-                    $contentStreamIdentifier,
-                    new DimensionSpacePointSet([$dimensionSpacePoint])
-                );
+                $succeedingSibling = $succeedingSiblingNodeAggregateIdentifier
+                    ? $this->projectionContentGraph->getNodeInAggregate(
+                        $contentStreamIdentifier,
+                        $succeedingSiblingNodeAggregateIdentifier,
+                        $dimensionSpacePoint
+                    )
+                    : null;
+
+                if ($parentNode) {
+                    $this->connectHierarchy(
+                        $contentStreamIdentifier,
+                        $parentNode->relationAnchorPoint,
+                        $nodeRelationAnchorPoint,
+                        new DimensionSpacePointSet([$dimensionSpacePoint]),
+                        $succeedingSibling ? $succeedingSibling->relationAnchorPoint : null,
+                        $nodeName
+                    );
+                }
             }
         }
 
@@ -346,12 +327,12 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function connectHierarchy(
+        ContentStreamIdentifier $contentStreamIdentifier,
         NodeRelationAnchorPoint $parentNodeAnchorPoint,
         NodeRelationAnchorPoint $childNodeAnchorPoint,
+        DimensionSpacePointSet $dimensionSpacePointSet,
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
-        NodeName $relationName = null,
-        ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePointSet $dimensionSpacePointSet
+        NodeName $relationName = null
     ): void {
         foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
             $position = $this->getRelationPosition(
@@ -440,7 +421,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
     /**
      * @param ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function whenContentStreamWasForked(ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event)
     {
@@ -500,34 +481,43 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
     /**
      * @param NodePropertyWasSet $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodePropertyWasSet(NodePropertyWasSet $event)
     {
         $this->transactional(function () use ($event) {
-            $this->updateNodeWithCopyOnWrite($event, function (Node $node) use ($event) {
+            $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
                 $node->properties[$event->getPropertyName()] = $event->getValue()->getValue();
             });
         });
     }
 
+    /**
+     * @param NodeReferencesWereSet $event
+     * @throws \Throwable
+     */
     public function whenNodeReferencesWereSet(NodeReferencesWereSet $event)
     {
         $this->transactional(function () use ($event) {
-            $this->updateNodeWithCopyOnWrite($event, function (Node $node) use ($event) {
+            $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
             });
-            $nodeAnchorPoint = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+
+            $nodeAnchorPoint = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                $event->getSourceNodeAggregateIdentifier(),
+                $event->getSourceOriginDimensionSpacePoint(),
+                $event->getContentStreamIdentifier()
+            );
 
             // remove old
             $this->getDatabaseConnection()->delete('neos_contentgraph_referencerelation', [
                 'nodeanchorpoint' => $nodeAnchorPoint,
-                'name' => $event->getPropertyName()
+                'name' => $event->getReferenceName()
             ]);
 
             // set new
             foreach ($event->getDestinationNodeAggregateIdentifiers() as $position => $destinationNodeIdentifier) {
                 $this->getDatabaseConnection()->insert('neos_contentgraph_referencerelation', [
-                    'name' => $event->getPropertyName(),
+                    'name' => $event->getReferenceName(),
                     'position' => $position,
                     'nodeanchorpoint' => $nodeAnchorPoint,
                     'destinationnodeaggregateidentifier' => $destinationNodeIdentifier,
@@ -538,7 +528,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
     /**
      * @param NodeWasHidden $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodeWasHidden(NodeWasHidden $event)
     {
@@ -605,7 +595,7 @@ insert into neos_contentgraph_restrictionedge
 
     /**
      * @param NodeWasShown $event
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodeWasShown(NodeWasShown $event)
     {
@@ -614,6 +604,12 @@ insert into neos_contentgraph_restrictionedge
         });
     }
 
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePointSet $affectedDimensionSpacePoints
+     * @throws \Doctrine\DBAL\DBALException
+     */
     private function removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
     {
         $this->getDatabaseConnection()->executeUpdate('
@@ -679,6 +675,11 @@ insert into neos_contentgraph_restrictionedge
             ]);
     }
 
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @throws \Doctrine\DBAL\DBALException
+     */
     private function removeAllRestrictionEdgesUnderneathNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
     {
         $this->getDatabaseConnection()->executeUpdate('
@@ -741,21 +742,22 @@ insert into neos_contentgraph_restrictionedge
     /**
      * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationWasCreated $event
      * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodeSpecializationWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeSpecializationWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
-            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getNodeAggregateIdentifier(), $event->getContentStreamIdentifier(), $event->getSourceDimensionSpacePoint());
+            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceDimensionSpacePoint());
 
             $specializedNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-            $specializedNode = new Node(
+            $specializedNode = new NodeRecord(
                 $specializedNodeRelationAnchorPoint,
-                $event->getSpecializationIdentifier(),
                 $sourceNode->nodeAggregateIdentifier,
                 $event->getSpecializationLocation()->jsonSerialize(),
                 $event->getSpecializationLocation()->getHash(),
                 $sourceNode->properties,
-                $sourceNode->nodeTypeName
+                $sourceNode->nodeTypeName,
+                $sourceNode->nodeName
             );
             $specializedNode->addToDatabase($this->getDatabaseConnection());
 
@@ -779,11 +781,12 @@ insert into neos_contentgraph_restrictionedge
     /**
      * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationWasCreated $event
      * @throws \Exception
+     * @throws \Throwable
      */
     public function whenNodeGeneralizationWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeGeneralizationWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
-            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getNodeAggregateIdentifier(), $event->getContentStreamIdentifier(), $event->getSourceDimensionSpacePoint());
+            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceDimensionSpacePoint());
             $sourceHierarchyRelation = $this->projectionContentGraph->findInboundHierarchyRelationsForNode(
                     $sourceNode->relationAnchorPoint,
                     $event->getContentStreamIdentifier(),
@@ -794,14 +797,14 @@ insert into neos_contentgraph_restrictionedge
             }
 
             $generalizedNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-            $generalizedNode = new Node(
+            $generalizedNode = new NodeRecord(
                 $generalizedNodeRelationAnchorPoint,
-                $event->getGeneralizationIdentifier(),
                 $sourceNode->nodeAggregateIdentifier,
                 $event->getGeneralizationLocation()->jsonSerialize(),
                 $event->getGeneralizationLocation()->getHash(),
                 $sourceNode->properties,
-                $sourceNode->nodeTypeName
+                $sourceNode->nodeTypeName,
+                $sourceNode->nodeName
             );
             $generalizedNode->addToDatabase($this->getDatabaseConnection());
 
@@ -826,116 +829,11 @@ insert into neos_contentgraph_restrictionedge
         });
     }
 
-    public function whenNodeInAggregateWasTranslated(Event\NodeInAggregateWasTranslated $event)
-    {
-        $this->transactional(function () use ($event) {
-            $childNodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-
-            $sourceNode = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getSourceNodeIdentifier(), $event->getContentStreamIdentifier());
-            if ($sourceNode === null) {
-                // TODO Log error
-                return;
-            }
-
-            $translatedNode = new Node(
-                $childNodeRelationAnchorPoint,
-                $event->getDestinationNodeIdentifier(),
-                $sourceNode->nodeAggregateIdentifier,
-                $event->getDimensionSpacePoint()->jsonSerialize(),
-                $event->getDimensionSpacePoint()->getHash(),
-                $sourceNode->properties,
-                $sourceNode->nodeTypeName
-            );
-            $parentNode = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getDestinationParentNodeIdentifier(), $event->getContentStreamIdentifier());
-            if ($parentNode === null) {
-                // TODO Log error
-                return;
-            }
-
-            $translatedNode->addToDatabase($this->getDatabaseConnection());
-            $this->connectHierarchy(
-                $parentNode->relationAnchorPoint,
-                $translatedNode->relationAnchorPoint,
-                // TODO: position on insert is still missing
-                null,
-                $sourceNode->nodeName,
-                $event->getContentStreamIdentifier(),
-                $event->getVisibleInDimensionSpacePoints()
-            );
-        });
-    }
-
     /**
-     * @param Event\NodesWereMoved $event
-     * @throws \Exception
+     * @param NodesWereRemovedFromAggregate $event
+     * @throws \Throwable
      */
-    public function whenNodesWereMoved(Event\NodesWereMoved $event)
-    {
-        $this->transactional(function () use ($event) {
-            foreach ($event->getNodeMoveMappings() as $moveNodeMapping) {
-                $nodeToBeMoved = $this->projectionContentGraph->getNode($moveNodeMapping->getNodeIdentifier(), $event->getContentStreamIdentifier());
-                $newSucceedingSibling = $moveNodeMapping->getNewSucceedingSiblingIdentifier()
-                    ? $this->projectionContentGraph->getNode($moveNodeMapping->getNewSucceedingSiblingIdentifier(), $event->getContentStreamIdentifier())
-                    : null;
-                $inboundHierarchyRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNode($nodeToBeMoved->relationAnchorPoint, $event->getContentStreamIdentifier());
-                if ($moveNodeMapping->getNewParentNodeIdentifier()) {
-                    //
-                    // 1. PRE-MOVE HOUSEKEEPING
-                    // - of the to-be moved nodes, remove all restriction edges
-                    // - TODO: this means that when moving a HIDDEN node itself (and none of its children), it will LOOSE its hidden state. TODO FIX!!!
-                    //
-                    $this->removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints(
-                        $event->getContentStreamIdentifier(),
-                        $nodeToBeMoved->nodeAggregateIdentifier,
-                        $moveNodeMapping->getDimensionSpacePointSet()
-                    );
-
-                    //
-                    // 2. do the MOVE ITSELF
-                    //
-                    $newParentNode = $this->projectionContentGraph->getNode($moveNodeMapping->getNewParentNodeIdentifier(), $event->getContentStreamIdentifier());
-                    foreach ($moveNodeMapping->getDimensionSpacePointSet()->getPoints() as $dimensionSpacePoint) {
-                        $newPosition = $this->getRelationPosition(
-                            $newParentNode->relationAnchorPoint,
-                            null,
-                            $newSucceedingSibling ? $newSucceedingSibling->relationAnchorPoint : null,
-                            $event->getContentStreamIdentifier(),
-                            $dimensionSpacePoint
-                        );
-                        $this->assignHierarchyRelationToNewParent($inboundHierarchyRelations[$dimensionSpacePoint->getHash()], $newParentNode->nodeIdentifier, $event->getContentStreamIdentifier(), $newPosition);
-                    }
-
-                    //
-                    // 3. POST-MOVE HOUSEKEEPING
-                    // - if parent node is hidden, hide the moved-to target as well.
-                    //
-                    $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
-                        $event->getContentStreamIdentifier(),
-                        $newParentNode->nodeIdentifier,
-                        $nodeToBeMoved->nodeAggregateIdentifier,
-                        $moveNodeMapping->getDimensionSpacePointSet()
-                    );
-                } else {
-                    foreach ($moveNodeMapping->getDimensionSpacePointSet()->getPoints() as $dimensionSpacePoint) {
-                        $newPosition = $this->getRelationPosition(
-                            null,
-                            $nodeToBeMoved->relationAnchorPoint,
-                            $newSucceedingSibling ? $newSucceedingSibling->relationAnchorPoint : null,
-                            $event->getContentStreamIdentifier(),
-                            $dimensionSpacePoint
-                        );
-                        $inboundHierarchyRelations[$dimensionSpacePoint->getHash()]->assignNewPosition($newPosition, $this->getDatabaseConnection());
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * @param Event\NodesWereRemovedFromAggregate $event
-     * @throws \Exception
-     */
-    public function whenNodesWereRemovedFromAggregate(Event\NodesWereRemovedFromAggregate $event)
+    public function whenNodesWereRemovedFromAggregate(NodesWereRemovedFromAggregate $event)
     {
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
@@ -949,10 +847,10 @@ insert into neos_contentgraph_restrictionedge
     }
 
     /**
-     * @param Event\NodeAggregateWasRemoved $event
-     * @throws \Exception
+     * @param NodeAggregateWasRemoved $event
+     * @throws \Throwable
      */
-    public function whenNodeAggregateWasRemoved(Event\NodeAggregateWasRemoved $event)
+    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event)
     {
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
@@ -966,6 +864,10 @@ insert into neos_contentgraph_restrictionedge
         });
     }
 
+    /**
+     * @param HierarchyRelation $inboundRelation
+     * @throws \Doctrine\DBAL\DBALException
+     */
     protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(HierarchyRelation $inboundRelation)
     {
         $inboundRelation->removeFromDatabase($this->getDatabaseConnection());
@@ -990,34 +892,9 @@ insert into neos_contentgraph_restrictionedge
     }
 
     /**
-     * @param HierarchyRelation $hierarchyRelation
-     * @param NodeIdentifier $newParentNodeIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param int $position
-     * @throws \Exception
-     */
-    protected function assignHierarchyRelationToNewParent(HierarchyRelation $hierarchyRelation, NodeIdentifier $newParentNodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, int $position)
-    {
-        $newParentNode = $this->projectionContentGraph->getNode($newParentNodeIdentifier, $contentStreamIdentifier);
-        if (!$newParentNode) {
-            throw new \Exception(sprintf('new parent %s for hierarchy relation in content stream %s not found.', $newParentNodeIdentifier, $contentStreamIdentifier), 1519768028);
-        }
-        $newHierarchyRelation = new HierarchyRelation(
-            $newParentNode->relationAnchorPoint,
-            $hierarchyRelation->childNodeAnchor,
-            $hierarchyRelation->name,
-            $hierarchyRelation->contentStreamIdentifier,
-            $hierarchyRelation->dimensionSpacePoint,
-            $hierarchyRelation->dimensionSpacePointHash,
-            $position
-        );
-        $newHierarchyRelation->addToDatabase($this->getDatabaseConnection());
-        $hierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
-    }
-
-    /**
      * @param callable $operations
      * @throws \Exception
+     * @throws \Throwable
      */
     protected function transactional(callable $operations): void
     {
@@ -1025,21 +902,32 @@ insert into neos_contentgraph_restrictionedge
         $this->emitProjectionUpdated();
     }
 
-    protected function updateNodeWithCopyOnWrite($event, callable $operations)
+    /**
+     * @param ContentRepository\Context\Node\CopyableAcrossContentStreamsInterface $event
+     * @param callable $operations
+     * @return mixed
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     */
+    protected function updateNodeWithCopyOnWrite(ContentRepository\Context\Node\CopyableAcrossContentStreamsInterface $event, callable $operations)
     {
-        // TODO: do this copy on write on every modification op concerning nodes
-
-        // TODO: does this always return a SINGLE anchor point??
-        if (method_exists($event, 'getNodeIdentifier')) {
-            // DEPRECATED case: NodeIdentifier
-            $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
-        } else {
-            $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream($event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint(), $event->getContentStreamIdentifier());
-        }
-
-        if ($anchorPointForNode === null) {
-            // TODO Log error
-            throw new \Exception(sprintf('anchor point for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1519681260000);
+        switch (get_class($event)) {
+            case NodeReferencesWereSet::class:
+                /** @var NodeReferencesWereSet $event */
+                $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                    $event->getSourceNodeAggregateIdentifier(),
+                    $event->getSourceOriginDimensionSpacePoint(),
+                    $event->getContentStreamIdentifier()
+                );
+                break;
+            default:
+                if (method_exists($event, 'getNodeAggregateIdentifier')) {
+                    $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                        $event->getNodeAggregateIdentifier(),
+                        $event->getOriginDimensionSpacePoint(),
+                        $event->getContentStreamIdentifier()
+                    );
+                }
         }
 
         $contentStreamIdentifiers = $this->projectionContentGraph->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPointForNode);
@@ -1095,6 +983,10 @@ insert into neos_contentgraph_restrictionedge
         return $this->client->getConnection();
     }
 
+    /**
+     * @param EventEnvelope $eventEnvelope
+     * @throws \Neos\Cache\Exception
+     */
     public function afterInvoke(EventEnvelope $eventEnvelope): void
     {
         $this->processedEventsCache->set(md5($eventEnvelope->getRawEvent()->getIdentifier()), true);

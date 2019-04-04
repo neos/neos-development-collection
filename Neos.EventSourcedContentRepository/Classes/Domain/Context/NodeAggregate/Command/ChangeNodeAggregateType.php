@@ -39,7 +39,6 @@ final class ChangeNodeAggregateType
      */
     protected $strategy;
 
-
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $newNodeTypeName, ?NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -48,13 +47,21 @@ final class ChangeNodeAggregateType
         $this->strategy = $strategy;
     }
 
+    /**
+     * @param array $array
+     * @return ChangeNodeAggregateType
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyUnknown
+     */
     public static function fromArray(array $array): self
     {
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['newNodeTypeName']),
-            $array['strategy'] ?? new NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy($array['strategy'])
+            isset($array['strategy'])
+                ? NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::fromString($array['strategy'])
+                : null
+
         );
     }
 

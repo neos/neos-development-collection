@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -22,9 +22,10 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 /**
  * Create root node command
  *
- * A root node has no aggregate (and is colorless in the content graph).
+ * A root node has no variants and no origin dimension space point but occupies the whole allowed dimension subspace.
+ * It also has no auto created child nodes.
  */
-final class CreateRootNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface
+final class CreateRootNodeAggregateWithNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -32,9 +33,9 @@ final class CreateRootNode implements \JsonSerializable, CopyableAcrossContentSt
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
-    private $nodeIdentifier;
+    private $nodeAggregateIdentifier;
 
     /**
      * @var NodeTypeName
@@ -46,18 +47,14 @@ final class CreateRootNode implements \JsonSerializable, CopyableAcrossContentSt
      */
     private $initiatingUserIdentifier;
 
-    /**
-     * CreateRootNode constructor.
-     *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param UserIdentifier $initiatingUserIdentifier
-     */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, UserIdentifier $initiatingUserIdentifier)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeTypeName $nodeTypeName,
+        UserIdentifier $initiatingUserIdentifier
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
@@ -66,7 +63,7 @@ final class CreateRootNode implements \JsonSerializable, CopyableAcrossContentSt
     {
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeIdentifier::fromString($array['nodeIdentifier']),
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['nodeTypeName']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
@@ -80,27 +77,16 @@ final class CreateRootNode implements \JsonSerializable, CopyableAcrossContentSt
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->nodeIdentifier;
+        return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * Getter for NodeTypeName
-     *
-     * @return NodeTypeName
-     */
     public function getNodeTypeName(): NodeTypeName
     {
         return $this->nodeTypeName;
     }
 
-    /**
-     * @return UserIdentifier
-     */
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
@@ -110,7 +96,7 @@ final class CreateRootNode implements \JsonSerializable, CopyableAcrossContentSt
     {
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeIdentifier' => $this->nodeIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'nodeTypeName' => $this->nodeTypeName,
             'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
         ];

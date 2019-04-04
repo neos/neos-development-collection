@@ -38,7 +38,7 @@ class NodeRelationAnchorPoint implements \JsonSerializable
         return new static(Algorithms::generateUUID());
     }
 
-    public function fromString(string $value): self
+    public static function fromString(string $value): self
     {
         return new static($value);
     }

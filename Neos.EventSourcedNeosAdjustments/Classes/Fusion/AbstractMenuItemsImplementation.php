@@ -15,7 +15,6 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Fusion\FusionObjects\TemplateImplementation;
 
 /**
  * Base class for Menu and DimensionsMenu

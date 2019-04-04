@@ -18,10 +18,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\Fork
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ChangeNodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateRootNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
@@ -29,10 +27,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFr
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
@@ -74,6 +72,12 @@ final class WorkspaceCommandHandler
      * @var NodeCommandHandler
      */
     protected $nodeCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAggregateCommandHandler
+     */
+    protected $nodeAggregateCommandHandler;
 
     /**
      * @Flow\Inject
@@ -191,15 +195,6 @@ final class WorkspaceCommandHandler
 
         $eventStore->commit($streamName, $events);
         $commandResult = $commandResult->merge(CommandResult::fromPublishedEvents($events));
-
-        $commandResult = $commandResult->merge($this->nodeCommandHandler->handleCreateRootNode(
-            new CreateRootNode(
-                $contentStreamIdentifier,
-                $command->getRootNodeIdentifier(),
-                $command->getRootNodeTypeName(),
-                $command->getInitiatingUserIdentifier()
-            )
-        ));
 
         return $commandResult;
     }
@@ -420,19 +415,29 @@ final class WorkspaceCommandHandler
         return $commands;
     }
 
+    /**
+     * @param $command
+     * @return CommandResult
+     * @throws \Neos\ContentRepository\Exception\NodeConstraintException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeNameIsAlreadyOccupied
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet
+     * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
     private function applyCommand($command): CommandResult
     {
         // TODO: use a more clever dispatching mechanism than the hard coded switch!!
         // TODO: add all commands!!
         switch (get_class($command)) {
-            case AddNodeToAggregate::class:
-                return $this->nodeCommandHandler->handleAddNodeToAggregate($command);
-                break;
-            case ChangeNodeName::class:
-                return $this->nodeCommandHandler->handleChangeNodeName($command);
+            case ChangeNodeAggregateName::class:
+                return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($command);
                 break;
             case CreateNodeAggregateWithNode::class:
-                return $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
+                return $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command);
                 break;
             case CreateRootNode::class:
                 return $this->nodeCommandHandler->handleCreateRootNode($command);
@@ -452,9 +457,6 @@ final class WorkspaceCommandHandler
             case SetNodeReferences::class:
                 return $this->nodeCommandHandler->handleSetNodeReferences($command);
                 break;
-            case TranslateNodeInAggregate::class:
-                return $this->nodeCommandHandler->handleTranslateNodeInAggregate($command);
-                break;
             case RemoveNodeAggregate::class:
                 return $this->nodeCommandHandler->handleRemoveNodeAggregate($command);
                 break;
@@ -470,8 +472,14 @@ final class WorkspaceCommandHandler
      * This method is like a combined Rebase and Publish!
      *
      * @param Command\PublishIndividualNodesFromWorkspace $command
+     * @return CommandResult
      * @throws BaseWorkspaceDoesNotExist
+     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
      * @throws WorkspaceDoesNotExist
+     * @throws \Neos\ContentRepository\Exception\NodeException
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamAlreadyExists
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
+     * @throws \Exception
      */
     public function handlePublishIndividualNodesFromWorkspace(Command\PublishIndividualNodesFromWorkspace $command)
     {
@@ -559,40 +567,10 @@ final class WorkspaceCommandHandler
      * @param object $command
      * @param NodeAddress[] $nodeAddresses
      * @return bool
-     * @throws \Neos\ContentRepository\Exception\NodeException
+     * @throws \Exception
      */
     private function commandMatchesNodeAddresses(object $command, array $nodeAddresses): bool
     {
-        if ($command instanceof ChangeNodeName) {
-            // TODO: HACK as long as ChangeNodeName does not work with NodeAggregateIdentifier. As soon as ChangeNodeName includes NodeAggregateIdentifier, it can simply implement MatchableWithNodeAddressInterface; and this block can be removed.
-            $node = $this->contentGraph->findNodeByIdentifierInContentStream($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
-            foreach ($nodeAddresses as $nodeAddress) {
-                if (
-                    (string)$node->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-                    && $node->getOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
-                    && $node->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
-                ) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        if ($command instanceof SetNodeReferences) {
-            // TODO: HACK as long as SetNodeReferences does not work with NodeAggregateIdentifier. As soon as SetNodeReferences includes NodeAggregateIdentifier, it can simply implement MatchableWithNodeAddressInterface; and this block can be removed.
-            $node = $this->contentGraph->findNodeByIdentifierInContentStream($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
-            foreach ($nodeAddresses as $nodeAddress) {
-                if (
-                    (string)$node->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-                    && $node->getOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
-                    && $node->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
-                ) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         if (!$command instanceof MatchableWithNodeAddressInterface) {
             throw new \Exception(sprintf('Command %s needs to implememt MatchableWithNodeAddressInterface in order to be published individually.', get_class($command)));
         }

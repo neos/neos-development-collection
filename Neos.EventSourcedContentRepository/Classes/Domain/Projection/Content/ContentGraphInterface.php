@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
 
@@ -40,10 +40,15 @@ interface ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $originDimensionSpacePoint
      * @return NodeInterface|null
      */
-    public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): ?NodeInterface;
+    public function findNodeByIdentifiers(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint
+    ): ?NodeInterface;
 
     /**
      * @param NodeTypeName $nodeTypeName
@@ -86,6 +91,16 @@ interface ContentGraphInterface
     public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
 
     /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeName $nodeName
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param DimensionSpacePoint $parentNodeOriginDimensionSpacePoints
+     * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
+     * @return DimensionSpacePointSet
+     */
+    public function getDimensionSpacePointsOccupiedByChildNodeName(ContentStreamIdentifier $contentStreamIdentifier, NodeName $nodeName, NodeAggregateIdentifier $parentNodeAggregateIdentifier, DimensionSpacePoint $parentNodeOriginDimensionSpacePoints, DimensionSpacePointSet $dimensionSpacePointsToCheck);
+
+    /**
      * @param NodeInterface $node
      * @return DimensionSpacePointSet
      */
@@ -101,6 +116,7 @@ interface ContentGraphInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): DimensionSpacePointSet;
 
+    public function countNodes(): int;
 
     /**
      * Enable all caches. All READ requests should enable the cache.

@@ -22,25 +22,34 @@ final class NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy imp
 {
     const STRATEGY_DELETE = 'delete';
 
-
     /**
      * @var string
      */
     private $strategy;
 
+    private function __construct(string $strategy)
+    {
+        $this->strategy = $strategy;
+    }
 
     /**
      * @param string $strategy
+     * @return NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
      * @throws NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyUnknown
      */
-    public function __construct(string $strategy)
+    public static function fromString(string $strategy): self
     {
         if ($strategy !== self::STRATEGY_DELETE) {
             throw new NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyUnknown(
                 'Given strategy "' . $strategy . '" is not known for resolving child node type constraint conflicts when changing a node type.', 15200134492
             );
         }
-        $this->strategy = $strategy;
+        return new self($strategy);
+    }
+
+    public static function delete(): NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+    {
+        return new self(self::STRATEGY_DELETE);
     }
 
     /**

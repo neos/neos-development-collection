@@ -20,8 +20,9 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
 use Neos\EventSourcing\EventBus\EventBus;
 use Neos\Flow\Annotations as Flow;
@@ -34,6 +35,12 @@ abstract class AbstractCreate extends AbstractStructuralChange
      * @var NodeCommandHandler
      */
     protected $nodeCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAggregateCommandHandler
+     */
+    protected $nodeAggregateCommandHandler;
 
     /**
      * @Flow\Inject
@@ -142,6 +149,20 @@ abstract class AbstractCreate extends AbstractStructuralChange
         return $this->name;
     }
 
+    /**
+     * @param TraversableNodeInterface $parentNode
+     * @return TraversableNodeInterface
+     * @throws InvalidNodeCreationHandlerException
+     * @throws \Neos\ContentRepository\Exception\NodeConstraintException
+     * @throws \Neos\ContentRepository\Exception\NodeException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeNameIsAlreadyOccupied
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
     protected function createNode(TraversableNodeInterface $parentNode): TraversableNodeInterface
     {
         // TODO: the $name=... line should be as expressed below
@@ -160,7 +181,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
             $nodeName
         );
 
-        $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command)->blockUntilProjectionsAreUpToDate();
+        $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command)->blockUntilProjectionsAreUpToDate();
 
         $newlyCreatedNode = $parentNode->findNamedChildNode($nodeName);
         $this->applyNodeCreationHandlers($newlyCreatedNode);

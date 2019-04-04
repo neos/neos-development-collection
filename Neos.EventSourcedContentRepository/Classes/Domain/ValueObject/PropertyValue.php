@@ -20,7 +20,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class PropertyValue implements \JsonSerializable
 {
-
     /**
      * @var mixed
      */

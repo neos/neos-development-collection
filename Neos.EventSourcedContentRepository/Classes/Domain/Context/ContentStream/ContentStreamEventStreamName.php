@@ -25,17 +25,15 @@ final class ContentStreamEventStreamName
      */
     protected $eventStreamName;
 
-
-    public function __construct(string $eventStreamName)
+    protected function __construct(string $eventStreamName)
     {
         $this->eventStreamName = $eventStreamName;
     }
 
-    public static function fromContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ContentStreamEventStreamName
+    public static function fromContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): self
     {
         return new ContentStreamEventStreamName('Neos.ContentRepository:ContentStream:' . $contentStreamIdentifier);
     }
-
 
     public function getEventStreamName(): StreamName
     {

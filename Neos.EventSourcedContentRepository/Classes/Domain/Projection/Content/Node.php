@@ -14,21 +14,18 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
-use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
  */
 class Node implements NodeInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -48,11 +45,6 @@ class Node implements NodeInterface
      * @var DimensionSpacePoint
      */
     protected $originDimensionSpacePoint;
-
-    /**
-     * @var NodeIdentifier
-     */
-    protected $nodeIdentifier;
 
     /**
      * @var NodeTypeName
@@ -75,24 +67,21 @@ class Node implements NodeInterface
     protected $properties;
 
     /**
-     * Node constructor.
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param NodeIdentifier $nodeIdentifier
      * @param NodeTypeName $nodeTypeName
      * @param NodeType $nodeType
      * @param NodeName $nodeName
      * @param PropertyCollection $properties
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, PropertyCollection $properties)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, PropertyCollection $properties)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
@@ -100,14 +89,13 @@ class Node implements NodeInterface
     }
 
     /**
-     * Whether or not this node is the root of the graph, i.e. has no parent node
+     * Whether or not this node is a root of the graph, i.e. has no parent node
      *
      * @return bool
-     * @throws \Exception
      */
     public function isRoot(): bool
     {
-        return $this->nodeAggregateIdentifier->equals(RootNodeIdentifiers::rootNodeAggregateIdentifier());
+        return $this->nodeType->isOfType('Neos.ContentRepository:Root');
     }
 
     /**
@@ -140,14 +128,6 @@ class Node implements NodeInterface
     public function getOriginDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->originDimensionSpacePoint;
-    }
-
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNodeIdentifier(): NodeIdentifier
-    {
-        return $this->nodeIdentifier;
     }
 
     /**
@@ -199,17 +179,21 @@ class Node implements NodeInterface
     {
         return isset($this->properties[$propertyName]);
     }
+
     /**
      * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
      * related to this object.
      *
      * @return string
      */
-    public function getCacheEntryIdentifier():string
+    public function getCacheEntryIdentifier(): string
     {
-        return $this->getNodeIdentifier() . '@' . $this->getContentStreamIdentifier() . '@' . $this->getDimensionSpacePoint()->serializeForUri();
+        return sha1(json_encode([
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'originDimensionSpacePoint' => $this->originDimensionSpacePoint
+        ]));
     }
-
 
     public function getLabel(): string
     {

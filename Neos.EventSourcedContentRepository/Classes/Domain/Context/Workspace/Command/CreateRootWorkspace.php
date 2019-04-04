@@ -13,8 +13,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -25,7 +23,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
  */
 final class CreateRootWorkspace
 {
-
     /**
      * @var WorkspaceName
      */
@@ -52,34 +49,24 @@ final class CreateRootWorkspace
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
-     */
-    private $rootNodeIdentifier;
-
-    /**
-     * @var NodeTypeName
-     */
-    private $rootNodeTypeName;
-
-    /**
-     * CreateRootWorkspace constructor.
      * @param WorkspaceName $workspaceName
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
      * @param UserIdentifier $initiatingUserIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $rootNodeIdentifier
-     * @param NodeTypeName $rootNodeTypeName
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $rootNodeIdentifier, NodeTypeName $rootNodeTypeName)
-    {
+    public function __construct(
+        WorkspaceName $workspaceName,
+        WorkspaceTitle $workspaceTitle,
+        WorkspaceDescription $workspaceDescription,
+        UserIdentifier $initiatingUserIdentifier,
+        ContentStreamIdentifier $contentStreamIdentifier
+    ) {
         $this->workspaceName = $workspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->rootNodeIdentifier = $rootNodeIdentifier;
-        $this->rootNodeTypeName = $rootNodeTypeName;
     }
 
     public static function fromArray(array $array): self
@@ -89,9 +76,7 @@ final class CreateRootWorkspace
             new WorkspaceTitle($array['workspaceTitle']),
             new WorkspaceDescription($array['workspaceDescription']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeIdentifier::fromString($array['rootNodeIdentifier']),
-            NodeTypeName::fromString($array['rootNodeTypeName'])
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier'])
         );
     }
 
@@ -133,21 +118,5 @@ final class CreateRootWorkspace
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
-    }
-
-    /**
-     * @return NodeIdentifier
-     */
-    public function getRootNodeIdentifier(): NodeIdentifier
-    {
-        return $this->rootNodeIdentifier;
-    }
-
-    /**
-     * @return NodeTypeName
-     */
-    public function getRootNodeTypeName(): NodeTypeName
-    {
-        return $this->rootNodeTypeName;
     }
 }

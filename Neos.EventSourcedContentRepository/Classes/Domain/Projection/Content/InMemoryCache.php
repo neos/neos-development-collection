@@ -16,7 +16,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\AllChildNodesByNodeIdentifierCache;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\NodeByNodeAggregateIdentifierCache;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\NodeByNodeIdentifierCache;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\NodePathCache;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
 
@@ -25,16 +24,10 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\P
  */
 final class InMemoryCache
 {
-
     /**
      * @var NodePathCache
      */
     private $nodePathCache;
-
-    /**
-     * @var NodeByNodeIdentifierCache
-     */
-    private $nodeByNodeIdentifierCache;
 
     /**
      * @var NodeByNodeAggregateIdentifierCache
@@ -86,14 +79,6 @@ final class InMemoryCache
         return $this->nodePathCache;
     }
 
-    /**
-     * @return NodeByNodeIdentifierCache
-     */
-    public function getNodeByNodeIdentifierCache(): NodeByNodeIdentifierCache
-    {
-        return $this->nodeByNodeIdentifierCache;
-    }
-
     public function getNodeByNodeAggregateIdentifierCache(): NodeByNodeAggregateIdentifierCache
     {
         return $this->nodeByNodeAggregateIdentifierCache;
@@ -123,14 +108,12 @@ final class InMemoryCache
         return $this->parentNodeIdentifierByChildNodeIdentifierCache;
     }
 
-
     /**
      * @param bool $isEnabled if TRUE, the caches work; if FALSE, they do not store anything.
      */
     private function reset(bool $isEnabled): void
     {
         $this->nodePathCache = new NodePathCache($isEnabled);
-        $this->nodeByNodeIdentifierCache = new NodeByNodeIdentifierCache($isEnabled);
         $this->nodeByNodeAggregateIdentifierCache = new NodeByNodeAggregateIdentifierCache($isEnabled);
         $this->allChildNodesByNodeIdentifierCache = new AllChildNodesByNodeIdentifierCache($isEnabled);
         $this->namedChildNodeByNodeIdentifierCache = new NamedChildNodeByNodeIdentifierCache($isEnabled);

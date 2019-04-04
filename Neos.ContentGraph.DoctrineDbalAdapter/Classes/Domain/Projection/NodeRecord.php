@@ -14,24 +14,18 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  */
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
 /**
  * The active record for reading and writing nodes from and to the database
  */
-class Node
+class NodeRecord
 {
     /**
      * @var NodeRelationAnchorPoint
      */
     public $relationAnchorPoint;
-
-    /**
-     * @var NodeIdentifier
-     */
-    public $nodeIdentifier;
 
     /**
      * @var NodeAggregateIdentifier
@@ -65,22 +59,9 @@ class Node
      */
     public $nodeName;
 
-    /**
-     * Node constructor.
-     *
-     * @param NodeRelationAnchorPoint $relationAnchorPoint
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param array $originDimensionSpacePoint
-     * @param string $originDimensionSpacePointHash
-     * @param array $properties
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeName $nodeName
-     */
     public function __construct(
         NodeRelationAnchorPoint $relationAnchorPoint,
-        NodeIdentifier $nodeIdentifier,
-        ?NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
         ?array $originDimensionSpacePoint,
         ?string $originDimensionSpacePointHash,
         ?array $properties,
@@ -88,7 +69,6 @@ class Node
         NodeName $nodeName = null
     ) {
         $this->relationAnchorPoint = $relationAnchorPoint;
-        $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->originDimensionSpacePointHash = $originDimensionSpacePointHash;
@@ -99,37 +79,45 @@ class Node
 
     /**
      * @param Connection $databaseConnection
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function addToDatabase(Connection $databaseConnection): void
     {
         $databaseConnection->insert('neos_contentgraph_node', [
             'relationanchorpoint' => (string) $this->relationAnchorPoint,
             'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
-            'nodeidentifier' => (string) $this->nodeIdentifier,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
             'nodetypename' => (string) $this->nodeTypeName
-        ]);
-    }
-
-    public function updateToDatabase(Connection $databaseConnection): void
-    {
-        $databaseConnection->update('neos_contentgraph_node', [
-            'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
-            'nodeidentifier' => (string) $this->nodeIdentifier,
-            'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
-            'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
-            'properties' => json_encode($this->properties),
-            'nodetypename' => (string) $this->nodeTypeName
-        ],
-        [
-            'relationanchorpoint' => $this->relationAnchorPoint
         ]);
     }
 
     /**
      * @param Connection $databaseConnection
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function updateToDatabase(Connection $databaseConnection): void
+    {
+        $databaseConnection->update(
+            'neos_contentgraph_node',
+            [
+                'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
+                'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
+                'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
+                'properties' => json_encode($this->properties),
+                'nodetypename' => (string) $this->nodeTypeName
+            ],
+            [
+                'relationanchorpoint' => $this->relationAnchorPoint
+            ]
+        );
+    }
+
+    /**
+     * @param Connection $databaseConnection
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
      */
     public function removeFromDatabase(Connection $databaseConnection): void
     {
@@ -138,17 +126,16 @@ class Node
         ]);
     }
 
-
     /**
      * @param array $databaseRow
      * @return static
+     * @throws \Exception
      */
-    public static function fromDatabaseRow(array $databaseRow)
+    public static function fromDatabaseRow(array $databaseRow): NodeRecord
     {
         return new static(
             NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
-            NodeIdentifier::fromString($databaseRow['nodeidentifier']),
-            $databaseRow['nodeaggregateidentifier'] ? NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']) : null,
+            NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
             json_decode($databaseRow['origindimensionspacepoint'], true),
             $databaseRow['origindimensionspacepointhash'],
             json_decode($databaseRow['properties'], true),

@@ -24,7 +24,6 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
@@ -75,32 +74,30 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * Find a node by node identifier and content stream identifier
-     *
-     * Note: This does not pass the CR context to the node!!!
-     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $originDimensionSpacePoint
      * @return NodeInterface|null
      * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): ?NodeInterface
-    {
+    public function findNodeByIdentifiers(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint
+    ): ?NodeInterface {
         $connection = $this->client->getConnection();
 
-        // TODO: we get an arbitrary DimensionSpacePoint returned here -- and this is actually a problem I guess...
-        // TODO think through in detail
+        // @todo remove fetching additional dimension space point once the matter is resolved
         // HINT: we check the ContentStreamIdentifier on the EDGE; as this is where we actually find out whether the node exists in the content stream
         $nodeRow = $connection->executeQuery(
-            'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint FROM neos_contentgraph_node n
+            'SELECT n.*, h.contentstreamidentifier, h.name, n.origindimensionspacepoint, n.origindimensionspacepoint AS dimensionspacepoint FROM neos_contentgraph_node n
                   INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-                  WHERE n.nodeidentifier = :nodeIdentifier
+                  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+                  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
                   AND h.contentstreamidentifier = :contentStreamIdentifier',
             [
-                'nodeIdentifier' => (string)$nodeIdentifier,
+                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash(),
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier
             ]
         )->fetch();
@@ -154,23 +151,19 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param Domain\Service\Context|null $context
      * @return NodeAggregate|null
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findNodeAggregateByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        Domain\Service\Context $context = null
+        NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeAggregate {
         $connection = $this->client->getConnection();
 
         $query = 'SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
-                      INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                      JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                       WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
                       AND h.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
@@ -183,8 +176,8 @@ final class ContentGraph implements ContentGraphInterface
             return null;
         }
 
-        $rawNodeTypeName = null;
-        $rawNodeName = null;
+        $rawNodeTypeName = '';
+        $rawNodeName = '';
         $nodes = [];
         foreach ($nodeRows as $nodeRow) {
             if (!$rawNodeTypeName) {
@@ -197,10 +190,10 @@ final class ContentGraph implements ContentGraphInterface
             } elseif ($nodeRow['name'] !== $rawNodeName) {
                 throw new Domain\Context\Node\NodeAggregatesNameIsAmbiguous('Node aggregate "' . $nodeAggregateIdentifier . '" has an ambiguous name.', 1519919025);
             }
-            $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
+            $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
         }
 
-        return new NodeAggregate($nodeAggregateIdentifier, NodeTypeName::fromString($rawNodeTypeName), NodeName::fromString($rawNodeName), $nodes);
+        return new NodeAggregate($nodeAggregateIdentifier, NodeTypeName::fromString($rawNodeTypeName), $rawNodeName ? NodeName::fromString($rawNodeName) : null, $nodes);
     }
 
     /**
@@ -234,38 +227,30 @@ final class ContentGraph implements ContentGraphInterface
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findParentAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
     {
-        $nodeIdentifiers = [];
-        foreach ($this->findNodesByNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier) as $node) {
-            $nodeIdentifiers[] = (string)$node->getNodeIdentifier();
-        }
-
         $connection = $this->client->getConnection();
 
         $query = 'SELECT p.*, ph.name, ph.contentstreamidentifier, ph.dimensionspacepoint FROM neos_contentgraph_node p
                       INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint 
-                      WHERE c.nodeidentifier IN (:nodeIdentifiers)
+                      WHERE c.nodeaggregateidentifier = :nodeAggregateIdentifier
                       AND ph.contentstreamidentifier = :contentStreamIdentifier
                       AND ch.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
-            'nodeIdentifiers' => $nodeIdentifiers,
+            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
             'contentStreamIdentifier' => (string)$contentStreamIdentifier
         ];
-        $types['nodeIdentifiers'] = Connection::PARAM_STR_ARRAY;
 
         $parentAggregates = [];
         $rawNodeTypeNames = [];
         $rawNodeNames = [];
         $nodesByAggregate = [];
-        foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $nodeRow) {
+        foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $nodeRow) {
             $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
-            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['nodeidentifier']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
+            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['origindimensionspacepointhash']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
             if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
@@ -281,7 +266,7 @@ final class ContentGraph implements ContentGraphInterface
             $parentAggregates[$rawNodeAggregateIdentifier] = new NodeAggregate(
                 NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
                 NodeTypeName::fromString($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
-                isset($rawNodeNames[$rawNodeAggregateIdentifier]) ? NodeName::fromString($rawNodeNames[$rawNodeAggregateIdentifier]) : NodeName::unnamed(),
+                isset($rawNodeNames[$rawNodeAggregateIdentifier]) ? NodeName::fromString($rawNodeNames[$rawNodeAggregateIdentifier]) : null,
                 $nodesByAggregate[$rawNodeAggregateIdentifier]
             );
         }
@@ -292,43 +277,35 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return array
+     * @return array|NodeAggregate[]
      * @throws Domain\Context\Node\NodeAggregatesNameIsAmbiguous
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
     {
-        $nodeIdentifiers = [];
-        foreach ($this->findNodesByNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier) as $node) {
-            $nodeIdentifiers[] = (string)$node->getNodeIdentifier();
-        }
-
         $connection = $this->client->getConnection();
 
         $query = 'SELECT c.*, ch.name, ch.contentstreamidentifier, ch.dimensionspacepoint FROM neos_contentgraph_node p
                       INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
                       INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint 
-                      WHERE p.nodeidentifier IN (:nodeIdentifiers)
+                      WHERE p.nodeaggregateidentifier = :nodeAggregateIdentifier
                       AND ph.contentstreamidentifier = :contentStreamIdentifier
                       AND ch.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
-            'nodeIdentifiers' => $nodeIdentifiers,
-            'contentStreamIdentifier' => $contentStreamIdentifier
+            'nodeAggregateIdentifier' => (string) $nodeAggregateIdentifier,
+            'contentStreamIdentifier' => (string) $contentStreamIdentifier
         ];
-        $types['nodeIdentifiers'] = Connection::PARAM_STR_ARRAY;
 
         $childAggregates = [];
         $rawNodeTypeNames = [];
         $rawNodeNames = [];
         $nodesByAggregate = [];
-        foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $nodeRow) {
+        foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $nodeRow) {
             $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
-            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['nodeidentifier']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
+            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['origindimensionspacepointhash']] = $this->nodeFactory->mapNodeRowToNode($nodeRow);
             if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
@@ -344,12 +321,57 @@ final class ContentGraph implements ContentGraphInterface
             $childAggregates[$rawNodeAggregateIdentifier] = new NodeAggregate(
                 NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
                 NodeTypeName::fromString($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
-                NodeName::fromString($rawNodeNames[$rawNodeAggregateIdentifier]),
+                isset($rawNodeNames[$rawNodeAggregateIdentifier]) ? NodeName::fromString($rawNodeNames[$rawNodeAggregateIdentifier]) : null,
                 $nodesByAggregate[$rawNodeAggregateIdentifier]
             );
         }
 
         return $childAggregates;
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeName $nodeName
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param DimensionSpacePoint $parentNodeDimensionSpacePoint
+     * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
+     * @return DimensionSpacePointSet
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function getDimensionSpacePointsOccupiedByChildNodeName(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeName $nodeName,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        DimensionSpacePoint $parentNodeDimensionSpacePoint,
+        DimensionSpacePointSet $dimensionSpacePointsToCheck
+    ) {
+        $connection = $this->client->getConnection();
+
+        $query = 'SELECT h.dimensionspacepoint, h.dimensionspacepointhash FROM neos_contentgraph_hierarchyrelation h
+                      INNER JOIN neos_contentgraph_node n ON h.parentnodeanchor = n.relationanchorpoint
+                      INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = n.relationanchorpoint
+                      WHERE n.nodeaggregateidentifier = :parentNodeAggregateIdentifier
+                      AND n.origindimensionspacepointhash = :parentNodeDimensionSpacePoint
+                      AND ph.contentstreamidentifier = :contentStreamIdentifier
+                      AND h.contentstreamidentifier = :contentStreamIdentifier
+                      AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)
+                      AND h.name = :nodeName';
+        $parameters = [
+            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
+            'parentNodeDimensionSpacePoint' => $parentNodeDimensionSpacePoint->getHash(),
+            'contentStreamIdentifier' => (string) $contentStreamIdentifier,
+            'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
+            'nodeName' => (string) $nodeName
+        ];
+        $types = [
+            'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+        ];
+        $dimensionSpacePoints = [];
+        foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $hierarchyRelationData) {
+            $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['dimensionspacepoint'], true));
+        }
+
+        return new DimensionSpacePointSet($dimensionSpacePoints);
     }
 
     /**
@@ -403,6 +425,14 @@ final class ContentGraph implements ContentGraphInterface
         }
 
         return new DimensionSpacePointSet($dimensionSpacePoints);
+    }
+
+    public function countNodes(): int
+    {
+        $connection = $this->client->getConnection();
+        $query = 'SELECT COUNT(*) FROM neos_contentgraph_node';
+
+        return (int) $connection->executeQuery($query)->fetch()['COUNT(*)'];
     }
 
     public function enableCache(): void

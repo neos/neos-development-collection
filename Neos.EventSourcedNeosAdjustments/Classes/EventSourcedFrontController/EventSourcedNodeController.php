@@ -250,13 +250,11 @@ class EventSourcedNodeController extends ActionController
         $subtree = $subgraph->findSubtrees([$nodeAddress->getNodeAggregateIdentifier()], 10, $this->nodeTypeConstraintFactory->parseFilterString('!Neos.Neos:Document'));
         $subtree = $subtree->getChildren()[0];
 
-        $nodeByNodeIdentifierCache = $subgraph->getInMemoryCache()->getNodeByNodeIdentifierCache();
         $nodePathCache = $subgraph->getInMemoryCache()->getNodePathCache();
 
         $currentDocumentNode = $subtree->getNode();
         $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->getNodeAggregateIdentifier());
 
-        $nodeByNodeIdentifierCache->add($currentDocumentNode->getNodeIdentifier(), $currentDocumentNode);
         $nodePathCache->add($currentDocumentNode->getNodeAggregateIdentifier(), $nodePathOfDocumentNode);
 
         foreach ($subtree->getChildren() as $childSubtree) {
@@ -267,7 +265,6 @@ class EventSourcedNodeController extends ActionController
     private static function fillCacheInternal(SubtreeInterface $subtree, NodeInterface $parentNode, NodePath $parentNodePath, InMemoryCache $inMemoryCache)
     {
         $parentNodeIdentifierByChildNodeIdentifierCache = $inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
-        $nodeByNodeIdentifierCache = $inMemoryCache->getNodeByNodeIdentifierCache();
         $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdentifierCache();
         $nodePathCache = $inMemoryCache->getNodePathCache();
@@ -276,7 +273,6 @@ class EventSourcedNodeController extends ActionController
         $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
 
         $parentNodeIdentifierByChildNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier());
-        $nodeByNodeIdentifierCache->add($node->getNodeIdentifier(), $node);
         $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeAggregateIdentifier(), $node->getNodeName(), $node);
         $nodePathCache->add($node->getNodeAggregateIdentifier(), $nodePath);
 
