@@ -1,7 +1,6 @@
 <?php
 namespace Neos\Media\Browser\Domain;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
