@@ -113,7 +113,7 @@ The resulting `composer.json` file should look something like this:
         }
     ],
     "require": {
-        "neos/neos-development-collection": "dev-master",
+        "neos/neos-development-collection": "dev-4.3",
         "neos/flow-development-collection": "dev-master",
         "neos/demo": "@dev",
 
