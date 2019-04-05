@@ -116,11 +116,12 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     final public function whenRootNodeAggregateWithNodeWasCreated(Event\RootNodeAggregateWithNodeWasCreated $event)
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
+        $dimensionSpacePoint = new DimensionSpacePoint([]);
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
             $event->getNodeAggregateIdentifier(),
-            RootNodeIdentifiers::rootDimensionSpacePoint()->getCoordinates(),
-            RootNodeIdentifiers::rootDimensionSpacePoint()->getHash(),
+            $dimensionSpacePoint->getCoordinates(),
+            $dimensionSpacePoint->getHash(),
             [],
             $event->getNodeTypeName()
         );

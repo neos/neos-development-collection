@@ -450,7 +450,7 @@ class ContentRepositoryExportService
         $event = new RootNodeAggregateWithNodeWasCreated(
             $this->contentStreamIdentifier,
             $this->sitesRootNodeIdentifier,
-            RootNodeIdentifiers::rootNodeAggregateIdentifier(),
+            NodeAggregateIdentifier::create(),
             NodeTypeName::fromString('Neos.Neos:Sites'),
             $dimensionSpacePointSet,
             UserIdentifier::forSystemUser()

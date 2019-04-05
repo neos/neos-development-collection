@@ -1417,7 +1417,7 @@ trait EventSourcedTrait
     {
         $node = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath($nodePath, RootNodeIdentifiers::rootNodeAggregateIdentifier());
+            ->findNodeByPath($nodePath, $this->rootNodeAggregateIdentifier);
         Assert::assertNotNull($node, 'Did find node at path "' . $nodePath . '"');
 
         /* @var $nodeAddressFactory NodeAddressFactory */
@@ -1434,7 +1434,7 @@ trait EventSourcedTrait
     {
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath($nodePath, RootNodeIdentifiers::rootNodeAggregateIdentifier());
+            ->findNodeByPath($nodePath, $this->rootNodeAggregateIdentifier);
     }
 
     protected function getWorkspaceCommandHandler(): WorkspaceCommandHandler
