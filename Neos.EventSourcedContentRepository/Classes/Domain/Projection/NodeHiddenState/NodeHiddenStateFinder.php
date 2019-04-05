@@ -15,7 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
