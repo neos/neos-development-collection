@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\FlowQuery\FlowQuery;
