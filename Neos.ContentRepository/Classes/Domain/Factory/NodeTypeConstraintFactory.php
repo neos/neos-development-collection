@@ -13,8 +13,9 @@ namespace Neos\ContentRepository\Domain\Factory;
  * source code.
  */
 
-use Neos\ContentRepository\Domain;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
@@ -30,7 +31,7 @@ class NodeTypeConstraintFactory
 {
     /**
      * @Flow\Inject
-     * @var Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -53,7 +54,7 @@ class NodeTypeConstraintFactory
                 $onlyNegatedFilters = false;
                 $negate = false;
             }
-            $nodeTypeFilterPartSubTypes = array_merge([$nodeTypeFilterPart], array_map(function (Domain\Model\NodeType $nodeType) {
+            $nodeTypeFilterPartSubTypes = array_merge([$nodeTypeFilterPart], array_map(function (NodeType $nodeType) {
                 return $nodeType->getName();
             }, $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart, true)));
 
