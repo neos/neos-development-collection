@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Domain\ValueObject;
+namespace Neos\ContentRepository\Domain\ContentSubgraph;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -19,6 +19,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The node path is a list of NodeNames. It can be either absolute or relative.
+ *
+ * It describes the hierarchy path of a node to a root node in a subgraph.
  *
  * @Flow\Proxy(false)
  * @api
