@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Domain\NodeAggregate;
  */
 
 use Neos\Cache\CacheAwareInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Utility;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Annotations as Flow;
