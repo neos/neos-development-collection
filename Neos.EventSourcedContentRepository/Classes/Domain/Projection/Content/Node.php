@@ -76,8 +76,16 @@ class Node implements NodeInterface
      * @param NodeName $nodeName
      * @param PropertyCollection $properties
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, PropertyCollection $properties)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint,
+        NodeTypeName $nodeTypeName,
+        NodeType $nodeType,
+        ?NodeName $nodeName,
+        PropertyCollection $properties
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -147,9 +155,9 @@ class Node implements NodeInterface
     }
 
     /**
-     * @return NodeName
+     * @return NodeName|null
      */
-    public function getNodeName(): NodeName
+    public function getNodeName(): ?NodeName
     {
         return $this->nodeName;
     }
@@ -161,7 +169,6 @@ class Node implements NodeInterface
     {
         return $this->properties;
     }
-
 
     /**
      * Returns the specified property.

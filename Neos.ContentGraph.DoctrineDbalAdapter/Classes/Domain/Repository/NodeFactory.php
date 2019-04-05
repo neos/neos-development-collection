@@ -98,7 +98,7 @@ final class NodeFactory
             $originDimensionSpacePoint,
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
-            isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : NodeName::unnamed(),
+            isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
             $propertyCollection
         );
 
