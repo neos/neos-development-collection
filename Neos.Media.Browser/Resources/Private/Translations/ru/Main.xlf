@@ -70,7 +70,7 @@
 			<target state="translated">Вид</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target state="translated">View asset</target></trans-unit>
+			<target state="translated">Показать актив</target><alt-trans><target>View asset</target></alt-trans></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target state="translated">Редактировать медиа-ресурс</target><alt-trans><target>Редактировать ресурс</target></alt-trans><alt-trans><target>Править медиа-ресурс</target></alt-trans></trans-unit>
@@ -181,13 +181,13 @@
 			<target state="translated">Отображать в виде миниатюр</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target state="translated">Connection error</target></trans-unit>
+			<target state="translated">Ошибка соединения</target><alt-trans><target>Connection error</target></alt-trans></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target state="translated">Media source</target></trans-unit>
+			<target state="translated">Медиа источник</target><alt-trans><target>Media source</target></alt-trans></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target state="translated">Media sources</target></trans-unit>
+			<target state="translated">Медиа источник</target><alt-trans><target>Media sources</target></alt-trans></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target state="translated">Коллекции</target></trans-unit>
@@ -301,13 +301,13 @@
 			<target state="translated">Предпросмотр</target><alt-trans><target>Просмотр</target></alt-trans><alt-trans><target>Предв. Просмотр</target></alt-trans></trans-unit>
       <trans-unit id="download" xml:space="preserve">
 				<source>Download</source>
-			<target state="translated">Скачать</target></trans-unit>
+			<target state="needs-translation">Download</target></trans-unit>
       <trans-unit id="next" xml:space="preserve">
 				<source>Next</source>
-			<target state="translated">Следующий</target></trans-unit>
+			<target state="needs-translation">Next</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>Previous</source>
-			<target state="translated">Предыдущий</target></trans-unit>
+			<target state="needs-translation">Previous</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target state="translated">Не удается загрузить файл</target></trans-unit>
