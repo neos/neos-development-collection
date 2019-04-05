@@ -77,9 +77,9 @@ interface NodeInterface extends CacheAwareInterface
     public function getNodeType(): NodeType;
 
     /**
-     * @return NodeName
+     * @return NodeName|null
      */
-    public function getNodeName(): NodeName;
+    public function getNodeName(): ?NodeName;
 
     /**
      * returns the DimensionSpacePoint the node is at home in. Usually needed to address a Node in a NodeAggregate
