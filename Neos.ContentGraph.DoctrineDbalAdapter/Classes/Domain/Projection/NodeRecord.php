@@ -14,7 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  */
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
 /**
