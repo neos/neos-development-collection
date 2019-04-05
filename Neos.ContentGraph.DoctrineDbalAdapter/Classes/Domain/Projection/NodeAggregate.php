@@ -12,7 +12,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
 /**

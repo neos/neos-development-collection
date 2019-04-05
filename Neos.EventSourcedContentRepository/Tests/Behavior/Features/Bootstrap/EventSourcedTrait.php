@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;

@@ -11,7 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 
 /**

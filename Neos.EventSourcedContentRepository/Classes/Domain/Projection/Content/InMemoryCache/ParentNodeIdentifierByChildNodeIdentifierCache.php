@@ -13,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 
 /**
  * NOTE: we do NOT directly cache the Parent Node; but only the Parent Node Identifier; as then, the NodeByNodeIdentifierCache can be used properly - thus
