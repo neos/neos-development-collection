@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Domain\ValueObject;
+namespace Neos\ContentRepository\Domain\NodeAggregate;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 
 use Neos\Cache\CacheAwareInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Utility;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Annotations as Flow;
