@@ -12,7 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodePath;
+use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 
 /**
  * An assignment of NodeAggregateIdentifiers to NodePaths

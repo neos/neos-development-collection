@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
  */
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodePath;
+use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 
 /**
  * Node Identifier -> Node Path cache
