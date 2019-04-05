@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -24,7 +25,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodePath implements \JsonSerializable
 {
-
     /**
      * @var string
      */
