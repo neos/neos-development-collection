@@ -1941,9 +1941,9 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     }
 
     /**
-     * @return NodeName
+     * @return NodeName|null
      */
-    public function getNodeName(): NodeName
+    public function getNodeName(): ?NodeName
     {
         return NodeName::fromString($this->getName());
     }
