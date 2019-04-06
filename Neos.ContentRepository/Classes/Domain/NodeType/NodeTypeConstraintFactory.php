@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Domain\Factory;
+namespace Neos\ContentRepository\Domain\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -15,7 +15,6 @@ namespace Neos\ContentRepository\Domain\Factory;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
