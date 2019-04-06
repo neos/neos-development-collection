@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Domain\NodeType;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 
 /**
