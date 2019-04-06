@@ -43,14 +43,6 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         $this->subgraph = $subgraph;
     }
 
-    /**
-     * @return ContentSubgraphInterface
-     */
-    public function getSubgraph(): ContentSubgraphInterface
-    {
-        return $this->subgraph;
-    }
-
     public function findParentNode(): TraversableNodeInterface
     {
         $node = $this->subgraph->findParentNode($this->node->getNodeAggregateIdentifier());
