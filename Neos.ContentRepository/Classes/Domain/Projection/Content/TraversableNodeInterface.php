@@ -18,7 +18,6 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Exception\NodeException;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 /**
@@ -43,8 +42,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
  */
 interface TraversableNodeInterface extends NodeInterface
 {
-    public function getSubgraph(): ContentSubgraphInterface;
-
     /**
      * Returns the DimensionSpacePoint the node was *requested in*, i.e. one of the DimensionSpacePoints
      * this node is visible in. If you need the DimensionSpacePoint where the node is actually at home,
