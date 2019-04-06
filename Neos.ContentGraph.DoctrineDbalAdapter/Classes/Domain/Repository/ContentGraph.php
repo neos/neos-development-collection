@@ -87,10 +87,9 @@ final class ContentGraph implements ContentGraphInterface
     ): ?NodeInterface {
         $connection = $this->client->getConnection();
 
-        // @todo remove fetching additional dimension space point once the matter is resolved
         // HINT: we check the ContentStreamIdentifier on the EDGE; as this is where we actually find out whether the node exists in the content stream
         $nodeRow = $connection->executeQuery(
-            'SELECT n.*, h.contentstreamidentifier, h.name, n.origindimensionspacepoint, n.origindimensionspacepoint AS dimensionspacepoint FROM neos_contentgraph_node n
+            'SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
                   INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                   WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
                   AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
@@ -121,7 +120,7 @@ final class ContentGraph implements ContentGraphInterface
     ): array {
         $connection = $this->client->getConnection();
 
-        $query = 'SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
+        $query = 'SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier';
@@ -208,7 +207,7 @@ final class ContentGraph implements ContentGraphInterface
 
         // TODO: this code might still be broken somehow; because we are not in a DimensionSpacePoint / ContentStreamIdentifier here!
         $nodeRow = $connection->executeQuery(
-            'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint FROM neos_contentgraph_node n
+            'SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
                     INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                   WHERE n.nodetypename = :nodeTypeName',
             [

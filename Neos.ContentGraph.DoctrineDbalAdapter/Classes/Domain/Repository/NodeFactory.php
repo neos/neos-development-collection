@@ -65,9 +65,6 @@ final class NodeFactory
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
         $className = $this->getNodeInterfaceImplementationClassName($nodeType);
 
-        if (!array_key_exists('dimensionspacepoint', $nodeRow)) {
-            throw new \Exception('The "dimensionspacepoint" property was not found in the $nodeRow; you need to include the "dimensionspacepoint" field in the SQL result.');
-        }
         if (!array_key_exists('contentstreamidentifier', $nodeRow)) {
             throw new \Exception('The "contentstreamidentifier" property was not found in the $nodeRow; you need to include the "contentstreamidentifier" field in the SQL result.');
         }
@@ -76,7 +73,6 @@ final class NodeFactory
         }
 
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
-        $dimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
         $originDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
 
         $properties = json_decode($nodeRow['properties'], true);
@@ -90,10 +86,9 @@ final class NodeFactory
 
         $propertyCollection = new ContentProjection\PropertyCollection($properties);
 
-        /* @var $node NodeInterface */
+        /* @var NodeInterface $node */
         $node = new $className(
             $contentStreamIdentifier,
-            $dimensionSpacePoint,
             NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
             $originDimensionSpacePoint,
             NodeTypeName::fromString($nodeRow['nodetypename']),

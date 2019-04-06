@@ -32,11 +32,6 @@ class Node implements NodeInterface
     protected $contentStreamIdentifier;
 
     /**
-     * @var DimensionSpacePoint
-     */
-    protected $dimensionSpacePoint;
-
-    /**
      * @var NodeAggregateIdentifier
      */
     protected $nodeAggregateIdentifier;
@@ -68,7 +63,6 @@ class Node implements NodeInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param NodeTypeName $nodeTypeName
@@ -78,7 +72,6 @@ class Node implements NodeInterface
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $originDimensionSpacePoint,
         NodeTypeName $nodeTypeName,
@@ -87,7 +80,6 @@ class Node implements NodeInterface
         PropertyCollection $properties
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->nodeTypeName = $nodeTypeName;
