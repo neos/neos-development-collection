@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Exception\NodeException;
