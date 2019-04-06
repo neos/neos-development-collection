@@ -18,7 +18,6 @@ use Doctrine\ORM\QueryBuilder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
