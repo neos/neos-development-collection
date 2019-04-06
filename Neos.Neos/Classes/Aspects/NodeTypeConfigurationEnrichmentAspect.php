@@ -270,6 +270,11 @@ class NodeTypeConfigurationEnrichmentAspect
                     $editorOptions['placeholder'] = $translationIdGenerator('textFieldEditor.placeholder');
                 }
                 break;
+            case 'Neos.Neos/Inspector/Editors/TextAreaEditor':
+                if (isset($editorOptions) && $this->shouldFetchTranslation($editorOptions, 'placeholder')) {
+                    $editorOptions['placeholder'] = $translationIdGenerator('textAreaEditor.placeholder');
+                }
+                break;
         }
     }
 
