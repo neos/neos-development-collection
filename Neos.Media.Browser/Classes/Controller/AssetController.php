@@ -479,7 +479,7 @@ class AssetController extends ActionController
             $this->assetRepository->add($asset);
         }
         $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
-        $this->redirect('index', null, null, [], 0, 201);
+        $this->redirect('index');
     }
 
     /**
