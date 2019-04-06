@@ -20,7 +20,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\Cache\CacheAwareInterface;
-use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 
 /**
  * This is a NEW interface, introduced in Neos 4.3.
