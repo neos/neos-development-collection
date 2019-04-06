@@ -110,11 +110,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         $this->context = $context;
     }
 
-    public function getSubgraph(): ContentSubgraphInterface
-    {
-        throw new \RuntimeException('Not implemented!');
-    }
-
     /**
      * Returns the absolute path of this node with additional context information (such as the workspace name).
      *
