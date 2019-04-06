@@ -649,6 +649,7 @@ final class NodeCommandHandler
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return DimensionSpacePointSet
      * @todo take parent node's visibility into account
+     * @todo use node aggregate
      *
      * A node in an aggregate should be visible in all points that fulfill all of the following criteria
      * - any node of the parent node aggregate is visible there
@@ -666,7 +667,7 @@ final class NodeCommandHandler
         );
         $dimensionSpacePoints = [];
         foreach ($existingNodes as $node) {
-            $dimensionSpacePoints[] = $node->getDimensionSpacePoint();
+            $dimensionSpacePoints[] = $node->getOriginDimensionSpacePoint();
         }
         $occupiedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
 

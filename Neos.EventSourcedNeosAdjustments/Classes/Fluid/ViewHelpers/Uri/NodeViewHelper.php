@@ -14,6 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Uri;
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
@@ -144,27 +145,27 @@ class NodeViewHelper extends AbstractViewHelper
         $nodeAddress = null;
 
 
-        if ($node instanceof NodeInterface) {
+        if ($node instanceof TraversableNodeInterface) {
             // the latter case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
             // a link towards the *shortcut itself*, and not to its target.
             // TODO: fix shortcuts!
             //$resolvedNode = $resolveShortcuts ? $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node) : $node;
             $resolvedNode = $node;
-            if ($resolvedNode instanceof NodeInterface) {
-                $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+            if ($resolvedNode instanceof TraversableNodeInterface) {
+                $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
             } else {
                 $uri = $resolvedNode;
             }
         } elseif ($node === '~') {
-            /* @var $documentNode \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
+            /* @var TraversableNodeInterface $documentNode */
             $documentNode = $this->getContextVariable('documentNode');
-            $nodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
+            $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($documentNode);
             $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
             $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, $siteNode->getNodeAggregateIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
-            /* @var $documentNode \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
+            /* @var TraversableNodeInterface $documentNode */
             $documentNode = $this->getContextVariable('documentNode');
-            $nodeAddress = $this->nodeAddressFactory->createFromNode($documentNode);
+            $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($documentNode);
             $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, NodeAggregateIdentifier::fromString(\mb_substr($node, 7)));
         } else {
             // @todo add path support

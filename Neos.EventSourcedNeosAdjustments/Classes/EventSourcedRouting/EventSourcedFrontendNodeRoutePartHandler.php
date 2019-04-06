@@ -182,8 +182,13 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             }
         }
 
+        $nodeAddress = new NodeAddress(
+            $matchingSubgraph->getContentStreamIdentifier(),
+            $matchingSubgraph->getDimensionSpacePoint(),
+            $matchingNode->getNodeAggregateIdentifier(),
+            $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($matchingSubgraph->getContentStreamIdentifier())->getWorkspaceName()
+        );
 
-        $nodeAddress = $this->nodeAddressFactory->createFromNode($matchingNode);
         return new MatchResult($nodeAddress->serializeForUri(), RouteTags::createFromArray($tagArray));
     }
 

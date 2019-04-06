@@ -115,14 +115,6 @@ class Node implements NodeInterface
     }
 
     /**
-     * @return DimensionSpacePoint
-     */
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        return $this->dimensionSpacePoint;
-    }
-
-    /**
      * @return NodeAggregateIdentifier
      */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier

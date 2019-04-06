@@ -135,7 +135,7 @@ class NodeUriImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $node = $this->getNode();
-        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
         if ($node instanceof NodeInterface) {
             $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, $node->getNodeAggregateIdentifier());
         } elseif ($node === '~') {

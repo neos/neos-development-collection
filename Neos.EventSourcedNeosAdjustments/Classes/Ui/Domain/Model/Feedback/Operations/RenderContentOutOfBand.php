@@ -194,7 +194,7 @@ class RenderContentOutOfBand extends AbstractFeedback
     public function serializePayload(ControllerContext $controllerContext)
     {
         return [
-            'contextPath' => $this->nodeAddressFactory->createFromNode($this->getNode())->serializeForUri(),
+            'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($this->getNode())->serializeForUri(),
             'parentDomAddress' => $this->getParentDomAddress(),
             'siblingDomAddress' => $this->getSiblingDomAddress(),
             'mode' => $this->getMode(),

@@ -60,9 +60,9 @@ class NodeHelper implements ProtectedContextAwareInterface
         }
     }
 
-    public function nodeAddressToString(NodeInterface $node): string
+    public function nodeAddressToString(TraversableNodeInterface $node): string
     {
-        return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+        return $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri();
     }
 
     /**

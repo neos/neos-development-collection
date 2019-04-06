@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
@@ -158,6 +159,18 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
             $traversableNodes[] = new TraversableNode($node, $this->subgraph);
         }
         return TraversableNodes::fromArray($traversableNodes);
+    }
+
+    /**
+     * Returns the DimensionSpacePoint the node was *requested in*, i.e. one of the DimensionSpacePoints
+     * this node is visible in. If you need the DimensionSpacePoint where the node is actually at home,
+     * see getOriginDimensionSpacePoint()
+     *
+     * @return DimensionSpacePoint
+     */
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->subgraph->getDimensionSpacePoint();
     }
 
     /**

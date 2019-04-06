@@ -160,7 +160,7 @@ abstract class AbstractStructuralChange extends AbstractChange
                 //    no other node in between
                 $this->getParentDomAddress() &&
                 $this->getParentDomAddress()->getFusionPath() &&
-                $this->getParentDomAddress()->getContextPath() === $this->nodeAddressFactory->createFromNode($node->findParentNode())->serializeForUri()
+                $this->getParentDomAddress()->getContextPath() === $this->nodeAddressFactory->createFromTraversableNode($node->findParentNode())->serializeForUri()
             ) {
                 $renderContentOutOfBand = new RenderContentOutOfBand();
                 $renderContentOutOfBand->setNode($node);

@@ -76,7 +76,7 @@ class ContentElementEditableService
 
         $attributes = [
             'data-__neos-property' => $property,
-            'data-__neos-editable-node-contextpath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri()
+            'data-__neos-editable-node-contextpath' => $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri()
         ];
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');

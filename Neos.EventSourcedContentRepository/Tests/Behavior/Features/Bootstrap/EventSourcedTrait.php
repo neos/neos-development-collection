@@ -46,6 +46,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFind
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -1366,15 +1367,15 @@ trait EventSourcedTrait
     }
 
     /**
-     * @var \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress[]
+     * @var NodeAddress[]
      */
     private $currentNodeAddresses;
 
     /**
      * @param string|null $alias
-     * @return \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress
+     * @return NodeAddress
      */
-    protected function getCurrentNodeAddress(string $alias = null): \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress
+    protected function getCurrentNodeAddress(string $alias = null): NodeAddress
     {
         if ($alias === null) {
             $alias = 'DEFAULT';
@@ -1383,7 +1384,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @return \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress[]
+     * @return NodeAddress[]
      */
     public function getCurrentNodeAddresses(): array
     {
@@ -1392,19 +1393,22 @@ trait EventSourcedTrait
 
     /**
      * @Given /^I get the node address for node aggregate "([^"]*)"(?:, remembering it as "([^"]*)")?$/
-     * @param string $nodeAggregateIdentifier
+     * @param string $rawNodeAggregateIdentifier
      * @param string $alias
      */
-    public function iGetTheNodeAddressForNodeAggregate(string $nodeAggregateIdentifier, $alias = 'DEFAULT')
+    public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateIdentifier, $alias = 'DEFAULT')
     {
-        $node = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
-        Assert::assertNotNull($node, 'Did find node with aggregate identifier "' . $nodeAggregateIdentifier . '"');
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
+        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+        Assert::assertNotNull($node, 'Did not find a node with aggregate identifier "' . $nodeAggregateIdentifier . '"');
 
-        /* @var $nodeAddressFactory NodeAddressFactory */
-        $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
-        $this->currentNodeAddresses[$alias] = $nodeAddressFactory->createFromNode($node);
+        $this->currentNodeAddresses[$alias] = new NodeAddress(
+            $this->contentStreamIdentifier,
+            $this->dimensionSpacePoint,
+            $nodeAggregateIdentifier,
+            $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)->getWorkspaceName()
+        );
     }
 
     /**
@@ -1415,14 +1419,16 @@ trait EventSourcedTrait
      */
     public function iGetTheNodeAddressForTheNodeAtPath(string $nodePath, $alias = 'DEFAULT')
     {
-        $node = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath($nodePath, $this->rootNodeAggregateIdentifier);
-        Assert::assertNotNull($node, 'Did find node at path "' . $nodePath . '"');
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $node = $subgraph->findNodeByPath($nodePath, $this->rootNodeAggregateIdentifier);
+        Assert::assertNotNull($node, 'Did not find a node at path "' . $nodePath . '"');
 
-        /* @var $nodeAddressFactory NodeAddressFactory */
-        $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
-        $this->currentNodeAddresses[$alias] = $nodeAddressFactory->createFromNode($node);
+        $this->currentNodeAddresses[$alias] = new NodeAddress(
+            $this->contentStreamIdentifier,
+            $this->dimensionSpacePoint,
+            $node->getNodeAggregateIdentifier(),
+            $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)->getWorkspaceName()
+        );
     }
 
     /**

@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
@@ -71,11 +71,11 @@ class NodePropertyConverterService
     /**
      * Get a single property reduced to a simple type (no objects) representation
      *
-     * @param NodeInterface $node
+     * @param TraversableNodeInterface $node
      * @param string $propertyName
      * @return mixed
      */
-    public function getProperty(NodeInterface $node, $propertyName)
+    public function getProperty(TraversableNodeInterface $node, $propertyName)
     {
         if ($propertyName === '_hidden') {
             return $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden();
@@ -110,23 +110,12 @@ class NodePropertyConverterService
     }
 
     /**
-     * Get all properties as JSON encoded string representation
-     *
-     * @param NodeInterface $node
-     * @return string
-     */
-    public function getPropertiesJson(NodeInterface $node)
-    {
-        return json_encode($this->getPropertiesArray($node));
-    }
-
-    /**
      * Get all properties reduced to simple type (no objects) representations in an array
      *
-     * @param NodeInterface $node
+     * @param TraversableNodeInterface $node
      * @return array
      */
-    public function getPropertiesArray(NodeInterface $node)
+    public function getPropertiesArray(TraversableNodeInterface $node)
     {
         $properties = [];
         foreach ($node->getNodeType()->getProperties() as $propertyName => $propertyConfiguration) {
