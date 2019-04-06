@@ -18,7 +18,7 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterf
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;

@@ -15,7 +15,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 
 /**
  * The active record for reading and writing nodes from and to the database

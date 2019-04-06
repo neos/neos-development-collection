@@ -20,7 +20,7 @@ use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 
 /**

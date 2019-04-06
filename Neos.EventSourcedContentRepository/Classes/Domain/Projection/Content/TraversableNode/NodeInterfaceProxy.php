@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;

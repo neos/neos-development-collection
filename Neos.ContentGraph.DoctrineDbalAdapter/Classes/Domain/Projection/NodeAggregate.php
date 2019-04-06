@@ -13,7 +13,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * source code.
  */
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 
 /**
  * A read model to read node aggregates from the projection
