@@ -788,31 +788,34 @@ insert into neos_contentgraph_restrictionedge
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceDimensionSpacePoint());
-            $sourceHierarchyRelation = $this->projectionContentGraph->findInboundHierarchyRelationsForNode(
-                    $sourceNode->relationAnchorPoint,
-                    $event->getContentStreamIdentifier(),
-                    new DimensionSpacePointSet([$event->getSourceDimensionSpacePoint()])
-                )[$event->getSourceDimensionSpacePoint()->getHash()] ?? null;
 
             $generalizedNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getGeneralizationLocation());
 
-            foreach ($event->getGeneralizationVisibility() as $newRelationDimensionSpacePoint) {
-                $newHierarchyRelation = new HierarchyRelation(
-                    $sourceHierarchyRelation->parentNodeAnchor,
-                    $generalizedNode->relationAnchorPoint,
-                    $sourceHierarchyRelation->name,
-                    $event->getContentStreamIdentifier(),
-                    $newRelationDimensionSpacePoint,
-                    $newRelationDimensionSpacePoint->getHash(),
-                    $this->getRelationPosition(
-                        $sourceHierarchyRelation->parentNodeAnchor,
-                        $generalizedNode->relationAnchorPoint,
-                        null, // todo: find proper sibling
+            $unassignedInboundDimensionSpacePoints = $event->getGeneralizationVisibility();
+            foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getGeneralizationVisibility()
+            ) as $existingInboundHierarchyRelation) {
+                $existingInboundHierarchyRelation->assignNewChildNode($generalizedNode->relationAnchorPoint, $this->getDatabaseConnection());
+                $unassignedInboundDimensionSpacePoints = $unassignedInboundDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingInboundHierarchyRelation->dimensionSpacePoint]));
+            }
+            if (count($unassignedInboundDimensionSpacePoints) > 0) {
+                $inboundSourceHierarchyRelation = $this->projectionContentGraph->findInboundHierarchyRelationsForNode(
+                        $sourceNode->relationAnchorPoint,
                         $event->getContentStreamIdentifier(),
-                        $newRelationDimensionSpacePoint
-                    )
-                );
-                $newHierarchyRelation->addToDatabase($this->getDatabaseConnection());
+                        new DimensionSpacePointSet([$event->getSourceDimensionSpacePoint()])
+                    )[$event->getSourceDimensionSpacePoint()->getHash()] ?? null;
+                // the null case is caught by the NodeAggregate or its command handler
+                foreach ($unassignedInboundDimensionSpacePoints as $unassignedDimensionSpacePoint) {
+                    $this->copyHierarchyRelationToDimensionSpacePoint(
+                        $inboundSourceHierarchyRelation,
+                        $event->getContentStreamIdentifier(),
+                        $unassignedDimensionSpacePoint,
+                        null,
+                        $generalizedNode->relationAnchorPoint
+                    );
+                }
             }
         });
     }
@@ -981,30 +984,31 @@ insert into neos_contentgraph_restrictionedge
         );
     }
 
-    /**
-     * @param HierarchyRelation $hierarchyRelation
-     * @param NodeIdentifier $newParentNodeIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param int $position
-     * @throws \Exception
-     */
-    protected function assignHierarchyRelationToNewParent(HierarchyRelation $hierarchyRelation, NodeIdentifier $newParentNodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, int $position)
-    {
-        $newParentNode = $this->projectionContentGraph->getNode($newParentNodeIdentifier, $contentStreamIdentifier);
-        if (!$newParentNode) {
-            throw new \Exception(sprintf('new parent %s for hierarchy relation in content stream %s not found.', $newParentNodeIdentifier, $contentStreamIdentifier), 1519768028);
-        }
-        $newHierarchyRelation = new HierarchyRelation(
-            $newParentNode->relationAnchorPoint,
-            $hierarchyRelation->childNodeAnchor,
-            $hierarchyRelation->name,
-            $hierarchyRelation->contentStreamIdentifier,
-            $hierarchyRelation->dimensionSpacePoint,
-            $hierarchyRelation->dimensionSpacePointHash,
-            $position
+    protected function copyHierarchyRelationToDimensionSpacePoint(
+        HierarchyRelation $sourceHierarchyRelation,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        ?NodeRelationAnchorPoint $newParent = null,
+        ?NodeRelationAnchorPoint $newChild = null
+    ): HierarchyRelation {
+        $copy = new HierarchyRelation(
+            $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
+            $newChild ?: $sourceHierarchyRelation->childNodeAnchor,
+            $sourceHierarchyRelation->name,
+            $contentStreamIdentifier,
+            $dimensionSpacePoint,
+            $dimensionSpacePoint->getHash(),
+            $this->getRelationPosition(
+                $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
+                $newChild ?: $sourceHierarchyRelation->childNodeAnchor,
+                null, // todo: find proper sibling
+                $contentStreamIdentifier,
+                $dimensionSpacePoint
+            )
         );
-        $newHierarchyRelation->addToDatabase($this->getDatabaseConnection());
-        $hierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
+        $copy->addToDatabase($this->getDatabaseConnection());
+
+        return $copy;
     }
 
     /**

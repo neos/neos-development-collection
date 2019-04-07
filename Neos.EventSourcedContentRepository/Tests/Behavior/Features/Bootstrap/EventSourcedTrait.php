@@ -1050,7 +1050,12 @@ trait EventSourcedTrait
         }
         $expectedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
 
-        Assert::assertEquals($this->currentNodeAggregate->getCoveredDimensionSpacePoints(), $expectedDimensionSpacePoints);
+        Assert::assertEquals(
+            $expectedDimensionSpacePoints,
+            $this->currentNodeAggregate->getCoveredDimensionSpacePoints(),
+            'Expected covered dimension space point set ' . json_encode($expectedDimensionSpacePoints)
+            . ', got ' . json_encode($this->currentNodeAggregate->getCoveredDimensionSpacePoints())
+        );
     }
     /**
      * @Then /^I expect this node aggregate to be classified as "([^"]*)"$/
