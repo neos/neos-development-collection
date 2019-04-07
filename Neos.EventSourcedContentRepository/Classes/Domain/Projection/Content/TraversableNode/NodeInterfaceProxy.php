@@ -99,4 +99,9 @@ trait NodeInterfaceProxy
     {
         return $this->node->isRoot();
     }
+
+    public function isTethered(): bool
+    {
+        return $this->node->isTethered();
+    }
 }
