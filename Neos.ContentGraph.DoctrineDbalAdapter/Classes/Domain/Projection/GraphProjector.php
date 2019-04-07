@@ -835,7 +835,17 @@ insert into neos_contentgraph_restrictionedge
             );
             $peerNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getPeerLocation());
 
-            foreach ($event->getPeerVisibility() as $coveredDimensionSpacePoint) {
+            $unassignedInboundDimensionSpacePoints = $event->getPeerVisibility();
+            foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getPeerVisibility()
+            ) as $existingInboundHierarchyRelation) {
+                $existingInboundHierarchyRelation->assignNewChildNode($peerNode->relationAnchorPoint, $this->getDatabaseConnection());
+                $unassignedInboundDimensionSpacePoints = $unassignedInboundDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingInboundHierarchyRelation->dimensionSpacePoint]));
+            }
+
+            foreach ($unassignedInboundDimensionSpacePoints as $coveredDimensionSpacePoint) {
                 // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
                 $peerParentNode = $this->projectionContentGraph->getNodeInAggregate(
                     $event->getContentStreamIdentifier(),
