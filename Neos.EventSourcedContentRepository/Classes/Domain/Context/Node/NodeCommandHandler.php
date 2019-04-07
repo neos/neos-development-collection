@@ -426,25 +426,17 @@ final class NodeCommandHandler
                     break;
                 case RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS:
                     $specializationSet = $this->interDimensionalVariationGraph->getSpecializationSet($command->getDimensionSpacePoint());
-                    $nodesInSpecializationSet = $this->contentGraph->findNodesByNodeAggregateIdentifier(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNodeAggregateIdentifier(),
-                        $specializationSet
-                    );
 
-                    foreach ($nodesInSpecializationSet as $nodeInSpecializationSet) {
-                        $nodeMoveMappings = $nodeMoveMappings->merge($this->getMoveNodeMappings($nodeInSpecializationSet, $command));
+                    foreach ($nodeAggregate->getNodes() as $node) {
+                        if ($specializationSet->contains($node->getOriginDimensionSpacePoint())) {
+                            $nodeMoveMappings = $nodeMoveMappings->merge($this->getMoveNodeMappings($node, $command));
+                        }
                     }
                     break;
                 case RelationDistributionStrategy::STRATEGY_GATHER_ALL:
                 default:
-                    $nodesInSpecializationSet = $this->contentGraph->findNodesByNodeAggregateIdentifier(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNodeAggregateIdentifier()
-                    );
-
-                    foreach ($nodesInSpecializationSet as $nodeInSpecializationSet) {
-                        $nodeMoveMappings = $nodeMoveMappings->merge($this->getMoveNodeMappings($nodeInSpecializationSet, $command));
+                    foreach ($nodeAggregate->getNodes() as $node) {
+                        $nodeMoveMappings = $nodeMoveMappings->merge($this->getMoveNodeMappings($node, $command));
                     }
             }
 
@@ -654,26 +646,19 @@ final class NodeCommandHandler
      * - any node of the parent node aggregate is visible there
      * - they are specializations of the node's original point
      * - they are not occupied by specializations of the node
+     * @throws NodeAggregatesTypeIsAmbiguous
      */
     private function calculateVisibilityForNewNodeInNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
     ): DimensionSpacePointSet {
-        $existingNodes = $this->contentGraph->findNodesByNodeAggregateIdentifier(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier
-        );
-        $dimensionSpacePoints = [];
-        foreach ($existingNodes as $node) {
-            $dimensionSpacePoints[] = $node->getDimensionSpacePoint();
-        }
-        $occupiedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
+        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         return $this->interDimensionalVariationGraph->getSpecializationSet(
             $dimensionSpacePoint,
             true,
-            $occupiedDimensionSpacePoints
+            $nodeAggregate->getOccupiedDimensionSpacePoints()
         );
     }
 }

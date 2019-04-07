@@ -20,6 +20,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
@@ -67,17 +68,21 @@ class Node implements NodeInterface
     protected $properties;
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeType $nodeType
-     * @param NodeName $nodeName
-     * @param PropertyCollection $properties
+     * @var NodeAggregateClassification
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, PropertyCollection $properties)
-    {
+    protected $classification;
+
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint,
+        NodeTypeName $nodeTypeName,
+        NodeType $nodeType,
+        NodeName $nodeName,
+        PropertyCollection $properties,
+        NodeAggregateClassification $classification
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -86,6 +91,7 @@ class Node implements NodeInterface
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
         $this->properties = $properties;
+        $this->classification = $classification;
     }
 
     /**
@@ -95,7 +101,17 @@ class Node implements NodeInterface
      */
     public function isRoot(): bool
     {
-        return $this->nodeType->isOfType('Neos.ContentRepository:Root');
+        return $this->classification->isRoot();
+    }
+
+    /**
+     * Whether or not this node is tethered to its parent, fka auto created child node
+     *
+     * @return bool
+     */
+    public function isTethered(): bool
+    {
+        return $this->classification->isTethered();
     }
 
     /**

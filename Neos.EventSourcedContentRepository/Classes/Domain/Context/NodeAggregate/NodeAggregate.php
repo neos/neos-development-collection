@@ -115,10 +115,10 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         CreateRootNodeAggregateWithNode $command,
         DimensionSpacePointSet $visibleDimensionSpacePoints
     ): DomainEvents {
+        /*
         if ($this->existsCurrently()) {
-            throw new NodeAggregateCurrentlyExists('Root node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.',
-                1541781941);
-        }
+            throw new NodeAggregateCurrentlyExists('Root node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541781941);
+        }*/
 
         $events = DomainEvents::createEmpty();
         $this->nodeEventPublisher->withCommand($command,
@@ -130,6 +130,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
                             $this->identifier,
                             $command->getNodeTypeName(),
                             $visibleDimensionSpacePoints,
+                            NodeAggregateClassification::root(),
                             $command->getInitiatingUserIdentifier()
                         )
                     )
@@ -151,15 +152,15 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
      * @return DomainEvents
      * @throw NodeAggregateCurrentlyExists
      */
-    public function createWithNode(
+    public function createRegularWithNode(
         CreateNodeAggregateWithNode $command,
         DimensionSpacePointSet $visibleDimensionSpacePoints,
         PropertyValues $initialPropertyValues
     ): DomainEvents {
+        /*
         if ($this->existsCurrently()) {
-            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.',
-                1541679244);
-        }
+            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541679244);
+        }*/
 
         $events = DomainEvents::createEmpty();
         $this->nodeEventPublisher->withCommand($command,
@@ -175,6 +176,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
                             $command->getParentNodeAggregateIdentifier(),
                             $command->getNodeName(),
                             $initialPropertyValues,
+                            NodeAggregateClassification::regular(),
                             $command->getSucceedingSiblingNodeAggregateIdentifier()
                         )
                     )
@@ -200,7 +202,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
      * @return DomainEvents
      * @throw NodeAggregateCurrentlyExists
      */
-    public function autoCreateWithNode(
+    public function createTetheredWithNode(
         CreateNodeAggregateWithNode $command,
         NodeTypeName $nodeTypeName,
         DimensionSpacePointSet $visibleDimensionSpacePoints,
@@ -209,10 +211,10 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         PropertyValues $initialPropertyValues,
         NodeAggregateIdentifier $precedingNodeAggregateIdentifier = null
     ): DomainEvents {
+        /*
         if ($this->existsCurrently()) {
-            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.',
-                1541755683);
-        }
+            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541755683);
+        }*/
 
         $events = DomainEvents::createEmpty();
         $this->nodeEventPublisher->withCommand($command, function () use (
@@ -236,6 +238,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
                         $parentNodeAggregateIdentifier,
                         $nodeName,
                         $initialPropertyValues,
+                        NodeAggregateClassification::tethered(),
                         $precedingNodeAggregateIdentifier
                     )
                 )
@@ -252,6 +255,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
 
     public function existsCurrently(): bool
     {
+        /** this currently cannot be evaluated due to event store limitations and thus must be done via soft constraint checks */
         $existsCurrently = false;
 
         $this->traverseEventStream(function (DomainEventInterface $event) use (&$existsCurrently) {
@@ -483,5 +487,20 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
     {
         return $this->getVisibleInDimensionSpacePoints();
+    }
+
+    public function getClassification(): NodeAggregateClassification
+    {
+        throw new \RuntimeException('getClassification is not yet supported by the write side node aggregate');
+    }
+
+    public function isRoot(): bool
+    {
+        throw new \RuntimeException('isRoot is not yet supported by the write side node aggregate');
+    }
+
+    public function isTethered(): bool
+    {
+        throw new \RuntimeException('isTethered is not yet supported by the write side node aggregate');
     }
 }

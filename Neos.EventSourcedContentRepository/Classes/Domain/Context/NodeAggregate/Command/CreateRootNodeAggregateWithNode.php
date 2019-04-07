@@ -20,10 +20,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContent
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
- * Create root node command
+ * Create root node aggregate with node command
  *
  * A root node has no variants and no origin dimension space point but occupies the whole allowed dimension subspace.
- * It also has no auto created child nodes.
+ * It also has no tethered child nodes.
  */
 final class CreateRootNodeAggregateWithNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {
@@ -104,9 +104,9 @@ final class CreateRootNodeAggregateWithNode implements \JsonSerializable, Copyab
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
     {
-        return new CreateRootNode(
+        return new CreateRootNodeAggregateWithNode(
             $targetContentStream,
-            $this->nodeIdentifier,
+            $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->initiatingUserIdentifier
         );

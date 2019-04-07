@@ -28,6 +28,8 @@ Feature: Workspace based content publishing
       | nodeTypeName                  | "Neos.ContentRepository:Root" |
       | visibleInDimensionSpacePoints | [{}]                          |
       | initiatingUserIdentifier      | "initiating-user-identifier"  |
+      | nodeAggregateClassification   | "root"                        |
+
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -37,6 +39,8 @@ Feature: Workspace based content publishing
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "child"                                  |
+      | nodeAggregateClassification   | "regular"                                |
+
     And the graph projection is fully up to date
 
     And the command "SetNodeProperty" is executed with payload:

@@ -28,6 +28,7 @@ Feature: Creation of nodes underneath hidden nodes
       | nodeTypeName                  | "Neos.ContentRepository:Root"          |
       | visibleInDimensionSpacePoints | [{}]                                   |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification   | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -37,6 +38,7 @@ Feature: Creation of nodes underneath hidden nodes
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "text1"                                  |
+      | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
     And the command "HideNode" is executed with payload:
       | Key                          | Value              |
@@ -53,8 +55,9 @@ Feature: Creation of nodes underneath hidden nodes
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint     | {}                                       |
       | visibleInDimensionSpacePoints | [{}]                                     |
-      | parentNodeAggregateIdentifier | "the-great-nodini"                 |
+      | parentNodeAggregateIdentifier | "the-great-nodini"                       |
       | nodeName                      | "text2"                                  |
+      | nodeAggregateClassification   | "regular"                                |
 
     And the graph projection is fully up to date
 

@@ -47,4 +47,10 @@ interface ReadableNodeAggregateInterface
     public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool;
 
     public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet;
+
+    public function getClassification(): NodeAggregateClassification;
+
+    public function isRoot(): bool;
+
+    public function isTethered(): bool;
 }

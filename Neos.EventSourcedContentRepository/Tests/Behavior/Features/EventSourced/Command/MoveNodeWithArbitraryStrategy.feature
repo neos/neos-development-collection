@@ -34,6 +34,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | workspaceDescription           | "The live workspace"                   |
       | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
       | currentContentStreamIdentifier | "cs-identifier"                        |
+      | nodeAggregateClassification    | "root"                                 |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                   |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
@@ -41,6 +42,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeTypeName                  | "Neos.ContentRepository:Root"                                                                                                           |
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                                                                                  |
+      | nodeAggregateClassification   | "root"                                                                                                                                  |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                   |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
@@ -50,8 +52,10 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                                                                                                              |
       | nodeName                      | "document"                                                                                                                              |
-
+      | nodeAggregateClassification   | "regular"                                                                                                                               |
   #Try to move a root node:
+  #  todo: test me
+  # Try to move a tethered node:
   #  todo: test me
 
   Scenario: Try to move a node in a non-existing dimension space point:
@@ -91,6 +95,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                                                                                                                         |
+      | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
@@ -100,6 +105,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
       | nodeName                      | "document"                                                                                                                                         |
+      | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the graph projection is fully up to date
     When the command MoveNode is executed with payload and exceptions are caught:
       | Key                              | Value                              |
@@ -120,6 +126,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | nodeIdentifier                | "doc-identifier"                                                                                                                                   |
       | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                                                                                                                         |
+      | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the graph projection is fully up to date
     When the command MoveNode is executed with payload and exceptions are caught:
       | Key                              | Value                              |
@@ -141,6 +148,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeIdentifier                | "doc-identifier"                                                                                                                                   |
       | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                                                                                                                         |
       | nodeName                      | "document"                                                                                                                                         |
+      | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
@@ -150,6 +158,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
       | nodeName                      | "autocreated"                                                                                                                                      |
+      | nodeAggregateClassification   | "tethered"                                                                                                                                         |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
@@ -159,6 +168,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
       | nodeName                      | "content"                                                                                                                                          |
+      | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the graph projection is fully up to date
     When the command MoveNode is executed with payload and exceptions are caught:
       | Key                              | Value                              |
@@ -190,6 +200,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                                                                                                                         |
       | nodeName                      | "document"                                                                                                                                         |
+      | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
@@ -199,6 +210,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
       | nodeName                      | "autocreated"                                                                                                                                      |
+      | nodeAggregateClassification   | "tethered"                                                                                                                                         |
     And the graph projection is fully up to date
     When the command MoveNode is executed with payload and exceptions are caught:
       | Key                              | Value                              |

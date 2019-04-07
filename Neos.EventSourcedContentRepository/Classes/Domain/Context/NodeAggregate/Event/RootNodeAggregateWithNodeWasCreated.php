@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
@@ -51,6 +52,11 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
     private $visibleInDimensionSpacePoints;
 
     /**
+     * @var NodeAggregateClassification
+     */
+    private $nodeAggregateClassification;
+
+    /**
      * @var UserIdentifier
      */
     private $initiatingUserIdentifier;
@@ -60,12 +66,14 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
+        NodeAggregateClassification $nodeAggregateClassification,
         UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
+        $this->nodeAggregateClassification = $nodeAggregateClassification;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
@@ -89,6 +97,11 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
         return $this->visibleInDimensionSpacePoints;
     }
 
+    public function getNodeAggregateClassification(): NodeAggregateClassification
+    {
+        return $this->nodeAggregateClassification;
+    }
+
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
@@ -101,6 +114,7 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->visibleInDimensionSpacePoints,
+            $this->nodeAggregateClassification,
             $this->initiatingUserIdentifier
         );
     }

@@ -17,6 +17,7 @@ Feature: Reading of our Graph Projection
       | nodeTypeName                  | "Neos.ContentRepository:Root"          |
       | visibleInDimensionSpacePoints | [{}]                                   |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification   | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
@@ -26,6 +27,7 @@ Feature: Reading of our Graph Projection
       | visibleInDimensionSpacePoints | [{}]                                      |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
       | nodeName                      | "foo"                                     |
+      | nodeAggregateClassification   | "regular"                                 |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 2 nodes

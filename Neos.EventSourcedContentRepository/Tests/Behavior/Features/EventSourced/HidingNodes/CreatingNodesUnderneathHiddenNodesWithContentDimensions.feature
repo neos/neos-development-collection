@@ -35,6 +35,7 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | nodeTypeName                  | "Neos.ContentRepository:Root"            |
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"   |
+      | nodeAggregateClassification   | "root"                                   |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -44,6 +45,7 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "text1"                                  |
+      | nodeAggregateClassification   | "regular"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -53,6 +55,7 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
       | parentNodeAggregateIdentifier | "the-great-nodini"                       |
       | nodeName                      | "text2"                                  |
+      | nodeAggregateClassification   | "regular"                                |
     And the event NodeSpecializationVariantWasCreated was published with payload:
       | Key                       | Value                 |
       | contentStreamIdentifier   | "cs-identifier"       |

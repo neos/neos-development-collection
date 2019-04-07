@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
@@ -87,6 +88,13 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
     private $initialPropertyValues;
 
     /**
+     * The node aggregate's classification
+     *
+     * @var NodeAggregateClassification
+     */
+    private $nodeAggregateClassification;
+
+    /**
      * The node's succeeding sibling's node aggregate identifier
      *
      * @var NodeAggregateIdentifier
@@ -102,6 +110,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $nodeName
      * @param PropertyValues $initialPropertyValues
+     * @param NodeAggregateClassification $nodeAggregateClassification
      * @param NodeAggregateIdentifier|null $succeedingNodeAggregateIdentifier
      */
     public function __construct(
@@ -113,6 +122,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         ?NodeName $nodeName,
         PropertyValues $initialPropertyValues,
+        NodeAggregateClassification $nodeAggregateClassification,
         NodeAggregateIdentifier $succeedingNodeAggregateIdentifier = null
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -123,6 +133,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         $this->parentNodeAggregateIdentifier = $parentNodeAggregateIdentifier;
         $this->nodeName = $nodeName;
         $this->initialPropertyValues = $initialPropertyValues;
+        $this->nodeAggregateClassification = $nodeAggregateClassification;
         $this->succeedingNodeAggregateIdentifier = $succeedingNodeAggregateIdentifier;
     }
 
@@ -166,6 +177,11 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         return $this->initialPropertyValues;
     }
 
+    public function getNodeAggregateClassification(): NodeAggregateClassification
+    {
+        return $this->nodeAggregateClassification;
+    }
+
     public function getSucceedingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
     {
         return $this->succeedingNodeAggregateIdentifier;
@@ -182,6 +198,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
             $this->parentNodeAggregateIdentifier,
             $this->nodeName,
             $this->initialPropertyValues,
+            $this->nodeAggregateClassification,
             $this->succeedingNodeAggregateIdentifier
         );
     }

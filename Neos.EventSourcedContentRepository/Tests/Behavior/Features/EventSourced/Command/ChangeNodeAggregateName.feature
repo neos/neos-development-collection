@@ -10,8 +10,9 @@ Feature: Change node name
       | contentStreamIdentifier       | "cs-identifier"                          |
       | nodeAggregateIdentifier       | "lady-eleonode-rootford"                 |
       | nodeTypeName                  | "Neos.ContentRepository:Root"            |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
+      | visibleInDimensionSpacePoints | [{}]                                     |
       | initiatingUserIdentifier      | "system"                                 |
+      | nodeAggregateClassification   | "root"                                   |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository.Testing:Content': []
@@ -27,6 +28,7 @@ Feature: Change node name
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "dog"                                    |
+      | nodeAggregateClassification   | "regular"                                   |
 
     And the graph projection is fully up to date
     When the command "ChangeNodeAggregateName" is executed with payload:

@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 
 /**
@@ -30,6 +31,11 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
      * @var NodeAggregateIdentifier
      */
     private $nodeAggregateIdentifier;
+
+    /**
+     * @var NodeAggregateClassification
+     */
+    private $classification;
 
     /**
      * @var NodeTypeName
@@ -58,6 +64,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
 
     public function __construct(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateClassification $classification,
         NodeTypeName $nodeTypeName,
         ?NodeName $nodeName,
         array $nodes,
@@ -65,6 +72,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         DimensionSpacePointSet $coveredDimensionSpacePoints
     ) {
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->classification = $classification;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeName = $nodeName;
         $this->nodes = $nodes;
@@ -122,5 +130,20 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         return $this->coveredDimensionSpacePoints->contains($dimensionSpacePoint);
+    }
+
+    public function getClassification(): NodeAggregateClassification
+    {
+        return $this->classification;
+    }
+
+    public function isRoot(): bool
+    {
+        return $this->classification->isRoot();
+    }
+
+    public function isTethered(): bool
+    {
+        return $this->classification->isTethered();
     }
 }

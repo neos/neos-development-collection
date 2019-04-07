@@ -1052,6 +1052,14 @@ trait EventSourcedTrait
 
         Assert::assertEquals($this->currentNodeAggregate->getCoveredDimensionSpacePoints(), $expectedDimensionSpacePoints);
     }
+    /**
+     * @Then /^I expect this node aggregate to be classified as "([^"]*)"$/
+     * @param string $expectedClassification
+     */
+    public function iExpectThisNodeAggregateToBeClassifiedAs(string $expectedClassification): void
+    {
+        Assert::assertEquals($expectedClassification, $this->currentNodeAggregate->getClassification());
+    }
 
     /**
      * @Then /^I expect a node with identifier (.*) to exist in the content graph$/

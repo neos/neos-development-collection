@@ -31,6 +31,7 @@ Feature: Create node aggregate with node
       | nodeTypeName                  | "Neos.ContentRepository:Root"                                              |
       | visibleInDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                     |
+      | nodeAggregateClassification   | "root"                                                                     |
     And the graph projection is fully up to date
 
   Scenario:  Create node aggregate with node with content dimensions
@@ -55,5 +56,6 @@ Feature: Create node aggregate with node
       | visibleInDimensionSpacePoints | [{"language":"de"},{"language":"ch"}]                          |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                       |
       | initialPropertyValues         | {"text": {"value": "my default", "type": "string"}}            |
+      | nodeAggregateClassification   | "regular"                                                      |
 
     And I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph

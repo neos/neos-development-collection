@@ -20,6 +20,7 @@ Feature: Reading of our Graph Projection
       | nodeTypeName                  | "Neos.ContentRepository:Root"                                                   |
       | visibleInDimensionSpacePoints | [{"language": "mul"},{"language": "en"},{"language": "de"},{"language": "gsw"}] |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                          |
+      | nodeAggregateClassification   | "root"                                                                          |
 
   Scenario: Property Changes with two dimension values
     When the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -31,6 +32,7 @@ Feature: Reading of our Graph Projection
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]  |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
       | nodeName                      | "foo"                                     |
+      | nodeAggregateClassification   | "regular"                                 |
     And the event NodePropertyWasSet was published with payload:
       | Key                       | Value                                         |
       | contentStreamIdentifier   | "cs-identifier"                               |

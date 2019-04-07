@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -99,7 +100,8 @@ final class NodeFactory
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : NodeName::unnamed(),
-            $propertyCollection
+            $propertyCollection,
+            NodeAggregateClassification::fromString($nodeRow['classification'])
         );
 
         if (!array_key_exists('name', $nodeRow)) {
@@ -111,7 +113,6 @@ final class NodeFactory
     /**
      * @param array $nodeRows
      * @return ContentProjection\NodeAggregate|null
-     * @throws \Exception
      */
     public function mapNodeRowsToNodeAggregate(array $nodeRows): ?ContentProjection\NodeAggregate
     {
@@ -122,6 +123,7 @@ final class NodeFactory
         $rawNodeAggregateIdentifier = '';
         $rawNodeTypeName = '';
         $rawNodeName = '';
+        $rawNodeAggregateClassification = '';
         $nodes = [];
         $occupiedDimensionSpacePoints = [];
         $coveredDimensionSpacePoints = [];
@@ -142,12 +144,16 @@ final class NodeFactory
                 if (empty($rawNodeName)) {
                     $rawNodeName = $nodeRow['name'];
                 }
+                if (empty($rawNodeAggregateClassification)) {
+                    $rawNodeAggregateClassification = $nodeRow['classification'];
+                }
             }
             $coveredDimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
         }
 
         return new ContentProjection\NodeAggregate(
             NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
+            NodeAggregateClassification::fromString($rawNodeAggregateClassification),
             NodeTypeName::fromString($rawNodeTypeName),
             $rawNodeName ? NodeName::fromString($rawNodeName) : null,
             $nodes,
@@ -159,7 +165,6 @@ final class NodeFactory
     /**
      * @param array $nodeRows
      * @return array|ContentProjection\NodeAggregate[]
-     * @throws \Exception
      */
     public function mapNodeRowsToNodeAggregates(array $nodeRows): array
     {
@@ -170,6 +175,7 @@ final class NodeFactory
         $occupiedDimensionSpacePointsByNodeAggregate = [];
         $coveredDimensionSpacePointsByNodeAggregate = [];
         $processedDimensionSpacePointsByNodeAggregate = [];
+        $classificationByNodeAggregate = [];
 
         foreach ($nodeRows as $nodeRow) {
             $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
@@ -182,6 +188,9 @@ final class NodeFactory
                 if (!isset($nodeNames[$rawNodeAggregateIdentifier])) {
                     $nodeNames[$rawNodeAggregateIdentifier] = $nodeRow['name'] ? NodeName::fromString($nodeRow['name']) : null;
                 }
+                if (!isset($classificationByNodeAggregate[$rawNodeAggregateIdentifier])) {
+                    $classificationByNodeAggregate[$rawNodeAggregateIdentifier] = NodeAggregateClassification::fromString($nodeRow['classification']);
+                }
             }
             $coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][] = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
         }
@@ -189,6 +198,7 @@ final class NodeFactory
         foreach ($nodesByAggregate as $rawNodeAggregateIdentifier => $nodes) {
             $nodeAggregates[$rawNodeAggregateIdentifier] = new ContentProjection\NodeAggregate(
                 NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
+                $classificationByNodeAggregate[$rawNodeAggregateIdentifier],
                 $nodeTypeNames[$rawNodeAggregateIdentifier],
                 $nodeNames[$rawNodeAggregateIdentifier],
                 $nodesByAggregate[$rawNodeAggregateIdentifier],

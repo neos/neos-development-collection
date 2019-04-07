@@ -36,6 +36,7 @@ Feature: Create node peer variant
       | nodeTypeName                  | "Neos.ContentRepository:Root"                                                                                                                                                                                                                                               |
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"DE", "language":"fr"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"},{"market":"CH", "language":"fr"}] |
       | initiatingUserIdentifier      | "system-user"                                                                                                                                                                                                                                                               |
+      | nodeAggregateClassification   | "root"                                                                                                                                                                                                                                                                      |
     # We have to add another node since root nodes have no origin dimension space points and thus cannot be varied.
     # We also need a tethered child node to test that it is reachable from the freshly created peer variant of the parent
     # and we need a tethered child node of the tethered child node to test that this works recursively
@@ -50,6 +51,7 @@ Feature: Create node peer variant
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                                                                                                  |
       | nodeName                      | "document"                                                                                                                                                                                                |
+      | nodeAggregateClassification   | "regular"                                                                                                                                                                                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                                                                                     |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                                                                           |
@@ -59,6 +61,7 @@ Feature: Create node peer variant
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                                                                                  |
       | nodeName                      | "child-document"                                                                                                                                                                                          |
+      | nodeAggregateClassification   | "regular"                                                                                                                                                                                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                                                                                     |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                                                                           |
@@ -68,6 +71,7 @@ Feature: Create node peer variant
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                                                                                  |
       | nodeName                      | "tethered-document"                                                                                                                                                                                       |
+      | nodeAggregateClassification   | "tethered"                                                                                                                                                                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                                                                                     |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                                                                                           |
@@ -77,6 +81,7 @@ Feature: Create node peer variant
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | parentNodeAggregateIdentifier | "nodimus-prime"                                                                                                                                                                                           |
       | nodeName                      | "tethered"                                                                                                                                                                                                |
+      | nodeAggregateClassification   | "tethered"                                                                                                                                                                                                |
     # We have to add another node as a peer.
     # We also need a tethered child node to test that it is reachable from the freshly created peer variant of the parent
     # and we need a tethered child node of the tethered child node to test that this works recursively
@@ -91,6 +96,7 @@ Feature: Create node peer variant
       | visibleInDimensionSpacePoints | [{"market":"CH", "language":"fr"}]        |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
       | nodeName                      | "peer-document"                           |
+      | nodeAggregateClassification   | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
@@ -100,6 +106,7 @@ Feature: Create node peer variant
       | visibleInDimensionSpacePoints | [{"market":"CH", "language":"fr"}]        |
       | parentNodeAggregateIdentifier | "madame-lanode"                           |
       | nodeName                      | "peer-child-document"                     |
+      | nodeAggregateClassification   | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                             |
       | contentStreamIdentifier       | "cs-identifier"                                   |
@@ -109,6 +116,7 @@ Feature: Create node peer variant
       | visibleInDimensionSpacePoints | [{"market":"CH", "language":"fr"}]                |
       | parentNodeAggregateIdentifier | "madame-lanode"                                   |
       | nodeName                      | "tethered-document"                               |
+      | nodeAggregateClassification   | "tethered"                                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
@@ -118,6 +126,7 @@ Feature: Create node peer variant
       | visibleInDimensionSpacePoints | [{"market":"CH", "language":"fr"}]        |
       | parentNodeAggregateIdentifier | "nodesis-prime"                           |
       | nodeName                      | "tethered"                                |
+      | nodeAggregateClassification   | "tethered"                                |
     And the graph projection is fully up to date
 
   Scenario: Create peer variant of node to dimension space point without specializations
@@ -315,7 +324,7 @@ Feature: Create node peer variant
     And the event NodePeerVariantWasCreated was published with payload:
       | Key                       | Value                                                                                                                                   |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier   | "nodesis-mediocre"                                                                                                                         |
+      | nodeAggregateIdentifier   | "nodesis-mediocre"                                                                                                                      |
       | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                                                                                        |
       | peerLocation              | {"market":"DE", "language":"de"}                                                                                                        |
       | peerVisibility            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
@@ -331,31 +340,31 @@ Feature: Create node peer variant
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the first above
     And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
-      | Key                       | Expected                           |
-      | contentStreamIdentifier   | "cs-identifier"                    |
-      | nodeAggregateIdentifier   | "madame-lanode"                    |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}   |
-      | peerLocation              | {"market":"DE", "language":"en"}   |
+      | Key                       | Expected                                                            |
+      | contentStreamIdentifier   | "cs-identifier"                                                     |
+      | nodeAggregateIdentifier   | "madame-lanode"                                                     |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                    |
+      | peerLocation              | {"market":"DE", "language":"en"}                                    |
       | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-prime"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the second above
     And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
-      | Key                       | Expected                           |
-      | contentStreamIdentifier   | "cs-identifier"                    |
-      | nodeAggregateIdentifier   | "nodesis-prime"                    |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}   |
-      | peerLocation              | {"market":"DE", "language":"en"}   |
+      | Key                       | Expected                                                            |
+      | contentStreamIdentifier   | "cs-identifier"                                                     |
+      | nodeAggregateIdentifier   | "nodesis-prime"                                                     |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                    |
+      | peerLocation              | {"market":"DE", "language":"en"}                                    |
       | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-mediocre"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the third above
     And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
-      | Key                       | Expected                           |
-      | contentStreamIdentifier   | "cs-identifier"                    |
-      | nodeAggregateIdentifier   | "nodesis-mediocre"                 |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}   |
-      | peerLocation              | {"market":"DE", "language":"en"}   |
+      | Key                       | Expected                                                            |
+      | contentStreamIdentifier   | "cs-identifier"                                                     |
+      | nodeAggregateIdentifier   | "nodesis-mediocre"                                                  |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                    |
+      | peerLocation              | {"market":"DE", "language":"en"}                                    |
       | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     And I expect exactly 1 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodette"
     # No peer node creation for non-auto created child nodes

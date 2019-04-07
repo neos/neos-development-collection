@@ -28,6 +28,7 @@ Feature: Create a root node aggregate
       | nodeTypeName                  | "Neos.ContentRepository:Root"                                                     |
       | visibleInDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "ch"}] |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                            |
+      | nodeAggregateClassification   | "root"                                                                            |
 
   Scenario: Create a root node aggregate using valid payload with dimensions
     When the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -45,6 +46,7 @@ Feature: Create a root node aggregate
       | nodeTypeName                  | "Neos.ContentRepository:Root"                                                     |
       | visibleInDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "ch"}] |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                            |
+      | nodeAggregateClassification   | "root"                                                                            |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 2 nodes

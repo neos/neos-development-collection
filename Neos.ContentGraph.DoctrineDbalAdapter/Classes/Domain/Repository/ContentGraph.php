@@ -14,8 +14,10 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -106,69 +108,31 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * Find all nodes of a node aggregate by node aggregate identifier and content stream identifier
-     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
-     * @return array<NodeInterface>|NodeInterface[]
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function findNodesByNodeAggregateIdentifier(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePointSet $dimensionSpacePointSet = null
-    ): array {
-        $connection = $this->client->getConnection();
-
-        $query = 'SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
- WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier';
-        $parameters = [
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
-        ];
-        $types = [];
-        if ($dimensionSpacePointSet) {
-            $query .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
-            $parameters['dimensionSpacePointHashes'] = $dimensionSpacePointSet->getPointHashes();
-            $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
-        }
-
-        $result = [];
-        foreach ($connection->executeQuery(
-            $query,
-            $parameters,
-            $types
-        )->fetchAll() as $nodeRow) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRow, null);
-        }
-
-        return $result;
-    }
-
-    /**
      * @param NodeTypeName $nodeTypeName
-     * @return NodeInterface|null
+     * @return NodeAggregate|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    public function findRootNodeByType(NodeTypeName $nodeTypeName): ?NodeInterface
+    public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): ?NodeAggregate
     {
         $connection = $this->client->getConnection();
 
-        // TODO: this code might still be broken somehow; because we are not in a DimensionSpacePoint / ContentStreamIdentifier here!
-        $nodeRow = $connection->executeQuery(
-            'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint FROM neos_contentgraph_node n
-                    INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-                  WHERE n.nodetypename = :nodeTypeName',
-            [
-                'nodeTypeName' => (string)$nodeTypeName,
-            ]
-        )->fetch();
+        $query = 'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint FROM neos_contentgraph_node n
+                      JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                      WHERE h.contentstreamidentifier = :contentStreamIdentifier
+                      AND h.parentnodeanchor = :rootEdgeParentAnchorIdentifier
+                      AND n.nodetypename = :nodeTypeName';
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, null) : null;
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'rootEdgeParentAnchorIdentifier' => (string)NodeRelationAnchorPoint::forRootEdge(),
+            'nodeTypeName' => (string)$nodeTypeName,
+        ];
+
+        $nodeRow = $connection->executeQuery($query, $parameters)->fetch();
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
     }
 
     /**
@@ -343,6 +307,38 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @return array|NodeAggregate[]
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function findTetheredChildNodeAggregates(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier
+    ): array {
+        $connection = $this->client->getConnection();
+
+        $query = 'SELECT c.*, ch.name, ch.contentstreamidentifier, ch.dimensionspacepoint FROM neos_contentgraph_node p
+                      JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
+                      JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
+                      JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint
+                      WHERE p.nodeaggregateidentifier = :parentNodeAggregateIdentifier
+                      AND ph.contentstreamidentifier = :contentStreamIdentifier
+                      AND ch.contentstreamidentifier = :contentStreamIdentifier
+                      AND c.classification = :tetheredClassification';
+
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
+            'tetheredClassification' => (string)NodeAggregateClassification::tethered()
+        ];
+
+        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows);
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeName $nodeName
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param DimensionSpacePoint $parentNodeDimensionSpacePoint
@@ -402,34 +398,6 @@ final class ContentGraph implements ContentGraphInterface
         $parameters = [
             'nodeIdentifier' => (string)$node->getNodeIdentifier(),
             'contentStreamIdentifier' => (string)$node->getContentStreamIdentifier()
-        ];
-        $dimensionSpacePoints = [];
-        foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $hierarchyRelationData) {
-            $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['dimensionspacepoint'], true));
-        }
-
-        return new DimensionSpacePointSet($dimensionSpacePoints);
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return DimensionSpacePointSet
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function findVisibleDimensionSpacePointsOfNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): DimensionSpacePointSet {
-        $connection = $this->client->getConnection();
-
-        $query = 'SELECT h.dimensionspacepoint, h.dimensionspacepointhash FROM neos_contentgraph_node n
-                      INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-                      WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
-                      AND h.contentstreamidentifier = :contentStreamIdentifier';
-        $parameters = [
-            'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
-            'contentStreamIdentifier' => $contentStreamIdentifier
         ];
         $dimensionSpacePoints = [];
         foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $hierarchyRelationData) {

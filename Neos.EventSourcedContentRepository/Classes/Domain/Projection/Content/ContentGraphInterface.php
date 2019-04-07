@@ -51,23 +51,11 @@ interface ContentGraphInterface
     ): ?NodeInterface;
 
     /**
-     * @param NodeTypeName $nodeTypeName
-     * @return NodeInterface|null
-     */
-    public function findRootNodeByType(NodeTypeName $nodeTypeName): ?NodeInterface;
-
-    /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
-     * @return array|NodeInterface[]
-     * @deprecated fetch node aggregate and ask it instead
+     * @param NodeTypeName $nodeTypeName
+     * @return NodeAggregate|null
      */
-    public function findNodesByNodeAggregateIdentifier(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePointSet $dimensionSpacePointSet = null
-    ): array;
+    public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): ?NodeAggregate;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -120,6 +108,16 @@ interface ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @return array|NodeAggregate[]
+     */
+    public function findTetheredChildNodeAggregates(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier
+    ): array;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeName $nodeName
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param DimensionSpacePoint $parentNodeOriginDimensionSpacePoints
@@ -133,17 +131,6 @@ interface ContentGraphInterface
      * @return DimensionSpacePointSet
      */
     public function findVisibleDimensionSpacePointsOfNode(NodeInterface $node): DimensionSpacePointSet;
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return DimensionSpacePointSet
-     * @deprecated fetch node aggregate and ask it instead
-     */
-    public function findVisibleDimensionSpacePointsOfNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): DimensionSpacePointSet;
 
     public function countNodes(): int;
 

@@ -37,6 +37,7 @@ Feature: Hide Node
       | nodeTypeName                  | "Neos.ContentRepository:Root"          |
       | visibleInDimensionSpacePoints | [{}]                                   |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification   | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -46,6 +47,7 @@ Feature: Hide Node
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "text1"                                  |
+      | nodeAggregateClassification   | "regular"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -55,6 +57,7 @@ Feature: Hide Node
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "text-1"                                 |
       | nodeName                      | "text2"                                  |
+      | nodeAggregateClassification   | "regular"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -64,6 +67,7 @@ Feature: Hide Node
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "text-1"                                 |
       | nodeName                      | "referencing"                            |
+      | nodeAggregateClassification   | "regular"                                |
     And the event NodeReferencesWereSet was published with payload:
       | Key                                 | Value              |
       | contentStreamIdentifier             | "cs-identifier"    |
@@ -144,8 +148,8 @@ Feature: Hide Node
     # findChildNodes
     # countChildNodes
     Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
-      | Name  | NodeAggregateIdentifier  |
-      | text1 | text-1                   |
+      | Name  | NodeAggregateIdentifier |
+      | text1 | text-1                  |
     # findParentNode
     When I go to the parent node of node aggregate "text-2"
     Then I find a node with node aggregate "text-1"

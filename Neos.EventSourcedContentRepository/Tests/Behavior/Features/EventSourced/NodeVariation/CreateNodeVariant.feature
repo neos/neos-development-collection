@@ -3,8 +3,6 @@ Feature: Create node variant
 
   As a user of the CR I want to create a copy of a node within an aggregate to another dimension space point.
 
-  #todo: test exception to be thrown when trying to directly create variants of tethered nodes
-
   Background:
     Given I have the following content dimensions:
       | Identifier | Default | Values  | Generalizations |
@@ -13,7 +11,11 @@ Feature: Create node variant
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository:Document': []
+    'Neos.ContentRepository.Testing:Document':
+      childNodes:
+        tethered:
+          type: 'Neos.ContentRepository.Testing:Tethered'
+    'Neos.ContentRepository.Testing:Tethered': []
     """
     And the event RootWorkspaceWasCreated was published with payload:
       | Key                            | Value                                  |
@@ -29,29 +31,42 @@ Feature: Create node variant
       | nodeTypeName                  | "Neos.ContentRepository:Root"                                                                                                           |
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                                                                                  |
+      | nodeAggregateClassification   | "root"                                                                                                                                  |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                 |
       | contentStreamIdentifier       | "cs-identifier"                                                       |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                                              |
-      | nodeTypeName                  | "Neos.ContentRepository:Document"                                     |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                    |
       | originDimensionSpacePoint     | {"market":"DE", "language":"gsw"}                                     |
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                              |
       | nodeName                      | "document"                                                            |
-    # We have to add yet another node since root nodes are visible in all dimension space points
-    # and we need a test case with a partially visible parent node
+      | nodeAggregateClassification   | "regular"                                                             |
+    # We add a tethered child node to provide for test cases for node aggregates of that classification
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                                                 |
+      | contentStreamIdentifier       | "cs-identifier"                                                       |
+      | nodeAggregateIdentifier       | "nodewyn-tetherton"                                              |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Tethered"                                    |
+      | originDimensionSpacePoint     | {"market":"DE", "language":"gsw"}                                     |
+      | visibleInDimensionSpacePoints | [{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                              |
+      | nodeName                      | "tethered"                                                            |
+      | nodeAggregateClassification   | "tethered"                                                             |
+    # We have to add yet another node since we need test cases with a partially visible parent node
     # Node /document/child
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                 |
       | contentStreamIdentifier       | "cs-identifier"                                                       |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                    |
-      | nodeTypeName                  | "Neos.ContentRepository:Document"                                     |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                     |
       | originDimensionSpacePoint     | {"market":"DE", "language":"gsw"}                                     |
       | visibleInDimensionSpacePoints | [{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                              |
       | nodeName                      | "child"                                                               |
+      | nodeAggregateClassification   | "regular"                                                             |
     And the graph projection is fully up to date
 
   Scenario: Try to create a variant in a content stream that does not exist yet
@@ -72,14 +87,23 @@ Feature: Create node variant
       | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
-  Scenario: Try to create a variant in a root node aggregate
+  Scenario: Try to create a variant of a root node aggregate
     When the command CreateNodeVariant is executed with payload and exceptions are caught:
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "lady-eleonode-rootford"          |
       | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
       | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  |
-    Then the last command should have thrown an exception of type "NodeTypeIsOfTypeRoot"
+    Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
+
+  Scenario: Try to create a variant in a tethered node aggregate
+    When the command CreateNodeVariant is executed with payload and exceptions are caught:
+      | Key                       | Value                             |
+      | contentStreamIdentifier   | "cs-identifier"                   |
+      | nodeAggregateIdentifier   | "nodewyn-tetherton"               |
+      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
+      | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  |
+    Then the last command should have thrown an exception of type "NodeAggregateIsTethered"
 
   Scenario: Try to create a variant from a source dimension space point that does not exist
     When the command CreateNodeVariant is executed with payload and exceptions are caught:

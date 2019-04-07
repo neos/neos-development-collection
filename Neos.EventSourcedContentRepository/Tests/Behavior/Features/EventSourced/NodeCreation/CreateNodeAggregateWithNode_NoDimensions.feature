@@ -28,6 +28,7 @@ Feature: Create node aggregate with node
       | nodeTypeName                  | "Neos.ContentRepository:Root"          |
       | visibleInDimensionSpacePoints | [[]]                                   |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification   | "regular"                              |
     And the graph projection is fully up to date
 
   Scenario: Try to create a node aggregate in a content stream that currently does not exist:
@@ -126,6 +127,7 @@ Feature: Create node aggregate with node
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                       |
       | nodeName                      | "esquire"                                                      |
       | initialPropertyValues         | {"text": {"value": "my default", "type": "string"}}            |
+      | nodeAggregateClassification   | "regular"                                                      |
 
   Scenario: Create node aggregate with node with auto-created child nodes
     Given I have the following NodeTypes configuration:
@@ -169,6 +171,7 @@ Feature: Create node aggregate with node
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                    |
       | nodeName                      | "esquire"                                                   |
       | initialPropertyValues         | {"text": {"value": "my default", "type": "string"}}         |
+      | nodeAggregateClassification   | "regular"                                                   |
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
     And event at index 0 is of type "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" with payload:
       | Key                           | Expected                                 |
@@ -179,6 +182,7 @@ Feature: Create node aggregate with node
       | visibleInDimensionSpacePoints | [[]]                                     |
       | parentNodeAggregateIdentifier | "sir-nodeward-nodington-iii"             |
       | nodeName                      | "main"                                   |
+      | nodeAggregateClassification   | "tethered"                               |
     Then I expect exactly 1 event to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimus-prime"
     And event at index 0 is of type "Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated" with payload:
       | Key                           | Expected                                    |
@@ -189,3 +193,4 @@ Feature: Create node aggregate with node
       | visibleInDimensionSpacePoints | [[]]                                        |
       | parentNodeAggregateIdentifier | "nody-mc-nodeface"                          |
       | nodeName                      | "foo"                                       |
+      | nodeAggregateClassification   | "tethered"                                  |

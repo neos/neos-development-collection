@@ -22,6 +22,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | nodeTypeName                  | "Neos.ContentRepository:Root" |
       | visibleInDimensionSpacePoints | [{}]                          |
       | initiatingUserIdentifier      | "user-identifier"             |
+      | nodeAggregateClassification   | "root"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -31,6 +32,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "child"                                  |
+      | nodeAggregateClassification   | "regular"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -40,11 +42,12 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "nody-mc-nodeface"                       |
       | nodeName                      | "pet"                                    |
+      | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
     And the command "SetNodeProperty" is executed with payload:
       | Key                       | Value                                |
       | contentStreamIdentifier   | "cs-identifier"                      |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                      |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                   |
       | originDimensionSpacePoint | {}                                   |
       | propertyName              | "text"                               |
       | value                     | {"value":"Original","type":"string"} |
@@ -60,7 +63,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
     Given the command "SetNodeProperty" is executed with payload:
       | Key                       | Value                               |
       | contentStreamIdentifier   | "user-cs-identifier"                |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                     |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                  |
       | originDimensionSpacePoint | {}                                  |
       | propertyName              | "text"                              |
       | value                     | {"value":"Changed","type":"string"} |
@@ -69,7 +72,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePropertyWasSet" with payload:
       | Key                       | Expected             |
       | contentStreamIdentifier   | "user-cs-identifier" |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"      |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | []                   |
       | propertyName              | "text"               |
       | value.value               | "Changed"            |
