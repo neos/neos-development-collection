@@ -23,6 +23,8 @@ use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
 use Neos\Media\Exception\NoThumbnailAvailableException;
 use Neos\Media\Exception\ThumbnailServiceException;
+use Neos\Utility\Arrays;
+use Neos\Utility\MediaTypes;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -57,6 +59,12 @@ class ThumbnailService
      * @var ResourceManager
      */
     protected $resourceManager;
+
+    /**
+     * @Flow\InjectConfiguration("image.defaultOptions.convertFormats")
+     * @var boolean
+     */
+    protected $formatConversions;
 
     /**
      * @Flow\InjectConfiguration("thumbnailPresets")
@@ -108,6 +116,27 @@ class ThumbnailService
      */
     public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
+        // Enforce format conversions if needed. This replaces the actual
+        // thumbnail-configuration with one tha enforces the target format
+        if ($configuration->getFormat() === null) {
+            if ($targetFormat = Arrays::getValueByPath($this->formatConversions,  $asset->getMediaType())) {
+                if (strpos($targetFormat, '/') > 0) {
+                    $targetFormat = MediaTypes::getFilenameExtensionFromMediaType($targetFormat);
+                }
+                $configuration = new ThumbnailConfiguration(
+                    $configuration->getWidth(),
+                    $configuration->getMaximumWidth(),
+                    $configuration->getHeight(),
+                    $configuration->getMaximumHeight(),
+                    $configuration->isCroppingAllowed(),
+                    $configuration->isUpScalingAllowed(),
+                    $configuration->isAsync(),
+                    $configuration->getQuality(),
+                    $targetFormat
+                );
+            }
+        }
+
         // Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new
         // dimensions differ from the specified image dimensions, otherwise the original image is returned.
         if ($asset instanceof ImageInterface) {
