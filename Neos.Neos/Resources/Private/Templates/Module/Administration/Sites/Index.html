@@ -6,8 +6,8 @@
 		<thead>
 			<tr>
 				<th>{neos:backend.translate(id: 'name', value: 'Name')}</th>
-				<th>{neos:backend.translate(id: 'sites.rootNodeName', value: 'Rootnode name')}</th>
-				<th>{neos:backend.translate(id: 'sites.domains', value: 'Domains')}</th>
+				<th>{neos:backend.translate(id: 'sites.rootNodeName', value: 'Rootnode name', source: 'Modules')}</th>
+				<th>{neos:backend.translate(id: 'sites.domains', value: 'Domains', source: 'Modules')}</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -68,13 +68,14 @@
 												<div class="neos-modal-content">
 													<div class="neos-modal-header">
 														<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-														<div class="neos-header">Do you really want to delete "{site.name}"? This action cannot be undone.</div>
+														<div class="neos-header">{neos:backend.translate(id: 'sites.confirmDeleteQuestion', arguments: {0: site.name}, source: 'Modules', value: 'Do you really want to delete "{site.name}"? This action cannot be undone.')}</div>
 													</div>
 													<div class="neos-modal-footer">
 														<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
 														<f:form action="deleteSite" arguments="{site: site}" class="neos-inline">
-															<button class="neos-button neos-button-danger" title="Delete this site">
-																{neos:backend.translate(id: 'sites.confirmDelete', value: 'Yes, delete this site')}
+															<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'sites.delete', value: 'Delete this site', source: 'Modules')}">
+
+																{neos:backend.translate(id: 'sites.confirmDelete', value: 'Yes, delete this site', source: 'Modules')}
 															</button>
 														</f:form>
 													</div>
@@ -89,7 +90,7 @@
 					</f:then>
 					<f:else>
 						<tr class="fold-{sitePackageKey}">
-							<td colspan="4"><i>No sites available</i></td>
+							<td colspan="4"><i>{neos:backend.translate(id: 'sites.noSitesAvailable', value: 'No sites available', source: 'Modules')}</i></td>
 						</tr>
 					</f:else>
 				</f:if>
@@ -97,7 +98,7 @@
 		</tbody>
 	</table>
 	<div class="neos-footer">
-		<f:link.action action="newSite" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToCreate', value: 'Click to create new')}">{neos:backend.translate(id: 'sites.add', value: 'Add new site')}</f:link.action>
+		<f:link.action action="newSite" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToCreate', value: 'Click to create new')}">{neos:backend.translate(id: 'sites.add', value: 'Add new site', source: 'Modules')}</f:link.action>
 	</div>
 
 	<script>

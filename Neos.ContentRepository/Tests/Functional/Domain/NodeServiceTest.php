@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * source code.
  */
 
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
@@ -88,7 +89,8 @@ class NodeServiceTest extends FunctionalTestCase
     {
         parent::tearDown();
         $this->inject($this->contextFactory, 'contextInstances', []);
-        $this->contentDimensionRepository->setDimensionsConfiguration([]);
+        $configuredDimensions = $this->objectManager->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepository.contentDimensions');
+        $this->contentDimensionRepository->setDimensionsConfiguration($configuredDimensions);
     }
 
     /**
