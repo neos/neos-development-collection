@@ -270,7 +270,7 @@ class Context
         if ($node !== false) {
             return $node;
         }
-        $nodeData = $this->nodeDataRepository->findOneByIdentifier($identifier, $this->getWorkspace(), $this->dimensions);
+        $nodeData = $this->nodeDataRepository->findOneByIdentifier($identifier, $this->getWorkspace(), $this->dimensions, $this->removedContentShown);
         if ($nodeData !== null) {
             $node = $this->nodeFactory->createFromNodeData($nodeData, $this);
         } else {
