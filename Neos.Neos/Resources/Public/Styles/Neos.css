@@ -9524,7 +9524,7 @@ readers do not read off random characters that represent icons */
   text-align: center;
 }
 .neos [class^="fa-"]:before, .neos [class^="fa-"]:after, .neos [class*=" fa-"]:before, .neos [class*=" fa-"]:after {
-  font-family: FontAwesome;
+  font-family: inherit;
 }
 .neos .neos-clear {
   clear: both;
