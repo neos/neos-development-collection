@@ -251,8 +251,8 @@ Feature: Remove Nodes from Aggregate
       | Key                       | Value                 |
       | contentStreamIdentifier   | "live-cs-identifier"  |
       | nodeAggregateIdentifier   | "nodimus-prime"       |
-      | sourceDimensionSpacePoint | {"language":"de"}     |
-      | targetDimensionSpacePoint | {"language":"gsw"}    |
+      | sourceOrigin | {"language":"de"}     |
+      | targetOrigin | {"language":"gsw"}    |
       | specializationIdentifier  | "cdoc-identifier-gsw" |
 
     When the command "ForkContentStream" is executed with payload:
@@ -335,8 +335,8 @@ Feature: Remove Nodes from Aggregate
       | Key                       | Value                |
       | contentStreamIdentifier   | "live-cs-identifier" |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
-      | sourceDimensionSpacePoint | {"language":"de"}    |
-      | targetDimensionSpacePoint | {"language":"gsw"}   |
+      | sourceOrigin | {"language":"de"}    |
+      | targetOrigin | {"language":"gsw"}   |
       | specializationIdentifier  | "doc-identifier-gsw" |
 
     When the command "ForkContentStream" is executed with payload:

@@ -134,35 +134,35 @@ Feature: Create node peer variant
       | Key                       | Value                            |
       | contentStreamIdentifier   | "cs-identifier"                  |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"         |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"en"} |
-      | targetDimensionSpacePoint | {"market":"CH", "language":"fr"} |
+      | sourceOrigin | {"market":"DE", "language":"en"} |
+      | targetOrigin | {"market":"CH", "language":"fr"} |
     Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                           |
       | contentStreamIdentifier   | "cs-identifier"                    |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"           |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"en"}   |
-      | peerLocation              | {"market":"CH", "language":"fr"}   |
-      | peerVisibility            | [{"market":"CH", "language":"fr"}] |
+      | sourceOrigin | {"market":"DE", "language":"en"}   |
+      | peerOrigin              | {"market":"CH", "language":"fr"}   |
+      | peerCoverage            | [{"market":"CH", "language":"fr"}] |
     And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimus-prime"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                           |
       | contentStreamIdentifier   | "cs-identifier"                    |
       | nodeAggregateIdentifier   | "nodimus-prime"                    |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"en"}   |
-      | peerLocation              | {"market":"CH", "language":"fr"}   |
-      | peerVisibility            | [{"market":"CH", "language":"fr"}] |
+      | sourceOrigin | {"market":"DE", "language":"en"}   |
+      | peerOrigin              | {"market":"CH", "language":"fr"}   |
+      | peerCoverage            | [{"market":"CH", "language":"fr"}] |
     And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimus-mediocre"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                           |
       | contentStreamIdentifier   | "cs-identifier"                    |
       | nodeAggregateIdentifier   | "nodimus-mediocre"                 |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"en"}   |
-      | peerLocation              | {"market":"CH", "language":"fr"}   |
-      | peerVisibility            | [{"market":"CH", "language":"fr"}] |
+      | sourceOrigin | {"market":"DE", "language":"en"}   |
+      | peerOrigin              | {"market":"CH", "language":"fr"}   |
+      | peerCoverage            | [{"market":"CH", "language":"fr"}] |
     And I expect exactly 1 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
     # No peer node creation for non-auto created child nodes
 
@@ -311,31 +311,31 @@ Feature: Create node peer variant
       | Key                       | Value                                                                                                                                   |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                         |
       | nodeAggregateIdentifier   | "madame-lanode"                                                                                                                         |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                                                                                        |
-      | peerLocation              | {"market":"DE", "language":"de"}                                                                                                        |
-      | peerVisibility            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                                                                                        |
+      | peerOrigin              | {"market":"DE", "language":"de"}                                                                                                        |
+      | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key                       | Value                                                                                                                                   |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                         |
       | nodeAggregateIdentifier   | "nodesis-prime"                                                                                                                         |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                                                                                        |
-      | peerLocation              | {"market":"DE", "language":"de"}                                                                                                        |
-      | peerVisibility            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                                                                                        |
+      | peerOrigin              | {"market":"DE", "language":"de"}                                                                                                        |
+      | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key                       | Value                                                                                                                                   |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                         |
       | nodeAggregateIdentifier   | "nodesis-mediocre"                                                                                                                      |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                                                                                        |
-      | peerLocation              | {"market":"DE", "language":"de"}                                                                                                        |
-      | peerVisibility            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                                                                                        |
+      | peerOrigin              | {"market":"DE", "language":"de"}                                                                                                        |
+      | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                       | Value                            |
       | contentStreamIdentifier   | "cs-identifier"                  |
       | nodeAggregateIdentifier   | "madame-lanode"                  |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"en"} |
+      | sourceOrigin | {"market":"CH", "language":"fr"} |
+      | targetOrigin | {"market":"DE", "language":"en"} |
     Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:madame-lanode"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the first above
@@ -343,9 +343,9 @@ Feature: Create node peer variant
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "madame-lanode"                                                     |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                    |
-      | peerLocation              | {"market":"DE", "language":"en"}                                    |
-      | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
+      | peerOrigin              | {"market":"DE", "language":"en"}                                    |
+      | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-prime"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the second above
@@ -353,9 +353,9 @@ Feature: Create node peer variant
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nodesis-prime"                                                     |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                    |
-      | peerLocation              | {"market":"DE", "language":"en"}                                    |
-      | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
+      | peerOrigin              | {"market":"DE", "language":"en"}                                    |
+      | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-mediocre"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the third above
@@ -363,9 +363,9 @@ Feature: Create node peer variant
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nodesis-mediocre"                                                  |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                    |
-      | peerLocation              | {"market":"DE", "language":"en"}                                    |
-      | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
+      | peerOrigin              | {"market":"DE", "language":"en"}                                    |
+      | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     And I expect exactly 1 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodette"
     # No peer node creation for non-auto created child nodes
 
@@ -518,31 +518,31 @@ Feature: Create node peer variant
       | Key                       | Value                                                                                                                                                                                                     |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                                                           |
       | nodeAggregateIdentifier   | "madame-lanode"                                                                                                                                                                                           |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                                                                                                                                                          |
-      | peerLocation              | {"market":"DE", "language":"en"}                                                                                                                                                                          |
-      | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                                                                                                                                                          |
+      | peerOrigin              | {"market":"DE", "language":"en"}                                                                                                                                                                          |
+      | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key                       | Value                                                                                                                                                                                                     |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                                                           |
       | nodeAggregateIdentifier   | "nodesis-prime"                                                                                                                                                                                           |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                                                                                                                                                          |
-      | peerLocation              | {"market":"DE", "language":"en"}                                                                                                                                                                          |
-      | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                                                                                                                                                          |
+      | peerOrigin              | {"market":"DE", "language":"en"}                                                                                                                                                                          |
+      | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key                       | Value                                                                                                                                                                                                     |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                                                           |
       | nodeAggregateIdentifier   | "nodesis-mediocre"                                                                                                                                                                                        |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                                                                                                                                                          |
-      | peerLocation              | {"market":"DE", "language":"en"}                                                                                                                                                                          |
-      | peerVisibility            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                                                                                                                                                          |
+      | peerOrigin              | {"market":"DE", "language":"en"}                                                                                                                                                                          |
+      | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                       | Value                            |
       | contentStreamIdentifier   | "cs-identifier"                  |
       | nodeAggregateIdentifier   | "madame-lanode"                  |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"de"} |
+      | sourceOrigin | {"market":"CH", "language":"fr"} |
+      | targetOrigin | {"market":"DE", "language":"de"} |
     Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:madame-lanode"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the first above
@@ -550,9 +550,9 @@ Feature: Create node peer variant
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "madame-lanode"                                                     |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                    |
-      | peerLocation              | {"market":"DE", "language":"de"}                                    |
-      | peerVisibility            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
+      | peerOrigin              | {"market":"DE", "language":"de"}                                    |
+      | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-prime"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the second above
@@ -560,9 +560,9 @@ Feature: Create node peer variant
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nodesis-prime"                                                     |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                    |
-      | peerLocation              | {"market":"DE", "language":"de"}                                    |
-      | peerVisibility            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
+      | peerOrigin              | {"market":"DE", "language":"de"}                                    |
+      | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-mediocre"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the third above
@@ -570,9 +570,9 @@ Feature: Create node peer variant
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nodesis-mediocre"                                                  |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"fr"}                                    |
-      | peerLocation              | {"market":"DE", "language":"de"}                                    |
-      | peerVisibility            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
+      | peerOrigin              | {"market":"DE", "language":"de"}                                    |
+      | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And I expect exactly 1 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodette"
     # No peer node creation for non-auto created child nodes
 
@@ -725,33 +725,33 @@ Feature: Create node peer variant
       | Key                       | Value                                                               |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"                                            |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"en"}                                    |
-      | peerLocation              | {"market":"DE", "language":"fr"}                                    |
-      | peerVisibility            | [{"market":"DE", "language":"fr"},{"market":"CH", "language":"fr"}] |
+      | sourceOrigin | {"market":"DE", "language":"en"}                                    |
+      | peerOrigin              | {"market":"DE", "language":"fr"}                                    |
+      | peerCoverage            | [{"market":"DE", "language":"fr"},{"market":"CH", "language":"fr"}] |
     And the event NodeSpecializationVariantWasCreated was published with payload:
       | Key                       | Value                              |
       | contentStreamIdentifier   | "cs-identifier"                    |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"           |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"fr"}   |
-      | specializationLocation    | {"market":"CH", "language":"fr"}   |
-      | specializationVisibility  | [{"market":"CH", "language":"fr"}] |
+      | sourceOrigin | {"market":"DE", "language":"fr"}   |
+      | specializationOrigin    | {"market":"CH", "language":"fr"}   |
+      | specializationCoverage  | [{"market":"CH", "language":"fr"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                       | Value                            |
       | contentStreamIdentifier   | "cs-identifier"                  |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"               |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"en"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"fr"} |
+      | sourceOrigin | {"market":"DE", "language":"en"} |
+      | targetOrigin | {"market":"DE", "language":"fr"} |
     Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                  |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"en"}                                    |
-      | peerLocation              | {"market":"DE", "language":"fr"}                                    |
-      | peerVisibility            | [{"market":"DE", "language":"fr"},{"market":"CH", "language":"fr"}] |
+      | sourceOrigin | {"market":"DE", "language":"en"}                                    |
+      | peerOrigin              | {"market":"DE", "language":"fr"}                                    |
+      | peerCoverage            | [{"market":"DE", "language":"fr"},{"market":"CH", "language":"fr"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 12 nodes

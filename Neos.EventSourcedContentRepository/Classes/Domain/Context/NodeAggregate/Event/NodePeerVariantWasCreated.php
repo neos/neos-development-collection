@@ -38,37 +38,30 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
     /**
      * @var DimensionSpacePoint
      */
-    private $sourceDimensionSpacePoint;
+    private $sourceOrigin;
 
     /**
      * @var DimensionSpacePoint
      */
-    private $peerLocation;
+    private $peerOrigin;
 
     /**
      * @var DimensionSpacePointSet
      */
-    private $peerVisibility;
+    private $peerCoverage;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param DimensionSpacePoint $peerLocation
-     * @param DimensionSpacePointSet $peerVisibility
-     */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $sourceDimensionSpacePoint,
-        DimensionSpacePoint $peerLocation,
-        DimensionSpacePointSet $peerVisibility
+        DimensionSpacePoint $sourceOrigin,
+        DimensionSpacePoint $peerOrigin,
+        DimensionSpacePointSet $peerCoverage
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
-        $this->peerLocation = $peerLocation;
-        $this->peerVisibility = $peerVisibility;
+        $this->sourceOrigin = $sourceOrigin;
+        $this->peerOrigin = $peerOrigin;
+        $this->peerCoverage = $peerCoverage;
     }
 
     /**
@@ -90,25 +83,25 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
     /**
      * @return DimensionSpacePoint
      */
-    public function getSourceDimensionSpacePoint(): DimensionSpacePoint
+    public function getSourceOrigin(): DimensionSpacePoint
     {
-        return $this->sourceDimensionSpacePoint;
+        return $this->sourceOrigin;
     }
 
     /**
      * @return DimensionSpacePoint
      */
-    public function getPeerLocation(): DimensionSpacePoint
+    public function getPeerOrigin(): DimensionSpacePoint
     {
-        return $this->peerLocation;
+        return $this->peerOrigin;
     }
 
     /**
      * @return DimensionSpacePointSet
      */
-    public function getPeerVisibility(): DimensionSpacePointSet
+    public function getPeerCoverage(): DimensionSpacePointSet
     {
-        return $this->peerVisibility;
+        return $this->peerCoverage;
     }
 
     /**
@@ -120,9 +113,9 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
         return new NodePeerVariantWasCreated(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
-            $this->sourceDimensionSpacePoint,
-            $this->peerLocation,
-            $this->peerVisibility
+            $this->sourceOrigin,
+            $this->peerOrigin,
+            $this->peerCoverage
         );
     }
 }

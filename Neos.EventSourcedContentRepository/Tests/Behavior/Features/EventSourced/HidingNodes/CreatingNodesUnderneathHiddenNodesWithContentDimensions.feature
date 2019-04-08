@@ -60,9 +60,9 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | Key                       | Value                 |
       | contentStreamIdentifier   | "cs-identifier"       |
       | nodeAggregateIdentifier   | "the-great-nodini"    |
-      | sourceDimensionSpacePoint | {"language": "de"}    |
-      | specializationLocation    | {"language": "gsw"}   |
-      | specializationVisibility  | [{"language": "gsw"}] |
+      | sourceOrigin | {"language": "de"}    |
+      | specializationOrigin    | {"language": "gsw"}   |
+      | specializationCoverage  | [{"language": "gsw"}] |
     And the graph projection is fully up to date
     And the command "HideNode" is executed with payload:
       | Key                          | Value                                     |
@@ -76,8 +76,8 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | Key                       | Value               |
       | contentStreamIdentifier   | "cs-identifier"     |
       | nodeAggregateIdentifier   | "nodingers-cat"     |
-      | sourceDimensionSpacePoint | {"language": "de"}  |
-      | targetDimensionSpacePoint | {"language": "gsw"} |
+      | sourceOrigin | {"language": "de"}  |
+      | targetOrigin | {"language": "gsw"} |
     And the graph projection is fully up to date
 
   #  When I am in content stream "cs-identifier" and Dimension Space Point {"language": "gsw"}

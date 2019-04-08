@@ -758,21 +758,21 @@ insert into neos_contentgraph_restrictionedge
     public function whenNodeSpecializationVariantWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
-            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceDimensionSpacePoint());
+            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
 
-            $specializedNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getSpecializationLocation());
+            $specializedNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getSpecializationOrigin());
 
             foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNode(
                 $sourceNode->relationAnchorPoint,
                 $event->getContentStreamIdentifier(),
-                $event->getSpecializationVisibility()
+                $event->getSpecializationCoverage()
             ) as $hierarchyRelation) {
                 $hierarchyRelation->assignNewChildNode($specializedNode->relationAnchorPoint, $this->getDatabaseConnection());
             }
             foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNode(
                 $sourceNode->relationAnchorPoint,
                 $event->getContentStreamIdentifier(),
-                $event->getSpecializationVisibility()
+                $event->getSpecializationCoverage()
             ) as $hierarchyRelation) {
                 $hierarchyRelation->assignNewParentNode($specializedNode->relationAnchorPoint, $this->getDatabaseConnection());
             }
@@ -787,15 +787,15 @@ insert into neos_contentgraph_restrictionedge
     public function whenNodeGeneralizationVariantWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
-            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceDimensionSpacePoint());
+            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
 
-            $generalizedNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getGeneralizationLocation());
+            $generalizedNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getGeneralizationOrigin());
 
-            $unassignedInboundDimensionSpacePoints = $event->getGeneralizationVisibility();
+            $unassignedInboundDimensionSpacePoints = $event->getGeneralizationCoverage();
             foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
-                $event->getGeneralizationVisibility()
+                $event->getGeneralizationCoverage()
             ) as $existingInboundHierarchyRelation) {
                 $existingInboundHierarchyRelation->assignNewChildNode($generalizedNode->relationAnchorPoint, $this->getDatabaseConnection());
                 $unassignedInboundDimensionSpacePoints = $unassignedInboundDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingInboundHierarchyRelation->dimensionSpacePoint]));
@@ -804,8 +804,8 @@ insert into neos_contentgraph_restrictionedge
                 $inboundSourceHierarchyRelation = $this->projectionContentGraph->findInboundHierarchyRelationsForNode(
                         $sourceNode->relationAnchorPoint,
                         $event->getContentStreamIdentifier(),
-                        new DimensionSpacePointSet([$event->getSourceDimensionSpacePoint()])
-                    )[$event->getSourceDimensionSpacePoint()->getHash()] ?? null;
+                        new DimensionSpacePointSet([$event->getSourceOrigin()])
+                    )[$event->getSourceOrigin()->getHash()] ?? null;
                 // the null case is caught by the NodeAggregate or its command handler
                 foreach ($unassignedInboundDimensionSpacePoints as $unassignedDimensionSpacePoint) {
                     $this->copyHierarchyRelationToDimensionSpacePoint(
@@ -827,19 +827,19 @@ insert into neos_contentgraph_restrictionedge
     public function whenNodePeerVariantWasCreated(Event\NodePeerVariantWasCreated $event)
     {
         $this->transactional(function () use ($event) {
-            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceDimensionSpacePoint());
+            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
             $sourceParentNode = $this->projectionContentGraph->findParentNode(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
-                $event->getSourceDimensionSpacePoint()
+                $event->getSourceOrigin()
             );
-            $peerNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getPeerLocation());
+            $peerNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getPeerOrigin());
 
-            $unassignedInboundDimensionSpacePoints = $event->getPeerVisibility();
+            $unassignedInboundDimensionSpacePoints = $event->getPeerCoverage();
             foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
-                $event->getPeerVisibility()
+                $event->getPeerCoverage()
             ) as $existingInboundHierarchyRelation) {
                 $existingInboundHierarchyRelation->assignNewChildNode($peerNode->relationAnchorPoint, $this->getDatabaseConnection());
                 $unassignedInboundDimensionSpacePoints = $unassignedInboundDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingInboundHierarchyRelation->dimensionSpacePoint]));

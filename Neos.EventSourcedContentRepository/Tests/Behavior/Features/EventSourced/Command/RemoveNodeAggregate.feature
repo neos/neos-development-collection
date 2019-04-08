@@ -54,8 +54,8 @@ Feature: Remove NodeAggregate
       | Key                       | Value                |
       | contentStreamIdentifier   | "live-cs-identifier" |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
-      | sourceDimensionSpacePoint | {"language":"de"}    |
-      | targetDimensionSpacePoint | {"language":"gsw"}   |
+      | sourceOrigin | {"language":"de"}    |
+      | targetOrigin | {"language":"gsw"}   |
     And the graph projection is fully up to date
 
   ########################

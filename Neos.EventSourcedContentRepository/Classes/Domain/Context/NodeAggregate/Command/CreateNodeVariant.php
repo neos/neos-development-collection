@@ -36,25 +36,23 @@ final class CreateNodeVariant implements \JsonSerializable
     /**
      * @var DimensionSpacePoint
      */
-    private $sourceDimensionSpacePoint;
+    private $sourceOrigin;
 
     /**
      * @var DimensionSpacePoint
      */
-    private $targetDimensionSpacePoint;
+    private $targetOrigin;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param DimensionSpacePoint $targetDimensionSpacePoint
-     */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $sourceDimensionSpacePoint, DimensionSpacePoint $targetDimensionSpacePoint)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $sourceOrigin,
+        DimensionSpacePoint $targetOrigin
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
-        $this->targetDimensionSpacePoint = $targetDimensionSpacePoint;
+        $this->sourceOrigin = $sourceOrigin;
+        $this->targetOrigin = $targetOrigin;
     }
 
     public static function fromArray(array $array): self
@@ -62,8 +60,8 @@ final class CreateNodeVariant implements \JsonSerializable
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new DimensionSpacePoint($array['sourceDimensionSpacePoint']),
-            new DimensionSpacePoint($array['targetDimensionSpacePoint'])
+            new DimensionSpacePoint($array['sourceOrigin']),
+            new DimensionSpacePoint($array['targetOrigin'])
         );
     }
 
@@ -86,17 +84,17 @@ final class CreateNodeVariant implements \JsonSerializable
     /**
      * @return DimensionSpacePoint
      */
-    public function getSourceDimensionSpacePoint(): DimensionSpacePoint
+    public function getSourceOrigin(): DimensionSpacePoint
     {
-        return $this->sourceDimensionSpacePoint;
+        return $this->sourceOrigin;
     }
 
     /**
      * @return DimensionSpacePoint
      */
-    public function getTargetDimensionSpacePoint(): DimensionSpacePoint
+    public function getTargetOrigin(): DimensionSpacePoint
     {
-        return $this->targetDimensionSpacePoint;
+        return $this->targetOrigin;
     }
 
     public function jsonSerialize(): array
@@ -104,8 +102,8 @@ final class CreateNodeVariant implements \JsonSerializable
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
-            'sourceDimensionSpacePoint' => $this->sourceDimensionSpacePoint,
-            'targetDimensionSpacePoint' => $this->targetDimensionSpacePoint
+            'sourceOrigin' => $this->sourceOrigin,
+            'targetOrigin' => $this->targetOrigin
         ];
     }
 }

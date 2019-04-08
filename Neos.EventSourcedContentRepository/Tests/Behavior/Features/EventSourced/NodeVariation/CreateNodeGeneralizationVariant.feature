@@ -91,35 +91,35 @@ Feature: Create node generalization
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"en"}  |
+      | sourceOrigin | {"market":"CH", "language":"gsw"} |
+      | targetOrigin | {"market":"DE", "language":"en"}  |
     Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                       | Expected                                                                                                                                                                |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"                                                                                                                                                |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationLocation    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationVisibility  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
+      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodewyn-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                       | Expected                                                                                                                                                                |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
       | nodeAggregateIdentifier   | "nodewyn-tetherton"                                                                                                                                                     |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationLocation    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationVisibility  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
+      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimer-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                       | Expected                                                                                                                                                                |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
       | nodeAggregateIdentifier   | "nodimer-tetherton"                                                                                                                                                     |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationLocation    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationVisibility  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
+      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 8 nodes
@@ -200,35 +200,35 @@ Feature: Create node generalization
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"gsw"} |
+      | sourceOrigin | {"market":"CH", "language":"gsw"} |
+      | targetOrigin | {"market":"DE", "language":"gsw"} |
     Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                       | Expected                            |
       | contentStreamIdentifier   | "cs-identifier"                     |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"            |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}   |
-      | generalizationLocation    | {"market":"DE", "language":"gsw"}   |
-      | generalizationVisibility  | [{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}   |
+      | generalizationOrigin    | {"market":"DE", "language":"gsw"}   |
+      | generalizationCoverage  | [{"market":"DE", "language":"gsw"}] |
     And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodewyn-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                       | Expected                            |
       | contentStreamIdentifier   | "cs-identifier"                     |
       | nodeAggregateIdentifier   | "nodewyn-tetherton"                 |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}   |
-      | generalizationLocation    | {"market":"DE", "language":"gsw"}   |
-      | generalizationVisibility  | [{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}   |
+      | generalizationOrigin    | {"market":"DE", "language":"gsw"}   |
+      | generalizationCoverage  | [{"market":"DE", "language":"gsw"}] |
     And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimer-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
       | Key                       | Expected                            |
       | contentStreamIdentifier   | "cs-identifier"                     |
       | nodeAggregateIdentifier   | "nodimer-tetherton"                 |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}   |
-      | generalizationLocation    | {"market":"DE", "language":"gsw"}   |
-      | generalizationVisibility  | [{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}   |
+      | generalizationOrigin    | {"market":"DE", "language":"gsw"}   |
+      | generalizationCoverage  | [{"market":"DE", "language":"gsw"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 8 nodes
@@ -309,31 +309,31 @@ Feature: Create node generalization
       | Key                       | Value                                                                                                 |
       | contentStreamIdentifier   | "cs-identifier"                                                                                       |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"                                                                              |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationLocation    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationVisibility  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
+      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the event NodeGeneralizationVariantWasCreated was published with payload:
       | Key                       | Value                                                                                                 |
       | contentStreamIdentifier   | "cs-identifier"                                                                                       |
       | nodeAggregateIdentifier   | "nodewyn-tetherton"                                                                                   |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationLocation    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationVisibility  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
+      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the event NodeGeneralizationVariantWasCreated was published with payload:
       | Key                       | Value                                                                                                 |
       | contentStreamIdentifier   | "cs-identifier"                                                                                       |
       | nodeAggregateIdentifier   | "nodimer-tetherton"                                                                                   |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationLocation    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationVisibility  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
+      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"en"}  |
+      | sourceOrigin | {"market":"CH", "language":"gsw"} |
+      | targetOrigin | {"market":"DE", "language":"en"}  |
     Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
@@ -341,9 +341,9 @@ Feature: Create node generalization
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"                                            |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                   |
-      | generalizationLocation    | {"market":"DE", "language":"en"}                                    |
-      | generalizationVisibility  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                   |
+      | generalizationOrigin    | {"market":"DE", "language":"en"}                                    |
+      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodewyn-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
@@ -351,9 +351,9 @@ Feature: Create node generalization
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nodewyn-tetherton"                                                 |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                   |
-      | generalizationLocation    | {"market":"DE", "language":"en"}                                    |
-      | generalizationVisibility  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                   |
+      | generalizationOrigin    | {"market":"DE", "language":"en"}                                    |
+      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimer-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
@@ -361,9 +361,9 @@ Feature: Create node generalization
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nodimer-tetherton"                                                 |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                   |
-      | generalizationLocation    | {"market":"DE", "language":"en"}                                    |
-      | generalizationVisibility  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                   |
+      | generalizationOrigin    | {"market":"DE", "language":"en"}                                    |
+      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 11 nodes
@@ -447,31 +447,31 @@ Feature: Create node generalization
       | Key                       | Value                                                                                                                                                                   |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"                                                                                                                                                |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationLocation    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationVisibility  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
+      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the event NodeGeneralizationVariantWasCreated was published with payload:
       | Key                       | Value                                                                                                                                                                   |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
       | nodeAggregateIdentifier   | "nodewyn-tetherton"                                                                                                                                                     |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationLocation    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationVisibility  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
+      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the event NodeGeneralizationVariantWasCreated was published with payload:
       | Key                       | Value                                                                                                                                                                   |
       | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
       | nodeAggregateIdentifier   | "nodimer-tetherton"                                                                                                                                                     |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationLocation    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationVisibility  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
+      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  |
+      | sourceOrigin | {"market":"CH", "language":"gsw"} |
+      | targetOrigin | {"market":"DE", "language":"de"}  |
     Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
@@ -479,9 +479,9 @@ Feature: Create node generalization
       | Key                       | Expected                                                                                              |
       | contentStreamIdentifier   | "cs-identifier"                                                                                       |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"                                                                              |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationLocation    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationVisibility  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
+      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodewyn-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
@@ -489,9 +489,9 @@ Feature: Create node generalization
       | Key                       | Expected                                                                                              |
       | contentStreamIdentifier   | "cs-identifier"                                                                                       |
       | nodeAggregateIdentifier   | "nodewyn-tetherton"                                                                                   |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationLocation    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationVisibility  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
+      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimer-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
@@ -499,9 +499,9 @@ Feature: Create node generalization
       | Key                       | Expected                                                                                              |
       | contentStreamIdentifier   | "cs-identifier"                                                                                       |
       | nodeAggregateIdentifier   | "nodimer-tetherton"                                                                                   |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationLocation    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationVisibility  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
+      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 11 nodes

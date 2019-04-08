@@ -40,37 +40,30 @@ final class NodeGeneralizationVariantWasCreated implements DomainEventInterface,
     /**
      * @var DimensionSpacePoint
      */
-    private $sourceDimensionSpacePoint;
+    private $sourceOrigin;
 
     /**
      * @var DimensionSpacePoint
      */
-    private $generalizationLocation;
+    private $generalizationOrigin;
 
     /**
      * @var DimensionSpacePointSet
      */
-    private $generalizationVisibility;
+    private $generalizationCoverage;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param DimensionSpacePoint $generalizationLocation
-     * @param DimensionSpacePointSet $generalizationVisibility
-     */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $sourceDimensionSpacePoint,
-        DimensionSpacePoint $generalizationLocation,
-        DimensionSpacePointSet $generalizationVisibility
+        DimensionSpacePoint $sourceOrigin,
+        DimensionSpacePoint $generalizationOrigin,
+        DimensionSpacePointSet $generalizationCoverage
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
-        $this->generalizationLocation = $generalizationLocation;
-        $this->generalizationVisibility = $generalizationVisibility;
+        $this->sourceOrigin = $sourceOrigin;
+        $this->generalizationOrigin = $generalizationOrigin;
+        $this->generalizationCoverage = $generalizationCoverage;
     }
 
 
@@ -93,25 +86,25 @@ final class NodeGeneralizationVariantWasCreated implements DomainEventInterface,
     /**
      * @return DimensionSpacePoint
      */
-    public function getSourceDimensionSpacePoint(): DimensionSpacePoint
+    public function getSourceOrigin(): DimensionSpacePoint
     {
-        return $this->sourceDimensionSpacePoint;
+        return $this->sourceOrigin;
     }
 
     /**
      * @return DimensionSpacePoint
      */
-    public function getGeneralizationLocation(): DimensionSpacePoint
+    public function getGeneralizationOrigin(): DimensionSpacePoint
     {
-        return $this->generalizationLocation;
+        return $this->generalizationOrigin;
     }
 
     /**
      * @return DimensionSpacePointSet
      */
-    public function getGeneralizationVisibility(): DimensionSpacePointSet
+    public function getGeneralizationCoverage(): DimensionSpacePointSet
     {
-        return $this->generalizationVisibility;
+        return $this->generalizationCoverage;
     }
 
     /**
@@ -123,9 +116,9 @@ final class NodeGeneralizationVariantWasCreated implements DomainEventInterface,
         return new NodeGeneralizationVariantWasCreated(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
-            $this->sourceDimensionSpacePoint,
-            $this->generalizationLocation,
-            $this->generalizationVisibility
+            $this->sourceOrigin,
+            $this->generalizationOrigin,
+            $this->generalizationCoverage
         );
     }
 }

@@ -40,39 +40,31 @@ final class NodeSpecializationVariantWasCreated implements DomainEventInterface,
     /**
      * @var DimensionSpacePoint
      */
-    private $sourceDimensionSpacePoint;
+    private $sourceOrigin;
 
     /**
      * @var DimensionSpacePoint
      */
-    private $specializationLocation;
+    private $specializationOrigin;
 
     /**
      * @var DimensionSpacePointSet
      */
-    private $specializationVisibility;
+    private $specializationCoverage;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param DimensionSpacePoint $specializationLocation
-     * @param DimensionSpacePointSet $specializationVisibility
-     */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $sourceDimensionSpacePoint,
-        DimensionSpacePoint $specializationLocation,
-        DimensionSpacePointSet $specializationVisibility
+        DimensionSpacePoint $sourceOrigin,
+        DimensionSpacePoint $specializationOrigin,
+        DimensionSpacePointSet $specializationCoverage
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
-        $this->specializationLocation = $specializationLocation;
-        $this->specializationVisibility = $specializationVisibility;
+        $this->sourceOrigin = $sourceOrigin;
+        $this->specializationOrigin = $specializationOrigin;
+        $this->specializationCoverage = $specializationCoverage;
     }
-
 
     /**
      * @return ContentStreamIdentifier
@@ -93,27 +85,26 @@ final class NodeSpecializationVariantWasCreated implements DomainEventInterface,
     /**
      * @return DimensionSpacePoint
      */
-    public function getSourceDimensionSpacePoint(): DimensionSpacePoint
+    public function getSourceOrigin(): DimensionSpacePoint
     {
-        return $this->sourceDimensionSpacePoint;
+        return $this->sourceOrigin;
     }
 
     /**
      * @return DimensionSpacePoint
      */
-    public function getSpecializationLocation(): DimensionSpacePoint
+    public function getSpecializationOrigin(): DimensionSpacePoint
     {
-        return $this->specializationLocation;
+        return $this->specializationOrigin;
     }
 
     /**
      * @return DimensionSpacePointSet
      */
-    public function getSpecializationVisibility(): DimensionSpacePointSet
+    public function getSpecializationCoverage(): DimensionSpacePointSet
     {
-        return $this->specializationVisibility;
+        return $this->specializationCoverage;
     }
-
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
@@ -124,9 +115,9 @@ final class NodeSpecializationVariantWasCreated implements DomainEventInterface,
         return new NodeSpecializationVariantWasCreated(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
-            $this->sourceDimensionSpacePoint,
-            $this->specializationLocation,
-            $this->specializationVisibility
+            $this->sourceOrigin,
+            $this->specializationOrigin,
+            $this->specializationCoverage
         );
     }
 }

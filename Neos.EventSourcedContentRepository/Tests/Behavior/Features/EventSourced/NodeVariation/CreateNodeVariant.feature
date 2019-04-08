@@ -74,8 +74,8 @@ Feature: Create node variant
       | Key                       | Value                             |
       | contentStreamIdentifier   | "i-do-not-exist-yet"              |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  |
+      | sourceOrigin | {"market":"CH", "language":"gsw"} |
+      | targetOrigin | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to create a variant in a node aggregate that currently does not exist
@@ -83,8 +83,8 @@ Feature: Create node variant
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "i-currently-do-not-exist"        |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  |
+      | sourceOrigin | {"market":"CH", "language":"gsw"} |
+      | targetOrigin | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to create a variant of a root node aggregate
@@ -92,8 +92,8 @@ Feature: Create node variant
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "lady-eleonode-rootford"          |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  |
+      | sourceOrigin | {"market":"CH", "language":"gsw"} |
+      | targetOrigin | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
 
   Scenario: Try to create a variant in a tethered node aggregate
@@ -101,8 +101,8 @@ Feature: Create node variant
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "nodewyn-tetherton"               |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  |
+      | sourceOrigin | {"market":"CH", "language":"gsw"} |
+      | targetOrigin | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "NodeAggregateIsTethered"
 
   Scenario: Try to create a variant from a source dimension space point that does not exist
@@ -110,8 +110,8 @@ Feature: Create node variant
       | Key                       | Value                            |
       | contentStreamIdentifier   | "cs-identifier"                  |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"         |
-      | sourceDimensionSpacePoint | {"undeclared":"undefined"}       |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"de"} |
+      | sourceOrigin | {"undeclared":"undefined"}       |
+      | targetOrigin | {"market":"DE", "language":"de"} |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to create a variant to a target dimension space point that does not exist
@@ -119,8 +119,8 @@ Feature: Create node variant
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"undeclared":"undefined"}        |
+      | sourceOrigin | {"market":"CH", "language":"gsw"} |
+      | targetOrigin | {"undeclared":"undefined"}        |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to create a variant from a source dimension space point that the node aggregate does not occupy
@@ -128,8 +128,8 @@ Feature: Create node variant
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceDimensionSpacePoint | {"market":"CH", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  |
+      | sourceOrigin | {"market":"CH", "language":"gsw"} |
+      | targetOrigin | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsNotYetOccupied"
 
   Scenario: Try to create a variant to a target dimension space point that the node aggregate already occupies
@@ -137,8 +137,8 @@ Feature: Create node variant
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"gsw"} |
+      | sourceOrigin | {"market":"DE", "language":"gsw"} |
+      | targetOrigin | {"market":"DE", "language":"gsw"} |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsAlreadyOccupied"
 
   Scenario: Try to create a variant to a target dimension space point that the node aggregate's parent in the source dimension point does not cover
@@ -146,6 +146,6 @@ Feature: Create node variant
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                |
-      | sourceDimensionSpacePoint | {"market":"DE", "language":"gsw"} |
-      | targetDimensionSpacePoint | {"market":"DE", "language":"de"}  |
+      | sourceOrigin | {"market":"DE", "language":"gsw"} |
+      | targetOrigin | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
