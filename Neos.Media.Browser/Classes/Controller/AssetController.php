@@ -717,6 +717,11 @@ class AssetController extends ActionController
         $this->forward('delete', 'AssetCollection', 'Neos.Media.Browser', ['assetCollection' => $assetCollection]);
     }
 
+    /**
+     * Prepare property mapping for updateImageVariantAction
+     *
+     * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
+     */
     public function initializeUpdateImageVariantAction()
     {
         $mappingConfiguration = $this->arguments->getArgument('imageVariant')->getPropertyMappingConfiguration();

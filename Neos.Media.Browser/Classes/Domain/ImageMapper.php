@@ -8,7 +8,7 @@ use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ImageVariant;
 
 /**
- *
+ * The ImageMapper provides basic information about an image object as array of simple types.
  */
 class ImageMapper
 {
@@ -60,10 +60,10 @@ class ImageMapper
      */
     private function mapImage(ImageInterface $image, ResourceManager $resourceManager, PersistenceManagerInterface $persistenceManager): array
     {
-        $previeUri = $resourceManager->getPublicPersistentResourceUri($image->getResource());
+        $previewUri = $resourceManager->getPublicPersistentResourceUri($image->getResource());
 
         return [
-            'previewUri' => $previeUri,
+            'previewUri' => $previewUri,
             'width' => $image->getWidth(),
             'height' => $image->getHeight(),
             'persistenceIdentifier' => $persistenceManager->getIdentifierByObject($image)
