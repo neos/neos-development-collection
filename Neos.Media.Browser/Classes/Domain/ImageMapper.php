@@ -58,7 +58,6 @@ class ImageMapper
     public function __construct(ImageInterface $image)
     {
         $this->image = $image;
-
     }
 
     public function initializeObject()
