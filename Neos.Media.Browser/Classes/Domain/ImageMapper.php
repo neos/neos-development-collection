@@ -13,6 +13,13 @@ use Neos\Media\Domain\Model\ImageVariant;
 class ImageMapper
 {
     /**
+     * The image to be mapped.
+     *
+     * @var ImageInterface
+     */
+    private $image;
+
+    /**
      * @var array
      */
     private $mappingResult = [];
@@ -20,28 +27,49 @@ class ImageMapper
     /**
      * @var ResourceManager
      */
-    protected $resourceManager;
+    private $resourceManager;
 
     /**
      * @var PersistenceManagerInterface
      */
-    protected $persistenceManager;
+    private $persistenceManager;
+
+    /**
+     * @param ResourceManager $resourceManager
+     */
+    public function injectResourceManager(ResourceManager $resourceManager)
+    {
+        $this->resourceManager = $resourceManager;
+    }
+
+    /**
+     * @param PersistenceManagerInterface $persistenceManager
+     */
+    public function injectPersistenceManager(PersistenceManagerInterface $persistenceManager)
+    {
+        $this->persistenceManager = $persistenceManager;
+    }
 
     /**
      * ImageMapper constructor.
      *
      * @param ImageInterface $image
-     * @param ResourceManager $resourceManager
-     * @param PersistenceManagerInterface $persistenceManager
      */
-    public function __construct(ImageInterface $image, ResourceManager $resourceManager, PersistenceManagerInterface $persistenceManager)
+    public function __construct(ImageInterface $image)
     {
-        $mappingResult = $this->mapImage($image, $resourceManager, $persistenceManager);
-        if ($image instanceof ImageVariant) {
-            $mappingResult = array_merge($mappingResult, $this->mapVariant($image));
+        $this->image = $image;
+
+    }
+
+    public function initializeObject()
+    {
+        $mappingResult = $this->mapImage();
+        if ($this->image instanceof ImageVariant) {
+            $mappingResult = array_merge($mappingResult, $this->mapVariant($this->image));
         }
 
         $this->mappingResult = $mappingResult;
+        $this->image = null;
     }
 
     /**
@@ -53,20 +81,19 @@ class ImageMapper
     }
 
     /**
-     * @param ImageInterface $image
-     * @param ResourceManager $resourceManager
-     * @param PersistenceManagerInterface $persistenceManager
+     * Map the image object attached to this mapper to basic properties.
+     *
      * @return array
      */
-    private function mapImage(ImageInterface $image, ResourceManager $resourceManager, PersistenceManagerInterface $persistenceManager): array
+    private function mapImage(): array
     {
-        $previewUri = $resourceManager->getPublicPersistentResourceUri($image->getResource());
+        $previewUri = $this->resourceManager->getPublicPersistentResourceUri($this->image->getResource());
 
         return [
             'previewUri' => $previewUri,
-            'width' => $image->getWidth(),
-            'height' => $image->getHeight(),
-            'persistenceIdentifier' => $persistenceManager->getIdentifierByObject($image)
+            'width' => $this->image->getWidth(),
+            'height' => $this->image->getHeight(),
+            'persistenceIdentifier' => $this->persistenceManager->getIdentifierByObject($this->image)
         ];
     }
 
