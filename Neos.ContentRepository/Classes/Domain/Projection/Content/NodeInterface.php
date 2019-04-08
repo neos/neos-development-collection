@@ -47,6 +47,13 @@ interface NodeInterface extends CacheAwareInterface
     public function isRoot(): bool;
 
     /**
+     * Whether or not this node is tethered to its parent, fka auto created child node
+     *
+     * @return bool
+     */
+    public function isTethered(): bool;
+
+    /**
      * @return ContentStreamIdentifier
      */
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
