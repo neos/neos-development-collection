@@ -680,10 +680,10 @@
 				<source>Database Error</source>
 			<target state="translated">Adatbázis hiba</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
-				<source>There is no database connection yet or the Neos database schema has not been created.</source>
+				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
 			<target state="translated">Nincs adatbázis kapcsolat vagy a Neos adatbázis séma nem lett létrehozva.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>Run the setup to configure your database.</source>
+				<source>You might want to configure or check your database configuration in the setup.</source>
 			<target state="translated">Futtassa a telepítőt az adatbázis beállításához.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
