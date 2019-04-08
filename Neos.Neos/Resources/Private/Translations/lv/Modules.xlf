@@ -609,9 +609,15 @@
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
 			<target state="translated">Izstradatajs.ManaPakotnesAtslega</target></trans-unit>
+      <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
+				<source>No sites available</source>
+			<target state="translated">Nav pieejama vietņu</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target state="translated">&lt;em&gt;Neos Kickstarter&lt;/em&gt; pakotne nav instalēta, vispirms instalējiet to izmantojot kickstart komandu veidojot jaunu pakotni.</target></trans-unit>
+      <trans-unit id="sites.new" xml:space="preserve">
+				<source>New site</source>
+			<target state="translated">Jauna tīmekļa vietne</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target state="translated">Vai jūs tiešām vēlaties dzēst "{0}"? Šo darbību nav iespējams atsaukt.</target></trans-unit>
@@ -621,6 +627,18 @@
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
 			<target state="translated">Rediģēt domēnu</target></trans-unit>
+      <trans-unit id="domainform.domainData" xml:space="preserve">
+				<source>Domain data</source>
+			<target state="translated">Domēna dati</target></trans-unit>
+      <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
+				<source>e.g. www.neos.io</source>
+			<target state="translated">piemēram, www.neos.io</target></trans-unit>
+      <trans-unit id="domainform.state" xml:space="preserve">
+				<source>State</source>
+			<target state="translated">Stāvoklis</target></trans-unit>
+      <trans-unit id="domainform.create" xml:space="preserve">
+				<source>Create</source>
+			<target state="translated">Izveidot</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target state="translated">Konfigurācija</target><alt-trans><target>Iestatījumi</target></alt-trans></trans-unit>
