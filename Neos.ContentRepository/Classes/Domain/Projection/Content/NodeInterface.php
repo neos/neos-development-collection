@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
@@ -66,11 +65,6 @@ interface NodeInterface extends CacheAwareInterface
      * @return NodeAggregateIdentifier
      */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier;
-
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNodeIdentifier(): NodeIdentifier;
 
     /**
      * @return NodeTypeName
