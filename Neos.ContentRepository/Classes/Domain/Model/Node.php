@@ -1846,10 +1846,9 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      *
      * NOTE: This is internal only and should not be used outside of the ContentRepository.
      *
-     * TODO: As it is used in the Workspace this should become part of the interface in the next major release.
-     *
      * @param NodeData $nodeData
      * @return void
+     * @deprecated with version 4.3 - will be removed with 5.0
      */
     public function setNodeData(NodeData $nodeData): void
     {
@@ -1878,10 +1877,19 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * should not be deleted.
      *
      * @return boolean true if this node is auto-created by the parent.
-     * @deprecated with version 4.3 - will be removed with 5.0. This information should not be required usually. Otherwise it can be determined via:
-     * if (array_key_exists((string)$node->getNodeName(), $parent->getNodeType()->getAutoCreatedChildNodes()))
+     * @deprecated with version 4.3 - will be replaced by isTethered with 5.0.
      */
     public function isAutoCreated(): bool
+    {
+        return $this->isTethered();
+    }
+
+    /**
+     * Whether or not this node is tethered to its parent, fka auto created child node
+     *
+     * @return bool
+     */
+    public function isTethered(): bool
     {
         $parent = $this->getParent();
         if ($parent === null) {
