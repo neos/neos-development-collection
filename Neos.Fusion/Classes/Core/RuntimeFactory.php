@@ -13,8 +13,8 @@ namespace Neos\Fusion\Core;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -56,7 +56,7 @@ class RuntimeFactory
 
         return new ControllerContext(
             $request,
-            new Response(),
+            new ActionResponse(),
             new Arguments([]),
             $uriBuilder
         );
