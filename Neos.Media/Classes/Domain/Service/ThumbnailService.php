@@ -117,23 +117,11 @@ class ThumbnailService
     public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
         // Enforce format conversions if needed. This replaces the actual
-        // thumbnail-configuration with one that enforces the target format
+        // thumbnail-configuration with one that also enforces the target format
         if ($configuration->getFormat() === null) {
-            if ($targetFormat = Arrays::getValueByPath($this->formatConversions, $asset->getMediaType())) {
-                if (strpos($targetFormat, '/') !== false) {
-                    $targetFormat = MediaTypes::getFilenameExtensionFromMediaType($targetFormat);
-                }
-                $configuration = new ThumbnailConfiguration(
-                    $configuration->getWidth(),
-                    $configuration->getMaximumWidth(),
-                    $configuration->getHeight(),
-                    $configuration->getMaximumHeight(),
-                    $configuration->isCroppingAllowed(),
-                    $configuration->isUpScalingAllowed(),
-                    $configuration->isAsync(),
-                    $configuration->getQuality(),
-                    $targetFormat
-                );
+            $targetFormat = Arrays::getValueByPath($this->formatConversions, $asset->getMediaType());
+            if (is_string($targetFormat)) {
+                $configuration = $this->applyFormatToThumbnailConfiguration($configuration, $targetFormat);
             }
         }
 
@@ -238,6 +226,33 @@ class ThumbnailService
             isset($presetConfiguration['format']) ? $presetConfiguration['format'] : null
         );
         return $thumbnailConfiguration;
+    }
+
+    /**
+     * Create a new thumbnailConfiguration with the identical configuration
+     * to the given one PLUS setting of the target-format
+     *
+     * @param ThumbnailConfiguration $configuration
+     * @param string $targetFormat
+     * @return ThumbnailConfiguration
+     */
+    protected function applyFormatToThumbnailConfiguration(ThumbnailConfiguration $configuration, string $targetFormat): ThumbnailConfiguration
+    {
+        if (strpos($targetFormat, '/') !== false) {
+            $targetFormat = MediaTypes::getFilenameExtensionFromMediaType($targetFormat);
+        }
+        $configuration = new ThumbnailConfiguration(
+            $configuration->getWidth(),
+            $configuration->getMaximumWidth(),
+            $configuration->getHeight(),
+            $configuration->getMaximumHeight(),
+            $configuration->isCroppingAllowed(),
+            $configuration->isUpScalingAllowed(),
+            $configuration->isAsync(),
+            $configuration->getQuality(),
+            $targetFormat
+        );
+        return $configuration;
     }
 
     /**
