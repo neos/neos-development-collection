@@ -605,9 +605,15 @@
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
 			<target state="translated">EladóNeve.Csomagom</target></trans-unit>
+      <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
+				<source>No sites available</source>
+			<target state="translated">Nincs elérhető oldal</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target state="translated">A &lt;em&gt;Neos Kickstarter&lt;/em&gt; csomag nincs telepítve, telepítse új oldalra.</target></trans-unit>
+      <trans-unit id="sites.new" xml:space="preserve">
+				<source>New site</source>
+			<target state="translated">Új oldal</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target state="translated">Biztos törölni akarja "{0}"? Ez a lépés nem vonható vissza.</target></trans-unit>
@@ -617,6 +623,18 @@
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
 			<target state="translated">Domain szerkesztése</target></trans-unit>
+      <trans-unit id="domainform.domainData" xml:space="preserve">
+				<source>Domain data</source>
+			<target state="translated">Domain adatok</target></trans-unit>
+      <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
+				<source>e.g. www.neos.io</source>
+			<target state="translated">pl: www.neos.io</target></trans-unit>
+      <trans-unit id="domainform.state" xml:space="preserve">
+				<source>State</source>
+			<target state="translated">Állam</target></trans-unit>
+      <trans-unit id="domainform.create" xml:space="preserve">
+				<source>Create</source>
+			<target state="translated">Létrehozás</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target state="translated">Konfiguráció</target></trans-unit>
