@@ -12,7 +12,6 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
