@@ -117,10 +117,10 @@ class ThumbnailService
     public function getThumbnail(AssetInterface $asset, ThumbnailConfiguration $configuration)
     {
         // Enforce format conversions if needed. This replaces the actual
-        // thumbnail-configuration with one tha enforces the target format
+        // thumbnail-configuration with one that enforces the target format
         if ($configuration->getFormat() === null) {
             if ($targetFormat = Arrays::getValueByPath($this->formatConversions, $asset->getMediaType())) {
-                if (strpos($targetFormat, '/') > 0) {
+                if (strpos($targetFormat, '/') !== false) {
                     $targetFormat = MediaTypes::getFilenameExtensionFromMediaType($targetFormat);
                 }
                 $configuration = new ThumbnailConfiguration(
