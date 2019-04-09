@@ -14,10 +14,8 @@ namespace Neos\EventSourcedContentRepository\TypeConverter;
 
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Flow\Security\Context;
 
 /**
  * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
@@ -31,7 +29,7 @@ class NewNodeSerializer extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = [\Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class];
+    protected $sourceTypes = [\Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface::class];
 
     /**
      * @var string
@@ -56,6 +54,6 @@ class NewNodeSerializer extends AbstractTypeConverter
     public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         // TODO: Move Node Address to CR
-        return $this->nodeAddressFactory->createFromNode($source)->serializeForUri();
+        return $this->nodeAddressFactory->createFromTraversableNode($source)->serializeForUri();
     }
 }

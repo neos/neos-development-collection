@@ -13,12 +13,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\ContentRepository\Domain\ValueObject\NodePath;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode\NodeInterfaceProxy;
@@ -40,14 +41,6 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
     {
         $this->node = $node;
         $this->subgraph = $subgraph;
-    }
-
-    /**
-     * @return ContentSubgraphInterface
-     */
-    public function getSubgraph(): ContentSubgraphInterface
-    {
-        return $this->subgraph;
     }
 
     public function findParentNode(): TraversableNodeInterface
@@ -158,6 +151,18 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
             $traversableNodes[] = new TraversableNode($node, $this->subgraph);
         }
         return TraversableNodes::fromArray($traversableNodes);
+    }
+
+    /**
+     * Returns the DimensionSpacePoint the node was *requested in*, i.e. one of the DimensionSpacePoints
+     * this node is visible in. If you need the DimensionSpacePoint where the node is actually at home,
+     * see getOriginDimensionSpacePoint()
+     *
+     * @return DimensionSpacePoint
+     */
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->subgraph->getDimensionSpacePoint();
     }
 
     /**

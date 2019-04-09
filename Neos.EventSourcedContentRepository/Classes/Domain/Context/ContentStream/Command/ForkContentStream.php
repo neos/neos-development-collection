@@ -12,14 +12,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Comman
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 
 /**
  * ForkContentStream for creating a new fork of a content stream.
  */
 final class ForkContentStream
 {
-
     /**
      * Content stream identifier for the new content stream
      *

@@ -13,6 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
@@ -60,6 +62,12 @@ class RenderContentOutOfBand extends AbstractFeedback
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var ContentGraphInterface
+     */
+    protected $contentGraph;
 
     /**
      * Set the node
@@ -194,7 +202,7 @@ class RenderContentOutOfBand extends AbstractFeedback
     public function serializePayload(ControllerContext $controllerContext)
     {
         return [
-            'contextPath' => $this->nodeAddressFactory->createFromNode($this->getNode())->serializeForUri(),
+            'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($this->getNode())->serializeForUri(),
             'parentDomAddress' => $this->getParentDomAddress(),
             'siblingDomAddress' => $this->getSiblingDomAddress(),
             'mode' => $this->getMode(),
@@ -218,7 +226,11 @@ class RenderContentOutOfBand extends AbstractFeedback
         $fusionView->setControllerContext($controllerContext);
 
         $fusionView->assign('value', $this->getNode()->findParentNode());
-        $fusionView->assign('subgraph', $this->getNode()->getSubgraph());
+        $fusionView->assign('subgraph', $this->contentGraph->getSubgraphByIdentifier(
+            $this->getNode()->getContentStreamIdentifier(),
+            $this->getNode()->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        ));
         $fusionView->setFusionPath($parentDomAddress->getFusionPath());
 
         return $fusionView->render();

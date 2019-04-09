@@ -14,13 +14,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
@@ -31,11 +31,6 @@ class Node implements NodeInterface
      * @var ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
-
-    /**
-     * @var DimensionSpacePoint
-     */
-    protected $dimensionSpacePoint;
 
     /**
      * @var NodeAggregateIdentifier
@@ -74,17 +69,15 @@ class Node implements NodeInterface
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $originDimensionSpacePoint,
         NodeTypeName $nodeTypeName,
         NodeType $nodeType,
-        NodeName $nodeName,
+        ?NodeName $nodeName,
         PropertyCollection $properties,
         NodeAggregateClassification $classification
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->nodeTypeName = $nodeTypeName;
@@ -123,14 +116,6 @@ class Node implements NodeInterface
     }
 
     /**
-     * @return DimensionSpacePoint
-     */
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        return $this->dimensionSpacePoint;
-    }
-
-    /**
      * @return NodeAggregateIdentifier
      */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
@@ -163,9 +148,9 @@ class Node implements NodeInterface
     }
 
     /**
-     * @return NodeName
+     * @return NodeName|null
      */
-    public function getNodeName(): NodeName
+    public function getNodeName(): ?NodeName
     {
         return $this->nodeName;
     }
@@ -177,7 +162,6 @@ class Node implements NodeInterface
     {
         return $this->properties;
     }
-
 
     /**
      * Returns the specified property.

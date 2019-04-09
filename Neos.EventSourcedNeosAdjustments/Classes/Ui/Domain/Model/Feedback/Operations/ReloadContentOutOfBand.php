@@ -141,7 +141,7 @@ class ReloadContentOutOfBand extends AbstractFeedback
     public function serializePayload(ControllerContext $controllerContext)
     {
         return [
-            'contextPath' => $this->nodeAddressFactory->createFromNode($this->getNode())->serializeForUri(),
+            'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($this->getNode())->serializeForUri(),
             'nodeDomAddress' => $this->getNodeDomAddress(),
             'renderedContent' => $this->renderContent($controllerContext)
         ];

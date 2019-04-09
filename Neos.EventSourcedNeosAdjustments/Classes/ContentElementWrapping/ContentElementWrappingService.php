@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\ContentElementWrapping;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
@@ -126,12 +126,13 @@ class ContentElementWrappingService
         //    return $content;
         //}
 
+        $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
         $attributes = [
-            'data-__neos-node-contextpath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
+            'data-__neos-node-contextpath' => $nodeAddress->serializeForUri(),
             'data-__neos-fusion-path' => $fusionPath
         ];
 
-        $this->renderedNodes[(string)$node->getNodeIdentifier()] = $node;
+        $this->renderedNodes[$node->getCacheEntryIdentifier()] = $node;
 
         $this->userLocaleService->switchToUILocale();
 
@@ -140,7 +141,7 @@ class ContentElementWrappingService
         $this->userLocaleService->switchToUILocale(true);
 
         $wrappedContent = $this->htmlAugmenter->addAttributes($content, $attributes, 'div');
-        $nodeContextPath = $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+        $nodeContextPath = $nodeAddress->serializeForUri();
         $wrappedContent .= "<script data-neos-nodedata>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
 
         return $wrappedContent;
@@ -170,7 +171,7 @@ class ContentElementWrappingService
 
             if (isset($this->renderedNodes[(string)$node->getNodeIdentifier()]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
-                $nodeContextPath = $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+                $nodeContextPath = $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri();
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
             }
 

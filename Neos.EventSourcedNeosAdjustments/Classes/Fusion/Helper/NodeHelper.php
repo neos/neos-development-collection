@@ -13,9 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Neos\Domain\Exception;
@@ -60,9 +59,9 @@ class NodeHelper implements ProtectedContextAwareInterface
         }
     }
 
-    public function nodeAddressToString(NodeInterface $node): string
+    public function nodeAddressToString(TraversableNodeInterface $node): string
     {
-        return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+        return $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri();
     }
 
     /**

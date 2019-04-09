@@ -55,7 +55,7 @@ class NodeHiddenStateProjector implements ProjectorInterface
     public function whenNodeWasHidden(NodeWasHidden $event)
     {
         $this->transactional(function () use ($event) {
-            foreach ($event->getAffectedDimensionSpacePoints()->getPoints() as $dimensionSpacePoint) {
+            foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $nodeHiddenState = new NodeHiddenState(
                     $event->getContentStreamIdentifier(),
                     $event->getNodeAggregateIdentifier(),
@@ -81,7 +81,6 @@ class NodeHiddenStateProjector implements ProjectorInterface
                 'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
                 'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
                 'dimensionSpacePointHashes' => $event->getAffectedDimensionSpacePoints()->getPointHashes()
-
             ],
             [
                 'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY

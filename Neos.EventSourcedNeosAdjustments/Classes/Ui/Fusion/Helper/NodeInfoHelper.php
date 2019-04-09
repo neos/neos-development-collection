@@ -12,9 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
@@ -229,7 +228,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     protected function getBasicNodeInformation(TraversableNodeInterface $node): array
     {
         return [
-            'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
+            'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri(),
             'name' => $node->getNodeName()->jsonSerialize(),
             'identifier' => $node->getNodeAggregateIdentifier()->jsonSerialize(),
             'nodeType' => $node->getNodeType()->getName(),
@@ -237,9 +236,8 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             'isAutoCreated' => self::isAutoCreated($node),
             'depth' => $node->findNodePath()->getDepth(),
             'children' => [],
-            'parent' => $this->nodeAddressFactory->createFromNode($node->findParentNode())->serializeForUri(),
-            // TODO: "matchescurrentdimensions"
-            //'matchesCurrentDimensions' => ($node instanceof Node && $node->dimensionsAreMatchingTargetDimensionValues())
+            'parent' => $this->nodeAddressFactory->createFromTraversableNode($node->findParentNode())->serializeForUri(),
+            'matchesCurrentDimensions' => $node->getDimensionSpacePoint()->equals($node->getOriginDimensionSpacePoint())
         ];
     }
 
@@ -282,7 +280,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         $infos = [];
         foreach ($childNodes as $childNode) {
             $infos[] = [
-                'contextPath' => $this->nodeAddressFactory->createFromNode($childNode)->serializeForUri(),
+                'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($childNode)->serializeForUri(),
                 'nodeType' => $childNode->getNodeType()->getName() // TODO: DUPLICATED; should NOT be needed!!!
             ];
         };
@@ -395,8 +393,8 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     public function defaultNodesForBackend(TraversableNodeInterface $site, TraversableNodeInterface $documentNode, ControllerContext $controllerContext): array
     {
         return [
-            ($this->nodeAddressFactory->createFromNode($site)->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($site, $controllerContext),
-            ($this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($documentNode, $controllerContext)
+            ($this->nodeAddressFactory->createFromTraversableNode($site)->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($site, $controllerContext),
+            ($this->nodeAddressFactory->createFromTraversableNode($documentNode)->serializeForUri()) => $this->renderNodeWithPropertiesAndChildrenInformation($documentNode, $controllerContext)
         ];
     }
 
@@ -418,7 +416,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
             ->setFormat('html')
             ->uriFor('redirectTo', [], 'Backend', 'Neos.Neos.Ui');
 
-        $basicRedirectUrl .= '?' . http_build_query(['node' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri()]);
+        $basicRedirectUrl .= '?' . http_build_query(['node' => $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri()]);
 
         return $basicRedirectUrl;
     }
@@ -482,19 +480,19 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
         return $this->buildNodeTypeFilterString([], $this->nodeTypeStringsToList($this->documentNodeTypeRole, $this->ignoredNodeTypeRole));
     }
 
-    public function nodeAddress(NodeInterface $node): NodeAddress
+    public function nodeAddress(TraversableNodeInterface $node): NodeAddress
     {
-        return $this->nodeAddressFactory->createFromNode($node);
+        return $this->nodeAddressFactory->createFromTraversableNode($node);
     }
 
-    public function serializedNodeAddress(NodeInterface $node): string
+    public function serializedNodeAddress(TraversableNodeInterface $node): string
     {
-        return $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
+        return $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri();
     }
 
-    public function inBackend(NodeInterface $node)
+    public function inBackend(TraversableNodeInterface $node)
     {
-        return !$this->nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
+        return !$this->nodeAddressFactory->createFromTraversableNode($node)->isInLiveWorkspace();
     }
 
     /**

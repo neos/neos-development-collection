@@ -12,8 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -87,14 +87,13 @@ class ConvertUrisImplementation extends AbstractFusionObject
             throw new Exception(sprintf('Only strings can be processed by this Fusion object, given: "%s".', gettype($text)), 1382624080);
         }
 
-        /* @var $node NodeInterface */
         $node = $this->fusionValue('node');
 
-        if (!$node instanceof NodeInterface) {
-            throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
+        if (!$node instanceof TraversableNodeInterface) {
+            throw new Exception(sprintf('The current node must be an instance of TraversableNodeInterface, given: "%s".', gettype($text)), 1382624087);
         }
 
-        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
 
         if (!$nodeAddress->isInLiveWorkspace() && !($this->fusionValue('forceConversion'))) {
             return $text;

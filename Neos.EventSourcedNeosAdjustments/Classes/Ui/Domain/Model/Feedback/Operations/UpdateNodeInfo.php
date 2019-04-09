@@ -130,7 +130,7 @@ class UpdateNodeInfo extends AbstractFeedback
     public function serializeNodeRecursively(TraversableNodeInterface $node, ControllerContext $controllerContext)
     {
         $result = [
-            $this->nodeAddressFactory->createFromNode($node)->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)
+            $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)
         ];
 
         if ($this->isRecursive === true) {
