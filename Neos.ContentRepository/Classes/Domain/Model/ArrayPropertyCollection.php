@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 
 class ArrayPropertyCollection extends \ArrayObject implements PropertyCollectionInterface
 {

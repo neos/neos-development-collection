@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\ContentRepository\Domain\Service\Context;
-use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 

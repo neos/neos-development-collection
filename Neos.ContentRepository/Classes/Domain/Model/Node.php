@@ -14,13 +14,13 @@ namespace Neos\ContentRepository\Domain\Model;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\ContentRepository\Domain\ValueObject\NodePath;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Exception\NodeMethodIsUnsupported;
@@ -39,7 +39,6 @@ use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\ContentRepository\Utility;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 
 /**
  * This is the main API for storing and retrieving content in the system.
@@ -108,11 +107,6 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     {
         $this->nodeData = $nodeData;
         $this->context = $context;
-    }
-
-    public function getSubgraph(): ContentSubgraphInterface
-    {
-        throw new \RuntimeException('Not implemented!');
     }
 
     /**
@@ -1852,10 +1846,9 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      *
      * NOTE: This is internal only and should not be used outside of the ContentRepository.
      *
-     * TODO: As it is used in the Workspace this should become part of the interface in the next major release.
-     *
      * @param NodeData $nodeData
      * @return void
+     * @deprecated with version 4.3 - will be removed with 5.0
      */
     public function setNodeData(NodeData $nodeData): void
     {
@@ -1884,10 +1877,19 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * should not be deleted.
      *
      * @return boolean true if this node is auto-created by the parent.
-     * @deprecated with version 4.3 - will be removed with 5.0. This information should not be required usually. Otherwise it can be determined via:
-     * if (array_key_exists((string)$node->getNodeName(), $parent->getNodeType()->getAutoCreatedChildNodes()))
+     * @deprecated with version 4.3 - will be replaced by isTethered with 5.0.
      */
     public function isAutoCreated(): bool
+    {
+        return $this->isTethered();
+    }
+
+    /**
+     * Whether or not this node is tethered to its parent, fka auto created child node
+     *
+     * @return bool
+     */
+    public function isTethered(): bool
     {
         $parent = $this->getParent();
         if ($parent === null) {
@@ -1941,9 +1943,9 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     }
 
     /**
-     * @return NodeName
+     * @return NodeName|null
      */
-    public function getNodeName(): NodeName
+    public function getNodeName(): ?NodeName
     {
         return NodeName::fromString($this->getName());
     }

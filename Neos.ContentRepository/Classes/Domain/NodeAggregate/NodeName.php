@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Domain\ValueObject;
+namespace Neos\ContentRepository\Domain\NodeAggregate;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -17,25 +17,16 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The Node Name is the "path part" of the node; i.e. when accessing the node "/foo" via path,
+ * The Node name is the "path part" of the node; i.e. when accessing the node "/foo" via path,
  * the node name is "foo".
+ *
+ * Semantically it describes the hierarchical relation of a node to its parent, e.g. "main" denotes the main child node.
  *
  * @Flow\Proxy(false)
  * @api
  */
 final class NodeName implements \JsonSerializable
 {
-
-    /**
-     * @var NodeName
-     */
-    private static $rootNodeName;
-
-    /**
-     * @var NodeName
-     */
-    private static $unnamedNodeName;
-
     /**
      * @var string
      */
@@ -53,45 +44,6 @@ final class NodeName implements \JsonSerializable
     public static function fromString(string $value): self
     {
         return new static(strtolower($value));
-    }
-
-    /**
-     * This constructor creates an empty NodeName that can be used to create "unnamed" nodes
-     * @see isUnnamed()
-     *
-     * @return NodeName
-     */
-    public static function unnamed(): NodeName
-    {
-        if (!self::$unnamedNodeName) {
-            self::$unnamedNodeName = new static('-');
-            self::$unnamedNodeName->value = '';
-        }
-        return self::$unnamedNodeName;
-    }
-
-
-    public function isUnnamed(): bool
-    {
-        return $this === self::$unnamedNodeName;
-    }
-
-    /**
-     * the Root node does not have a name; so it is assigned this special NodeName
-     *
-     * @return NodeName
-     */
-    public static function root(): NodeName
-    {
-        if (!self::$rootNodeName) {
-            self::$rootNodeName = new static('-');
-        }
-        return self::$rootNodeName;
-    }
-
-    public function isRoot(): bool
-    {
-        return $this === self::$rootNodeName;
     }
 
     /**

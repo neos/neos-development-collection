@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Domain\ValueObject;
+
+namespace Neos\ContentRepository\Domain\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,18 +13,18 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
-use Neos\Cache\CacheAwareInterface;
-use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The ContentStreamIdentifier is the identifier for a Content Stream, which is
- * a central concept in the Event-Sourced CR introduced with Neos 5.0.
+ * Name of a Node Type; e.g. "Neos.Neos:Content"
  *
  * @Flow\Proxy(false)
+ * @api
  */
-final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInterface
+final class NodeTypeName implements \JsonSerializable
 {
+    const ROOT_NODE_TYPE_NAME = 'Neos.ContentRepository:Root';
+
     /**
      * @var string
      */
@@ -31,6 +32,10 @@ final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInte
 
     private function __construct(string $value)
     {
+        if ($value === '') {
+            throw new \InvalidArgumentException('Node type name must not be empty.', 1505835958);
+        }
+
         $this->value = $value;
     }
 
@@ -39,22 +44,12 @@ final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInte
         return new static($value);
     }
 
-    public static function create(): self
-    {
-        return new static(Algorithms::generateUUID());
-    }
-
-    public function jsonSerialize(): string
+    public function jsonSerialize()
     {
         return $this->value;
     }
 
-    public function getCacheEntryIdentifier(): string
-    {
-        return $this->value;
-    }
-
-    public function __toString(): string
+    public function __toString()
     {
         return $this->value;
     }
