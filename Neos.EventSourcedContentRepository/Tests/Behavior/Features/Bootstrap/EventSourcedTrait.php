@@ -14,6 +14,7 @@ declare(strict_types=1);
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -1117,6 +1118,7 @@ trait EventSourcedTrait
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
+        $this->currentNode = $nodeByAggregateIdentifier;
         Assert::assertInstanceOf(NodeInterface::class, $nodeByAggregateIdentifier, 'No node could be found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
         Assert::assertEquals($expectedNodeIdentifier, NodeDiscriminator::fromNode($nodeByAggregateIdentifier), 'Node discriminators did not match');
     }
@@ -1164,6 +1166,23 @@ trait EventSourcedTrait
 
         $nodeByPath = $subgraph->findNodeByPath($serializedNodePath, $this->rootNodeAggregateIdentifier);
         Assert::assertNull($nodeByPath, 'A node was found by path "' . $serializedNodePath . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
+    }
+
+    /**
+     * @Then /^I expect this node to be a child of node (.*)$/
+     * @param string $serializedNodeDiscriminator
+     */
+    public function iExpectThisNodeToBeTheChildOfNode(string $serializedNodeDiscriminator): void
+    {
+        $expectedNodeDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeDiscriminator, true));
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        $parent = $subgraph->findParentNode($this->currentNode->getNodeAggregateIdentifier());
+        Assert::assertInstanceOf(NodeInterface::class, $parent, 'Parent not found.');
+        Assert::assertEquals($expectedNodeDiscriminator, NodeDiscriminator::fromNode($parent), 'Parent discriminator does not match.');
+
+        $child = $subgraph->findChildNodeConnectedThroughEdgeName($parent->getNodeAggregateIdentifier(), $this->currentNode->getNodeName());
+        Assert::assertEquals($this->currentNode, $child, 'Child discriminator does not match.');
     }
 
     /**

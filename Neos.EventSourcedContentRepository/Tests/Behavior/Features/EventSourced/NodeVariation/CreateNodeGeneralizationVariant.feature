@@ -88,36 +88,36 @@ Feature: Create node generalization
 
   Scenario: Create generalization of node to dimension space point without further generalizations
     When the command CreateNodeVariant is executed with payload:
-      | Key                       | Value                             |
-      | contentStreamIdentifier   | "cs-identifier"                   |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceOrigin | {"market":"CH", "language":"gsw"} |
-      | targetOrigin | {"market":"DE", "language":"en"}  |
+      | Key                     | Value                             |
+      | contentStreamIdentifier | "cs-identifier"                   |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"          |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
+      | targetOrigin            | {"market":"DE", "language":"en"}  |
     Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                                                                                                                                                                |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"                                                                                                                                                |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | Key                     | Expected                                                                                                                                                                |
+      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                                                |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
       | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
       | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodewyn-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                                                                                                                                                                |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateIdentifier   | "nodewyn-tetherton"                                                                                                                                                     |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | Key                     | Expected                                                                                                                                                                |
+      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
+      | nodeAggregateIdentifier | "nodewyn-tetherton"                                                                                                                                                     |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
       | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
       | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimer-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                                                                                                                                                                |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateIdentifier   | "nodimer-tetherton"                                                                                                                                                     |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | Key                     | Expected                                                                                                                                                                |
+      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
+      | nodeAggregateIdentifier | "nodimer-tetherton"                                                                                                                                                     |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
       | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
       | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
 
@@ -156,77 +156,96 @@ Feature: Create node generalization
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
 
   Scenario: Create generalization of node to dimension space point with further generalizations
     When the command CreateNodeVariant is executed with payload:
-      | Key                       | Value                             |
-      | contentStreamIdentifier   | "cs-identifier"                   |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceOrigin | {"market":"CH", "language":"gsw"} |
-      | targetOrigin | {"market":"DE", "language":"gsw"} |
+      | Key                     | Value                             |
+      | contentStreamIdentifier | "cs-identifier"                   |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"          |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
+      | targetOrigin            | {"market":"DE", "language":"gsw"} |
     Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                            |
-      | contentStreamIdentifier   | "cs-identifier"                     |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"            |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}   |
+      | Key                     | Expected                            |
+      | contentStreamIdentifier | "cs-identifier"                     |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"            |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}   |
       | generalizationOrigin    | {"market":"DE", "language":"gsw"}   |
       | generalizationCoverage  | [{"market":"DE", "language":"gsw"}] |
     And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodewyn-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                            |
-      | contentStreamIdentifier   | "cs-identifier"                     |
-      | nodeAggregateIdentifier   | "nodewyn-tetherton"                 |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}   |
+      | Key                     | Expected                            |
+      | contentStreamIdentifier | "cs-identifier"                     |
+      | nodeAggregateIdentifier | "nodewyn-tetherton"                 |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}   |
       | generalizationOrigin    | {"market":"DE", "language":"gsw"}   |
       | generalizationCoverage  | [{"market":"DE", "language":"gsw"}] |
     And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimer-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                            |
-      | contentStreamIdentifier   | "cs-identifier"                     |
-      | nodeAggregateIdentifier   | "nodimer-tetherton"                 |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}   |
+      | Key                     | Expected                            |
+      | contentStreamIdentifier | "cs-identifier"                     |
+      | nodeAggregateIdentifier | "nodimer-tetherton"                 |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}   |
       | generalizationOrigin    | {"market":"DE", "language":"gsw"}   |
       | generalizationCoverage  | [{"market":"DE", "language":"gsw"}] |
 
@@ -279,8 +298,11 @@ Feature: Create node generalization
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"gsw"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"gsw"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"en"}
@@ -300,68 +322,72 @@ Feature: Create node generalization
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
 
   Scenario: Create generalization of node to dimension space point with specializations that are partially occupied and covered
     When the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                       | Value                                                                                                 |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                       |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"                                                                              |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | Key                     | Value                                                                                                 |
+      | contentStreamIdentifier | "cs-identifier"                                                                                       |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"                                                                              |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
       | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
       | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                       | Value                                                                                                 |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                       |
-      | nodeAggregateIdentifier   | "nodewyn-tetherton"                                                                                   |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | Key                     | Value                                                                                                 |
+      | contentStreamIdentifier | "cs-identifier"                                                                                       |
+      | nodeAggregateIdentifier | "nodewyn-tetherton"                                                                                   |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
       | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
       | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                       | Value                                                                                                 |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                       |
-      | nodeAggregateIdentifier   | "nodimer-tetherton"                                                                                   |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | Key                     | Value                                                                                                 |
+      | contentStreamIdentifier | "cs-identifier"                                                                                       |
+      | nodeAggregateIdentifier | "nodimer-tetherton"                                                                                   |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
       | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
       | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                       | Value                             |
-      | contentStreamIdentifier   | "cs-identifier"                   |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceOrigin | {"market":"CH", "language":"gsw"} |
-      | targetOrigin | {"market":"DE", "language":"en"}  |
+      | Key                     | Value                             |
+      | contentStreamIdentifier | "cs-identifier"                   |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"          |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
+      | targetOrigin            | {"market":"DE", "language":"en"}  |
     Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                                                            |
-      | contentStreamIdentifier   | "cs-identifier"                                                     |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"                                            |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                   |
+      | Key                     | Expected                                                            |
+      | contentStreamIdentifier | "cs-identifier"                                                     |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"                                            |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                   |
       | generalizationOrigin    | {"market":"DE", "language":"en"}                                    |
       | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodewyn-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                                                            |
-      | contentStreamIdentifier   | "cs-identifier"                                                     |
-      | nodeAggregateIdentifier   | "nodewyn-tetherton"                                                 |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                   |
+      | Key                     | Expected                                                            |
+      | contentStreamIdentifier | "cs-identifier"                                                     |
+      | nodeAggregateIdentifier | "nodewyn-tetherton"                                                 |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                   |
       | generalizationOrigin    | {"market":"DE", "language":"en"}                                    |
       | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimer-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                                                            |
-      | contentStreamIdentifier   | "cs-identifier"                                                     |
-      | nodeAggregateIdentifier   | "nodimer-tetherton"                                                 |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                   |
+      | Key                     | Expected                                                            |
+      | contentStreamIdentifier | "cs-identifier"                                                     |
+      | nodeAggregateIdentifier | "nodimer-tetherton"                                                 |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                   |
       | generalizationOrigin    | {"market":"DE", "language":"en"}                                    |
       | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
 
@@ -403,103 +429,122 @@ Feature: Create node generalization
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
 
   Scenario: Create generalization of a node to a dimension space point that is already covered by a more general generalization
     When the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                       | Value                                                                                                                                                                   |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"                                                                                                                                                |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | Key                     | Value                                                                                                                                                                   |
+      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                                                |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
       | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
       | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                       | Value                                                                                                                                                                   |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateIdentifier   | "nodewyn-tetherton"                                                                                                                                                     |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | Key                     | Value                                                                                                                                                                   |
+      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
+      | nodeAggregateIdentifier | "nodewyn-tetherton"                                                                                                                                                     |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
       | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
       | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the event NodeGeneralizationVariantWasCreated was published with payload:
-      | Key                       | Value                                                                                                                                                                   |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateIdentifier   | "nodimer-tetherton"                                                                                                                                                     |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | Key                     | Value                                                                                                                                                                   |
+      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                         |
+      | nodeAggregateIdentifier | "nodimer-tetherton"                                                                                                                                                     |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
       | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
       | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                       | Value                             |
-      | contentStreamIdentifier   | "cs-identifier"                   |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"          |
-      | sourceOrigin | {"market":"CH", "language":"gsw"} |
-      | targetOrigin | {"market":"DE", "language":"de"}  |
+      | Key                     | Value                             |
+      | contentStreamIdentifier | "cs-identifier"                   |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"          |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
+      | targetOrigin            | {"market":"DE", "language":"de"}  |
     Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                                                                                              |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                       |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"                                                                              |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | Key                     | Expected                                                                                              |
+      | contentStreamIdentifier | "cs-identifier"                                                                                       |
+      | nodeAggregateIdentifier | "sir-david-nodenborough"                                                                              |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
       | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
       | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodewyn-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                                                                                              |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                       |
-      | nodeAggregateIdentifier   | "nodewyn-tetherton"                                                                                   |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | Key                     | Expected                                                                                              |
+      | contentStreamIdentifier | "cs-identifier"                                                                                       |
+      | nodeAggregateIdentifier | "nodewyn-tetherton"                                                                                   |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
       | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
       | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimer-tetherton"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated" with payload:
-      | Key                       | Expected                                                                                              |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                       |
-      | nodeAggregateIdentifier   | "nodimer-tetherton"                                                                                   |
-      | sourceOrigin | {"market":"CH", "language":"gsw"}                                                                     |
+      | Key                     | Expected                                                                                              |
+      | contentStreamIdentifier | "cs-identifier"                                                                                       |
+      | nodeAggregateIdentifier | "nodimer-tetherton"                                                                                   |
+      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
       | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
       | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
 
@@ -541,41 +586,60 @@ Feature: Create node generalization
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimer-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}

@@ -27,6 +27,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesW
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -751,11 +753,11 @@ insert into neos_contentgraph_restrictionedge
     }
 
     /**
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated $event
+     * @param NodeSpecializationVariantWasCreated $event
      * @throws \Exception
      * @throws \Throwable
      */
-    public function whenNodeSpecializationVariantWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated $event): void
+    public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
@@ -780,15 +782,19 @@ insert into neos_contentgraph_restrictionedge
     }
 
     /**
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated $event
+     * @param NodeGeneralizationVariantWasCreated $event
      * @throws \Exception
      * @throws \Throwable
      */
-    public function whenNodeGeneralizationVariantWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated $event): void
+    public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
-
+            $sourceParentNode = $this->projectionContentGraph->findParentNode(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getSourceOrigin()
+            );
             $generalizedNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getGeneralizationOrigin());
 
             $unassignedInboundDimensionSpacePoints = $event->getGeneralizationCoverage();
@@ -796,10 +802,19 @@ insert into neos_contentgraph_restrictionedge
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getGeneralizationCoverage()
-            ) as $existingInboundHierarchyRelation) {
-                $existingInboundHierarchyRelation->assignNewChildNode($generalizedNode->relationAnchorPoint, $this->getDatabaseConnection());
-                $unassignedInboundDimensionSpacePoints = $unassignedInboundDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingInboundHierarchyRelation->dimensionSpacePoint]));
+            ) as $existingOutboundHierarchyRelation) {
+                $existingOutboundHierarchyRelation->assignNewChildNode($generalizedNode->relationAnchorPoint, $this->getDatabaseConnection());
+                $unassignedInboundDimensionSpacePoints = $unassignedInboundDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingOutboundHierarchyRelation->dimensionSpacePoint]));
             }
+
+            foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNodeAggregate(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getGeneralizationCoverage()
+            ) as $existingOutboundHierarchyRelation) {
+                $existingOutboundHierarchyRelation->assignNewParentNode($generalizedNode->relationAnchorPoint, $this->getDatabaseConnection());
+            }
+
             if (count($unassignedInboundDimensionSpacePoints) > 0) {
                 $inboundSourceHierarchyRelation = $this->projectionContentGraph->findInboundHierarchyRelationsForNode(
                         $sourceNode->relationAnchorPoint,
@@ -808,11 +823,18 @@ insert into neos_contentgraph_restrictionedge
                     )[$event->getSourceOrigin()->getHash()] ?? null;
                 // the null case is caught by the NodeAggregate or its command handler
                 foreach ($unassignedInboundDimensionSpacePoints as $unassignedDimensionSpacePoint) {
+                    // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
+                    $generalizationParentNode = $this->projectionContentGraph->getNodeInAggregate(
+                        $event->getContentStreamIdentifier(),
+                        $sourceParentNode->nodeAggregateIdentifier,
+                        $unassignedDimensionSpacePoint
+                    );
+
                     $this->copyHierarchyRelationToDimensionSpacePoint(
                         $inboundSourceHierarchyRelation,
                         $event->getContentStreamIdentifier(),
                         $unassignedDimensionSpacePoint,
-                        null,
+                        $generalizationParentNode->relationAnchorPoint,
                         $generalizedNode->relationAnchorPoint
                     );
                 }
