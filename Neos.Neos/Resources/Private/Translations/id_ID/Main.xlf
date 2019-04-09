@@ -680,11 +680,11 @@
 				<source>Database Error</source>
 			<target state="translated">Database Error</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
-				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target state="translated">Maaf, kami mendeteksi galat dengan database Anda. Periksa file log dalam Data log / * untuk informasi lebih lanjut.</target></trans-unit>
+				<source>There is no database connection yet or the Neos database schema has not been created.</source>
+			<target state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target state="translated">Anda mungkin ingin mengkonfigurasi atau memeriksa konfigurasi database Anda dalam setup.</target></trans-unit>
+				<source>Run the setup to configure your database.</source>
+			<target state="needs-translation">Run the setup to configure your database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target state="translated">Halaman Tidak Ditemukan</target></trans-unit>
