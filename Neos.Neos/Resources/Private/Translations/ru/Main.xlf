@@ -658,15 +658,9 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target state="translated">Ваша сессия истекла. Пожалуйста, войдите снова.</target><alt-trans><target>Ваш логин истек. Пожалуйста, войдите снова.</target></alt-trans></trans-unit>
       <!-- Error handlers -->
-      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
-				<source>Welcome to Neos</source>
-			<target state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
 			<target state="translated">Перейти к установке</target></trans-unit>
-      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
-				<source>Technical Information</source>
-			<target state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
 			<target state="translated">Домашняя страница отсутствует</target><alt-trans><target>Стартовая страница отсутствует</target></alt-trans></trans-unit>
