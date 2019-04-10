@@ -802,9 +802,9 @@ insert into neos_contentgraph_restrictionedge
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getGeneralizationCoverage()
-            ) as $existingOutboundHierarchyRelation) {
-                $existingOutboundHierarchyRelation->assignNewChildNode($generalizedNode->relationAnchorPoint, $this->getDatabaseConnection());
-                $unassignedInboundDimensionSpacePoints = $unassignedInboundDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingOutboundHierarchyRelation->dimensionSpacePoint]));
+            ) as $existingInboundHierarchyRelation) {
+                $existingInboundHierarchyRelation->assignNewChildNode($generalizedNode->relationAnchorPoint, $this->getDatabaseConnection());
+                $unassignedInboundDimensionSpacePoints = $unassignedInboundDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingInboundHierarchyRelation->dimensionSpacePoint]));
             }
 
             foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNodeAggregate(
@@ -865,6 +865,14 @@ insert into neos_contentgraph_restrictionedge
             ) as $existingInboundHierarchyRelation) {
                 $existingInboundHierarchyRelation->assignNewChildNode($peerNode->relationAnchorPoint, $this->getDatabaseConnection());
                 $unassignedInboundDimensionSpacePoints = $unassignedInboundDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingInboundHierarchyRelation->dimensionSpacePoint]));
+            }
+
+            foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNodeAggregate(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getPeerCoverage()
+            ) as $existingOutboundHierarchyRelation) {
+                $existingOutboundHierarchyRelation->assignNewParentNode($peerNode->relationAnchorPoint, $this->getDatabaseConnection());
             }
 
             foreach ($unassignedInboundDimensionSpacePoints as $coveredDimensionSpacePoint) {

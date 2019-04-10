@@ -634,35 +634,57 @@ Feature: Create node peer variant
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
     And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
     And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"fr"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
@@ -678,36 +700,57 @@ Feature: Create node peer variant
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
     And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to no node
-    And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"fr"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
@@ -716,9 +759,13 @@ Feature: Create node peer variant
     And I expect node aggregate identifier "nodimus-prime" and path "document/tethered-document" to lead to no node
     And I expect node aggregate identifier "nodimus-mediocre" and path "document/tethered-document/tethered" to lead to no node
     And I expect node aggregate identifier "madame-lanode" and path "peer-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodette" and path "peer-document/peer-child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodette", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
     And I expect node aggregate identifier "nodesis-prime" and path "peer-document/tethered-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"madame-lanode", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
     And I expect node aggregate identifier "nodesis-mediocre" and path "peer-document/tethered-document/tethered" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-mediocre", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodesis-prime", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
 
   Scenario: Create a peer node variant to a dimension space point with specializations and where the parent node aggregate is already specialized in
     Given the event NodePeerVariantWasCreated was published with payload:
@@ -784,31 +831,39 @@ Feature: Create node peer variant
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"fr"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"fr"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"fr"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"fr"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"fr"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {"market":"DE", "language":"fr"}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"fr"}}
