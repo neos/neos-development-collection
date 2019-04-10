@@ -44,13 +44,12 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
       | nodeName                      | "pet"                                    |
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
-    And the command "SetNodeProperty" is executed with payload:
-      | Key                       | Value                                |
-      | contentStreamIdentifier   | "cs-identifier"                      |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                   |
-      | originDimensionSpacePoint | {}                                   |
-      | propertyName              | "text"                               |
-      | value                     | {"value":"Original","type":"string"} |
+    And the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                                          |
+      | contentStreamIdentifier   | "cs-identifier"                                |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                             |
+      | originDimensionSpacePoint | {}                                             |
+      | propertyValues            | {"text": {"value":"Original","type":"string"}} |
     And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                     | Value                |
@@ -60,22 +59,20 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
     And the graph projection is fully up to date
 
   Scenario: Set property of a node
-    Given the command "SetNodeProperty" is executed with payload:
-      | Key                       | Value                               |
-      | contentStreamIdentifier   | "user-cs-identifier"                |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                  |
-      | originDimensionSpacePoint | {}                                  |
-      | propertyName              | "text"                              |
-      | value                     | {"value":"Changed","type":"string"} |
+    Given the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                                         |
+      | contentStreamIdentifier   | "user-cs-identifier"                          |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                            |
+      | originDimensionSpacePoint | {}                                            |
+      | propertyValues            | {"text": {"value":"Changed","type":"string"}} |
 
     Then I expect exactly 2 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:user-cs-identifier"
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePropertyWasSet" with payload:
+    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePropertiesWereSet" with payload:
       | Key                       | Expected             |
       | contentStreamIdentifier   | "user-cs-identifier" |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | []                   |
-      | propertyName              | "text"               |
-      | value.value               | "Changed"            |
+      | propertyValues.text.value | "Changed"            |
 
     When the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and Dimension Space Point {}
