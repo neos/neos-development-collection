@@ -16,6 +16,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasMoved;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -472,6 +473,41 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         }
     }
 
+    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->getVisibleInDimensionSpacePoints();
+    }
+
+    public function getNodesByCoveredDimensionSpacePoint(): array
+    {
+        throw new \RuntimeException('getNodesByCoveredDimensionSpacePoint is not yet supported by the write side node aggregate');
+    }
+
+    public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): DimensionSpacePoint
+    {
+        throw new \RuntimeException('getOccupationByCovered is not yet supported by the write side node aggregate');
+    }
+
+    public function getNodeByCoveredDimensionSpacePoint(DimensionSpacePoint $coveredDimensionSpacePoint): NodeInterface
+    {
+        throw new \RuntimeException('getNodeByCoveredDimensionSpacePoint is not yet supported by the write side node aggregate');
+    }
+
+    public function getCoverageByOccupant(DimensionSpacePoint $occupiedDimensionSpacePoint): DimensionSpacePointSet
+    {
+        throw new \RuntimeException('getCoverageByOccupant is not yet supported by the write side node aggregate');
+    }
+
+    public function getNodeByOccupiedDimensionSpacePoint(DimensionSpacePoint $occupiedDimensionSpacePoint
+    ): NodeInterface {
+        throw new \RuntimeException('getNodeByOccupiedDimensionSpacePoint is not yet supported by the write side node aggregate');
+    }
+
+    public function getNodesByOccupiedDimensionSpacePoint(): array
+    {
+        throw new \RuntimeException('getNodesByOccupiedDimensionSpacePoint is not yet supported by the write side node aggregate');
+    }
+
     /**
      * A node aggregate covers a dimension space point if any node is visible in it
      * in that is has an incoming edge in it.
@@ -482,11 +518,6 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         return $this->getVisibleInDimensionSpacePoints()->contains($dimensionSpacePoint);
-    }
-
-    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
-    {
-        return $this->getVisibleInDimensionSpacePoints();
     }
 
     public function getClassification(): NodeAggregateClassification

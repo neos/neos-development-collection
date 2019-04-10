@@ -14,7 +14,6 @@ declare(strict_types=1);
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -23,15 +22,19 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategyIsInvalid;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
@@ -450,7 +453,7 @@ trait EventSourcedTrait
     /**
      * @When /^the command CreateRootNodeAggregateWithNode is executed with payload:$/
      * @param TableNode $payloadTable
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
+     * @throws ContentStreamDoesNotExistYet
      * @throws Exception
      */
     public function theCommandCreateRootNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable)
@@ -604,7 +607,7 @@ trait EventSourcedTrait
     /**
      * @Given /^the command RemoveNodesFromAggregate was published with payload:$/
      * @param TableNode $payloadTable
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet
+     * @throws SpecializedDimensionsMustBePartOfDimensionSpacePointSet
      * @throws Exception
      */
     public function theCommandRemoveNodesFromAggregateIsExecutedWithPayload(TableNode $payloadTable)
@@ -706,10 +709,8 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
         $command = MoveNode::fromArray($commandArguments);
 
-        /** @var NodeCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
-
-        $commandHandler->handleMoveNode($command);
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
+            ->handleMoveNode($command);
     }
 
     /**
@@ -1013,7 +1014,7 @@ trait EventSourcedTrait
     /**
      * @Then /^I expect the node aggregate "([^"]*)" to exist$/
      * @param string $nodeAggregateIdentifier
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @throws NodeAggregatesTypeIsAmbiguous
      */
     public function iExpectTheNodeAggregateToExist(string $nodeAggregateIdentifier): void
     {

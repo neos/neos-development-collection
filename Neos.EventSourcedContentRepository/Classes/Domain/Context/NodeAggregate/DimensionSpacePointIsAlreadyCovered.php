@@ -14,8 +14,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a dimension space point is already occupied by a node in a node aggregate but is supposed not to be
+ * The exception to be thrown if a dimension space point is already covered by a node aggregate but is supposed not to be
  */
-class DimensionSpacePointIsAlreadyOccupied extends \DomainException
+class DimensionSpacePointIsAlreadyCovered extends \DomainException
 {
 }
