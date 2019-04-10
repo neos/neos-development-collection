@@ -40,7 +40,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventStreamName;
@@ -630,39 +629,6 @@ trait EventSourcedTrait
     {
         try {
             $this->theCommandRemoveNodesFromAggregateIsExecutedWithPayload($payloadTable);
-        } catch (\Exception $exception) {
-            $this->lastCommandException = $exception;
-        }
-    }
-
-    /**
-     * @Given /^the command CreateNodeGeneralization was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied
-     * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
-     * @throws Exception
-     */
-    public function theCommandCreateNodeGeneralizationIsExecutedWithPayload(TableNode $payloadTable)
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-
-        $command = CreateNodeGeneralization::fromArray($commandArguments);
-        /** @var NodeAggregateCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
-
-        $this->lastCommandOrEventResult = $commandHandler->handleCreateNodeGeneralizationVariant($command);
-    }
-
-    /**
-     * @Given /^the command CreateNodeGeneralization was published with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
-     * @throws Exception
-     */
-    public function theCommandCreateNodeGeneralizationIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
-    {
-        try {
-            $this->theCommandCreateNodeGeneralizationIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
