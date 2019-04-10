@@ -71,8 +71,8 @@ class WorkspaceService
             $documentNode = (new FlowQuery([$node]))->closest('[instanceof Neos.Neos:Document]')->get(0);
             if ($documentNode) {
                 return [
-                    'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
-                    'documentContextPath' => $this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri()
+                    'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri(),
+                    'documentContextPath' => $this->nodeAddressFactory->createFromTraversableNode($documentNode)->serializeForUri()
                 ];
             }
         }, $publishableNodes);

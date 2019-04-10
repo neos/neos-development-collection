@@ -20,10 +20,10 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariati
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
@@ -649,6 +649,7 @@ final class NodeCommandHandler
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return DimensionSpacePointSet
      * @todo take parent node's visibility into account
+     * @todo use node aggregate
      *
      * A node in an aggregate should be visible in all points that fulfill all of the following criteria
      * - any node of the parent node aggregate is visible there
@@ -666,7 +667,7 @@ final class NodeCommandHandler
         );
         $dimensionSpacePoints = [];
         foreach ($existingNodes as $node) {
-            $dimensionSpacePoints[] = $node->getDimensionSpacePoint();
+            $dimensionSpacePoints[] = $node->getOriginDimensionSpacePoint();
         }
         $occupiedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
 

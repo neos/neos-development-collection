@@ -105,7 +105,7 @@ class NodeCreated extends AbstractFeedback
         $node = $this->getNode();
 
         return [
-            'contextPath' => $this->nodeAddressFactory->createFromNode($this->getNode())->serializeForUri(),
+            'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($this->getNode())->serializeForUri(),
             'identifier' => (string)$node->getNodeAggregateIdentifier(),
             'isDocument' => $nodeService->isDocument($node)
         ];
