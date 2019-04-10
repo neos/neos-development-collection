@@ -203,7 +203,7 @@ class ContentRepositoryExportService
             ->where('n.workspace = :workspace')
             ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
             ->andWhere('n.path NOT IN(\'/sites\', \'/\')')
-            ->orderBy('n.path', 'ASC')
+            ->orderBy('n.parentPath', 'ASC')
             ->addOrderBy('n.index', 'ASC')
             ->setParameter('workspace', 'live')
             ->setParameter('removed', false, \PDO::PARAM_BOOL);
