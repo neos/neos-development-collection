@@ -12,14 +12,14 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
  * source code.
  */
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -109,17 +109,9 @@ class BackendController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var ContentGraph
+     * @var ContentGraphInterface
      */
     protected $contentGraph;
-
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
-
 
     /**
      * @Flow\Inject
@@ -132,6 +124,12 @@ class BackendController extends ActionController
      * @var StyleAndJavascriptInclusionService
      */
     protected $styleAndJavascriptInclusionService;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionSourceInterface
+     */
+    protected $contentDimensionSource;
 
     /**
      * @Flow\InjectConfiguration(package="Neos.Neos.Ui", path="splashScreen.partial")
@@ -165,7 +163,7 @@ class BackendController extends ActionController
         $workspaceName = $this->userService->getPersonalWorkspaceName();
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspaceName));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeAggregateIdentifier(), NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
+        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeAggregateIdentifier($workspace->getCurrentContentStreamIdentifier()), NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
         $siteNode = new TraversableNode($siteNode, $subgraph);
 
         if (!$nodeAddress) {
@@ -202,12 +200,6 @@ class BackendController extends ActionController
         $this->redirect('show', 'Frontend\Node', 'Neos.Neos', ['node' => $node]);
     }
 
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionSourceInterface
-     */
-    protected $contentDimensionSource;
-
     protected function findDefaultDimensionSpacePoint(): DimensionSpacePoint
     {
         $coordinates = [];
@@ -219,11 +211,11 @@ class BackendController extends ActionController
     }
 
     /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @return NodeAggregateIdentifier
-     * @throws \Doctrine\DBAL\DBALException
      */
-    protected function getRootNodeAggregateIdentifier(): NodeAggregateIdentifier
+    protected function getRootNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier): NodeAggregateIdentifier
     {
-        return $this->contentGraph->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'))->getNodeAggregateIdentifier();
+        return $this->contentGraph->findRootNodeAggregateByType($contentStreamIdentifier, NodeTypeName::fromString('Neos.Neos:Sites'))->getIdentifier();
     }
 }

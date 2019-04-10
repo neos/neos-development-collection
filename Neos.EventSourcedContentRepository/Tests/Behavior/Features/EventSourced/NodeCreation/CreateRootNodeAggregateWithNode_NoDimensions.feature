@@ -27,6 +27,8 @@ Feature: Create a root node aggregate
       | nodeTypeName                  | "Neos.ContentRepository:Root"          |
       | visibleInDimensionSpacePoints | [{}]                                   |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification   | "root"                                 |
+    And the graph projection is fully up to date
 
   Scenario: Try to create a root node aggregate in a content stream that currently does not exist:
     When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
@@ -74,6 +76,7 @@ Feature: Create a root node aggregate
       | nodeTypeName                  | "Neos.ContentRepository:Root"          |
       | visibleInDimensionSpacePoints | [[]]                                   |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification   | "root"                                 |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 2 nodes

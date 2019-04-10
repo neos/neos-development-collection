@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
@@ -14,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a node aggregate is currently not visible in a given dimension space point but is supposed to be
+ * The exception to be thrown if a node aggregate is classified as root but wasn't expected to be
  */
-class NodeAggregateIsCurrentlyNotVisibleInDimensionSpacePoint extends \DomainException
+final class NodeAggregateIsRoot extends \DomainException
 {
 }

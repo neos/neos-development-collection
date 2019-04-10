@@ -154,7 +154,8 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             // fetch subgraph explicitly without authorization checks because the security context isn't available yet
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:
             $matchingSubgraph = $this->fetchSubgraphForParameters($requestPath);
-            $matchingRootNode = $this->contentGraph->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'));
+            $sitesNodeAggregate = $this->contentGraph->findRootNodeAggregateByType($matchingSubgraph->getContentStreamIdentifier(), NodeTypeName::fromString('Neos.Neos:Sites'));
+            $matchingRootNode = $matchingSubgraph->findNodeByNodeAggregateIdentifier($sitesNodeAggregate->getIdentifier());
 
             $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
             $tagArray[] = (string)$matchingSite->getNodeAggregateIdentifier();

@@ -25,6 +25,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | nodeTypeName                  | "Neos.ContentRepository:Root"          |
       | visibleInDimensionSpacePoints | [{}]                                   |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification   | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -34,6 +35,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "court-magician"                         |
+      | nodeAggregateClassification   | "regular"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -43,6 +45,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "the-great-nodini"                       |
       | nodeName                      | "pet"                                    |
+      | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
     And the command "HideNode" is executed with payload:
       | Key                          | Value              |

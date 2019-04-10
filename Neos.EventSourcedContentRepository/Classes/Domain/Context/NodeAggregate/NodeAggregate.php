@@ -42,7 +42,7 @@ use Neos\EventSourcing\EventStore\StreamName;
  *
  * The aggregate enforces that each dimension space point can only ever be occupied by one of its nodes.
  */
-final class NodeAggregate
+final class NodeAggregate implements ReadableNodeAggregateInterface
 {
     /**
      * @var NodeAggregateIdentifier
@@ -87,7 +87,7 @@ final class NodeAggregate
      */
     public function requireDimensionSpacePointToBeOccupied(DimensionSpacePoint $dimensionSpacePoint)
     {
-        if (!$this->isDimensionSpacePointOccupied($dimensionSpacePoint)) {
+        if (!$this->occupiesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new DimensionSpacePointIsNotYetOccupied('The source dimension space point "' . $dimensionSpacePoint . '" is not yet occupied',
                 1521312039);
         }
@@ -99,7 +99,7 @@ final class NodeAggregate
      */
     public function requireDimensionSpacePointToBeUnoccupied(DimensionSpacePoint $dimensionSpacePoint)
     {
-        if ($this->isDimensionSpacePointOccupied($dimensionSpacePoint)) {
+        if ($this->occupiesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new DimensionSpacePointIsAlreadyOccupied('The target dimension space point "' . $dimensionSpacePoint . '" is already occupied',
                 1521314881);
         }
@@ -115,10 +115,10 @@ final class NodeAggregate
         CreateRootNodeAggregateWithNode $command,
         DimensionSpacePointSet $visibleDimensionSpacePoints
     ): DomainEvents {
+        /*
         if ($this->existsCurrently()) {
-            throw new NodeAggregateCurrentlyExists('Root node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.',
-                1541781941);
-        }
+            throw new NodeAggregateCurrentlyExists('Root node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541781941);
+        }*/
 
         $events = DomainEvents::createEmpty();
         $this->nodeEventPublisher->withCommand($command,
@@ -130,6 +130,7 @@ final class NodeAggregate
                             $this->identifier,
                             $command->getNodeTypeName(),
                             $visibleDimensionSpacePoints,
+                            NodeAggregateClassification::root(),
                             $command->getInitiatingUserIdentifier()
                         )
                     )
@@ -151,15 +152,15 @@ final class NodeAggregate
      * @return DomainEvents
      * @throw NodeAggregateCurrentlyExists
      */
-    public function createWithNode(
+    public function createRegularWithNode(
         CreateNodeAggregateWithNode $command,
         DimensionSpacePointSet $visibleDimensionSpacePoints,
         PropertyValues $initialPropertyValues
     ): DomainEvents {
+        /*
         if ($this->existsCurrently()) {
-            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.',
-                1541679244);
-        }
+            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541679244);
+        }*/
 
         $events = DomainEvents::createEmpty();
         $this->nodeEventPublisher->withCommand($command,
@@ -175,6 +176,7 @@ final class NodeAggregate
                             $command->getParentNodeAggregateIdentifier(),
                             $command->getNodeName(),
                             $initialPropertyValues,
+                            NodeAggregateClassification::regular(),
                             $command->getSucceedingSiblingNodeAggregateIdentifier()
                         )
                     )
@@ -200,7 +202,7 @@ final class NodeAggregate
      * @return DomainEvents
      * @throw NodeAggregateCurrentlyExists
      */
-    public function autoCreateWithNode(
+    public function createTetheredWithNode(
         CreateNodeAggregateWithNode $command,
         NodeTypeName $nodeTypeName,
         DimensionSpacePointSet $visibleDimensionSpacePoints,
@@ -209,10 +211,10 @@ final class NodeAggregate
         PropertyValues $initialPropertyValues,
         NodeAggregateIdentifier $precedingNodeAggregateIdentifier = null
     ): DomainEvents {
+        /*
         if ($this->existsCurrently()) {
-            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.',
-                1541755683);
-        }
+            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541755683);
+        }*/
 
         $events = DomainEvents::createEmpty();
         $this->nodeEventPublisher->withCommand($command, function () use (
@@ -236,6 +238,7 @@ final class NodeAggregate
                         $parentNodeAggregateIdentifier,
                         $nodeName,
                         $initialPropertyValues,
+                        NodeAggregateClassification::tethered(),
                         $precedingNodeAggregateIdentifier
                     )
                 )
@@ -252,6 +255,7 @@ final class NodeAggregate
 
     public function existsCurrently(): bool
     {
+        /** this currently cannot be evaluated due to event store limitations and thus must be done via soft constraint checks */
         $existsCurrently = false;
 
         $this->traverseEventStream(function (DomainEventInterface $event) use (&$existsCurrently) {
@@ -284,13 +288,13 @@ final class NodeAggregate
                         /** @var Event\NodeAggregateWithNodeWasCreated $event */
                         $occupiedDimensionSpacePoints[$event->getOriginDimensionSpacePoint()->getHash()] = $event->getOriginDimensionSpacePoint();
                         break;
-                    case Event\NodeSpecializationWasCreated::class:
-                        /** @var Event\NodeSpecializationWasCreated $event */
-                        $occupiedDimensionSpacePoints[$event->getSpecializationLocation()->getHash()] = $event->getSpecializationLocation();
+                    case Event\NodeSpecializationVariantWasCreated::class:
+                        /** @var Event\NodeSpecializationVariantWasCreated $event */
+                        $occupiedDimensionSpacePoints[$event->getSpecializationOrigin()->getHash()] = $event->getSpecializationOrigin();
                         break;
-                    case Event\NodeGeneralizationWasCreated::class:
-                        /** @var Event\NodeGeneralizationWasCreated $event */
-                        $occupiedDimensionSpacePoints[$event->getGeneralizationLocation()->getHash()] = $event->getGeneralizationLocation();
+                    case Event\NodeGeneralizationVariantWasCreated::class:
+                        /** @var Event\NodeGeneralizationVariantWasCreated $event */
+                        $occupiedDimensionSpacePoints[$event->getGeneralizationOrigin()->getHash()] = $event->getGeneralizationOrigin();
                         break;
                     default:
                         continue 2;
@@ -317,15 +321,15 @@ final class NodeAggregate
                             $visibleInDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
                         }
                         break;
-                    case Event\NodeSpecializationWasCreated::class:
-                        /** @var Event\NodeSpecializationWasCreated $event */
-                        foreach ($event->getSpecializationVisibility()->getPoints() as $visibleDimensionSpacePoint) {
+                    case Event\NodeSpecializationVariantWasCreated::class:
+                        /** @var Event\NodeSpecializationVariantWasCreated $event */
+                        foreach ($event->getSpecializationCoverage()->getPoints() as $visibleDimensionSpacePoint) {
                             $visibleInDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
                         }
                         break;
-                    case Event\NodeGeneralizationWasCreated::class:
-                        /** @var Event\NodeGeneralizationWasCreated $event */
-                        foreach ($event->getGeneralizationVisibility()->getPoints() as $visibleDimensionSpacePoint) {
+                    case Event\NodeGeneralizationVariantWasCreated::class:
+                        /** @var Event\NodeGeneralizationVariantWasCreated $event */
+                        foreach ($event->getGeneralizationCoverage()->getPoints() as $visibleDimensionSpacePoint) {
                             $visibleInDimensionSpacePoints[$visibleDimensionSpacePoint->getHash()] = $visibleDimensionSpacePoint;
                         }
                         break;
@@ -343,7 +347,7 @@ final class NodeAggregate
         return $this->getVisibleInDimensionSpacePoints()->contains($dimensionSpacePoint);
     }
 
-    public function isDimensionSpacePointOccupied(DimensionSpacePoint $dimensionSpacePoint): bool
+    public function occupiesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         $dimensionSpacePointOccupied = false;
         $eventStream = $this->getEventStream();
@@ -355,13 +359,13 @@ final class NodeAggregate
                         /** @var NodeAggregateWithNodeWasCreated $event */
                         $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getOriginDimensionSpacePoint()->equals($dimensionSpacePoint);
                         break;
-                    case Event\NodeSpecializationWasCreated::class:
-                        /** @var Event\NodeSpecializationWasCreated $event */
-                        $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getSpecializationLocation()->equals($dimensionSpacePoint);
+                    case Event\NodeSpecializationVariantWasCreated::class:
+                        /** @var Event\NodeSpecializationVariantWasCreated $event */
+                        $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getSpecializationOrigin()->equals($dimensionSpacePoint);
                         break;
-                    case Event\NodeGeneralizationWasCreated::class:
-                        /** @var Event\NodeGeneralizationWasCreated $event */
-                        $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getGeneralizationLocation()->equals($dimensionSpacePoint);
+                    case Event\NodeGeneralizationVariantWasCreated::class:
+                        /** @var Event\NodeGeneralizationVariantWasCreated $event */
+                        $dimensionSpacePointOccupied = $dimensionSpacePointOccupied || $event->getGeneralizationOrigin()->equals($dimensionSpacePoint);
                         break;
                     default:
                         continue 2;
@@ -396,7 +400,7 @@ final class NodeAggregate
         return $parentIdentifiers;
     }
 
-    public function getNodeTypeName(): ?NodeTypeName
+    public function getNodeTypeName(): NodeTypeName
     {
         $nodeTypeName = null;
         $this->traverseEventStream(function (DomainEventInterface $event) use (&$nodeTypeName) {
@@ -466,5 +470,37 @@ final class NodeAggregate
         } catch (EventStreamNotFoundException $eventStreamNotFound) {
             return null;
         }
+    }
+
+    /**
+     * A node aggregate covers a dimension space point if any node is visible in it
+     * in that is has an incoming edge in it.
+     *
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return bool
+     */
+    public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
+    {
+        return $this->getVisibleInDimensionSpacePoints()->contains($dimensionSpacePoint);
+    }
+
+    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->getVisibleInDimensionSpacePoints();
+    }
+
+    public function getClassification(): NodeAggregateClassification
+    {
+        throw new \RuntimeException('getClassification is not yet supported by the write side node aggregate');
+    }
+
+    public function isRoot(): bool
+    {
+        throw new \RuntimeException('isRoot is not yet supported by the write side node aggregate');
+    }
+
+    public function isTethered(): bool
+    {
+        throw new \RuntimeException('isTethered is not yet supported by the write side node aggregate');
     }
 }

@@ -12,18 +12,20 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * A node specialization was created
+ *
  * @Flow\Proxy(false)
  */
-final class NodeAlternativeWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeSpecializationVariantWasCreated implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -38,37 +40,30 @@ final class NodeAlternativeWasCreated implements DomainEventInterface, CopyableA
     /**
      * @var DimensionSpacePoint
      */
-    private $sourceDimensionSpacePoint;
+    private $sourceOrigin;
 
     /**
      * @var DimensionSpacePoint
      */
-    private $alternativeLocation;
+    private $specializationOrigin;
 
     /**
      * @var DimensionSpacePointSet
      */
-    private $alternativeVisibility;
+    private $specializationCoverage;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param DimensionSpacePoint $alternativeLocation
-     * @param DimensionSpacePointSet $alternativeVisibility
-     */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $sourceDimensionSpacePoint,
-        DimensionSpacePoint $alternativeLocation,
-        DimensionSpacePointSet $alternativeVisibility
+        DimensionSpacePoint $sourceOrigin,
+        DimensionSpacePoint $specializationOrigin,
+        DimensionSpacePointSet $specializationCoverage
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
-        $this->alternativeLocation = $alternativeLocation;
-        $this->alternativeVisibility = $alternativeVisibility;
+        $this->sourceOrigin = $sourceOrigin;
+        $this->specializationOrigin = $specializationOrigin;
+        $this->specializationCoverage = $specializationCoverage;
     }
 
     /**
@@ -90,39 +85,39 @@ final class NodeAlternativeWasCreated implements DomainEventInterface, CopyableA
     /**
      * @return DimensionSpacePoint
      */
-    public function getSourceDimensionSpacePoint(): DimensionSpacePoint
+    public function getSourceOrigin(): DimensionSpacePoint
     {
-        return $this->sourceDimensionSpacePoint;
+        return $this->sourceOrigin;
     }
 
     /**
      * @return DimensionSpacePoint
      */
-    public function getAlternativeLocation(): DimensionSpacePoint
+    public function getSpecializationOrigin(): DimensionSpacePoint
     {
-        return $this->alternativeLocation;
+        return $this->specializationOrigin;
     }
 
     /**
      * @return DimensionSpacePointSet
      */
-    public function getAlternativeVisibility(): DimensionSpacePointSet
+    public function getSpecializationCoverage(): DimensionSpacePointSet
     {
-        return $this->alternativeVisibility;
+        return $this->specializationCoverage;
     }
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
-     * @return NodeAlternativeWasCreated
+     * @return NodeSpecializationVariantWasCreated
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeAlternativeWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeSpecializationVariantWasCreated
     {
-        return new NodeAlternativeWasCreated(
+        return new NodeSpecializationVariantWasCreated(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
-            $this->sourceDimensionSpacePoint,
-            $this->alternativeLocation,
-            $this->alternativeVisibility
+            $this->sourceOrigin,
+            $this->specializationOrigin,
+            $this->specializationCoverage
         );
     }
 }

@@ -34,6 +34,7 @@ Feature: Publishing individual nodes (basics)
       | nodeTypeName                  | "Neos.ContentRepository:Root" |
       | visibleInDimensionSpacePoints | [{}]                          |
       | initiatingUserIdentifier      | "system"                      |
+      | nodeAggregateClassification   | "root"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |
@@ -43,6 +44,7 @@ Feature: Publishing individual nodes (basics)
       | visibleInDimensionSpacePoints | [{}]                                                |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
       | initialPropertyValues         | {"text": {"type": "string", "value": "Initial t1"}} |
+      | nodeAggregateClassification   | "regular"                                           |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |
@@ -52,6 +54,7 @@ Feature: Publishing individual nodes (basics)
       | visibleInDimensionSpacePoints | [{}]                                                |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                            |
       | initialPropertyValues         | {"text": {"type": "string", "value": "Initial t2"}} |
+      | nodeAggregateClassification   | "regular"                                           |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                  |
       | contentStreamIdentifier       | "cs-identifier"                                        |
@@ -61,6 +64,7 @@ Feature: Publishing individual nodes (basics)
       | visibleInDimensionSpacePoints | [{}]                                                   |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                               |
       | initialPropertyValues         | {"image": {"type": "image", "value": "Initial image"}} |
+      | nodeAggregateClassification   | "regular"                                              |
     And the graph projection is fully up to date
 
     # Create user workspace

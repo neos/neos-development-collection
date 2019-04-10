@@ -398,17 +398,17 @@ final class NodeCommandHandler
                         1404648100);
                 }
 
-                $oldParentAggregates = $this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+                $oldParentAggregates = $this->contentGraph->findParentNodeAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
                 foreach ($oldParentAggregates as $oldParentAggregate) {
                     $oldParentAggregatesNodeType = $this->nodeTypeManager->getNodeType((string)$oldParentAggregate->getNodeTypeName());
                     if (isset($oldParentAggregatesNodeType->getAutoCreatedChildNodes()[(string)$node->getNodeName()])) {
-                        throw new NodeConstraintException('Cannot move auto-generated node "' . $command->getNodeAggregateIdentifier() . '" into new parent "' . $newParentAggregate->getNodeAggregateIdentifier() . '"', 1519920594);
+                        throw new NodeConstraintException('Cannot move auto-generated node "' . $command->getNodeAggregateIdentifier() . '" into new parent "' . $newParentAggregate->getIdentifier() . '"', 1519920594);
                     }
                 }
-                foreach ($this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $command->getNewParentNodeAggregateIdentifier()) as $grandParentAggregate) {
+                foreach ($this->contentGraph->findParentNodeAggregates($command->getContentStreamIdentifier(), $command->getNewParentNodeAggregateIdentifier()) as $grandParentAggregate) {
                     $grandParentsNodeType = $this->nodeTypeManager->getNodeType((string)$grandParentAggregate->getNodeTypeName());
                     if (isset($grandParentsNodeType->getAutoCreatedChildNodes()[(string)$newParentAggregate->getNodeName()]) && !$grandParentsNodeType->allowsGrandchildNodeType((string)$newParentAggregate->getNodeName(), $nodesNodeType)) {
-                        throw new NodeConstraintException('Cannot move node "' . $command->getNodeAggregateIdentifier() . '" into grand parent node "' . $grandParentAggregate->getNodeAggregateIdentifier() . '"',
+                        throw new NodeConstraintException('Cannot move node "' . $command->getNodeAggregateIdentifier() . '" into grand parent node "' . $grandParentAggregate->getIdentifier() . '"',
                             1519828263);
                     }
                 }
@@ -426,25 +426,17 @@ final class NodeCommandHandler
                     break;
                 case RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS:
                     $specializationSet = $this->interDimensionalVariationGraph->getSpecializationSet($command->getDimensionSpacePoint());
-                    $nodesInSpecializationSet = $this->contentGraph->findNodesByNodeAggregateIdentifier(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNodeAggregateIdentifier(),
-                        $specializationSet
-                    );
 
-                    foreach ($nodesInSpecializationSet as $nodeInSpecializationSet) {
-                        $nodeMoveMappings = $nodeMoveMappings->merge($this->getMoveNodeMappings($nodeInSpecializationSet, $command));
+                    foreach ($nodeAggregate->getNodes() as $node) {
+                        if ($specializationSet->contains($node->getOriginDimensionSpacePoint())) {
+                            $nodeMoveMappings = $nodeMoveMappings->merge($this->getMoveNodeMappings($node, $command));
+                        }
                     }
                     break;
                 case RelationDistributionStrategy::STRATEGY_GATHER_ALL:
                 default:
-                    $nodesInSpecializationSet = $this->contentGraph->findNodesByNodeAggregateIdentifier(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNodeAggregateIdentifier()
-                    );
-
-                    foreach ($nodesInSpecializationSet as $nodeInSpecializationSet) {
-                        $nodeMoveMappings = $nodeMoveMappings->merge($this->getMoveNodeMappings($nodeInSpecializationSet, $command));
+                    foreach ($nodeAggregate->getNodes() as $node) {
+                        $nodeMoveMappings = $nodeMoveMappings->merge($this->getMoveNodeMappings($node, $command));
                     }
             }
 
@@ -649,32 +641,24 @@ final class NodeCommandHandler
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return DimensionSpacePointSet
      * @todo take parent node's visibility into account
-     * @todo use node aggregate
      *
      * A node in an aggregate should be visible in all points that fulfill all of the following criteria
      * - any node of the parent node aggregate is visible there
      * - they are specializations of the node's original point
      * - they are not occupied by specializations of the node
+     * @throws NodeAggregatesTypeIsAmbiguous
      */
     private function calculateVisibilityForNewNodeInNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
     ): DimensionSpacePointSet {
-        $existingNodes = $this->contentGraph->findNodesByNodeAggregateIdentifier(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier
-        );
-        $dimensionSpacePoints = [];
-        foreach ($existingNodes as $node) {
-            $dimensionSpacePoints[] = $node->getOriginDimensionSpacePoint();
-        }
-        $occupiedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
+        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         return $this->interDimensionalVariationGraph->getSpecializationSet(
             $dimensionSpacePoint,
             true,
-            $occupiedDimensionSpacePoints
+            $nodeAggregate->getOccupiedDimensionSpacePoints()
         );
     }
 }

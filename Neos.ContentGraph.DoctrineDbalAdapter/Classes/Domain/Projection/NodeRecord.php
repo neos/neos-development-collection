@@ -13,6 +13,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * source code.
  */
 use Doctrine\DBAL\Connection;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
@@ -59,6 +60,11 @@ class NodeRecord
      */
     public $nodeName;
 
+    /**
+     * @var NodeAggregateClassification
+     */
+    public $classification;
+
     public function __construct(
         NodeRelationAnchorPoint $relationAnchorPoint,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -66,6 +72,7 @@ class NodeRecord
         ?string $originDimensionSpacePointHash,
         ?array $properties,
         NodeTypeName $nodeTypeName,
+        NodeAggregateClassification $classification,
         NodeName $nodeName = null
     ) {
         $this->relationAnchorPoint = $relationAnchorPoint;
@@ -74,6 +81,7 @@ class NodeRecord
         $this->originDimensionSpacePointHash = $originDimensionSpacePointHash;
         $this->properties = $properties;
         $this->nodeTypeName = $nodeTypeName;
+        $this->classification = $classification;
         $this->nodeName = $nodeName;
     }
 
@@ -89,7 +97,8 @@ class NodeRecord
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
-            'nodetypename' => (string) $this->nodeTypeName
+            'nodetypename' => (string) $this->nodeTypeName,
+            'classification' => (string) $this->classification
         ]);
     }
 
@@ -106,7 +115,8 @@ class NodeRecord
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
-                'nodetypename' => (string) $this->nodeTypeName
+                'nodetypename' => (string) $this->nodeTypeName,
+                'classification' => (string) $this->classification
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint
@@ -140,6 +150,7 @@ class NodeRecord
             $databaseRow['origindimensionspacepointhash'],
             json_decode($databaseRow['properties'], true),
             NodeTypeName::fromString($databaseRow['nodetypename']),
+            NodeAggregateClassification::fromString($databaseRow['classification']),
             isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null
         );
     }

@@ -251,8 +251,8 @@ Feature: Change node aggregate type
 #      | contentStreamIdentifier  | "cs-identifier"                                 |
 #      | nodeIdentifier           | "nodea-identifier-de"                           |
 #      | specializationIdentifier | "nodea-identifier-de"                           |
-#      | specializationLocation   | {"market":"CH", "language":"gsw"}               |
-#      | specializationVisibility | {"points":[{"coordinates":{"language":"gsw"}}]} |
+#      | specializationOrigin   | {"market":"CH", "language":"gsw"}               |
+#      | specializationCoverage | {"points":[{"coordinates":{"language":"gsw"}}]} |
 #      node type change must be changed
 #      missing autocreated child nodes of target type must be created
 #      extra autocreated child nodes of source type must be removed if delete strategy is to be applied

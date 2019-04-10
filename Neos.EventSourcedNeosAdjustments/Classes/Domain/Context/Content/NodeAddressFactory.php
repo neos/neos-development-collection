@@ -84,7 +84,13 @@ class NodeAddressFactory
         $nodePath = \mb_strpos($pathValues['nodePath'], '/sites') === 0 ? \mb_substr($pathValues['nodePath'], 6) : $pathValues['nodePath'];
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
-        $node = $subgraph->findNodeByPath($nodePath, $this->contentGraph->findRootNodeByType(NodeTypeName::fromString('Neos.Neos:Sites'))->getNodeAggregateIdentifier());
+        $node = $subgraph->findNodeByPath(
+            $nodePath,
+            $this->contentGraph->findRootNodeAggregateByType(
+                $contentStreamIdentifier,
+                NodeTypeName::fromString('Neos.Neos:Sites')
+            )->getIdentifier()
+        );
 
         return new NodeAddress($contentStreamIdentifier, $dimensionSpacePoint, $node->getNodeAggregateIdentifier(), $workspace->getWorkspaceName());
     }

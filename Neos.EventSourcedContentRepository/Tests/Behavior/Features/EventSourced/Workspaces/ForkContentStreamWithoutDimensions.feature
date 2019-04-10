@@ -27,6 +27,7 @@ Feature: ForkContentStream Without Dimensions
       | nodeTypeName                  | "Neos.ContentRepository:Root" |
       | visibleInDimensionSpacePoints | [{}]                          |
       | initiatingUserIdentifier      | "user-identifier"             |
+      | nodeAggregateClassification   | "root"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -36,6 +37,7 @@ Feature: ForkContentStream Without Dimensions
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "child"                                  |
+      | nodeAggregateClassification   | "regular"                                |
     And the Event "Neos.EventSourcedContentRepository:NodePropertyWasSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
       | Key                       | Value                                         |
       | contentStreamIdentifier   | "cs-identifier"                               |

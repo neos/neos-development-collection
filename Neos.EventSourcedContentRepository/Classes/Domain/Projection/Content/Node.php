@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
@@ -62,14 +63,10 @@ class Node implements NodeInterface
     protected $properties;
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeType $nodeType
-     * @param NodeName $nodeName
-     * @param PropertyCollection $properties
+     * @var NodeAggregateClassification
      */
+    protected $classification;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -77,7 +74,8 @@ class Node implements NodeInterface
         NodeTypeName $nodeTypeName,
         NodeType $nodeType,
         ?NodeName $nodeName,
-        PropertyCollection $properties
+        PropertyCollection $properties,
+        NodeAggregateClassification $classification
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -86,6 +84,7 @@ class Node implements NodeInterface
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
         $this->properties = $properties;
+        $this->classification = $classification;
     }
 
     /**
@@ -95,7 +94,17 @@ class Node implements NodeInterface
      */
     public function isRoot(): bool
     {
-        return $this->nodeType->isOfType('Neos.ContentRepository:Root');
+        return $this->classification->isRoot();
+    }
+
+    /**
+     * Whether or not this node is tethered to its parent, fka auto created child node
+     *
+     * @return bool
+     */
+    public function isTethered(): bool
+    {
+        return $this->classification->isTethered();
     }
 
     /**

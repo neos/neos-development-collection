@@ -38,6 +38,11 @@ class NodeRelationAnchorPoint implements \JsonSerializable
         return new static(Algorithms::generateUUID());
     }
 
+    public static function forRootEdge(): self
+    {
+        return new static('00000000-0000-0000-0000-000000000000');
+    }
+
     public static function fromString(string $value): self
     {
         return new static($value);

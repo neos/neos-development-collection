@@ -56,6 +56,41 @@ class ProjectionContentGraph
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
+     * @param DimensionSpacePoint $originDimensionSpacePoint
+     * @return NodeRecord|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     */
+    public function findParentNode(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $childNodeAggregateIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint
+    ): ?NodeRecord {
+        $params = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
+            'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash()
+        ];
+        $nodeRow = $this->getDatabaseConnection()->executeQuery(
+            'SELECT p.*, ph.contentstreamidentifier, ph.name FROM neos_contentgraph_node p
+ INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
+ INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
+ INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint
+ WHERE c.nodeaggregateidentifier = :childNodeAggregateIdentifier
+ AND c.origindimensionspacepointhash = :originDimensionSpacePointHash
+ AND ph.contentstreamidentifier = :contentStreamIdentifier
+ AND ch.contentstreamidentifier = :contentStreamIdentifier
+ AND ph.dimensionspacepointhash = :originDimensionSpacePointHash
+ AND ch.dimensionspacepointhash = :originDimensionSpacePointHash',
+            $params
+        )->fetch();
+
+        return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return NodeRecord|null

@@ -35,6 +35,7 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | nodeTypeName                  | "Neos.ContentRepository:Root"            |
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"   |
+      | nodeAggregateClassification   | "root"                                   |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -44,6 +45,7 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "text1"                                  |
+      | nodeAggregateClassification   | "regular"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -53,14 +55,14 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
       | parentNodeAggregateIdentifier | "the-great-nodini"                       |
       | nodeName                      | "text2"                                  |
-    And the graph projection is fully up to date
-    And the event NodeSpecializationWasCreated was published with payload:
+      | nodeAggregateClassification   | "regular"                                |
+    And the event NodeSpecializationVariantWasCreated was published with payload:
       | Key                       | Value                 |
       | contentStreamIdentifier   | "cs-identifier"       |
       | nodeAggregateIdentifier   | "the-great-nodini"    |
-      | sourceDimensionSpacePoint | {"language": "de"}    |
-      | specializationLocation    | {"language": "gsw"}   |
-      | specializationVisibility  | [{"language": "gsw"}] |
+      | sourceOrigin | {"language": "de"}    |
+      | specializationOrigin    | {"language": "gsw"}   |
+      | specializationCoverage  | [{"language": "gsw"}] |
     And the graph projection is fully up to date
     And the command "HideNode" is executed with payload:
       | Key                          | Value                                     |
@@ -70,12 +72,12 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
     And the graph projection is fully up to date
 
   Scenario: When a new node is added to an already existing aggregate underneath a hidden node, this one should be hidden as well
-    When the command CreateNodeSpecialization is executed with payload:
+    When the command CreateNodeVariant is executed with payload:
       | Key                       | Value               |
       | contentStreamIdentifier   | "cs-identifier"     |
       | nodeAggregateIdentifier   | "nodingers-cat"     |
-      | sourceDimensionSpacePoint | {"language": "de"}  |
-      | targetDimensionSpacePoint | {"language": "gsw"} |
+      | sourceOrigin | {"language": "de"}  |
+      | targetOrigin | {"language": "gsw"} |
     And the graph projection is fully up to date
 
   #  When I am in content stream "cs-identifier" and Dimension Space Point {"language": "gsw"}

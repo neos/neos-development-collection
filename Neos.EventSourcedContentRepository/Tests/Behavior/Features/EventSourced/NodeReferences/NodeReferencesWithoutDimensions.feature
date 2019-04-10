@@ -28,6 +28,7 @@ Feature: Node References without Dimensions
       | nodeAggregateIdentifier  | "lady-eleonode-rootford"               |
       | nodeTypeName             | "Neos.ContentRepository:Root"          |
       | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
+    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |
@@ -35,6 +36,7 @@ Feature: Node References without Dimensions
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"              |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
+    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |
@@ -42,6 +44,7 @@ Feature: Node References without Dimensions
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"              |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
+    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |
@@ -49,6 +52,7 @@ Feature: Node References without Dimensions
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
       | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"              |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
+    And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |

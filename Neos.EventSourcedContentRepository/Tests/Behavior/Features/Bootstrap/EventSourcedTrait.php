@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -28,13 +30,14 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAgg
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeSpecialization;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventStreamName;
@@ -116,6 +119,11 @@ trait EventSourcedTrait
      * @var NodeInterface
      */
     protected $currentNode;
+
+    /**
+     * @var ReadableNodeAggregateInterface
+     */
+    protected $currentNodeAggregate;
 
     /**
      * @var EventNormalizer
@@ -245,11 +253,11 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^the event NodeGeneralizationWasCreated was published with payload:$/
+     * @Given /^the event NodeGeneralizationVariantWasCreated was published with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */
-    public function theEventNodeGeneralizationWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
+    public function theEventNodeGeneralizationVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
@@ -259,7 +267,43 @@ trait EventSourcedTrait
             $nodeAggregateIdentifier
         );
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodeGeneralizationWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
+    }
+
+    /**
+     * @Given /^the event NodeSpecializationVariantWasCreated was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theEventNodeSpecializationVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
+        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier
+        );
+
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
+    }
+
+    /**
+     * @Given /^the event NodePeerVariantWasCreated was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theEventNodePeerVariantWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
+        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier
+        );
+
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodePeerVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 
     /**
@@ -468,32 +512,31 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^the command CreateNodeSpecialization is executed with payload:$/
+     * @Given /^the command CreateNodeVariant is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint
      * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
      * @throws Exception
      */
-    public function theCommandCreateNodeSpecializationIsExecutedWithPayload(TableNode $payloadTable)
+    public function theCommandCreateNodeVariantIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $command = CreateNodeSpecialization::fromArray($commandArguments);
 
+        $command = CreateNodeVariant::fromArray($commandArguments);
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateNodeSpecialization($command);
+            ->handleCreateNodeVariant($command);
     }
 
     /**
-     * @Given /^the command CreateNodeSpecialization is executed with payload and exceptions are caught:$/
+     * @Given /^the command CreateNodeVariant is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */
-    public function theCommandCreateNodeSpecializationIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    public function theCommandCreateNodeVariantIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
     {
         try {
-            $this->theCommandCreateNodeSpecializationIsExecutedWithPayload($payloadTable);
+            $this->theCommandCreateNodeVariantIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
@@ -605,7 +648,7 @@ trait EventSourcedTrait
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
-        $this->lastCommandOrEventResult = $commandHandler->handleCreateNodeGeneralization($command);
+        $this->lastCommandOrEventResult = $commandHandler->handleCreateNodeGeneralizationVariant($command);
     }
 
     /**
@@ -900,6 +943,15 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^I am in content stream "([^"]*)"$/
+     * @param string $contentStreamIdentifier
+     */
+    public function iAmInContentStream(string $contentStreamIdentifier): void
+    {
+        $this->contentStreamIdentifier = ContentStreamIdentifier::fromString($contentStreamIdentifier);
+    }
+
+    /**
      * @Given /^I am in the active content stream of workspace "([^"]*)" and Dimension Space Point (.*)$/
      * @param string $workspaceName
      * @param string $dimensionSpacePoint
@@ -959,6 +1011,62 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Then /^I expect the node aggregate "([^"]*)" to exist$/
+     * @param string $nodeAggregateIdentifier
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     */
+    public function iExpectTheNodeAggregateToExist(string $nodeAggregateIdentifier): void
+    {
+        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifier);
+        $this->currentNodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($this->contentStreamIdentifier, $nodeAggregateIdentifier);
+
+        Assert::assertNotNull($this->currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current content stream "%s".', $nodeAggregateIdentifier, $this->contentStreamIdentifier));
+    }
+
+    /**
+     * @Then /^I expect this node aggregate to occupy dimension space points (.*)$/
+     * @param string $rawDimensionSpacePoints
+     */
+    public function iExpectThisNodeAggregateToOccupyDimensionSpacePoints(string $rawDimensionSpacePoints): void
+    {
+        $dimensionSpacePoints = [];
+        foreach (json_decode($rawDimensionSpacePoints, true) as $coordinates) {
+            $dimensionSpacePoints[] = new DimensionSpacePoint($coordinates);
+        }
+        $expectedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
+
+        Assert::assertEquals($this->currentNodeAggregate->getOccupiedDimensionSpacePoints(), $expectedDimensionSpacePoints);
+    }
+
+    /**
+     * @Then /^I expect this node aggregate to cover dimension space points (.*)$/
+     * @param string $rawDimensionSpacePoints
+     */
+    public function iExpectThisNodeAggregateToCoverDimensionSpacePoints(string $rawDimensionSpacePoints): void
+    {
+        $dimensionSpacePoints = [];
+        foreach (json_decode($rawDimensionSpacePoints, true) as $coordinates) {
+            $dimensionSpacePoints[] = new DimensionSpacePoint($coordinates);
+        }
+        $expectedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
+
+        Assert::assertEquals(
+            $expectedDimensionSpacePoints,
+            $this->currentNodeAggregate->getCoveredDimensionSpacePoints(),
+            'Expected covered dimension space point set ' . json_encode($expectedDimensionSpacePoints)
+            . ', got ' . json_encode($this->currentNodeAggregate->getCoveredDimensionSpacePoints())
+        );
+    }
+    /**
+     * @Then /^I expect this node aggregate to be classified as "([^"]*)"$/
+     * @param string $expectedClassification
+     */
+    public function iExpectThisNodeAggregateToBeClassifiedAs(string $expectedClassification): void
+    {
+        Assert::assertEquals($expectedClassification, $this->currentNodeAggregate->getClassification());
+    }
+
+    /**
      * @Then /^I expect a node with identifier (.*) to exist in the content graph$/
      * @param string $serializedNodeIdentifier
      * @throws Exception
@@ -1010,6 +1118,7 @@ trait EventSourcedTrait
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         $nodeByAggregateIdentifier = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier));
+        $this->currentNode = $nodeByAggregateIdentifier;
         Assert::assertInstanceOf(NodeInterface::class, $nodeByAggregateIdentifier, 'No node could be found by node aggregate identifier "' . $serializedNodeAggregateIdentifier . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
         Assert::assertEquals($expectedNodeIdentifier, NodeDiscriminator::fromNode($nodeByAggregateIdentifier), 'Node discriminators did not match');
     }
@@ -1057,6 +1166,23 @@ trait EventSourcedTrait
 
         $nodeByPath = $subgraph->findNodeByPath($serializedNodePath, $this->rootNodeAggregateIdentifier);
         Assert::assertNull($nodeByPath, 'A node was found by path "' . $serializedNodePath . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
+    }
+
+    /**
+     * @Then /^I expect this node to be a child of node (.*)$/
+     * @param string $serializedNodeDiscriminator
+     */
+    public function iExpectThisNodeToBeTheChildOfNode(string $serializedNodeDiscriminator): void
+    {
+        $expectedNodeDiscriminator = NodeDiscriminator::fromArray(json_decode($serializedNodeDiscriminator, true));
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+
+        $parent = $subgraph->findParentNode($this->currentNode->getNodeAggregateIdentifier());
+        Assert::assertInstanceOf(NodeInterface::class, $parent, 'Parent not found.');
+        Assert::assertEquals($expectedNodeDiscriminator, NodeDiscriminator::fromNode($parent), 'Parent discriminator does not match.');
+
+        $child = $subgraph->findChildNodeConnectedThroughEdgeName($parent->getNodeAggregateIdentifier(), $this->currentNode->getNodeName());
+        Assert::assertEquals($this->currentNode, $child, 'Child discriminator does not match.');
     }
 
     /**

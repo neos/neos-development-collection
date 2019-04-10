@@ -13,8 +13,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
@@ -22,12 +25,17 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 /**
  * Node aggregate read model
  */
-final class NodeAggregate
+final class NodeAggregate implements ReadableNodeAggregateInterface
 {
     /**
      * @var NodeAggregateIdentifier
      */
     private $nodeAggregateIdentifier;
+
+    /**
+     * @var NodeAggregateClassification
+     */
+    private $classification;
 
     /**
      * @var NodeTypeName
@@ -45,33 +53,37 @@ final class NodeAggregate
     private $nodes;
 
     /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeName $nodeName
-     * @param array $nodes
+     * @var DimensionSpacePointSet
      */
-    public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, ?NodeName $nodeName, array $nodes)
-    {
+    private $occupiedDimensionSpacePoints;
+
+    /**
+     * @var DimensionSpacePointSet
+     */
+    private $coveredDimensionSpacePoints;
+
+    public function __construct(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateClassification $classification,
+        NodeTypeName $nodeTypeName,
+        ?NodeName $nodeName,
+        array $nodes,
+        DimensionSpacePointSet $occupiedDimensionSpacePoints,
+        DimensionSpacePointSet $coveredDimensionSpacePoints
+    ) {
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->classification = $classification;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeName = $nodeName;
         $this->nodes = $nodes;
-    }
-
-    public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
-    {
-        $dimensionSpacePoints = [];
-        foreach ($this->nodes as $node) {
-            $dimensionSpacePoints[] = $node->getOriginDimensionSpacePoint();
-        }
-
-        return new DimensionSpacePointSet($dimensionSpacePoints);
+        $this->occupiedDimensionSpacePoints = $occupiedDimensionSpacePoints;
+        $this->coveredDimensionSpacePoints = $coveredDimensionSpacePoints;
     }
 
     /**
      * @return NodeAggregateIdentifier
      */
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    public function getIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
@@ -98,5 +110,40 @@ final class NodeAggregate
     public function getNodes(): array
     {
         return $this->nodes;
+    }
+
+    public function getOccupiedDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->occupiedDimensionSpacePoints;
+    }
+
+    public function occupiesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
+    {
+        return $this->occupiedDimensionSpacePoints->contains($dimensionSpacePoint);
+    }
+
+    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->coveredDimensionSpacePoints;
+    }
+
+    public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
+    {
+        return $this->coveredDimensionSpacePoints->contains($dimensionSpacePoint);
+    }
+
+    public function getClassification(): NodeAggregateClassification
+    {
+        return $this->classification;
+    }
+
+    public function isRoot(): bool
+    {
+        return $this->classification->isRoot();
+    }
+
+    public function isTethered(): bool
+    {
+        return $this->classification->isTethered();
     }
 }

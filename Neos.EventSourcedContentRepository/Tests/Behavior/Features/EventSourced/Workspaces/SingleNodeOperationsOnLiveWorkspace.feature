@@ -23,6 +23,7 @@ Feature: Single Node operations on live workspace
       | nodeTypeName                  | "Neos.ContentRepository:Root" |
       | visibleInDimensionSpacePoints | [{}]                          |
       | initiatingUserIdentifier      | "user-identifier"             |
+      | nodeAggregateClassification   | "root"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
@@ -32,25 +33,26 @@ Feature: Single Node operations on live workspace
       | visibleInDimensionSpacePoints | [{}]                                     |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "child"                                  |
+      | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
 
   Scenario: Set property of a node
     Given the command "SetNodeProperty" is executed with payload:
       | Key                       | Value                             |
       | contentStreamIdentifier   | "cs-identifier"                   |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                   |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                |
       | originDimensionSpacePoint | {}                                |
       | propertyName              | "text"                            |
       | value                     | {"value":"Hello","type":"string"} |
 
     Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 3 is of type "Neos.EventSourcedContentRepository:NodePropertyWasSet" with payload:
-      | Key                       | Expected        |
-      | contentStreamIdentifier   | "cs-identifier" |
+      | Key                       | Expected           |
+      | contentStreamIdentifier   | "cs-identifier"    |
       | nodeAggregateIdentifier   | "nody-mc-nodeface" |
-      | originDimensionSpacePoint | []              |
-      | propertyName              | "text"          |
-      | value.value               | "Hello"         |
+      | originDimensionSpacePoint | []                 |
+      | propertyName              | "text"             |
+      | value.value               | "Hello"            |
 
     When the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and Dimension Space Point {}
@@ -61,17 +63,17 @@ Feature: Single Node operations on live workspace
 
   Scenario: Show a node
     Given the command "ShowNode" is executed with payload:
-      | Key                          | Value           |
-      | contentStreamIdentifier      | "cs-identifier" |
+      | Key                          | Value              |
+      | contentStreamIdentifier      | "cs-identifier"    |
       | nodeAggregateIdentifier      | "nody-mc-nodeface" |
-      | affectedDimensionSpacePoints | [{}]            |
+      | affectedDimensionSpacePoints | [{}]               |
 
     Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 3 is of type "Neos.EventSourcedContentRepository:NodeWasShown" with payload:
-      | Key                          | Expected        |
-      | contentStreamIdentifier      | "cs-identifier" |
+      | Key                          | Expected           |
+      | contentStreamIdentifier      | "cs-identifier"    |
       | nodeAggregateIdentifier      | "nody-mc-nodeface" |
-      | affectedDimensionSpacePoints | [[]]            |
+      | affectedDimensionSpacePoints | [[]]               |
 
     When the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and Dimension Space Point {}
