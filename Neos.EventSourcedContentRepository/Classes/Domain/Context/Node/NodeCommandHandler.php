@@ -15,9 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -25,18 +23,16 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeExistsException;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
@@ -44,11 +40,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
 use Neos\EventSourcedContentRepository\Exception;
-use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
@@ -86,7 +82,7 @@ final class NodeCommandHandler
 
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface
+     * @var ContentGraphInterface
      */
     protected $contentGraph;
 
@@ -103,10 +99,10 @@ final class NodeCommandHandler
     protected $readSideMemoryCacheManager;
 
     /**
-     * @param SetNodeProperty $command
+     * @param SetNodeProperties $command
      * @return CommandResult
      */
-    public function handleSetNodeProperty(SetNodeProperty $command): CommandResult
+    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 
@@ -120,12 +116,11 @@ final class NodeCommandHandler
 
             $events = DomainEvents::withSingleEvent(
                 EventWithIdentifier::create(
-                    new NodePropertyWasSet(
+                    new NodePropertiesWereSet(
                         $contentStreamIdentifier,
                         $command->getNodeAggregateIdentifier(),
                         $command->getOriginDimensionSpacePoint(),
-                        $command->getPropertyName(),
-                        $command->getValue()
+                        $command->getPropertyValues()
                     )
                 )
             );

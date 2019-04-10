@@ -13,9 +13,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 
@@ -44,21 +45,27 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             if (isset($data['title'])) {
-                $this->nodeCommandHandler->handleSetNodeProperty(new SetNodeProperty(
+                $this->nodeCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
-                    'title',
-                    new PropertyValue($data['title'], 'string')
+                    PropertyValues::fromArray(
+                        [
+                            'title' => new PropertyValue($data['title'], 'string')
+                        ]
+                    )
                 ));
             }
 
-            $this->nodeCommandHandler->handleSetNodeProperty(new SetNodeProperty(
+            $this->nodeCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
-                'uriPathSegment',
-                new PropertyValue($data['title'], 'string')
+                PropertyValues::fromArray(
+                    [
+                        'uriPathSegment' => new PropertyValue($data['title'], 'string')
+                    ]
+                )
             ))->blockUntilProjectionsAreUpToDate();
             // TODO: re-enable line below
             // $node->setProperty('uriPathSegment', $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node, (isset($data['title']) ? $data['title'] : null)));

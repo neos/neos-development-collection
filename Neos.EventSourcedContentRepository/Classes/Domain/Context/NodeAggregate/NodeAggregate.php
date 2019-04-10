@@ -121,27 +121,23 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
             throw new NodeAggregateCurrentlyExists('Root node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541781941);
         }*/
 
-        $events = DomainEvents::createEmpty();
-        $this->nodeEventPublisher->withCommand($command,
-            function () use ($command, $visibleDimensionSpacePoints, &$events) {
-                $events = DomainEvents::withSingleEvent(
-                    EventWithIdentifier::create(
-                        new RootNodeAggregateWithNodeWasCreated(
-                            $command->getContentStreamIdentifier(),
-                            $this->identifier,
-                            $command->getNodeTypeName(),
-                            $visibleDimensionSpacePoints,
-                            NodeAggregateClassification::root(),
-                            $command->getInitiatingUserIdentifier()
-                        )
-                    )
-                );
+        $events = DomainEvents::withSingleEvent(
+            EventWithIdentifier::create(
+                new RootNodeAggregateWithNodeWasCreated(
+                    $command->getContentStreamIdentifier(),
+                    $this->identifier,
+                    $command->getNodeTypeName(),
+                    $visibleDimensionSpacePoints,
+                    NodeAggregateClassification::root(),
+                    $command->getInitiatingUserIdentifier()
+                )
+            )
+        );
 
-                $this->nodeEventPublisher->publishMany(
-                    $this->streamName,
-                    $events
-                );
-            });
+        $this->nodeEventPublisher->publishMany(
+            $this->streamName,
+            $events
+        );
 
         return $events;
     }
@@ -163,31 +159,27 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
             throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541679244);
         }*/
 
-        $events = DomainEvents::createEmpty();
-        $this->nodeEventPublisher->withCommand($command,
-            function () use ($command, $visibleDimensionSpacePoints, $initialPropertyValues, &$events) {
-                $events = DomainEvents::withSingleEvent(
-                    EventWithIdentifier::create(
-                        new NodeAggregateWithNodeWasCreated(
-                            $command->getContentStreamIdentifier(),
-                            $this->identifier,
-                            $command->getNodeTypeName(),
-                            $command->getOriginDimensionSpacePoint(),
-                            $visibleDimensionSpacePoints,
-                            $command->getParentNodeAggregateIdentifier(),
-                            $command->getNodeName(),
-                            $initialPropertyValues,
-                            NodeAggregateClassification::regular(),
-                            $command->getSucceedingSiblingNodeAggregateIdentifier()
-                        )
-                    )
-                );
+        $events = DomainEvents::withSingleEvent(
+            EventWithIdentifier::create(
+                new NodeAggregateWithNodeWasCreated(
+                    $command->getContentStreamIdentifier(),
+                    $this->identifier,
+                    $command->getNodeTypeName(),
+                    $command->getOriginDimensionSpacePoint(),
+                    $visibleDimensionSpacePoints,
+                    $command->getParentNodeAggregateIdentifier(),
+                    $command->getNodeName(),
+                    $initialPropertyValues,
+                    NodeAggregateClassification::regular(),
+                    $command->getSucceedingSiblingNodeAggregateIdentifier()
+                )
+            )
+        );
 
-                $this->nodeEventPublisher->publishMany(
-                    $this->streamName,
-                    $events
-                );
-            });
+        $this->nodeEventPublisher->publishMany(
+            $this->streamName,
+            $events
+        );
 
         return $events;
     }
@@ -217,39 +209,27 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
             throw new NodeAggregateCurrentlyExists('Node aggregate "' . $this->identifier . '" does currently exist and can thus not be created.', 1541755683);
         }*/
 
-        $events = DomainEvents::createEmpty();
-        $this->nodeEventPublisher->withCommand($command, function () use (
-            $command,
-            $nodeTypeName,
-            $visibleDimensionSpacePoints,
-            $parentNodeAggregateIdentifier,
-            $nodeName,
-            $initialPropertyValues,
-            $precedingNodeAggregateIdentifier,
-            &$events
-        ) {
-            $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
-                    new NodeAggregateWithNodeWasCreated(
-                        $command->getContentStreamIdentifier(),
-                        $this->identifier,
-                        $nodeTypeName,
-                        $command->getOriginDimensionSpacePoint(),
-                        $visibleDimensionSpacePoints,
-                        $parentNodeAggregateIdentifier,
-                        $nodeName,
-                        $initialPropertyValues,
-                        NodeAggregateClassification::tethered(),
-                        $precedingNodeAggregateIdentifier
-                    )
+        $events = DomainEvents::withSingleEvent(
+            EventWithIdentifier::create(
+                new NodeAggregateWithNodeWasCreated(
+                    $command->getContentStreamIdentifier(),
+                    $this->identifier,
+                    $nodeTypeName,
+                    $command->getOriginDimensionSpacePoint(),
+                    $visibleDimensionSpacePoints,
+                    $parentNodeAggregateIdentifier,
+                    $nodeName,
+                    $initialPropertyValues,
+                    NodeAggregateClassification::tethered(),
+                    $precedingNodeAggregateIdentifier
                 )
-            );
+            )
+        );
 
-            $this->nodeEventPublisher->publishMany(
-                $this->streamName,
-                $events
-            );
-        });
+        $this->nodeEventPublisher->publishMany(
+            $this->streamName,
+            $events
+        );
 
         return $events;
     }

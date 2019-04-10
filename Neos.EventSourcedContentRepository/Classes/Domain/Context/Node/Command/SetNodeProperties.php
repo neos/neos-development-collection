@@ -17,10 +17,10 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
-final class SetNodeProperty implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
+final class SetNodeProperties implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -38,30 +38,23 @@ final class SetNodeProperty implements \JsonSerializable, CopyableAcrossContentS
     private $originDimensionSpacePoint;
 
     /**
-     * @var string
+     * @var PropertyValues
      */
-    private $propertyName;
+    private $propertyValues;
 
     /**
-     * @var PropertyValue
-     */
-    private $value;
-
-    /**
-     * SetNodeProperty constructor.
+     * SetNodeProperties constructor.
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param string $propertyName
-     * @param PropertyValue $value
+     * @param PropertyValues $propertyValues
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, string $propertyName, PropertyValue $value)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, PropertyValues $propertyValues)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->propertyName = $propertyName;
-        $this->value = $value;
+        $this->propertyValues = $propertyValues;
     }
 
     public static function fromArray(array $array): self
@@ -70,8 +63,7 @@ final class SetNodeProperty implements \JsonSerializable, CopyableAcrossContentS
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['originDimensionSpacePoint']),
-            $array['propertyName'],
-            new PropertyValue($array['value']['value'], $array['value']['type'])
+            PropertyValues::fromArray($array['propertyValues'])
         );
     }
 
@@ -100,19 +92,11 @@ final class SetNodeProperty implements \JsonSerializable, CopyableAcrossContentS
     }
 
     /**
-     * @return string
+     * @return PropertyValues
      */
-    public function getPropertyName(): string
+    public function getPropertyValues(): PropertyValues
     {
-        return $this->propertyName;
-    }
-
-    /**
-     * @return PropertyValue
-     */
-    public function getValue(): PropertyValue
-    {
-        return $this->value;
+        return $this->propertyValues;
     }
 
     public function jsonSerialize(): array
@@ -121,19 +105,17 @@ final class SetNodeProperty implements \JsonSerializable, CopyableAcrossContentS
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
-            'propertyName' => $this->propertyName,
-            'value' => $this->value,
+            'propertyValues' => $this->propertyValues,
         ];
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
     {
-        return new SetNodeProperty(
+        return new SetNodeProperties(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,
-            $this->propertyName,
-            $this->value
+            $this->propertyValues
         );
     }
 

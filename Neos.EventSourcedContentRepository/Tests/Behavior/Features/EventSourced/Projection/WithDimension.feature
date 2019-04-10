@@ -33,13 +33,12 @@ Feature: Reading of our Graph Projection
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
       | nodeName                      | "foo"                                     |
       | nodeAggregateClassification   | "regular"                                 |
-    And the event NodePropertyWasSet was published with payload:
-      | Key                       | Value                                         |
-      | contentStreamIdentifier   | "cs-identifier"                               |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                            |
-      | originDimensionSpacePoint | {"language": "de"}                            |
-      | propertyName              | "test"                                        |
-      | value                     | {"value": "original value", "type": "string"} |
+    And the event NodePropertiesWereSet was published with payload:
+      | Key                       | Value                                                   |
+      | contentStreamIdentifier   | "cs-identifier"                                         |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
+      | originDimensionSpacePoint | {"language": "de"}                                      |
+      | propertyValues            | {"test": {"value": "original value", "type": "string"}} |
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 2 nodes

@@ -75,27 +75,24 @@ Feature: Publishing individual nodes (basics)
       | contentStreamIdentifier | "user-cs-identifier" |
     And the graph projection is fully up to date
     # modify nodes in user WS
-    And the command "SetNodeProperty" is executed with payload:
-      | Key                       | Value                                   |
-      | contentStreamIdentifier   | "user-cs-identifier"                    |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"                |
-      | originDimensionSpacePoint | {}                                      |
-      | propertyName              | "text"                                  |
-      | value                     | {"value":"Modified t1","type":"string"} |
-    And the command "SetNodeProperty" is executed with payload:
-      | Key                       | Value                                   |
-      | contentStreamIdentifier   | "user-cs-identifier"                    |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                      |
-      | originDimensionSpacePoint | {}                                      |
-      | propertyName              | "text"                                  |
-      | value                     | {"value":"Modified t2","type":"string"} |
-    And the command "SetNodeProperty" is executed with payload:
-      | Key                       | Value                                      |
-      | contentStreamIdentifier   | "user-cs-identifier"                       |
-      | nodeAggregateIdentifier   | "sir-nodeward-nodington-iii"               |
-      | originDimensionSpacePoint | {}                                         |
-      | propertyName              | "image"                                    |
-      | value                     | {"value":"Modified image","type":"string"} |
+    And the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                                             |
+      | contentStreamIdentifier   | "user-cs-identifier"                              |
+      | nodeAggregateIdentifier   | "sir-david-nodenborough"                          |
+      | originDimensionSpacePoint | {}                                                |
+      | propertyValues            | {"text": {"value":"Modified t1","type":"string"}} |
+    And the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                                             |
+      | contentStreamIdentifier   | "user-cs-identifier"                              |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                |
+      | originDimensionSpacePoint | {}                                                |
+      | propertyValues            | {"text": {"value":"Modified t2","type":"string"}} |
+    And the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                                                 |
+      | contentStreamIdentifier   | "user-cs-identifier"                                  |
+      | nodeAggregateIdentifier   | "sir-nodeward-nodington-iii"                          |
+      | originDimensionSpacePoint | {}                                                    |
+      | propertyValues            | {"image": {"value":"Modified image","type":"string"}} |
     And the graph projection is fully up to date
 
   Scenario: It is possible to publish a single node; and only this one is live.

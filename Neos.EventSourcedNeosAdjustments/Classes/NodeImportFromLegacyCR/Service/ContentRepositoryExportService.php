@@ -18,20 +18,23 @@ use Doctrine\ORM\QueryBuilder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
@@ -42,6 +45,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
+use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\Helpers\NodeAggregateIdentifierAndNodeTypeForLegacyImport;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -93,6 +97,12 @@ class ContentRepositoryExportService
 
     /**
      * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
@@ -110,12 +120,19 @@ class ContentRepositoryExportService
     protected $contentDimensionZookeeper;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeAggregateIdentifierAndNodeTypeForLegacyImport
      */
     private $nodeAggregateIdentifierForSitesNode;
 
-    private $nodeIdentifiers;
+    /**
+     * @var NodeAggregateIdentifierAndNodeTypeForLegacyImport[]
+     */
+    private $nodeAggregateIdentifiers;
 
+    /**
+     * key is the NodeAggregateIdentifier, value is the Dimension Space Point
+     * @var DimensionSpacePoint
+     */
     private $alreadyCreatedNodeAggregateIdentifiers;
 
     /**
@@ -157,12 +174,15 @@ class ContentRepositoryExportService
 
     public function migrate()
     {
-        $this->nodeIdentifiers = [];
+        $this->nodeAggregateIdentifiers = [];
         $this->alreadyCreatedNodeAggregateIdentifiers = [];
 
         $this->contentStreamIdentifier = ContentStreamIdentifier::create();
-        $this->sitesRootNodeIdentifier = NodeIdentifier::create();
-        $this->nodeAggregateIdentifierForSitesNode = NodeAggregateIdentifier::create();
+        $this->nodeAggregateIdentifierForSitesNode = new NodeAggregateIdentifierAndNodeTypeForLegacyImport(
+            NodeAggregateIdentifier::create(),
+            NodeTypeName::fromString('Neos.Neos:Sites')
+        );
+
         $this->commandResult = CommandResult::createEmpty();
 
         $streamName = $this->contentStreamName();
@@ -191,7 +211,7 @@ class ContentRepositoryExportService
         $nodeDatas = $queryBuilder->getQuery()->getResult();
         $nodeDatasToExportAtNextIteration = [];
         foreach ($nodeDatas as $nodeData) {
-            $this->exportNodeData($nodeData, null, $nodeDatasToExportAtNextIteration);
+            $this->exportNodeData($nodeData, $nodeDatasToExportAtNextIteration);
         }
         var_dump("NODE DATAS IN NEXT ITER: " . count($nodeDatasToExportAtNextIteration));
 
@@ -200,25 +220,21 @@ class ContentRepositoryExportService
         $nodeDatasToExportAtNextIteration = [];
         // TODO: correct sorting with respect to iteration!!
         foreach ($nodeDatas as $nodeData) {
-            $this->exportNodeData($nodeData, null, $nodeDatasToExportAtNextIteration);
+            $this->exportNodeData($nodeData, $nodeDatasToExportAtNextIteration);
         }
         var_dump("NODE DATAS IN NEXT ITER: " . count($nodeDatasToExportAtNextIteration));
 
         $this->commandResult->blockUntilProjectionsAreUpToDate();
     }
 
-    protected function exportNodeData(NodeData $nodeData, DimensionSpacePoint $dimensionRestriction = null, &$nodeDatasToExportAtNextIteration)
+    protected function exportNodeData(NodeData $nodeData, &$nodeDatasToExportAtNextIteration)
     {
         $nodePath = NodePath::fromString($nodeData->getPath());
 
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($nodeData->getDimensionValues());
-        if ($dimensionRestriction !== null && $dimensionSpacePoint->getHash() !== $dimensionRestriction->getHash()) {
-            // unwanted dimension; so let's skip it!
-            return;
-        }
 
-        $parentNodeIdentifier = $this->findParentNodeIdentifier($nodeData->getParentPath(), $dimensionSpacePoint);
-        if (!$parentNodeIdentifier) {
+        $parentNodeAggregateIdentifierAndNodeType = $this->findParentNodeAggregateIdentifierAndNodeType($nodeData->getParentPath(), $dimensionSpacePoint);
+        if (!$parentNodeAggregateIdentifierAndNodeType) {
             // if parent node identifier not found, TRY LATER
             $nodeDatasToExportAtNextIteration[] = $nodeData;
             return;
@@ -227,82 +243,102 @@ class ContentRepositoryExportService
 
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeData->getIdentifier());
 
-
-
-        $excludedSet = $this->findOtherExistingDimensionSpacePointsForNodeData($nodeData);
-        $nodeIdentifier = NodeIdentifier::fromString($this->persistenceManager->getIdentifierByObject($nodeData));
         $this->exportNodeOrNodeAggregate(
             $nodeAggregateIdentifier,
             NodeTypeName::fromString($nodeData->getNodeType()->getName()),
             $dimensionSpacePoint,
-            $excludedSet,
-            $nodeIdentifier,
-            $parentNodeIdentifier,
+            $parentNodeAggregateIdentifierAndNodeType,
             NodeName::fromString($nodeData->getName()),
             $this->processPropertyValues($nodeData),
             $this->processPropertyReferences($nodeData),
-            $nodePath // TODO: probably pass last path-part only?
+            $nodePath
         );
     }
 
     protected function exportNodeOrNodeAggregate(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
-        DimensionSpacePoint $dimensionSpacePoint,
-        DimensionSpacePointSet $excludedSet,
-        NodeIdentifier $nodeIdentifier,
-        NodeIdentifier $parentNodeIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint,
+        NodeAggregateIdentifierAndNodeTypeForLegacyImport $parentNodeAggregateIdentifierAndNodeType,
         NodeName $nodeName,
         array $propertyValues,
         array $propertyReferences,
         NodePath $nodePath
     ) {
-        $visibleInDimensionSpacePoints = $this->interDimensionalFallbackGraph->getSpecializationSet($dimensionSpacePoint, true, $excludedSet);
-        $this->recordNodeIdentifier($nodePath, $dimensionSpacePoint, $nodeIdentifier);
-        $streamName = StreamName::fromString('NodeAggregate:' . $nodeIdentifier);
-        if (isset($this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier])) {
-            // a Node of this NodeAggregate already exists; we create a Node
-            $event = new NodeWasAddedToAggregate(
-                $this->contentStreamIdentifier,
-                $nodeAggregateIdentifier,
-                $nodeTypeName,
-                $dimensionSpacePoint,
-                $visibleInDimensionSpacePoints,
-                $nodeIdentifier,
-                $parentNodeIdentifier,
-                $nodeName,
-                PropertyValues::fromArray($propertyValues)
-            );
-        } else {
-            // first time a Node of this NodeAggregate is created
-            $event = new NodeAggregateWithNodeWasCreated(
-                $this->contentStreamIdentifier,
-                $nodeAggregateIdentifier,
-                $nodeTypeName,
-                $dimensionSpacePoint,
-                $visibleInDimensionSpacePoints,
-                $nodeIdentifier,
-                $parentNodeIdentifier,
-                $nodeName,
-                PropertyValues::fromArray($propertyValues)
-            );
-        }
-        $this->commitEvent($streamName, $event);
+        echo $nodePath . "\n";
 
-        // publish reference edges
-        foreach ($propertyReferences as $propertyName => $references) {
-            $streamName = $this->contentStreamName('NodeAggregate:' . $nodeIdentifier);
-            $event = new NodeReferencesWereSet(
-                $this->contentStreamIdentifier,
-                $visibleInDimensionSpacePoints,
-                $nodeIdentifier,
-                PropertyName::fromString($propertyName),
-                $references
-            );
-            $this->commitEvent($streamName, $event);
-        }
+        try {
+            $this->recordNodeAggregateIdentifierAndNodeType($nodePath, $originDimensionSpacePoint, $nodeAggregateIdentifier, $nodeTypeName);
 
-        $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = true;
+            $isTethered = false;
+            if ($this->nodeTypeManager->hasNodeType((string)$parentNodeAggregateIdentifierAndNodeType->getNodeTypeName())) {
+                $nodeTypeOfParent = $this->nodeTypeManager->getNodeType((string)$parentNodeAggregateIdentifierAndNodeType->getNodeTypeName());
+                $isTethered = $nodeTypeOfParent->hasAutoCreatedChildNode($nodeName);
+            }
+
+            if ($isTethered) {
+                // we KNOW that tethered nodes already exist; so we just set its properties.
+                if (!empty($propertyValues)) {
+                    $this->nodeCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                        $this->contentStreamIdentifier,
+                        $nodeAggregateIdentifier,
+                        $originDimensionSpacePoint,
+                        PropertyValues::fromArray($propertyValues)
+                    ))->blockUntilProjectionsAreUpToDate();
+                }
+            } else {
+                if (isset($this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier])) {
+                    $dimensionSpacePointOfAlreadyCreatedNode = $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier];
+
+                    $this->nodeAggregateCommandHandler->handleCreateNodeVariant(new CreateNodeVariant(
+                    // a Node of this NodeAggregate already exists; we create a Node variant
+                        $this->contentStreamIdentifier,
+                        $nodeAggregateIdentifier,
+                        $dimensionSpacePointOfAlreadyCreatedNode,
+                        $originDimensionSpacePoint
+                    ))->blockUntilProjectionsAreUpToDate();
+
+                    $this->nodeCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                        $this->contentStreamIdentifier,
+                        $nodeAggregateIdentifier,
+                        $originDimensionSpacePoint,
+                        PropertyValues::fromArray($propertyValues)
+                    ))->blockUntilProjectionsAreUpToDate();
+                } else {
+                    $nodeAggregateIdentifiersByNodePaths = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePath, $nodeTypeName);
+
+                    $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode(new CreateNodeAggregateWithNode(
+                        $this->contentStreamIdentifier,
+                        $nodeAggregateIdentifier,
+                        $nodeTypeName,
+                        $originDimensionSpacePoint,
+                        UserIdentifier::forSystemUser(),
+                        $parentNodeAggregateIdentifierAndNodeType->getNodeAggregateIdentifier(),
+                        null,
+                        $nodeName,
+                        PropertyValues::fromArray($propertyValues),
+                        $nodeAggregateIdentifiersByNodePaths
+                    // TODO: tethered descendant IDs
+                    ))->blockUntilProjectionsAreUpToDate();
+                }
+            }
+
+
+            // publish reference edges
+            foreach ($propertyReferences as $propertyName => $references) {
+                $this->nodeCommandHandler->handleSetNodeReferences(new SetNodeReferences(
+                    $this->contentStreamIdentifier,
+                    $nodeAggregateIdentifier,
+                    $originDimensionSpacePoint,
+                    $references,
+                    PropertyName::fromString($propertyName)
+                ))->blockUntilProjectionsAreUpToDate();
+            }
+
+            $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = $originDimensionSpacePoint;
+        } catch (\Exception $e) {
+            throw new \RuntimeException('There was an error exporting the node ' . $nodeAggregateIdentifier . ' at path ' . $nodePath . ' in Dimension Space Point ' . $originDimensionSpacePoint . '. See nested exception for details', 1554897508, $e);
+        }
     }
 
     protected function contentStreamName($suffix = null): StreamName
@@ -372,19 +408,16 @@ class ContentRepositoryExportService
         return $references;
     }
 
-    private function findParentNodeIdentifier($parentPath, DimensionSpacePoint $dimensionSpacePoint): ?NodeIdentifier
+    private function findParentNodeAggregateIdentifierAndNodeType($parentPath, DimensionSpacePoint $dimensionSpacePoint): ?NodeAggregateIdentifierAndNodeTypeForLegacyImport
     {
         if ($parentPath === '/sites') {
-            return $this->sitesRootNodeIdentifier;
+            return $this->nodeAggregateIdentifierForSitesNode;
         }
 
         while ($dimensionSpacePoint !== null) {
-            if ($dimensionSpacePoint->getCoordinates()['language'] !== 'en_US') {
-                \Neos\Flow\var_dump($dimensionSpacePoint->getCoordinates());
-            }
             $key = $parentPath . '__' . $dimensionSpacePoint->getHash();
-            if (isset($this->nodeIdentifiers[$key])) {
-                return $this->nodeIdentifiers[$key];
+            if (isset($this->nodeAggregateIdentifiers[$key])) {
+                return $this->nodeAggregateIdentifiers[$key];
             }
 
             $dimensionSpacePoint = $this->interDimensionalFallbackGraph->getPrimaryGeneralization($dimensionSpacePoint);
@@ -393,44 +426,64 @@ class ContentRepositoryExportService
         return null;
     }
 
-    private function recordNodeIdentifier(NodePath $nodePath, DimensionSpacePoint $dimensionSpacePoint, NodeIdentifier $nodeIdentifier)
+    private function recordNodeAggregateIdentifierAndNodeType(NodePath $nodePath, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName)
     {
         $key = $nodePath . '__' . $dimensionSpacePoint->getHash();
-        if (isset($this->nodeIdentifiers[$key])) {
+        if (isset($this->nodeAggregateIdentifiers[$key])) {
             throw new \RuntimeException('TODO: node identifier ' . $key . 'already known!!!');
         }
-        $this->nodeIdentifiers[$key] = $nodeIdentifier;
+        $this->nodeAggregateIdentifiers[$key] = new NodeAggregateIdentifierAndNodeTypeForLegacyImport(
+            $nodeAggregateIdentifier,
+            $nodeTypeName
+        );
     }
 
-    private function findOtherExistingDimensionSpacePointsForNodeData(NodeData $nodeData): DimensionSpacePointSet
+
+    /**
+     * @param NodePath $nodePath
+     * @param NodeTypeName $nodeTypeName
+     * @return NodeAggregateIdentifiersByNodePaths
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    private function findNodeAggregateIdentifiersForTetheredDescendantNodes(NodePath $nodePath, NodeTypeName $nodeTypeName): NodeAggregateIdentifiersByNodePaths
     {
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
 
-        $query = $queryBuilder->select('n')
-            ->from(NodeData::class, 'n')
-            ->where('n.workspace = :workspace')
-            ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
-            ->andWhere('n.identifier = :identifier')
-            ->setParameter('workspace', 'live')
-            ->setParameter('removed', false, \PDO::PARAM_BOOL)
-            ->setParameter('identifier', $nodeData->getIdentifier());
+        $nodeAggregateIdentifiersByNodePath = [];
+        foreach ($nodeType->getAutoCreatedChildNodes() as $nodeName => $childNodeType) {
+            /** @var QueryBuilder $queryBuilder */
+            $queryBuilder = $this->entityManager->createQueryBuilder();
+            $nodePathOfTetheredNode = $nodePath->appendPathSegment(NodeName::fromString($nodeName));
 
-        $points = [];
-        foreach ($query->getQuery()->getResult() as $relatedNodeData) {
-            if ($relatedNodeData === $nodeData) {
-                // skip current element
-                continue;
+            $query = $queryBuilder->select('n')
+                ->from(NodeData::class, 'n')
+                ->where('n.workspace = :workspace')
+                ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
+                ->andWhere('n.path = :path')
+                ->setParameter('workspace', 'live')
+                ->setParameter('removed', false, \PDO::PARAM_BOOL)
+                ->setParameter('path', $nodePathOfTetheredNode)
+                ->setMaxResults(1);
+
+            // all tethered nodes have the same Node Identifier; so we can just go for the first one.
+            $tetheredChild = $query->getQuery()->getSingleResult();
+
+            $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($tetheredChild->getIdentifier());
+            $nodeAggregateIdentifiersByNodePath[$nodeName] = $nodeAggregateIdentifier;
+
+            $nestedNodeAggregateIdentifiersByNodePath = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePathOfTetheredNode, NodeTypeName::fromString($childNodeType->getName()));
+            foreach ($nestedNodeAggregateIdentifiersByNodePath->getNodeAggregateIdentifiers() as $nodePathString => $nodeAggregateIdentifier) {
+                $nodeAggregateIdentifiersByNodePath[$nodeName . '/' . $nodePathString] = $nodeAggregateIdentifier;
             }
-
-            /** @var $relatedNodeData NodeData */
-            $points[] = DimensionSpacePoint::fromLegacyDimensionArray($relatedNodeData->getDimensionValues());
         }
 
-        return new DimensionSpacePointSet($points);
+        return NodeAggregateIdentifiersByNodePaths::fromArray($nodeAggregateIdentifiersByNodePath);
     }
 
-    private function createRootWorkspace()
+
+    private function createRootWorkspace(): void
     {
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:live');
         $event = new RootWorkspaceWasCreated(
@@ -443,15 +496,15 @@ class ContentRepositoryExportService
         $this->commitEvent($streamName, $event);
     }
 
-    private function createRootNode()
+    private function createRootNode(): void
     {
         $dimensionSpacePointSet = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
         $event = new RootNodeAggregateWithNodeWasCreated(
             $this->contentStreamIdentifier,
-            $this->sitesRootNodeIdentifier,
-            NodeAggregateIdentifier::create(),
+            $this->nodeAggregateIdentifierForSitesNode->getNodeAggregateIdentifier(),
             NodeTypeName::fromString('Neos.Neos:Sites'),
             $dimensionSpacePointSet,
+            NodeAggregateClassification::root(),
             UserIdentifier::forSystemUser()
         );
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($this->contentStreamIdentifier)->getEventStreamName();
@@ -465,10 +518,8 @@ class ContentRepositoryExportService
         $publishedEvents = DomainEvents::withSingleEvent($event);
         $eventStore->commit($streamName, $publishedEvents);
 
-        $this->commandResult = $this->commandResult->merge(
-            CommandResult::fromPublishedEvents(
-                $publishedEvents
-            )
-        );
+        CommandResult::fromPublishedEvents(
+            $publishedEvents
+        )->blockUntilProjectionsAreUpToDate();
     }
 }

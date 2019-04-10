@@ -37,22 +37,20 @@ Feature: Single Node operations on live workspace
     And the graph projection is fully up to date
 
   Scenario: Set property of a node
-    Given the command "SetNodeProperty" is executed with payload:
-      | Key                       | Value                             |
-      | contentStreamIdentifier   | "cs-identifier"                   |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                |
-      | originDimensionSpacePoint | {}                                |
-      | propertyName              | "text"                            |
-      | value                     | {"value":"Hello","type":"string"} |
+    Given the command "SetNodeProperties" is executed with payload:
+      | Key                       | Value                                       |
+      | contentStreamIdentifier   | "cs-identifier"                             |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                          |
+      | originDimensionSpacePoint | {}                                          |
+      | propertyValues            | {"text": {"value":"Hello","type":"string"}} |
 
     Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 3 is of type "Neos.EventSourcedContentRepository:NodePropertyWasSet" with payload:
+    And event at index 3 is of type "Neos.EventSourcedContentRepository:NodePropertiesWereSet" with payload:
       | Key                       | Expected           |
       | contentStreamIdentifier   | "cs-identifier"    |
       | nodeAggregateIdentifier   | "nody-mc-nodeface" |
       | originDimensionSpacePoint | []                 |
-      | propertyName              | "text"             |
-      | value.value               | "Hello"            |
+      | propertyValues.text.value | "Hello"            |
 
     When the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and Dimension Space Point {}

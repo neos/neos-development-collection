@@ -309,11 +309,11 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^the event NodePropertyWasSet was published with payload:$/
+     * @Given /^the event NodePropertiesWereSet was published with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */
-    public function theEventNodePropertyWasSetWasPublishedWithPayload(TableNode $payloadTable)
+    public function theEventNodePropertiesWereSetWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
@@ -323,7 +323,7 @@ trait EventSourcedTrait
             $nodeAggregateIdentifier
         );
 
-        $this->publishEvent('Neos.EventSourcedContentRepository:NodePropertyWasSet', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodePropertiesWereSet', $streamName->getEventStreamName(), $eventPayload);
     }
 
     /**
@@ -803,11 +803,11 @@ trait EventSourcedTrait
                     NodeAggregateCommandHandler::class,
                     'handleChangeNodeAggregateName'
                 ];
-            case 'SetNodeProperty':
+            case 'SetNodeProperties':
                 return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty::class,
+                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties::class,
                     NodeCommandHandler::class,
-                    'handleSetNodeProperty'
+                    'handleSetNodeProperties'
                 ];
             case 'HideNode':
                 return [

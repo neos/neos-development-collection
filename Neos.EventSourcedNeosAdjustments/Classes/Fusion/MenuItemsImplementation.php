@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Flow\Annotations as Flow;
 
@@ -201,7 +202,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             $children[] = $this->traverseChildren($childNode);
         }
 
-        return new MenuItem($subtree->getNode(), MenuItemState::normal(), $subtree->getNode()->getLabel(), $subtree->getLevel(), $children);
+        $traversableNode = new TraversableNode($subtree->getNode(), $this->getSubgraph());
+        return new MenuItem($traversableNode, MenuItemState::normal(), $subtree->getNode()->getLabel(), $subtree->getLevel(), $children);
     }
 
 

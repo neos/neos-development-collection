@@ -23,6 +23,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -98,7 +99,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 
                 $menuItems[] = [
                     'subgraph' => $subgraph,
-                    'node' => $variant,
+                    'node' => $variant ? new TraversableNode($variant, $subgraph) : null,
                     'state' => $this->calculateItemState($variant),
                     'label' => $this->determineLabel($variant, $metadata),
                     'targetDimensions' => $metadata

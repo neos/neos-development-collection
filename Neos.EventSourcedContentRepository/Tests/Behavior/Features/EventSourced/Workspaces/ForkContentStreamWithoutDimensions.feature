@@ -38,13 +38,12 @@ Feature: ForkContentStream Without Dimensions
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "child"                                  |
       | nodeAggregateClassification   | "regular"                                |
-    And the Event "Neos.EventSourcedContentRepository:NodePropertyWasSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
-      | Key                       | Value                                         |
-      | contentStreamIdentifier   | "cs-identifier"                               |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                            |
-      | originDimensionSpacePoint | {}                                            |
-      | propertyName              | "text"                                        |
-      | value                     | {"value": "original value", "type": "string"} |
+    And the Event "Neos.EventSourcedContentRepository:NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
+      | Key                       | Value                                                   |
+      | contentStreamIdentifier   | "cs-identifier"                                         |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
+      | originDimensionSpacePoint | {}                                                      |
+      | propertyValues            | {"text": {"value": "original value", "type": "string"}} |
 
   Scenario: Ensure that the node is available in the forked content stream
     When the command "ForkContentStream" is executed with payload:
@@ -61,13 +60,12 @@ Feature: ForkContentStream Without Dimensions
       | Key                           | Value                |
       | contentStreamIdentifier       | "user-cs-identifier" |
       | sourceContentStreamIdentifier | "cs-identifier"      |
-    And the Event "Neos.EventSourcedContentRepository:NodePropertyWasSet" was published to stream "Neos.ContentRepository:ContentStream:user-cs-identifier" with payload:
-      | Key                       | Value                                         |
-      | contentStreamIdentifier   | "user-cs-identifier"                          |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                            |
-      | originDimensionSpacePoint | {}                                            |
-      | propertyName              | "text"                                        |
-      | value                     | {"value": "modified value", "type": "string"} |
+    And the Event "Neos.EventSourcedContentRepository:NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:user-cs-identifier" with payload:
+      | Key                       | Value                                                   |
+      | contentStreamIdentifier   | "user-cs-identifier"                                    |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
+      | originDimensionSpacePoint | {}                                                      |
+      | propertyValues            | {"text": {"value": "modified value", "type": "string"}} |
     And the graph projection is fully up to date
 
       # live
@@ -90,13 +88,12 @@ Feature: ForkContentStream Without Dimensions
       | Key                           | Value                |
       | contentStreamIdentifier       | "user-cs-identifier" |
       | sourceContentStreamIdentifier | "cs-identifier"      |
-    And the Event "Neos.EventSourcedContentRepository:NodePropertyWasSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
-      | Key                       | Value                                         |
-      | contentStreamIdentifier   | "cs-identifier"                               |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                            |
-      | originDimensionSpacePoint | {}                                            |
-      | propertyName              | "text"                                        |
-      | value                     | {"value": "modified value", "type": "string"} |
+    And the Event "Neos.EventSourcedContentRepository:NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
+      | Key                       | Value                                                   |
+      | contentStreamIdentifier   | "cs-identifier"                                         |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
+      | originDimensionSpacePoint | {}                                                      |
+      | propertyValues            | {"text": {"value": "modified value", "type": "string"}} |
     And the graph projection is fully up to date
 
     # live

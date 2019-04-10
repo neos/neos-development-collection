@@ -14,6 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingService;
@@ -43,7 +44,7 @@ class NodeUriImplementation extends AbstractFusionObject
      *
      * @return mixed
      */
-    public function getNode()
+    public function getNode(): ?TraversableNodeInterface
     {
         return $this->fusionValue('node');
     }
@@ -135,12 +136,14 @@ class NodeUriImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $node = $this->getNode();
-        $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
         if ($node instanceof NodeInterface) {
+            $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
             $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, $node->getNodeAggregateIdentifier());
         } elseif ($node === '~') {
+            $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
             $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
+            $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
             $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, NodeAggregateIdentifier::fromString(\mb_substr($node, 7)));
         } else {
             return '';

@@ -17,10 +17,11 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
@@ -231,14 +232,17 @@ class Property extends AbstractChange
                 }
             } else {
                 $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
-                $command = new SetNodeProperty(
+                $command = new SetNodeProperties(
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
-                    $propertyName,
-                    new PropertyValue($value, $propertyType)
+                    PropertyValues::fromArray(
+                        [
+                            $propertyName => new PropertyValue($value, $propertyType)
+                        ]
+                    )
                 );
-                $this->nodeCommandHandler->handleSetNodeProperty($command)->blockUntilProjectionsAreUpToDate();
+                $this->nodeCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
             }
 
             $this->updateWorkspaceInfo();
