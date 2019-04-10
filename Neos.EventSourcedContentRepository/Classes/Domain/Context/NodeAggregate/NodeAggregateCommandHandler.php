@@ -123,15 +123,19 @@ final class NodeAggregateCommandHandler
 
         $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
 
-        $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
 
-        $nodeType = $this->requireNodeType($command->getNodeTypeName());
-        $this->requireNodeTypeToBeOfTypeRoot($nodeType);
+        $events = DomainEvents::createEmpty();
+        $this->nodeEventPublisher->withCommand($command, function() use ($command, &$events) {
+            $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
 
-        $events = $nodeAggregate->createRootWithNode(
-            $command,
-            $this->allowedDimensionSubspace
-        );
+            $nodeType = $this->requireNodeType($command->getNodeTypeName());
+            $this->requireNodeTypeToBeOfTypeRoot($nodeType);
+
+            $events = $nodeAggregate->createRootWithNode(
+                $command,
+                $this->allowedDimensionSubspace
+            );
+        });
 
         return CommandResult::fromPublishedEvents($events);
     }
@@ -152,57 +156,60 @@ final class NodeAggregateCommandHandler
     {
         $this->readSideMemoryCacheManager->disableCache();
 
-        $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-        $this->requireDimensionSpacePointToExist($command->getOriginDimensionSpacePoint());
-        $nodeType = $this->requireNodeType($command->getNodeTypeName());
-        $this->requireNodeTypeToNotBeOfTypeRoot($nodeType);
-        $this->requireTetheredDescendantNodeTypesToExist($nodeType);
-        $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($nodeType);
-        $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $nodeType, $command->getNodeName(), [$command->getParentNodeAggregateIdentifier()]);
-        $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-        $parentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
+        $events = DomainEvents::createEmpty();
+        $this->nodeEventPublisher->withCommand($command, function() use ($command, &$events) {
+            $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+            $this->requireDimensionSpacePointToExist($command->getOriginDimensionSpacePoint());
+            $nodeType = $this->requireNodeType($command->getNodeTypeName());
+            $this->requireNodeTypeToNotBeOfTypeRoot($nodeType);
+            $this->requireTetheredDescendantNodeTypesToExist($nodeType);
+            $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($nodeType);
+            $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $nodeType, $command->getNodeName(), [$command->getParentNodeAggregateIdentifier()]);
+            $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+            $parentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
 
-        if ($command->getSucceedingSiblingNodeAggregateIdentifier()) {
-            $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getSucceedingSiblingNodeAggregateIdentifier());
-        }
-        $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getOriginDimensionSpacePoint());
+            if ($command->getSucceedingSiblingNodeAggregateIdentifier()) {
+                $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getSucceedingSiblingNodeAggregateIdentifier());
+            }
+            $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getOriginDimensionSpacePoint());
 
-        $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($command->getOriginDimensionSpacePoint());
-        $visibleDimensionSpacePoints = $specializations->getIntersection($parentNodeAggregate->getCoveredDimensionSpacePoints());
+            $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($command->getOriginDimensionSpacePoint());
+            $visibleDimensionSpacePoints = $specializations->getIntersection($parentNodeAggregate->getCoveredDimensionSpacePoints());
 
-        if ($command->getNodeName()) {
-            $this->requireNodeNameToBeUnoccupied(
-                $command->getContentStreamIdentifier(),
-                $command->getNodeName(),
-                $command->getParentNodeAggregateIdentifier(),
-                $command->getOriginDimensionSpacePoint(),
-                $visibleDimensionSpacePoints
+            if ($command->getNodeName()) {
+                $this->requireNodeNameToBeUnoccupied(
+                    $command->getContentStreamIdentifier(),
+                    $command->getNodeName(),
+                    $command->getParentNodeAggregateIdentifier(),
+                    $command->getOriginDimensionSpacePoint(),
+                    $visibleDimensionSpacePoints
+                );
+            }
+
+            $descendantNodeAggregateIdentifiers = $this->populateNodeAggregateIdentifiers($nodeType, $command->getTetheredDescendantNodeAggregateIdentifiers());
+
+            foreach ($descendantNodeAggregateIdentifiers as $rawNodePath => $descendantNodeAggregateIdentifier) {
+                $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $descendantNodeAggregateIdentifier);
+            }
+
+            $defaultPropertyValues = $this->getDefaultPropertyValues($nodeType);
+            $initialPropertyValues = $defaultPropertyValues->merge($command->getInitialPropertyValues());
+
+            $events = $nodeAggregate->createRegularWithNode(
+                $command,
+                $visibleDimensionSpacePoints,
+                $initialPropertyValues
             );
-        }
 
-        $descendantNodeAggregateIdentifiers = $this->populateNodeAggregateIdentifiers($nodeType, $command->getTetheredDescendantNodeAggregateIdentifiers());
-
-        foreach ($descendantNodeAggregateIdentifiers as $rawNodePath => $descendantNodeAggregateIdentifier) {
-            $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $descendantNodeAggregateIdentifier);
-        }
-
-        $defaultPropertyValues = $this->getDefaultPropertyValues($nodeType);
-        $initialPropertyValues = $defaultPropertyValues->merge($command->getInitialPropertyValues());
-
-        $events = $nodeAggregate->createRegularWithNode(
-            $command,
-            $visibleDimensionSpacePoints,
-            $initialPropertyValues
-        );
-
-        $events = $this->handleTetheredChildNodes(
-            $command,
-            $nodeType,
-            $visibleDimensionSpacePoints,
-            $command->getNodeAggregateIdentifier(),
-            $descendantNodeAggregateIdentifiers,
-            $events
-        );
+            $events = $this->handleTetheredChildNodes(
+                $command,
+                $nodeType,
+                $visibleDimensionSpacePoints,
+                $command->getNodeAggregateIdentifier(),
+                $descendantNodeAggregateIdentifiers,
+                $events
+            );
+        });
 
         return CommandResult::fromPublishedEvents($events);
     }
@@ -233,7 +240,7 @@ final class NodeAggregateCommandHandler
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawNodeName => $childNodeType) {
             $nodeName = NodeName::fromString($rawNodeName);
             $childNodePath = $nodePath ? $nodePath->appendPathSegment($nodeName) : NodePath::fromString((string) $nodeName);
-            $childNodeAggregateIdentifier = $nodeAggregateIdentifiers->getNodeAggregateIdentifier($childNodePath);
+            $childNodeAggregateIdentifier = $nodeAggregateIdentifiers->getNodeAggregateIdentifier($childNodePath) ?? NodeAggregateIdentifier::create();
             $initialPropertyValues = $this->getDefaultPropertyValues($childNodeType);
 
             $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $childNodeAggregateIdentifier);
@@ -551,7 +558,7 @@ final class NodeAggregateCommandHandler
                 try {
                     $grandParentsNodeType = $this->requireNodeType($grandParentNodeAggregate->getNodeTypeName());
                     if ($grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->getNodeName())
-                        && !$grandParentsNodeType->allowsGrandchildNodeType($parentAggregate->getNodeName(), $nodeType)) {
+                        && !$grandParentsNodeType->allowsGrandchildNodeType((string)$parentAggregate->getNodeName(), $nodeType)) {
                         throw new NodeConstraintException('Node type "' . $nodeType . '" is not allowed below tethered child nodes "' . $parentAggregate->getNodeName()
                             . '" of nodes of type "' . $grandParentNodeAggregate->getNodeTypeName() . '"', 1520011791);
                     }
