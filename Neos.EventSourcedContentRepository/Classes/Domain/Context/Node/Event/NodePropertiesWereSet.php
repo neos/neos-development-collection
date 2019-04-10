@@ -16,7 +16,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -25,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodePropertyWasSet implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodePropertiesWereSet implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -44,36 +44,28 @@ final class NodePropertyWasSet implements DomainEventInterface, CopyableAcrossCo
     private $originDimensionSpacePoint;
 
     /**
-     * @var string
+     * @var PropertyValues
      */
-    private $propertyName;
+    private $propertyValues;
 
     /**
-     * @var PropertyValue
-     */
-    private $value;
-
-    /**
-     * NodePropertyWasSet constructor.
-     *
+     * NodePropertiesWereSet constructor.
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param string $propertyName
-     * @param PropertyValue $value
+     * @param PropertyValues $propertyValues
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $originDimensionSpacePoint,
-        $propertyName,
-        PropertyValue $value
-    ) {
+        PropertyValues $propertyValues
+    )
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->propertyName = $propertyName;
-        $this->value = $value;
+        $this->propertyValues = $propertyValues;
     }
 
     /**
@@ -101,33 +93,24 @@ final class NodePropertyWasSet implements DomainEventInterface, CopyableAcrossCo
     }
 
     /**
-     * @return string
+     * @return PropertyValues
      */
-    public function getPropertyName(): string
+    public function getPropertyValues(): PropertyValues
     {
-        return $this->propertyName;
-    }
-
-    /**
-     * @return PropertyValue
-     */
-    public function getValue(): PropertyValue
-    {
-        return $this->value;
+        return $this->propertyValues;
     }
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
-     * @return NodePropertyWasSet
+     * @return NodePropertiesWereSet
      */
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodePropertyWasSet(
+        return new NodePropertiesWereSet(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,
-            $this->propertyName,
-            $this->value
+            $this->propertyValues
         );
     }
 }

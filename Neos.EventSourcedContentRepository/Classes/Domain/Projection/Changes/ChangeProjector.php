@@ -16,7 +16,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
@@ -56,7 +56,7 @@ class ChangeProjector implements ProjectorInterface
         });
     }
 
-    public function whenNodePropertyWasSet(NodePropertyWasSet $event)
+    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event)
     {
         $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint());
     }

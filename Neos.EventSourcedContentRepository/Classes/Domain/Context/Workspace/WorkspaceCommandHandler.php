@@ -24,7 +24,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
@@ -445,8 +445,8 @@ final class WorkspaceCommandHandler
             case MoveNode::class:
                 return $this->nodeCommandHandler->handleMoveNode($command);
                 break;
-            case SetNodeProperty::class:
-                return $this->nodeCommandHandler->handleSetNodeProperty($command);
+            case SetNodeProperties::class:
+                return $this->nodeCommandHandler->handleSetNodeProperties($command);
                 break;
             case HideNode::class:
                 return $this->nodeCommandHandler->handleHideNode($command);

@@ -15,43 +15,34 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeExistsException;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Exception;
-use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Exception\NodeNotFoundException;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
@@ -89,7 +80,7 @@ final class NodeCommandHandler
 
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface
+     * @var ContentGraphInterface
      */
     protected $contentGraph;
 
@@ -106,131 +97,10 @@ final class NodeCommandHandler
     protected $readSideMemoryCacheManager;
 
     /**
-     * Create events for adding a node aggregate with node, including all auto-created child node aggregates with nodes (recursively)
-     *
-     * @param CreateNodeAggregateWithNode $command
-     * @param bool $checkParent
-     * @return DomainEvents
-     * @throws Exception
-     * @throws NodeNotFoundException
-     * @throws DimensionSpacePointNotFound
-     */
-    /*
-    private function nodeAggregateWithNodeWasCreatedFromCommand(CreateNodeAggregateWithNode $command, bool $checkParent = true): array
-    private function nodeAggregateWithNodeWasCreatedFromCommand(CreateNodeAggregateWithNode $command, bool $checkParent = true): DomainEvents
-    {
-        $nodeType = $this->getNodeType($command->getNodeTypeName());
-
-        $propertyDefaultValuesAndTypes = [];
-        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-            $propertyDefaultValuesAndTypes[$propertyName] = new PropertyValue(
-                $propertyValue,
-                $nodeType->getPropertyType($propertyName)
-            );
-        }
-        $defaultPropertyValues = new PropertyValues($propertyDefaultValuesAndTypes);
-        $initialPropertyValues = $defaultPropertyValues->merge($command->getInitialPropertyValues());
-
-        $events = DomainEvents::createEmpty();
-
-        $dimensionSpacePoint = $command->getOriginDimensionSpacePoint();
-        $contentStreamIdentifier = $command->getContentStreamIdentifier();
-        $parentNodeIdentifier = $command->getParentNodeAggregateIdentifier();
-        $nodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
-
-        if ($checkParent) {
-            $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier,
-                $dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
-            if ($contentSubgraph === null) {
-                throw new Exception(sprintf('Content subgraph not found for content stream %s, %s',
-                    $contentStreamIdentifier, $dimensionSpacePoint), 1506440320);
-            }
-            $parentNode = $contentSubgraph->findNodeByIdentifier($parentNodeIdentifier);
-            if ($parentNode === null) {
-                throw new NodeNotFoundException(sprintf('Parent node %s not found for content stream %s, %s',
-                    $parentNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint),
-                    1506440451);
-            }
-        }
-
-        $visibleInDimensionSpacePoints = $this->getVisibleInDimensionSpacePoints($dimensionSpacePoint);
-
-        $events = $events->appendEvent(EventWithIdentifier::create(
-            new NodeAggregateWithNodeWasCreated(
-                $contentStreamIdentifier,
-                $nodeAggregateIdentifier,
-                $command->getNodeTypeName(),
-                $dimensionSpacePoint,
-                $visibleInDimensionSpacePoints,
-                $command->getNodeIdentifier(),
-                $parentNodeIdentifier,
-                $command->getNodeName(),
-                PropertyValues::fromArray($propertyDefaultValuesAndTypes)
-            )
-        ));
-
-        foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
-            $childNodeName = NodeName::fromString($childNodeNameStr);
-            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName, $nodeAggregateIdentifier);
-            $childNodeIdentifier = NodeIdentifier::create();
-            $childParentNodeIdentifier = $command->getNodeIdentifier();
-
-            $events = $events->appendEvents($this->nodeAggregateWithNodeWasCreatedFromCommand(new CreateNodeAggregateWithNode(
-                $contentStreamIdentifier,
-                $childNodeAggregateIdentifier,
-                NodeTypeName::fromString($childNodeType->getName()),
-                $dimensionSpacePoint,
-                $childNodeIdentifier,
-                $childParentNodeIdentifier,
-                $childNodeName
-            ), false)
-            );
-        }
-
-        return $events;
-    }*/
-
-    /**
-     * CreateRootNode
-     *
-     * @param CreateRootNode $command
+     * @param SetNodeProperties $command
      * @return CommandResult
      */
-    public function handleCreateRootNode(CreateRootNode $command): CommandResult
-    {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        $events = null;
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-
-            $dimensionSpacePointSet = $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
-
-            $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
-                    new RootNodeWasCreated(
-                        $contentStreamIdentifier,
-                        $command->getNodeIdentifier(),
-                        RootNodeIdentifiers::rootNodeAggregateIdentifier(),
-                        $command->getNodeTypeName(),
-                        $dimensionSpacePointSet,
-                        $command->getInitiatingUserIdentifier()
-                    )
-                )
-            );
-            $this->nodeEventPublisher->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
-                $events
-            );
-        });
-        return CommandResult::fromPublishedEvents($events);
-    }
-
-    /**
-     * @param SetNodeProperty $command
-     * @return CommandResult
-     */
-    public function handleSetNodeProperty(SetNodeProperty $command): CommandResult
+    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 
@@ -244,12 +114,11 @@ final class NodeCommandHandler
 
             $events = DomainEvents::withSingleEvent(
                 EventWithIdentifier::create(
-                    new NodePropertyWasSet(
+                    new NodePropertiesWereSet(
                         $contentStreamIdentifier,
                         $command->getNodeAggregateIdentifier(),
                         $command->getOriginDimensionSpacePoint(),
-                        $command->getPropertyName(),
-                        $command->getValue()
+                        $command->getPropertyValues()
                     )
                 )
             );
@@ -587,38 +456,6 @@ final class NodeCommandHandler
         return CommandResult::fromPublishedEvents($events);
     }
 
-    /**
-     * @param NodeTypeName $nodeTypeName
-     * @return NodeType
-     * @throws NodeTypeNotFoundException
-     */
-    private function getNodeType(NodeTypeName $nodeTypeName): NodeType
-    {
-        $this->validateNodeTypeName($nodeTypeName);
-
-        return $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
-    }
-
-    /**
-     * @param NodeTypeName $nodeTypeName
-     */
-    private function validateNodeTypeName(NodeTypeName $nodeTypeName): void
-    {
-        if (!$this->nodeTypeManager->hasNodeType((string)$nodeTypeName)) {
-            throw new \InvalidArgumentException('TODO: Node type ' . $nodeTypeName . ' not found.');
-        }
-    }
-
-    /**
-     * @param $dimensionSpacePoint
-     * @return DimensionSpacePointSet
-     * @throws DimensionSpacePointNotFound
-     */
-    private function getVisibleInDimensionSpacePoints($dimensionSpacePoint): DimensionSpacePointSet
-    {
-        return $this->interDimensionalVariationGraph->getSpecializationSet($dimensionSpacePoint);
-    }
-
     private function assertNodeWithOriginDimensionSpacePointExists(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint): NodeInterface
     {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $originDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
@@ -635,30 +472,4 @@ final class NodeCommandHandler
         return $node;
     }
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return DimensionSpacePointSet
-     * @todo take parent node's visibility into account
-     *
-     * A node in an aggregate should be visible in all points that fulfill all of the following criteria
-     * - any node of the parent node aggregate is visible there
-     * - they are specializations of the node's original point
-     * - they are not occupied by specializations of the node
-     * @throws NodeAggregatesTypeIsAmbiguous
-     */
-    private function calculateVisibilityForNewNodeInNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint
-    ): DimensionSpacePointSet {
-        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
-
-        return $this->interDimensionalVariationGraph->getSpecializationSet(
-            $dimensionSpacePoint,
-            true,
-            $nodeAggregate->getOccupiedDimensionSpacePoints()
-        );
-    }
 }

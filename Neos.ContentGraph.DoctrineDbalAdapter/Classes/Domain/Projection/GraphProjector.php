@@ -20,7 +20,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWa
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
@@ -493,14 +493,16 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     }
 
     /**
-     * @param NodePropertyWasSet $event
+     * @param NodePropertiesWereSet $event
      * @throws \Throwable
      */
-    public function whenNodePropertyWasSet(NodePropertyWasSet $event)
+    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event)
     {
         $this->transactional(function () use ($event) {
             $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
-                $node->properties[$event->getPropertyName()] = $event->getValue()->getValue();
+                foreach ($event->getPropertyValues() as $propertyName => $propertyValue) {
+                    $node->properties[$propertyName] = $propertyValue->getValue();
+                }
             });
         });
     }

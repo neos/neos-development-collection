@@ -838,7 +838,7 @@ trait EventSourcedTrait
                 ];
             case 'SetNodeProperty':
                 return [
-                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty::class,
+                    \Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties::class,
                     NodeCommandHandler::class,
                     'handleSetNodeProperty'
                 ];
