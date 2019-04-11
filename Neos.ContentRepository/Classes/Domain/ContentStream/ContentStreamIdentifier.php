@@ -58,4 +58,9 @@ final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInte
     {
         return $this->value;
     }
+
+    public function equals(ContentStreamIdentifier $other): bool
+    {
+        return $this->value === $other->value;
+    }
 }

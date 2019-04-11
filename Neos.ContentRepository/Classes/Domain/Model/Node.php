@@ -2258,4 +2258,14 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     {
         return 'Node ' . $this->getContextPath() . '[' . $this->getNodeType()->getName() . ']';
     }
+
+    public function equals(TraversableNodeInterface $other): bool
+    {
+        if ($other instanceof NodeInterface) {
+            return $this->getContextPath() === $other->getContextPath();
+        }
+
+        // if $other is not a Legacy NodeInterface, they are always different.
+        return false;
+    }
 }
