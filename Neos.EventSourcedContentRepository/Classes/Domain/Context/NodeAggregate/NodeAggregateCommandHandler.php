@@ -122,7 +122,6 @@ final class NodeAggregateCommandHandler
     /**
      * @param CreateRootNodeAggregateWithNode $command
      * @return CommandResult
-     * @throws ContentStream\ContentStreamDoesNotExistYet
      * @throws NodeAggregatesTypeIsAmbiguous
      */
     public function handleCreateRootNodeAggregateWithNode(CreateRootNodeAggregateWithNode $command): CommandResult
@@ -151,14 +150,6 @@ final class NodeAggregateCommandHandler
     /**
      * @param CreateNodeAggregateWithNode $command
      * @return CommandResult
-     * @throws ContentStream\ContentStreamDoesNotExistYet If the given content stream does not exist yet
-     * @throws DimensionSpacePointNotFound If the given dimension space point is not in the allowed dimension space
-     * @throws NodeConstraintException If a node aggregate of that type is not allowed to be created as a descendant of its parents
-     * @throws NodeNameIsAlreadyOccupied If the given node name is already taken in any of the dimension space points the node will be visible in
-     * @throws NodeTypeNotFoundException If the given type does not exist
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     * @throws NodeAggregatesTypeIsAmbiguous
      */
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
     {
@@ -893,7 +884,7 @@ final class NodeAggregateCommandHandler
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws DimensionSpacePointNotFound
-     * @throws NodeNameIsAlreadyCovered
+     * @throws NodeAggregateIsDescendant
      */
     public function handleMoveNode(MoveNode $command): CommandResult
     {
@@ -939,6 +930,8 @@ final class NodeAggregateCommandHandler
                 );
 
                 $newParentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNewParentNodeAggregateIdentifier());
+
+                $this->requireNodeAggregateToNotBeDescendant($command->getContentStreamIdentifier(), $newParentNodeAggregate, $nodeAggregate);
             }
 
             $newSucceedingSiblingNodeAggregate = null;
@@ -968,6 +961,25 @@ final class NodeAggregateCommandHandler
         });
 
         return CommandResult::fromPublishedEvents($events);
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @param ReadableNodeAggregateInterface $referenceNodeAggregate
+     * @throws NodeAggregateIsDescendant
+     */
+    protected function requireNodeAggregateToNotBeDescendant(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ReadableNodeAggregateInterface $nodeAggregate,
+        ReadableNodeAggregateInterface $referenceNodeAggregate
+    ) {
+        if ($nodeAggregate->getIdentifier()->equals($referenceNodeAggregate->getIdentifier())) {
+            throw new NodeAggregateIsDescendant('Node aggregate "' . $nodeAggregate->getIdentifier() . '" is descendant of node aggregate "' . $referenceNodeAggregate->getIdentifier() . '"', 1554971124);
+        }
+        foreach ($this->contentGraph->findChildNodeAggregates($contentStreamIdentifier, $referenceNodeAggregate->getIdentifier()) as $childReferenceNodeAggregate) {
+            $this->requireNodeAggregateToNotBeDescendant($contentStreamIdentifier, $nodeAggregate, $childReferenceNodeAggregate);
+        }
     }
 
     protected function getNodeMoveMappings(
