@@ -46,9 +46,6 @@ final class NodeMoveMapping
         ?DimensionSpacePointSet $relationDimensionSpacePoints
     ) {
         if (is_null($newParentNodeOrigin)) {
-            if (is_null($newSucceedingSiblingOrigin)) {
-                throw new NodeMoveMappingIsInvalid('Node move mapping has neither new parent nor new succeeding sibling origin given.', 1554905753);
-            }
             if (!is_null($relationDimensionSpacePoints)) {
                 throw new NodeMoveMappingIsInvalid('Node move mapping has no new parent origin but relation dimension space points given.', 1554905915);
             }

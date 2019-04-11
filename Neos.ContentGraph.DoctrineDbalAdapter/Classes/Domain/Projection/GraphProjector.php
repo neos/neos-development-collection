@@ -1052,6 +1052,15 @@ insert into neos_contentgraph_restrictionedge
         );
     }
 
+    /**
+     * @param HierarchyRelation $sourceHierarchyRelation
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param NodeRelationAnchorPoint|null $newParent
+     * @param NodeRelationAnchorPoint|null $newChild
+     * @return HierarchyRelation
+     * @throws \Doctrine\DBAL\DBALException
+     */
     protected function copyHierarchyRelationToDimensionSpacePoint(
         HierarchyRelation $sourceHierarchyRelation,
         ContentStreamIdentifier $contentStreamIdentifier,

@@ -255,21 +255,34 @@ class ProjectionContentGraph
                 $position = ($succeedingSiblingPosition + $precedingSiblingPosition) / 2;
             }
         } else {
-            $rightmostSucceedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
-                'SELECT MAX(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanchor') . ' = :parentOrChildAnchorPoint
-                          AND h.contentstreamidentifier = :contentStreamIdentifier
-                          AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                          ORDER BY h.`position` DESC',
+            if (!$parentAnchorPoint) {
+                $childHierarchyRelationData = $this->getDatabaseConnection()->executeQuery(
+                    'SELECT h.parentnodeanchor FROM neos_contentgraph_hierarchyrelation h
+                      WHERE h.childnodeanchor = :childAnchorPoint
+                      AND h.contentstreamidentifier = :contentStreamIdentifier
+                      AND h.dimensionspacepointhash = :dimensionSpacePointHash',
+                    [
+                        'childAnchorPoint' => $childAnchorPoint,
+                        'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                        'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
+                    ]
+                )->fetch();
+                $parentAnchorPoint = NodeRelationAnchorPoint::fromString($childHierarchyRelationData['parentnodeanchor']);
+            }
+            $rightmostSucceedingSiblingRelationData = $this->getDatabaseConnection()->executeQuery(
+                'SELECT MAX(h.position) AS position FROM neos_contentgraph_hierarchyrelation h
+                      WHERE h.parentnodeanchor = :parentAnchorPoint
+                      AND h.contentstreamidentifier = :contentStreamIdentifier
+                      AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'parentOrChildAnchorPoint' => $parentAnchorPoint ?: $childAnchorPoint,
+                    'parentAnchorPoint' => $parentAnchorPoint,
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
                 ]
             )->fetch();
 
-            if ($rightmostSucceedingSiblingRelation) {
-                $position = ((int)$rightmostSucceedingSiblingRelation['position']) + GraphProjector::RELATION_DEFAULT_OFFSET;
+            if ($rightmostSucceedingSiblingRelationData) {
+                $position = ((int)$rightmostSucceedingSiblingRelationData['position']) + GraphProjector::RELATION_DEFAULT_OFFSET;
             } else {
                 $position = 0;
             }
