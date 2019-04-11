@@ -156,6 +156,9 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             $matchingSubgraph = $this->fetchSubgraphForParameters($requestPath);
             $sitesNodeAggregate = $this->contentGraph->findRootNodeAggregateByType($matchingSubgraph->getContentStreamIdentifier(), NodeTypeName::fromString('Neos.Neos:Sites'));
             $matchingRootNode = $matchingSubgraph->findNodeByNodeAggregateIdentifier($sitesNodeAggregate->getIdentifier());
+            if (!$matchingRootNode) {
+                return;
+            }
 
             $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
             $tagArray[] = (string)$matchingSite->getNodeAggregateIdentifier();
