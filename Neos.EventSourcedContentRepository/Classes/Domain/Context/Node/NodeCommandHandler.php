@@ -34,7 +34,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;

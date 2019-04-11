@@ -69,7 +69,7 @@ final class NodeMoveMapping
             new DimensionSpacePoint($array['movedNodeOrigin']),
             isset($array['newParentNodeOrigin']) ? new DimensionSpacePoint($array['newParentNodeOrigin']) : null,
             isset($array['newSucceedingSiblingOrigin']) ? new DimensionSpacePoint($array['newSucceedingSiblingOrigin']) : null,
-            isset($array['coveredDimensionSpacePointSet']) ? new DimensionSpacePointSet($array['coveredDimensionSpacePointSet']) : null
+            isset($array['relationDimensionSpacePoints']) ? new DimensionSpacePointSet($array['relationDimensionSpacePoints']) : null
         );
     }
 

@@ -34,6 +34,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensions
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategyIsInvalid;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
@@ -673,6 +674,9 @@ trait EventSourcedTrait
     public function theCommandMoveNodeIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['relationDistributionStrategy'])) {
+            $commandArguments['relationDistributionStrategy'] = RelationDistributionStrategy::STRATEGY_GATHER_ALL;
+        }
         $command = MoveNode::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()

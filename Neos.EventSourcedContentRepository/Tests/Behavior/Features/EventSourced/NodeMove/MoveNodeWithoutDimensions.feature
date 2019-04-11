@@ -1,0 +1,132 @@
+@fixtures
+Feature: Move node to a new parent / within the current parent before a sibling / to the end of the sibling list
+
+  As a user of the CR I want to move a node to a new parent / within the current parent before a sibling / to the end of the sibling list,
+  without affecting other nodes in the node aggregate.
+
+  These are the test cases for moving nodes without content dimensions being involved
+
+  Background:
+    Given I have no content dimensions
+    And I have the following NodeTypes configuration:
+    """
+    'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository.Testing:Document': []
+    """
+    And the event RootWorkspaceWasCreated was published with payload:
+      | Key                            | Value                                  |
+      | workspaceName                  | "live"                                 |
+      | workspaceTitle                 | "Live"                                 |
+      | workspaceDescription           | "The live workspace"                   |
+      | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
+      | currentContentStreamIdentifier | "cs-identifier"                        |
+    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                  |
+      | contentStreamIdentifier       | "cs-identifier"                        |
+      | nodeAggregateIdentifier       | "lady-eleonode-rootford"               |
+      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
+      | visibleInDimensionSpacePoints | [{}]                                   |
+      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification   | "root"                                 |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                     |
+      | contentStreamIdentifier       | "cs-identifier"                           |
+      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint     | {}                                        |
+      | visibleInDimensionSpacePoints | [{}]                                      |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | nodeName                      | "document"                                |
+      | nodeAggregateClassification   | "regular"                                 |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                     |
+      | contentStreamIdentifier       | "cs-identifier"                           |
+      | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint     | {}                                        |
+      | visibleInDimensionSpacePoints | [{}]                                      |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
+      | nodeName                      | "child-document"                          |
+      | nodeAggregateClassification   | "regular"                                 |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                     |
+      | contentStreamIdentifier       | "cs-identifier"                           |
+      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"              |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint     | {}                                        |
+      | visibleInDimensionSpacePoints | [{}]                                      |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | nodeName                      | "esquire"                                 |
+      | nodeAggregateClassification   | "regular"                                 |
+    And the graph projection is fully up to date
+
+  Scenario: Move a node to a new parent without succeeding sibling
+    When the command MoveNode is executed with payload:
+      | Key                              | Value                        |
+      | contentStreamIdentifier          | "cs-identifier"              |
+      | nodeAggregateIdentifier          | "sir-david-nodenborough"     |
+      | dimensionSpacePoint              | {}                           |
+      | newParentNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
+
+    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
+    # The first event is NodeAggregateWithNodeWasCreated
+    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
+      | Key                                  | Expected                                                                                                                   |
+      | contentStreamIdentifier              | "cs-identifier"                                                                                                            |
+      | nodeAggregateIdentifier              | "sir-david-nodenborough"                                                                                                   |
+      | newParentNodeAggregateIdentifier     | "sir-nodeward-nodington-iii"                                                                                               |
+      | newSucceedingNodeAggregateIdentifier | null                                                                                                                       |
+      | nodeMoveMappings                     | [{"movedNodeOrigin":[], "newParentNodeOrigin":[], "newSucceedingSiblingOrigin":null, "relationDimensionSpacePoints":[[]]}] |
+
+    When the graph projection is fully up to date
+    Then I expect the graph projection to consist of exactly 4 nodes
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-nodeward-nodington-iii", "originDimensionSpacePoint": {}} to exist in the content graph
+
+    # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and path "esquire" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-nodeward-nodington-iii", "originDimensionSpacePoint": {}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "sir-david-nodenborough" and path "esquire/document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-nodeward-nodington-iii", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "nody-mc-nodeface" and path "esquire/document/child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {}}
+
+  Scenario: Move a node to a node with a succeeding sibling
+    When the command MoveNode is executed with payload:
+      | Key                                         | Value                        |
+      | contentStreamIdentifier                     | "cs-identifier"              |
+      | nodeAggregateIdentifier                     | "nody-mc-nodeface"           |
+      | dimensionSpacePoint                         | {}                           |
+      | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"     |
+      | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
+    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
+    # The first event is NodeAggregateWithNodeWasCreated
+    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
+      | Key                                         | Expected                                                                                                                 |
+      | contentStreamIdentifier                     | "cs-identifier"                                                                                                          |
+      | nodeAggregateIdentifier                     | "nody-mc-nodeface"                                                                                                       |
+      | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"                                                                                                 |
+      | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii"                                                                                             |
+      | nodeMoveMappings                            | [{"movedNodeOrigin":[], "newParentNodeOrigin":[], "newSucceedingSiblingOrigin":[], "relationDimensionSpacePoints":[[]]}] |
+
+    When the graph projection is fully up to date
+    Then I expect the graph projection to consist of exactly 4 nodes
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {}} to exist in the content graph
+    And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-nodeward-nodington-iii", "originDimensionSpacePoint": {}} to exist in the content graph
+
+    # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
+
+    When I am in content stream "cs-identifier" and Dimension Space Point {}
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and path "esquire" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-nodeward-nodington-iii", "originDimensionSpacePoint": {}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    And I expect node aggregate identifier "nody-mc-nodeface" and path "child-document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {}}
+    And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+

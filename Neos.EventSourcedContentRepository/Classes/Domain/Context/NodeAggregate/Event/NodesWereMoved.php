@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -28,17 +28,31 @@ final class NodesWereMoved implements DomainEventInterface, CopyableAcrossConten
     private $nodeAggregateIdentifier;
 
     /**
-     * @var NodeMoveMappings
+     * @var NodeAggregateIdentifier|null
+     */
+    private $newParentNodeAggregateIdentifier;
+
+    /**
+     * @var NodeAggregateIdentifier|null
+     */
+    private $newSucceedingSiblingNodeAggregateIdentifier;
+
+    /**
+     * @var NodeMoveMappings|null
      */
     private $nodeMoveMappings;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeMoveMappings $nodeMoveMappings
+        ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier,
+        ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier,
+        ?NodeMoveMappings $nodeMoveMappings
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->newParentNodeAggregateIdentifier = $newParentNodeAggregateIdentifier;
+        $this->newSucceedingSiblingNodeAggregateIdentifier = $newSucceedingSiblingNodeAggregateIdentifier;
         $this->nodeMoveMappings = $nodeMoveMappings;
     }
 
@@ -52,7 +66,17 @@ final class NodesWereMoved implements DomainEventInterface, CopyableAcrossConten
         return $this->nodeAggregateIdentifier;
     }
 
-    public function getNodeMoveMappings(): NodeMoveMappings
+    public function getNewParentNodeAggregateIdentifier(): ?NodeAggregateIdentifier
+    {
+        return $this->newParentNodeAggregateIdentifier;
+    }
+
+    public function getNewSucceedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
+    {
+        return $this->newSucceedingSiblingNodeAggregateIdentifier;
+    }
+
+    public function getNodeMoveMappings(): ?NodeMoveMappings
     {
         return $this->nodeMoveMappings;
     }
@@ -62,6 +86,8 @@ final class NodesWereMoved implements DomainEventInterface, CopyableAcrossConten
         return new NodesWereMoved(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
+            $this->newParentNodeAggregateIdentifier,
+            $this->newSucceedingSiblingNodeAggregateIdentifier,
             $this->nodeMoveMappings
         );
     }

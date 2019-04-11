@@ -13,6 +13,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
@@ -42,7 +43,7 @@ class ProjectionContentGraph
 
     /**
      * @return bool
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function isEmpty(): bool
     {
@@ -59,7 +60,7 @@ class ProjectionContentGraph
      * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
      * @return NodeRecord|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      * @throws \Exception
      */
     public function findParentNode(
@@ -94,7 +95,7 @@ class ProjectionContentGraph
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return NodeRecord|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      * @throws \Exception
      */
     public function getNodeInAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $dimensionSpacePoint): ?NodeRecord
@@ -116,11 +117,40 @@ class ProjectionContentGraph
     }
 
     /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param DimensionSpacePoint $originDimensionSpacePoint
+     * @return NodeRecord|null
+     * @throws \Exception
+     */
+    public function findNodeByIdentifiers(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint
+    ): ?NodeRecord {
+        $nodeRow = $this->getDatabaseConnection()->executeQuery(
+            'SELECT n.*, h.name FROM neos_contentgraph_node n
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+ AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
+ AND h.contentstreamidentifier = :contentStreamIdentifier
+ AND h.dimensionspacepointhash = :originDimensionSpacePointHash',
+            [
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash()
+            ]
+        )->fetch();
+
+        return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
+    }
+
+    /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @return NodeRelationAnchorPoint|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, ContentStreamIdentifier $contentStreamIdentifier): ?NodeRelationAnchorPoint
     {
@@ -152,7 +182,7 @@ class ProjectionContentGraph
     /**
      * @param NodeRelationAnchorPoint $nodeRelationAnchorPoint
      * @return NodeRecord|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getNodeByAnchorPoint(NodeRelationAnchorPoint $nodeRelationAnchorPoint): ?NodeRecord
     {
@@ -174,7 +204,7 @@ class ProjectionContentGraph
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return int
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function determineHierarchyRelationPosition(
         ?NodeRelationAnchorPoint $parentAnchorPoint,
@@ -248,7 +278,7 @@ class ProjectionContentGraph
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return HierarchyRelation[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getOutboundHierarchyRelationsForNodeAndSubgraph(
         NodeRelationAnchorPoint $parentAnchorPoint,
@@ -278,7 +308,7 @@ class ProjectionContentGraph
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return HierarchyRelation[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getInboundHierarchyRelationsForNodeAndSubgraph(
         NodeRelationAnchorPoint $childAnchorPoint,
@@ -308,7 +338,7 @@ class ProjectionContentGraph
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePointSet|null $restrictToSet
      * @return HierarchyRelation[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function findInboundHierarchyRelationsForNode(NodeRelationAnchorPoint $childAnchorPoint, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePointSet $restrictToSet = null): array
     {
@@ -340,7 +370,7 @@ class ProjectionContentGraph
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePointSet|null $restrictToSet
      * @return HierarchyRelation[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function findOutboundHierarchyRelationsForNode(NodeRelationAnchorPoint $parentAnchorPoint, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePointSet $restrictToSet = null): array
     {
@@ -372,7 +402,7 @@ class ProjectionContentGraph
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointSet
      * @return array|HierarchyRelation[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function findOutboundHierarchyRelationsForNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -406,7 +436,7 @@ class ProjectionContentGraph
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePointSet|null $dimensionSpacePointSet
      * @return array|HierarchyRelation[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function findInboundHierarchyRelationsForNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -443,7 +473,7 @@ class ProjectionContentGraph
      * @param string $parentNodesIdentifierInGraph
      * @param array $subgraphIdentityHashs
      * @return array|HierarchyRelation[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function findOutboundHierarchyRelationsForNodeAndSubgraphs(string $parentNodesIdentifierInGraph, array $subgraphIdentityHashs): array
     {
@@ -470,7 +500,7 @@ class ProjectionContentGraph
     /**
      * @param NodeRelationAnchorPoint $nodeRelationAnchorPoint
      * @return array
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getAllContentStreamIdentifiersAnchorPointIsContainedIn(NodeRelationAnchorPoint $nodeRelationAnchorPoint): array
     {
@@ -493,7 +523,7 @@ class ProjectionContentGraph
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeAggregate|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier): ?NodeAggregate
     {

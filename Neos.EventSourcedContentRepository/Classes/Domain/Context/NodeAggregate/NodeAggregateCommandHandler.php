@@ -25,7 +25,6 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregateNotFound;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
@@ -38,6 +37,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAg
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePeerVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodesWereMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -931,6 +931,8 @@ final class NodeAggregateCommandHandler
 
                 $newParentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNewParentNodeAggregateIdentifier());
 
+                // @todo new parent must cover all affected DSPs
+
                 $this->requireNodeAggregateToNotBeDescendant($command->getContentStreamIdentifier(), $newParentNodeAggregate, $nodeAggregate);
             }
 
@@ -946,6 +948,8 @@ final class NodeAggregateCommandHandler
                     new NodesWereMoved(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
+                        $command->getNewParentNodeAggregateIdentifier(),
+                        $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
                         $nodeMoveMappings
                     )
                 )

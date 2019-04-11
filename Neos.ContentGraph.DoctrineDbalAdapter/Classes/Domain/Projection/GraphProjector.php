@@ -30,6 +30,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodesWereMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -615,7 +616,7 @@ insert into neos_contentgraph_restrictionedge
     public function whenNodeWasShown(NodeWasShown $event)
     {
         $this->transactional(function () use ($event) {
-            $this->removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getAffectedDimensionSpacePoints());
+            $this->removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getAffectedDimensionSpacePoints());
         });
     }
 
@@ -625,7 +626,7 @@ insert into neos_contentgraph_restrictionedge
      * @param DimensionSpacePointSet $affectedDimensionSpacePoints
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
+    private function removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
     {
         $this->getDatabaseConnection()->executeUpdate('
                 -- GraphProjector::removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints
@@ -898,56 +899,81 @@ insert into neos_contentgraph_restrictionedge
     }
 
     /**
-     * @param Event\NodesWereMoved $event
-     * @throws \Exception
+     * @param NodesWereMoved $event
+     * @throws \Throwable
      */
-    /*
-    public function whenNodesWereMoved(Event\NodesWereMoved $event)
+    public function whenNodesWereMoved(NodesWereMoved $event)
     {
         $this->transactional(function () use ($event) {
             foreach ($event->getNodeMoveMappings() as $moveNodeMapping) {
-                $nodeToBeMoved = $this->projectionContentGraph->getNode($moveNodeMapping->getNodeIdentifier(), $event->getContentStreamIdentifier());
-                $newSucceedingSibling = $moveNodeMapping->getNewSucceedingSiblingIdentifier()
-                    ? $this->projectionContentGraph->getNode($moveNodeMapping->getNewSucceedingSiblingIdentifier(), $event->getContentStreamIdentifier())
-                    : null;
+                $nodeToBeMoved = $this->projectionContentGraph->findNodeByIdentifiers(
+                    $event->getContentStreamIdentifier(),
+                    $event->getNodeAggregateIdentifier(),
+                    $moveNodeMapping->getMovedNodeOrigin()
+                );
+
+                $newSucceedingSibling = null;
+                if ($event->getNewSucceedingSiblingNodeAggregateIdentifier()) {
+                    // @todo this might differ from DSP to DSP and has to be moved to the mapping as sibling aggregate identifier
+                    $newSucceedingSibling = $this->projectionContentGraph->findNodeByIdentifiers(
+                        $event->getContentStreamIdentifier(),
+                        $event->getNewSucceedingSiblingNodeAggregateIdentifier(),
+                        $moveNodeMapping->getNewSucceedingSiblingOrigin()
+                    );
+                }
+
                 $inboundHierarchyRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNode($nodeToBeMoved->relationAnchorPoint, $event->getContentStreamIdentifier());
-                if ($moveNodeMapping->getNewParentNodeIdentifier()) {
-                    //
+                if ($event->getNewParentNodeAggregateIdentifier()) {
+
+                    // @todo remove inbound restriction edges of to-be-moved node
+                    // @todo remove inbound restriction edges with same parent anchor as the above and child anchor of node's descendants
+
                     // 1. PRE-MOVE HOUSEKEEPING
                     // - of the to-be moved nodes, remove all restriction edges
                     // - TODO: this means that when moving a HIDDEN node itself (and none of its children), it will LOOSE its hidden state. TODO FIX!!!
                     //
-                    $this->removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints(
+                    /*
+                    $this->removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints(
                         $event->getContentStreamIdentifier(),
-                        $nodeToBeMoved->nodeAggregateIdentifier,
-                        $moveNodeMapping->getDimensionSpacePointSet()
-                    );
+                        $event->getNodeAggregateIdentifier(),
+                        $moveNodeMapping->getRelationDimensionSpacePoints()
+                    );*/
 
                     //
                     // 2. do the MOVE ITSELF
                     //
-                    $newParentNode = $this->projectionContentGraph->getNode($moveNodeMapping->getNewParentNodeIdentifier(), $event->getContentStreamIdentifier());
-                    foreach ($moveNodeMapping->getDimensionSpacePointSet()->getPoints() as $dimensionSpacePoint) {
+
+                    $newParentNode = $this->projectionContentGraph->findNodeByIdentifiers(
+                        $event->getContentStreamIdentifier(),
+                        $event->getNewParentNodeAggregateIdentifier(),
+                        $moveNodeMapping->getNewParentNodeOrigin()
+                    );
+                    foreach ($moveNodeMapping->getRelationDimensionSpacePoints() as $relationDimensionSpacePoint) {
                         $newPosition = $this->getRelationPosition(
                             $newParentNode->relationAnchorPoint,
                             null,
                             $newSucceedingSibling ? $newSucceedingSibling->relationAnchorPoint : null,
                             $event->getContentStreamIdentifier(),
-                            $dimensionSpacePoint
+                            $relationDimensionSpacePoint
                         );
-                        $this->assignHierarchyRelationToNewParent($inboundHierarchyRelations[$dimensionSpacePoint->getHash()], $newParentNode->nodeIdentifier, $event->getContentStreamIdentifier(), $newPosition);
+
+                        $inboundHierarchyRelations[$relationDimensionSpacePoint->getHash()]->assignNewParentNode($newParentNode->relationAnchorPoint, $this->getDatabaseConnection());
+                        $inboundHierarchyRelations[$relationDimensionSpacePoint->getHash()]->assignNewPosition($newPosition, $this->getDatabaseConnection());
                     }
+
+                    // @todo connect inbound restriction edges of new parent to moved node and all of its descendants
 
                     //
                     // 3. POST-MOVE HOUSEKEEPING
                     // - if parent node is hidden, hide the moved-to target as well.
                     //
+                    /*
                     $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
                         $event->getContentStreamIdentifier(),
                         $newParentNode->nodeIdentifier,
                         $nodeToBeMoved->nodeAggregateIdentifier,
                         $moveNodeMapping->getDimensionSpacePointSet()
-                    );
+                    );*/
                 } else {
                     foreach ($moveNodeMapping->getDimensionSpacePointSet()->getPoints() as $dimensionSpacePoint) {
                         $newPosition = $this->getRelationPosition(
@@ -962,7 +988,7 @@ insert into neos_contentgraph_restrictionedge
                 }
             }
         });
-    }*/
+    }
 
     /**
      * @param NodesWereRemovedFromAggregate $event
@@ -973,7 +999,7 @@ insert into neos_contentgraph_restrictionedge
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
-            $this->removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
+            $this->removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
             $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
             foreach ($inboundRelations as $inboundRelation) {
                 $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($inboundRelation);
