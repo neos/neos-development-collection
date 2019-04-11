@@ -55,7 +55,6 @@ use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
-use Neos\EventSourcing\EventBus\EventBus;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStoreManager;
@@ -139,11 +138,6 @@ trait EventSourcedTrait
     protected $visibilityConstraints;
 
     /**
-     * @var EventBus
-     */
-    private $eventBus;
-
-    /**
      * @var CommandResult
      */
     protected $lastCommandOrEventResult;
@@ -163,7 +157,6 @@ trait EventSourcedTrait
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
         $this->eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
-        $this->eventBus = $this->getObjectManager()->get(EventBus::class);
 
         $contentStreamRepository = $this->getObjectManager()->get(ContentStreamRepository::class);
         \Neos\Utility\ObjectAccess::setProperty($contentStreamRepository, 'contentStreams', [], true);

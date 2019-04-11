@@ -18,8 +18,8 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProj
 use Neos\EventSourcing\Event\Decorator\EventDecoratorUtilities;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventBus\EventBus;
 use Neos\EventSourcing\EventListener\EventListenerLocator;
+use Neos\EventSourcing\EventStore\EventListenerTrigger\EventListenerTrigger;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -51,9 +51,9 @@ final class CommandResult
 
     /**
      * @Flow\Inject
-     * @var EventBus
+     * @var EventListenerTrigger
      */
-    protected $eventBus;
+    protected $eventListenerTrigger;
 
     protected function __construct(DomainEvents $publishedEvents)
     {
@@ -78,7 +78,7 @@ final class CommandResult
 
     public function blockUntilProjectionsAreUpToDate(): void
     {
-        $this->eventBus->flush();
+        $this->eventListenerTrigger->invoke();
 
         $publishedEventsForGraphProjector = $this->filterPublishedEventsByListener(GraphProjector::class);
         $publishedEventsForWorkspaceProjector = $this->filterPublishedEventsByListener(WorkspaceProjector::class);

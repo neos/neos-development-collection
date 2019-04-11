@@ -13,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Command;
  */
 
 use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ContentRepositoryExportService;
+use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\ImportProjectionPerformanceService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
@@ -29,11 +30,18 @@ class ContentRepositoryMigrateCommandController extends CommandController
     protected $contentRepositoryExportService;
 
     /**
+     * @Flow\Inject
+     * @var ImportProjectionPerformanceService
+     */
+    protected $importProjectionPerformanceService;
+
+    /**
      * Run a CR export
      */
     public function runCommand()
     {
         $this->contentRepositoryExportService->reset();
+        $this->importProjectionPerformanceService->configureGraphAndWorkspaceProjectionsToRunSynchronously();
         $this->contentRepositoryExportService->migrate();
     }
 }

@@ -17,14 +17,12 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
-use Neos\EventSourcing\EventBus\EventBus;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Exception\InvalidNodeCreationHandlerException;
 
@@ -41,12 +39,6 @@ abstract class AbstractCreate extends AbstractStructuralChange
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
-
-    /**
-     * @Flow\Inject
-     * @var EventBus
-     */
-    protected $eventBus;
 
     /**
      * The type of the node that will be created

@@ -89,7 +89,7 @@ class UpdateNodeInfo extends AbstractFeedback
      */
     public function getDescription()
     {
-        return sprintf('Updated info for node "%s" is available.', $this->getNode()->getNodeIdentifier());
+        return sprintf('Updated info for node "%s" is available.', $this->getNode()->getNodeAggregateIdentifier());
     }
 
     /**
@@ -104,7 +104,7 @@ class UpdateNodeInfo extends AbstractFeedback
             return false;
         }
 
-        return $this->getNode()->getNodeIdentifier() === $feedback->getNode()->getNodeIdentifier();
+        return $this->getNode()->getNodeAggregateIdentifier() === $feedback->getNode()->getNodeAggregateIdentifier();
     }
 
     /**
