@@ -125,4 +125,12 @@ interface TraversableNodeInterface extends NodeInterface
      * @return TraversableNodes
      */
     public function findNamedReferencingNodes(PropertyName $nodeName): TraversableNodes;
+
+    /**
+     * Compare whether two traversable nodes are equal
+     *
+     * @param TraversableNodeInterface $other
+     * @return bool
+     */
+    public function equals(TraversableNodeInterface $other): bool;
 }
