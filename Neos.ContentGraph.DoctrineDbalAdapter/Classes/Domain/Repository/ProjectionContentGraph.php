@@ -217,37 +217,43 @@ class ProjectionContentGraph
             throw new \InvalidArgumentException('You must specify either parent or child node anchor to determine a hierarchy relation position', 1519847447);
         }
         if ($succeedingSiblingAnchorPoint) {
-            $succeedingSiblingPosition = (int)$this->getDatabaseConnection()->executeQuery(
-                'SELECT h.position FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.childnodeanchor = :succeedingSiblingAnchorPoint
+            $succeedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
+                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanchor') . ' = :anchorPoint
+                          AND h. ' . ($parentAnchorPoint ? 'childnodeanchor' : 'parentnodeanchor') . ' = :succeedingSiblingAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
+                    'anchorPoint' => $parentAnchorPoint ?: $childAnchorPoint,
                     'succeedingSiblingAnchorPoint' => (string)$succeedingSiblingAnchorPoint,
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
                 ]
+            )->fetch();
 
-            )->fetch()['position'];
+            $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
 
-            $succeedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
-                'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanchor') . ' = :parentOrChildAnchorPoint
+            $precedingSiblingPosition = $this->getDatabaseConnection()->executeQuery(
+                'SELECT MAX(h.position) AS position FROM neos_contentgraph_hierarchyrelation h
+                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanchor') . ' = :anchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                          AND h.`position` > :position',
+                          AND h.position < :position',
                 [
-                    'parentOrChildAnchorPoint' => $parentAnchorPoint ?: $childAnchorPoint,
+                    'anchorPoint' => $parentAnchorPoint ?: $childAnchorPoint,
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                     'position' => $succeedingSiblingPosition
                 ]
-            )->fetch();
+            )->fetch()['position'] ?? null;
+            if (!is_null($precedingSiblingPosition)) {
+                $precedingSiblingPosition = (int) $precedingSiblingPosition;
+            }
 
-            if (!is_null($succeedingSiblingRelation['position'])) {
-                $position = ($succeedingSiblingPosition + (int)$succeedingSiblingRelation['position']) / 2;
+            if (is_null($precedingSiblingPosition)) {
+                $position = $succeedingSiblingPosition - GraphProjector::RELATION_DEFAULT_OFFSET;
             } else {
-                $position = $succeedingSiblingPosition + GraphProjector::RELATION_DEFAULT_OFFSET;
+                $position = ($succeedingSiblingPosition + $precedingSiblingPosition) / 2;
             }
         } else {
             $rightmostSucceedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(

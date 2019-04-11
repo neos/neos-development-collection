@@ -126,15 +126,21 @@ class HierarchyRelation
 
     /**
      * @param NodeRelationAnchorPoint $parentAnchorPoint
+     * @param int|null $position
      * @param Connection $databaseConnection
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function assignNewParentNode(NodeRelationAnchorPoint $parentAnchorPoint, Connection $databaseConnection): void
+    public function assignNewParentNode(NodeRelationAnchorPoint $parentAnchorPoint, ?int $position, Connection $databaseConnection): void
     {
+        $data = [
+            'parentnodeanchor' => $parentAnchorPoint
+        ];
+        if (!is_null($position)) {
+            $data['position'] = $position;
+        }
         $databaseConnection->update(
             'neos_contentgraph_hierarchyrelation',
-            [
-                'parentnodeanchor' => $parentAnchorPoint
-            ],
+            $data,
             $this->getDatabaseIdentifier()
         );
     }

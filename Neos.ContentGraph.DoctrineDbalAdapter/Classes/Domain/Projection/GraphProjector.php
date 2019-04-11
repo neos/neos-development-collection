@@ -325,7 +325,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
             $visibleInDimensionSpacePoints
         );
         foreach ($existingChildRelations as $existingChildRelation) {
-            $existingChildRelation->assignNewParentNode($nodeRelationAnchorPoint, $this->getDatabaseConnection());
+            $existingChildRelation->assignNewParentNode($nodeRelationAnchorPoint, null, $this->getDatabaseConnection());
         }
 
         $node->addToDatabase($this->getDatabaseConnection());
@@ -779,7 +779,7 @@ insert into neos_contentgraph_restrictionedge
                 $event->getContentStreamIdentifier(),
                 $event->getSpecializationCoverage()
             ) as $hierarchyRelation) {
-                $hierarchyRelation->assignNewParentNode($specializedNode->relationAnchorPoint, $this->getDatabaseConnection());
+                $hierarchyRelation->assignNewParentNode($specializedNode->relationAnchorPoint, null, $this->getDatabaseConnection());
             }
         });
     }
@@ -815,7 +815,7 @@ insert into neos_contentgraph_restrictionedge
                 $event->getNodeAggregateIdentifier(),
                 $event->getGeneralizationCoverage()
             ) as $existingOutboundHierarchyRelation) {
-                $existingOutboundHierarchyRelation->assignNewParentNode($generalizedNode->relationAnchorPoint, $this->getDatabaseConnection());
+                $existingOutboundHierarchyRelation->assignNewParentNode($generalizedNode->relationAnchorPoint, null, $this->getDatabaseConnection());
             }
 
             if (count($unassignedInboundDimensionSpacePoints) > 0) {
@@ -875,7 +875,7 @@ insert into neos_contentgraph_restrictionedge
                 $event->getNodeAggregateIdentifier(),
                 $event->getPeerCoverage()
             ) as $existingOutboundHierarchyRelation) {
-                $existingOutboundHierarchyRelation->assignNewParentNode($peerNode->relationAnchorPoint, $this->getDatabaseConnection());
+                $existingOutboundHierarchyRelation->assignNewParentNode($peerNode->relationAnchorPoint, null, $this->getDatabaseConnection());
             }
 
             foreach ($unassignedInboundDimensionSpacePoints as $coveredDimensionSpacePoint) {
@@ -957,8 +957,7 @@ insert into neos_contentgraph_restrictionedge
                             $relationDimensionSpacePoint
                         );
 
-                        $inboundHierarchyRelations[$relationDimensionSpacePoint->getHash()]->assignNewParentNode($newParentNode->relationAnchorPoint, $this->getDatabaseConnection());
-                        $inboundHierarchyRelations[$relationDimensionSpacePoint->getHash()]->assignNewPosition($newPosition, $this->getDatabaseConnection());
+                        $inboundHierarchyRelations[$relationDimensionSpacePoint->getHash()]->assignNewParentNode($newParentNode->relationAnchorPoint, $newPosition, $this->getDatabaseConnection());
                     }
 
                     // @todo connect inbound restriction edges of new parent to moved node and all of its descendants

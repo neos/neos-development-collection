@@ -1157,6 +1157,54 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Then /^I expect this node to have the preceding siblings (.*)$/
+     * @param string $serializedExpectedSiblingNodeAggregateIdentifiers
+     */
+    public function iExpectThisNodeToHaveThePrecedingSiblings(string $serializedExpectedSiblingNodeAggregateIdentifiers)
+    {
+        $rawExpectedSiblingNodeAggregateIdentifiers = json_decode($serializedExpectedSiblingNodeAggregateIdentifiers);
+        $expectedSiblingNodeAggregateIdentifiers = array_map(function($item) {
+            return NodeAggregateIdentifier::fromString($item);
+        }, $rawExpectedSiblingNodeAggregateIdentifiers);
+
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $actualSiblings = $subgraph->findPrecedingSiblings($this->currentNode->getNodeAggregateIdentifier());
+        $actualSiblingNodeAggregateIdentifiers = array_map(function (NodeInterface $sibling) {
+            return $sibling->getNodeAggregateIdentifier();
+        }, $actualSiblings);
+
+        Assert::assertEquals(
+            $expectedSiblingNodeAggregateIdentifiers,
+            $actualSiblingNodeAggregateIdentifiers,
+            'Expected preceding siblings ' . json_encode($expectedSiblingNodeAggregateIdentifiers) . ', found ' . json_encode($actualSiblingNodeAggregateIdentifiers)
+        );
+    }
+
+    /**
+     * @Then /^I expect this node to have the succeeding siblings (.*)$/
+     * @param string $serializedExpectedSiblingNodeAggregateIdentifiers
+     */
+    public function iExpectThisNodeToHaveTheSucceedingSiblings(string $serializedExpectedSiblingNodeAggregateIdentifiers)
+    {
+        $rawExpectedSiblingNodeAggregateIdentifiers = json_decode($serializedExpectedSiblingNodeAggregateIdentifiers);
+        $expectedSiblingNodeAggregateIdentifiers = array_map(function($item) {
+            return NodeAggregateIdentifier::fromString($item);
+        }, $rawExpectedSiblingNodeAggregateIdentifiers);
+
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $actualSiblings = $subgraph->findSucceedingSiblings($this->currentNode->getNodeAggregateIdentifier());
+        $actualSiblingNodeAggregateIdentifiers = array_map(function (NodeInterface $sibling) {
+            return $sibling->getNodeAggregateIdentifier();
+        }, $actualSiblings);
+
+        Assert::assertEquals(
+            $expectedSiblingNodeAggregateIdentifiers,
+            $actualSiblingNodeAggregateIdentifiers,
+            'Expected succeeding siblings ' . json_encode($expectedSiblingNodeAggregateIdentifiers) . ', found ' . json_encode($actualSiblingNodeAggregateIdentifiers)
+        );
+    }
+
+    /**
      * @Then /^I expect a node identified by aggregate identifier "([^"]*)" to exist in the subgraph$/
      * @param string $rawNodeAggregateIdentifier
      * @throws Exception

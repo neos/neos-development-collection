@@ -564,7 +564,7 @@ WHERE
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
-            AND n.nodeaggregateidentier != :siblingNodeAggregateIdentifier')
+            AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
@@ -605,7 +605,7 @@ WHERE
     ): array {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
-            AND n.nodeaggregateidentier != :siblingNodeAggregateIdentifier')
+            AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
@@ -653,7 +653,7 @@ WHERE
     ): array {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
-            AND n.nodeaggregateidentier != :siblingNodeAggregateIdentifier')
+            AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
