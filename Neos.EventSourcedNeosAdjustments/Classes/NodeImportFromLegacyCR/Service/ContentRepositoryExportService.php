@@ -182,6 +182,13 @@ class ContentRepositoryExportService
 
     public function migrate()
     {
+        $this->nodeAggregateCommandHandler->withoutAncestorNodeTypeConstraintChecks(function () {
+            $this->migrateInternal();
+        });
+    }
+
+    protected function migrateInternal()
+    {
         $this->nodeAggregateIdentifiers = [];
         $this->alreadyCreatedNodeAggregateIdentifiers = [];
 
@@ -426,7 +433,7 @@ class ContentRepositoryExportService
                         return NodeAggregateIdentifier::fromString($identifier);
                     }, $propertyValue);
                 }
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $message = 'There was an error exporting the reference ' . $propertyName . ' at path ' . $nodeData->getContextPath() . ':' . $e->getMessage();
                 $this->systemLogger->warning($message, ['exception' => $e]);
             }

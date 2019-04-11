@@ -92,6 +92,11 @@ final class NodeAggregateCommandHandler
      */
     protected $readSideMemoryCacheManager;
 
+    /**
+     * can be disabled in {@see NodeAggregateCommandHandler::withoutAnchestorNodeTypeConstraintChecks()}
+     * @var bool
+     */
+    protected $ancestorNodeTypeConstraintChecksEnabled = true;
 
     public function __construct(
         ContentStream\ContentStreamRepository $contentStreamRepository,
@@ -109,6 +114,25 @@ final class NodeAggregateCommandHandler
         $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
         $this->nodeEventPublisher = $nodeEventPublisher;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
+    }
+
+    /**
+     * Use this closure to run code with the Anchestor Node Type Checks disabled; e.g.
+     * during imports.
+     *
+     * You can disable this because many old sites have this constraint violated more or less;
+     * and it's easy to fix lateron; as it does not touch the fundamental integrity of the CR.
+     *
+     * @param \Closure $callback
+     */
+    public function withoutAncestorNodeTypeConstraintChecks(\Closure $callback): void
+    {
+        $previousAncestorNodeTypeConstraintChecksEnabled = $this->ancestorNodeTypeConstraintChecksEnabled;
+        $this->ancestorNodeTypeConstraintChecksEnabled = false;
+
+        $callback();
+
+        $this->ancestorNodeTypeConstraintChecksEnabled = $previousAncestorNodeTypeConstraintChecksEnabled;
     }
 
     /**
@@ -164,7 +188,9 @@ final class NodeAggregateCommandHandler
             $this->requireNodeTypeToNotBeOfTypeRoot($nodeType);
             $this->requireTetheredDescendantNodeTypesToExist($nodeType);
             $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($nodeType);
-            $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $nodeType, $command->getNodeName(), [$command->getParentNodeAggregateIdentifier()]);
+            if ($this->ancestorNodeTypeConstraintChecksEnabled) {
+                $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $nodeType, $command->getNodeName(), [$command->getParentNodeAggregateIdentifier()]);
+            }
             $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
             $parentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
 
