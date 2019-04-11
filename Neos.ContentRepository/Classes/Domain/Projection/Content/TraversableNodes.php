@@ -58,7 +58,7 @@ final class TraversableNodes implements \IteratorAggregate, \Countable
     private function getNodeIndex(TraversableNodeInterface $subject): int
     {
         foreach ($this->nodes as $index => $node) {
-            if ($node === $subject) {
+            if ($node->equals($subject)) {
                 return $index;
             }
         }
