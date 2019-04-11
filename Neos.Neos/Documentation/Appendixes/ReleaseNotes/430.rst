@@ -16,17 +16,13 @@ This change also includes a basic view displaying all variants of an asset in th
 While this new view (implemented as a tab) may be useful already, it is neither especially polished nor does it provide additional features. 
 Therefore it is disabled by a feature switch for now. See the ``Settings.yaml`` of ``Neos.Media.Browser`` for details on enabling the tab.
 
-Add fallback from ``itemRenderer`` to ``content`` for ``Neos.Fusion:Map`` and derived prototypes
-================================================================================================
+Enable Loops in Fusion AFX without ``@children`` annotation
+===========================================================
 
-This allows to declare the itemRenderers in `AFX` without `@children` annotation and avoids a
-common error in afx code.
-
-Affected prototypes:
--  `Neos.Fusion:Map`
--  `Neos.Fusion:RawCollection`
--  `Neos.Fusion:Loop`
--  `Neos.Fusion:Collection`
+Fusion AFX uses the key ``content`` by default to render children. Since Collections or Loops 
+use `ìtemRenderer`` to define the inner content ``@children=itemRenderer`` had to be declared 
+in the past. To overcome this Loop and deriver prototypes now got a fallback from ``itemRenderer``
+to content. This avoids a common error in afx code.
 
 Native 404 error rendering that can be controlled via Fusion
 ============================================================
