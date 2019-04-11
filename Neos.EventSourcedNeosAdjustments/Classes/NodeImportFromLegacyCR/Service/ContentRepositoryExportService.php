@@ -52,6 +52,7 @@ use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Neos\Utility\TypeHandling;
@@ -94,6 +95,12 @@ class ContentRepositoryExportService
      * @var NodeCommandHandler
      */
     protected $nodeCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var PsrSystemLoggerInterface
+     */
+    protected $systemLogger;
 
     /**
      * @Flow\Inject
@@ -337,7 +344,9 @@ class ContentRepositoryExportService
 
             $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = $originDimensionSpacePoint;
         } catch (\Exception $e) {
-            throw new \RuntimeException('There was an error exporting the node ' . $nodeAggregateIdentifier . ' at path ' . $nodePath . ' in Dimension Space Point ' . $originDimensionSpacePoint . '. See nested exception for details', 1554897508, $e);
+            $message = 'There was an error exporting the node ' . $nodeAggregateIdentifier . ' at path ' . $nodePath . ' in Dimension Space Point ' . $originDimensionSpacePoint . ':' . $e->getMessage();
+            $this->systemLogger->warning($message, ['exception' => $e]);
+            echo $message;
         }
     }
 

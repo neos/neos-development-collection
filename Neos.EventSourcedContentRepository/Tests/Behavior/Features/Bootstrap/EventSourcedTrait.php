@@ -1141,7 +1141,7 @@ trait EventSourcedTrait
 
         $this->iExpectNodeAggregateIdentifierToLeadToNode($serializedNodeAggregateIdentifier, $serializedNodeIdentifier);
 
-        $nodeByPath = $subgraph->findNodeByPath($serializedNodePath, $this->rootNodeAggregateIdentifier);
+        $nodeByPath = $subgraph->findNodeByPath($serializedNodePath, $this->getRootNodeAggregateIdentifier());
         Assert::assertInstanceOf(NodeInterface::class, $nodeByPath, 'No node could be found by path "' . $serializedNodePath . '"" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
         Assert::assertEquals($expectedNodeIdentifier, NodeDiscriminator::fromNode($nodeByPath), 'Node discriminators did not match');
     }
@@ -1157,7 +1157,7 @@ trait EventSourcedTrait
 
         $this->iExpectNodeAggregateIdentifierToLeadToNoNode($serializedNodeAggregateIdentifier);
 
-        $nodeByPath = $subgraph->findNodeByPath($serializedNodePath, $this->rootNodeAggregateIdentifier);
+        $nodeByPath = $subgraph->findNodeByPath($serializedNodePath, $this->getRootNodeAggregateIdentifier());
         Assert::assertNull($nodeByPath, 'A node was found by path "' . $serializedNodePath . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
     }
 
@@ -1366,13 +1366,13 @@ trait EventSourcedTrait
      */
     public function iExpectThePathToLeadToTheNode(string $nodePath, string $serializedNodeIdentifier)
     {
-        if (!$this->rootNodeAggregateIdentifier) {
+        if (!$this->getRootNodeAggregateIdentifier()) {
             throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }
         $expectedIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath($nodePath, $this->rootNodeAggregateIdentifier);
+            ->findNodeByPath($nodePath, $this->getRootNodeAggregateIdentifier());
         Assert::assertNotNull($this->currentNode, 'Did not find node at path "' . $nodePath . '"');
         Assert::assertEquals($expectedIdentifier, NodeDiscriminator::fromNode($this->currentNode), 'Node discriminators do not match.');
     }
@@ -1416,12 +1416,12 @@ trait EventSourcedTrait
      */
     public function iExpectThePathToLeadToNoNode(string $nodePath)
     {
-        if (!$this->rootNodeAggregateIdentifier) {
+        if (!$this->getRootNodeAggregateIdentifier()) {
             throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }
         $node = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath($nodePath, $this->rootNodeAggregateIdentifier);
+            ->findNodeByPath($nodePath, $this->getRootNodeAggregateIdentifier());
         Assert::assertNull($node, 'Did find node at path "' . $nodePath . '"');
     }
 
@@ -1537,7 +1537,7 @@ trait EventSourcedTrait
     public function iGetTheNodeAddressForTheNodeAtPath(string $nodePath, $alias = 'DEFAULT')
     {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-        $node = $subgraph->findNodeByPath($nodePath, $this->rootNodeAggregateIdentifier);
+        $node = $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateIdentifier());
         Assert::assertNotNull($node, 'Did not find a node at path "' . $nodePath . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
@@ -1557,7 +1557,7 @@ trait EventSourcedTrait
     {
         $this->currentNode = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByPath($nodePath, $this->rootNodeAggregateIdentifier);
+            ->findNodeByPath($nodePath, $this->getRootNodeAggregateIdentifier());
     }
 
     protected function getWorkspaceCommandHandler(): WorkspaceCommandHandler
@@ -1582,5 +1582,19 @@ trait EventSourcedTrait
         $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
         return $commandHandler;
+    }
+
+    protected function getRootNodeAggregateIdentifier(): ?NodeAggregateIdentifier
+    {
+        if ($this->rootNodeAggregateIdentifier) {
+            return $this->rootNodeAggregateIdentifier;
+        }
+
+        $sitesNodeAggregate = $this->contentGraph->findRootNodeAggregateByType($this->contentStreamIdentifier, \Neos\ContentRepository\Domain\NodeType\NodeTypeName::fromString('Neos.Neos:Sites'));
+        if ($sitesNodeAggregate) {
+            return $sitesNodeAggregate->getIdentifier();
+        }
+
+        return null;
     }
 }

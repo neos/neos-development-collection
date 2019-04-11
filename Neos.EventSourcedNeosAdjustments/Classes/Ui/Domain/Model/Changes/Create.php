@@ -57,7 +57,7 @@ class Create extends AbstractCreate
     {
         if ($this->canApply()) {
             $parentNode = $this->getSubject();
-            $this->createNode($parentNode);
+            $this->createNode($parentNode, null);
             $this->updateWorkspaceInfo();
         }
     }
