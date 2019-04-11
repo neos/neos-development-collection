@@ -1,13 +1,14 @@
 @fixtures
-Feature: Move a node without content dimensions
+Feature: Publishing moved nodes without dimensions
 
   As a user of the CR I want to move a node
   - to the end of its siblings
   - before one of its siblings
   - to a new parent and the end of its children
   - to a new parent and before one of its children
+  and then publish the result to the target workspace.
 
-  These are the test cases for moving nodes without content dimensions being involved
+  These are the test cases for publishing moved nodes without content dimensions being involved
 
   Background:
     Given I have no content dimensions
@@ -16,13 +17,10 @@ Feature: Move a node without content dimensions
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
-      | Key                            | Value                                  |
-      | workspaceName                  | "live"                                 |
-      | workspaceTitle                 | "Live"                                 |
-      | workspaceDescription           | "The live workspace"                   |
-      | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
-      | currentContentStreamIdentifier | "cs-identifier"                        |
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                     | Value           |
+      | workspaceName           | "live"          |
+      | contentStreamIdentifier | "cs-identifier" |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                  |
       | contentStreamIdentifier       | "cs-identifier"                        |
@@ -63,16 +61,27 @@ Feature: Move a node without content dimensions
       | nodeAggregateClassification   | "regular"                                 |
     And the graph projection is fully up to date
 
-  Scenario: Move a node to the end of its siblings
+    And the command CreateWorkspace is executed with payload:
+      | Key                     | Value                |
+      | workspaceName           | "user"               |
+      | baseWorkspaceName       | "live"               |
+      | contentStreamIdentifier | "user-cs-identifier" |
+    And the graph projection is fully up to date
+
+  Scenario: Publish the move of a node to the end of its siblings
     When the command MoveNode is executed with payload:
       | Key                                         | Value                    |
-      | contentStreamIdentifier                     | "cs-identifier"          |
-      | nodeAggregateIdentifier                     | "sir-david-nodenborough" |
+      | contentStreamIdentifier                     | "user-cs-identifier"     |
       | dimensionSpacePoint                         | {}                       |
+      | nodeAggregateIdentifier                     | "sir-david-nodenborough" |
       | newParentNodeAggregateIdentifier            | null                     |
       | newSucceedingSiblingNodeAggregateIdentifier | null                     |
+    And the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key           | Value                                                                                                                               |
+      | workspaceName | "user"                                                                                                                              |
+      | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}] |
+    And the graph projection is fully up to date
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}} to exist in the content graph
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {}} to exist in the content graph
@@ -95,16 +104,20 @@ Feature: Move a node without content dimensions
     And I expect this node to have the preceding siblings []
     And I expect this node to have the succeeding siblings []
 
-  Scenario: Move a node before one of its siblings
+  Scenario: Publish the move of a node before one of its siblings
     When the command MoveNode is executed with payload:
       | Key                                         | Value                        |
-      | contentStreamIdentifier                     | "cs-identifier"              |
+      | contentStreamIdentifier                     | "user-cs-identifier"         |
       | nodeAggregateIdentifier                     | "sir-nodeward-nodington-iii" |
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateIdentifier            | null                         |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-david-nodenborough"     |
+    And the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key           | Value                                                                                                                                   |
+      | workspaceName | "user"                                                                                                                                  |
+      | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-nodeward-nodington-iii"}] |
+    And the graph projection is fully up to date
 
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}} to exist in the content graph
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {}} to exist in the content graph
@@ -127,7 +140,7 @@ Feature: Move a node without content dimensions
     And I expect this node to have the preceding siblings []
     And I expect this node to have the succeeding siblings []
 
-  Scenario: Move a node to a new parent and the end of its children
+  Scenario: Publish the move of a node to a new parent and the end of its children
     Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
@@ -141,22 +154,16 @@ Feature: Move a node without content dimensions
     And the graph projection is fully up to date
     When the command MoveNode is executed with payload:
       | Key                              | Value                        |
-      | contentStreamIdentifier          | "cs-identifier"              |
+      | contentStreamIdentifier          | "user-cs-identifier"         |
       | nodeAggregateIdentifier          | "sir-david-nodenborough"     |
       | dimensionSpacePoint              | {}                           |
       | newParentNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
+    And the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key           | Value                                                                                                                               |
+      | workspaceName | "user"                                                                                                                              |
+      | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "sir-david-nodenborough"}] |
+    And the graph projection is fully up to date
 
-    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
-    # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
-      | Key                                  | Expected                                                                                                                   |
-      | contentStreamIdentifier              | "cs-identifier"                                                                                                            |
-      | nodeAggregateIdentifier              | "sir-david-nodenborough"                                                                                                   |
-      | newParentNodeAggregateIdentifier     | "sir-nodeward-nodington-iii"                                                                                               |
-      | newSucceedingNodeAggregateIdentifier | null                                                                                                                       |
-      | nodeMoveMappings                     | [{"movedNodeOrigin":[], "newParentNodeOrigin":[], "newSucceedingSiblingOrigin":null, "relationDimensionSpacePoints":[[]]}] |
-
-    When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}} to exist in the content graph
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {}} to exist in the content graph
@@ -184,23 +191,18 @@ Feature: Move a node without content dimensions
     And I expect this node to have the preceding siblings []
     And I expect this node to have the succeeding siblings []
 
-  Scenario: Move a node to a new parent and before one of its children
+  Scenario: Publish the move of a node to a new parent and before one of its children
     When the command MoveNode is executed with payload:
       | Key                                         | Value                        |
-      | contentStreamIdentifier                     | "cs-identifier"              |
+      | contentStreamIdentifier                     | "user-cs-identifier"         |
       | nodeAggregateIdentifier                     | "nody-mc-nodeface"           |
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"     |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
-    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
-    # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
-      | Key                                         | Expected                                                                                                                 |
-      | contentStreamIdentifier                     | "cs-identifier"                                                                                                          |
-      | nodeAggregateIdentifier                     | "nody-mc-nodeface"                                                                                                       |
-      | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"                                                                                                 |
-      | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii"                                                                                             |
-      | nodeMoveMappings                            | [{"movedNodeOrigin":[], "newParentNodeOrigin":[], "newSucceedingSiblingOrigin":[], "relationDimensionSpacePoints":[[]]}] |
+    And the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key           | Value                                                                                                                         |
+      | workspaceName | "user"                                                                                                                        |
+      | nodeAddresses | [{"contentStreamIdentifier": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateIdentifier": "nody-mc-nodeface"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes

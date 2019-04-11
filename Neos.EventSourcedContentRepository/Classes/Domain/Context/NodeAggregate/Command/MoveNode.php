@@ -16,8 +16,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContent
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategyIsInvalid;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
 /**
  * Move node command
@@ -31,7 +33,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDist
  *
  * This is only allowed if both nodes exist and the new parent aggregate's type allows children of the given aggregate's type
  */
-final class MoveNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface
+final class MoveNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -169,5 +171,12 @@ final class MoveNode implements \JsonSerializable, CopyableAcrossContentStreamsI
             $this->newSucceedingSiblingNodeAggregateIdentifier,
             $this->relationDistributionStrategy
         );
+    }
+
+    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    {
+        return (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
+            && $this->nodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
+            && $this->dimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint());
     }
 }
