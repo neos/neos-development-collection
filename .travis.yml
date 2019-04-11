@@ -31,5 +31,4 @@ script:
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedContentRepository/Tests/Functional
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Functional
   - bin/behat --ansi -f progress -c Packages/CR/Neos.EventSourcedContentRepository/Tests/Behavior/behat.yml.dist
-  # TODO: re-enable Neos UI tests!
-  #- bin/behat --ansi -f progress -c Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Behavior/behat.yml.dist
+  - bin/behat --ansi -f progress -c Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Behavior/behat.yml.dist
