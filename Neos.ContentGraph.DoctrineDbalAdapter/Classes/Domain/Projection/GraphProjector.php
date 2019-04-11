@@ -70,8 +70,26 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
      */
     protected $processedEventsCache;
 
+    /**
+     * @var bool
+     */
+    protected $assumeProjectorRunsSynchronously = false;
+
+    /**
+     * @internal
+     */
+    public function assumeProjectorRunsSynchronously()
+    {
+        $this->assumeProjectorRunsSynchronously = true;
+    }
+
+
     public function hasProcessed(DomainEvents $events): bool
     {
+        if ($this->assumeProjectorRunsSynchronously === true) {
+            // if we run synchronously during an import, we *know* that events have been processed already.
+            return true;
+        }
         foreach ($events as $event) {
             if (!$event instanceof DomainEventWithIdentifierInterface) {
                 throw new \RuntimeException(sprintf('The CommandResult contains an event "%s" that does not implement the %s interface', get_class($event), DomainEventWithIdentifierInterface::class), 1550314769);
@@ -1175,6 +1193,10 @@ insert into neos_contentgraph_restrictionedge
      */
     public function afterInvoke(EventEnvelope $eventEnvelope): void
     {
+        if ($this->assumeProjectorRunsSynchronously === true) {
+            // if we run synchronously during an import, we don't need the processed events cache
+            return;
+        }
         $this->processedEventsCache->set(md5($eventEnvelope->getRawEvent()->getIdentifier()), true);
     }
 }
