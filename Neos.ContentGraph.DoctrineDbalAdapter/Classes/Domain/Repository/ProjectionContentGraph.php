@@ -219,12 +219,10 @@ class ProjectionContentGraph
         if ($succeedingSiblingAnchorPoint) {
             $succeedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
                 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanchor') . ' = :anchorPoint
-                          AND h. ' . ($parentAnchorPoint ? 'childnodeanchor' : 'parentnodeanchor') . ' = :succeedingSiblingAnchorPoint
+                          WHERE h.childnodeanchor = :succeedingSiblingAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'anchorPoint' => $parentAnchorPoint ?: $childAnchorPoint,
                     'succeedingSiblingAnchorPoint' => (string)$succeedingSiblingAnchorPoint,
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
@@ -232,15 +230,16 @@ class ProjectionContentGraph
             )->fetch();
 
             $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
+            $parentAnchorPoint = $succeedingSiblingRelation['parentnodeanchor'];
 
             $precedingSiblingPosition = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MAX(h.position) AS position FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.' . ($parentAnchorPoint ? 'parentnodeanchor' : 'childnodeanchor') . ' = :anchorPoint
+                          WHERE h.parentnodeanchor = :anchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
                           AND h.position < :position',
                 [
-                    'anchorPoint' => $parentAnchorPoint ?: $childAnchorPoint,
+                    'anchorPoint' => $parentAnchorPoint,
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                     'position' => $succeedingSiblingPosition

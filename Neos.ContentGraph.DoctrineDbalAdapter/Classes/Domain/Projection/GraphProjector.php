@@ -974,15 +974,16 @@ insert into neos_contentgraph_restrictionedge
                         $moveNodeMapping->getDimensionSpacePointSet()
                     );*/
                 } else {
-                    foreach ($moveNodeMapping->getDimensionSpacePointSet()->getPoints() as $dimensionSpacePoint) {
+                    foreach ($inboundHierarchyRelations as $inboundHierarchyRelation) {
                         $newPosition = $this->getRelationPosition(
                             null,
                             $nodeToBeMoved->relationAnchorPoint,
                             $newSucceedingSibling ? $newSucceedingSibling->relationAnchorPoint : null,
                             $event->getContentStreamIdentifier(),
-                            $dimensionSpacePoint
+                            $inboundHierarchyRelation->dimensionSpacePoint
                         );
-                        $inboundHierarchyRelations[$dimensionSpacePoint->getHash()]->assignNewPosition($newPosition, $this->getDatabaseConnection());
+
+                        $inboundHierarchyRelation->assignNewPosition($newPosition, $this->getDatabaseConnection());
                     }
                 }
             }
