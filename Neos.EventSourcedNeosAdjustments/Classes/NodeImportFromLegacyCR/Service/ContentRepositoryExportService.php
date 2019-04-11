@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service;
 
 /*
@@ -215,10 +216,18 @@ class ContentRepositoryExportService
             ->setParameter('workspace', 'live')
             ->setParameter('removed', false, \PDO::PARAM_BOOL);
 
-        $nodeDatas = $queryBuilder->getQuery()->getResult();
+        $i = 0;
+        $batchSize = 100;
         $nodeDatasToExportAtNextIteration = [];
-        foreach ($nodeDatas as $nodeData) {
+
+        foreach ($queryBuilder->getQuery()->iterate() as $nodeDataRows) {
+            $i++;
+            $nodeData = $nodeDataRows[0];
             $this->exportNodeData($nodeData, $nodeDatasToExportAtNextIteration);
+
+            if (($i % $batchSize) === 0) {
+                $this->persistenceManager->clearState();
+            }
         }
         var_dump("NODE DATAS IN NEXT ITER: " . count($nodeDatasToExportAtNextIteration));
 
@@ -271,7 +280,8 @@ class ContentRepositoryExportService
         array $propertyValues,
         array $propertyReferences,
         NodePath $nodePath
-    ) {
+    )
+    {
         echo $nodePath . "\n";
 
         try {
@@ -402,16 +412,23 @@ class ContentRepositoryExportService
 
     private function processPropertyReferences(NodeData $nodeData)
     {
+
         $references = [];
+
         foreach ($nodeData->getProperties() as $propertyName => $propertyValue) {
-            $type = $nodeData->getNodeType()->getPropertyType($propertyName);
-            if ($type === 'reference') {
-                $references[$propertyName] = [NodeAggregateIdentifier::fromString($propertyValue)];
-            }
-            if ($type === 'references' && is_array($propertyValue)) {
-                $references[$propertyName] = array_map(function ($identifier) {
-                    return NodeAggregateIdentifier::fromString($identifier);
-                }, $propertyValue);
+            try {
+                $type = $nodeData->getNodeType()->getPropertyType($propertyName);
+                if ($type === 'reference' && !empty($propertyValue)) {
+                    $references[$propertyName] = [NodeAggregateIdentifier::fromString($propertyValue)];
+                }
+                if ($type === 'references' && is_array($propertyValue)) {
+                    $references[$propertyName] = array_map(function ($identifier) {
+                        return NodeAggregateIdentifier::fromString($identifier);
+                    }, $propertyValue);
+                }
+            } catch(\Exception $e) {
+                $message = 'There was an error exporting the reference ' . $propertyName . ' at path ' . $nodeData->getContextPath() . ':' . $e->getMessage();
+                $this->systemLogger->warning($message, ['exception' => $e]);
             }
         }
         return $references;
@@ -477,14 +494,16 @@ class ContentRepositoryExportService
                 ->setMaxResults(1);
 
             // all tethered nodes have the same Node Identifier; so we can just go for the first one.
-            $tetheredChild = $query->getQuery()->getSingleResult();
+            $tetheredChildren = $query->getQuery()->execute();
+            if (count($tetheredChildren) > 0) {
+                // if we find a tethered child, we step one level down.
+                $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($tetheredChildren[0]->getIdentifier());
+                $nodeAggregateIdentifiersByNodePath[$nodeName] = $nodeAggregateIdentifier;
 
-            $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($tetheredChild->getIdentifier());
-            $nodeAggregateIdentifiersByNodePath[$nodeName] = $nodeAggregateIdentifier;
-
-            $nestedNodeAggregateIdentifiersByNodePath = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePathOfTetheredNode, NodeTypeName::fromString($childNodeType->getName()));
-            foreach ($nestedNodeAggregateIdentifiersByNodePath->getNodeAggregateIdentifiers() as $nodePathString => $nodeAggregateIdentifier) {
-                $nodeAggregateIdentifiersByNodePath[$nodeName . '/' . $nodePathString] = $nodeAggregateIdentifier;
+                $nestedNodeAggregateIdentifiersByNodePath = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePathOfTetheredNode, NodeTypeName::fromString($childNodeType->getName()));
+                foreach ($nestedNodeAggregateIdentifiersByNodePath->getNodeAggregateIdentifiers() as $nodePathString => $nodeAggregateIdentifier) {
+                    $nodeAggregateIdentifiersByNodePath[$nodeName . '/' . $nodePathString] = $nodeAggregateIdentifier;
+                }
             }
         }
 
