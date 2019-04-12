@@ -152,6 +152,7 @@ final class NodeAggregateCommandHandler
 
         $events = DomainEvents::createEmpty();
         $this->nodeEventPublisher->withCommand($command, function() use ($command, &$events) {
+            $this->requireContentStreamToExist($command->getContentStreamIdentifier());
             $nodeType = $this->requireNodeType($command->getNodeTypeName());
             $this->requireNodeTypeToBeOfTypeRoot($nodeType);
 
@@ -209,6 +210,7 @@ final class NodeAggregateCommandHandler
 
         $events = DomainEvents::createEmpty();
         $this->nodeEventPublisher->withCommand($command, function() use ($command, &$events) {
+            $this->requireContentStreamToExist($command->getContentStreamIdentifier());
             $this->requireDimensionSpacePointToExist($command->getOriginDimensionSpacePoint());
             $nodeType = $this->requireNodeType($command->getNodeTypeName());
             $this->requireNodeTypeToNotBeOfTypeRoot($nodeType);
@@ -326,6 +328,7 @@ final class NodeAggregateCommandHandler
             $childNodeAggregateIdentifier = $nodeAggregateIdentifiers->getNodeAggregateIdentifier($childNodePath) ?? NodeAggregateIdentifier::create();
             $initialPropertyValues = $this->getDefaultPropertyValues($childNodeType);
 
+            $this->requireContentStreamToExist($command->getContentStreamIdentifier());
             $events = $events->appendEvents($this->createTetheredWithNode(
                 $command,
                 $childNodeAggregateIdentifier,
