@@ -430,8 +430,7 @@ final class WorkspaceCommandHandler
      */
     private function applyCommand($command): CommandResult
     {
-        // TODO: use a more clever dispatching mechanism than the hard coded switch!!
-        // TODO: add all commands!!
+        // TODO: relay all commands to the node aggregate command handler as it is the single point of entry for all node related commands
         switch (get_class($command)) {
             case ChangeNodeAggregateName::class:
                 return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($command);

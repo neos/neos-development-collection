@@ -41,27 +41,27 @@ Feature: Disable a node
 
   Scenario: Try to hide a node in a non-existing content stream
     When the command DisableNode is executed with payload and exceptions are caught:
-      | Key                       | Value                    |
-      | contentStreamIdentifier   | "i-do-not-exist"         |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough" |
-      | originDimensionSpacePoint | {}                       |
-      | nodeDisablingStrategy     | "scatter"                |
+      | Key                        | Value                    |
+      | contentStreamIdentifier    | "i-do-not-exist"         |
+      | nodeAggregateIdentifier    | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint | {}                       |
+      | nodeDisablingStrategy      | "scatter"                |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to hide a node in a non-existing dimension space point
     When the command DisableNode is executed with payload and exceptions are caught:
-      | Key                       | Value                       |
-      | contentStreamIdentifier   | "cs-identifier"             |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"    |
-      | originDimensionSpacePoint | {"undeclared": "undefined"} |
-      | nodeDisablingStrategy     | "scatter"                   |
+      | Key                        | Value                       |
+      | contentStreamIdentifier    | "cs-identifier"             |
+      | nodeAggregateIdentifier    | "sir-david-nodenborough"    |
+      | coveredDimensionSpacePoint | {"undeclared": "undefined"} |
+      | nodeDisablingStrategy      | "scatter"                   |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to hide a node in a non-existing node aggregate
     When the command DisableNode is executed with payload and exceptions are caught:
-      | Key                       | Value            |
-      | contentStreamIdentifier   | "cs-identifier"  |
-      | nodeAggregateIdentifier   | "i-do-not-exist" |
-      | originDimensionSpacePoint | {}               |
-      | nodeDisablingStrategy     | "scatter"        |
+      | Key                        | Value            |
+      | contentStreamIdentifier    | "cs-identifier"  |
+      | nodeAggregateIdentifier    | "i-do-not-exist" |
+      | coveredDimensionSpacePoint | {}               |
+      | nodeDisablingStrategy      | "scatter"        |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"

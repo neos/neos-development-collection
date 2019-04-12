@@ -758,6 +758,22 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the command ForkContentStream is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws ContentStreamAlreadyExists
+     * @throws ContentStreamDoesNotExistYet
+     * @throws Exception
+     */
+    public function theCommandForkContentStreamIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $command = ForkContentStream::fromArray($commandArguments);
+
+        $this->lastCommandOrEventResult = $this->getContentStreamCommandHandler()
+            ->handleForkContentStream($command);
+    }
+
+    /**
      * @When /^the command "([^"]*)" is executed with payload:$/
      * @Given /^the command "([^"]*)" was executed with payload:$/
      * @param string $shortCommandName
@@ -1658,6 +1674,14 @@ trait EventSourcedTrait
     {
         /** @var WorkspaceCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(WorkspaceCommandHandler::class);
+
+        return $commandHandler;
+    }
+
+    protected function getContentStreamCommandHandler(): ContentStreamCommandHandler
+    {
+        /** @var ContentStreamCommandHandler $commandHandler */
+        $commandHandler = $this->getObjectManager()->get(ContentStreamCommandHandler::class);
 
         return $commandHandler;
     }
