@@ -23,6 +23,7 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
@@ -274,7 +275,8 @@ class ContentRepositoryExportService
             NodeName::fromString($nodeData->getName()),
             $this->processPropertyValues($nodeData),
             $this->processPropertyReferences($nodeData),
-            $nodePath
+            $nodePath,
+            $nodeData->isHidden()
         );
     }
 
@@ -286,7 +288,8 @@ class ContentRepositoryExportService
         NodeName $nodeName,
         array $propertyValues,
         array $propertyReferences,
-        NodePath $nodePath
+        NodePath $nodePath,
+        bool $isHidden
     )
     {
         echo $nodePath . "\n";
@@ -357,6 +360,15 @@ class ContentRepositoryExportService
                     $references,
                     PropertyName::fromString($propertyName)
                 ))->blockUntilProjectionsAreUpToDate();
+            }
+
+            if ($isHidden === true) {
+                $this->nodeCommandHandler->handleHideNode(new HideNode(
+                    $this->contentStreamIdentifier,
+                    $nodeAggregateIdentifier,
+                    // HINT: we currently *always* hide the specializations; this is a DEVIATION from the old behavior where only non-materialized nodes were affected by the hiding.
+                    $this->interDimensionalFallbackGraph->getSpecializationSet($originDimensionSpacePoint)
+                ));
             }
 
             $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = $originDimensionSpacePoint;
