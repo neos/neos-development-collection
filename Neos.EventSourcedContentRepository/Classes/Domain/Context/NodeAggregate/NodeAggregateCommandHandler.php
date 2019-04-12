@@ -328,6 +328,7 @@ final class NodeAggregateCommandHandler
 
             $events = $events->appendEvents($this->createTetheredWithNode(
                 $command,
+                $childNodeAggregateIdentifier,
                 NodeTypeName::fromString($childNodeType->getName()),
                 $visibleDimensionSpacePoints,
                 $parentNodeAggregateIdentifier,
@@ -351,6 +352,7 @@ final class NodeAggregateCommandHandler
 
     private function createTetheredWithNode(
         CreateNodeAggregateWithNode $command,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
         DimensionSpacePointSet $visibleDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
@@ -363,7 +365,7 @@ final class NodeAggregateCommandHandler
             EventWithIdentifier::create(
                 new NodeAggregateWithNodeWasCreated(
                     $command->getContentStreamIdentifier(),
-                    $command->getNodeAggregateIdentifier(),
+                    $nodeAggregateIdentifier,
                     $nodeTypeName,
                     $command->getOriginDimensionSpacePoint(),
                     $visibleDimensionSpacePoints,
