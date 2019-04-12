@@ -11,20 +11,17 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Exception\NodeException;
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Eel\FlowQueryOperations\SiblingsOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the FlowQuery SiblingsOperation
  */
-class SiblingsOperationTest extends UnitTestCase
+class SiblingsOperationTest extends AbstractQueryOperationsTest
 {
     /**
      * @var Context
@@ -57,12 +54,11 @@ class SiblingsOperationTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->siteNode = $this->createMock(TraversableNodeInterface::class);
-        $this->firstNodeInLevel = $this->createMock(TraversableNodeInterface::class);
-        $this->secondNodeInLevel = $this->createMock(TraversableNodeInterface::class);
-        $this->thirdNodeInLevel = $this->createMock(TraversableNodeInterface::class);
+        $this->siteNode = $this->mockNode('site');
+        $this->firstNodeInLevel = $this->mockNode('first-node');
+        $this->secondNodeInLevel = $this->mockNode('second-node');
+        $this->thirdNodeInLevel = $this->mockNode('third-node');
 
-        $this->siteNode->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('site')));
         $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(TraversableNodes::fromArray([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
@@ -72,11 +68,8 @@ class SiblingsOperationTest extends UnitTestCase
 
         $this->siteNode->expects($this->any())->method('findParentNode')->will($this->throwException(new NodeException('No parent')));
         $this->firstNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->firstNodeInLevel->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('first-node')));
         $this->secondNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('second-node')));
         $this->thirdNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('third-node')));
     }
 
     /**

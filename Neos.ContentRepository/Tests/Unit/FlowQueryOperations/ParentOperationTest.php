@@ -11,19 +11,17 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodePath;
-use Neos\ContentRepository\Exception\NodeException;
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Eel\FlowQueryOperations\ParentOperation;
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the FlowQuery ParentsOperation
  */
-class ParentOperationTest extends UnitTestCase
+class ParentOperationTest extends AbstractQueryOperationsTest
 {
     /**
      * @var Context
@@ -47,13 +45,12 @@ class ParentOperationTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->siteNode = $this->createMock(TraversableNodeInterface::class);
-        $this->firstLevelNode = $this->createMock(TraversableNodeInterface::class);
-        $this->secondLevelNode = $this->createMock(TraversableNodeInterface::class);
+        $this->siteNode = $this->mockNode('site-identifier-uuid');
+        $this->firstLevelNode = $this->mockNode('node1');
+        $this->secondLevelNode = $this->mockNode('node2');
 
         $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site')));
         $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue([$this->firstLevelNode]));
-        $this->siteNode->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('site-identifier-uuid')));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->siteNode->expects($this->any())->method('findParentNode')->will($this->throwException(new NodeException('No parent')));

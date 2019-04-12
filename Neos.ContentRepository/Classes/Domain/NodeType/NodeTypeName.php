@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Domain\ValueObject;
+namespace Neos\ContentRepository\Domain\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,19 +13,18 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
-use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Utility\Algorithms;
 
 /**
- * The "Node Identifier" will be removed with the Event-Sourced CR in Neos 5.0; but some
- * parts of the ES code still rely on it so far.
+ * Name of a Node Type; e.g. "Neos.Neos:Content"
  *
  * @Flow\Proxy(false)
- * @deprecated
+ * @api
  */
-final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
+final class NodeTypeName implements \JsonSerializable
 {
+    const ROOT_NODE_TYPE_NAME = 'Neos.ContentRepository:Root';
+
     /**
      * @var string
      */
@@ -33,12 +32,11 @@ final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
 
     private function __construct(string $value)
     {
-        $this->value = $value;
-    }
+        if ($value === '') {
+            throw new \InvalidArgumentException('Node type name must not be empty.', 1505835958);
+        }
 
-    public static function create(): self
-    {
-        return new static(Algorithms::generateUUID());
+        $this->value = $value;
     }
 
     public static function fromString(string $value): self
@@ -46,17 +44,12 @@ final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
         return new static($value);
     }
 
-    public function jsonSerialize(): string
+    public function jsonSerialize()
     {
         return $this->value;
     }
 
-    public function getCacheEntryIdentifier(): string
-    {
-        return $this->value;
-    }
-
-    public function __toString(): string
+    public function __toString()
     {
         return $this->value;
     }

@@ -103,7 +103,6 @@ class AssetRepository extends Repository
      * @param Tag $tag
      * @param AssetCollection $assetCollection
      * @return integer
-     * @throws NonUniqueResultException
      */
     public function countByTag(Tag $tag, AssetCollection $assetCollection = null)
     {
@@ -121,7 +120,11 @@ class AssetRepository extends Repository
         if ($assetCollection !== null) {
             $query->setParameter(2, $assetCollection);
         }
-        return $query->getSingleScalarResult();
+        try {
+            return $query->getSingleScalarResult();
+        } catch (NonUniqueResultException $e) {
+            return 0;
+        }
     }
 
     /**
@@ -210,7 +213,6 @@ class AssetRepository extends Repository
      *
      * @param AssetCollection $assetCollection
      * @return integer
-     * @throws NonUniqueResultException
      */
     public function countByAssetCollection(AssetCollection $assetCollection)
     {
@@ -221,7 +223,11 @@ class AssetRepository extends Repository
 
         $query = $this->entityManager->createNativeQuery($queryString, $rsm);
         $query->setParameter(1, $assetCollection);
-        return $query->getSingleScalarResult();
+        try {
+            return $query->getSingleScalarResult();
+        } catch (NonUniqueResultException $e) {
+            return 0;
+        }
     }
 
     /**
