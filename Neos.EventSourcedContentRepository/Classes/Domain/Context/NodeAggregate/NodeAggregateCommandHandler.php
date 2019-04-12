@@ -611,9 +611,8 @@ final class NodeAggregateCommandHandler
             );
 
             $this->nodeEventPublisher->publishMany(
-                NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-                    $command->getContentStreamIdentifier(),
-                    $command->getNodeAggregateIdentifier()
+                ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(
+                    $command->getContentStreamIdentifier()
                 )->getEventStreamName(),
                 $events
             );
@@ -783,9 +782,8 @@ final class NodeAggregateCommandHandler
                     EventWithIdentifier::create($event)
                 );
 
-                $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-                    $event->getContentStreamIdentifier(),
-                    $event->getNodeAggregateIdentifier()
+                $streamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(
+                    $event->getContentStreamIdentifier()
                 );
 
                 $this->nodeEventPublisher->publishMany($streamName->getEventStreamName(), $domainEvents);

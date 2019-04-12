@@ -136,34 +136,31 @@ Feature: Create node peer variant
       | nodeAggregateIdentifier   | "sir-david-nodenborough"         |
       | sourceOrigin | {"market":"DE", "language":"en"} |
       | targetOrigin | {"market":"CH", "language":"fr"} |
-    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
+    Then I expect exactly 13 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 10 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                           |
       | contentStreamIdentifier   | "cs-identifier"                    |
       | nodeAggregateIdentifier   | "sir-david-nodenborough"           |
       | sourceOrigin | {"market":"DE", "language":"en"}   |
       | peerOrigin              | {"market":"CH", "language":"fr"}   |
       | peerCoverage            | [{"market":"CH", "language":"fr"}] |
-    And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimus-prime"
     # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 11 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                           |
       | contentStreamIdentifier   | "cs-identifier"                    |
       | nodeAggregateIdentifier   | "nodimus-prime"                    |
       | sourceOrigin | {"market":"DE", "language":"en"}   |
       | peerOrigin              | {"market":"CH", "language":"fr"}   |
       | peerCoverage            | [{"market":"CH", "language":"fr"}] |
-    And I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodimus-mediocre"
     # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 12 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                           |
       | contentStreamIdentifier   | "cs-identifier"                    |
       | nodeAggregateIdentifier   | "nodimus-mediocre"                 |
       | sourceOrigin | {"market":"DE", "language":"en"}   |
       | peerOrigin              | {"market":"CH", "language":"fr"}   |
       | peerCoverage            | [{"market":"CH", "language":"fr"}] |
-    And I expect exactly 1 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
     # No peer node creation for non-auto created child nodes
 
     When the graph projection is fully up to date
@@ -336,37 +333,34 @@ Feature: Create node peer variant
       | nodeAggregateIdentifier   | "madame-lanode"                  |
       | sourceOrigin | {"market":"CH", "language":"fr"} |
       | targetOrigin | {"market":"DE", "language":"en"} |
-    Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:madame-lanode"
+    Then I expect exactly 16 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the first above
-    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 13 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "madame-lanode"                                                     |
       | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
       | peerOrigin              | {"market":"DE", "language":"en"}                                    |
       | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
-    And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-prime"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the second above
-    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 14 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nodesis-prime"                                                     |
       | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
       | peerOrigin              | {"market":"DE", "language":"en"}                                    |
       | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
-    And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-mediocre"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the third above
-    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 15 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nodesis-mediocre"                                                  |
       | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
       | peerOrigin              | {"market":"DE", "language":"en"}                                    |
       | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
-    And I expect exactly 1 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodette"
     # No peer node creation for non-auto created child nodes
 
     When the graph projection is fully up to date
@@ -543,37 +537,34 @@ Feature: Create node peer variant
       | nodeAggregateIdentifier   | "madame-lanode"                  |
       | sourceOrigin | {"market":"CH", "language":"fr"} |
       | targetOrigin | {"market":"DE", "language":"de"} |
-    Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:madame-lanode"
+    Then I expect exactly 16 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the first above
-    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 13 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "madame-lanode"                                                     |
       | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
       | peerOrigin              | {"market":"DE", "language":"de"}                                    |
       | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
-    And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-prime"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the second above
-    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 14 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nodesis-prime"                                                     |
       | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
       | peerOrigin              | {"market":"DE", "language":"de"}                                    |
       | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
-    And I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodesis-mediocre"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second is the third above
-    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 15 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nodesis-mediocre"                                                  |
       | sourceOrigin | {"market":"CH", "language":"fr"}                                    |
       | peerOrigin              | {"market":"DE", "language":"de"}                                    |
       | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
-    And I expect exactly 1 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nodette"
     # No peer node creation for non-auto created child nodes
 
     When the graph projection is fully up to date
@@ -790,9 +781,9 @@ Feature: Create node peer variant
       | nodeAggregateIdentifier   | "nody-mc-nodeface"               |
       | sourceOrigin | {"market":"DE", "language":"en"} |
       | targetOrigin | {"market":"DE", "language":"fr"} |
-    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
+    Then I expect exactly 13 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
+    And event at index 12 is of type "Neos.EventSourcedContentRepository:NodePeerVariantWasCreated" with payload:
       | Key                       | Expected                                                            |
       | contentStreamIdentifier   | "cs-identifier"                                                     |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                  |

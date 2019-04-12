@@ -37,8 +37,8 @@ Feature: Change node name
       | nodeAggregateIdentifier | "nody-mc-nodeface" |
       | newNodeName             | "cat"              |
 
-    Then I expect exactly 2 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodeAggregateNameWasChanged" with payload:
+    Then I expect exactly 3 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
+    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeAggregateNameWasChanged" with payload:
       | Key                     | Expected           |
       | contentStreamIdentifier | "cs-identifier"    |
       | nodeAggregateIdentifier | "nody-mc-nodeface" |

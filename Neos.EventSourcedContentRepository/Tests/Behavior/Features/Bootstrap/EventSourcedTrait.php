@@ -14,7 +14,6 @@ declare(strict_types=1);
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -37,10 +36,8 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeGeneralization;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -193,7 +190,7 @@ trait EventSourcedTrait
         $eventPayload = $this->readPayloadTable($payloadTable);
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
         $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
-        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
 
         $this->publishEvent('Neos.EventSourcedContentRepository:RootNodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
         $this->rootNodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -221,8 +218,7 @@ trait EventSourcedTrait
         }
 
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
-        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
 
         $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
@@ -236,10 +232,8 @@ trait EventSourcedTrait
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
-        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $contentStreamIdentifier
         );
 
         $this->publishEvent('Neos.EventSourcedContentRepository:NodeSpecializationWasCreated', $streamName->getEventStreamName(), $eventPayload);
@@ -254,10 +248,8 @@ trait EventSourcedTrait
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
-        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $contentStreamIdentifier
         );
 
         $this->publishEvent('Neos.EventSourcedContentRepository:NodeGeneralizationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
@@ -272,10 +264,8 @@ trait EventSourcedTrait
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
-        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $contentStreamIdentifier
         );
 
         $this->publishEvent('Neos.EventSourcedContentRepository:NodeSpecializationVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
@@ -290,10 +280,8 @@ trait EventSourcedTrait
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
-        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $contentStreamIdentifier
         );
 
         $this->publishEvent('Neos.EventSourcedContentRepository:NodePeerVariantWasCreated', $streamName->getEventStreamName(), $eventPayload);
@@ -308,10 +296,8 @@ trait EventSourcedTrait
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['nodeAggregateIdentifier']);
-        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $contentStreamIdentifier
         );
 
         $this->publishEvent('Neos.EventSourcedContentRepository:NodePropertiesWereSet', $streamName->getEventStreamName(), $eventPayload);
@@ -326,10 +312,8 @@ trait EventSourcedTrait
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($eventPayload['sourceNodeAggregateIdentifier']);
-        $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
+            $contentStreamIdentifier
         );
 
         $this->publishEvent('Neos.EventSourcedContentRepository:NodeReferencesWereSet', $streamName->getEventStreamName(), $eventPayload);
