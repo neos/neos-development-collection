@@ -72,20 +72,24 @@ If no format is given the crops will use the format of the original image.
 This allows to to enforce rendering of crops in jpeg or png but also adds support for rendering
 of webp-images as alternate sources.
 
-Additionally this pr adds the ConvertImageThumbnailGenerator that allows to specify images that should be converted for 
-online-presentation to an optimized target format. While the default imageFormat is specified in the settings this can still 
-be overridden via `format` option on the thumbnail-configurations.
+.. note::
 
-The ConvertImageThumbnailGenerator is configured via settings:
+	The selected imagine-diver has to support both the source and the target image format for a sucessfull conversion.
+	Especially the ``Gd`` driver lacks some features in this regard. So please test your driver if you are using
+	format like webp or tiff.
+
+Additionally the option ``convertFormats`` is added to the Settings to automatically convert non-web images into
+web images. The example shows how to configure Neos to automatically convert tiff images to jpg.
 
 ```
 Neos:
   Media:
-    thumbnailGenerators:
-      Neos\\Media\\Domain\\Model\\ThumbnailGenerator\\ConvertImageThumbnailGenerator:
-        supportedExtensions:
-          - tiff
-        targetExtension: jpg
+    image:
+      defaultOptions:
+        # Image formats that shall always be converted regardless wether an adjustment was applied or not
+        # The key is the the source media-type and the value is the target media-type or file-extension.
+        convertFormats:
+          image/tiff: image/jpeg
 ```
 
 Add ``Neos.Neos:MenuItems``, ``Neos.Neos:DimensionMenuItems`` and ``Neos.Neos:BreadcrumbMenuItems`` prototypes
