@@ -111,14 +111,39 @@ class ImageMapper
 
         foreach ($imageVariant->getAdjustments() as $adjustment) {
             if ($adjustment instanceof CropImageAdjustment) {
-                $variantInformation['hasCrop'] = true;
-                $variantInformation['cropInformation'] = [
-                    'width' => $adjustment->getWidth(),
-                    'height' => $adjustment->getHeight(),
-                    'x' => $adjustment->getX(),
-                    'y' => $adjustment->getY(),
-                ];
+                $variantInformation = array_merge($variantInformation, $this->mapCrop($imageVariant, $adjustment));
             }
+        }
+
+        return $variantInformation;
+    }
+
+    /**
+     * Map crop information for user interface.
+     *
+     * @param ImageVariant $imageVariant
+     * @param CropImageAdjustment $adjustment
+     * @return array
+     */
+    private function mapCrop(ImageVariant $imageVariant, CropImageAdjustment $adjustment)
+    {
+        $variantInformation['hasCrop'] = true;
+        $variantInformation['cropInformation'] = [
+            'width' => $adjustment->getWidth(),
+            'height' => $adjustment->getHeight(),
+            'x' => $adjustment->getX(),
+            'y' => $adjustment->getY(),
+        ];
+
+        $aspectRatio = $adjustment->getAspectRatio();
+        if ($aspectRatio !== null) {
+            [$x, $y, $width, $height] = CropImageAdjustment::calculateDimensionsByAspectRatio($imageVariant->getOriginalAsset()->getWidth(), $imageVariant->getOriginalAsset()->getHeight(), $aspectRatio);
+            $variantInformation['cropInformation'] = [
+                'width' => $width,
+                'height' => $height,
+                'x' => $x,
+                'y' => $y,
+            ];
         }
 
         return $variantInformation;
