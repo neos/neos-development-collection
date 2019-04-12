@@ -23,12 +23,15 @@ use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateNameWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
@@ -1004,6 +1007,67 @@ final class NodeAggregateCommandHandler
         }
 
         return NodeMoveMappings::fromArray($nodeMoveMappings);
+    }
+
+    /**
+     * @param DisableNode $command
+     * @return CommandResult
+     * @throws ContentStream\ContentStreamDoesNotExistYet
+     * @throws DimensionSpacePointNotFound
+     * @throws NodeAggregateCurrentlyDoesNotExist
+     * @throws NodeAggregatesTypeIsAmbiguous
+     */
+    public function handleDisableNode(DisableNode $command): CommandResult
+    {
+        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $this->requireDimensionSpacePointToExist($command->getCoveredDimensionSpacePoint());
+        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->getCoveredDimensionSpacePoint());
+
+        $events = null;
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
+            switch ($command->getNodeDisablingStrategy()->getStrategy()) {
+                case NodeDisablingStrategy::STRATEGY_GATHER_ALL_SPECIALIZATIONS:
+                    $affectedDimensionSpacePoints = $this->interDimensionalVariationGraph->getSpecializationSet($command->getCoveredDimensionSpacePoint())
+                        ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints());
+                    break;
+                case NodeDisablingStrategy::STRATEGY_GATHER_VIRTUAL_SPECIALIZATIONS:
+                    $specializationSet = $this->interDimensionalVariationGraph->getSpecializationSet($command->getCoveredDimensionSpacePoint());
+                    $affectedDimensionSpacePoints = $specializationSet
+                        ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints());
+                    foreach ($specializationSet as $specializedDimensionSpacePoint) {
+                        if ($specializedDimensionSpacePoint->equals($command->getCoveredDimensionSpacePoint())) {
+                            continue;
+                        }
+                        if ($nodeAggregate->occupiesDimensionSpacePoint($specializedDimensionSpacePoint)) {
+                            $affectedDimensionSpacePoints = $affectedDimensionSpacePoints->getIntersection(
+                                $this->interDimensionalVariationGraph->getSpecializationSet($specializedDimensionSpacePoint)
+                            );
+                        }
+                    }
+                    break;
+                case NodeDisablingStrategy::STRATEGY_SCATTER:
+                default:
+                    $affectedDimensionSpacePoints = new DimensionSpacePointSet([$command->getCoveredDimensionSpacePoint()]);
+            }
+
+            $events = DomainEvents::withSingleEvent(
+                EventWithIdentifier::create(
+                    new NodeWasDisabled(
+                        $command->getContentStreamIdentifier(),
+                        $command->getNodeAggregateIdentifier(),
+                        $affectedDimensionSpacePoints
+                    )
+                )
+            );
+
+            $this->nodeEventPublisher->publishMany(
+                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
+                $events
+            );
+        });
+
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**

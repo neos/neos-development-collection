@@ -19,5 +19,5 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
  */
 interface CopyableAcrossContentStreamsInterface
 {
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream);
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier);
 }

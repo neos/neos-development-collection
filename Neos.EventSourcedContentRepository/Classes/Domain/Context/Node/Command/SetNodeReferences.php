@@ -126,10 +126,10 @@ final class SetNodeReferences implements \JsonSerializable, CopyableAcrossConten
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifierIdentifier): self
     {
         return new SetNodeReferences(
-            $targetContentStreamIdentifier,
+            $targetContentStreamIdentifierIdentifier,
             $this->sourceNodeAggregateIdentifier,
             $this->sourceOriginDimensionSpacePoint,
             $this->destinationNodeAggregateIdentifiers,

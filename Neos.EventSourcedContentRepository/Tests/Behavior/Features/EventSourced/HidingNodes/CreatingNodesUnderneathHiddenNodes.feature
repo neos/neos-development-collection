@@ -40,7 +40,7 @@ Feature: Creation of nodes underneath hidden nodes
       | nodeName                      | "text1"                                  |
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
-    And the command "HideNode" is executed with payload:
+    And the command "DisableNode" is executed with payload:
       | Key                          | Value              |
       | contentStreamIdentifier      | "cs-identifier"    |
       | nodeAggregateIdentifier      | "the-great-nodini" |

@@ -94,10 +94,10 @@ final class ShowNode implements \JsonSerializable, CopyableAcrossContentStreamsI
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new ShowNode(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->affectedDimensionSpacePoints
         );

@@ -609,6 +609,8 @@ WHERE
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints);
+
         $query->addToQuery('
     AND h.position < (
         SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
@@ -657,6 +659,8 @@ WHERE
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints);
+
         $query->addToQuery('
     AND h.position > (
         SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
@@ -687,7 +691,7 @@ WHERE
     protected function getSiblingBaseQuery(): string
     {
         return '
-  SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint FROM neos_contentgraph_node n
+  SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
   INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
   WHERE h.contentstreamidentifier = :contentStreamIdentifier AND h.dimensionspacepointhash = :dimensionSpacePointHash
   AND h.parentnodeanchor = (

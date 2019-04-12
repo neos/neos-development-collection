@@ -161,10 +161,10 @@ final class MoveNode implements \JsonSerializable, CopyableAcrossContentStreamsI
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new MoveNode(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->dimensionSpacePoint,
             $this->nodeAggregateIdentifier,
             $this->newParentNodeAggregateIdentifier,

@@ -21,7 +21,6 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
@@ -31,7 +30,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWa
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -152,42 +150,6 @@ final class NodeCommandHandler
             );
         });
 
-        return CommandResult::fromPublishedEvents($events);
-    }
-
-    /**
-     * @param HideNode $command
-     * @return CommandResult
-     */
-    public function handleHideNode(HideNode $command): CommandResult
-    {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        $events = null;
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-
-            // Soft constraint check: Check if node exists in *all* given DimensionSpacePoints
-            foreach ($command->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
-                $this->assertNodeWithOriginDimensionSpacePointExists($contentStreamIdentifier, $command->getNodeAggregateIdentifier(), $dimensionSpacePoint);
-            }
-
-
-            $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
-                    new NodeWasHidden(
-                        $contentStreamIdentifier,
-                        $command->getNodeAggregateIdentifier(),
-                        $command->getAffectedDimensionSpacePoints()
-                    )
-                )
-            );
-
-            $this->nodeEventPublisher->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
-                $events
-            );
-        });
         return CommandResult::fromPublishedEvents($events);
     }
 

@@ -61,10 +61,10 @@ final class NodeAggregateWasRemoved implements DomainEventInterface, CopyableAcr
         return $this->nodeAggregateIdentifier;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodeAggregateWasRemoved(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier
         );
     }

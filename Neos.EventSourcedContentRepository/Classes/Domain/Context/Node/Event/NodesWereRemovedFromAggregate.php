@@ -81,13 +81,13 @@ final class NodesWereRemovedFromAggregate implements DomainEventInterface, Copya
     }
 
     /**
-     * @param ContentStreamIdentifier $targetContentStream
+     * @param ContentStreamIdentifier $targetContentStreamIdentifier
      * @return NodesWereRemovedFromAggregate
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodesWereRemovedFromAggregate(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->dimensionSpacePointSet
         );

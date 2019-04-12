@@ -115,10 +115,10 @@ final class MoveNodesInAggregate implements \JsonSerializable, CopyableAcrossCon
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new MoveNodesInAggregate(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->referencePosition,
             $this->referenceNodeAggregateIdentifier

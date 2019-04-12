@@ -107,10 +107,10 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
         return $this->initiatingUserIdentifier;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): RootNodeAggregateWithNodeWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): RootNodeAggregateWithNodeWasCreated
     {
         return new RootNodeAggregateWithNodeWasCreated(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->visibleInDimensionSpacePoints,

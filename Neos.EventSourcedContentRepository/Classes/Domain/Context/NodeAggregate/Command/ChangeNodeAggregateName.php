@@ -76,10 +76,10 @@ final class ChangeNodeAggregateName implements \JsonSerializable, CopyableAcross
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new ChangeNodeAggregateName(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->newNodeName
         );

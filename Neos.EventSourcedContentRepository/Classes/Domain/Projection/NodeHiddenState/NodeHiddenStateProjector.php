@@ -15,7 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState;
 use Doctrine\DBAL\Connection;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcing\Projection\ProjectorInterface;
@@ -52,7 +52,7 @@ class NodeHiddenStateProjector implements ProjectorInterface
         });
     }
 
-    public function whenNodeWasHidden(NodeWasHidden $event)
+    public function whenNodeWasDisabled(NodeWasDisabled $event)
     {
         $this->transactional(function () use ($event) {
             foreach ($event->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {

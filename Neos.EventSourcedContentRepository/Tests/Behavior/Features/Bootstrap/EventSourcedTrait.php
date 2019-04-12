@@ -14,6 +14,7 @@ declare(strict_types=1);
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -27,7 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
@@ -699,7 +700,6 @@ trait EventSourcedTrait
     /**
      * @Given /^the command MoveNode is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
-     * @throws Exception
      */
     public function theCommandMoveNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
     {
@@ -728,6 +728,33 @@ trait EventSourcedTrait
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
             ->handlePublishIndividualNodesFromWorkspace($command);
+    }
+
+    /**
+     * @Given /^the command DisableNode is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandDisableNodeIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $command = DisableNode::fromArray($commandArguments);
+
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
+            ->handleDisableNode($command);
+    }
+
+    /**
+     * @Given /^the command DisableNode is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     */
+    public function theCommandDisableNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandDisableNodeIsExecutedWithPayload($payloadTable);
+        } catch (Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
     }
 
     /**
@@ -846,11 +873,11 @@ trait EventSourcedTrait
                     NodeCommandHandler::class,
                     'handleSetNodeProperties'
                 ];
-            case 'HideNode':
+            case 'DisableNode':
                 return [
-                    HideNode::class,
-                    NodeCommandHandler::class,
-                    'handleHideNode'
+                    DisableNode::class,
+                    NodeAggregateCommandHandler::class,
+                    'handleDisableNode'
                 ];
             case 'ShowNode':
                 return [
@@ -1283,8 +1310,12 @@ trait EventSourcedTrait
         Assert::assertEquals(count($expectedChildNodesTable->getHash()), $numberOfChildNodes, 'ContentSubgraph::countChildNodes returned a wrong value');
         Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'ContentSubgraph::findChildNodes: Child Node Count does not match');
         foreach ($expectedChildNodesTable->getHash() as $index => $row) {
-            Assert::assertEquals($row['Name'], (string)$nodes[$index]->getNodeName(), 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeName());
-            Assert::assertEquals($row['NodeAggregateIdentifier'], (string)$nodes[$index]->getNodeAggregateIdentifier(), 'ContentSubgraph::findChildNodes: Node identifier in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeAggregateIdentifier() . ' Expected: ' . $row['NodeAggregateIdentifier']);
+            $expectedNodeName = NodeName::fromString($row['Name']);
+            $actualNodeName = $nodes[$index]->getNodeName();
+            Assert::assertEquals($expectedNodeName, $actualNodeName, 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match. Expected: "' . $expectedNodeName . '" Actual: "' . $actualNodeName . '"');
+            $expectedNodeDiscriminator = NodeDiscriminator::fromArray(json_decode($row['NodeDiscriminator'], true));
+            $actualNodeDiscriminator = NodeDiscriminator::fromNode($nodes[$index]);
+            Assert::assertEquals($expectedNodeDiscriminator, $actualNodeDiscriminator, 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . $expectedNodeDiscriminator . ' Actual: ' . $actualNodeDiscriminator);
         }
     }
 
@@ -1527,8 +1558,12 @@ trait EventSourcedTrait
         Assert::assertEquals(count($expectedRows), count($flattenedSubtree), 'number of expected subtrees do not match');
 
         foreach ($expectedRows as $i => $expectedRow) {
-            Assert::assertEquals($expectedRow['Level'], $flattenedSubtree[$i]->getLevel(), 'Level does not match in index ' . $i);
-            Assert::assertEquals($expectedRow['NodeAggregateIdentifier'], (string)$flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier(), 'NodeAggregateIdentifier does not match in index ' . $i . ', expected: ' . $expectedRow['NodeAggregateIdentifier'] . ', actual: ' . $flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier());
+            $expectedLevel = (int)$expectedRow['Level'];
+            $actualLevel = $flattenedSubtree[$i]->getLevel();
+            Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel);
+            $expectedNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($expectedRow['NodeAggregateIdentifier']);
+            $actualNodeAggregateIdentifier = $flattenedSubtree[$i]->getNode()->getNodeAggregateIdentifier();
+            Assert::assertTrue($expectedNodeAggregateIdentifier->equals($actualNodeAggregateIdentifier), 'NodeAggregateIdentifier does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateIdentifier . '", actual: "' . $actualNodeAggregateIdentifier . '"');
         }
     }
 

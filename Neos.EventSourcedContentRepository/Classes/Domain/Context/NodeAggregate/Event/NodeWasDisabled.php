@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -20,13 +20,12 @@ use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 
 /**
- * Node was hidden
+ * A node was disabled
  *
  * @Flow\Proxy(false)
  */
-final class NodeWasHidden implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeWasDisabled implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -44,51 +43,35 @@ final class NodeWasHidden implements DomainEventInterface, CopyableAcrossContent
      */
     private $affectedDimensionSpacePoints;
 
-    /**
-     * NodeWasHidden constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePointSet $affectedDimensionSpacePoints
-     */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePointSet $affectedDimensionSpacePoints
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->affectedDimensionSpacePoints = $affectedDimensionSpacePoints;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return DimensionSpacePointSet
-     */
     public function getAffectedDimensionSpacePoints(): DimensionSpacePointSet
     {
         return $this->affectedDimensionSpacePoints;
     }
 
-    /**
-     * @param ContentStreamIdentifier $targetContentStream
-     * @return NodeWasHidden
-     */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new NodeWasHidden(
-            $targetContentStream,
+        return new NodeWasDisabled(
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->affectedDimensionSpacePoints
         );

@@ -21,7 +21,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemove
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -561,10 +561,10 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     }
 
     /**
-     * @param NodeWasHidden $event
+     * @param NodeWasDisabled $event
      * @throws \Throwable
      */
-    public function whenNodeWasHidden(NodeWasHidden $event)
+    public function whenNodeWasDisabled(NodeWasDisabled $event)
     {
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeUpdate('

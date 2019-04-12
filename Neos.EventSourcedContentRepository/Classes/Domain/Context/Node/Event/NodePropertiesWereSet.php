@@ -101,13 +101,13 @@ final class NodePropertiesWereSet implements DomainEventInterface, CopyableAcros
     }
 
     /**
-     * @param ContentStreamIdentifier $targetContentStream
+     * @param ContentStreamIdentifier $targetContentStreamIdentifier
      * @return NodePropertiesWereSet
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodePropertiesWereSet(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,
             $this->propertyValues

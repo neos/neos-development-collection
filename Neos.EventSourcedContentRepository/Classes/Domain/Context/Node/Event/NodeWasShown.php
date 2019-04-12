@@ -81,13 +81,13 @@ final class NodeWasShown implements DomainEventInterface, CopyableAcrossContentS
         return $this->affectedDimensionSpacePoints;
     }
     /**
-     * @param ContentStreamIdentifier $targetContentStream
+     * @param ContentStreamIdentifier $targetContentStreamIdentifier
      * @return NodeWasShown
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodeWasShown(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->affectedDimensionSpacePoints
         );

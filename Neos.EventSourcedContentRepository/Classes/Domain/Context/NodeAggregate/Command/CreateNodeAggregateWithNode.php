@@ -227,10 +227,10 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifierIdentifier): self
     {
         return new CreateNodeAggregateWithNode(
-            $targetContentStreamIdentifier,
+            $targetContentStreamIdentifierIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,

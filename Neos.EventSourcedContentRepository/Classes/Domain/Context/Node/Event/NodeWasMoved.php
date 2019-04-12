@@ -101,13 +101,13 @@ final class NodeWasMoved implements DomainEventInterface, CopyableAcrossContentS
     }
 
     /**
-     * @param ContentStreamIdentifier $targetContentStream
+     * @param ContentStreamIdentifier $targetContentStreamIdentifier
      * @return NodeWasMoved
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodeWasMoved(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->referencePosition,
             $this->referenceNodeAggregateIdentifier

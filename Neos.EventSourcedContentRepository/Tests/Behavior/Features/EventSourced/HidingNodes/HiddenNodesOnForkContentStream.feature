@@ -47,7 +47,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | nodeName                      | "pet"                                    |
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
-    And the command "HideNode" is executed with payload:
+    And the command "DisableNode" is executed with payload:
       | Key                          | Value              |
       | contentStreamIdentifier      | "cs-identifier"    |
       | nodeAggregateIdentifier      | "the-great-nodini" |

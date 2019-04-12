@@ -8,7 +8,7 @@ Feature: Publishing hide/show scenario of nodes
   -- sir-nodeward-nodington-iii (name=image) <== this one is modified
 
   The setup is always as follows:
-  - we modify two nodes using a certain command (e.g. HideNode) in the USER workspace
+  - we modify two nodes using a certain command (e.g. DisableNode) in the USER workspace
   - we publish one of them
   - we check that the user workspace still sees both nodes as hidden; and the live workspace only sees one of the changes.
 
@@ -74,7 +74,7 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateClassification   | "regular"                                              |
     And the graph projection is fully up to date
 
-  Scenario: (HideNode) It is possible to publish hiding of a node.
+  Scenario: (DisableNode) It is possible to publish hiding of a node.
     Given the command CreateWorkspace is executed with payload:
       | Key                     | Value                |
       | workspaceName           | "user-test"          |
@@ -83,12 +83,12 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     # SETUP: hide two nodes in USER workspace
-    Given the command "HideNode" is executed with payload:
+    Given the command "DisableNode" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "user-cs-identifier"     |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
-    Given the command "HideNode" is executed with payload:
+    Given the command "DisableNode" is executed with payload:
       | Key                          | Value                        |
       | contentStreamIdentifier      | "user-cs-identifier"         |
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
@@ -114,12 +114,12 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (ShowNode) It is possible to publish showing of a node.
     # BEFORE: ensure two nodes are hidden in live (and user WS)
-    Given the command "HideNode" is executed with payload:
+    Given the command "DisableNode" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
-    Given the command "HideNode" is executed with payload:
+    Given the command "DisableNode" is executed with payload:
       | Key                          | Value                        |
       | contentStreamIdentifier      | "cs-identifier"              |
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |

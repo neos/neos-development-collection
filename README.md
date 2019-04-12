@@ -271,7 +271,7 @@ Neos:
   - [ ] CreateNode
   - [ ] MoveNode
   - [ ] ShowNode
-  - [ ] HideNode
+  - [ ] DisableNode
 - [x] create feature list in this README, detailing what is supported and what not yet.
 - [x] support empty content dimension values in URL; e.g. "/de/..." for german, and "/..." for english
 - [ ] absolute node referencing for ContentCollection (e.g. shared footer in Demo Site)

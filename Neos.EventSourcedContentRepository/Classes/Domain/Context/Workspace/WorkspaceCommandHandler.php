@@ -20,7 +20,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
@@ -439,17 +439,14 @@ final class WorkspaceCommandHandler
             case CreateNodeAggregateWithNode::class:
                 return $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command);
                 break;
-            case CreateRootNode::class:
-                return $this->nodeCommandHandler->handleCreateRootNode($command);
-                break;
             case MoveNode::class:
                 return $this->nodeAggregateCommandHandler->handleMoveNode($command);
                 break;
             case SetNodeProperties::class:
                 return $this->nodeCommandHandler->handleSetNodeProperties($command);
                 break;
-            case HideNode::class:
-                return $this->nodeCommandHandler->handleHideNode($command);
+            case DisableNode::class:
+                return $this->nodeAggregateCommandHandler->handleDisableNode($command);
                 break;
             case ShowNode::class:
                 return $this->nodeCommandHandler->handleShowNode($command);

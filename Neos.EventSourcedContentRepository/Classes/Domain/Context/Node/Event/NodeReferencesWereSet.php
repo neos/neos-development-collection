@@ -104,10 +104,10 @@ final class NodeReferencesWereSet implements DomainEventInterface, CopyableAcros
         return $this->referenceName;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodeReferencesWereSet(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->sourceNodeAggregateIdentifier,
             $this->sourceOriginDimensionSpacePoint,
             $this->destinationNodeAggregateIdentifiers,

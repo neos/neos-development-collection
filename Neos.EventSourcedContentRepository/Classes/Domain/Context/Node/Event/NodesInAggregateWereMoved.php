@@ -118,13 +118,13 @@ final class NodesInAggregateWereMoved implements DomainEventInterface, CopyableA
     }
 
     /**
-     * @param ContentStreamIdentifier $targetContentStream
+     * @param ContentStreamIdentifier $targetContentStreamIdentifier
      * @return NodesInAggregateWereMoved
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodesInAggregateWereMoved(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->referencePosition,
             $this->referenceNodeAggregateIdentifier,

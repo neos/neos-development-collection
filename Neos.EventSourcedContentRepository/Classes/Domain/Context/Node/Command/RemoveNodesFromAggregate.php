@@ -105,10 +105,10 @@ final class RemoveNodesFromAggregate implements \JsonSerializable, CopyableAcros
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new RemoveNodesFromAggregate(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->dimensionSpacePointSet
         );

@@ -109,10 +109,10 @@ final class SetNodeProperties implements \JsonSerializable, CopyableAcrossConten
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new SetNodeProperties(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,
             $this->propertyValues

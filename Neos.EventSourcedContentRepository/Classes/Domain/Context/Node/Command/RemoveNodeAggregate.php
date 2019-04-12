@@ -74,10 +74,10 @@ final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossCont
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new RemoveNodeAggregate(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier
         );
     }
