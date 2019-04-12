@@ -11,26 +11,22 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Eel\FlowQueryOperations\FilterOperation;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the FlowQuery FilterOperation
  */
-class FilterOperationTest extends UnitTestCase
+class FilterOperationTest extends AbstractQueryOperationsTest
 {
+
     /**
      * @test
      */
     public function filterWithIdentifierUsesNodeAggregateIdentifier()
     {
-        $node1 = $this->createMock(TraversableNodeInterface::class);
-        $node1->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('node1-identifier-uuid')));
-        $node2 = $this->createMock(TraversableNodeInterface::class);
-        $node2->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('node2-identifier-uuid')));
+        $node1 = $this->mockNode('node1-identifier-uuid');
+        $node2 = $this->mockNode('node2-identifier-uuid');
 
         $context = [$node1, $node2];
         $q = new FlowQuery($context);
@@ -46,8 +42,8 @@ class FilterOperationTest extends UnitTestCase
      */
     public function filterWithNodeInstanceIsSupported()
     {
-        $node1 = $this->createMock(TraversableNodeInterface::class);
-        $node2 = $this->createMock(TraversableNodeInterface::class);
+        $node1 = $this->mockNode('node1');
+        $node2 = $this->mockNode('node2');
 
         $context = [$node1, $node2];
         $q = new FlowQuery($context);

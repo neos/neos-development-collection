@@ -117,9 +117,15 @@ class ImageService
         }
 
         $resourceUri = $originalResource->createTemporaryLocalCopy();
-
-        $resultingFileExtension = ($format !== null && in_array($format, self::$allowedFormats, true)) ? $format : $originalResource->getFileExtension();
-        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.' . $resultingFileExtension;
+        $fileExtension = $originalResource->getFileExtension();
+        if ($format !== null
+            && $originalResource->getFileExtension() !== $format
+            && in_array($format, self::$allowedFormats, true)
+        ) {
+            $adjustmentsApplied = true;
+            $fileExtension = $format;
+        }
+        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.' . $fileExtension;
 
         if (!file_exists($resourceUri)) {
             throw new ImageFileException(sprintf('An error occurred while transforming an image: the resource data of the original image does not exist (%s, %s).', $originalResource->getSha1(), $resourceUri), 1374848224);
@@ -182,7 +188,7 @@ class ImageService
             unlink($transformedImageTemporaryPathAndFilename);
 
             $pathInfo = UnicodeFunctions::pathinfo($originalResource->getFilename());
-            $resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $imageSize->getWidth(), $imageSize->getHeight(), $resultingFileExtension));
+            $resource->setFilename(sprintf('%s-%ux%u.%s', $pathInfo['filename'], $imageSize->getWidth(), $imageSize->getHeight(), $fileExtension));
         } else {
             $originalResourceStream = $originalResource->getStream();
             $resource = $this->resourceManager->importResource($originalResourceStream, $originalResource->getCollectionName());

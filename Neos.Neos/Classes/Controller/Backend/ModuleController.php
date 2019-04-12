@@ -13,7 +13,7 @@ namespace Neos\Neos\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Security\Context;
@@ -94,7 +94,7 @@ class ModuleController extends ActionController
 
         $moduleRequest->setArgument('__moduleConfiguration', $moduleConfiguration);
 
-        $moduleResponse = new Response($this->response);
+        $moduleResponse = new ActionResponse($this->response);
 
         $this->dispatcher->dispatch($moduleRequest, $moduleResponse);
 

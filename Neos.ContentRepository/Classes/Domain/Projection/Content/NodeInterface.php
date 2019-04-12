@@ -14,14 +14,12 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\Cache\CacheAwareInterface;
-use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
 
 /**
  * This is a NEW interface, introduced in Neos 4.3.
@@ -49,28 +47,21 @@ interface NodeInterface extends CacheAwareInterface
     public function isRoot(): bool;
 
     /**
+     * Whether or not this node is tethered to its parent, fka auto created child node
+     *
+     * @return bool
+     */
+    public function isTethered(): bool;
+
+    /**
      * @return ContentStreamIdentifier
      */
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
 
     /**
-     * returns the DimensionSpacePoint the node was *requested in*, i.e. one of the DimensionSpacePoints
-     * this node is visible in. If you need the DimensionSpacePoint where the node is actually at home,
-     * see getOriginDimensionSpacePoint()
-     *
-     * @return DimensionSpacePoint
-     */
-    public function getDimensionSpacePoint(): DimensionSpacePoint;
-
-    /**
      * @return NodeAggregateIdentifier
      */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier;
-
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNodeIdentifier(): NodeIdentifier;
 
     /**
      * @return NodeTypeName
@@ -83,9 +74,9 @@ interface NodeInterface extends CacheAwareInterface
     public function getNodeType(): NodeType;
 
     /**
-     * @return NodeName
+     * @return NodeName|null
      */
-    public function getNodeName(): NodeName;
+    public function getNodeName(): ?NodeName;
 
     /**
      * returns the DimensionSpacePoint the node is at home in. Usually needed to address a Node in a NodeAggregate

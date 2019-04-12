@@ -73,9 +73,9 @@ class ThumbnailConfiguration
      * @param integer $maximumHeight Desired maximum height of the image
      * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
      * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
+     * @param boolean $async Whether the thumbnail can be generated asynchronously
      * @param integer $quality Quality of the processed image
      * @param string $format Format for the image, only jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported.
-     * @param boolean $async Whether the thumbnail can be generated asynchronously
      */
     public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $quality = null, $format = null)
     {
@@ -85,8 +85,8 @@ class ThumbnailConfiguration
         $this->maximumHeight = $maximumHeight ? (integer)$maximumHeight : null;
         $this->allowCropping = $allowCropping ? (boolean)$allowCropping : false;
         $this->allowUpScaling = $allowUpScaling ? (boolean)$allowUpScaling : false;
-        $this->quality = $quality ? (integer)$quality : null;
         $this->async = $async ? (boolean)$async : false;
+        $this->quality = $quality ? (integer)$quality : null;
         $this->format = $format ? (string)$format : null;
     }
 

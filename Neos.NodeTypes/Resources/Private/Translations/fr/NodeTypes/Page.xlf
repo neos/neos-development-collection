@@ -4,25 +4,25 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Page</source>
-			<target xml:lang="fr" state="translated">Page</target></trans-unit>
+			<target state="translated">Page</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="fr" state="translated">Titre</target></trans-unit>
+			<target state="translated">Titre</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve" approved="yes">
 				<source>Layout</source>
-			<target xml:lang="fr" state="translated">Mise en page</target></trans-unit>
+			<target state="translated">Mise en page</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve" approved="yes">
 				<source>Layout for this page only</source>
-			<target xml:lang="fr" state="translated">Mise en page pour cette page uniquement</target></trans-unit>
+			<target state="translated">Mise en page pour cette page uniquement</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="fr" state="translated">Hériter du parent</target></trans-unit>
+			<target state="translated">Hériter du parent</target></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve" approved="yes">
 				<source>Layout for subpages of this page</source>
-			<target xml:lang="fr" state="translated">Mise en page pour les sous-pages de cette page</target></trans-unit>
+			<target state="translated">Mise en page pour les sous-pages de cette page</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="fr" state="translated">Hériter du parent</target></trans-unit>
+			<target state="translated">Hériter du parent</target></trans-unit>
     </body>
   </file>
 </xliff>

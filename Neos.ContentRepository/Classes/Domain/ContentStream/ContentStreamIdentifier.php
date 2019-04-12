@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepository\Domain\ValueObject;
+namespace Neos\ContentRepository\Domain\ContentStream;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -57,5 +57,10 @@ final class ContentStreamIdentifier implements \JsonSerializable, CacheAwareInte
     public function __toString(): string
     {
         return $this->value;
+    }
+
+    public function equals(ContentStreamIdentifier $other): bool
+    {
+        return $this->value === $other->value;
     }
 }
