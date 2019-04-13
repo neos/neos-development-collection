@@ -125,6 +125,9 @@ final class NodeFactory
         $processedDimensionSpacePoints = [];
 
         foreach ($nodeRows as $nodeRow) {
+            if (!is_array($nodeRow)) {
+                throw new \RuntimeException('NodeRow is of type ' . gettype($nodeRow) . ' - array expected.');
+            }
             if (!isset($processedDimensionSpacePoints[$nodeRow['origindimensionspacepointhash']])) {
                 $nodes[] = $this->mapNodeRowToNode($nodeRow);
                 $occupiedDimensionSpacePoints[] = DimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);

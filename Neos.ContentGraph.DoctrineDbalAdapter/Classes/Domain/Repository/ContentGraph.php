@@ -131,6 +131,10 @@ final class ContentGraph implements ContentGraphInterface
 
         $nodeRow = $connection->executeQuery($query, $parameters)->fetch();
 
+        if (!is_array($nodeRow)) {
+            return null;
+        }
+
         return $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
     }
 
