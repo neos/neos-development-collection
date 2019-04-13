@@ -51,8 +51,5 @@ class ContentRepositoryMigrateCommandController extends CommandController
         $this->outputLine('!!!!! NOW, run ./flow projection:catchup nodehiddenstate');
 
         // ChangeProjector catchup
-
-
-
     }
 }

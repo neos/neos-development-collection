@@ -60,8 +60,7 @@ final class NodePropertiesWereSet implements DomainEventInterface, CopyableAcros
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $originDimensionSpacePoint,
         PropertyValues $propertyValues
-    )
-    {
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;

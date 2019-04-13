@@ -471,5 +471,4 @@ final class NodeCommandHandler
 
         return $node;
     }
-
 }

@@ -290,8 +290,7 @@ class ContentRepositoryExportService
         array $propertyReferences,
         NodePath $nodePath,
         bool $isHidden
-    )
-    {
+    ) {
         echo $nodePath . "\n";
 
         try {
@@ -431,7 +430,6 @@ class ContentRepositoryExportService
 
     private function processPropertyReferences(NodeData $nodeData)
     {
-
         $references = [];
 
         foreach ($nodeData->getProperties() as $propertyName => $propertyValue) {

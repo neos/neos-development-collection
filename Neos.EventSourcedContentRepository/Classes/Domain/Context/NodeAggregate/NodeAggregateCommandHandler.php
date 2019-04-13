@@ -35,7 +35,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGe
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePeerVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -151,7 +150,7 @@ final class NodeAggregateCommandHandler
 
 
         $events = DomainEvents::createEmpty();
-        $this->nodeEventPublisher->withCommand($command, function() use ($command, &$events) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $this->requireContentStreamToExist($command->getContentStreamIdentifier());
             $nodeType = $this->requireNodeType($command->getNodeTypeName());
             $this->requireNodeTypeToBeOfTypeRoot($nodeType);
@@ -169,7 +168,6 @@ final class NodeAggregateCommandHandler
         CreateRootNodeAggregateWithNode $command,
         DimensionSpacePointSet $visibleDimensionSpacePoints
     ): DomainEvents {
-
         $events = DomainEvents::withSingleEvent(
             EventWithIdentifier::create(
                 new RootNodeAggregateWithNodeWasCreated(
@@ -209,7 +207,7 @@ final class NodeAggregateCommandHandler
         $this->readSideMemoryCacheManager->disableCache();
 
         $events = DomainEvents::createEmpty();
-        $this->nodeEventPublisher->withCommand($command, function() use ($command, &$events) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
             $this->requireContentStreamToExist($command->getContentStreamIdentifier());
             $this->requireDimensionSpacePointToExist($command->getOriginDimensionSpacePoint());
             $nodeType = $this->requireNodeType($command->getNodeTypeName());
@@ -363,7 +361,6 @@ final class NodeAggregateCommandHandler
         PropertyValues $initialPropertyValues,
         NodeAggregateIdentifier $precedingNodeAggregateIdentifier = null
     ): DomainEvents {
-
         $events = DomainEvents::withSingleEvent(
             EventWithIdentifier::create(
                 new NodeAggregateWithNodeWasCreated(

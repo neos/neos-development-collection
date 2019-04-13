@@ -11,7 +11,6 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 
 /**
