@@ -100,7 +100,8 @@ Feature: Disable a node
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"succeeding-nodenborough", "originDimensionSpacePoint": {}} to exist in the content graph
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {}} to exist in the content graph
 
-    # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
+    And I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to disable dimension space points [{}]
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}
     And VisibilityConstraints are set to "withoutRestrictions"

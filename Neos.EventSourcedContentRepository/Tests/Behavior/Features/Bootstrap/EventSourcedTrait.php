@@ -397,6 +397,16 @@ trait EventSourcedTrait
         return $eventPayload;
     }
 
+    protected function unserializeDimensionSpacePointSet(string $serializedDimensionSpacePoints): DimensionSpacePointSet
+    {
+        $dimensionSpacePoints = [];
+        foreach (json_decode($serializedDimensionSpacePoints, true) as $coordinates) {
+            $dimensionSpacePoints[] = new DimensionSpacePoint($coordinates);
+        }
+
+        return new DimensionSpacePointSet($dimensionSpacePoints);
+    }
+
     /**
      * @When /^the command CreateRootWorkspace is executed with payload:$/
      * @param TableNode $payloadTable
@@ -1088,6 +1098,23 @@ trait EventSourcedTrait
             . ', got ' . json_encode($this->currentNodeAggregate->getCoveredDimensionSpacePoints())
         );
     }
+
+    /**
+     * @Then /^I expect this node aggregate disable dimension space points (.*)$/
+     * @param string $rawDimensionSpacePoints
+     */
+    public function iExpectThisNodeAggregateToDisableDimensionSpacePoints(string $rawDimensionSpacePoints): void
+    {
+        $expectedDimensionSpacePointSet = $this->unserializeDimensionSpacePointSet($rawDimensionSpacePoints);
+
+        Assert::assertEquals(
+            $expectedDimensionSpacePointSet,
+            $this->currentNodeAggregate->getDisabledDimensionSpacePounts(),
+            'Expected disabled dimension space point set ' . json_encode($expectedDimensionSpacePointSet)
+            . ', got ' . json_encode($this->currentNodeAggregate->getCoveredDimensionSpacePoints())
+        );
+    }
+
     /**
      * @Then /^I expect this node aggregate to be classified as "([^"]*)"$/
      * @param string $expectedClassification
