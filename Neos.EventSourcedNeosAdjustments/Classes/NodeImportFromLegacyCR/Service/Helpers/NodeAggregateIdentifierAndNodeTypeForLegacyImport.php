@@ -14,7 +14,6 @@ namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\Helper
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 
@@ -56,6 +55,4 @@ class NodeAggregateIdentifierAndNodeTypeForLegacyImport
     {
         return $this->nodeTypeName;
     }
-
-
 }

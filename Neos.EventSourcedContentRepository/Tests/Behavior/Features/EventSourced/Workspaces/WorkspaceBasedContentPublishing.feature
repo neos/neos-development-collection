@@ -58,7 +58,7 @@ Feature: Workspace based content publishing
 
   Scenario: Basic events are emitted
     # LIVE workspace
-    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 4 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 0 is of type "Neos.EventSourcedContentRepository:ContentStreamWasCreated" with payload:
       | Key                      | Expected                     |
       | contentStreamIdentifier  | "cs-identifier"              |

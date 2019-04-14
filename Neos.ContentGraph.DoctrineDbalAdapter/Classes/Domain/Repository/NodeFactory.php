@@ -121,11 +121,14 @@ final class NodeFactory
         $occupationByCovering = [];
 
         foreach ($nodeRows as $nodeRow) {
+            if (!is_array($nodeRow)) {
+                throw new \RuntimeException('NodeRow is of type ' . gettype($nodeRow) . ' - array expected.');
+            }
             $occupiedDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
             if (!isset($nodesByOccupiedDimensionSpacePoints[$nodeRow['origindimensionspacepointhash']])) {
                 $nodesByOccupiedDimensionSpacePoints[$nodeRow['origindimensionspacepointhash']] = $this->mapNodeRowToNode($nodeRow);
                 $occupiedDimensionSpacePoints[] = $occupiedDimensionSpacePoint;
-                if (empty($rawNodeAggregateIdentifier)) {
+               if (empty($rawNodeAggregateIdentifier)) {
                     $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
                 } elseif ($rawNodeAggregateIdentifier !== $nodeRow['nodeaggregateidentifier']) {
                     throw new NodeAggregateIsAmbiguous('Node aggregate is ambiguous', 1552691226);

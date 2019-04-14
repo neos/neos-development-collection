@@ -242,4 +242,17 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
     {
         return true;
     }
+
+    /**
+     * Compare whether two traversable nodes are equal
+     *
+     * @param TraversableNodeInterface $other
+     * @return bool
+     */
+    public function equals(TraversableNodeInterface $other): bool
+    {
+        return $this->getContentStreamIdentifier()->equals($other->getContentStreamIdentifier())
+            && $this->getDimensionSpacePoint()->equals($other->getDimensionSpacePoint())
+            && $this->getNodeAggregateIdentifier()->equals($other->getNodeAggregateIdentifier());
+    }
 }

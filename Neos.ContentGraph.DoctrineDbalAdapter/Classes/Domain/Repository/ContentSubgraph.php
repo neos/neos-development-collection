@@ -194,6 +194,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
             $result[] = $node;
             $namedChildNodeCache->add($nodeAggregateIdentifier, $node->getNodeName(), $node);
             $parentNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $nodeAggregateIdentifier);
+            $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
         }
 
         if ($nodeTypeConstraints === null && $limit === null && $offset === null) {
@@ -426,6 +427,9 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
         $node = $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
         if ($node) {
             $cache->add($childNodeAggregateIdentifier, $node->getNodeAggregateIdentifier());
+
+            // we also add the parent node to the NodeAggregateIdentifier => Node cache; as this might improve cache hit rates as well.
+            $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
         } else {
             $cache->rememberNonExistingParentNode($childNodeAggregateIdentifier);
         }
@@ -509,6 +513,7 @@ WHERE
                 $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
                 if ($node) {
                     $cache->add($parentNodeAggregateIdentifier, $edgeName, $node);
+                    $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
 
                     return $node;
                 }
@@ -889,6 +894,8 @@ order by level asc, position asc;')
 
         foreach ($result as $nodeData) {
             $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
+            $this->getInMemoryCache()->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
+
             if (!isset($subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']])) {
                 throw new \Exception('TODO: must not happen');
             }
@@ -896,6 +903,13 @@ order by level asc, position asc;')
             $subtree = new Subtree($nodeData['level'], $node);
             $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']]->add($subtree);
             $subtreesByNodeIdentifier[$nodeData['nodeaggregateidentifier']] = $subtree;
+
+            // also add the parents to the child -> parent cache.
+            /* @var $parentSubtree Subtree */
+            $parentSubtree = $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']];
+            if ($parentSubtree->getNode() !== null) {
+                $this->getInMemoryCache()->getParentNodeIdentifierByChildNodeIdentifierCache()->add($node->getNodeAggregateIdentifier(), $parentSubtree->getNode()->getNodeAggregateIdentifier());
+            }
         }
 
         return $subtreesByNodeIdentifier['ROOT'];

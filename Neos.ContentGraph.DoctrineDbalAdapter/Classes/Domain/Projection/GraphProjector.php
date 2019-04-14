@@ -229,8 +229,9 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
         NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
     ) {
+        // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
         $this->getDatabaseConnection()->executeUpdate('
-                INSERT INTO neos_contentgraph_restrictionedge (
+                INSERT IGNORE INTO neos_contentgraph_restrictionedge (
                   contentstreamidentifier,
                   dimensionspacepointhash,
                   originnodeaggregateidentifier,
@@ -567,9 +568,10 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     public function whenNodeWasDisabled(NodeWasDisabled $event)
     {
         $this->transactional(function () use ($event) {
+            // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
             $this->getDatabaseConnection()->executeUpdate('
 -- GraphProjector::whenNodeWasHidden
-insert into neos_contentgraph_restrictionedge
+insert ignore into neos_contentgraph_restrictionedge
 (
     -- we build a recursive tree
     with recursive tree as (
