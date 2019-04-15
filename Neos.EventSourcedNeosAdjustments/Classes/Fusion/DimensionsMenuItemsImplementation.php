@@ -97,13 +97,15 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 
                 $metadata = $this->determineMetadata($dimensionSpacePoint);
 
-                $menuItems[] = [
-                    'subgraph' => $subgraph,
-                    'node' => $variant ? new TraversableNode($variant, $subgraph) : null,
-                    'state' => $this->calculateItemState($variant),
-                    'label' => $this->determineLabel($variant, $metadata),
-                    'targetDimensions' => $metadata
-                ];
+                if (!$this->isNodeHidden($variant)) {
+                    $menuItems[] = [
+                        'subgraph' => $subgraph,
+                        'node' => $variant ? new TraversableNode($variant, $subgraph) : null,
+                        'state' => $this->calculateItemState($variant),
+                        'label' => $this->determineLabel($variant, $metadata),
+                        'targetDimensions' => $metadata
+                    ];
+                }
             }
         }
 
