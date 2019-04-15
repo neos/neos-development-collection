@@ -57,6 +57,8 @@ The following example shows the required structure and possible fields of the pr
 
 .. code-block:: yaml
 ```yaml
+Neos:
+  Media:
     variantPresets:
       'Flownative.Demo:Preset1':
         label: 'Demo Preset 1'
@@ -94,4 +96,14 @@ The following example shows the required structure and possible fields of the pr
                   aspectRatio:
                     width: 1
                     height: 1
+```
+
+The automatic variant generation for new assets has to be enabled via setting as
+by default this feature is disabled.
+
+.. code-block:: yaml
+```yaml
+Neos:
+  Media:
+    autoCreateImageVariantPresets: true
 ```

@@ -11,16 +11,14 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Eel\FlowQueryOperations\CacheLifetimeOperation;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the ContentRepository FlowQuery CacheLifetimeOperation
  */
-class CacheLifetimeOperationTest extends UnitTestCase
+class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
 {
     /**
      * @var CacheLifetimeOperation
@@ -63,7 +61,7 @@ class CacheLifetimeOperationTest extends UnitTestCase
      */
     public function canEvaluateReturnsTrueIfNodeIsInContext()
     {
-        $mockNode = $this->createMock(TraversableNodeInterface::class);
+        $mockNode = $this->mockNode('node');
 
         $result = $this->operation->canEvaluate([$mockNode]);
         $this->assertTrue($result);

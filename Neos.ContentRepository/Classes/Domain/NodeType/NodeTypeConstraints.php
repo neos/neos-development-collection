@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Domain\ValueObject;
+namespace Neos\ContentRepository\Domain\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -42,8 +42,8 @@ final class NodeTypeConstraints
 
     /**
      * @param bool $wildCardAllowed
-     * @param array $explicitlyAllowedNodeTypeNames
-     * @param array $explicitlyDisallowedNodeTypeNames
+     * @param array|NodeTypeName[] $explicitlyAllowedNodeTypeNames
+     * @param array|NodeTypeName[] $explicitlyDisallowedNodeTypeNames
      */
     public function __construct(bool $wildCardAllowed, array $explicitlyAllowedNodeTypeNames = [], array $explicitlyDisallowedNodeTypeNames = [])
     {

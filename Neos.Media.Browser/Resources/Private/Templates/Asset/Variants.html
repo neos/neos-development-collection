@@ -15,38 +15,17 @@
         </li>
     </ul>
 
-    <div class="neos-tab-content">
-        <div role="tabpanel" class="neos-tab-pane neos-active">
-            <h2>Original</h2>
-            <div class="neos-img-container">
-                <img src="{m:uri.image(image: asset)}" alt="" width="250" height="250"/>
-            </div>
-            <div class="neos-img-label">
-                <span class="neos-caption asset-label">{asset.width}px x {asset.height}px</span>
-            </div>
-            <h2>Variants</h2>
-            <ul class="neos-thumbnails asset-list">
-            <f:for each="{asset.variants}" as="assetVariant">
-                <li class="asset" data-asset-identifier="{assetVariant -> f:format.identifier()}" data-local-asset-identifier="{assetVariant -> f:format.identifier()}">
-                    <div class="neos-img-container">
-                        <img src="{m:uri.image(image: assetVariant)}" alt="" width="250" height="250"/>
-                    </div>
-                    <div class="neos-img-label">
-                        <span class="neos-caption asset-label">
-                            {assetVariant.width}px x {assetVariant.height}px
-                        <f:if condition="{assetVariant.presetIdentifier}">
-                            <br />{assetVariant.presetIdentifier}: {assetVariant.presetVariantName}
-                        </f:if>
-                        </span>
-                    </div>
-                </li>
-            </f:for>
-            </ul>
+    <div class="neos-tab-content neos-media-browser">
+        <div role="tabpanel" class="neos-tab-pane neos-active neos-media-assets" id="variants-app">
         </div>
+        <script id="variants-information" type="application/json">{variantsInformation -> f:format.json() -> f:format.raw()}</script>
+        <script id="original-information" type="application/json">{originalInformation -> f:format.json() -> f:format.raw()}</script>
     </div>
-
+    <f:form action="update" controller="ImageVariant" package="Neos.Media.Browser" format="json" id="postHelper" method="post" useParentRequest="true"></f:form>
 </f:section>
 
 <f:section name="Scripts">
     <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/select.js')}"></script>
+    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/Vendor.js')}"></script>
+    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/Main.js')}"></script>
 </f:section>

@@ -11,20 +11,17 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodePath;
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Eel\FlowQueryOperations\PrevAllOperation;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the FlowQuery PrevAllOperation
  */
-class PrevAllOperationTest extends UnitTestCase
+class PrevAllOperationTest extends AbstractQueryOperationsTest
 {
     /**
      * @var Context
@@ -57,10 +54,10 @@ class PrevAllOperationTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->siteNode = $this->createMock(TraversableNodeInterface::class);
-        $this->firstNodeInLevel = $this->createMock(TraversableNodeInterface::class);
-        $this->secondNodeInLevel = $this->createMock(TraversableNodeInterface::class);
-        $this->thirdNodeInLevel = $this->createMock(TraversableNodeInterface::class);
+        $this->siteNode = $this->mockNode('site');
+        $this->firstNodeInLevel = $this->mockNode('node1');
+        $this->secondNodeInLevel = $this->mockNode('node2');
+        $this->thirdNodeInLevel = $this->mockNode('node3');
 
         $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site')));
         $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(TraversableNodes::fromArray([
@@ -71,11 +68,8 @@ class PrevAllOperationTest extends UnitTestCase
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->firstNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->firstNodeInLevel->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('first-node')));
         $this->secondNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('second-node')));
         $this->thirdNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects($this->any())->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::fromString('third-node')));
     }
 
     /**

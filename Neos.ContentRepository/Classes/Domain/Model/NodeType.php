@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
