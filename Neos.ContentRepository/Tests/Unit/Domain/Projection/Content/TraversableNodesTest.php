@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Projection\Content;
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -36,12 +36,20 @@ class TraversableNodesTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->mockNode1 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
-        $this->mockNode1->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::create()));
-        $this->mockNode2 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
-        $this->mockNode2->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::create()));
-        $this->mockNode3 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
-        $this->mockNode3->method('getNodeAggregateIdentifier')->will($this->returnValue(NodeAggregateIdentifier::create()));
+        $this->mockNode1 = $this->mockNode();
+        $this->mockNode2 = $this->mockNode();
+        $this->mockNode3 = $this->mockNode();
+    }
+
+    private function mockNode(): TraversableNodeInterface
+    {
+        /** @var TraversableNodeInterface|MockObject $mockNode */
+        $mockNode = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
+        $mockNode->method('getNodeAggregateIdentifier')->willReturn(NodeAggregateIdentifier::create());
+        $mockNode->method('equals')->willReturnCallback(function (TraversableNodeInterface $other) use ($mockNode) {
+            return $other === $mockNode;
+        });
+        return $mockNode;
     }
 
     /**
@@ -64,9 +72,9 @@ class TraversableNodesTest extends UnitTestCase
 
     public function mergeDataProvider()
     {
-        $mockNode1 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
-        $mockNode2 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
-        $mockNode3 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
+        $mockNode1 = $this->mockNode();
+        $mockNode2 = $this->mockNode();
+        $mockNode3 = $this->mockNode();
         return [
             ['nodes1' => [], 'nodes2' => [], 'expectedResult' => []],
             ['nodes1' => [$mockNode1], 'nodes2' => [$mockNode2], 'expectedResult' => [$mockNode1, $mockNode2]],
@@ -175,9 +183,9 @@ class TraversableNodesTest extends UnitTestCase
 
     public function previousAllDataProvider()
     {
-        $mockNode1 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
-        $mockNode2 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
-        $mockNode3 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
+        $mockNode1 = $this->mockNode();
+        $mockNode2 = $this->mockNode();
+        $mockNode3 = $this->mockNode();
         return [
             ['nodes' => [$mockNode1, $mockNode2, $mockNode3], 'reference' => $mockNode1, 'expectedResult' => []],
             ['nodes' => [$mockNode1, $mockNode2, $mockNode3], 'reference' => $mockNode2, 'expectedResult' => [$mockNode1]],
@@ -195,8 +203,8 @@ class TraversableNodesTest extends UnitTestCase
      */
     public function previousAllTests(array $nodes, TraversableNodeInterface $reference, array $expectedResult)
     {
-        $nodes = TraversableNodes::fromArray($nodes);
-        $result = $nodes->previousAll($reference);
+        $traversableNodes = TraversableNodes::fromArray($nodes);
+        $result = $traversableNodes->previousAll($reference);
 
         $this->assertSame($expectedResult, $result->toArray());
     }
@@ -247,9 +255,9 @@ class TraversableNodesTest extends UnitTestCase
 
     public function nextAllDataProvider()
     {
-        $mockNode1 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
-        $mockNode2 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
-        $mockNode3 = $this->getMockBuilder(TraversableNodeInterface::class)->getMock();
+        $mockNode1 = $this->mockNode();
+        $mockNode2 = $this->mockNode();
+        $mockNode3 = $this->mockNode();
         return [
             ['nodes' => [$mockNode1, $mockNode2, $mockNode3], 'reference' => $mockNode3, 'expectedResult' => []],
             ['nodes' => [$mockNode1, $mockNode2, $mockNode3], 'reference' => $mockNode1, 'expectedResult' => [$mockNode2, $mockNode3]],
@@ -267,8 +275,8 @@ class TraversableNodesTest extends UnitTestCase
      */
     public function nextAllTests(array $nodes, TraversableNodeInterface $reference, array $expectedResult)
     {
-        $nodes = TraversableNodes::fromArray($nodes);
-        $result = $nodes->nextAll($reference);
+        $traversableNodes = TraversableNodes::fromArray($nodes);
+        $result = $traversableNodes->nextAll($reference);
 
         $this->assertSame($expectedResult, $result->toArray());
     }

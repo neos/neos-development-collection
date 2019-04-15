@@ -30,7 +30,9 @@ use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\FluidAdaptor\View\TemplateView;
+use Neos\Media\Browser\Domain\ImageMapper;
 use Neos\Media\Browser\Domain\Session\BrowserState;
+use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -44,7 +46,9 @@ use Neos\Media\Domain\Model\AssetSource\SupportsCollectionsInterface;
 use Neos\Media\Domain\Model\AssetSource\SupportsSortingInterface;
 use Neos\Media\Domain\Model\AssetSource\SupportsTaggingInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
+use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Model\Tag;
+use Neos\Media\Domain\Model\VariantSupportInterface;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
@@ -243,7 +247,7 @@ class AssetController extends ActionController
 
             foreach ($activeAssetCollection !== null ? $activeAssetCollection->getTags() : $this->tagRepository->findAll() as $retrievedTag) {
                 assert($retrievedTag instanceof Tag);
-                $tags[] = ['object' => $tag, 'count' => $this->assetRepository->countByTag($retrievedTag, $activeAssetCollection)];
+                $tags[] = ['object' => $retrievedTag, 'count' => $this->assetRepository->countByTag($retrievedTag, $activeAssetCollection)];
             }
 
             if ($searchTerm !== null) {
@@ -398,7 +402,8 @@ class AssetController extends ActionController
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
                 'contentPreview' => $contentPreview,
-                'assetSource' => $assetSource
+                'assetSource' => $assetSource,
+                'canShowVariants' => ($assetProxy instanceof NeosAssetProxy) && ($assetProxy->getAsset() instanceof VariantSupportInterface)
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Asset not found');
@@ -429,14 +434,21 @@ class AssetController extends ActionController
             $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
             $asset = $this->persistenceManager->getObjectByIdentifier($assetProxy->getLocalAssetIdentifier(), Asset::class);
 
+            /** @var VariantSupportInterface $originalAsset */
             $originalAsset = ($asset instanceof AssetVariantInterface ? $asset->getOriginalAsset() : $asset);
+
+            $variantInformation = array_map(static function (AssetVariantInterface $imageVariant) {
+                return (new ImageMapper($imageVariant))->getMappingResult();
+            }, $originalAsset->getVariants());
 
             $this->view->assignMultiple([
                 'assetProxy' => $assetProxy,
                 'asset' => $originalAsset,
                 'assetSource' => $assetSource,
                 'imageProfiles' => $this->imageProfilesConfiguration,
-                'overviewAction' => $overviewAction
+                'overviewAction' => $overviewAction,
+                'originalInformation' => (new ImageMapper($asset))->getMappingResult(),
+                'variantsInformation' => $variantInformation
             ]);
         } catch (AssetNotFoundExceptionInterface $e) {
             $this->throwStatus(404, 'Original asset not found');
@@ -738,6 +750,30 @@ class AssetController extends ActionController
     public function deleteAssetCollectionAction(AssetCollection $assetCollection): void
     {
         $this->forward('delete', 'AssetCollection', 'Neos.Media.Browser', ['assetCollection' => $assetCollection]);
+    }
+
+    /**
+     * Prepare property mapping for updateImageVariantAction
+     *
+     * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
+     */
+    public function initializeUpdateImageVariantAction()
+    {
+        $mappingConfiguration = $this->arguments->getArgument('imageVariant')->getPropertyMappingConfiguration();
+        $mappingConfiguration->allowAllProperties();
+        $mappingConfiguration->getConfigurationFor('adjustments')->allowAllProperties();
+        $mappingConfiguration->getConfigurationFor('adjustments')->getConfigurationFor('*')->allowAllProperties();
+        $mappingConfiguration->getConfigurationFor('adjustments')->getConfigurationFor(CropImageAdjustment::class)->allowAllProperties();
+        $mappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+    }
+
+    /**
+     * @param ImageVariant $imageVariant
+     */
+    public function updateImageVariantAction(ImageVariant $imageVariant)
+    {
+        $this->assetRepository->update($imageVariant);
+        $this->redirect('variants');
     }
 
     /**

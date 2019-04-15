@@ -15,6 +15,7 @@ namespace Neos\Neos\View;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Fusion\Exception\RuntimeException;
@@ -28,7 +29,6 @@ use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Security\Context;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -115,7 +115,7 @@ class FusionExceptionView extends AbstractView implements ViewInterface
         $uriBuilder->setRequest($request);
         $controllerContext = new ControllerContext(
             $request,
-            new Response(),
+            new ActionResponse(),
             new Arguments([]),
             $uriBuilder
         );

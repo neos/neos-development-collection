@@ -17,6 +17,8 @@
                 <f:form.textfield property="title" id="title" placeholder="{neos:backend.translate(id: 'field.title', package: 'Neos.Media.Browser')}"/>
                 <label for="caption">{neos:backend.translate(id: 'field.caption', package: 'Neos.Media.Browser')}</label>
                 <f:form.textarea property="caption" rows="3" id="caption" placeholder="{neos:backend.translate(id: 'field.caption', package: 'Neos.Media.Browser')}"/>
+                <label for="copyrightnotice">{neos:backend.translate(id: 'field.copyrightnotice', package: 'Neos.Media.Browser')}</label>
+                <f:form.textarea property="copyrightNotice" id="copyrightnotice" rows="4" placeholder="{neos:backend.translate(id: 'field.copyrightnotice', package: 'Neos.Media.Browser')}"/>
                 <f:if condition="{tags}">
                     <label>{neos:backend.translate(id: 'field.tags', package: 'Neos.Media.Browser')}</label>
                     <f:for each="{tags}" as="tag">
