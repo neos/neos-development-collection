@@ -3,7 +3,7 @@
 Media ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2019-03-05
+This reference was automatically generated from code on 2019-04-15
 
 
 .. _`Media ViewHelper Reference: neos.media:fileTypeIcon`:
@@ -231,7 +231,9 @@ Arguments
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
 
-* ``quality`` (integer, *optional*): Quality of the image
+* ``quality`` (integer, *optional*): Image quality, from 0 to 100
+
+* ``format`` (string, *optional*): Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -475,7 +477,9 @@ Arguments
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
 
-* ``quality`` (integer, *optional*): Quality of the image
+* ``quality`` (integer, *optional*): Image quality, from 0 to 100
+
+* ``format`` (string, *optional*): Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
 
 
 
