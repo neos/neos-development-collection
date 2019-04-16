@@ -36,24 +36,24 @@ The matcher receives the context values ``exception``, ``renderingOptions``, ``s
 
 By extending the ``error`` case you can add custom 404 rendering like in the example below.
 
-```
-	#
-	# Extend error matcher to render the document with uriPathSegment ``notfound``
-	# for exceptions with 4xx status code
-	#
-	error {
-		@context.notfoundDocument = ${q(site).children('[instanceof Neos.Neos:Document]').filter('[uriPathSegment="notfound"]').get(0)}
+.. code-block: javascript
 
-		4xx {
-			@position = 'start'
-			condition = ${statusCode >= 400 && statusCode < 500 && notfoundDocument}
-			renderer = Neos.Fusion:Renderer {
-				@context.node = ${notfoundDocument}
-				renderPath = '/root'
-			}
-		}
-	}
-```
+#
+# Extend error matcher to render the document with uriPathSegment ``notfound``
+# for exceptions with 4xx status code
+#
+error {
+    @context.notfoundDocument = ${q(site).children('[instanceof Neos.Neos:Document]').filter('[uriPathSegment="notfound"]').get(0)}
+
+    4xx {
+        @position = 'start'
+        condition = ${statusCode >= 400 && statusCode < 500 && notfoundDocument}
+        renderer = Neos.Fusion:Renderer {
+            @context.node = ${notfoundDocument}
+            renderPath = '/root'
+        }
+    }
+}
 
 Set crop image adjustment by aspect ratio
 =========================================
@@ -64,7 +64,6 @@ an aspect ratio, instead of x, y, width and height.
 If an aspect ratio is specified, the x, y, width, and height parameters
 are automatically deactivated. Likewise, if x, y, width or height are
 specified, a potentially defined aspect ratio value will be reset.
-
 
 Add ``format`` option for image-prototypes, viewHelpers and presets
 ===================================================================
@@ -77,14 +76,15 @@ of webp-images as alternate sources.
 
 .. note::
 
-	The selected imagine-diver has to support both the source and the target image format for a successful conversion.
-	Especially the ``Gd`` driver lacks some features in this regard. So please test your driver if you are using
-	format like ``webp`` or ``tiff``.
+    The selected imagine-diver has to support both the source and the target image format for a successful conversion.
+    Especially the ``Gd`` driver lacks some features in this regard. So please test your driver if you are using
+    format like ``webp`` or ``tiff``.
 
 Additionally the option ``convertFormats`` is added to settings to automatically convert non-web images into
 web images. The example shows how to configure Neos to automatically convert tiff images to jpg.
 
-```
+.. code-block: yaml
+
 Neos:
   Media:
     image:
@@ -93,7 +93,6 @@ Neos:
         # The key is the the source media-type and the value is the target media-type or file-extension.
         convertFormats:
           image/tiff: image/jpeg
-```
 
 Add ``Neos.Neos:MenuItems``, ``Neos.Neos:DimensionMenuItems`` and ``Neos.Neos:BreadcrumbMenuItems`` prototypes
 ==============================================================================================================
