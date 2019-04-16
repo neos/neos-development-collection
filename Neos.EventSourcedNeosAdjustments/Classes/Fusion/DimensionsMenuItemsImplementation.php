@@ -81,6 +81,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 
         $currentDimensionSpacePoint = $this->getSubgraph()->getDimensionSpacePoint();
         foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace()->getPoints() as $dimensionSpacePoint) {
+            $subgraph = null;
+            $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {
                     $subgraph = $this->getSubgraph();
