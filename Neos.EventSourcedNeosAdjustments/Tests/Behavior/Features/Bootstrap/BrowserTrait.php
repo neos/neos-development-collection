@@ -84,6 +84,14 @@ trait BrowserTrait
     }
 
     /**
+     * @Then /^the content of the page does not contain "([^"]*)"$/
+     */
+    public function theContentOfThePageDoesNotContain($expectedString)
+    {
+        Assert::assertNotContains($expectedString, $this->currentResponse->getBody()->getContents());
+    }
+
+    /**
      * @Then /^the URL path is "([^"]*)"$/
      */
     public function theUrlIs($expectedUrlPath)

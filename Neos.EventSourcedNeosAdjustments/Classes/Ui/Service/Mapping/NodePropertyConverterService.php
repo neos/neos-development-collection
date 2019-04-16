@@ -80,7 +80,7 @@ class NodePropertyConverterService
         if ($propertyName === '_hidden') {
             return $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden();
         }
-        if ($propertyName[0] === '_') {
+        if ($propertyName[0] === '_' && $propertyName !== '_hiddenInIndex') {
             $propertyValue = ObjectAccess::getProperty($node, ltrim($propertyName, '_'));
         } else {
             $propertyValue = $node->getProperty($propertyName);

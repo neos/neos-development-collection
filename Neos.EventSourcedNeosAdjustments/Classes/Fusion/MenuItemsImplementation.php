@@ -184,7 +184,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
         $items = [];
         foreach ($subtree->getChildren() as $subtree) {
-            $items[] = $this->traverseChildren($subtree);
+            if (!$this->isNodeHidden($subtree->getNode())) {
+                $items[] = $this->traverseChildren($subtree);
+            }
         }
 
         return $items;
@@ -199,7 +201,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         $children = [];
 
         foreach ($subtree->getChildren() as $childNode) {
-            $children[] = $this->traverseChildren($childNode);
+            if (!$this->isNodeHidden($subtree->getNode())) {
+                $children[] = $this->traverseChildren($childNode);
+            }
         }
 
         $traversableNode = new TraversableNode($subtree->getNode(), $this->getSubgraph());

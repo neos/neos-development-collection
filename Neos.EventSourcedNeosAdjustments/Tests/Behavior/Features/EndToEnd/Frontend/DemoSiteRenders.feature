@@ -17,3 +17,7 @@ Feature: The demo site renders
     When I visit "/en/features.html"
     Then the content of the page contains "Built for Extensibility"
 
+  Scenario: not in menu-pages won't render
+    When I visit "/"
+    Then the content of the page does not contain "Not Found"
+
