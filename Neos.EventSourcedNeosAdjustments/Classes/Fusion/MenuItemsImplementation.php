@@ -18,7 +18,7 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeTreeTraversalHelper;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Flow\Annotations as Flow;
@@ -236,25 +236,31 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         } elseif ($this->getEntryLevel() < 0) {
             $remainingIterations = abs($this->getEntryLevel());
             $entryParentNode = null;
-            $this->getSubgraph()->traverseHierarchy($traversalStartingPoint, HierarchyTraversalDirection::up(), $this->getNodeTypeConstraints(),
-                function (NodeInterface $node) use (&$remainingIterations, &$entryParentNode) {
-                    if ($remainingIterations > 0) {
-                        $remainingIterations--;
+            NodeTreeTraversalHelper::traverseUpUntilCondition($this->getSubgraph(), $traversalStartingPoint, function (NodeInterface $node) use (&$remainingIterations, &$entryParentNode) {
+                if (!$this->getNodeTypeConstraints()->matches($node->getNodeTypeName())) {
+                    return false;
+                }
 
-                        return true;
-                    } else {
-                        $entryParentNode = $node;
+                if ($remainingIterations > 0) {
+                    $remainingIterations--;
 
-                        return false;
-                    }
-                });
+                    return true;
+                } else {
+                    $entryParentNode = $node;
+
+                    return false;
+                }
+            });
         } else {
             $traversedHierarchy = [];
-            $this->getSubgraph()->traverseHierarchy($traversalStartingPoint, HierarchyTraversalDirection::up(), $this->getNodeTypeConstraints()->withExplicitlyDisallowedNodeType(NodeTypeName::fromString('Neos.Neos:Sites')),
-                function (NodeInterface $traversedNode) use (&$traversedHierarchy) {
-                    $traversedHierarchy[] = $traversedNode;
-                    return true;
-                });
+            $constraints = $this->getNodeTypeConstraints()->withExplicitlyDisallowedNodeType(NodeTypeName::fromString('Neos.Neos:Sites'));
+            NodeTreeTraversalHelper::traverseUpUntilCondition($this->getSubgraph(), $traversalStartingPoint, function (NodeInterface $traversedNode) use (&$traversedHierarchy, $constraints) {
+                if (!$constraints->matches($traversedNode->getNodeTypeName())) {
+                    return false;
+                }
+                $traversedHierarchy[] = $traversedNode;
+                return true;
+            });
             $traversedHierarchy = array_reverse($traversedHierarchy);
 
             $entryParentNode = $traversedHierarchy[$this->getEntryLevel() - 1] ?? null;
