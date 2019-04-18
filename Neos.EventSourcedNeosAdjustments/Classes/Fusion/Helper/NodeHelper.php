@@ -12,9 +12,11 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeTreeTraversalHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Neos\Domain\Exception;
@@ -40,7 +42,7 @@ class NodeHelper implements ProtectedContextAwareInterface
      * @return TraversableNodeInterface
      * @throws Exception
      */
-    public function nearestContentCollection(TraversableNodeInterface $node, $nodePath)
+    public function nearestContentCollection(TraversableNodeInterface $node, $nodePath, ContentSubgraphInterface $subgraph)
     {
         $contentCollectionType = 'Neos.Neos:ContentCollection';
         if ($node->getNodeType()->isOfType($contentCollectionType)) {
@@ -49,12 +51,16 @@ class NodeHelper implements ProtectedContextAwareInterface
             if ((string)$nodePath === '') {
                 throw new Exception(sprintf('No content collection of type %s could be found in the current node and no node path was provided. You might want to configure the nodePath property with a relative path to the content collection.', $contentCollectionType), 1409300545);
             }
-            // TODO: support NodePath here??
-            $subNode = $node->findNamedChildNode(NodeName::fromString($nodePath));
+            $subNode = NodeTreeTraversalHelper::findNodeByNodePath(
+                $subgraph,
+                $node,
+                NodePath::fromString($nodePath)
+            );
+
             if ($subNode !== null && $subNode->getNodeType()->isOfType($contentCollectionType)) {
                 return $subNode;
             } else {
-                throw new Exception(sprintf('No content collection of type %s could be found in the current node (%s) or at the path "%s". You might want to adjust your node type configuration and create the missing child node through the "flow node:repair --node-type %s" command.', $contentCollectionType, $node->getPath(), $nodePath, (string)$node->getNodeType()), 1389352984);
+                throw new Exception(sprintf('No content collection of type %s could be found in the current node (%s) or at the path "%s". You might want to adjust your node type configuration and create the missing child node through the "flow node:repair --node-type %s" command.', $contentCollectionType, $node->findNodePath(), $nodePath, (string)$node->getNodeType()), 1389352984);
             }
         }
     }
