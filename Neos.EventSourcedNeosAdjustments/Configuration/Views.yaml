@@ -1,0 +1,5 @@
+-
+  requestFilter: 'isPackage("Neos.Neos") && isController("Module\Management\Workspaces")'
+  options:
+    templateRootPaths:
+      - 'resource://Neos.EventSourcedNeosAdjustments/Private/Templates'

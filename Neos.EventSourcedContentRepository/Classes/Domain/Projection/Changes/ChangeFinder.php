@@ -30,6 +30,10 @@ final class ChangeFinder
      */
     protected $client;
 
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @return array|Change[]
+     */
     public function findByContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): array
     {
         $connection = $this->client->getConnection();
