@@ -18,7 +18,6 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;

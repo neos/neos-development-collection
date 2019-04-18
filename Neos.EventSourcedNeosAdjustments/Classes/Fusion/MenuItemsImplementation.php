@@ -18,7 +18,6 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeTreeTraversalHelper;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Fusion\Exception as FusionException;

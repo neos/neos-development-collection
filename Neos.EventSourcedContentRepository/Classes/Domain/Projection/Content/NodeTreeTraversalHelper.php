@@ -30,7 +30,8 @@ final class NodeTreeTraversalHelper
      * @param NodeInterface $node
      * @param \Closure $callback
      */
-    public static function traverseUpUntilCondition(ContentSubgraphInterface $subgraph, NodeInterface $node, \Closure $callback): void {
+    public static function traverseUpUntilCondition(ContentSubgraphInterface $subgraph, NodeInterface $node, \Closure $callback): void
+    {
         do {
             $shouldContinueTraversal = $callback($node);
             $node = $subgraph->findParentNode($node->getNodeAggregateIdentifier());
@@ -55,10 +56,9 @@ final class NodeTreeTraversalHelper
     }
 
 
-
     private static function findRootNodeAggregateIdentifier(ContentSubgraphInterface $subgraph, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregateIdentifier
     {
-        while(true) {
+        while (true) {
             $parentNode = $subgraph->findParentNode($nodeAggregateIdentifier);
             if ($parentNode === null) {
                 // there is no parent, so the root node was the node before
