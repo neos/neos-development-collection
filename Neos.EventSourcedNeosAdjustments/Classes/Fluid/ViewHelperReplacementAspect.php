@@ -30,7 +30,8 @@ class ViewHelperReplacementAspect
         \Neos\Neos\ViewHelpers\Rendering\InBackendViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\InBackendViewHelper::class,
         \Neos\Neos\ViewHelpers\Rendering\InEditModeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\InEditModeViewHelper::class,
         \Neos\Neos\ViewHelpers\Rendering\InPreviewModeViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\InPreviewModeViewHelper::class,
-        \Neos\Neos\ViewHelpers\Rendering\LiveViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\LiveViewHelper::class
+        \Neos\Neos\ViewHelpers\Rendering\LiveViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Rendering\LiveViewHelper::class,
+        \Neos\Neos\ViewHelpers\Backend\DocumentBreadcrumbPathViewHelper::class => \Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Backend\DocumentBreadcrumbPathViewHelper::class
 
     ];
 

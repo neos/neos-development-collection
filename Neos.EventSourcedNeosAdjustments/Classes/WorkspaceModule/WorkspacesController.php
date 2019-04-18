@@ -22,7 +22,8 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as NeosWorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\Translator;
@@ -142,7 +143,7 @@ class WorkspacesController extends AbstractModuleController
     public function indexAction()
     {
         $currentAccount = $this->securityContext->getAccount();
-        $userWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName());
+        $userWorkspace = $this->workspaceFinder->findOneByName(NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())->toContentRepositoryWorkspaceName());
 
         $workspacesAndCounts = [
             $userWorkspace->getWorkspaceName()->jsonSerialize() => [
@@ -172,18 +173,16 @@ class WorkspacesController extends AbstractModuleController
         $this->view->assign('workspacesAndChangeCounts', $workspacesAndCounts);
     }
 
-    /**
-     * @param Workspace $workspace
-     * @return void
-     */
-    public function showAction(Workspace $workspace)
+
+    public function showAction(WorkspaceName $workspace)
     {
+        $workspace = $this->workspaceFinder->findOneByName($workspace);
         $this->view->assignMultiple([
             'selectedWorkspace' => $workspace,
-            'selectedWorkspaceLabel' => $workspace->getTitle() ?: $workspace->getName(),
-            'baseWorkspaceName' => $workspace->getBaseWorkspace()->getName(),
-            'baseWorkspaceLabel' => $workspace->getBaseWorkspace()->getTitle() ?: $workspace->getBaseWorkspace()->getName(),
-            'canPublishToBaseWorkspace' => $this->userService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
+            'selectedWorkspaceLabel' => $workspace->workspaceTitle ?: $workspace->getWorkspaceName(),
+            'baseWorkspaceName' => $workspace->getBaseWorkspaceName(),
+            'baseWorkspaceLabel' => $workspace->getBaseWorkspaceName(), // TODO fallback to title
+            'canPublishToBaseWorkspace' => true, // TODO $this->userService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
             'siteChanges' => $this->computeSiteChanges($workspace),
             'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets()
         ]);
