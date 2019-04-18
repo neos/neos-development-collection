@@ -165,6 +165,9 @@ trait EventSourcedTrait
     {
         $this->contentGraph->enableCache();
         $this->visibilityConstraints = VisibilityConstraints::frontend();
+        $this->dimensionSpacePoint = null;
+        $this->rootNodeAggregateIdentifier = null;
+        $this->contentStreamIdentifier = null;
     }
 
     /**
@@ -1521,6 +1524,9 @@ trait EventSourcedTrait
     public function iGetTheNodeAddressForTheNodeAtPath(string $nodePath, $alias = 'DEFAULT')
     {
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        if (!$this->getRootNodeAggregateIdentifier()) {
+            throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
+        }
         $node = $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateIdentifier());
         Assert::assertNotNull($node, 'Did not find a node at path "' . $nodePath . '"');
 

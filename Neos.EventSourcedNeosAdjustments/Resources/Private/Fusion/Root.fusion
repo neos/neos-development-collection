@@ -6,7 +6,6 @@ prototype(Neos.Fusion:GlobalCacheIdentifiers) {
 
 prototype(Neos.Neos:NodeUri) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\NodeUriImplementation'
-    subgraph = ${subgraph}
 }
 
 prototype(Neos.Neos:DimensionsMenuItems) {
