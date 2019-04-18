@@ -22,6 +22,21 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 final class NodeTreeTraversalHelper
 {
 
+    /**
+     * the callback always gets the current NodeInterface passed as first parameter, and then its parent, and its parent etc etc.
+     * Until it has reached the root, or the return value of the closure is FALSE.
+     *
+     * @param ContentSubgraphInterface $subgraph
+     * @param NodeInterface $node
+     * @param \Closure $callback
+     */
+    public static function traverseUpUntilCondition(ContentSubgraphInterface $subgraph, NodeInterface $node, \Closure $callback): void {
+        do {
+            $shouldContinueTraversal = $callback($node);
+            $node = $subgraph->findParentNode($node->getNodeAggregateIdentifier());
+        } while ($shouldContinueTraversal !== false && $node !== null);
+    }
+
     public static function findNodeByNodePath(ContentSubgraphInterface $subgraph, TraversableNodeInterface $node, NodePath $nodePath): ?TraversableNodeInterface
     {
         $nodeAggregateIdentifier = $node->getNodeAggregateIdentifier();
