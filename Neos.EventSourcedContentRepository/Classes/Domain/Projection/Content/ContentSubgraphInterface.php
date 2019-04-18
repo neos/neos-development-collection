@@ -94,13 +94,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findChildNodeConnectedThroughEdgeName(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $edgeName): ?NodeInterface;
 
     /**
-     * @param NodeAggregateIdentifier $parentAggregateIdentifier
-     * @param NodeName $edgeName
-     * @return NodeInterface|null
-     */
-    public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(NodeAggregateIdentifier $parentAggregateIdentifier, NodeName $edgeName): ?NodeInterface;
-
-    /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodePath
      */

@@ -524,39 +524,6 @@ WHERE
     }
 
     /**
-     * @param NodeAggregateIdentifier $parentAggregateIdentifier
-     * @param NodeName $edgeName
-     * @return NodeInterface|null
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
-     */
-    public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(
-        NodeAggregateIdentifier $parentAggregateIdentifier,
-        NodeName $edgeName
-    ): ?NodeInterface {
-        $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
- WHERE p.nodeaggregateidentifier = :parentNodeAggregateIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash = :dimensionSpacePointHash
- AND h.name = :edgeName
- ORDER BY h.position LIMIT 1',
-            [
-                'parentNodeAggregateIdentifier' => (string)$parentAggregateIdentifier,
-                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                'edgeName' => (string)$edgeName
-            ]
-        )->fetch();
-
-        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData) : null;
-    }
-
-    /**
      * @param NodeInterface $startNode
      * @param HierarchyTraversalDirection $direction
      * @param NodeTypeConstraints|null $nodeTypeConstraints

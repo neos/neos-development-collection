@@ -172,8 +172,6 @@ Feature: Hide Node
       | 1     | text-2                  |
       | 1     | referencing-node        |
 
-    # TODO: findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName
-
     # TODO: findSiblings
     # TODO: findSucceedingSiblings
     # TODO: findPrecedingSiblings
