@@ -110,7 +110,6 @@ class Thumbnail implements ImageInterface
             if ($this->async === false) {
                 $this->refresh();
             }
-            $this->emitThumbnailCreated($this);
         }
     }
 
@@ -224,18 +223,5 @@ class Thumbnail implements ImageInterface
     public function refresh()
     {
         $this->generatorStrategy->refresh($this);
-    }
-
-    /**
-     * Signals that a thumbnail was created.
-     * @deprecated Will be removed with next major version of Neos.Media.
-     * Use ThumbnailService::emitThumbnailCreated signal instead.
-     *
-     * @Flow\Signal
-     * @param Thumbnail $thumbnail
-     * @return void
-     */
-    protected function emitThumbnailCreated(Thumbnail $thumbnail)
-    {
     }
 }
