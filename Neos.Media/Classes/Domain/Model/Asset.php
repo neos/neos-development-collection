@@ -166,7 +166,7 @@ class Asset implements AssetInterface
     }
 
     /**
-     * @param $initializationCause
+     * @param integer $initializationCause
      * @return void
      */
     public function initializeObject($initializationCause)
