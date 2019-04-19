@@ -166,9 +166,10 @@ class Asset implements AssetInterface
     }
 
     /**
+     * @param $initializationCause
      * @return void
      */
-    public function initializeObject()
+    public function initializeObject($initializationCause)
     {
         // FIXME: This is a workaround for after the resource management changes that introduced the property.
         if ($this->thumbnails === null) {
