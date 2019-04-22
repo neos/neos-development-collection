@@ -184,10 +184,10 @@
 			<target state="translated">Bağlantı hatası</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target state="needs-translation">Media source</target></trans-unit>
+			<target state="translated">Medya kaynağı</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target state="needs-translation">Media sources</target></trans-unit>
+			<target state="translated">Medya kaynakları</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
 			<target state="translated">Koleksiyonlar</target></trans-unit>
