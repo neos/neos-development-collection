@@ -17,7 +17,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -155,6 +154,7 @@ class Asset implements AssetInterface
      * is called.
      *
      * @param PersistentResource $resource
+     * @throws \Exception
      */
     public function __construct(PersistentResource $resource)
     {
@@ -174,9 +174,6 @@ class Asset implements AssetInterface
         // FIXME: This is a workaround for after the resource management changes that introduced the property.
         if ($this->thumbnails === null) {
             $this->thumbnails = new ArrayCollection();
-        }
-        if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
-            $this->emitAssetCreated($this);
         }
     }
 
@@ -515,19 +512,6 @@ class Asset implements AssetInterface
             $this->systemLogger->notice(sprintf('Asset %s: Failed connecting to asset source %s (%s): %s', $this->getIdentifier(), $assetSource->getIdentifier(), $assetSource->getLabel(), $e->getMessage()), LogEnvironment::fromMethodName(__METHOD__));
             return null;
         }
-    }
-
-    /**
-     * Signals that an asset was created.
-     * @deprecated Will be removed with next major version of Neos.Media.
-     * Use AssetService::emitAssetCreated signal instead.
-     *
-     * @Flow\Signal
-     * @param AssetInterface $asset
-     * @return void
-     */
-    protected function emitAssetCreated(AssetInterface $asset)
-    {
     }
 
     /**
