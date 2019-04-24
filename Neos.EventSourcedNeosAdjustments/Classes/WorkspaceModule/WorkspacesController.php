@@ -39,7 +39,6 @@ use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\UserService;
-use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Service\PublishingService;
 use Neos\ContentRepository\Exception\WorkspaceException;
 use Neos\ContentRepository\TypeConverter\NodeConverter;
@@ -494,10 +493,18 @@ class WorkspacesController extends AbstractModuleController
         $changes = $this->changeFinder->findByContentStreamIdentifier($selectedWorkspace->getCurrentContentStreamIdentifier());
 
         foreach ($changes as $change) {
-            if (!$change->originDimensionSpacePoint) {
-                // TODO: only deletion
+            $contentStreamIdentifier = $change->contentStreamIdentifier;
+
+            if ($change->deleted) {
+                // If we deleted a node, there is no way for us to anymore find the deleted node in the ContentStream where the node
+                // was deleted.
+                // Thus, to figure out the rootline for display, we check the *base workspace* Content Stream.
+                //
+                // This is safe because the UI basically shows what would be removed once the deletion is published.
+                $baseWorkspace = $this->workspaceFinder->findOneByName($selectedWorkspace->getBaseWorkspaceName());
+                $contentStreamIdentifier = $baseWorkspace->getCurrentContentStreamIdentifier();
             }
-            $subgraph = $this->contentGraph->getSubgraphByIdentifier($change->contentStreamIdentifier, $change->originDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
+            $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $change->originDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
 
             $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
             $node = new TraversableNode($node, $subgraph);
@@ -518,7 +525,7 @@ class WorkspacesController extends AbstractModuleController
 
                     $change = [
                         'node' => $node,
-                        'isRemoved' => false,
+                        'isRemoved' => $change->deleted,
                         'isNew' => false,
                         'contentChanges' => []//$this->renderContentChanges($node)
                     ];

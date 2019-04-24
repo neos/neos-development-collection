@@ -12,15 +12,14 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
-use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
-use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
-use Neos\Flow\Mvc\Controller\ControllerContext;
 
-class UpdateNodeInfo extends AbstractFeedback
+class RemoveNode extends AbstractFeedback
 {
     /**
      * @var TraversableNodeInterface
@@ -28,10 +27,9 @@ class UpdateNodeInfo extends AbstractFeedback
     protected $node;
 
     /**
-     * @Flow\Inject
-     * @var NodeInfoHelper
+     * @var TraversableNodeInterface
      */
-    protected $nodeInfoHelper;
+    protected $parentNode;
 
     /**
      * @Flow\Inject
@@ -39,27 +37,15 @@ class UpdateNodeInfo extends AbstractFeedback
      */
     protected $nodeAddressFactory;
 
-    protected $isRecursive = false;
-
     /**
-     * Set the node
-     *
+     * RemoveNode constructor.
      * @param TraversableNodeInterface $node
-     * @return void
+     * @param TraversableNodeInterface $parentNode
      */
-    public function setNode(TraversableNodeInterface $node)
+    public function __construct(TraversableNodeInterface $node, TraversableNodeInterface $parentNode)
     {
         $this->node = $node;
-    }
-
-    /**
-     * Update node infos recursively
-     *
-     * @return void
-     */
-    public function recursive()
-    {
-        $this->isRecursive = true;
+        $this->parentNode = $parentNode;
     }
 
     /**
@@ -79,7 +65,7 @@ class UpdateNodeInfo extends AbstractFeedback
      */
     public function getType()
     {
-        return 'Neos.Neos.Ui:UpdateNodeInfo';
+        return 'Neos.Neos.Ui:RemoveNode';
     }
 
     /**
@@ -89,7 +75,7 @@ class UpdateNodeInfo extends AbstractFeedback
      */
     public function getDescription()
     {
-        return sprintf('Updated info for node "%s" is available.', $this->getNode()->getNodeAggregateIdentifier());
+        return sprintf('Node "%s" has been removed.', $this->getNode()->getLabel());
     }
 
     /**
@@ -100,7 +86,7 @@ class UpdateNodeInfo extends AbstractFeedback
      */
     public function isSimilarTo(FeedbackInterface $feedback)
     {
-        if (!$feedback instanceof UpdateNodeInfo) {
+        if (!$feedback instanceof RemoveNode) {
             return false;
         }
 
@@ -116,29 +102,8 @@ class UpdateNodeInfo extends AbstractFeedback
     public function serializePayload(ControllerContext $controllerContext)
     {
         return [
-            'byContextPath' => $this->serializeNodeRecursively($this->getNode(), $controllerContext)
+            'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($this->node)->serializeForUri(),
+            'parentContextPath' => $this->nodeAddressFactory->createFromTraversableNode($this->parentNode)->serializeForUri()
         ];
-    }
-
-    /**
-     * Serialize node and all child nodes
-     *
-     * @param TraversableNodeInterface $node
-     * @param ControllerContext $controllerContext
-     * @return array
-     */
-    public function serializeNodeRecursively(TraversableNodeInterface $node, ControllerContext $controllerContext)
-    {
-        $result = [
-            $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $controllerContext)
-        ];
-
-        if ($this->isRecursive === true) {
-            foreach ($node->findChildNodes() as $childNode) {
-                $result = array_merge($result, $this->serializeNodeRecursively($childNode, $controllerContext));
-            }
-        }
-
-        return $result;
     }
 }

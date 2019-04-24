@@ -75,3 +75,4 @@ Neos:
           'Neos.Neos.Ui:CreateInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Create
           'Neos.Neos.Ui:CreateAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CreateAfter
           'Neos.Neos.Ui:CreateBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CreateBefore
+          'Neos.Neos.Ui:RemoveNode': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Remove
