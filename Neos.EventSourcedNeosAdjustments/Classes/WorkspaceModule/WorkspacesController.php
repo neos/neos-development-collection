@@ -13,6 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\WorkspaceModule;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -527,7 +529,7 @@ class WorkspacesController extends AbstractModuleController
                         'node' => $node,
                         'isRemoved' => $change->deleted,
                         'isNew' => false,
-                        'contentChanges' => []//$this->renderContentChanges($node)
+                        'contentChanges' => $this->renderContentChanges($node, $change->contentStreamIdentifier)
                     ];
                     if ($node->getNodeType()->isOfType('Neos.Neos:Node')) {
                         $change['configuration'] = $node->getNodeType()->getFullConfiguration();
@@ -555,33 +557,40 @@ class WorkspacesController extends AbstractModuleController
     }
 
     /**
-     * Retrieves the given node's corresponding node in the base workspace (that is, which would be overwritten if the
+     * Retrieves the given node's corresponding node in the base content stream (that is, which would be overwritten if the
      * given node would be published)
      *
-     * @param NodeInterface $modifiedNode
-     * @return NodeInterface
+     * @param TraversableNodeInterface $modifiedNode
+     * @param ContentStreamIdentifier $baseContentStreamIdentifier
+     * @return TraversableNodeInterface
      */
-    protected function getOriginalNode(NodeInterface $modifiedNode)
+    protected function getOriginalNode(TraversableNodeInterface $modifiedNode, ContentStreamIdentifier $baseContentStreamIdentifier): ?TraversableNodeInterface
     {
-        $baseWorkspaceName = $modifiedNode->getWorkspace()->getBaseWorkspace()->getName();
-        $contextProperties = $modifiedNode->getContext()->getProperties();
-        $contextProperties['workspaceName'] = $baseWorkspaceName;
-        $contentContext = $this->contextFactory->create($contextProperties);
-
-        return $contentContext->getNodeByIdentifier($modifiedNode->getIdentifier());
+        $baseSubgraph = $this->contentGraph->getSubgraphByIdentifier($baseContentStreamIdentifier, $modifiedNode->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $node = $baseSubgraph->findNodeByNodeAggregateIdentifier($modifiedNode->getNodeAggregateIdentifier());
+        return $node ? new TraversableNode($node, $baseSubgraph) : null;
     }
 
     /**
      * Renders the difference between the original and the changed content of the given node and returns it, along
      * with meta information, in an array.
      *
-     * @param NodeInterface $changedNode
+     * @param TraversableNodeInterface $changedNode
      * @return array
      */
-    protected function renderContentChanges(NodeInterface $changedNode)
+    protected function renderContentChanges(TraversableNodeInterface $changedNode, ContentStreamIdentifier $contentStreamIdentifierOfOriginalNode)
     {
+        $currentWorkspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifierOfOriginalNode);
+        $originalNode = null;
+        if ($currentWorkspace !== null) {
+            $baseWorkspace = $this->workspaceFinder->findOneByName($currentWorkspace->getBaseWorkspaceName());
+            $baseContentStreamIdentifier = $baseWorkspace->getCurrentContentStreamIdentifier();
+            $originalNode = $this->getOriginalNode($changedNode, $baseContentStreamIdentifier);
+        }
+
+
         $contentChanges = [];
-        $originalNode = $this->getOriginalNode($changedNode);
+
         $changeNodePropertiesDefaults = $changedNode->getNodeType()->getDefaultValuesForProperties($changedNode);
 
         $renderer = new HtmlArrayRenderer();
@@ -592,13 +601,15 @@ class WorkspacesController extends AbstractModuleController
 
             $originalPropertyValue = ($originalNode === null ? null : $originalNode->getProperty($propertyName));
 
-            if ($changedPropertyValue === $originalPropertyValue && !$changedNode->isRemoved()) {
+            if ($changedPropertyValue === $originalPropertyValue) {
+                // TODO  && !$changedNode->isRemoved()
                 continue;
             }
 
             if (!is_object($originalPropertyValue) && !is_object($changedPropertyValue)) {
                 $originalSlimmedDownContent = $this->renderSlimmedDownContent($originalPropertyValue);
-                $changedSlimmedDownContent = $changedNode->isRemoved() ? '' : $this->renderSlimmedDownContent($changedPropertyValue);
+                // TODO $changedSlimmedDownContent = $changedNode->isRemoved() ? '' : $this->renderSlimmedDownContent($changedPropertyValue);
+                $changedSlimmedDownContent = $this->renderSlimmedDownContent($changedPropertyValue);
 
                 $diff = new Diff(explode("\n", $originalSlimmedDownContent), explode("\n", $changedSlimmedDownContent), ['context' => 1]);
                 $diffArray = $diff->render($renderer);
@@ -677,10 +688,10 @@ class WorkspacesController extends AbstractModuleController
      * Tries to determine a label for the specified property
      *
      * @param string $propertyName
-     * @param NodeInterface $changedNode
+     * @param TraversableNodeInterface $changedNode
      * @return string
      */
-    protected function getPropertyLabel($propertyName, NodeInterface $changedNode)
+    protected function getPropertyLabel($propertyName, TraversableNodeInterface $changedNode)
     {
         $properties = $changedNode->getNodeType()->getProperties();
         if (!isset($properties[$propertyName]) ||
