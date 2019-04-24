@@ -19,6 +19,8 @@ use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
@@ -121,6 +123,12 @@ class WorkspacesController extends AbstractModuleController
      * @var ContentGraphInterface
      */
     protected $contentGraph;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceCommandHandler
+     */
+    protected $workspaceCommandHandler;
 
     /**
      * @return void
@@ -429,12 +437,12 @@ class WorkspacesController extends AbstractModuleController
     /**
      * Publishes the whole workspace
      *
-     * @param Workspace $workspace
-     * @return void
+     * @param WorkspaceName $workspace
      */
-    public function publishWorkspaceAction(Workspace $workspace)
+    public function publishWorkspaceAction(WorkspaceName $workspace)
     {
-        if (($targetWorkspace = $workspace->getBaseWorkspace()) === null) {
+        $workspace = $this->workspaceFinder->findOneByName($workspace);
+        if (($targetWorkspace = $workspace->getBaseWorkspaceName()) === null) {
             $targetWorkspace = $this->workspaceFinder->findOneByName('live');
         }
         $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace), $targetWorkspace);
@@ -445,14 +453,14 @@ class WorkspacesController extends AbstractModuleController
     /**
      * Discards content of the whole workspace
      *
-     * @param Workspace $workspace
-     * @return void
+     * @param WorkspaceName $workspace
      */
-    public function discardWorkspaceAction(Workspace $workspace)
+    public function discardWorkspaceAction(WorkspaceName $workspace)
     {
-        $unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspace);
-        $this->publishingService->discardNodes($unpublishedNodes);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getTitle())], null, null, 'Modules', 'Neos.Neos'));
+        $workspace = $this->workspaceFinder->findOneByName($workspace);
+        $this->workspaceCommandHandler->handleDiscardWorkspace(new DiscardWorkspace($workspace->getWorkspaceName()))->blockUntilProjectionsAreUpToDate();
+
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getWorkspaceName()->getName())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
 
