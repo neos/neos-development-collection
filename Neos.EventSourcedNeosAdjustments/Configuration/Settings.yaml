@@ -18,6 +18,7 @@ Neos:
           'Neos\\EventSourcedContentRepository\\Domain\\Projection\\Content\\PropertyCollection': true
           'Neos\\Fusion\\FusionObjects\\Helpers\\FusionPathProxy': true
           'Neos\\ContentRepository\\Domain\\Service\\NodeTypeManager': true
+          'Neos\\ContentRepository\\DimensionSpace\\DimensionSpace\\DimensionSpacePoint.*': true
 
   Fusion:
     defaultContext:
