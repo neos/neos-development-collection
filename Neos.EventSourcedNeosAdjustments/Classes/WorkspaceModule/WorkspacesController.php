@@ -20,6 +20,7 @@ use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -442,11 +443,10 @@ class WorkspacesController extends AbstractModuleController
     public function publishWorkspaceAction(WorkspaceName $workspace)
     {
         $workspace = $this->workspaceFinder->findOneByName($workspace);
-        if (($targetWorkspace = $workspace->getBaseWorkspaceName()) === null) {
-            $targetWorkspace = $this->workspaceFinder->findOneByName('live');
-        }
-        $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace), $targetWorkspace);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getTitle()), htmlspecialchars($targetWorkspace->getTitle())], null, null, 'Modules', 'Neos.Neos'));
+        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
+
+        $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace($workspace->getWorkspaceName()))->blockUntilProjectionsAreUpToDate();
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getWorkspaceName()->getName()), htmlspecialchars($baseWorkspace->getWorkspaceName()->getName())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
 
