@@ -70,8 +70,8 @@ class ParentsOperation extends AbstractOperation
                     break;
                 }
                 // stop at sites
-                if ($node->findNodePath() === SiteService::SITES_ROOT_PATH) {
-                    continue;
+                if ($node->findNodePath() == SiteService::SITES_ROOT_PATH) {
+                    break;
                 }
                 $parents[] = $node;
             } while (true);
