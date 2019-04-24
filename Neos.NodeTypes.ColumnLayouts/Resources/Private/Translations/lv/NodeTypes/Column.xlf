@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
                 <source>Column</source>
-            <target xml:lang="lv" state="translated">Kolonna</target><alt-trans><target xml:lang="lv">Sleja</target></alt-trans></trans-unit>
+            <target state="translated">Kolonna</target><alt-trans><target>Sleja</target></alt-trans></trans-unit>
       <trans-unit id="groups.column" xml:space="preserve" approved="yes">
                 <source>Columns</source>
-            <target xml:lang="lv" state="translated">Kolonnas</target><alt-trans><target xml:lang="lv">Slejas</target></alt-trans></trans-unit>
+            <target state="translated">Kolonnas</target><alt-trans><target>Slejas</target></alt-trans></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve" approved="yes">
                 <source>Layout</source>
-            <target xml:lang="lv" state="translated">Izkārtojums</target></trans-unit>
+            <target state="translated">Izkārtojums</target></trans-unit>
     </body>
   </file>
 </xliff>

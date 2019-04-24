@@ -4,58 +4,58 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Menu</source>
-			<target xml:lang="km" state="translated">មឺុនុយ</target></trans-unit>
+			<target state="translated">មឺុនុយ</target></trans-unit>
       <trans-unit id="groups.options" xml:space="preserve" approved="yes">
 				<source>Options</source>
-			<target xml:lang="km" state="translated">ជម្រើស</target></trans-unit>
+			<target state="translated">ជម្រើស</target></trans-unit>
       <trans-unit id="properties.startLevel" xml:space="preserve" approved="yes">
 				<source>Starting Level</source>
-			<target xml:lang="km" state="translated">កម្រិតនៃការចាប់ផ្តើម</target></trans-unit>
+			<target state="translated">កម្រិតនៃការចាប់ផ្តើម</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve" approved="yes">
 				<source>Four Levels Above Current Page</source>
-			<target xml:lang="km" state="translated">កម្រិតទី៤លេើ​ទំព័រនេះ</target></trans-unit>
+			<target state="translated">កម្រិតទី៤លេើ​ទំព័រនេះ</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve" approved="yes">
 				<source>Three Levels Above Current Page</source>
-			<target xml:lang="km" state="translated">បីថ្នាក់ខាងលើទំព័រនេះ</target></trans-unit>
+			<target state="translated">បីថ្នាក់ខាងលើទំព័រនេះ</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-2" xml:space="preserve" approved="yes">
 				<source>Two Levels Above Current Page</source>
-			<target xml:lang="km" state="translated">កម្រិតទី២​លេើ​ទំព័រនេះ</target></trans-unit>
+			<target state="translated">កម្រិតទី២​លេើ​ទំព័រនេះ</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-1" xml:space="preserve" approved="yes">
 				<source>One Level Above Current Page</source>
-			<target xml:lang="km" state="translated">កម្រិតទី១លេើ​ទំព័រនេះ</target></trans-unit>
+			<target state="translated">កម្រិតទី១លេើ​ទំព័រនេះ</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.0" xml:space="preserve" approved="yes">
 				<source>Same Level As Current Page</source>
-			<target xml:lang="km" state="translated">កំរិតដូចគ្នាជាមួយទំព័រនេះ</target></trans-unit>
+			<target state="translated">កំរិតដូចគ្នាជាមួយទំព័រនេះ</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve" approved="yes">
 				<source>First Level Of Website</source>
-			<target xml:lang="km" state="translated">កម្រិតទីមួយនៃគេហទំព័រ</target></trans-unit>
+			<target state="translated">កម្រិតទីមួយនៃគេហទំព័រ</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.2" xml:space="preserve" approved="yes">
 				<source>Second Level Of Website</source>
-			<target xml:lang="km" state="translated">កម្រិតទីពីរនៃគេហទំព័រ</target></trans-unit>
+			<target state="translated">កម្រិតទីពីរនៃគេហទំព័រ</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.3" xml:space="preserve" approved="yes">
 				<source>Third Level Of Website</source>
-			<target xml:lang="km" state="translated">កម្រិតទីបីនៃគេហទំព័រ</target></trans-unit>
+			<target state="translated">កម្រិតទីបីនៃគេហទំព័រ</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.4" xml:space="preserve" approved="yes">
 				<source>Fourth Level Of Website</source>
-			<target xml:lang="km" state="translated">កម្រិតទីបួននៃគេហទំព័រ</target></trans-unit>
+			<target state="translated">កម្រិតទីបួននៃគេហទំព័រ</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.5" xml:space="preserve" approved="yes">
 				<source>Fifth Level Of Website</source>
-			<target xml:lang="km" state="translated">កម្រិតទីប្រាំនៃគេហទំព័រ</target></trans-unit>
+			<target state="translated">កម្រិតទីប្រាំនៃគេហទំព័រ</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.6" xml:space="preserve" approved="yes">
 				<source>Sixth Level Of Website</source>
-			<target xml:lang="km" state="translated">កម្រិតទីប្រាំមួយនៃគេហទំព័រ</target></trans-unit>
+			<target state="translated">កម្រិតទីប្រាំមួយនៃគេហទំព័រ</target></trans-unit>
       <trans-unit id="properties.selection" xml:space="preserve" approved="yes">
 				<source>Selection</source>
-			<target xml:lang="km" state="translated">ជំរើស</target></trans-unit>
+			<target state="translated">ជំរើស</target></trans-unit>
       <trans-unit id="properties.startingPoint" xml:space="preserve" approved="yes">
 				<source>Starting Point</source>
-			<target xml:lang="km" state="translated">ចំណុច​ចាប់ផ្ដើម</target></trans-unit>
+			<target state="translated">ចំណុច​ចាប់ផ្ដើម</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve" approved="yes">
 				<source>Maximum Levels</source>
-			<target xml:lang="km" state="translated">កំរិតអតិបិរមា</target></trans-unit>
+			<target state="translated">កំរិតអតិបិរមា</target></trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve" approved="yes">
 				<source>Empty Menu</source>
-			<target xml:lang="km" state="translated">មិនមាន​មុឺនុយ</target></trans-unit>
+			<target state="translated">មិនមាន​មុឺនុយ</target></trans-unit>
     </body>
   </file>
 </xliff>

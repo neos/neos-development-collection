@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Invalid node</source>
-			<target xml:lang="zh-CN" state="translated">无效的节点</target></trans-unit>
+			<target state="translated">无效的节点</target></trans-unit>
     </body>
   </file>
 </xliff>

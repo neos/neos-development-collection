@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Insert content references</source>
-			<target xml:lang="km" state="translated">បញ្ចូល​មាតិកា​យោង​</target></trans-unit>
+			<target state="translated">បញ្ចូល​មាតិកា​យោង​</target></trans-unit>
       <trans-unit id="groups.references" xml:space="preserve" approved="yes">
 				<source>References</source>
-			<target xml:lang="km" state="translated">ទិន្នន័យយោង</target><alt-trans><target xml:lang="km">យោងទៅតាម</target></alt-trans></trans-unit>
+			<target state="translated">ទិន្នន័យយោង</target><alt-trans><target>យោងទៅតាម</target></alt-trans></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve" approved="yes">
 				<source>Select</source>
-			<target xml:lang="km" state="translated">ជ្រើសរើស</target></trans-unit>
+			<target state="translated">ជ្រើសរើស</target></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve" approved="yes">
 				<source>No references selected</source>
-			<target xml:lang="km" state="translated">មិនមាន​ទិន្នន័យយោង​ត្រូវបានជ្រើសរើស</target></trans-unit>
+			<target state="translated">មិនមាន​ទិន្នន័យយោង​ត្រូវបានជ្រើសរើស</target></trans-unit>
     </body>
   </file>
 </xliff>

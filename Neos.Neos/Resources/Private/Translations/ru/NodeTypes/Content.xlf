@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Content</source>
-			<target xml:lang="ru" state="translated">Содержимое</target><alt-trans><target xml:lang="ru">Контент</target></alt-trans></trans-unit>
+			<target state="translated">Содержимое</target><alt-trans><target>Контент</target></alt-trans></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target xml:lang="ru" state="translated">Изменить тип</target></trans-unit>
+			<target state="translated">Изменить тип</target></trans-unit>
     </body>
   </file>
 </xliff>

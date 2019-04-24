@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Shortcut</source>
-			<target xml:lang="sv-SE" state="translated">Genväg</target></trans-unit>
+			<target state="translated">Genväg</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target xml:lang="sv-SE" state="translated">Genvägsalternativ</target><alt-trans><target xml:lang="sv-SE">Genvägen alternativ</target></alt-trans></trans-unit>
+			<target state="translated">Genvägsalternativ</target><alt-trans><target>Genvägen alternativ</target></alt-trans></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target xml:lang="sv-SE" state="translated">Genvägsalternativ</target><alt-trans><target xml:lang="sv-SE">Genvägen alternativ</target></alt-trans></trans-unit>
+			<target state="translated">Genvägsalternativ</target><alt-trans><target>Genvägen alternativ</target></alt-trans></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="sv-SE" state="translated">Målläge</target></trans-unit>
+			<target state="translated">Målläge</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target xml:lang="sv-SE" state="translated">Mål</target></trans-unit>
+			<target state="translated">Mål</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve">
 				<source>First child node</source>
-			<target xml:lang="sv-SE" state="translated">Första underordnade nod</target></trans-unit>
+			<target state="translated">Första underordnade nod</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve">
 				<source>Parent node</source>
-			<target xml:lang="sv-SE" state="translated">Överordnad nod</target></trans-unit>
+			<target state="translated">Överordnad nod</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve">
 				<source>Selected target</source>
-			<target xml:lang="sv-SE" state="translated">Valt mål</target></trans-unit>
+			<target state="translated">Valt mål</target></trans-unit>
     </body>
   </file>
 </xliff>

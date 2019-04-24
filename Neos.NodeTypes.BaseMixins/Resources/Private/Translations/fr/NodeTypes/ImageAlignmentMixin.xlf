@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve" approved="yes">
 				<source>Alignment</source>
-			<target xml:lang="fr" state="translated">Alignement</target></trans-unit>
+			<target state="translated">Alignement</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Default</source>
-			<target xml:lang="fr" state="translated">Par défaut</target></trans-unit>
+			<target state="translated">Par défaut</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve" approved="yes">
 				<source>Center</source>
-			<target xml:lang="fr" state="translated">Centré</target><alt-trans><target xml:lang="fr">Centre</target></alt-trans></trans-unit>
+			<target state="translated">Centré</target><alt-trans><target>Centre</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve" approved="yes">
 				<source>Left</source>
-			<target xml:lang="fr" state="translated">À gauche</target><alt-trans><target xml:lang="fr">Gauche</target></alt-trans></trans-unit>
+			<target state="translated">À gauche</target><alt-trans><target>Gauche</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve" approved="yes">
 				<source>Right</source>
-			<target xml:lang="fr" state="translated">À droite</target><alt-trans><target xml:lang="fr">Droite</target></alt-trans></trans-unit>
+			<target state="translated">À droite</target><alt-trans><target>Droite</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

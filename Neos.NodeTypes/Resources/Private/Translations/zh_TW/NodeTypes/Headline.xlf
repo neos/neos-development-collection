@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Headline</source>
-			<target xml:lang="zh-TW" state="translated">頭條標題</target></trans-unit>
+			<target state="translated">頭條標題</target></trans-unit>
     </body>
   </file>
 </xliff>

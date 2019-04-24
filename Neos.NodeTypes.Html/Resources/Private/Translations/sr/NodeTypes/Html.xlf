@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>HTML</source>
-			<target xml:lang="sr" state="translated">HTML</target></trans-unit>
+			<target state="translated">HTML</target></trans-unit>
       <trans-unit id="groups.html" xml:space="preserve">
 				<source>HTML</source>
-			<target xml:lang="sr" state="translated">HTML</target></trans-unit>
+			<target state="translated">HTML</target></trans-unit>
       <trans-unit id="properties.source" xml:space="preserve">
 				<source>HTML Content</source>
-			<target xml:lang="sr" state="translated">HTML садржај</target><alt-trans><target xml:lang="sr">„HTML” садржај</target></alt-trans></trans-unit>
+			<target state="translated">HTML садржај</target><alt-trans><target>„HTML” садржај</target></alt-trans></trans-unit>
       <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve">
 				<source>Edit HTML source</source>
-			<target xml:lang="sr" state="translated">Измени HTML изворни код</target></trans-unit>
+			<target state="translated">Измени HTML изворни код</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -4,25 +4,25 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Page</source>
-			<target xml:lang="km" state="translated">ទំព័រ</target></trans-unit>
+			<target state="translated">ទំព័រ</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="km" state="translated">ចំណងជើង</target></trans-unit>
+			<target state="translated">ចំណងជើង</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve" approved="yes">
 				<source>Layout</source>
-			<target xml:lang="km" state="translated">ប្លង់</target></trans-unit>
+			<target state="translated">ប្លង់</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve" approved="yes">
 				<source>Layout for this page only</source>
-			<target xml:lang="km" state="translated">ទំព័រគេោលសម្រាប់ទំព័រនេះ</target></trans-unit>
+			<target state="translated">ទំព័រគេោលសម្រាប់ទំព័រនេះ</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="km" state="translated">បានទទួលពីឪពុកម្តាយ</target></trans-unit>
+			<target state="translated">បានទទួលពីឪពុកម្តាយ</target></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve" approved="yes">
 				<source>Layout for subpages of this page</source>
-			<target xml:lang="km" state="translated">ទំព័រគេោលសម្រាប់ទំព័របន្ទាប់ពីរទំព័រដេីម</target></trans-unit>
+			<target state="translated">ទំព័រគេោលសម្រាប់ទំព័របន្ទាប់ពីរទំព័រដេីម</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="km" state="translated">បានទទួលពីឪពុកម្តាយ</target></trans-unit>
+			<target state="translated">បានទទួលពីឪពុកម្តាយ</target></trans-unit>
     </body>
   </file>
 </xliff>

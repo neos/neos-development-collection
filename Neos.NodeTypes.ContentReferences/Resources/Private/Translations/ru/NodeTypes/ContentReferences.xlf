@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Insert content references</source>
-			<target xml:lang="ru" state="translated">Вставка ссылок на содержимое</target><alt-trans><target xml:lang="ru">Вставить ссылку на содержимое</target></alt-trans><alt-trans><target xml:lang="ru">Вставка содержимого ссылок</target></alt-trans></trans-unit>
+			<target state="translated">Вставка ссылок на содержимое</target><alt-trans><target>Вставить ссылку на содержимое</target></alt-trans><alt-trans><target>Вставка содержимого ссылок</target></alt-trans></trans-unit>
       <trans-unit id="groups.references" xml:space="preserve" approved="yes">
 				<source>References</source>
-			<target xml:lang="ru" state="translated">Ссылки</target></trans-unit>
+			<target state="translated">Ссылки</target></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve" approved="yes">
 				<source>Select</source>
-			<target xml:lang="ru" state="translated">Выбрать</target></trans-unit>
+			<target state="translated">Выбрать</target></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve" approved="yes">
 				<source>No references selected</source>
-			<target xml:lang="ru" state="translated">Нет выбранных ссылок</target></trans-unit>
+			<target state="translated">Нет выбранных ссылок</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Insert content references</source>
-			<target xml:lang="ar" state="translated">إدراج مراجع المحتوى</target></trans-unit>
+			<target state="translated">إدراج مراجع المحتوى</target></trans-unit>
       <trans-unit id="groups.references" xml:space="preserve">
 				<source>References</source>
-			<target xml:lang="ar" state="translated">المراجع</target></trans-unit>
+			<target state="translated">المراجع</target></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve">
 				<source>Select</source>
-			<target xml:lang="ar" state="translated">اختيار</target></trans-unit>
+			<target state="translated">اختيار</target></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve">
 				<source>No references selected</source>
-			<target xml:lang="ar" state="translated">لا توجد مراجع مختارة</target></trans-unit>
+			<target state="translated">لا توجد مراجع مختارة</target></trans-unit>
     </body>
   </file>
 </xliff>

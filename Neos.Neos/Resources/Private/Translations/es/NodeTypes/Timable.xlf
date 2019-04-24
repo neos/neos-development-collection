@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target xml:lang="es-ES" state="translated">Ocultar antes de</target></trans-unit>
+			<target state="translated">Ocultar antes de</target></trans-unit>
       <trans-unit id="properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target xml:lang="es-ES" state="translated">Ocultar después de</target></trans-unit>
+			<target state="translated">Ocultar después de</target></trans-unit>
     </body>
   </file>
 </xliff>

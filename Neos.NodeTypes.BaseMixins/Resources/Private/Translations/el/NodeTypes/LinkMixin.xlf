@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties.link" xml:space="preserve">
 				<source>Link</source>
-			<target xml:lang="el" state="translated">Σύνδεσμος</target></trans-unit>
+			<target state="translated">Σύνδεσμος</target></trans-unit>
     </body>
   </file>
 </xliff>

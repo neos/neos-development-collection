@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve">
 				<source>Alignment</source>
-			<target xml:lang="uk" state="translated">Вирівнювання</target></trans-unit>
+			<target state="translated">Вирівнювання</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Default</source>
-			<target xml:lang="uk" state="translated">За замовчанням</target></trans-unit>
+			<target state="translated">За замовчанням</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
 				<source>Center</source>
-			<target xml:lang="uk" state="translated">Центр</target><alt-trans><target xml:lang="uk">По центру</target></alt-trans><alt-trans><target xml:lang="uk">По-центру</target></alt-trans></trans-unit>
+			<target state="translated">Центр</target><alt-trans><target>По центру</target></alt-trans><alt-trans><target>По-центру</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve">
 				<source>Left</source>
-			<target xml:lang="uk" state="translated">Ліворуч</target><alt-trans><target xml:lang="uk">Зліва</target></alt-trans></trans-unit>
+			<target state="translated">Ліворуч</target><alt-trans><target>Зліва</target></alt-trans></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve">
 				<source>Right</source>
-			<target xml:lang="uk" state="translated">Праворуч</target><alt-trans><target xml:lang="uk">Право</target></alt-trans></trans-unit>
+			<target state="translated">Праворуч</target><alt-trans><target>Право</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

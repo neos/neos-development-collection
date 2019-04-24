@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve" approved="yes">
 				<source>Alignment</source>
-			<target xml:lang="fi" state="translated">Tasaus</target></trans-unit>
+			<target state="translated">Tasaus</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Default</source>
-			<target xml:lang="fi" state="translated">Oletus</target></trans-unit>
+			<target state="translated">Oletus</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve" approved="yes">
 				<source>Center</source>
-			<target xml:lang="fi" state="translated">Keskitetty</target></trans-unit>
+			<target state="translated">Keskitetty</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve" approved="yes">
 				<source>Left</source>
-			<target xml:lang="fi" state="translated">Vasemmalla</target></trans-unit>
+			<target state="translated">Vasemmalla</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve" approved="yes">
 				<source>Right</source>
-			<target xml:lang="fi" state="translated">Oikealla</target></trans-unit>
+			<target state="translated">Oikealla</target></trans-unit>
     </body>
   </file>
 </xliff>

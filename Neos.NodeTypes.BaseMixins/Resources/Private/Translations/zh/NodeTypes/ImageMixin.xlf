@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="groups.image" xml:space="preserve">
 				<source>Image</source>
-			<target xml:lang="zh-CN" state="translated">图片</target></trans-unit>
+			<target state="translated">图片</target></trans-unit>
       <trans-unit id="properties.image" xml:space="preserve">
 				<source>Image</source>
-			<target xml:lang="zh-CN" state="translated">图片</target></trans-unit>
+			<target state="translated">图片</target></trans-unit>
       <trans-unit id="properties.alternativeText" xml:space="preserve">
 				<source>Alternative text</source>
-			<target xml:lang="zh-CN" state="translated">替代文本</target></trans-unit>
+			<target state="translated">替代文本</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="zh-CN" state="translated">标题</target></trans-unit>
+			<target state="translated">标题</target></trans-unit>
     </body>
   </file>
 </xliff>

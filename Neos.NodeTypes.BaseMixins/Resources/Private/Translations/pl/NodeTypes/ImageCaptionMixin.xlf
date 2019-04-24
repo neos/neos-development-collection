@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="properties.hasCaption" xml:space="preserve" approved="yes">
 				<source>Enable caption</source>
-			<target xml:lang="pl" state="translated">Włącz etykietę</target></trans-unit>
+			<target state="translated">Włącz etykietę</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve" approved="yes">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="pl" state="translated"><![CDATA[<p>Wprowadź tutaj etykietę</p>]]></target></trans-unit>
+			<target state="translated"><![CDATA[<p>Wprowadź tutaj etykietę</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

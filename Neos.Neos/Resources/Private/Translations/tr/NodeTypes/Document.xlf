@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="tr" state="translated">Belge</target></trans-unit>
+			<target state="translated">Belge</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="tr" state="translated">Başlık</target></trans-unit>
+			<target state="translated">Başlık</target></trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="tr" state="translated">URL yolu segmenti</target></trans-unit>
+			<target state="translated">URL yolu segmenti</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="tr" state="translated">Menülerde gizle</target></trans-unit>
+			<target state="translated">Menülerde gizle</target></trans-unit>
       <trans-unit id="creationDialog.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="tr" state="translated">Başlık</target></trans-unit>
+			<target state="translated">Başlık</target></trans-unit>
     </body>
   </file>
 </xliff>
