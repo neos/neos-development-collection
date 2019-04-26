@@ -1133,13 +1133,13 @@ class NodeDataRepository extends Repository
             } else {
                 $negate = false;
             }
-            $nodeTypeFilterPartSubTypes = array_merge([$nodeTypeFilterPart], $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart));
+            $nodeTypeFilterPartSubTypes = array_merge([$this->nodeTypeManager->getNodeType($nodeTypeFilterPart)], $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart));
 
             foreach ($nodeTypeFilterPartSubTypes as $nodeTypeFilterPartSubType) {
                 if ($negate === true) {
-                    $constraints['excludeNodeTypes'][] = $nodeTypeFilterPartSubType;
+                    $constraints['excludeNodeTypes'][] = $nodeTypeFilterPartSubType->getName();
                 } else {
-                    $constraints['includeNodeTypes'][] = $nodeTypeFilterPartSubType;
+                    $constraints['includeNodeTypes'][] = $nodeTypeFilterPartSubType->getName();
                 }
             }
         }
@@ -1165,13 +1165,13 @@ class NodeDataRepository extends Repository
             } else {
                 $negate = false;
             }
-            $nodeTypeFilterPartSubTypes = array_merge([$nodeTypeFilterPart], $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart, false));
+            $nodeTypeFilterPartSubTypes = array_merge([$this->nodeTypeManager->getNodeType($nodeTypeFilterPart)], $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart, false));
 
             foreach ($nodeTypeFilterPartSubTypes as $nodeTypeFilterPartSubType) {
                 if ($negate === true) {
-                    $excludeNodeTypeConstraints[] = $query->logicalNot($query->equals('nodeType', $nodeTypeFilterPartSubType));
+                    $excludeNodeTypeConstraints[] = $query->logicalNot($query->equals('nodeType', $nodeTypeFilterPartSubType->getName()));
                 } else {
-                    $includeNodeTypeConstraints[] = $query->equals('nodeType', $nodeTypeFilterPartSubType);
+                    $includeNodeTypeConstraints[] = $query->equals('nodeType', $nodeTypeFilterPartSubType->getName());
                 }
             }
         }
