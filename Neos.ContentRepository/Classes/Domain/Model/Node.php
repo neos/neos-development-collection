@@ -533,7 +533,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
     /**
      * Returns the parent node of this node
      *
-     * @return NodeInterface The parent node or NULL if this is the root node
+     * @return NodeInterface|null The parent node or NULL if this is the root node
      * @deprecated with version 4.3, use findParentNode() instead.
      */
     public function getParent()

@@ -30,12 +30,18 @@ class ParentsOperationTest extends UnitTestCase
      */
     public function parentsWillReturnTheSiteNodeAsRootLevelParent()
     {
+        $rootNode = $this->createMock(TraversableNodeInterface::class);
+        $sitesNode = $this->createMock(TraversableNodeInterface::class);
         $siteNode = $this->createMock(TraversableNodeInterface::class);
         $firstLevelNode = $this->createMock(TraversableNodeInterface::class);
         $secondLevelNode = $this->createMock(TraversableNodeInterface::class);
 
+        $rootNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/')));
+        $rootNode->expects($this->any())->method('findParentNode')->will($this->throwException(new NodeException('No parent')));
+        $sitesNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/sites')));
+        $sitesNode->expects($this->any())->method('findParentNode')->will($this->returnValue($rootNode));
         $siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/sites/site')));
-        $siteNode->expects($this->any())->method('findParentNode')->will($this->throwException(new NodeException('No parent')));
+        $siteNode->expects($this->any())->method('findParentNode')->will($this->returnValue($sitesNode));
         $firstLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($siteNode));
         $firstLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/sites/site/first')));
         $secondLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($firstLevelNode));
