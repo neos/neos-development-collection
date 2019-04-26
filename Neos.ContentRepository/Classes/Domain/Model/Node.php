@@ -502,7 +502,7 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Returns the parent node of this node
      *
-     * @return NodeInterface The parent node or NULL if this is the root node
+     * @return NodeInterface|null The parent node or NULL if this is the root node
      * @api
      */
     public function getParent()
