@@ -102,7 +102,6 @@ class NodeDataExportServiceTest extends FunctionalTestCase
         $this->assertSame($originalNode->getIdentifier(), $importedNode->getIdentifier());
         $this->assertSame($originalNode->getProperty('description'), $importedNode->getProperty('description'));
         $this->assertEqualsWithDelta($originalNode->getProperty('someDate'), $importedNode->getProperty('someDate'), 1, 'The "someDate" property had a different value after import');
-
     }
 
     /**
