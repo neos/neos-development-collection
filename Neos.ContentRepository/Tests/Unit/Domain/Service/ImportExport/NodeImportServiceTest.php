@@ -28,7 +28,7 @@ class NodeImportServiceTest extends UnitTestCase
      */
     protected $mockSecurityContext;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->getMock();
 
@@ -431,6 +431,6 @@ class NodeImportServiceTest extends UnitTestCase
 
         $this->assertCount(1, $actualNodeDatas);
 
-        $this->assertArraySubset($expectedNodeDatas[0]['creationDateTime'], $actualNodeDatas[0]['creationDateTime'], true);
+        $this->assertEquals($expectedNodeDatas[0]['creationDateTime']['source'], $actualNodeDatas[0]['creationDateTime']['source']);
     }
 }

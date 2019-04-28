@@ -13,6 +13,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Parser;
+use Neos\Fusion\Exception;
 use Neos\Fusion\FusionObjects\ArrayImplementation;
 
 /**
@@ -34,7 +35,7 @@ class ParserTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    protected function setUp()
+    public function setUp(): void
     {
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnCallback([$this, 'objectManagerIsRegisteredCallback']));
@@ -114,10 +115,10 @@ class ParserTest extends UnitTestCase
      * Checks if a leading slash in the namespace declaration throws an exception
      *
      * @test
-     * @expectedException \Neos\Fusion\Exception
      */
     public function parserThrowsFusionExceptionIfNamespaceDeclarationIsInvalid()
     {
+        $this->expectException(Exception::class);
         $sourceCode = 'namespace: cms=\-notvalid-\Fusion\Fixtures';
         $this->parser->parse($sourceCode);
     }
@@ -716,10 +717,10 @@ class ParserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
      */
     public function parserThrowsExceptionOnFixture16b()
     {
+        $this->expectException(Exception::class);
         $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture16b.fusion';
         $sourceCode = file_get_contents($fixture, FILE_TEXT);
 
@@ -870,20 +871,20 @@ class ParserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
      */
     public function parserDetectsDirectRecursions()
     {
+        $this->expectException(Exception::class);
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture21');
         $this->parser->parse($sourceCode);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
      */
     public function parserDetectsIndirectRecursions()
     {
+        $this->expectException(Exception::class);
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture22');
         $this->parser->parse($sourceCode);
     }
@@ -963,11 +964,11 @@ class ParserTest extends UnitTestCase
      * Checks unclosed dsl-expressions are
      *
      * @test
-     * @expectedException \Neos\Fusion\Exception
-     * @expectedExceptionCode 1490714685
      */
     public function parserThrowsFusionExceptionIfUnfinishedDslIsDetected()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(1490714685);
         $this->parser->parse('dslValue1 = dsl1`unclosed dsl expression');
     }
 

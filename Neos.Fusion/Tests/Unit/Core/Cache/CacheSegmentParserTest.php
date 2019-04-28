@@ -13,6 +13,7 @@ namespace Neos\Fusion\Tests\Unit\Core\Cache;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Cache\CacheSegmentParser;
+use Neos\Fusion\Exception;
 
 /**
  * Test case for the CacheSegmentParser
@@ -209,31 +210,31 @@ class CacheSegmentParserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
-     * @expectedExceptionCode 1391855139
      */
     public function invalidContentWithMissingEndThrowsException()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(1391855139);
         new CacheSegmentParser($this->invalidContentWithMissingEnd);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
-     * @expectedExceptionCode 1391853689
      */
     public function invalidContentWithExceedingEndThrowsException()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(1391853689);
         new CacheSegmentParser($this->invalidContentWithExceedingEnd);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
-     * @expectedExceptionCode 1391855139
      */
     public function invalidContentWithMissingSeparatorThrowsException()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(1391855139);
         new CacheSegmentParser($this->invalidContentWithMissingSeparator);
     }
 

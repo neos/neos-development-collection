@@ -76,7 +76,7 @@ class NodeViewHelperTest extends FunctionalTestCase
      */
     protected $contextFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->router->setRoutesConfiguration(null);
@@ -136,7 +136,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->viewHelper->initialize();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

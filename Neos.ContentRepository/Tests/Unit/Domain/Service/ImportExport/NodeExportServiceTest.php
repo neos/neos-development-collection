@@ -27,7 +27,7 @@ class NodeExportServiceTest extends UnitTestCase
      */
     protected $mockSecurityContext;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $this->mockSecurityContext->expects($this->any())->method('withoutAuthorizationChecks')->will($this->returnCallback(function ($callback) {
@@ -151,7 +151,7 @@ class NodeExportServiceTest extends UnitTestCase
 			  </node>
 			</nodes>
 		', $output);
-        $this->assertContains('<!--Skipped node', $output);
+        $this->assertStringContainsString('<!--Skipped node', $output);
     }
 
     /**

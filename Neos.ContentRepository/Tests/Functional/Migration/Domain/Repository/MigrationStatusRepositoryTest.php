@@ -32,7 +32,7 @@ class MigrationStatusRepositoryTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->repository = $this->objectManager->get(MigrationStatusRepository::class);

@@ -463,10 +463,10 @@ class NodeServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function normalizePathThrowsInvalidArgumentExceptionOnPathContainingDoubleSlash()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $nodeService = $this->createNodeService();
         $nodeService->normalizePath('foo//bar', '/');
     }

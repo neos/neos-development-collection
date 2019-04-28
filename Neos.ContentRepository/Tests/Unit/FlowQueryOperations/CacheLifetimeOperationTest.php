@@ -35,7 +35,7 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
      */
     protected $dateFixtures;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->operation = new CacheLifetimeOperation();
         $this->now = new \DateTime();
@@ -136,7 +136,7 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
         if ($expectedLifetime === null) {
             $this->assertNull($lifetime);
         } else {
-            $this->assertEquals($expectedLifetime, $lifetime, 'Lifetime did not match expected value +/- 1', 1);
+            $this->assertEqualsWithDelta($expectedLifetime, $lifetime, 1, 'Lifetime did not match expected value +/- 1');
         }
     }
 

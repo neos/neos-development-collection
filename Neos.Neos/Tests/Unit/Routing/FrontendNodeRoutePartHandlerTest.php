@@ -20,6 +20,7 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Routing\Exception\NoHomepageException;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -78,7 +79,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * @return void
      */
-    protected function setUp()
+    public function setUp(): void
     {
         $this->routePartHandler = new FrontendNodeRoutePartHandler();
         $this->routePartHandler->setName('node');
@@ -166,10 +167,10 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * If convertRequestPathToNode() throws any exception and the request path is '' a "missing homepage" message should appear.
      *
      * @test
-     * @expectedException \Neos\Neos\Routing\Exception\NoHomepageException
      */
     public function matchThrowsAnExceptionIfNoHomepageExists()
     {
+        $this->expectException(NoHomepageException::class);
         $this->buildMockContext(['workspaceName' => 'live']);
         $routePath = '';
         $this->routePartHandler->match($routePath);

@@ -46,7 +46,7 @@ class XliffServiceTest extends FunctionalTestCase
     /**
      * Initialize dependencies
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->xliffService = $this->objectManager->get(XliffService::class);

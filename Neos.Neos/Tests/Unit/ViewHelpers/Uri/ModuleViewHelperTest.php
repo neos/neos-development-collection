@@ -31,7 +31,7 @@ class ModuleViewHelperTest extends UnitTestCase
 
     /**
      */
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getMockBuilder(ModuleViewHelper::class)->setMethods(['setMainRequestToUriBuilder'])->getMock();
