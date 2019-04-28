@@ -71,7 +71,7 @@ class NodeViewHelperTest extends FunctionalTestCase
      */
     protected $contextFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
@@ -121,7 +121,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

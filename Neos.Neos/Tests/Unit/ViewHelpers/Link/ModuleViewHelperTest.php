@@ -43,7 +43,7 @@ class ModuleViewHelperTest extends UnitTestCase
 
     /**
      */
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(ModuleViewHelper::class, ['renderChildren']);

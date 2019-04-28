@@ -26,7 +26,7 @@ class MigrationTest extends AbstractNodeTest
      */
     protected $nodeTypeManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);

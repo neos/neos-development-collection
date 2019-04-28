@@ -84,7 +84,7 @@ class LinkingServiceTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
@@ -123,7 +123,7 @@ class LinkingServiceTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->inject($this->contextFactory, 'contextInstances', []);
@@ -255,28 +255,28 @@ class LinkingServiceTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException Exception
      */
     public function linkingServiceThrowsAnExceptionWhenTryingToLinkToANonExistingNode()
     {
+        $this->expectException(Exception::class);
         $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/not-found', $this->baseNode);
     }
 
     /**
      * @test
-     * @expectedException Exception
      */
     public function linkingServiceThrowsAnExceptionWhenItIsGivenAnEmptyString()
     {
+        $this->expectException(Exception::class);
         $this->linkingService->createNodeUri($this->controllerContext, '', $this->baseNode);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function linkingServiceThrowsAnExceptionWhenItIsGivenADifferentObject()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->linkingService->createNodeUri($this->controllerContext, new \stdClass());
     }
 

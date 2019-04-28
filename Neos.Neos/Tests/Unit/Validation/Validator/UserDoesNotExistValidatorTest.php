@@ -13,6 +13,7 @@ namespace Neos\Neos\Tests\Unit\Validation\Validator;
 
 use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Validation\Exception\InvalidSubjectException;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Validation\Validator\UserDoesNotExistValidator;
 
@@ -24,10 +25,10 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidSubjectException
      */
     public function validateThrowsExceptionForNonStringValue()
     {
+        $this->expectException(InvalidSubjectException::class);
         $validator = new UserDoesNotExistValidator();
         $validator->validate(false);
     }

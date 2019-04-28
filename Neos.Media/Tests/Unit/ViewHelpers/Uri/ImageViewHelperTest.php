@@ -23,7 +23,7 @@ class ImageViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->viewHelper = new ImageViewHelper();

@@ -38,7 +38,7 @@ class NodeDataRepositoryTest extends UnitTestCase
      */
     protected $mockQueryBuilder;
 
-    protected function setUp()
+    public function setUp(): void
     {
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
 

@@ -66,7 +66,7 @@ class WorkspacesTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->currentTestWorkspaceName = uniqid('user-', true);
@@ -77,7 +77,7 @@ class WorkspacesTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->saveNodesAndTearDownRootNodeAndRepository();
         parent::tearDown();

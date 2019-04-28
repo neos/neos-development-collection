@@ -11,6 +11,8 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\Exception;
+
 /**
  * Testcase for reserved Fusion keys
  *
@@ -19,10 +21,10 @@ class ReservedKeysTest extends AbstractFusionObjectTest
 {
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
      */
     public function usingReservedKeysThrowsException()
     {
+        $this->expectException(Exception::class);
         $view = $this->buildView();
         $view->setFusionPathPattern(__DIR__ . '/Fixtures/ReservedKeysFusion');
         $view->render();
