@@ -16,24 +16,42 @@ This is the package bundle you can install alongside a plain Neos to play around
 | --------------------------- |:----------:|:----------------:|
 | **Basics**                  |            |                  |
 | Create/ Edit / Delete Nodes |     ✅     |        ✅        |
-| Shortcut Handling            |    ✅     |                  |
+| Shortcut Handling            |    ✅     |        ⏩        |
 | Query Nodes                 |     ✅     |        ✅        |
 | Cut / Copy / Paste          |     ✅     |                  |
 | Move Nodes                  |     ✅     |        ⏩        |
 | Hide Nodes                  |     ✅     |        ✅        |
-| History                     |     ✅     |                  |
+| History                     |     (✅)    |                 |
+| Basic Workspaces            |     ✅     |        ✅        |
+| Workspace Module            |     ✅    |         ⏩        |
+| Nested Workspaces           |     ✅     |                 |
 | Undo / Redo                 |     🚫     |                  |
 | Setting Start / End time    |     ✅     |                  |
-| Workspaces                  |     ✅     |        ⏩        |
 | Resolving Referencing Nodes |     🚫     |        ✅        |
+| Menu Rendering              |    ✅      |       ✅         |
+| Dimension Menu Rendering    |    ✅      |       ✅         |
+| Supporting "not in menu"    |    ✅      |       ✅         |
 | **Advanced**                |            |                  |
-| Dimensions                  |     ✅     |        (✅)      |
-| Dimension Fallback          |     ✅     |       (✅)       |
-| Multiple Sites              |     ✅     |                  |
+| Dimensions                  |     ✅     |        ✅        |
+| Dimension Fallback          |     ✅     |        ✅        |
+| Multiple Sites              |     ✅     |        ✅        |
+| Permissions / Policy        |     ✅     |                  |
 | **Maintenance**             |            |                  |
 | Export / Import             |     ✅     |                  |
-| Node Migrations             |     ✅     |                  |
-| Node Repair                 |     ✅     |                  |
+| Node Migrations             |     ✅     |        ⏩        |
+| Node Repair                 |     ✅     |        ⏩        |
+| **API**                     |            |                  |
+| Separate Read and Write API |     🚫     |        ✅        |
+| More convenient write API   |            |                  |
+| FlowQuery is compatible     |    ✅      |       ✅         |
+| Advanced test cases         |    🚫      |       ✅         |
+| Don't use ORM, but direct SQL queries|    🚫      |       ✅         |
+| Asynchronous operations possible |    🚫      |       ✅         |
+| performant node moving     |    🚫      |       ✅         |
+| performant node deletion   |    🚫      |       ✅         |
+| **User Interface**         |            |                  |
+| Ensure node deletion can be published in UI    |   ✅     |       ✅         |
+| Support Dimension Constraints    |   ✅     |               |
 
 
 ## Requirements
