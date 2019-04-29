@@ -49,8 +49,9 @@ This is the package bundle you can install alongside a plain Neos to play around
 | Asynchronous operations possible |    🚫      |       ✅         |
 | performant node moving     |    🚫      |       ✅         |
 | performant node deletion   |    🚫      |       ✅         |
+| near-constant read performance |    🚫      |       ✅         |
 | **User Interface**         |            |                  |
-| Ensure node deletion can be published in UI    |   ✅     |       ✅         |
+| Ensure node deletion can be published in UI    |   ✅     |                |
 | Support Dimension Constraints    |   ✅     |               |
 
 
