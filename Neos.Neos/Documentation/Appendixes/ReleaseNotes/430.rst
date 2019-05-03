@@ -22,7 +22,7 @@ Enable Loops in Fusion AFX without ``@children`` annotation
 ===========================================================
 
 Fusion AFX uses the ``content`` key by default to render children. Since collections and loops
-use `ìtemRenderer`` to define the inner content ``@children=itemRenderer`` had to be declared
+use ``ìtemRenderer`` to define the inner content ``@children=itemRenderer`` had to be declared
 in the past. To overcome this, loop and derived prototypes now got a fallback from ``itemRenderer``
 to content. This avoids a common error in AFX code.
 
@@ -38,22 +38,23 @@ By extending the ``error`` case you can add custom 404 rendering like in the exa
 
 .. code-block: javascript
 
-#
-# Extend error matcher to render the document with uriPathSegment ``notfound``
-# for exceptions with 4xx status code
-#
-error {
-    @context.notfoundDocument = ${q(site).children('[instanceof Neos.Neos:Document]').filter('[uriPathSegment="notfound"]').get(0)}
+  #
+  # Extend error matcher to render the document with uriPathSegment ``notfound``
+  # for exceptions with 4xx status code
+  #
+  error {
+      @context.notfoundDocument = ${q(site).children('[instanceof Neos.Neos:Document]').filter('[uriPathSegment="notfound"]').get(0)}
 
-    4xx {
-        @position = 'start'
-        condition = ${statusCode >= 400 && statusCode < 500 && notfoundDocument}
-        renderer = Neos.Fusion:Renderer {
-            @context.node = ${notfoundDocument}
-            renderPath = '/root'
-        }
-    }
-}
+      4xx {
+          @position = 'start'
+          condition = ${statusCode >= 400 && statusCode < 500 && notfoundDocument}
+          renderer = Neos.Fusion:Renderer {
+              @context.node = ${notfoundDocument}
+              renderPath = '/root'
+          }
+      }
+  }
+
 
 Set crop image adjustment by aspect ratio
 =========================================
@@ -85,14 +86,14 @@ web images. The example shows how to configure Neos to automatically convert tif
 
 .. code-block: yaml
 
-Neos:
-  Media:
-    image:
-      defaultOptions:
-        # Image formats that shall always be converted regardless wether an adjustment was applied or not
-        # The key is the the source media-type and the value is the target media-type or file-extension.
-        convertFormats:
-          image/tiff: image/jpeg
+  Neos:
+    Media:
+      image:
+        defaultOptions:
+          # Image formats that shall always be converted regardless wether an adjustment was applied or not
+          # The key is the the source media-type and the value is the target media-type or file-extension.
+          convertFormats:
+            image/tiff: image/jpeg
 
 Add ``Neos.Neos:MenuItems``, ``Neos.Neos:DimensionMenuItems`` and ``Neos.Neos:BreadcrumbMenuItems`` prototypes
 ==============================================================================================================
