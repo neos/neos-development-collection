@@ -215,7 +215,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             $uri = $uriBuilder->uriFor(
                 'show',
                 [
-                    'node' => $nodeAddress
+                    'node' => $nodeAddress->serializeForUri()
                 ],
                 'Frontend\Node',
                 'Neos.Neos'

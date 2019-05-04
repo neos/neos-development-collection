@@ -176,4 +176,27 @@ final class WorkspaceFinder
 
         return Workspace::fromDatabaseRow($workspaceRow);
     }
+
+    /**
+     * @return array|Workspace[]
+     */
+    public function findAll(): array
+    {
+        $result = [];
+
+        $connection = $this->client->getConnection();
+        $workspaceRows = $connection->executeQuery(
+            '
+                SELECT * FROM neos_contentrepository_projection_workspace_v1
+            '
+        )->fetchAll();
+
+        foreach ($workspaceRows as $workspaceRow) {
+            $similarlyNamedWorkspace = Workspace::fromDatabaseRow($workspaceRow);
+            /** @var Workspace $similarlyNamedWorkspace */
+            $result[(string)$similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
+        }
+
+        return $result;
+    }
 }

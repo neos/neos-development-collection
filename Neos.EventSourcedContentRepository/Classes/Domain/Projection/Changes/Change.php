@@ -48,20 +48,18 @@ class Change
     public $moved;
 
     /**
-     * Change constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param bool $changed
-     * @param bool $moved
+     * @var bool
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, bool $changed, bool $moved)
+    public $deleted;
+
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, bool $changed, bool $moved, bool $deleted)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->changed = $changed;
         $this->moved = $moved;
+        $this->deleted = $deleted;
     }
 
 
@@ -76,7 +74,8 @@ class Change
             'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
             'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->getHash(),
             'changed' => (int)$this->changed,
-            'moved' => (int)$this->moved
+            'moved' => (int)$this->moved,
+            'deleted' => (int)$this->deleted,
         ]);
     }
 
@@ -84,7 +83,8 @@ class Change
     {
         $databaseConnection->update('neos_contentrepository_projection_change', [
             'changed' => (int)$this->changed,
-            'moved' => (int)$this->moved
+            'moved' => (int)$this->moved,
+            'deleted' => (int)$this->deleted
         ],
         [
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
@@ -105,7 +105,8 @@ class Change
             NodeAggregateIdentifier::fromString($databaseRow['nodeAggregateIdentifier']),
             new DimensionSpacePoint(json_decode($databaseRow['originDimensionSpacePoint'], true)),
             (bool)$databaseRow['changed'],
-            (bool)$databaseRow['moved']
+            (bool)$databaseRow['moved'],
+            (bool)$databaseRow['deleted']
         );
     }
 }
