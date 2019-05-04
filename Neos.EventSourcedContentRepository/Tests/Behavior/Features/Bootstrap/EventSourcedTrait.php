@@ -43,7 +43,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpa
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategyIsInvalid;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
@@ -1185,7 +1184,7 @@ trait EventSourcedTrait
     public function iExpectThisNodeToHaveThePrecedingSiblings(string $serializedExpectedSiblingNodeAggregateIdentifiers)
     {
         $rawExpectedSiblingNodeAggregateIdentifiers = json_decode($serializedExpectedSiblingNodeAggregateIdentifiers);
-        $expectedSiblingNodeAggregateIdentifiers = array_map(function($item) {
+        $expectedSiblingNodeAggregateIdentifiers = array_map(function ($item) {
             return NodeAggregateIdentifier::fromString($item);
         }, $rawExpectedSiblingNodeAggregateIdentifiers);
 
@@ -1209,7 +1208,7 @@ trait EventSourcedTrait
     public function iExpectThisNodeToHaveTheSucceedingSiblings(string $serializedExpectedSiblingNodeAggregateIdentifiers)
     {
         $rawExpectedSiblingNodeAggregateIdentifiers = json_decode($serializedExpectedSiblingNodeAggregateIdentifiers);
-        $expectedSiblingNodeAggregateIdentifiers = array_map(function($item) {
+        $expectedSiblingNodeAggregateIdentifiers = array_map(function ($item) {
             return NodeAggregateIdentifier::fromString($item);
         }, $rawExpectedSiblingNodeAggregateIdentifiers);
 
