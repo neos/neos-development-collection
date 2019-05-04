@@ -138,6 +138,26 @@ final class ContentGraph implements ContentGraphInterface
         return $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
     }
 
+    public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): \Iterator
+    {
+        $connection = $this->client->getConnection();
+
+        $query = 'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint FROM neos_contentgraph_node n
+                      JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                      WHERE h.contentstreamidentifier = :contentStreamIdentifier
+                      AND n.nodetypename = :nodeTypeName';
+
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'nodeTypeName' => (string)$nodeTypeName,
+        ];
+
+        $resultStatement = $connection->executeQuery($query, $parameters);
+        while ($nodeRow = $resultStatement->fetch()) {
+            yield $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
+        }
+    }
+
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
@@ -416,6 +436,21 @@ final class ContentGraph implements ContentGraphInterface
         $query = 'SELECT COUNT(*) FROM neos_contentgraph_node';
 
         return (int) $connection->executeQuery($query)->fetch()['COUNT(*)'];
+    }
+
+    /**
+     * Returns all content stream identifiers
+     *
+     * @return ContentStreamIdentifier[]
+     */
+    public function findContentStreamIdentifiers(): array
+    {
+        $connection = $this->client->getConnection();
+
+        $rows = $connection->executeQuery('SELECT DISTINCT contentstreamidentifier FROM neos_contentgraph_hierarchyrelation')->fetchAll();
+        return array_map(function(array $row) {
+            return ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
+        }, $rows);
     }
 
     public function enableCache(): void

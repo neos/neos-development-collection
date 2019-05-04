@@ -45,6 +45,8 @@ use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
+use Neos\Flow\Property\Exception as PropertyException;
+use Neos\Flow\Security\Exception as SecurityException;
 
 final class NodeAggregateCommandHandler
 {
@@ -198,8 +200,8 @@ final class NodeAggregateCommandHandler
      * @throws NodeConstraintException If a node aggregate of that type is not allowed to be created as a descendant of its parents
      * @throws NodeNameIsAlreadyOccupied If the given node name is already taken in any of the dimension space points the node will be visible in
      * @throws NodeTypeNotFoundException If the given type does not exist
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
+     * @throws PropertyException
+     * @throws SecurityException
      * @throws NodeAggregatesTypeIsAmbiguous
      */
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
@@ -253,12 +255,20 @@ final class NodeAggregateCommandHandler
                 $initialPropertyValues
             );
 
-            $events = $this->handleTetheredChildNodes(
-                $command,
-                $nodeType,
-                $visibleDimensionSpacePoints,
-                $command->getNodeAggregateIdentifier(),
-                $descendantNodeAggregateIdentifiers,
+            $events  = $events->appendEvents(
+                $this->handleTetheredChildNodes(
+                    $command->getContentStreamIdentifier(),
+                    $nodeType,
+                    $visibleDimensionSpacePoints,
+                    $command->getOriginDimensionSpacePoint(),
+                    $command->getNodeAggregateIdentifier(),
+                    $descendantNodeAggregateIdentifiers
+                )
+            );
+
+            $contentStreamEventStreamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
+            $this->nodeEventPublisher->publishMany(
+                $contentStreamEventStreamName->getEventStreamName(),
                 $events
             );
         });
@@ -271,7 +281,7 @@ final class NodeAggregateCommandHandler
         DimensionSpacePointSet $visibleDimensionSpacePoints,
         PropertyValues $initialPropertyValues
     ): DomainEvents {
-        $events = DomainEvents::withSingleEvent(
+        return DomainEvents::withSingleEvent(
             EventWithIdentifier::create(
                 new NodeAggregateWithNodeWasCreated(
                     $command->getContentStreamIdentifier(),
@@ -287,106 +297,109 @@ final class NodeAggregateCommandHandler
                 )
             )
         );
-
-        $contentStreamEventStreamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
-        $this->nodeEventPublisher->publishMany(
-            $contentStreamEventStreamName->getEventStreamName(),
-            $events
-        );
-
-        return $events;
     }
 
     /**
-     * @param CreateNodeAggregateWithNode $command
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeType $nodeType
      * @param DimensionSpacePointSet $visibleDimensionSpacePoints
+     * @param DimensionSpacePoint $originDimensionSpacePoint
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers
-     * @param DomainEvents $events
      * @param NodePath|null $nodePath
      * @return DomainEvents
      * @throws ContentStream\ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFoundException
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
+     * @throws PropertyException
+     * @throws SecurityException
      */
     protected function handleTetheredChildNodes(
-        CreateNodeAggregateWithNode $command,
+        ContentStreamIdentifier $contentStreamIdentifier,
         NodeType $nodeType,
         DimensionSpacePointSet $visibleDimensionSpacePoints,
+        DimensionSpacePoint $originDimensionSpacePoint,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers,
-        DomainEvents $events,
         NodePath $nodePath = null
     ): DomainEvents {
+        $events = DomainEvents::createEmpty();
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawNodeName => $childNodeType) {
-            $nodeName = NodeName::fromString($rawNodeName);
-            $childNodePath = $nodePath ? $nodePath->appendPathSegment($nodeName) : NodePath::fromString((string) $nodeName);
-            $childNodeAggregateIdentifier = $nodeAggregateIdentifiers->getNodeAggregateIdentifier($childNodePath) ?? NodeAggregateIdentifier::create();
-            $initialPropertyValues = $this->getDefaultPropertyValues($childNodeType);
-
-            $this->requireContentStreamToExist($command->getContentStreamIdentifier());
-            $events = $events->appendEvents($this->createTetheredWithNode(
-                $command,
-                $childNodeAggregateIdentifier,
-                NodeTypeName::fromString($childNodeType->getName()),
-                $visibleDimensionSpacePoints,
-                $parentNodeAggregateIdentifier,
-                $nodeName,
-                $initialPropertyValues
-            ));
-
-            $events = $this->handleTetheredChildNodes(
-                $command,
-                $childNodeType,
-                $visibleDimensionSpacePoints,
-                $childNodeAggregateIdentifier,
-                $nodeAggregateIdentifiers,
-                $events,
-                $childNodePath
+            $events = $events->appendEvents(
+                $this->handleTetheredChildNode(
+                    $contentStreamIdentifier,
+                    $visibleDimensionSpacePoints,
+                    $originDimensionSpacePoint,
+                    $parentNodeAggregateIdentifier,
+                    $nodeAggregateIdentifiers,
+                    NodeName::fromString($rawNodeName),
+                    $childNodeType,
+                    $nodePath
+                )
             );
         }
 
         return $events;
     }
 
-    private function createTetheredWithNode(
-        CreateNodeAggregateWithNode $command,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeTypeName $nodeTypeName,
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
+     * @param DimensionSpacePoint $originDimensionSpacePoint
+     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers
+     * @param NodePath $nodePath
+     * @param NodeName $nodeName
+     * @param NodeType $childNodeType
+     * @return DomainEvents
+     * @throws ContentStream\ContentStreamDoesNotExistYet
+     * @throws NodeTypeNotFoundException
+     * @throws PropertyException
+     * @throws SecurityException
+     */
+    public function handleTetheredChildNode(
+        ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $visibleDimensionSpacePoints,
+        DimensionSpacePoint $originDimensionSpacePoint,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers,
         NodeName $nodeName,
-        PropertyValues $initialPropertyValues,
-        NodeAggregateIdentifier $precedingNodeAggregateIdentifier = null
+        NodeType $childNodeType,
+        NodePath $nodePath = null
     ): DomainEvents {
+        $childNodePath = $nodePath ? $nodePath->appendPathSegment($nodeName) : NodePath::fromString((string)$nodeName);
+        $childNodeAggregateIdentifier = $nodeAggregateIdentifiers->getNodeAggregateIdentifier($childNodePath) ?? NodeAggregateIdentifier::create();
+        $initialPropertyValues = $this->getDefaultPropertyValues($childNodeType);
+
+        $this->requireContentStreamToExist($contentStreamIdentifier);
         $events = DomainEvents::withSingleEvent(
             EventWithIdentifier::create(
                 new NodeAggregateWithNodeWasCreated(
-                    $command->getContentStreamIdentifier(),
-                    $nodeAggregateIdentifier,
-                    $nodeTypeName,
-                    $command->getOriginDimensionSpacePoint(),
+                    $contentStreamIdentifier,
+                    $childNodeAggregateIdentifier,
+                    NodeTypeName::fromString($childNodeType->getName()),
+                    $originDimensionSpacePoint,
                     $visibleDimensionSpacePoints,
                     $parentNodeAggregateIdentifier,
                     $nodeName,
                     $initialPropertyValues,
                     NodeAggregateClassification::tethered(),
-                    $precedingNodeAggregateIdentifier
+                    null
                 )
             )
         );
-
-        $contentStreamEventStreamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
-        $this->nodeEventPublisher->publishMany(
-            $contentStreamEventStreamName->getEventStreamName(),
-            $events
+        $events = $events->appendEvents(
+            $this->handleTetheredChildNodes(
+                $contentStreamIdentifier,
+                $childNodeType,
+                $visibleDimensionSpacePoints,
+                $originDimensionSpacePoint,
+                $childNodeAggregateIdentifier,
+                $nodeAggregateIdentifiers,
+                $childNodePath
+            )
         );
-
         return $events;
     }
-
 
     protected function getDefaultPropertyValues(NodeType $nodeType): PropertyValues
     {
