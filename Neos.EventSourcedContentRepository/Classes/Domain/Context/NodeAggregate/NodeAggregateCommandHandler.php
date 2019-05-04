@@ -31,10 +31,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Crea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateNameWasChanged;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePeerVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodesWereMoved;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -95,6 +97,11 @@ final class NodeAggregateCommandHandler
      */
     protected $readSideMemoryCacheManager;
 
+    /**
+     * can be disabled in {@see NodeAggregateCommandHandler::withoutAnchestorNodeTypeConstraintChecks()}
+     * @var bool
+     */
+    protected $ancestorNodeTypeConstraintChecksEnabled = true;
 
     public function __construct(
         ContentStream\ContentStreamRepository $contentStreamRepository,
@@ -115,6 +122,25 @@ final class NodeAggregateCommandHandler
     }
 
     /**
+     * Use this closure to run code with the Anchestor Node Type Checks disabled; e.g.
+     * during imports.
+     *
+     * You can disable this because many old sites have this constraint violated more or less;
+     * and it's easy to fix lateron; as it does not touch the fundamental integrity of the CR.
+     *
+     * @param \Closure $callback
+     */
+    public function withoutAncestorNodeTypeConstraintChecks(\Closure $callback): void
+    {
+        $previousAncestorNodeTypeConstraintChecksEnabled = $this->ancestorNodeTypeConstraintChecksEnabled;
+        $this->ancestorNodeTypeConstraintChecksEnabled = false;
+
+        $callback();
+
+        $this->ancestorNodeTypeConstraintChecksEnabled = $previousAncestorNodeTypeConstraintChecksEnabled;
+    }
+
+    /**
      * @param CreateRootNodeAggregateWithNode $command
      * @return CommandResult
      * @throws NodeAggregatesTypeIsAmbiguous
@@ -127,19 +153,44 @@ final class NodeAggregateCommandHandler
 
 
         $events = DomainEvents::createEmpty();
-        $this->nodeEventPublisher->withCommand($command, function() use ($command, &$events) {
-            $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
+            $this->requireContentStreamToExist($command->getContentStreamIdentifier());
             $nodeType = $this->requireNodeType($command->getNodeTypeName());
             $this->requireNodeTypeToBeOfTypeRoot($nodeType);
 
-            $events = $nodeAggregate->createRootWithNode(
+            $events = $this->createRootWithNode(
                 $command,
                 $this->allowedDimensionSubspace
             );
         });
 
         return CommandResult::fromPublishedEvents($events);
+    }
+
+    private function createRootWithNode(
+        CreateRootNodeAggregateWithNode $command,
+        DimensionSpacePointSet $visibleDimensionSpacePoints
+    ): DomainEvents {
+        $events = DomainEvents::withSingleEvent(
+            EventWithIdentifier::create(
+                new RootNodeAggregateWithNodeWasCreated(
+                    $command->getContentStreamIdentifier(),
+                    $command->getNodeAggregateIdentifier(),
+                    $command->getNodeTypeName(),
+                    $visibleDimensionSpacePoints,
+                    NodeAggregateClassification::root(),
+                    $command->getInitiatingUserIdentifier()
+                )
+            )
+        );
+
+        $contentStreamEventStreamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
+        $this->nodeEventPublisher->publishMany(
+            $contentStreamEventStreamName->getEventStreamName(),
+            $events
+        );
+
+        return $events;
     }
 
     /**
@@ -151,14 +202,16 @@ final class NodeAggregateCommandHandler
         $this->readSideMemoryCacheManager->disableCache();
 
         $events = DomainEvents::createEmpty();
-        $this->nodeEventPublisher->withCommand($command, function() use ($command, &$events) {
-            $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
+            $this->requireContentStreamToExist($command->getContentStreamIdentifier());
             $this->requireDimensionSpacePointToExist($command->getOriginDimensionSpacePoint());
             $nodeType = $this->requireNodeType($command->getNodeTypeName());
             $this->requireNodeTypeToNotBeOfTypeRoot($nodeType);
             $this->requireTetheredDescendantNodeTypesToExist($nodeType);
             $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($nodeType);
-            $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $nodeType, $command->getNodeName(), [$command->getParentNodeAggregateIdentifier()]);
+            if ($this->ancestorNodeTypeConstraintChecksEnabled) {
+                $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $nodeType, $command->getNodeName(), [$command->getParentNodeAggregateIdentifier()]);
+            }
             $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
             $parentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
 
@@ -189,7 +242,7 @@ final class NodeAggregateCommandHandler
             $defaultPropertyValues = $this->getDefaultPropertyValues($nodeType);
             $initialPropertyValues = $defaultPropertyValues->merge($command->getInitialPropertyValues());
 
-            $events = $nodeAggregate->createRegularWithNode(
+            $events = $this->createRegularWithNode(
                 $command,
                 $visibleDimensionSpacePoints,
                 $initialPropertyValues
@@ -206,6 +259,37 @@ final class NodeAggregateCommandHandler
         });
 
         return CommandResult::fromPublishedEvents($events);
+    }
+
+    private function createRegularWithNode(
+        CreateNodeAggregateWithNode $command,
+        DimensionSpacePointSet $visibleDimensionSpacePoints,
+        PropertyValues $initialPropertyValues
+    ): DomainEvents {
+        $events = DomainEvents::withSingleEvent(
+            EventWithIdentifier::create(
+                new NodeAggregateWithNodeWasCreated(
+                    $command->getContentStreamIdentifier(),
+                    $command->getNodeAggregateIdentifier(),
+                    $command->getNodeTypeName(),
+                    $command->getOriginDimensionSpacePoint(),
+                    $visibleDimensionSpacePoints,
+                    $command->getParentNodeAggregateIdentifier(),
+                    $command->getNodeName(),
+                    $initialPropertyValues,
+                    NodeAggregateClassification::regular(),
+                    $command->getSucceedingSiblingNodeAggregateIdentifier()
+                )
+            )
+        );
+
+        $contentStreamEventStreamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
+        $this->nodeEventPublisher->publishMany(
+            $contentStreamEventStreamName->getEventStreamName(),
+            $events
+        );
+
+        return $events;
     }
 
     /**
@@ -237,9 +321,10 @@ final class NodeAggregateCommandHandler
             $childNodeAggregateIdentifier = $nodeAggregateIdentifiers->getNodeAggregateIdentifier($childNodePath) ?? NodeAggregateIdentifier::create();
             $initialPropertyValues = $this->getDefaultPropertyValues($childNodeType);
 
-            $nodeAggregate = $this->getNodeAggregate($command->getContentStreamIdentifier(), $childNodeAggregateIdentifier);
-            $events = $events->appendEvents($nodeAggregate->createTetheredWithNode(
+            $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+            $events = $events->appendEvents($this->createTetheredWithNode(
                 $command,
+                $childNodeAggregateIdentifier,
                 NodeTypeName::fromString($childNodeType->getName()),
                 $visibleDimensionSpacePoints,
                 $parentNodeAggregateIdentifier,
@@ -260,6 +345,43 @@ final class NodeAggregateCommandHandler
 
         return $events;
     }
+
+    private function createTetheredWithNode(
+        CreateNodeAggregateWithNode $command,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeTypeName $nodeTypeName,
+        DimensionSpacePointSet $visibleDimensionSpacePoints,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeName $nodeName,
+        PropertyValues $initialPropertyValues,
+        NodeAggregateIdentifier $precedingNodeAggregateIdentifier = null
+    ): DomainEvents {
+        $events = DomainEvents::withSingleEvent(
+            EventWithIdentifier::create(
+                new NodeAggregateWithNodeWasCreated(
+                    $command->getContentStreamIdentifier(),
+                    $nodeAggregateIdentifier,
+                    $nodeTypeName,
+                    $command->getOriginDimensionSpacePoint(),
+                    $visibleDimensionSpacePoints,
+                    $parentNodeAggregateIdentifier,
+                    $nodeName,
+                    $initialPropertyValues,
+                    NodeAggregateClassification::tethered(),
+                    $precedingNodeAggregateIdentifier
+                )
+            )
+        );
+
+        $contentStreamEventStreamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
+        $this->nodeEventPublisher->publishMany(
+            $contentStreamEventStreamName->getEventStreamName(),
+            $events
+        );
+
+        return $events;
+    }
+
 
     protected function getDefaultPropertyValues(NodeType $nodeType): PropertyValues
     {
@@ -370,33 +492,6 @@ final class NodeAggregateCommandHandler
 
         if ($nodeAggregate) {
             throw new NodeAggregateCurrentlyExists('Node aggregate "' . $nodeAggregateIdentifier . '" does currently not exist.', 1541687645);
-        }
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @throws ContentStream\ContentStreamDoesNotExistYet
-     * @throws NodeAggregateCurrentlyDoesNotExist
-     */
-    protected function requireNodeAggregateToCurrentlyExist(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): void
-    {
-        $nodeAggregate = $this->getNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier);
-        if (!$nodeAggregate->existsCurrently()) {
-            throw new NodeAggregateCurrentlyDoesNotExist('Node aggregate "' . $nodeAggregateIdentifier . '" does currently not exist.', 1541678486);
-        }
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @throws ContentStream\ContentStreamDoesNotExistYet
-     */
-    protected function requireNodeAggregateToCurrentlyNotExist(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): void
-    {
-        $nodeAggregate = $this->getNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier);
-        if ($nodeAggregate->existsCurrently()) {
-            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $nodeAggregateIdentifier . '" does currently exist.', 1541687645);
         }
     }
 
@@ -530,9 +625,8 @@ final class NodeAggregateCommandHandler
             );
 
             $this->nodeEventPublisher->publishMany(
-                NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-                    $command->getContentStreamIdentifier(),
-                    $command->getNodeAggregateIdentifier()
+                ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(
+                    $command->getContentStreamIdentifier()
                 )->getEventStreamName(),
                 $events
             );
@@ -707,9 +801,8 @@ final class NodeAggregateCommandHandler
                     EventWithIdentifier::create($event)
                 );
 
-                $streamName = NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-                    $event->getContentStreamIdentifier(),
-                    $event->getNodeAggregateIdentifier()
+                $streamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier(
+                    $event->getContentStreamIdentifier()
                 );
 
                 $this->nodeEventPublisher->publishMany($streamName->getEventStreamName(), $domainEvents);
@@ -1097,21 +1190,5 @@ final class NodeAggregateCommandHandler
         } catch (NodeTypeNotFoundException $e) {
             throw new NodeTypeNotFound('Node type "' . $nodeTypeName . '" is unknown to the node type manager.', 1541671070);
         }
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregate
-     * @throws ContentStream\ContentStreamDoesNotExistYet
-     */
-    protected function getNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregate
-    {
-        $contentStream = $this->contentStreamRepository->findContentStream($contentStreamIdentifier);
-        if (!$contentStream) {
-            throw new ContentStream\ContentStreamDoesNotExistYet('The content stream "' . $contentStreamIdentifier . '" to get a node aggregate from does not exist yet.');
-        }
-
-        return $contentStream->getNodeAggregate($nodeAggregateIdentifier);
     }
 }

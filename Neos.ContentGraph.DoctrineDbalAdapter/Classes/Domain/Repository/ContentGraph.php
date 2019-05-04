@@ -114,7 +114,7 @@ final class ContentGraph implements ContentGraphInterface
      * @throws DBALException
      * @throws \Exception
      */
-    public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): ?NodeAggregate
+    public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): NodeAggregate
     {
         $connection = $this->client->getConnection();
 
@@ -131,6 +131,10 @@ final class ContentGraph implements ContentGraphInterface
         ];
 
         $nodeRow = $connection->executeQuery($query, $parameters)->fetch();
+
+        if (!is_array($nodeRow)) {
+            throw new \RuntimeException('Root Node Aggregate not found');
+        }
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
     }

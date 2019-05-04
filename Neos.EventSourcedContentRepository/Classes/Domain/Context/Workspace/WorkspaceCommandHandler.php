@@ -582,4 +582,37 @@ final class WorkspaceCommandHandler
         }
         return false;
     }
+
+    public function handleDiscardWorkspace(Command\DiscardWorkspace $command): CommandResult
+    {
+        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
+        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
+
+
+        $newContentStream = ContentStreamIdentifier::create();
+        $this->contentStreamCommandHandler->handleForkContentStream(
+            new ForkContentStream(
+                $newContentStream,
+                $baseWorkspace->getCurrentContentStreamIdentifier()
+            )
+        )->blockUntilProjectionsAreUpToDate();
+
+        // TODO: "Rebased" is not the correct wording here!
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $events = DomainEvents::withSingleEvent(
+            EventWithIdentifier::create(
+                new WorkspaceWasRebased(
+                    $command->getWorkspaceName(),
+                    $newContentStream
+                )
+            )
+        );
+
+        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
+        $eventStore->commit($streamName, $events);
+
+        // It is safe to only return the last command result, as the commands which were rebased are already executed "synchronously"
+        return CommandResult::fromPublishedEvents($events);
+    }
 }

@@ -62,7 +62,7 @@ Feature: Reading of our Graph Projection
   #    | nodeName                      | "foo"                                     |#
 
     # Translated node /sites/text1 (language=en)
-    #And the Event "Neos.EventSourcedContentRepository:NodeInAggregateWasTranslated" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
+    #And the Event "Neos.EventSourcedContentRepository:NodeInAggregateWasTranslated" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
     #  | Key                             | Value                                  |
     #  | contentStreamIdentifier         | "cs-identifier"                        |
      # | sourceNodeIdentifier            | "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" |

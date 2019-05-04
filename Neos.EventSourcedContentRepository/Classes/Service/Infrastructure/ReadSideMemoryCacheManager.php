@@ -14,6 +14,7 @@ namespace Neos\EventSourcedContentRepository\Service\Infrastructure;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -30,13 +31,21 @@ class ReadSideMemoryCacheManager
      */
     protected $contentGraph;
 
+    /**
+     * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
+
     public function enableCache(): void
     {
         $this->contentGraph->enableCache();
+        $this->workspaceFinder->enableCache();
     }
 
     public function disableCache(): void
     {
         $this->contentGraph->disableCache();
+        $this->workspaceFinder->disableCache();
     }
 }

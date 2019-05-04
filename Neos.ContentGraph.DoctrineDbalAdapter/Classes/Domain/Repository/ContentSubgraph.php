@@ -18,7 +18,6 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
@@ -194,6 +193,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
             $result[] = $node;
             $namedChildNodeCache->add($nodeAggregateIdentifier, $node->getNodeName(), $node);
             $parentNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $nodeAggregateIdentifier);
+            $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
         }
 
         if ($nodeTypeConstraints === null && $limit === null && $offset === null) {
@@ -426,6 +426,9 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
         $node = $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
         if ($node) {
             $cache->add($childNodeAggregateIdentifier, $node->getNodeAggregateIdentifier());
+
+            // we also add the parent node to the NodeAggregateIdentifier => Node cache; as this might improve cache hit rates as well.
+            $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
         } else {
             $cache->rememberNonExistingParentNode($childNodeAggregateIdentifier);
         }
@@ -509,6 +512,7 @@ WHERE
                 $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
                 if ($node) {
                     $cache->add($parentNodeAggregateIdentifier, $edgeName, $node);
+                    $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
 
                     return $node;
                 }
@@ -516,39 +520,6 @@ WHERE
         }
 
         return null;
-    }
-
-    /**
-     * @param NodeAggregateIdentifier $parentAggregateIdentifier
-     * @param NodeName $edgeName
-     * @return NodeInterface|null
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
-     */
-    public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(
-        NodeAggregateIdentifier $parentAggregateIdentifier,
-        NodeName $edgeName
-    ): ?NodeInterface {
-        $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
- WHERE p.nodeaggregateidentifier = :parentNodeAggregateIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash = :dimensionSpacePointHash
- AND h.name = :edgeName
- ORDER BY h.position LIMIT 1',
-            [
-                'parentNodeAggregateIdentifier' => (string)$parentAggregateIdentifier,
-                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                'edgeName' => (string)$edgeName
-            ]
-        )->fetch();
-
-        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData) : null;
     }
 
     /**
@@ -885,6 +856,8 @@ order by level asc, position asc;')
 
         foreach ($result as $nodeData) {
             $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
+            $this->getInMemoryCache()->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
+
             if (!isset($subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']])) {
                 throw new \Exception('TODO: must not happen');
             }
@@ -892,6 +865,13 @@ order by level asc, position asc;')
             $subtree = new Subtree($nodeData['level'], $node);
             $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']]->add($subtree);
             $subtreesByNodeIdentifier[$nodeData['nodeaggregateidentifier']] = $subtree;
+
+            // also add the parents to the child -> parent cache.
+            /* @var $parentSubtree Subtree */
+            $parentSubtree = $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']];
+            if ($parentSubtree->getNode() !== null) {
+                $this->getInMemoryCache()->getParentNodeIdentifierByChildNodeIdentifierCache()->add($node->getNodeAggregateIdentifier(), $parentSubtree->getNode()->getNodeAggregateIdentifier());
+            }
         }
 
         return $subtreesByNodeIdentifier['ROOT'];

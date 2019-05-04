@@ -16,13 +16,12 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeTreeTraversalHelper;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
@@ -156,6 +155,9 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             $matchingSubgraph = $this->fetchSubgraphForParameters($requestPath);
             $sitesNodeAggregate = $this->contentGraph->findRootNodeAggregateByType($matchingSubgraph->getContentStreamIdentifier(), NodeTypeName::fromString('Neos.Neos:Sites'));
             $matchingRootNode = $matchingSubgraph->findNodeByNodeAggregateIdentifier($sitesNodeAggregate->getIdentifier());
+            if (!$matchingRootNode) {
+                return;
+            }
 
             $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
             $tagArray[] = (string)$matchingSite->getNodeAggregateIdentifier();
@@ -256,10 +258,16 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             throw new NoWorkspaceException(sprintf('No workspace found for request path "%s"', $requestPath), 1346949318);
         }
 
+        // when we are in live workspace, we use the "frontend" visibility constraints,
+        // to ensure we re-use the same subgraph as the frontend rendering; and also re-use
+        // their in-memory runtime caches.
+        // This is safe because in live workspace, only "visible" nodes can be routed to.
+        $visibilityConstraints = $workspace->getWorkspaceName()->isLive() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
+
         return $this->contentGraph->getSubgraphByIdentifier(
             $workspace->getCurrentContentStreamIdentifier(),
             $this->getDimensionSpacePointFromParameters(),
-            VisibilityConstraints::withoutRestrictions()
+            $visibilityConstraints
         );
     }
 
@@ -347,7 +355,14 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             }
         }
         /** @var NodeAddress $nodeAddress */
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        // when we are in live workspace, we use the "frontend" visibility constraints,
+        // to ensure we re-use the same subgraph as the frontend rendering; and also re-use
+        // their in-memory runtime caches.
+        // This is safe because in live workspace, only "visible" nodes can be routed to.
+        $visibilityConstraints = $nodeAddress->isInLiveWorkspace() ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
+
+
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), $visibilityConstraints);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
 
         if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {
@@ -406,15 +421,15 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
         // the input node is allowed to be seen and we must generate the full path here.
         // To disallow showing a node actually hidden itself has to be ensured in matching
         // a request path, not in building one.
-
-        // TODO: Hidden handling should be solved in the CR itself; not here in the routing.
         $requestPathSegments = [];
         $this->securityContext->withoutAuthorizationChecks(function () use ($contentSubgraph, $node, &$requestPathSegments) {
-            $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(true),
+            NodeTreeTraversalHelper::traverseUpUntilCondition(
+                $contentSubgraph,
+                $node,
                 function (NodeInterface $node) use (&$requestPathSegments, $contentSubgraph) {
                     if (!$node->hasProperty('uriPathSegment')) {
                         throw new MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
-                            $node->getNodeIdentifier()), 1415020326);
+                            $node->getNodeAggregateIdentifier()), 1415020326);
                     }
 
                     $parentNode = $contentSubgraph->findParentNode($node->getNodeAggregateIdentifier());
@@ -425,7 +440,8 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
 
                     $requestPathSegments[] = $node->getProperty('uriPathSegment');
                     return true;
-                });
+                }
+            );
         });
 
         return implode('/', array_reverse($requestPathSegments));

@@ -22,6 +22,8 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeNameIsAlreadyOccupied;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Exception\InvalidNodeCreationHandlerException;
@@ -143,19 +145,20 @@ abstract class AbstractCreate extends AbstractStructuralChange
 
     /**
      * @param TraversableNodeInterface $parentNode
+     * @param NodeAggregateIdentifier|null $succeedingSiblingNodeAggregateIdentifier
      * @return TraversableNodeInterface
      * @throws InvalidNodeCreationHandlerException
+     * @throws NodeNameIsAlreadyOccupied
      * @throws \Neos\ContentRepository\Exception\NodeConstraintException
      * @throws \Neos\ContentRepository\Exception\NodeException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeNameIsAlreadyOccupied
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    protected function createNode(TraversableNodeInterface $parentNode): TraversableNodeInterface
+    protected function createNode(TraversableNodeInterface $parentNode, NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null): TraversableNodeInterface
     {
         // TODO: the $name=... line should be as expressed below
         // $name = $this->getName() ?: $this->nodeService->generateUniqueNodeName($parent->findParentNode());
@@ -168,8 +171,9 @@ abstract class AbstractCreate extends AbstractStructuralChange
             $nodeAggregateIdentifier,
             NodeTypeName::fromString($this->getNodeType()->getName()),
             $parentNode->getDimensionSpacePoint(),
-            NodeIdentifier::create(),
-            $parentNode->getNodeIdentifier(),
+            UserIdentifier::forSystemUser(), // TODO
+            $parentNode->getNodeAggregateIdentifier(),
+            $succeedingSiblingNodeAggregateIdentifier,
             $nodeName
         );
 

@@ -15,8 +15,6 @@
     _hiddenAfterDateTime: ~
 
 'Neos.Neos:Document':
-  properties:
-    _hiddenInIndex: ~
   options:
     nodeCreationHandlers:
       documentTitle:

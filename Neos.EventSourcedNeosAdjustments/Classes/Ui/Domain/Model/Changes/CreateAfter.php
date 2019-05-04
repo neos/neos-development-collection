@@ -12,8 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\MoveNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
 class CreateAfter extends AbstractCreate
@@ -51,16 +49,19 @@ class CreateAfter extends AbstractCreate
         if ($this->canApply()) {
             $subject = $this->getSubject();
             $parentNode = $subject->findParentNode();
-            $newlyCreatedNode = $this->createNode($parentNode);
 
-            $this->nodeCommandHandler->handleMoveNode(new MoveNode(
-                $newlyCreatedNode->getContentStreamIdentifier(),
-                $newlyCreatedNode->getDimensionSpacePoint(),
-                $newlyCreatedNode->getNodeAggregateIdentifier(),
-                null,
-                $subject->getNodeAggregateIdentifier(), // TODO notfully correct I THINK, but for first tests it seems to work.
-                RelationDistributionStrategy::gatherAll()
-            ))->blockUntilProjectionsAreUpToDate();
+            $succeedingSibling = null;
+            try {
+                $succeedingSibling = $parentNode->findChildNodes()->next($subject);
+            } catch (\InvalidArgumentException $e) {
+                // do nothing; $succeedingSibling is null.
+            }
+
+            if ($succeedingSibling) {
+                $this->createNode($parentNode, $succeedingSibling->getNodeAggregateIdentifier());
+            } else {
+                $this->createNode($parentNode, null);
+            }
 
             $this->updateWorkspaceInfo();
         }
