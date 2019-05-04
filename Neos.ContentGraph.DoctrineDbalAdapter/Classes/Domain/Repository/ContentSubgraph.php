@@ -669,43 +669,6 @@ WHERE
   )';
     }
 
-    /**
-     * @param NodeInterface $startNode
-     * @param HierarchyTraversalDirection $direction
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param callable $callback
-     * @throws \Exception
-     */
-    public function traverseHierarchy(
-        NodeInterface $startNode,
-        HierarchyTraversalDirection $direction = null,
-        NodeTypeConstraints $nodeTypeConstraints = null,
-        callable $callback
-    ): void {
-        if (is_null($direction)) {
-            $direction = HierarchyTraversalDirection::down();
-        }
-
-        $continueTraversal = $callback($startNode);
-        if ($continueTraversal) {
-            if ($direction->isUp()) {
-                $parentNode = $this->findParentNode($startNode->getNodeAggregateIdentifier());
-                if ($parentNode && ($nodeTypeConstraints === null || $nodeTypeConstraints->matches($parentNode->getNodeTypeName()))) {
-                    $this->traverseHierarchy($parentNode, $direction, $nodeTypeConstraints, $callback);
-                }
-            } elseif ($direction->isDown()) {
-                foreach ($this->findChildNodes(
-                    $startNode->getNodeAggregateIdentifier(),
-                    $nodeTypeConstraints,
-                    null,
-                    null
-                ) as $childNode) {
-                    $this->traverseHierarchy($childNode, $direction, $nodeTypeConstraints, $callback);
-                }
-            }
-        }
-    }
-
     protected function getDatabaseConnection(): Connection
     {
         return $this->client->getConnection();
