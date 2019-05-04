@@ -88,3 +88,8 @@ prototype(Neos.Neos:Page) {
 
 }
 
+
+prototype(Neos.Neos:Editable) {
+  // TODO: add props.node.context.currentRenderingMode.edit
+  renderer.editable.condition = ${Neos.EventSourcedNeosAdjustments.Ui.NodeInfo.inBackend(props.node)}
+}

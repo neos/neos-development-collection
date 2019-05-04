@@ -379,6 +379,38 @@ class BackendServiceController extends ActionController
     }
 
     /**
+     * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
+     */
+    public function initializeGetAdditionalNodeMetadataAction()
+    {
+        $this->arguments->getArgument('nodes')->getPropertyMappingConfiguration()->allowAllProperties();
+    }
+
+    /**
+     * Fetches all the node information that can be lazy-loaded
+     *
+     * @param array<NodeInterface> $nodes
+     */
+    public function getAdditionalNodeMetadataAction(array $nodes)
+    {
+        $result = [];
+        // TODO implement lateron
+        /** @var NodeInterface $node */
+        /*foreach ($nodes as $node) {
+            $otherNodeVariants = array_values(array_filter(array_map(function ($node) {
+                return $this->getCurrentDimensionPresetIdentifiersForNode($node);
+            }, $node->getOtherNodeVariants())));
+            $result[$node->getContextPath()] = [
+                'policy' => $this->nodePolicyService->getNodePolicyInformation($node),
+                'dimensions' => $this->getCurrentDimensionPresetIdentifiersForNode($node),
+                'otherNodeVariants' => $otherNodeVariants
+            ];
+        }*/
+
+        $this->view->assign('value', $result);
+    }
+
+    /**
      * @Flow\Inject
      * @var ContentGraphInterface
      */
