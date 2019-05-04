@@ -55,8 +55,12 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
      * @param ContentSubgraphInterface $contentSubgraph
      * @return array|Workspace[]
      */
-    public function getWorkspaceChain(ContentSubgraphInterface $contentSubgraph): array
+    public function getWorkspaceChain(?ContentSubgraphInterface $contentSubgraph): array
     {
+        if ($contentSubgraph === null) {
+            return [];
+        }
+
         /** @var Workspace $currentWorkspace */
         $currentWorkspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentSubgraph->getContentStreamIdentifier());
         $workspaceChain = [];
