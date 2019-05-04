@@ -476,7 +476,7 @@ class WorkspacesController extends AbstractModuleController
         foreach ($this->computeSiteChanges($selectedWorkspace) as $siteChanges) {
             foreach ($siteChanges['documents'] as $documentChanges) {
                 foreach ($documentChanges['changes'] as $change) {
-                    if ($change['isRemoved'] === TRUE) {
+                    if ($change['isRemoved'] === true) {
                         $changesCount['removed']++;
                     } elseif ($change['isNew']) {
                         $changesCount['new']++;

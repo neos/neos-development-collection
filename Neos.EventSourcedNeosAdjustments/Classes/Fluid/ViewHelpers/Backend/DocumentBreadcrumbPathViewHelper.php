@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Backend;
 
-
 /*
  * This file is part of the Neos.Neos package.
  *
