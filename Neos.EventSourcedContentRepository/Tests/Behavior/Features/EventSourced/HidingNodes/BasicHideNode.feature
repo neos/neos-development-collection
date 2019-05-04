@@ -111,7 +111,6 @@ Feature: Hide Node
     # findParentNode
     When I go to the parent node of node aggregate "text-2"
     Then I do not find any node
-    # traverseHierarchy is covered by "findChildNodes" and "findParentNode"
     # findParentNodeByNodeAggregateIdentifier
     When I go to the parent node of node aggregate "text-2"
     Then I do not find any node
@@ -153,7 +152,6 @@ Feature: Hide Node
     # findParentNode
     When I go to the parent node of node aggregate "text-2"
     Then I find a node with node aggregate "text-1"
-    # traverseHierarchy is covered by "findChildNodes" and "findParentNode"
     # findParentNodeByNodeAggregateIdentifier
     When I go to the parent node of node aggregate "text-2"
     Then I find a node with node aggregate "text-1"

@@ -3,91 +3,90 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Nodes were moved
+ * A node move mapping
  *
+ * It declares:
+ * * The moved node's origin dimension space point
+ * * The new parent's origin dimension space point if given
+ * * The new succeeding sibling's origin dimension space point if given
+ * * The dimension space points covered by the hierarchy relations if and only if a new parent was assigned
  * @Flow\Proxy(false)
  */
 final class NodeMoveMapping
 {
     /**
-     * @var NodeIdentifier
+     * @var DimensionSpacePoint
      */
-    private $nodeIdentifier;
+    private $movedNodeOrigin;
 
     /**
-     * @var NodeIdentifier
+     * @var DimensionSpacePoint|null
      */
-    private $newParentNodeIdentifier;
+    private $newParentNodeOrigin;
 
     /**
-     * @var NodeIdentifier
+     * @var DimensionSpacePoint|null
      */
-    private $newSucceedingSiblingIdentifier;
+    private $newSucceedingSiblingOrigin;
 
     /**
      * @var DimensionSpacePointSet
      */
-    private $dimensionSpacePointSet;
+    private $relationDimensionSpacePoints;
 
-
-    /**
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeIdentifier|null $newParentNodeIdentifier
-     * @param NodeIdentifier|null $newSucceedingSiblingIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
-     */
-    public function __construct(NodeIdentifier $nodeIdentifier, ?NodeIdentifier $newParentNodeIdentifier, ?NodeIdentifier $newSucceedingSiblingIdentifier, DimensionSpacePointSet $dimensionSpacePointSet)
-    {
-        $this->nodeIdentifier = $nodeIdentifier;
-        $this->newParentNodeIdentifier = $newParentNodeIdentifier;
-        $this->newSucceedingSiblingIdentifier = $newSucceedingSiblingIdentifier;
-        $this->dimensionSpacePointSet = $dimensionSpacePointSet;
+    public function __construct(
+        DimensionSpacePoint $movedNodeOrigin,
+        ?DimensionSpacePoint $newParentNodeOrigin,
+        ?DimensionSpacePoint $newSucceedingSiblingOrigin,
+        ?DimensionSpacePointSet $relationDimensionSpacePoints
+    ) {
+        if (is_null($newParentNodeOrigin)) {
+            if (!is_null($relationDimensionSpacePoints)) {
+                throw new NodeMoveMappingIsInvalid('Node move mapping has no new parent origin but relation dimension space points given.', 1554905915);
+            }
+        } else {
+            if (is_null($relationDimensionSpacePoints)) {
+                throw new NodeMoveMappingIsInvalid('Node move mapping has a new parent origin but no relation dimension space points given.', 1554905920);
+            }
+        }
+        $this->movedNodeOrigin = $movedNodeOrigin;
+        $this->newParentNodeOrigin = $newParentNodeOrigin;
+        $this->newSucceedingSiblingOrigin = $newSucceedingSiblingOrigin;
+        $this->relationDimensionSpacePoints = $relationDimensionSpacePoints;
     }
 
     public static function fromArray(array $array): self
     {
         return new static(
-            NodeIdentifier::fromString($array['nodeIdentifier']),
-            isset($array['newParentNodeIdentifier']) ? NodeIdentifier::fromString($array['newParentNodeIdentifier']) : null,
-            isset($array['newSucceedingSiblingIdentifier']) ? NodeIdentifier::fromString($array['newSucceedingSiblingIdentifier']) : null,
-            new DimensionSpacePointSet($array['dimensionSpacePointSet'])
+            new DimensionSpacePoint($array['movedNodeOrigin']),
+            isset($array['newParentNodeOrigin']) ? new DimensionSpacePoint($array['newParentNodeOrigin']) : null,
+            isset($array['newSucceedingSiblingOrigin']) ? new DimensionSpacePoint($array['newSucceedingSiblingOrigin']) : null,
+            isset($array['relationDimensionSpacePoints']) ? new DimensionSpacePointSet($array['relationDimensionSpacePoints']) : null
         );
     }
 
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getMovedNodeOrigin(): DimensionSpacePoint
     {
-        return $this->nodeIdentifier;
+        return $this->movedNodeOrigin;
     }
 
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNewParentNodeIdentifier(): ?NodeIdentifier
+    public function getNewParentNodeOrigin(): ?DimensionSpacePoint
     {
-        return $this->newParentNodeIdentifier;
+        return $this->newParentNodeOrigin;
     }
 
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNewSucceedingSiblingIdentifier(): ?NodeIdentifier
+    public function getNewSucceedingSiblingOrigin(): ?DimensionSpacePoint
     {
-        return $this->newSucceedingSiblingIdentifier;
+        return $this->newSucceedingSiblingOrigin;
     }
 
-    /**
-     * @return DimensionSpacePointSet
-     */
-    public function getDimensionSpacePointSet(): DimensionSpacePointSet
+    public function getRelationDimensionSpacePoints(): ?DimensionSpacePointSet
     {
-        return $this->dimensionSpacePointSet;
+        return $this->relationDimensionSpacePoints;
     }
 }

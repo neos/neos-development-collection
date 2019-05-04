@@ -16,7 +16,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
  * The interface to implemented by all (readable) node aggregates that are to be used for hard or soft constraint checks.
@@ -27,6 +29,10 @@ interface ReadableNodeAggregateInterface
 
     public function getNodeTypeName(): NodeTypeName;
 
+    public function getNodeName(): ?NodeName;
+
+    public function getOccupiedDimensionSpacePoints(): DimensionSpacePointSet;
+
     /**
      * A node aggregate occupies a dimension space point if any node originates in it.
      *
@@ -35,7 +41,16 @@ interface ReadableNodeAggregateInterface
      */
     public function occupiesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool;
 
-    public function getOccupiedDimensionSpacePoints(): DimensionSpacePointSet;
+    public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): DimensionSpacePoint;
+
+    /**
+     * @return array|NodeInterface[]
+     */
+    public function getNodesByOccupiedDimensionSpacePoint(): array;
+
+    public function getNodeByOccupiedDimensionSpacePoint(DimensionSpacePoint $occupiedDimensionSpacePoint): NodeInterface;
+
+    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet;
 
     /**
      * A node aggregate covers a dimension space point if any node is visible in it
@@ -46,7 +61,14 @@ interface ReadableNodeAggregateInterface
      */
     public function coversDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool;
 
-    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet;
+    public function getCoverageByOccupant(DimensionSpacePoint $occupiedDimensionSpacePoint): DimensionSpacePointSet;
+
+    /**
+     * @return array|NodeInterface[]
+     */
+    public function getNodesByCoveredDimensionSpacePoint(): array;
+
+    public function getNodeByCoveredDimensionSpacePoint(DimensionSpacePoint $coveredDimensionSpacePoint): NodeInterface;
 
     public function getClassification(): NodeAggregateClassification;
 

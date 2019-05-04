@@ -13,9 +13,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+use Neos\Flow\Exception;
+
 /**
- * The exception to be thrown if a dimension space point is already occupied by a node in a node aggregate but is supposed not to be
+ * The exception to be thrown if an invalid relation distribution strategy was tried to be initialized
  */
-class DimensionSpacePointIsAlreadyOccupied extends \DomainException
+class RelationDistributionStrategyIsInvalid extends Exception
 {
 }

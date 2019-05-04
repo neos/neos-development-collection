@@ -1,7 +1,6 @@
 <?php
-declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,11 +12,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * source code.
  */
 
-use Neos\Flow\Exception;
-
 /**
- * The exception to be thrown if an invalid relation distribution strategy was tried to be initialized
+ * The exception to be thrown if a node aggregate is a descendant of a reference node aggregate but wasn't expected to be
  */
-class RelationDistributionStrategyIsInvalid extends Exception
+final class NodeAggregateIsDescendant extends \DomainException
 {
 }

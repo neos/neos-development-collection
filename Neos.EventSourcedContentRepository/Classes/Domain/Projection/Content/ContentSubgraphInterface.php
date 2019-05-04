@@ -85,6 +85,33 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findChildNodeConnectedThroughEdgeName(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $edgeName): ?NodeInterface;
 
     /**
+     * @param NodeAggregateIdentifier $sibling
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array|NodeInterface[]
+     */
+    public function findSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+
+    /**
+     * @param NodeAggregateIdentifier $sibling
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array|NodeInterface[]
+     */
+    public function findSucceedingSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+
+    /**
+     * @param NodeAggregateIdentifier $sibling
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array|NodeInterface[]
+     */
+    public function findPrecedingSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+
+    /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodePath
      */

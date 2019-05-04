@@ -13,21 +13,19 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Traversable;
 
 /**
  * @Flow\Proxy(false)
  */
 final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSerializable
 {
-
     /**
-     * @var NodeMoveMappings[]
+     * @var NodeMoveMapping[]
      */
     private $mappings;
 
     /**
-     * @param NodeMoveMappings[] values
+     * @param NodeMoveMapping[] values
      */
     private function __construct(array $values)
     {
@@ -67,7 +65,7 @@ final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSer
     }
 
     /**
-     * @return NodeMoveMapping[]|Traversable<NodeMoveMapping>
+     * @return NodeMoveMapping[]|\Traversable<NodeMoveMapping>
      */
     public function getIterator(): \Traversable
     {

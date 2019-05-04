@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,6 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The relation distribution strategy for node aggregates as defined in the NodeType declaration
  * Used for building relations to other node aggregates
@@ -22,6 +24,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * - `gatherAll` means that all nodes within the aggregate must be related to the same other aggregate (e.g. parent)
  * - `gatherSpecializations` means that when a node is related to another node aggregate (e.g. parent),
  *      all specializations of that node will be related to that same aggregate while generalizations may be related to others
+ *
+ * @Flow\Proxy(false)
  */
 final class RelationDistributionStrategy implements \JsonSerializable
 {
@@ -34,44 +38,34 @@ final class RelationDistributionStrategy implements \JsonSerializable
      */
     protected $strategy;
 
-
     protected function __construct(string $strategy)
     {
         $this->strategy = $strategy;
     }
 
-    /**
-     * @return RelationDistributionStrategy
-     */
-    public static function scatter(): RelationDistributionStrategy
+    public static function scatter(): self
     {
         return new static(static::STRATEGY_SCATTER);
     }
 
-    /**
-     * @return RelationDistributionStrategy
-     */
-    public static function gatherAll(): RelationDistributionStrategy
+    public static function gatherAll(): self
     {
         return new static(static::STRATEGY_GATHER_ALL);
     }
 
-    /**
-     * @return RelationDistributionStrategy
-     */
-    public static function gatherSpecializations(): RelationDistributionStrategy
+    public static function gatherSpecializations(): self
     {
         return new static(static::STRATEGY_GATHER_SPECIALIZATIONS);
     }
 
     /**
-     * @param null|string $configurationValue
+     * @param null|string $serialization
      * @return RelationDistributionStrategy
      * @throws RelationDistributionStrategyIsInvalid
      */
-    public static function fromConfigurationValue(?string $configurationValue): RelationDistributionStrategy
+    public static function fromString(?string $serialization): self
     {
-        switch ($configurationValue) {
+        switch ($serialization) {
             case self::STRATEGY_SCATTER:
                 return static::scatter();
             case self::STRATEGY_GATHER_SPECIALIZATIONS:
@@ -80,30 +74,35 @@ final class RelationDistributionStrategy implements \JsonSerializable
             case null:
                 return static::gatherAll();
             default:
-                throw new RelationDistributionStrategyIsInvalid('Given relation distribution strategy ' . $configurationValue . ' is invalid', 1519761485);
+                throw new RelationDistributionStrategyIsInvalid('Given relation distribution strategy ' . $serialization . ' is invalid', 1519761485);
         }
     }
 
+    public function isScatter(): bool
+    {
+        return $this->strategy === self::STRATEGY_SCATTER;
+    }
 
-    /**
-     * @return string
-     */
+    public function isGatherAll(): bool
+    {
+        return $this->strategy === self::STRATEGY_GATHER_ALL;
+    }
+
+    public function isGatherSpecializations(): bool
+    {
+        return $this->strategy === self::STRATEGY_GATHER_SPECIALIZATIONS;
+    }
+
     public function getStrategy(): string
     {
         return $this->strategy;
     }
 
-    /**
-     * @return string
-     */
     public function jsonSerialize(): string
     {
         return $this->strategy;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->strategy;
