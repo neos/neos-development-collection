@@ -47,8 +47,8 @@ class ContentRepositoryMigrateCommandController extends CommandController
         // TODO: re-enable asynchronous behavior; and trigger catchup of all projections. (e.g. ChangeProjector etc)
         $this->outputLine('');
         $this->outputLine('');
-        $this->outputLine('!!!!! NOW, run ./flow projection:catchup change');
-        $this->outputLine('!!!!! NOW, run ./flow projection:catchup nodehiddenstate');
+        $this->outputLine('!!!!! NOW, run ./flow projection:replay change');
+        $this->outputLine('!!!!! NOW, run ./flow projection:replay nodehiddenstate');
 
         // ChangeProjector catchup
     }
