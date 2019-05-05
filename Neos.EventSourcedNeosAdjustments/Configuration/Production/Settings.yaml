@@ -1,0 +1,9 @@
+Neos:
+  Neos:
+    fusion:
+      # we need to disable the fusion object tree cache by now because it relies on the context; we replace it with our own FusionCachingAspect.
+      enableObjectTreeCache: false
+
+  EventSourcedNeosAdjustments:
+    fusion:
+      enableObjectTreeCache: true

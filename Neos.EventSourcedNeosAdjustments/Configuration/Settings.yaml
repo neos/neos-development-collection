@@ -3,6 +3,8 @@ Neos:
     contentDimensions:
       resolution:
         uriPathSegmentDelimiter: '_'
+    fusion:
+      enableObjectTreeCache: false
   Flow:
     http:
       chain:
