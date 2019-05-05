@@ -491,7 +491,7 @@ final class NodeAggregateCommandHandler
         $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         if ($nodeAggregate) {
-            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $nodeAggregateIdentifier . '" does currently not exist.', 1541687645);
+            throw new NodeAggregateCurrentlyExists('Node aggregate "' . $nodeAggregateIdentifier . '" does currently exist already, but should not.', 1541687645);
         }
     }
 
