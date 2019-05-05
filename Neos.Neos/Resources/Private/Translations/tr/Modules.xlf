@@ -228,16 +228,16 @@
 			<target state="translated">Henüz bu geçmişte gösterilebilecek herhangi bir olay kaydedildi.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
-			<target state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0}, {1} "{2}" oluşturdu.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} "{2}".</source>
-			<target state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0}, {1} "{2}" 'yi kaldırdı.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+			<target state="translated">{0}, {2} "{3}" varyantını {1} oluşturdu.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} modified the {1} "{2}".</source>
-			<target state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+			<target state="translated">{0}, {1} "{2}" değiştirdi.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved the {1} "{2}".</source>
 			<target state="translated">{0}, {1} "{2}" taşıdı.</target></trans-unit>
@@ -625,13 +625,13 @@
 			<target state="translated">Alan adını düzenle</target></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
-			<target state="needs-translation">Domain data</target></trans-unit>
+			<target state="translated">Domain datası</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
 			<target state="translated">örneğin www.neos.io</target></trans-unit>
       <trans-unit id="domainform.state" xml:space="preserve">
 				<source>State</source>
-			<target state="needs-translation">State</target></trans-unit>
+			<target state="translated">Devlet</target></trans-unit>
       <trans-unit id="domainform.create" xml:space="preserve">
 				<source>Create</source>
 			<target state="translated">Oluştur</target></trans-unit>
