@@ -16,7 +16,8 @@
         "neos/fusion": "*",
         "neos/fluid-adaptor": "*",
         "behat/transliterator": "~1.0",
-        "neos/media": "*"
+        "neos/media": "*",
+        "ext-json": "*"
     },
     "suggest": {
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",

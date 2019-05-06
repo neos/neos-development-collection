@@ -77,6 +77,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * will not be sufficient for most tests, but they are the lowest common denominator.
      *
      * @return void
+     * @throws \Neos\ContentRepository\Exception
+     * @throws \ReflectionException
      */
     protected function setUp()
     {
@@ -682,75 +684,6 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
         $this->assertTrue($this->routePartHandler->resolve($routeValues));
         $this->assertSame($expectedUriPath, $this->routePartHandler->getValue());
-    }
-
-    /**
-     * data provider for dimensionRequestPathRegex
-     */
-    public function dimensionRequestPathMatcherDataProvider()
-    {
-        return [
-            'an empty request path does not match' => [
-                'requestPath' => '',
-                'doesMatch' => false,
-                'expected' => []
-            ],
-            'a request path only containing a dimension matches' => [
-                'requestPath' => 'de_global',
-                'doesMatch' => true,
-                'expected' => [
-                    0 => 'de_global',
-                    'firstUriPart' => 'de_global',
-                    1 => 'de_global',
-                    'remainingRequestPath' => '',
-                    2 => ''
-                ]
-            ],
-            'a request path only containing a dimension and a workspace matches' => [
-                'requestPath' => 'de_global@user-admin',
-                'doesMatch' => true,
-                'expected' => [
-                    0 => 'de_global@user-admin',
-                    'firstUriPart' => 'de_global',
-                    1 => 'de_global',
-                    'remainingRequestPath' => '@user-admin',
-                    2 => '@user-admin'
-                ]
-            ],
-            'a longer request path is split correctly' => [
-                'requestPath' => 'de_global/foo/bar?baz=foo[]',
-                'doesMatch' => true,
-                'expected' => [
-                    0 => 'de_global/foo/bar?baz=foo[]',
-                    'firstUriPart' => 'de_global',
-                    1 => 'de_global',
-                    'remainingRequestPath' => 'foo/bar?baz=foo[]',
-                    2 => 'foo/bar?baz=foo[]'
-                ]
-            ],
-            'a longer request path is split correctly, also if it contains a workspace' => [
-                'requestPath' => 'de_global/foo/bar@user-admin',
-                'doesMatch' => true,
-                'expected' => [
-                    0 => 'de_global/foo/bar@user-admin',
-                    'firstUriPart' => 'de_global',
-                    1 => 'de_global',
-                    'remainingRequestPath' => 'foo/bar@user-admin',
-                    2 => 'foo/bar@user-admin'
-                ]
-            ]
-        ];
-    }
-
-    /**
-     * @dataProvider dimensionRequestPathMatcherDataProvider
-     * @test
-     */
-    public function dimensionRequestPathRegex($requestPath, $doesMatch, $expected)
-    {
-        $matches = [];
-        $this->assertSame($doesMatch, (boolean)preg_match(FrontendNodeRoutePartHandler::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches));
-        $this->assertSame($expected, $matches);
     }
 
     /********************************************************************************************************************

@@ -35,6 +35,10 @@ Neos:
     # which is displayed if no domain pattern matches the current request
     defaultSiteNodeName: null
 
+    contentDimensions:
+      resolution:
+        uriPathSegmentDelimiter: '_'
+
     routing:
       # Setting this to true allows to use an empty uriSegment for default dimensions.
       # The only limitation is that all segments must be unique across all dimenions.
@@ -400,6 +404,13 @@ Neos:
     core:
       applicationPackageKey: Neos.Neos
       applicationName: Neos
+
+    http:
+      chain:
+        preprocess:
+          chain:
+            detectContentSubgraph:
+              component: Neos\Neos\Http\DetectContentSubgraphComponent
 
     mvc:
       routes:
