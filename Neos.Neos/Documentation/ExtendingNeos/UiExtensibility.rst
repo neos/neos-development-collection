@@ -34,7 +34,6 @@ Every component gets the following properties (see `EditorEnvelope/index.js`)
 
 - `identifier`: an identifier which can be used for HTML ID generation
 - `label`: the label
-- `node`: the current node
 - `value`: the value to display
 - `propertyName`: name of the node property to edit
 - `options`: additional editor options
