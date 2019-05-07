@@ -389,7 +389,7 @@ class BackendServiceController extends ActionController
     /**
      * Fetches all the node information that can be lazy-loaded
      *
-     * @param array<NodeInterface> $nodes
+     * @param array<NodeAddress> $nodes
      */
     public function getAdditionalNodeMetadataAction(array $nodes)
     {

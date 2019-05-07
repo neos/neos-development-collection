@@ -15,6 +15,8 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 use Neos\Flow\Annotations as Flow;
 
 /**
+ * TODO: can be removed, moving works differently now.
+ *
  * Position of a reference (when moving or copying)
  * @Flow\Proxy(false)
  */
