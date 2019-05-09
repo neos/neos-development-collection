@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\ActionResponseRenderer\Content;
+use Neos\Flow\Mvc\ActionResponseRenderer\IntoActionResponse;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -149,12 +151,8 @@ class PluginImplementation extends AbstractArrayFusionObject
         $pluginResponse = new ActionResponse($parentResponse);
 
         $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
-
-        foreach ($pluginResponse->getHeaders()->getAll() as $key => $value) {
-            $parentResponse->getHeaders()->set($key, $value, true);
-        }
-
-        return $pluginResponse->getContent();
+        $pluginResponse->prepareRendering(new IntoActionResponse($parentResponse))->render();
+        return $pluginResponse->prepareRendering(new Content())->render();
     }
 
     /**

@@ -13,6 +13,7 @@ namespace Neos\Media\Browser\ViewHelpers;
 */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 use Neos\Media\Browser\ViewHelpers\Controller\PaginateController;
 use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
@@ -52,6 +53,6 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
     public function render(AssetProxyQueryResultInterface $queryResult, $as, array $configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99])
     {
         $response = $this->initiateSubRequest();
-        return $response->getContent();
+        return $response->prepareRendering(new Content())->render();
     }
 }
