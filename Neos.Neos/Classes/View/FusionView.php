@@ -11,11 +11,13 @@ namespace Neos\Neos\View;
  * source code.
  */
 
+use function GuzzleHttp\Psr7\parse_response;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Response;
+use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
@@ -112,27 +114,22 @@ class FusionView extends AbstractView
      */
     protected function mergeHttpResponseFromOutput($output, Runtime $fusionRuntime)
     {
-        if (substr($output, 0, 5) === 'HTTP/') {
-            $endOfHeader = strpos($output, "\r\n\r\n");
-            if ($endOfHeader !== false) {
-                $header = substr($output, 0, $endOfHeader + 4);
-                try {
-                    $renderedResponse = Response::createFromRaw($header);
-
-                    /** @var Response $response */
-                    $response = $fusionRuntime->getControllerContext()->getResponse();
-                    $response->setStatus($renderedResponse->getStatusCode());
-                    foreach ($renderedResponse->getHeaders()->getAll() as $headerName => $headerValues) {
-                        $response->setHeader($headerName, $headerValues);
-                    }
-
-                    $output = substr($output, strlen($header));
-                } catch (\InvalidArgumentException $exception) {
-                }
-            }
+        if (!strpos($output, 'HTTP/') === 0) {
+            return $output;
         }
 
-        return $output;
+        $renderedResponse = parse_response($output);
+        try {
+            /** @var ActionResponse $response */
+            $response = $fusionRuntime->getControllerContext()->getResponse();
+            $response->setStatusCode($renderedResponse->getStatusCode());
+            foreach ($renderedResponse->getHeaders() as $headerName => $headerValues) {
+                $response->setComponentParameter(SetHeaderComponent::class, $headerName, $headerValues);
+            }
+        } catch (\InvalidArgumentException $exception) {
+        }
+
+        return $renderedResponse->getBody()->getContents();
     }
 
     /**

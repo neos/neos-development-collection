@@ -70,7 +70,7 @@ abstract class AbstractServiceController extends ActionController
      * @return void
      * @throws \Exception
      */
-    public function processRequest(RequestInterface $request, ResponseInterface $response)
+    public function processRequest($request, $response)
     {
         try {
             parent::processRequest($request, $response);

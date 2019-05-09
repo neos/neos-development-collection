@@ -14,6 +14,8 @@ namespace Neos\Neos\Controller\Backend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\ActionResponseRenderer\IntoActionResponse;
+use Neos\Flow\Mvc\ActionResponseRenderer\ToArray;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Security\Context;
@@ -98,14 +100,16 @@ class ModuleController extends ActionController
 
         $this->dispatcher->dispatch($moduleRequest, $moduleResponse);
 
-        if ($moduleResponse->hasHeader('Location')) {
-            $this->redirectToUri($moduleResponse->getHeader('Location'), 0, $moduleResponse->getStatusCode());
+        $rawResponse = $moduleResponse->prepareRendering(new ToArray())->render();
+
+        if ($rawResponse['redirectUri'] !== null) {
+            $this->redirectToUri($rawResponse['redirectUri'], 0, $rawResponse['statusCode']);
         } elseif ($moduleRequest->getFormat() !== 'html') {
             $mediaType = MediaTypes::getMediaTypeFromFilename('file.' . $moduleRequest->getFormat());
             if ($mediaType !== 'application/octet-stream') {
-                $this->controllerContext->getResponse()->setHeader('Content-Type', $mediaType);
+                $this->controllerContext->getResponse()->setContentType($mediaType);
             }
-            return $moduleResponse->getContent();
+            return $rawResponse['content'];
         } else {
             $user = $this->partyService->getAssignedPartyOfAccount($this->securityContext->getAccount());
 
@@ -113,7 +117,7 @@ class ModuleController extends ActionController
 
             $this->view->assignMultiple([
                 'moduleClass' => implode('-', $modules),
-                'moduleContents' => $moduleResponse->getContent(),
+                'moduleContents' => $rawResponse['content'],
                 'title' => $moduleRequest->hasArgument('title') ? $moduleRequest->getArgument('title') : $moduleConfiguration['label'],
                 'rootModule' => array_shift($modules),
                 'submodule' => array_shift($modules),

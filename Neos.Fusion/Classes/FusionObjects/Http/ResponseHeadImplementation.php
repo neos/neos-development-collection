@@ -11,8 +11,8 @@ namespace Neos\Fusion\FusionObjects\Http;
  * source code.
  */
 
-use Neos\Flow\Http\Headers;
-use Neos\Flow\Http\Response;
+use function GuzzleHttp\Psr7\str;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
@@ -44,7 +44,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
         if ($statusCode === null) {
             $statusCode = 200;
         }
-        if (Response::getStatusMessageByCode($statusCode) === 'Unknown Status') {
+        if (ResponseInformationHelper::getStatusMessageByCode($statusCode) === 'Unknown Status') {
             throw new \InvalidArgumentException('Unknown HTTP status code', 1412085703);
         }
         return (integer)$statusCode;
@@ -69,16 +69,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        // TODO: Adjust for Neos 5.0 (PSR-7)
-        $httpResponse = new Response();
-        $httpResponse->setVersion($this->getHttpVersion());
-        $httpResponse->setStatus($this->getStatusCode());
-        $httpResponse->setHeaders(new Headers());
-
-        foreach ($this->getHeaders() as $name => $value) {
-            $httpResponse->setHeader($name, $value);
-        }
-
-        return implode("\r\n", $httpResponse->renderHeaders()) . "\r\n\r\n";
+        $httpResponse = new \GuzzleHttp\Psr7\Response($this->getStatusCode(), $this->getHeaders(), null, $this->getHttpVersion());
+        return str($httpResponse);
     }
 }
