@@ -254,7 +254,7 @@ class ContentCache
         if ($cacheDiscriminator !== null) {
             $cacheIdentifier .= '_' . md5($cacheDiscriminator);
         }
-        $content = $this->cache->get($cacheIdentifier);
+        $content = $this->getCacheByIdentifier($cacheIdentifier);
 
         if ($content === false) {
             return false;
@@ -289,11 +289,10 @@ class ContentCache
      */
     protected function replaceCachePlaceholders(&$content, $addCacheSegmentMarkersToPlaceholders)
     {
-        $cache = $this->cache;
         $foundMissingIdentifier = false;
-        $content = preg_replace_callback(self::CACHE_PLACEHOLDER_REGEX, function ($match) use ($cache, &$foundMissingIdentifier, $addCacheSegmentMarkersToPlaceholders) {
+        $content = preg_replace_callback(self::CACHE_PLACEHOLDER_REGEX, function ($match) use (&$foundMissingIdentifier, $addCacheSegmentMarkersToPlaceholders) {
             $identifier = $match['identifier'];
-            $entry = $cache->get($identifier);
+            $entry = $this->getCacheByIdentifier($identifier);
             if ($entry !== false) {
                 if ($addCacheSegmentMarkersToPlaceholders) {
                     return ContentCache::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . '*' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $entry . ContentCache::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
@@ -369,6 +368,17 @@ class ContentCache
             $type = gettype($contextValue);
         }
         return $type;
+    }
+
+    /**
+     * Get a content cache entry by it's identifier
+     *
+     * @param string $cacheIdentifier
+     * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
+     */
+    public function getCacheByIdentifier(string $cacheIdentifier)
+    {
+        return $this->cache->get($cacheIdentifier);
     }
 
     /**
