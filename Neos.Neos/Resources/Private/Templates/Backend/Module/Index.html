@@ -28,10 +28,10 @@
 		</f:for>
 	</f:if>
 
-	<script type="text/javascript">
+	<script type="text/javascript"><![CDATA[
 		// TODO: Get rid of those global variables
 		{neos:backend.javascriptConfiguration()}
-	</script>
+	]]></script>
 
 	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
 	<!-- TODO: Make sure the schema information and edit / preview panel data isn't necessary in backend modules -->
@@ -73,13 +73,13 @@
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Neos.Twitter.Bootstrap')}"></script>
 		<script src="{f:uri.resource(path: 'Library/fixedsticky/fixedsticky.js', package: 'Neos.Neos')}"></script>
 
-		<script type="text/javascript">
+		<script type="text/javascript"><![CDATA[
 			(function($) {
 				$(function() {
 					$('.neos-footer').fixedsticky();
 				});
 			})(jQuery);
-		</script>
+		]]></script>
 
 		<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'Neos.Neos')}"></script>
 		<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
@@ -91,7 +91,7 @@
 			</f:else>
 		</f:if>
 
-		<script>
+		<script><![CDATA[
 			$(function() {
 				require(
 					{
@@ -109,6 +109,6 @@
 					}
 				)
 			});
-		</script>
+		]]></script>
 	</body>
 </f:section>
