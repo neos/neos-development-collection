@@ -329,11 +329,11 @@
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target state="needs-translation">{0} usages</target>
+          <target state="translated">{0} utilizzo</target>
         </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
-          <target state="needs-translation">{0} usages</target>
+          <target state="translated">{0} utilizzi</target>
         </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
