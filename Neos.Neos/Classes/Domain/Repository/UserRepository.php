@@ -12,7 +12,9 @@ namespace Neos\Neos\Domain\Repository;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence\Repository;
+use Neos\Flow\Persistence\Doctrine\Repository;
+use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
 
 /**
  * The User Repository
@@ -22,4 +24,33 @@ use Neos\Flow\Persistence\Repository;
  */
 class UserRepository extends Repository
 {
+    /**
+     * @return QueryResultInterface
+     */
+    public function findAllOrderedByUsername(): QueryResultInterface
+    {
+        return $this->createQuery()
+            ->setOrderings(['name.alias' => QueryInterface::ORDER_ASCENDING])
+            ->execute();
+    }
+
+    /**
+     * @param string $searchTerm
+     * @return QueryResultInterface
+     */
+    public function findBySearchTerm(string $searchTerm): QueryResultInterface
+    {
+        try {
+            $query = $this->createQuery();
+            $query->matching(
+                $query->logicalOr(
+                    $query->like('name.alias', '%'.$searchTerm.'%'),
+                    $query->like('name.fullName', '%'.$searchTerm.'%')
+                )
+            );
+            return $query->setOrderings(['name.alias' => QueryInterface::ORDER_ASCENDING])->execute();
+        } catch (\Neos\Flow\Persistence\Exception\InvalidQueryException $e) {
+            throw new \RuntimeException($e->getMessage(), 1557767046, $e);
+        }
+    }
 }
