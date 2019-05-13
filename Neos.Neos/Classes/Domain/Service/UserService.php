@@ -19,6 +19,7 @@ use Neos\Flow\Security\AccountFactory;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\Token\UsernamePassword;
+use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
@@ -120,6 +121,12 @@ class UserService
      * @var Context
      */
     protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var TokenAndProviderFactoryInterface
+     */
+    protected $tokenAndProviderFactory;
 
     /**
      * @Flow\Inject
@@ -348,7 +355,7 @@ class UserService
      */
     public function setUserPassword(User $user, $password)
     {
-        $tokens = $this->authenticationManager->getTokens();
+        $tokens = $this->tokenAndProviderFactory->getTokens();
         $indexedTokens = [];
         foreach ($tokens as $token) {
             /** @var TokenInterface $token */
