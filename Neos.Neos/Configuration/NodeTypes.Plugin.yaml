@@ -3,9 +3,6 @@
   superTypes:
     'Neos.Neos:Content': true
   abstract: true
-  options:
-    fusion:
-      prototypeGenerator: Neos\Neos\Domain\Service\DefaultPluginPrototypeGenerator
   ui:
     label: i18n
     group: 'plugins'
