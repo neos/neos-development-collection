@@ -48,7 +48,7 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
      */
     protected $thirdNodeInLevel;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->siteNode = $this->mockNode('site');
         $this->firstNodeInLevel = $this->mockNode('node1');

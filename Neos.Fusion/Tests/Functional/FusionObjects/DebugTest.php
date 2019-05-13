@@ -24,7 +24,7 @@ class DebugTest extends AbstractFusionObjectTest
      */
     protected $debugStack;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->debugStack = $this->objectManager->get(DebugStack::class);

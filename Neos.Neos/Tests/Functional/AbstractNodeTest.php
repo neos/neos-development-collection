@@ -53,7 +53,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
      */
     protected $contextFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -83,7 +83,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
         return $node;
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

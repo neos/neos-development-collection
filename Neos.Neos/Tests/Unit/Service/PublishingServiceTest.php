@@ -81,7 +81,7 @@ class PublishingServiceTest extends UnitTestCase
      */
     protected $mockContentDimensionPresetSource;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->publishingService = new PublishingService();
 

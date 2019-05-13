@@ -73,7 +73,7 @@ class UserServiceTest extends UnitTestCase
      */
     protected $mockPersistenceManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->userService = new UserService();
         $this->userDomainService = new UserDomainService();

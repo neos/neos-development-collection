@@ -20,6 +20,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Cache\ContentCache;
+use Neos\Fusion\Exception\CacheException;
 
 /**
  * Test case for the ContentCache
@@ -69,11 +70,11 @@ class ContentCacheTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidEntryIdentifierValues
-     * @expectedException \Neos\Fusion\Exception\CacheException
-     * @expectedExceptionCode 1395846615
      */
     public function createCacheSegmentWithInvalidEntryIdentifierValueThrowsException($entryIdentifierValues)
     {
+        $this->expectException(CacheException::class);
+        $this->expectExceptionCode(1395846615);
         $contentCache = new ContentCache();
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
@@ -116,8 +117,8 @@ class ContentCacheTest extends UnitTestCase
         $contentCache = new ContentCache();
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
-        $segement = $contentCache->createCacheSegment('My content', '/foo/bar', [42], ['Foo', 'Bar'], 60);
-        $this->assertContains('Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segement);
+        $segment = $contentCache->createCacheSegment('My content', '/foo/bar', [42], ['Foo', 'Bar'], 60);
+        $this->assertStringContainsString('Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segment);
     }
 
     /**

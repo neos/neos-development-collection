@@ -36,7 +36,7 @@ class FusionViewTest extends FunctionalTestCase
     /**
      * Initializer
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->mockFallbackView = $this->createMock(ViewInterface::class);
         $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();

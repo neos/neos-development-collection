@@ -26,7 +26,7 @@ class ContextTest extends UnitTestCase
      */
     protected $contextFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->contextFactory = new ContextFactory();
         $this->inject($this->contextFactory, 'now', new \Neos\Flow\Utility\Now());

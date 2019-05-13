@@ -67,7 +67,7 @@ class NodeDataExportServiceTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->setUpRootNodeAndRepository();
@@ -101,7 +101,7 @@ class NodeDataExportServiceTest extends FunctionalTestCase
         $this->assertNotNull($importedNode, 'Expected node not found');
         $this->assertSame($originalNode->getIdentifier(), $importedNode->getIdentifier());
         $this->assertSame($originalNode->getProperty('description'), $importedNode->getProperty('description'));
-        $this->assertEquals($originalNode->getProperty('someDate'), $importedNode->getProperty('someDate'), 'The "someDate" property had a different value after import', 1);
+        $this->assertEqualsWithDelta($originalNode->getProperty('someDate'), $importedNode->getProperty('someDate'), 1, 'The "someDate" property had a different value after import');
     }
 
     /**

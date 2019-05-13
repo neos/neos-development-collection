@@ -12,6 +12,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  */
 
 use Neos\Cache\Frontend\StringFrontend;
+use Neos\ContentRepository\Exception;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -31,7 +33,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     protected $mockConfigurationManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->prepareNodeTypeManager($this->nodeTypesFixture);
     }
@@ -174,28 +176,28 @@ class NodeTypeManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function getNodeTypeThrowsExceptionForUnknownNodeType()
     {
+        $this->expectException(NodeTypeNotFoundException::class);
         $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:TextFooBarNotHere');
     }
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function getNodeTypeThrowsExceptionIfNoFallbackNodeTypeIsConfigured()
     {
+        $this->expectException(NodeTypeNotFoundException::class);
         $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:TextFooBarNotHere');
     }
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function getNodeTypeThrowsExceptionIfConfiguredFallbackNodeTypeCantBeFound()
     {
+        $this->expectException(NodeTypeNotFoundException::class);
         $this->inject($this->nodeTypeManager, 'fallbackNodeTypeName', 'Neos.ContentRepository:NonExistingFallbackNode');
         $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:TextFooBarNotHere');
     }
@@ -214,10 +216,10 @@ class NodeTypeManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception
      */
     public function createNodeTypeAlwaysThrowsAnException()
     {
+        $this->expectException(Exception::class);
         $this->nodeTypeManager->createNodeType('Neos.ContentRepository.Testing:ContentObject');
     }
 
@@ -338,10 +340,10 @@ class NodeTypeManagerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeTypeIsFinalException
      */
     public function getNodeTypeThrowsExceptionIfFinalNodeTypeIsSubclassed()
     {
+        $this->expectException(Exception\NodeTypeIsFinalException::class);
         $nodeTypesFixture = [
             'Neos.ContentRepository.Testing:Base' => [
                 'final' => true

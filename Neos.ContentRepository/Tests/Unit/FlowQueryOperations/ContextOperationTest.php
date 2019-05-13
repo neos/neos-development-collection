@@ -32,7 +32,7 @@ class ContextOperationTest extends AbstractQueryOperationsTest
      */
     protected $mockContextFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->operation = new ContextOperation();
         $this->mockContextFactory = $this->createMock(ContextFactoryInterface::class);

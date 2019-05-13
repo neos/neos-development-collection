@@ -18,6 +18,7 @@ use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Exception;
 use Neos\Fusion\FusionObjects\ResourceUriImplementation;
 
 /**
@@ -55,7 +56,7 @@ class ResourceUriImplementationTest extends UnitTestCase
      */
     protected $mockActionRequest;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
@@ -77,10 +78,10 @@ class ResourceUriImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
      */
     public function evaluateThrowsExceptionIfSpecifiedResourceIsInvalid()
     {
+        $this->expectException(Exception::class);
         $invalidResource = new \stdClass();
         $this->resourceUriImplementation->evaluate();
     }
@@ -101,10 +102,10 @@ class ResourceUriImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
      */
     public function evaluateThrowsExceptionIfNeitherResourceNorPathAreSpecified()
     {
+        $this->expectException(Exception::class);
         $this->mockRuntime->expects($this->atLeastOnce())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
             return null;
         }));
@@ -114,10 +115,10 @@ class ResourceUriImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
      */
     public function evaluateThrowsExceptionIfSpecifiedPathPointsToAPrivateResource()
     {
+        $this->expectException(Exception::class);
         $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
             $relativePath = str_replace('resourceUri/test/', '', $evaluatePath);
             switch ($relativePath) {

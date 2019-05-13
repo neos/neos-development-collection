@@ -11,6 +11,7 @@ namespace Neos\Neos\Tests\Functional\Domain\Service;
  * source code.
  */
 
+use Neos\Neos\Domain\Exception;
 use ReflectionMethod;
 use Symfony\Component\Yaml\Parser as YamlParser;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -53,7 +54,7 @@ class FusionServiceTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -69,7 +70,7 @@ class FusionServiceTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->objectManager->setInstance(NodeTypeManager::class, $this->originalNodeTypeManager);
         $this->expectedPrototypeGenerator->reset();
@@ -78,10 +79,10 @@ class FusionServiceTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Neos\Domain\Exception
      */
     public function generateFusionForNodeThrowsExceptionForInvalidFusionPrototypeGenerator()
     {
+        $this->expectException(Exception::class);
         $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithInvalidFusionPrototypeGenerator');
     }
 

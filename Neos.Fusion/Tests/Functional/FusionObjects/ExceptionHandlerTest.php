@@ -37,7 +37,7 @@ class ExceptionHandlerTest extends AbstractFusionObjectTest
         $view->setFusionPath('exceptionHandler/eelExpressionInOverride');
         $output = $view->render();
         $this->assertStringStartsWith('StartException while rendering exceptionHandler', $output);
-        $this->assertContains('myCollection', $output, 'The override path should be visible in the message Fusion path');
+        $this->assertStringContainsString('myCollection', $output, 'The override path should be visible in the message Fusion path');
     }
 
     /**
@@ -54,6 +54,6 @@ class ExceptionHandlerTest extends AbstractFusionObjectTest
         $output = $view->render();
         $this->assertNotNull($output);
         $this->assertStringStartsWith('Exception while rendering', $output);
-        $this->assertContains('Just testing an exception', $output);
+        $this->assertStringContainsString('Just testing an exception', $output);
     }
 }
