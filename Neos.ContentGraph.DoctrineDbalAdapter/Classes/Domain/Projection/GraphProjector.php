@@ -16,7 +16,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;

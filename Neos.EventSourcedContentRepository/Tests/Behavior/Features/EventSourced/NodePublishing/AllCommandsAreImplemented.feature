@@ -212,11 +212,11 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     # SETUP: remove two nodes in USER workspace
-    When the command RemoveNodeAggregate was published with payload:
+    When the command RemoveNodeAggregate is executed with payload:
       | Key                     | Value                    |
       | contentStreamIdentifier | "user-cs-identifier"     |
       | nodeAggregateIdentifier | "sir-david-nodenborough" |
-    When the command RemoveNodeAggregate was published with payload:
+    When the command RemoveNodeAggregate is executed with payload:
       | Key                     | Value                        |
       | contentStreamIdentifier | "user-cs-identifier"         |
       | nodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
@@ -253,7 +253,7 @@ Feature: Publishing hide/show scenario of nodes
       | contentStreamIdentifier | "user-cs-identifier"     |
       | nodeAggregateIdentifier | "sir-david-nodenborough" |
       | dimensionSpacePointSet  | [{}]                     |
-    When the command RemoveNodeAggregate was published with payload:
+    When the command RemoveNodeAggregate is executed with payload:
       | Key                     | Value                        |
       | contentStreamIdentifier | "user-cs-identifier"         |
       | nodeAggregateIdentifier | "sir-nodeward-nodington-iii" |

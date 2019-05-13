@@ -21,12 +21,10 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
@@ -176,41 +174,6 @@ final class NodeCommandHandler
                         $contentStreamIdentifier,
                         $command->getNodeAggregateIdentifier(),
                         $command->getAffectedDimensionSpacePoints()
-                    )
-                )
-            );
-
-            $this->nodeEventPublisher->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
-                $events
-            );
-        });
-        return CommandResult::fromPublishedEvents($events);
-    }
-
-    /**
-     * @param RemoveNodeAggregate $command
-     * @return CommandResult
-     */
-    public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): CommandResult
-    {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        $events = null;
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-
-            // Check if node aggregate exists
-            $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $command->getNodeAggregateIdentifier());
-            if ($nodeAggregate === null) {
-                throw new NodeAggregateNotFound('Node aggregate ' . $command->getNodeAggregateIdentifier() . ' not found', 1532026858);
-            }
-
-            $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
-                    new NodeAggregateWasRemoved(
-                        $contentStreamIdentifier,
-                        $command->getNodeAggregateIdentifier()
                     )
                 )
             );

@@ -28,11 +28,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
@@ -76,6 +76,7 @@ use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\StreamName;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
@@ -356,6 +357,21 @@ trait EventSourcedTrait
 
         $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWasDisabled', $streamName->getEventStreamName(), $eventPayload);
     }
+
+    /**
+     * @Given /^the event NodeAggregateWasRemoved was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theEventNodeAggregateWasRemovedWasPublishedWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
+
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWasRemoved', $streamName->getEventStreamName(), $eventPayload);
+    }
+
     /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
      * @param $eventType
@@ -597,7 +613,7 @@ trait EventSourcedTrait
         }
     }
     /**
-     * @Given /^the command RemoveNodeAggregate was published with payload:$/
+     * @Given /^the command RemoveNodeAggregate is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */
@@ -605,10 +621,9 @@ trait EventSourcedTrait
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         $command = RemoveNodeAggregate::fromArray($commandArguments);
-        /** @var NodeCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
-        $this->lastCommandOrEventResult = $commandHandler->handleRemoveNodeAggregate($command);
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
+            ->handleRemoveNodeAggregate($command);
     }
 
     /**

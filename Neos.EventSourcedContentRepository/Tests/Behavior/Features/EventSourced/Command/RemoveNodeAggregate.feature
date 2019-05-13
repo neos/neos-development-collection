@@ -66,10 +66,10 @@ Feature: Remove NodeAggregate
       | Key                     | Value                         |
       | contentStreamIdentifier | "live-cs-identifier"          |
       | nodeAggregateIdentifier | "non-existing-agg-identifier" |
-    Then the last command should have thrown an exception of type "NodeAggregateNotFound"
+    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: In LIVE workspace, removing a NodeAggregate removes all nodes completely
-    When the command RemoveNodeAggregate was published with payload:
+    When the command RemoveNodeAggregate is executed with payload:
       | Key                     | Value                |
       | contentStreamIdentifier | "live-cs-identifier" |
       | nodeAggregateIdentifier | "nody-mc-nodeface"   |
@@ -94,7 +94,7 @@ Feature: Remove NodeAggregate
       | sourceContentStreamIdentifier | "live-cs-identifier" |
     And the graph projection is fully up to date
 
-    When the command RemoveNodeAggregate was published with payload:
+    When the command RemoveNodeAggregate is executed with payload:
       | Key                     | Value                |
       | contentStreamIdentifier | "user-cs-identifier" |
       | nodeAggregateIdentifier | "nody-mc-nodeface"   |

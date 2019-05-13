@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -23,7 +23,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContent
  */
 final class NodeAggregateWasRemoved implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -34,28 +33,17 @@ final class NodeAggregateWasRemoved implements DomainEventInterface, CopyableAcr
      */
     private $nodeAggregateIdentifier;
 
-    /**
-     * RemoveNodeAggregate constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     */
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;

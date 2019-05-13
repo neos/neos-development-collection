@@ -26,6 +26,8 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
@@ -1077,9 +1079,8 @@ final class NodeAggregateCommandHandler
             );
 
             $this->nodeEventPublisher->publishMany(
-                NodeAggregateEventStreamName::fromContentStreamIdentifierAndNodeAggregateIdentifier(
-                    $command->getContentStreamIdentifier(),
-                    $command->getNodeAggregateIdentifier()
+                ContentStreamEventStreamName::fromContentStreamIdentifier(
+                    $command->getContentStreamIdentifier()
                 )->getEventStreamName(),
                 $events
             );
@@ -1338,5 +1339,36 @@ final class NodeAggregateCommandHandler
         } catch (NodeTypeNotFoundException $e) {
             throw new NodeTypeNotFound('Node type "' . $nodeTypeName . '" is unknown to the node type manager.', 1541671070);
         }
+    }
+
+    /**
+     * @param RemoveNodeAggregate $command
+     * @return CommandResult
+     * @throws NodeAggregatesTypeIsAmbiguous
+     */
+    public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): CommandResult
+    {
+        $this->readSideMemoryCacheManager->disableCache();
+
+        /* @todo add DSP support */
+        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+
+        $events = null;
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
+            $events = DomainEvents::withSingleEvent(
+                EventWithIdentifier::create(
+                    new NodeAggregateWasRemoved(
+                        $command->getContentStreamIdentifier(),
+                        $command->getNodeAggregateIdentifier()
+                    )
+                )
+            );
+
+            $this->nodeEventPublisher->publishMany(
+                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
+                $events
+            );
+        });
+        return CommandResult::fromPublishedEvents($events);
     }
 }

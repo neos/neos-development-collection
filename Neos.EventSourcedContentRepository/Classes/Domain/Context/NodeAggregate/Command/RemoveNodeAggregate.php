@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -20,7 +20,6 @@ use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
 final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -31,11 +30,6 @@ final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossCont
      */
     private $nodeAggregateIdentifier;
 
-    /**
-     * RemoveNodeAggregate constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     */
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -50,17 +44,11 @@ final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossCont
         );
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
