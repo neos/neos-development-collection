@@ -30,7 +30,7 @@ class NodePublishingDependencySolverTest extends UnitTestCase
      */
     protected $mockContext;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->setConstructorArgs(['live'])->getMock();
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();

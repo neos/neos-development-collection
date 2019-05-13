@@ -52,7 +52,7 @@ class PrevOperationTest extends AbstractQueryOperationsTest
      * @throws \ReflectionException
      * @throws \Exception
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->siteNode = $this->mockNode('site-node');
         $this->firstNodeInLevel = $this->mockNode('first-node');

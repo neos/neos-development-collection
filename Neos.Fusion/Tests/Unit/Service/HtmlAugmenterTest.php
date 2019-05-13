@@ -13,6 +13,7 @@ namespace Neos\Fusion\Tests\Unit\Service;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Service\HtmlAugmenter;
+use Neos\Neos\Exception;
 
 /**
  * Testcase for the HTML Augmenter
@@ -25,7 +26,7 @@ class HtmlAugmenterTest extends UnitTestCase
      */
     protected $htmlAugmenter;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->htmlAugmenter = new HtmlAugmenter();
     }
@@ -270,10 +271,10 @@ class HtmlAugmenterTest extends UnitTestCase
      * @param array $exclusiveAttributes
      * @test
      * @dataProvider invalidAttributesDataProvider
-     * @expectedException \Neos\Neos\Exception
      */
     public function invalidAttributesTests($html, array $attributes, $fallbackTagName, $exclusiveAttributes)
     {
+        $this->expectException(Exception::class);
         $this->addAttributesTests($html, $attributes, $fallbackTagName, $exclusiveAttributes, null);
     }
 }

@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\WorkspaceException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -120,10 +121,10 @@ class WorkspaceTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\WorkspaceException
      */
     public function verifyPublishingTargetWorkspaceThrowsAnExceptionIfWorkspaceIsNotBasedOnTheSpecifiedWorkspace()
     {
+        $this->expectException(WorkspaceException::class);
         $someBaseWorkspace = new Workspace('live');
         $currentWorkspace = $this->getAccessibleMock(Workspace::class, ['dummy'], ['user-foo', $someBaseWorkspace]);
         $otherWorkspace = new Workspace('user-bar', $someBaseWorkspace);

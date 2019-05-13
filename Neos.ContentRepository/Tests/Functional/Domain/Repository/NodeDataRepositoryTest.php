@@ -64,7 +64,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
@@ -80,7 +80,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->inject($this->contextFactory, 'contextInstances', []);

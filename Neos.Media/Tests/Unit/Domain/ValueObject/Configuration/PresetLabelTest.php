@@ -64,10 +64,10 @@ class PresetLabelTest extends UnitTestCase
      * @param $label
      * @test
      * @dataProvider invalidLabels()
-     * @expectedException \InvalidArgumentException
      */
     public function invalidLabelsAreRejected($label): void
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Label($label);
     }
 }

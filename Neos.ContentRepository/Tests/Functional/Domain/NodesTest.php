@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
@@ -75,7 +76,7 @@ class NodesTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->nodeDataRepository = new NodeDataRepository();
@@ -100,7 +101,7 @@ class NodesTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->inject($this->contextFactory, 'contextInstances', []);
@@ -110,10 +111,10 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function nodeCreationThrowsExceptionIfNodeNameContainsUppercaseCharacters()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->context->getRootNode()->createNode('fooBar');
     }
 
@@ -831,10 +832,10 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function moveBeforeThrowsExceptionIfTargetExists()
     {
+        $this->expectException(NodeExistsException::class);
         $rootNode = $this->context->getNode('/');
 
         $alfaNode = $rootNode->createNode('alfa');
@@ -845,10 +846,10 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function moveAfterThrowsExceptionIfTargetExists()
     {
+        $this->expectException(NodeExistsException::class);
         $rootNode = $this->context->getNode('/');
 
         $alfaNode = $rootNode->createNode('alfa');
@@ -859,10 +860,10 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function moveIntoThrowsExceptionIfTargetExists()
     {
+        $this->expectException(NodeExistsException::class);
         $rootNode = $this->context->getNode('/');
 
         $alfaNode = $rootNode->createNode('alfa');
@@ -1241,10 +1242,10 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function copyBeforeThrowsExceptionIfTargetExists()
     {
+        $this->expectException(NodeExistsException::class);
         $rootNode = $this->context->getNode('/');
 
         $rootNode->createNode('exists');
@@ -1256,10 +1257,10 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function copyAfterThrowsExceptionIfTargetExists()
     {
+        $this->expectException(NodeExistsException::class);
         $rootNode = $this->context->getNode('/');
 
         $rootNode->createNode('exists');
@@ -1271,10 +1272,10 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function copyIntoThrowsExceptionIfTargetExists()
     {
+        $this->expectException(NodeExistsException::class);
         $rootNode = $this->context->getNode('/');
 
         $rootNode->createNode('exists');

@@ -21,6 +21,7 @@ use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Model\Video;
 use Neos\Media\Domain\Service\AssetVariantGenerator;
+use Neos\Media\Exception\AssetVariantGeneratorException;
 
 /**
  * Test case for the Asset Variant Generator
@@ -128,7 +129,6 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \Neos\Media\Exception\AssetVariantGeneratorException
      * @test
      * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationException
      * @throws \Neos\Flow\ResourceManagement\Exception
@@ -137,6 +137,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
      */
     public function createVariantThrowsExceptionOnUnknownAdjustmentType(): void
     {
+        $this->expectException(AssetVariantGeneratorException::class);
         $variantPresetsConfiguration = [
             'Flownative.Demo:Preset' => [
                 'label' => 'Demo Preset',
