@@ -23,12 +23,10 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
@@ -152,41 +150,6 @@ final class NodeCommandHandler
     }
 
     /**
-     * @param ShowNode $command
-     * @return CommandResult
-     */
-    public function handleShowNode(ShowNode $command): CommandResult
-    {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        $events = null;
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-
-            // Soft constraint check: Check if node exists in *all* given DimensionSpacePoints
-            foreach ($command->getAffectedDimensionSpacePoints() as $dimensionSpacePoint) {
-                $this->assertNodeWithOriginDimensionSpacePointExists($contentStreamIdentifier, $command->getNodeAggregateIdentifier(), $dimensionSpacePoint);
-            }
-
-            $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
-                    new NodeWasShown(
-                        $contentStreamIdentifier,
-                        $command->getNodeAggregateIdentifier(),
-                        $command->getAffectedDimensionSpacePoints()
-                    )
-                )
-            );
-
-            $this->nodeEventPublisher->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
-                $events
-            );
-        });
-        return CommandResult::fromPublishedEvents($events);
-    }
-
-    /**
      * @param RemoveNodesFromAggregate $command
      * @return CommandResult
      * @throws SpecializedDimensionsMustBePartOfDimensionSpacePointSet
@@ -231,21 +194,5 @@ final class NodeCommandHandler
             );
         });
         return CommandResult::fromPublishedEvents($events);
-    }
-
-    private function assertNodeWithOriginDimensionSpacePointExists(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint): NodeInterface
-    {
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $originDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
-        if ($node === null) {
-            throw new NodeNotFoundException(sprintf('Node %s not found in dimension %s', $nodeAggregateIdentifier, $originDimensionSpacePoint), 1541070463);
-        }
-
-        if (!$node->getOriginDimensionSpacePoint()->equals($originDimensionSpacePoint)) {
-            throw new Exception\NodeNotOriginatingInCorrectDimensionSpacePointException(sprintf('Node %s has origin dimension space point %s, but you requested OriginDimensionSpacePoint %s.', $nodeAggregateIdentifier,
-                $node->getOriginDimensionSpacePoint(), $originDimensionSpacePoint), 1541070670);
-        }
-
-        return $node;
     }
 }
