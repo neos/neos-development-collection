@@ -11,6 +11,7 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
@@ -18,6 +19,7 @@ use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 
 /**
  * This runtime factory takes care of instantiating a Fusion runtime.
@@ -27,6 +29,12 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
  */
 class RuntimeFactory
 {
+    /**
+     * @Flow\Inject
+     * @var ServerRequestFactoryInterface
+     */
+    protected $serverRequestFactory;
+
     /**
      * @param array $fusionConfiguration
      * @param ControllerContext $controllerContext
@@ -46,7 +54,7 @@ class RuntimeFactory
      */
     protected function createControllerContextFromEnvironment()
     {
-        $httpRequest = Request::createFromEnvironment();
+        $httpRequest = ServerRequest::fromGlobals();
 
         /** @var ActionRequest $request */
         $request = new ActionRequest($httpRequest);
