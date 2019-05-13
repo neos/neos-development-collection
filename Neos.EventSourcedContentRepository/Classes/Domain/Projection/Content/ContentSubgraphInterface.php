@@ -27,15 +27,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
  */
 interface ContentSubgraphInterface extends \JsonSerializable
 {
-    /**
-     * TODO: TraverseHierarchy refactoring!
-     *
-     * @param NodeInterface $startNode
-     * @param HierarchyTraversalDirection $direction
-     * @param NodeTypeConstraints $nodeTypeConstraints
-     * @param callable $callback
-     */
-    public function traverseHierarchy(NodeInterface $startNode, HierarchyTraversalDirection $direction, NodeTypeConstraints $nodeTypeConstraints, callable $callback): void;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
@@ -92,13 +83,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @return NodeInterface|null
      */
     public function findChildNodeConnectedThroughEdgeName(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $edgeName): ?NodeInterface;
-
-    /**
-     * @param NodeAggregateIdentifier $parentAggregateIdentifier
-     * @param NodeName $edgeName
-     * @return NodeInterface|null
-     */
-    public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(NodeAggregateIdentifier $parentAggregateIdentifier, NodeName $edgeName): ?NodeInterface;
 
     /**
      * @param NodeAggregateIdentifier $sibling

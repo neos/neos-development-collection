@@ -18,7 +18,6 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
@@ -524,39 +523,6 @@ WHERE
     }
 
     /**
-     * @param NodeAggregateIdentifier $parentAggregateIdentifier
-     * @param NodeName $edgeName
-     * @return NodeInterface|null
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
-     */
-    public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(
-        NodeAggregateIdentifier $parentAggregateIdentifier,
-        NodeName $edgeName
-    ): ?NodeInterface {
-        $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
- WHERE p.nodeaggregateidentifier = :parentNodeAggregateIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash = :dimensionSpacePointHash
- AND h.name = :edgeName
- ORDER BY h.position LIMIT 1',
-            [
-                'parentNodeAggregateIdentifier' => (string)$parentAggregateIdentifier,
-                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                'edgeName' => (string)$edgeName
-            ]
-        )->fetch();
-
-        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData) : null;
-    }
-
-    /**
      * @param NodeAggregateIdentifier $sibling
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
@@ -705,43 +671,6 @@ WHERE
       WHERE sib.nodeaggregateidentifier = :siblingNodeAggregateIdentifier
       AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
   )';
-    }
-
-    /**
-     * @param NodeInterface $startNode
-     * @param HierarchyTraversalDirection $direction
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param callable $callback
-     * @throws \Exception
-     */
-    public function traverseHierarchy(
-        NodeInterface $startNode,
-        HierarchyTraversalDirection $direction = null,
-        NodeTypeConstraints $nodeTypeConstraints = null,
-        callable $callback
-    ): void {
-        if (is_null($direction)) {
-            $direction = HierarchyTraversalDirection::down();
-        }
-
-        $continueTraversal = $callback($startNode);
-        if ($continueTraversal) {
-            if ($direction->isUp()) {
-                $parentNode = $this->findParentNode($startNode->getNodeAggregateIdentifier());
-                if ($parentNode && ($nodeTypeConstraints === null || $nodeTypeConstraints->matches($parentNode->getNodeTypeName()))) {
-                    $this->traverseHierarchy($parentNode, $direction, $nodeTypeConstraints, $callback);
-                }
-            } elseif ($direction->isDown()) {
-                foreach ($this->findChildNodes(
-                    $startNode->getNodeAggregateIdentifier(),
-                    $nodeTypeConstraints,
-                    null,
-                    null
-                ) as $childNode) {
-                    $this->traverseHierarchy($childNode, $direction, $nodeTypeConstraints, $callback);
-                }
-            }
-        }
     }
 
     protected function getDatabaseConnection(): Connection

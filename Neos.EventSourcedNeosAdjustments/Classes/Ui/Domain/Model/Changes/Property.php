@@ -215,12 +215,26 @@ class Property extends AbstractChange
             );
 
             // TODO: Make changing the node type a separated, specific/defined change operation.
-            if ($propertyName === '_nodeType') {
-                throw new \Exception("TODO FIX");
-                $nodeType = $this->nodeTypeManager->getNodeType($value);
-                $node = $this->changeNodeType($node, $nodeType);
-            } elseif ($propertyName{0} === '_') {
-                if ($propertyName === '_hidden') {
+            if ($propertyName{0} !== '_' || $propertyName === '_hiddenInIndex') {
+                $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
+                $command = new SetNodeProperties(
+                    $node->getContentStreamIdentifier(),
+                    $node->getNodeAggregateIdentifier(),
+                    $node->getOriginDimensionSpacePoint(),
+                    PropertyValues::fromArray(
+                        [
+                            $propertyName => new PropertyValue($value, $propertyType)
+                        ]
+                    )
+                );
+                $this->nodeCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
+            } else {
+                // property starts with "_"
+                if ($propertyName === '_nodeType') {
+                    throw new \Exception("TODO FIX");
+                    $nodeType = $this->nodeTypeManager->getNodeType($value);
+                    $node = $this->changeNodeType($node, $nodeType);
+                } elseif ($propertyName === '_hidden') {
                     if ($value === true) {
                         $command = new DisableNodeAggregate(
                             $node->getContentStreamIdentifier(),
@@ -241,21 +255,7 @@ class Property extends AbstractChange
                     }
                 } else {
                     throw new \Exception("TODO FIX");
-                    ObjectAccess::setProperty($node, substr($propertyName, 1), $value);
                 }
-            } else {
-                $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
-                $command = new SetNodeProperties(
-                    $node->getContentStreamIdentifier(),
-                    $node->getNodeAggregateIdentifier(),
-                    $node->getOriginDimensionSpacePoint(),
-                    PropertyValues::fromArray(
-                        [
-                            $propertyName => new PropertyValue($value, $propertyType)
-                        ]
-                    )
-                );
-                $this->nodeCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
             }
 
             $this->updateWorkspaceInfo();

@@ -16,13 +16,12 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeTreeTraversalHelper;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
@@ -422,15 +421,15 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
         // the input node is allowed to be seen and we must generate the full path here.
         // To disallow showing a node actually hidden itself has to be ensured in matching
         // a request path, not in building one.
-
-        // TODO: Hidden handling should be solved in the CR itself; not here in the routing.
         $requestPathSegments = [];
         $this->securityContext->withoutAuthorizationChecks(function () use ($contentSubgraph, $node, &$requestPathSegments) {
-            $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(true),
+            NodeTreeTraversalHelper::traverseUpUntilCondition(
+                $contentSubgraph,
+                $node,
                 function (NodeInterface $node) use (&$requestPathSegments, $contentSubgraph) {
                     if (!$node->hasProperty('uriPathSegment')) {
                         throw new MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
-                            $node->getNodeIdentifier()), 1415020326);
+                            $node->getNodeAggregateIdentifier()), 1415020326);
                     }
 
                     $parentNode = $contentSubgraph->findParentNode($node->getNodeAggregateIdentifier());
@@ -441,7 +440,8 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
 
                     $requestPathSegments[] = $node->getProperty('uriPathSegment');
                     return true;
-                });
+                }
+            );
         });
 
         return implode('/', array_reverse($requestPathSegments));

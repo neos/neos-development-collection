@@ -15,6 +15,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
@@ -80,6 +82,95 @@ class ChangeProjector implements ProjectorInterface
         $this->markAsMoved($event->getContentStreamIdentifier(), $event->getNodeIdentifier());
     }*/
 
+    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event)
+    {
+        $this->transactional(function () use ($event) {
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($event->getContentStreamIdentifier());
+            if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
+                // Workspace is the live workspace (has no base workspace); we do not need to do anything
+                return;
+            }
+
+            $this->getDatabaseConnection()->executeUpdate(
+                'DELETE FROM neos_contentrepository_projection_change n
+                    WHERE
+                        n.contentStreamIdentifier = :contentStreamIdentifier
+                        AND n.nodeAggregateIdentifier = :nodeAggregateIdentifier
+                    ',
+                [
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
+                    'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
+                ]
+            );
+
+            $this->getDatabaseConnection()->executeUpdate(
+                'INSERT INTO neos_contentrepository_projection_change (contentStreamIdentifier, nodeAggregateIdentifier, deleted)
+                        VALUES (
+                            :contentStreamIdentifier,
+                            :nodeAggregateIdentifier,
+                            1
+                        )
+                    ',
+                [
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
+                    'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
+                ]
+            );
+        });
+    }
+
+
+    public function whenNodesWereRemovedFromAggregate(NodesWereRemovedFromAggregate $event)
+    {
+        $this->transactional(function () use ($event) {
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($event->getContentStreamIdentifier());
+            if ($workspace instanceof Workspace && $workspace->getBaseWorkspaceName() === null) {
+                // Workspace is the live workspace (has no base workspace); we do not need to do anything
+                return;
+            }
+
+            $this->getDatabaseConnection()->executeUpdate(
+                'DELETE FROM neos_contentrepository_projection_change
+                    WHERE
+                        contentStreamIdentifier = :contentStreamIdentifier
+                        AND nodeAggregateIdentifier = :nodeAggregateIdentifier
+                        AND originDimensionSpacePointHash IN (:dimensionSpacePointHashes)
+                    ',
+                [
+                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
+                    'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
+                    'dimensionSpacePointHashes' => $event->getDimensionSpacePointSet()->getPointHashes(),
+                ],
+                [
+                    'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+                ]
+            );
+
+            foreach ($event->getDimensionSpacePointSet() as $dimensionSpacePoint) {
+                /* @var $dimensionSpacePoint DimensionSpacePoint */
+                $this->getDatabaseConnection()->executeUpdate(
+                    'INSERT INTO neos_contentrepository_projection_change (contentStreamIdentifier, nodeAggregateIdentifier, originDimensionSpacePoint, originDimensionSpacePointHash, deleted, changed, moved)
+                        VALUES (
+                            :contentStreamIdentifier,
+                            :nodeAggregateIdentifier,
+                            :originDimensionSpacePoint,
+                            :originDimensionSpacePointHash,
+                            1,
+                            0,
+                            0
+                        )
+                    ',
+                    [
+                        'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier(),
+                        'nodeAggregateIdentifier' => (string)$event->getNodeAggregateIdentifier(),
+                        'originDimensionSpacePoint' => json_encode($dimensionSpacePoint),
+                        'originDimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
+                    ]
+                );
+            }
+        });
+    }
+
     protected function markAsChanged(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint)
     {
         $this->transactional(function () use ($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) {
@@ -96,6 +187,7 @@ class ChangeProjector implements ProjectorInterface
                     $originDimensionSpacePoint,
 
                     true,
+                    false,
                     false
                 );
                 $change->addToDatabase($this->getDatabaseConnection());
@@ -121,7 +213,8 @@ class ChangeProjector implements ProjectorInterface
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
                     false,
-                    true
+                    true,
+                    false
                 );
                 $change->addToDatabase($this->getDatabaseConnection());
             } else {

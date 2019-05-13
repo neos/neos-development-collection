@@ -12,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
@@ -122,7 +121,7 @@ class NodeUriImplementation extends AbstractFusionObject
     /**
      * @return ContentSubgraphInterface
      */
-    public function getSubgraph(): ContentSubgraphInterface
+    public function getSubgraph(): ?ContentSubgraphInterface
     {
         return $this->fusionValue('subgraph');
     }
@@ -136,7 +135,7 @@ class NodeUriImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $node = $this->getNode();
-        if ($node instanceof NodeInterface) {
+        if ($node instanceof TraversableNodeInterface) {
             $nodeAddress = $this->nodeAddressFactory->createFromTraversableNode($node);
             $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, $node->getNodeAggregateIdentifier());
         } elseif ($node === '~') {

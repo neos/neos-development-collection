@@ -6,7 +6,6 @@ prototype(Neos.Fusion:GlobalCacheIdentifiers) {
 
 prototype(Neos.Neos:NodeUri) {
     @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\NodeUriImplementation'
-    subgraph = ${subgraph}
 }
 
 prototype(Neos.Neos:DimensionsMenuItems) {
@@ -25,7 +24,7 @@ prototype(Neos.NodeTypes.Navigation:Navigation) {
 
 
 prototype(Neos.Neos:ContentCollection) {
-    @context.node = ${Neos.EventSourcedNeosAdjustments.Node.nearestContentCollection(node, this.nodePath)}
+    @context.node = ${Neos.EventSourcedNeosAdjustments.Node.nearestContentCollection(node, this.nodePath, subgraph)}
     // TODO FIX ME HERE!!!
     @cache.maximumLifetime = ${null}
 }

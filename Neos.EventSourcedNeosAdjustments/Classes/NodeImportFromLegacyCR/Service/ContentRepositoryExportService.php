@@ -398,6 +398,10 @@ class ContentRepositoryExportService
             $properties[$propertyName] = new PropertyValue($propertyValue, $type);
         }
 
+        if ($nodeData->isHiddenInIndex()) {
+            $properties['_hiddenInIndex'] = new PropertyValue($nodeData->isHiddenInIndex(), 'boolean');
+        }
+
         return $properties;
     }
 
