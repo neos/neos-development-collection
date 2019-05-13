@@ -1125,13 +1125,10 @@ trait EventSourcedTrait
      */
     public function iExpectThisNodeAggregateToOccupyDimensionSpacePoints(string $rawDimensionSpacePoints): void
     {
-        $dimensionSpacePoints = [];
-        foreach (json_decode($rawDimensionSpacePoints, true) as $coordinates) {
-            $dimensionSpacePoints[] = new DimensionSpacePoint($coordinates);
-        }
-        $expectedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
-
-        Assert::assertEquals($this->currentNodeAggregate->getOccupiedDimensionSpacePoints(), $expectedDimensionSpacePoints);
+        Assert::assertEquals(
+            $this->unserializeDimensionSpacePointSet($rawDimensionSpacePoints),
+            $this->currentNodeAggregate->getOccupiedDimensionSpacePoints()
+        );
     }
 
     /**
@@ -1140,33 +1137,27 @@ trait EventSourcedTrait
      */
     public function iExpectThisNodeAggregateToCoverDimensionSpacePoints(string $rawDimensionSpacePoints): void
     {
-        $dimensionSpacePoints = [];
-        foreach (json_decode($rawDimensionSpacePoints, true) as $coordinates) {
-            $dimensionSpacePoints[] = new DimensionSpacePoint($coordinates);
-        }
-        $expectedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
-
+        $expectedDimensionSpacePointSet = $this->unserializeDimensionSpacePointSet($rawDimensionSpacePoints);
         Assert::assertEquals(
-            $expectedDimensionSpacePoints,
+            $expectedDimensionSpacePointSet,
             $this->currentNodeAggregate->getCoveredDimensionSpacePoints(),
-            'Expected covered dimension space point set ' . json_encode($expectedDimensionSpacePoints)
-            . ', got ' . json_encode($this->currentNodeAggregate->getCoveredDimensionSpacePoints())
+            'Expected covered dimension space point set ' . $expectedDimensionSpacePointSet
+            . ', got ' . $this->currentNodeAggregate->getCoveredDimensionSpacePoints()
         );
     }
 
     /**
-     * @Then /^I expect this node aggregate disable dimension space points (.*)$/
+     * @Then /^I expect this node aggregate to disable dimension space points (.*)$/
      * @param string $rawDimensionSpacePoints
      */
     public function iExpectThisNodeAggregateToDisableDimensionSpacePoints(string $rawDimensionSpacePoints): void
     {
         $expectedDimensionSpacePointSet = $this->unserializeDimensionSpacePointSet($rawDimensionSpacePoints);
-
         Assert::assertEquals(
             $expectedDimensionSpacePointSet,
-            $this->currentNodeAggregate->getDisabledDimensionSpacePounts(),
-            'Expected disabled dimension space point set ' . json_encode($expectedDimensionSpacePointSet)
-            . ', got ' . json_encode($this->currentNodeAggregate->getCoveredDimensionSpacePoints())
+            $this->currentNodeAggregate->getDisabledDimensionSpacePoints(),
+            'Expected disabled dimension space point set ' . $expectedDimensionSpacePointSet
+            . ', got ' . $this->currentNodeAggregate->getDisabledDimensionSpacePoints()
         );
     }
 

@@ -70,6 +70,10 @@ interface ReadableNodeAggregateInterface
 
     public function getNodeByCoveredDimensionSpacePoint(DimensionSpacePoint $coveredDimensionSpacePoint): NodeInterface;
 
+    public function getDisabledDimensionSpacePoints(): DimensionSpacePointSet;
+
+    public function disablesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool;
+
     public function getClassification(): NodeAggregateClassification;
 
     public function isRoot(): bool;
