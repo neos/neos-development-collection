@@ -26,7 +26,7 @@ to the existing issue instead.
 ### Affected Versions
 
 <!--
-If you want to be a super-hero, try to find out the olded supported version
+If you want to be a super-hero, try to find out the oldest supported version
 affected by the bug you describe. Thanks!
 -->
 
