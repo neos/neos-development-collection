@@ -17,8 +17,8 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeWasDisabled;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -61,14 +61,14 @@ class ChangeProjector implements ProjectorInterface
         $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getOriginDimensionSpacePoint());
     }
 
-    public function whenNodeWasDisabled(NodeWasDisabled $event)
+    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event)
     {
         foreach ($event->getAffectedDimensionSpacePoints()->getPoints() as $dimensionSpacePoint) {
             $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $dimensionSpacePoint);
         }
     }
 
-    public function whenNodeWasShown(NodeWasShown $event)
+    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event)
     {
         foreach ($event->getAffectedDimensionSpacePoints()->getPoints() as $dimensionSpacePoint) {
             $this->markAsChanged($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $dimensionSpacePoint);

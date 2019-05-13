@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,44 +12,55 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDisablingStrategy;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
-final class ShowNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
+/**
+ * Disable the given node aggregate in the given content stream in a dimension space point using a given strategy
+ */
+final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
     private $contentStreamIdentifier;
 
     /**
-     * Node Aggregate identifier which the user intended to show
+     * Node aggregate identifier of the node the user intends to disable
      *
      * @var NodeAggregateIdentifier
      */
     private $nodeAggregateIdentifier;
 
     /**
-     * @var DimensionSpacePointSet
+     * One of the visible dimension space points of the node aggregate in which the user intends to disable it
+     *
+     * @var DimensionSpacePoint
      */
-    private $affectedDimensionSpacePoints;
+    private $coveredDimensionSpacePoint;
 
     /**
-     * ShowNode constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePointSet $affectedDimensionSpacePoints
+     * The strategy the user chose to determine which specialization variants will also be disabled
+     *
+     * @var NodeAggregateDisablingStrategy
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
-    {
+    private $nodeAggregateDisablingStrategy;
+
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $coveredDimensionSpacePoint,
+        NodeAggregateDisablingStrategy $nodeDisablingStrategy
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->affectedDimensionSpacePoints = $affectedDimensionSpacePoints;
+        $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
+        $this->nodeAggregateDisablingStrategy = $nodeDisablingStrategy;
     }
 
     public static function fromArray(array $array): self
@@ -57,32 +68,29 @@ final class ShowNode implements \JsonSerializable, CopyableAcrossContentStreamsI
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new DimensionSpacePointSet($array['affectedDimensionSpacePoints'])
+            new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
+            NodeAggregateDisablingStrategy::fromString($array['nodeDisablingStrategy'])
         );
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return DimensionSpacePointSet
-     */
-    public function getAffectedDimensionSpacePoints(): DimensionSpacePointSet
+    public function getCoveredDimensionSpacePoint(): DimensionSpacePoint
     {
-        return $this->affectedDimensionSpacePoints;
+        return $this->coveredDimensionSpacePoint;
+    }
+
+    public function getNodeAggregateDisablingStrategy(): NodeAggregateDisablingStrategy
+    {
+        return $this->nodeAggregateDisablingStrategy;
     }
 
     public function jsonSerialize(): array
@@ -90,16 +98,18 @@ final class ShowNode implements \JsonSerializable, CopyableAcrossContentStreamsI
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
-            'affectedDimensionSpacePoints' => $this->affectedDimensionSpacePoints,
+            'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
+            'nodeAggregateDisablingStrategy' => $this->nodeAggregateDisablingStrategy,
         ];
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new ShowNode(
+        return new static(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
-            $this->affectedDimensionSpacePoints
+            $this->coveredDimensionSpacePoint,
+            $this->nodeAggregateDisablingStrategy
         );
     }
 
@@ -107,7 +117,7 @@ final class ShowNode implements \JsonSerializable, CopyableAcrossContentStreamsI
     {
         return (
             (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
-            && $this->getAffectedDimensionSpacePoints()->contains($nodeAddress->getDimensionSpacePoint())
+            && $this->getCoveredDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
             && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
         );
     }

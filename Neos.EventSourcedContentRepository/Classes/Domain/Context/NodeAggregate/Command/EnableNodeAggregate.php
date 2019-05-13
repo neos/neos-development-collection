@@ -17,10 +17,13 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeDisablingStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDisablingStrategy;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
-final class DisableNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
+/**
+ * Enable the given node aggregate in the given content stream in a dimension space point using a given strategy
+ */
+final class EnableNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -28,14 +31,14 @@ final class DisableNode implements \JsonSerializable, CopyableAcrossContentStrea
     private $contentStreamIdentifier;
 
     /**
-     * Node aggregate identifier of the node the user intends to disable
+     * Node aggregate identifier of the node the user intends to enable
      *
      * @var NodeAggregateIdentifier
      */
     private $nodeAggregateIdentifier;
 
     /**
-     * One of the visible dimension space points of the node aggregate in which the user intends to disable it
+     * The covered dimension space points of the node aggregate in which the user intends to enable it
      *
      * @var DimensionSpacePoint
      */
@@ -44,20 +47,20 @@ final class DisableNode implements \JsonSerializable, CopyableAcrossContentStrea
     /**
      * The strategy the user chose to determine which specialization variants will also be disabled
      *
-     * @var NodeDisablingStrategy
+     * @var NodeAggregateDisablingStrategy
      */
-    private $nodeDisablingStrategy;
+    private $nodeAggregateDisablingStrategy;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $originDimensionSpacePoint,
-        NodeDisablingStrategy $nodeDisablingStrategy
+        DimensionSpacePoint $coveredDimensionSpacePoint,
+        NodeAggregateDisablingStrategy $nodeAggregateDisablingStrategy
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->coveredDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->nodeDisablingStrategy = $nodeDisablingStrategy;
+        $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
+        $this->nodeAggregateDisablingStrategy = $nodeAggregateDisablingStrategy;
     }
 
     public static function fromArray(array $array): self
@@ -66,7 +69,7 @@ final class DisableNode implements \JsonSerializable, CopyableAcrossContentStrea
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
-            NodeDisablingStrategy::fromString($array['nodeDisablingStrategy'])
+            NodeAggregateDisablingStrategy::fromString($array['nodeDisablingStrategy'])
         );
     }
 
@@ -85,9 +88,9 @@ final class DisableNode implements \JsonSerializable, CopyableAcrossContentStrea
         return $this->coveredDimensionSpacePoint;
     }
 
-    public function getNodeDisablingStrategy(): NodeDisablingStrategy
+    public function getNodeAggregateDisablingStrategy(): NodeAggregateDisablingStrategy
     {
-        return $this->nodeDisablingStrategy;
+        return $this->nodeAggregateDisablingStrategy;
     }
 
     public function jsonSerialize(): array
@@ -96,17 +99,17 @@ final class DisableNode implements \JsonSerializable, CopyableAcrossContentStrea
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
-            'nodeDisablingStrategy' => $this->nodeDisablingStrategy,
+            'nodeAggregateDisablingStrategy' => $this->nodeAggregateDisablingStrategy
         ];
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new static(
+        return new EnableNodeAggregate(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->coveredDimensionSpacePoint,
-            $this->nodeDisablingStrategy
+            $this->nodeAggregateDisablingStrategy
         );
     }
 

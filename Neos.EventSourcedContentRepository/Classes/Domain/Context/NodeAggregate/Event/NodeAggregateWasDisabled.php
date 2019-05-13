@@ -20,25 +20,29 @@ use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 
 /**
- * A node was disabled
+ * A node aggregate was disabled
  *
  * @Flow\Proxy(false)
  */
-final class NodeWasDisabled implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateWasDisabled implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
+     * The identifier of the content stream the node aggregate was disabled in
+     *
      * @var ContentStreamIdentifier
      */
     private $contentStreamIdentifier;
 
     /**
-     * Node Aggregate identifier which the user intended to hide
+     * The identifier of the node Aagregate that was disabled
      *
      * @var NodeAggregateIdentifier
      */
     private $nodeAggregateIdentifier;
 
     /**
+     * The dimension space points the node aggregate was disabled in
+     *
      * @var DimensionSpacePointSet
      */
     private $affectedDimensionSpacePoints;
@@ -70,7 +74,7 @@ final class NodeWasDisabled implements DomainEventInterface, CopyableAcrossConte
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new NodeWasDisabled(
+        return new NodeAggregateWasDisabled(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->affectedDimensionSpacePoints

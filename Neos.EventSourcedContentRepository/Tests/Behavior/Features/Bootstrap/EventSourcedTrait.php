@@ -14,6 +14,7 @@ declare(strict_types=1);
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -27,12 +28,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet;
@@ -43,7 +44,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpa
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategyIsInvalid;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
@@ -343,6 +343,19 @@ trait EventSourcedTrait
         $this->publishEvent('Neos.EventSourcedContentRepository:NodeReferencesWereSet', $streamName->getEventStreamName(), $eventPayload);
     }
 
+    /**
+     * @Given /^the event NodeAggregateWasDisabled was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theEventNodeAggregateWasDisabledWasPublishedWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
+
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWasDisabled', $streamName->getEventStreamName(), $eventPayload);
+    }
     /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
      * @param $eventType
@@ -725,27 +738,54 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^the command DisableNode is executed with payload:$/
+     * @Given /^the command DisableNodeAggregate is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */
-    public function theCommandDisableNodeIsExecutedWithPayload(TableNode $payloadTable): void
+    public function theCommandDisableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $command = DisableNode::fromArray($commandArguments);
+        $command = DisableNodeAggregate::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleDisableNode($command);
+            ->handleDisableNodeAggregate($command);
     }
 
     /**
-     * @Given /^the command DisableNode is executed with payload and exceptions are caught:$/
+     * @Given /^the command DisableNodeAggregate is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      */
-    public function theCommandDisableNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    public function theCommandDisableNodeAggregateIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
     {
         try {
-            $this->theCommandDisableNodeIsExecutedWithPayload($payloadTable);
+            $this->theCommandDisableNodeAggregateIsExecutedWithPayload($payloadTable);
+        } catch (Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
+     * @Given /^the command EnableNodeAggregate is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandEnableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $command = EnableNodeAggregate::fromArray($commandArguments);
+
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
+            ->handleEnableNodeAggregate($command);
+    }
+
+    /**
+     * @Given /^the command EnableNodeAggregate is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     */
+    public function theCommandEnableNodeAggregateIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandEnableNodeAggregateIsExecutedWithPayload($payloadTable);
         } catch (Exception $exception) {
             $this->lastCommandException = $exception;
         }
@@ -883,17 +923,17 @@ trait EventSourcedTrait
                     NodeCommandHandler::class,
                     'handleSetNodeProperties'
                 ];
-            case 'DisableNode':
+            case 'DisableNodeAggregate':
                 return [
-                    DisableNode::class,
+                    DisableNodeAggregate::class,
                     NodeAggregateCommandHandler::class,
-                    'handleDisableNode'
+                    'handleDisableNodeAggregate'
                 ];
-            case 'ShowNode':
+            case 'EnableNodeAggregate':
                 return [
-                    ShowNode::class,
-                    NodeCommandHandler::class,
-                    'handleShowNode'
+                    EnableNodeAggregate::class,
+                    NodeAggregateCommandHandler::class,
+                    'handleEnableNodeAggregate'
                 ];
             case 'MoveNode':
                 return [

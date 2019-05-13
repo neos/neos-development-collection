@@ -16,12 +16,12 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeDisablingStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDisablingStrategy;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -222,16 +222,16 @@ class Property extends AbstractChange
             } elseif ($propertyName{0} === '_') {
                 if ($propertyName === '_hidden') {
                     if ($value === true) {
-                        $command = new DisableNode(
+                        $command = new DisableNodeAggregate(
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
                             $node->getOriginDimensionSpacePoint(),
-                            NodeDisablingStrategy::gatherAllSpecializations()
+                            NodeAggregateDisablingStrategy::gatherAllSpecializations()
                         );
-                        $this->nodeAggregateCommandHandler->handleDisableNode($command)->blockUntilProjectionsAreUpToDate();
+                        $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                     } else {
                         // unhide
-                        $command = new ShowNode(
+                        $command = new EnableNodeAggregate(
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
                             // TODO: what do we want to unhide? I.e. including NESTED dimensions?

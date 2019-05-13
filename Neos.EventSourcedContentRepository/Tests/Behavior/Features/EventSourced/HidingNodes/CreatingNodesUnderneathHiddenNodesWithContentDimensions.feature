@@ -63,8 +63,7 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | sourceOrigin | {"language": "de"}    |
       | specializationOrigin    | {"language": "gsw"}   |
       | specializationCoverage  | [{"language": "gsw"}] |
-    And the graph projection is fully up to date
-    And the command "DisableNode" is executed with payload:
+    And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                                     |
       | contentStreamIdentifier      | "cs-identifier"                           |
       | nodeAggregateIdentifier      | "the-great-nodini"                        |

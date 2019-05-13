@@ -21,8 +21,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemove
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeWasDisabled;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -562,15 +562,15 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     }
 
     /**
-     * @param NodeWasDisabled $event
+     * @param NodeAggregateWasDisabled $event
      * @throws \Throwable
      */
-    public function whenNodeWasDisabled(NodeWasDisabled $event)
+    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event)
     {
         $this->transactional(function () use ($event) {
             // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
             $this->getDatabaseConnection()->executeUpdate('
--- GraphProjector::whenNodeWasHidden
+-- GraphProjector::whenNodeAggregateWasDisabled
 insert ignore into neos_contentgraph_restrictionrelation
 (
     -- we build a recursive tree
@@ -630,10 +630,10 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param NodeWasShown $event
+     * @param NodeAggregateWasEnabled $event
      * @throws \Throwable
      */
-    public function whenNodeWasShown(NodeWasShown $event)
+    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event)
     {
         $this->transactional(function () use ($event) {
             $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getAffectedDimensionSpacePoints());

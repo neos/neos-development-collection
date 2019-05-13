@@ -17,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The disabling strategy for node aggregates as selected when creating commands.
- * Used for building restriction relations to other node aggregates
+ * Used for calculate the affected dimension space points to build restriction relations to other node aggregates.
  *
  * - `scatter` means that different nodes within the aggregate may be individually restricted.
  * - `gatherVirtualSpecializations` means that all virtual specializations of the node will be restricted alongside with it
@@ -26,11 +26,21 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodeDisablingStrategy implements \JsonSerializable
+final class NodeAggregateDisablingStrategy implements \JsonSerializable
 {
-    const STRATEGY_SCATTER = 'scatter';
-    const STRATEGY_GATHER_VIRTUAL_SPECIALIZATIONS = 'gatherVirtualSpecializations';
-    const STRATEGY_GATHER_ALL_SPECIALIZATIONS = 'gatherAllSpecializations';
+    /**
+     * The "only this" strategy, meaning only the given dimension space point is affected
+     */
+    const STRATEGY_ONLY_THIS = 'onlyThis';
+    /**
+     * The "virtual specializations" strategy, meaning only the specializations covered but unoccupied by this node aggregate are affected
+     */
+    const STRATEGY_VIRTUAL_SPECIALIZATIONS = 'virtualSpecializations';
+    /**
+     * The "all specializations" strategy, meaning all covered specializations of
+     */
+    const STRATEGY_ALL_SPECIALIZATIONS = 'allSpecializations';
+    const STRATEGY_ALL_VARIANTS = 'allVariants';
 
     /**
      * @var string
@@ -42,19 +52,19 @@ final class NodeDisablingStrategy implements \JsonSerializable
         $this->strategy = $strategy;
     }
 
-    public static function scatter(): self
+    public static function onlyThis(): self
     {
-        return new static(static::STRATEGY_SCATTER);
+        return new static(static::STRATEGY_ONLY_THIS);
     }
 
     public static function gatherVirtualSpecializations(): self
     {
-        return new static(static::STRATEGY_GATHER_VIRTUAL_SPECIALIZATIONS);
+        return new static(static::STRATEGY_VIRTUAL_SPECIALIZATIONS);
     }
 
     public static function gatherAllSpecializations(): self
     {
-        return new static(static::STRATEGY_GATHER_ALL_SPECIALIZATIONS);
+        return new static(static::STRATEGY_ALL_SPECIALIZATIONS);
     }
 
     /**
@@ -64,9 +74,9 @@ final class NodeDisablingStrategy implements \JsonSerializable
      */
     public static function fromString(string $serialization): self
     {
-        if (!$serialization === self::STRATEGY_SCATTER
-            && !$serialization === self::STRATEGY_GATHER_VIRTUAL_SPECIALIZATIONS
-            && !$serialization === self::STRATEGY_GATHER_ALL_SPECIALIZATIONS
+        if (!$serialization === self::STRATEGY_ONLY_THIS
+            && !$serialization === self::STRATEGY_VIRTUAL_SPECIALIZATIONS
+            && !$serialization === self::STRATEGY_ALL_SPECIALIZATIONS
         ) {
             throw new NodeDisablingStrategyIsInvalid('Given node disabling strategy "' . $serialization . '" is invalid, must be one of the defined constants.', 1555074043);
         }
@@ -76,17 +86,17 @@ final class NodeDisablingStrategy implements \JsonSerializable
 
     public function isScatter(): bool
     {
-        return $this->strategy === self::STRATEGY_SCATTER;
+        return $this->strategy === self::STRATEGY_ONLY_THIS;
     }
 
     public function isGatherVirtualSpecializations(): bool
     {
-        return $this->strategy === self::STRATEGY_GATHER_VIRTUAL_SPECIALIZATIONS;
+        return $this->strategy === self::STRATEGY_VIRTUAL_SPECIALIZATIONS;
     }
 
     public function isGatherAllSpecializations(): bool
     {
-        return $this->strategy === self::STRATEGY_GATHER_ALL_SPECIALIZATIONS;
+        return $this->strategy === self::STRATEGY_ALL_SPECIALIZATIONS;
     }
 
     public function getStrategy(): string

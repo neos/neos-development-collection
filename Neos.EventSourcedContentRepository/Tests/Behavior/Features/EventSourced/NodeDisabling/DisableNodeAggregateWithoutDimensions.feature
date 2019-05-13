@@ -1,7 +1,7 @@
 @fixtures
-Feature: Disable a node
+Feature: Disable a node aggregate
 
-  As a user of the CR I want to disable a node and expect its descendants to also be disabled.
+  As a user of the CR I want to disable a node aggregate and expect its descendants to also be disabled.
 
   These are the test cases without dimensions being involved
 
@@ -77,15 +77,15 @@ Feature: Disable a node
     And the graph projection is fully up to date
 
   Scenario: Disable node with arbitrary strategy since dimensions are not involved
-    When the command DisableNode is executed with payload:
+    When the command DisableNodeAggregate is executed with payload:
       | Key                        | Value                    |
       | contentStreamIdentifier    | "cs-identifier"          |
       | nodeAggregateIdentifier    | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint | {}                       |
-      | nodeDisablingStrategy      | "scatter"                |
+      | nodeDisablingStrategy      | "allVariants"            |
 
     Then I expect exactly 8 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 7 is of type "Neos.EventSourcedContentRepository:NodeWasDisabled" with payload:
+    And event at index 7 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasDisabled" with payload:
       | Key                          | Expected                 |
       | contentStreamIdentifier      | "cs-identifier"          |
       | nodeAggregateIdentifier      | "sir-david-nodenborough" |
@@ -161,23 +161,19 @@ Feature: Disable a node
     And I expect this node to have the preceding siblings ["preceding-nodenborough"]
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
-
   Scenario: Restore a hidden node by removing and recreating it
-    When the command DisableNode is executed with payload:
-      | Key                        | Value              |
-      | contentStreamIdentifier    | "cs-identifier"    |
-      | nodeAggregateIdentifier    | "nody-mc-nodeface" |
-      | coveredDimensionSpacePoint | {}                 |
-      | nodeDisablingStrategy      | "scatter"          |
-    And the graph projection is fully up to date
-
-    And the command RemoveNodeAggregate was published with payload:
+    Given the event NodeAggregateWasDisabled was published with payload:
+      | Key                          | Value              |
+      | contentStreamIdentifier      | "cs-identifier"    |
+      | nodeAggregateIdentifier      | "nody-mc-nodeface" |
+      | affectedDimensionSpacePoints | [{}]               |
+    And the event NodeAggregateWasRemoved was published with payload:
       | Key                     | Value              |
       | contentStreamIdentifier | "cs-identifier"    |
       | nodeAggregateIdentifier | "nody-mc-nodeface" |
     And the graph projection is fully up to date
 
-    And the command CreateNodeAggregateWithNode is executed with payload:
+    When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
@@ -195,7 +191,8 @@ Feature: Disable a node
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"succeeding-nodenborough", "originDimensionSpacePoint": {}} to exist in the content graph
     And I expect a node with identifier {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint": {}} to exist in the content graph
 
-    # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
+    And I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to disable dimension space points []
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}
     And VisibilityConstraints are set to "frontend"

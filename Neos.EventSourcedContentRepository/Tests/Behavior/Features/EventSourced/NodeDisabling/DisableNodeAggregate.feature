@@ -1,9 +1,11 @@
 @fixtures
 Feature: Disable a node
 
-  As a user of the CR I want to disable a node and expect its descendants to also be disabled.
+  As a user of the CR I want to disable a node aggregate and expect its descendants to also be disabled.
 
   These are the base test cases for the NodeAggregateCommandHandler to block invalid commands.
+
+  # @todo catch disabling of node aggregates in a non-covered dimension space point in the multidimensional case
 
   Background:
     Given I have no content dimensions
@@ -39,29 +41,45 @@ Feature: Disable a node
       | nodeAggregateClassification   | "regular"                                 |
     And the graph projection is fully up to date
 
-  Scenario: Try to hide a node in a non-existing content stream
-    When the command DisableNode is executed with payload and exceptions are caught:
+  Scenario: Try to disable a node aggregate in a non-existing content stream
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
       | Key                        | Value                    |
       | contentStreamIdentifier    | "i-do-not-exist"         |
       | nodeAggregateIdentifier    | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint | {}                       |
-      | nodeDisablingStrategy      | "scatter"                |
+      | nodeDisablingStrategy      | "allVariants"            |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
-  Scenario: Try to hide a node in a non-existing dimension space point
-    When the command DisableNode is executed with payload and exceptions are caught:
+  Scenario: Try to disable a node aggregate in a non-existing dimension space point
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
       | Key                        | Value                       |
       | contentStreamIdentifier    | "cs-identifier"             |
       | nodeAggregateIdentifier    | "sir-david-nodenborough"    |
       | coveredDimensionSpacePoint | {"undeclared": "undefined"} |
-      | nodeDisablingStrategy      | "scatter"                   |
+      | nodeDisablingStrategy      | "allVariants"               |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
-  Scenario: Try to hide a node in a non-existing node aggregate
-    When the command DisableNode is executed with payload and exceptions are caught:
+  Scenario: Try to disable a non-existing node aggregate
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
       | Key                        | Value            |
       | contentStreamIdentifier    | "cs-identifier"  |
       | nodeAggregateIdentifier    | "i-do-not-exist" |
       | coveredDimensionSpacePoint | {}               |
-      | nodeDisablingStrategy      | "scatter"        |
+      | nodeDisablingStrategy      | "allVariants"    |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
+
+  Scenario: Try to disable an already disabled node aggregate
+    Given the event NodeAggregateWasDisabled was published with payload:
+      | Key                          | Value                 |
+      | contentStreamIdentifier      | "cs-identifier"          |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | affectedDimensionSpacePoints | [{}]                     |
+    And the graph projection is fully up to date
+
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
+      | Key                        | Value                    |
+      | contentStreamIdentifier    | "cs-identifier"          |
+      | nodeAggregateIdentifier    | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint | {}                       |
+      | nodeDisablingStrategy      | "allVariants"            |
+    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDisablesDimensionSpacePoint"

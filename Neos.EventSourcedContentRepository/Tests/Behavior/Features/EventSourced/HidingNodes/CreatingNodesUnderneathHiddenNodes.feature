@@ -39,8 +39,7 @@ Feature: Creation of nodes underneath hidden nodes
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "text1"                                  |
       | nodeAggregateClassification   | "regular"                                |
-    And the graph projection is fully up to date
-    And the command "DisableNode" is executed with payload:
+    And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value              |
       | contentStreamIdentifier      | "cs-identifier"    |
       | nodeAggregateIdentifier      | "the-great-nodini" |
@@ -48,7 +47,7 @@ Feature: Creation of nodes underneath hidden nodes
     And the graph projection is fully up to date
 
   Scenario: When a new node is created underneath a hidden node, this one should be hidden as well
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
+    Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
       | nodeAggregateIdentifier       | "nodingers-cat"                          |
@@ -58,7 +57,6 @@ Feature: Creation of nodes underneath hidden nodes
       | parentNodeAggregateIdentifier | "the-great-nodini"                       |
       | nodeName                      | "text2"                                  |
       | nodeAggregateClassification   | "regular"                                |
-
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}

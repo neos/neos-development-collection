@@ -13,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a node aggregate disables a given dimension space point but wasn't expected to be
+ * The exception to be thrown if a node aggregate currently disables a given dimension space point but wasn't expected to do
  */
-final class NodeAggregateDisablesDimensionSpacePoint extends \DomainException
+final class NodeAggregateCurrentlyDisablesDimensionSpacePoint extends \DomainException
 {
 }

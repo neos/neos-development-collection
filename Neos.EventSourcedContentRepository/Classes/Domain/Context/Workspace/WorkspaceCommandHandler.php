@@ -20,12 +20,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNode;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
@@ -444,11 +444,11 @@ final class WorkspaceCommandHandler
             case SetNodeProperties::class:
                 return $this->nodeCommandHandler->handleSetNodeProperties($command);
                 break;
-            case DisableNode::class:
-                return $this->nodeAggregateCommandHandler->handleDisableNode($command);
+            case DisableNodeAggregate::class:
+                return $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command);
                 break;
-            case ShowNode::class:
-                return $this->nodeCommandHandler->handleShowNode($command);
+            case EnableNodeAggregate::class:
+                return $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command);
                 break;
             case SetNodeReferences::class:
                 return $this->nodeCommandHandler->handleSetNodeReferences($command);
