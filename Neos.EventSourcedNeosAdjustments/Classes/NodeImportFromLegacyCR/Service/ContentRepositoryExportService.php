@@ -253,7 +253,7 @@ class ContentRepositoryExportService
 
     protected function exportNodeData(NodeData $nodeData, &$nodeDatasToExportAtNextIteration)
     {
-        $nodePath = NodePath::fromString($nodeData->getPath());
+        $nodePath = NodePath::fromString(strtolower($nodeData->getPath()));
 
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($nodeData->getDimensionValues());
 
@@ -462,7 +462,7 @@ class ContentRepositoryExportService
         }
 
         while ($dimensionSpacePoint !== null) {
-            $key = $parentPath . '__' . $dimensionSpacePoint->getHash();
+            $key = strtolower($parentPath) . '__' . $dimensionSpacePoint->getHash();
             if (isset($this->nodeAggregateIdentifiers[$key])) {
                 return $this->nodeAggregateIdentifiers[$key];
             }
@@ -475,7 +475,7 @@ class ContentRepositoryExportService
 
     private function recordNodeAggregateIdentifierAndNodeType(NodePath $nodePath, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName)
     {
-        $key = $nodePath . '__' . $dimensionSpacePoint->getHash();
+        $key = strtolower($nodePath->jsonSerialize()) . '__' . $dimensionSpacePoint->getHash();
         if (isset($this->nodeAggregateIdentifiers[$key])) {
             throw new \RuntimeException('TODO: node identifier ' . $key . 'already known!!!');
         }

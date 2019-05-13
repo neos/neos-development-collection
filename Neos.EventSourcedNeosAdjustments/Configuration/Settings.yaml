@@ -3,6 +3,8 @@ Neos:
     contentDimensions:
       resolution:
         uriPathSegmentDelimiter: '_'
+    fusion:
+      enableObjectTreeCache: false
   Flow:
     http:
       chain:
@@ -18,6 +20,7 @@ Neos:
           'Neos\\EventSourcedContentRepository\\Domain\\Projection\\Content\\PropertyCollection': true
           'Neos\\Fusion\\FusionObjects\\Helpers\\FusionPathProxy': true
           'Neos\\ContentRepository\\Domain\\Service\\NodeTypeManager': true
+          'Neos\\ContentRepository\\DimensionSpace\\DimensionSpace\\DimensionSpacePoint.*': true
 
   Fusion:
     defaultContext:
@@ -75,3 +78,7 @@ Neos:
           'Neos.Neos.Ui:CreateInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Create
           'Neos.Neos.Ui:CreateAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CreateAfter
           'Neos.Neos.Ui:CreateBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CreateBefore
+          'Neos.Neos.Ui:RemoveNode': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\Remove
+          'Neos.Neos.Ui:MoveInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveInto
+          'Neos.Neos.Ui:MoveAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveAfter
+          'Neos.Neos.Ui:MoveBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveBefore

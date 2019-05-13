@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -80,7 +81,7 @@ final class ContentGraph implements ContentGraphInterface
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $originDimensionSpacePoint
      * @return NodeInterface|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function findNodeByIdentifiers(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -110,7 +111,7 @@ final class ContentGraph implements ContentGraphInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeTypeName $nodeTypeName
      * @return NodeAggregate|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      * @throws \Exception
      */
     public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): NodeAggregate
@@ -162,7 +163,7 @@ final class ContentGraph implements ContentGraphInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeAggregate|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      * @throws \Exception
      */
     public function findNodeAggregateByIdentifier(
@@ -189,7 +190,7 @@ final class ContentGraph implements ContentGraphInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return array|NodeAggregate[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      * @throws \Exception
      */
     public function findParentNodeAggregates(
@@ -220,7 +221,7 @@ final class ContentGraph implements ContentGraphInterface
      * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
      * @param DimensionSpacePoint $childOriginDimensionSpacePoint
      * @return NodeAggregate|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      * @throws \Exception
      */
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
@@ -259,7 +260,7 @@ final class ContentGraph implements ContentGraphInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @return array|NodeAggregate[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      * @throws \Exception
      */
     public function findChildNodeAggregates(
@@ -289,16 +290,14 @@ final class ContentGraph implements ContentGraphInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $name
-     * @return NodeAggregate|null
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws Domain\Context\NodeAggregate\ChildNodeAggregateIsAmbiguous
-     * @throws \Exception
+     * @return array
+     * @throws DBALException
      */
-    public function findChildNodeAggregateByName(
+    public function findChildNodeAggregatesByName(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $name
-    ): ?NodeAggregate {
+    ): array {
         $connection = $this->client->getConnection();
 
         $query = 'SELECT c.*, ch.name, ch.contentstreamidentifier, ch.dimensionspacepoint FROM neos_contentgraph_node p
@@ -317,22 +316,15 @@ final class ContentGraph implements ContentGraphInterface
         ];
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
-        if (empty($nodeRows)) {
-            return null;
-        }
 
-        try {
-            return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows);
-        } catch (Domain\Context\NodeAggregate\NodeAggregateIsAmbiguous $e) {
-            throw new Domain\Context\NodeAggregate\ChildNodeAggregateIsAmbiguous('Child node aggregate with name "' . $name . '" for parent node aggregate "' . $parentNodeAggregateIdentifier . '" is ambiguous.', 1552691409, $e);
-        }
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows);
     }
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @return array|NodeAggregate[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function findTetheredChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -367,7 +359,7 @@ final class ContentGraph implements ContentGraphInterface
      * @param DimensionSpacePoint $parentNodeDimensionSpacePoint
      * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
      * @return DimensionSpacePointSet
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getDimensionSpacePointsOccupiedByChildNodeName(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -408,7 +400,7 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param NodeInterface $node
      * @return DimensionSpacePointSet
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function findVisibleDimensionSpacePointsOfNode(NodeInterface $node): DimensionSpacePointSet
     {

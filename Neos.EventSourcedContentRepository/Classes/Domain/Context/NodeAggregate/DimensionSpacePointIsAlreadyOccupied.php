@@ -12,11 +12,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Exception;
 
 /**
  * The exception to be thrown if a dimension space point is already occupied by a node in a node aggregate but is supposed not to be
  */
-class DimensionSpacePointIsAlreadyOccupied extends Exception
+class DimensionSpacePointIsAlreadyOccupied extends \DomainException
 {
 }

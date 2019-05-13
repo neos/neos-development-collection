@@ -91,4 +91,12 @@ final class WorkspaceName implements \JsonSerializable, CacheAwareInterface
     {
         return $this->name;
     }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
 }

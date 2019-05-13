@@ -102,16 +102,19 @@ interface ContentGraphInterface
     ): array;
 
     /**
+     * A node aggregate may have multiple child node aggregates with the same name
+     * as long as they do not share dimension space coverage
+     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $name
-     * @return NodeAggregate|null
+     * @return array|NodeAggregate[]
      */
-    public function findChildNodeAggregateByName(
+    public function findChildNodeAggregatesByName(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $name
-    ): ?NodeAggregate;
+    ): array;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
