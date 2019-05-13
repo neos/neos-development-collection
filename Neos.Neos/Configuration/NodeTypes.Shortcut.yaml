@@ -1,0 +1,48 @@
+# A shortcut.
+# "Shortcuts" can be linked to but instead of displaying content themselves they redirect to another "Document" node
+'Neos.Neos:Shortcut':
+  superTypes:
+    'Neos.Neos:Document': true
+  ui:
+    label: i18n
+    icon: 'icon-share'
+    position: 200
+    inspector:
+      groups:
+        document:
+          label: i18n
+  properties:
+    targetMode:
+      type: string
+      defaultValue: 'firstChildNode'
+      ui:
+        label: i18n
+        reloadPageIfChanged: true
+        inspector:
+          group: 'document'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            values:
+              firstChildNode:
+                label: i18n
+              parentNode:
+                label: i18n
+              selectedTarget:
+                label: i18n
+          editorListeners:
+            removeTargetIfNotUsed:
+              property: 'target'
+              handler: 'Neos.Neos/Inspector/Handlers/ShortcutHandler'
+    target:
+      type: string
+      ui:
+        label: i18n
+        reloadPageIfChanged: true
+        inspector:
+          hidden: 'ClientEval:node.properties.targetMode === "selectedTarget" ? false : true'
+          group: 'document'
+          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
+          editorListeners:
+            setTargetModeIfNotEmpty:
+              property: 'targetMode'
+              handler: 'Neos.Neos/Inspector/Handlers/ShortcutHandler'
