@@ -27,14 +27,14 @@ class ContentCacheTest extends AbstractFusionObjectTest
      */
     protected $contentCache;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->contentCache = $this->objectManager->get(ContentCache::class);
         $this->contentCache->flush();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         // Re-inject the original cache since some tests might replace it with a mock object
         $cacheManager = $this->objectManager->get(CacheManager::class);

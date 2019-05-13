@@ -31,7 +31,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
      */
     protected $schema;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->nodeTypeSchemaBuilder = $this->objectManager->get(NodeTypeSchemaBuilder::class);
@@ -90,8 +90,8 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     public function alohaUiConfigurationPartsAreActualArrayAndDontContainExcludedElements()
     {
         $alohaConfiguration = $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['properties']['text']['ui']['aloha'];
-        $this->assertInternalType('array', $alohaConfiguration['alignment']);
-        $this->assertInternalType('array', $alohaConfiguration['format']);
+        $this->assertIsArray($alohaConfiguration['alignment']);
+        $this->assertIsArray($alohaConfiguration['format']);
 
         $this->assertArrayNotHasKey('h3', $alohaConfiguration['format']);
         $this->assertArrayNotHasKey('sup', $alohaConfiguration['format']);

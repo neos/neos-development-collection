@@ -55,10 +55,10 @@ class MediaTypePatternTest extends UnitTestCase
      * @param $mediaTypePatternAsString
      * @test
      * @dataProvider invalidMediaTypePatterns()
-     * @expectedException \InvalidArgumentException
      */
     public function invalidMediaTypePatternsAreRejected($mediaTypePatternAsString): void
     {
+        $this->expectException(\InvalidArgumentException::class);
         new MediaTypePattern($mediaTypePatternAsString);
     }
 

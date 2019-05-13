@@ -183,7 +183,7 @@
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+          <target state="translated">Non è stato eliminato il progetto "{0}" poichè contiene attualmente {1} nodi.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">

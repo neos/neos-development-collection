@@ -71,7 +71,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
      */
     protected $templateVariables = [];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->contentElementEditableService = new ContentElementEditableService();

@@ -42,7 +42,7 @@ class PluginImplementationTest extends UnitTestCase
     protected $mockControllerContext;
 
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->pluginImplementation = $this->getAccessibleMock(PluginImplementation::class, ['buildPluginRequest'], [], '', false);
 

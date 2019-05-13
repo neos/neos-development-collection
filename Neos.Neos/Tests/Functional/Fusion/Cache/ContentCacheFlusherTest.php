@@ -53,7 +53,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
      */
     protected $nodeDataRepository;
 
-    public function setUp()/* The :void return type declaration that should be here would cause a BC issue */
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -282,7 +282,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         }
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->contextFactory->reset();
         parent::tearDown();

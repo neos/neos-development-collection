@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Service\ConfigurationContentDimensionPresetSource;
 
@@ -98,7 +99,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         foreach ($this->allLanguages as $languageCode => $languageName) {
             $this->configurationWithThreeDimensionsAndManyValues['language']['presets'][$languageCode] = [
@@ -175,11 +176,11 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception
-     * @expectedExceptionCode 1401093863
      */
     public function setConfigurationThrowsExceptionIfSpecifiedDefaultPresetDoesNotExist()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(1401093863);
         $source = new ConfigurationContentDimensionPresetSource();
         $configuration = $this->validConfiguration;
         $configuration['language']['defaultPreset'] = 'something';

@@ -27,7 +27,7 @@ class ContentContextTest extends UnitTestCase
      */
     protected $contextFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->contextFactory = new ContentContextFactory();
     }

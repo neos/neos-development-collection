@@ -32,7 +32,7 @@ abstract class AbstractTest extends FunctionalTestCase
      */
     protected $resourceManager;
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $persistenceManager = self::$bootstrap->getObjectManager()->get(PersistenceManagerInterface::class);
         if (is_callable([$persistenceManager, 'tearDown'])) {

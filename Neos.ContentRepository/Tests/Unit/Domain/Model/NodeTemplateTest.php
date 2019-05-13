@@ -31,10 +31,10 @@ class NodeTemplateTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setNameWithInvalidNameThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $nodeTemplate = new NodeTemplate();
         $nodeTemplate->setName(',?/invalid-node-name');
     }

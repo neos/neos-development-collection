@@ -20,6 +20,7 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\FusionService;
+use Neos\Neos\Exception;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -95,21 +96,21 @@ class FusionViewTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \Neos\Neos\Exception
      * @test
      */
     public function attemptToRenderWithoutNodeInformationAtAllThrowsException()
     {
+        $this->expectException(Exception::class);
         $view = $this->getAccessibleMock(FusionView::class, ['dummy']);
         $view->render();
     }
 
     /**
-     * @expectedException \Neos\Neos\Exception
      * @test
      */
     public function attemptToRenderWithInvalidNodeInformationThrowsException()
     {
+        $this->expectException(Exception::class);
         $view = $this->getAccessibleMock(FusionView::class, ['dummy']);
         $view->_set('variables', ['value' => 'foo']);
         $view->render();
