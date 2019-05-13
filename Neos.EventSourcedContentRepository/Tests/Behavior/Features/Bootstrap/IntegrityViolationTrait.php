@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Integrity\IntegrityViolationDetector;
@@ -52,6 +53,22 @@ trait IntegrityViolationTrait
         $this->integrityViolationDetector = $this->getObjectManager()->get(IntegrityViolationDetector::class);
         $this->integrityViolationResolver = $this->getObjectManager()->get(IntegrityViolationResolver::class);
         $this->nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
+    }
+
+    /**
+     * @When /^I add missing tethered nodes for node type "([^"]*)" and node name "([^"]*)"$/
+     * @param string $nodeTypeName
+     * @param string $tetheredNodeName
+     * @throws NodeTypeNotFoundException
+     */
+    public function iAddmissingTetheredNodes(string $nodeTypeName, string $tetheredNodeName): void
+    {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+
+        // FIXME Hack to initialize the node type (to be fixed in NodeType::getTypeOfAutoCreatedChildNode())
+        $nodeType->getFullConfiguration();
+
+        $this->lastCommandOrEventResult = $this->integrityViolationResolver->addMissingTetheredNodes($nodeType, NodeName::fromString($tetheredNodeName));
     }
 
     /**

@@ -83,9 +83,36 @@ Feature: Tethered Nodes integrity violations
         'new-tethered-node':
           type: 'Neos.ContentRepository.Testing:Tethered'
     """
-    And I expect the following tethered node violations for type "Neos.ContentRepository.Testing:Document":
+    Then I expect the following tethered node violations for type "Neos.ContentRepository.Testing:Document":
       | Violation           | Parameters                       |
       | MissingTetheredNode | {"nodeName":"new-tethered-node"} |
+
+
+  Scenario: Adding missing tethered nodes resolves the corresponding integrity violations
+    Given I have the following additional NodeTypes configuration:
+    """
+    'Neos.ContentRepository.Testing:Document':
+      childNodes:
+        'some-new-child':
+          type: 'Neos.ContentRepository.Testing:Tethered'
+    """
+    When I add missing tethered nodes for node type "Neos.ContentRepository.Testing:Document" and node name "some-new-child"
+    And the graph projection is fully up to date
+    Then I expect no tethered node violations for type "Neos.ContentRepository.Testing:Document"
+
+  Scenario: Adding the same
+    Given I have the following additional NodeTypes configuration:
+    """
+    'Neos.ContentRepository.Testing:Document':
+      childNodes:
+        'some-new-child':
+          type: 'Neos.ContentRepository.Testing:Tethered'
+    """
+    And I add missing tethered nodes for node type "Neos.ContentRepository.Testing:Document" and node name "some-new-child"
+    And the graph projection is fully up to date
+    Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    When I add missing tethered nodes for node type "Neos.ContentRepository.Testing:Document" and node name "some-new-child"
+    Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
 
   Scenario: Adjusting the schema removing a tethered node leads to a DisallowedTetheredNode integrity violation
     Given I have the following additional NodeTypes configuration:
@@ -94,7 +121,7 @@ Feature: Tethered Nodes integrity violations
       childNodes:
         'tethered-node': ~
     """
-    And I expect the following tethered node violations for type "Neos.ContentRepository.Testing:Document":
+    Then I expect the following tethered node violations for type "Neos.ContentRepository.Testing:Document":
       | Violation              | Parameters                   |
       | DisallowedTetheredNode | {"nodeName":"tethered-node"} |
 
@@ -106,6 +133,7 @@ Feature: Tethered Nodes integrity violations
         'tethered-node':
           type: 'Neos.ContentRepository.Testing:TetheredLeaf'
     """
-    And I expect the following tethered node violations for type "Neos.ContentRepository.Testing:Document":
+    Then I expect the following tethered node violations for type "Neos.ContentRepository.Testing:Document":
       | Violation               | Parameters                                                                                                                                               |
       | InvalidTetheredNodeType | {"nodeName":"tethered-node","expectedNodeType":"Neos.ContentRepository.Testing:TetheredLeaf","actualNodeType":"Neos.ContentRepository.Testing:Tethered"} |
+

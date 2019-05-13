@@ -12,13 +12,19 @@ namespace Neos\EventSourcedContentRepository\Integrity;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\Flow\Annotations as Flow;
 
@@ -46,22 +52,32 @@ final class IntegrityViolationResolver
      */
     protected $eventStoreManager;
 
-    public function addMissingTetheredNodes(NodeType $nodeType, NodeName $tetheredNodeName)
+    /**
+     * @Flow\Inject
+     * @var ContentGraphInterface
+     */
+    protected $contentGraph;
+
+    public function addMissingTetheredNodes(NodeType $nodeType, NodeName $tetheredNodeName): CommandResult
     {
         try {
             $tetheredNodeNodeType = $nodeType->getTypeOfAutoCreatedChildNode($tetheredNodeName);
         } catch (NodeTypeNotFoundException $exception) {
-            throw new \InvalidArgumentException(sprintf('There is no tethered node "%s" for type %s according to the schema', $tetheredNodeName, $nodeType), 1555051308, $exception);
+            throw new \InvalidArgumentException(sprintf('The tethered node "%s" for type %s has an invalid/unknown type', $tetheredNodeName, $nodeType), 1555051308, $exception);
         }
         if ($tetheredNodeNodeType === null) {
             throw new \InvalidArgumentException(sprintf('There is no tethered node "%s" for type %s according to the schema', $tetheredNodeName, $nodeType), 1555082781);
         }
 
+        $publishedEvents = DomainEvents::createEmpty();
         $nodeTypeName = NodeTypeName::fromString($nodeType->getName());
-        foreach ($this->integrityViolationDetector->nodesOfType($nodeTypeName) as $contentStreamIdentifier => $nodeAggregate) {
+        foreach ($this->nodesOfType($nodeTypeName) as $contentStreamIdentifier => $nodeAggregate) {
             // FIXME this should probably be filled with ids using NodeAggregateIdentifier::forAutoCreatedChildNode() to be deterministic
             $nodeAggregateIdentifiers = new NodeAggregateIdentifiersByNodePaths([]);
             foreach ($nodeAggregate->getNodes() as $node) {
+                if ($this->tetheredNodeExists($contentStreamIdentifier, $node->getNodeAggregateIdentifier(), $tetheredNodeName)) {
+                    continue;
+                }
                 $events = $this->nodeAggregateCommandHandler->handleTetheredChildNode(
                     $contentStreamIdentifier,
                     $nodeAggregate->getCoveredDimensionSpacePoints(),
@@ -74,8 +90,30 @@ final class IntegrityViolationResolver
                 $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
                 $eventStore = $this->eventStoreManager->getEventStoreForStreamName($contentStreamEventStreamName->getEventStreamName());
                 $eventStore->commit($contentStreamEventStreamName->getEventStreamName(), $events);
+                $publishedEvents = $publishedEvents->appendEvents($events);
             }
         }
+        return CommandResult::fromPublishedEvents($publishedEvents);
+    }
+
+    /**
+     * @param NodeTypeName $nodeTypeName
+     * @return NodeAggregate[]|\Iterator
+     */
+    private function nodesOfType(NodeTypeName $nodeTypeName): \Iterator
+    {
+        $contentStreamIdentifiers = $this->contentGraph->findContentStreamIdentifiers();
+        foreach ($contentStreamIdentifiers as $contentStreamIdentifier) {
+            $nodeAggregates = $this->contentGraph->findNodeAggregatesByType($contentStreamIdentifier, $nodeTypeName);
+            foreach ($nodeAggregates as $nodeAggregate) {
+                yield $contentStreamIdentifier => $nodeAggregate;
+            }
+        }
+    }
+
+    private function tetheredNodeExists(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $parentNodeIdentifier, NodeName $tetheredNodeName): bool
+    {
+        return $this->contentGraph->findChildNodeAggregateByName($contentStreamIdentifier, $parentNodeIdentifier, $tetheredNodeName) !== null;
     }
 
 }
