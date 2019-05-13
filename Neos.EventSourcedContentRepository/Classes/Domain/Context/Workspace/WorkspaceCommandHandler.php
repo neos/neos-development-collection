@@ -20,11 +20,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodesFromAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;

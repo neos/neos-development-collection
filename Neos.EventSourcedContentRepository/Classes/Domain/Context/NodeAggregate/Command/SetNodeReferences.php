@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;

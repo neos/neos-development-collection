@@ -28,11 +28,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodesFromAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;

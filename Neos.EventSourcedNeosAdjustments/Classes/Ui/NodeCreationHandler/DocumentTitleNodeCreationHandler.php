@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
