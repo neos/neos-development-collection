@@ -146,9 +146,8 @@ Feature: Move a node without content dimensions
       | dimensionSpacePoint              | {}                           |
       | newParentNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
 
-    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:sir-david-nodenborough"
-    # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
+    Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    And event at index 6 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
       | Key                                  | Expected                                                                                                                   |
       | contentStreamIdentifier              | "cs-identifier"                                                                                                            |
       | nodeAggregateIdentifier              | "sir-david-nodenborough"                                                                                                   |
@@ -192,9 +191,8 @@ Feature: Move a node without content dimensions
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"     |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
-    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier:NodeAggregate:nody-mc-nodeface"
-    # The first event is NodeAggregateWithNodeWasCreated
-    And event at index 1 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
+    Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    And event at index 6 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
       | Key                                         | Expected                                                                                                                 |
       | contentStreamIdentifier                     | "cs-identifier"                                                                                                          |
       | nodeAggregateIdentifier                     | "nody-mc-nodeface"                                                                                                       |
