@@ -13,6 +13,8 @@ namespace Neos\Neos\Service\Controller;
 
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Response as HttpResponse;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\RequestInterface;

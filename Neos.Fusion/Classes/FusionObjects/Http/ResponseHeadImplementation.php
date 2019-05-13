@@ -69,7 +69,12 @@ class ResponseHeadImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        $httpResponse = new \GuzzleHttp\Psr7\Response($this->getStatusCode(), $this->getHeaders(), null, $this->getHttpVersion());
+        $httpVersion = $this->getHttpVersion();
+        if (strpos($httpVersion, 'HTTP/') === 0) {
+            $httpVersion = substr($httpVersion, 5);
+        }
+
+        $httpResponse = new \GuzzleHttp\Psr7\Response($this->getStatusCode(), $this->getHeaders(), null, $httpVersion);
         return str($httpResponse);
     }
 }
