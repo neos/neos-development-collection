@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Asset list</source>
-			<target xml:lang="fi" state="translated">Nimikelistaus</target><alt-trans><target xml:lang="fi">Tiedostolistaus</target></alt-trans></trans-unit>
+			<target state="translated">Nimikelistaus</target><alt-trans><target>Tiedostolistaus</target></alt-trans></trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve" approved="yes">
 				<source>Resources</source>
-			<target xml:lang="fi" state="translated">Resurssit</target></trans-unit>
+			<target state="translated">Resurssit</target></trans-unit>
       <trans-unit id="properties.assets" xml:space="preserve" approved="yes">
 				<source>Assets</source>
-			<target xml:lang="fi" state="translated">Nimikkeet</target><alt-trans><target xml:lang="fi">Tiedostot</target></alt-trans></trans-unit>
+			<target state="translated">Nimikkeet</target><alt-trans><target>Tiedostot</target></alt-trans></trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve" approved="yes">
 				<source>Empty asset list</source>
-			<target xml:lang="fi" state="translated">Tyhjä nimikelistaus</target></trans-unit>
+			<target state="translated">Tyhjä nimikelistaus</target></trans-unit>
     </body>
   </file>
 </xliff>

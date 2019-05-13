@@ -4,58 +4,58 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Menu</source>
-			<target xml:lang="de" state="translated">Menü</target></trans-unit>
+			<target state="translated">Menü</target></trans-unit>
       <trans-unit id="groups.options" xml:space="preserve" approved="yes">
 				<source>Options</source>
-			<target xml:lang="de" state="translated">Optionen</target></trans-unit>
+			<target state="translated">Optionen</target></trans-unit>
       <trans-unit id="properties.startLevel" xml:space="preserve" approved="yes">
 				<source>Starting Level</source>
-			<target xml:lang="de" state="translated">Startebene</target></trans-unit>
+			<target state="translated">Startebene</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve" approved="yes">
 				<source>Four Levels Above Current Page</source>
-			<target xml:lang="de" state="translated">Vier Ebenen oberhalb der aktuellen Seite</target></trans-unit>
+			<target state="translated">Vier Ebenen oberhalb der aktuellen Seite</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve" approved="yes">
 				<source>Three Levels Above Current Page</source>
-			<target xml:lang="de" state="translated">Drei Ebenen oberhalb der aktuellen Seite</target></trans-unit>
+			<target state="translated">Drei Ebenen oberhalb der aktuellen Seite</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-2" xml:space="preserve" approved="yes">
 				<source>Two Levels Above Current Page</source>
-			<target xml:lang="de" state="translated">Zwei Ebenen oberhalb der aktuellen Seite</target></trans-unit>
+			<target state="translated">Zwei Ebenen oberhalb der aktuellen Seite</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-1" xml:space="preserve" approved="yes">
 				<source>One Level Above Current Page</source>
-			<target xml:lang="de" state="translated">Eine Ebene oberhalb der aktuellen Seite</target></trans-unit>
+			<target state="translated">Eine Ebene oberhalb der aktuellen Seite</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.0" xml:space="preserve" approved="yes">
 				<source>Same Level As Current Page</source>
-			<target xml:lang="de" state="translated">Gleichen Ebene wie die aktuelle Seite</target></trans-unit>
+			<target state="translated">Gleichen Ebene wie die aktuelle Seite</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve" approved="yes">
 				<source>First Level Of Website</source>
-			<target xml:lang="de" state="translated">Erste Ebene der Website</target></trans-unit>
+			<target state="translated">Erste Ebene der Website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.2" xml:space="preserve" approved="yes">
 				<source>Second Level Of Website</source>
-			<target xml:lang="de" state="translated">Zweite Ebene der Website</target></trans-unit>
+			<target state="translated">Zweite Ebene der Website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.3" xml:space="preserve" approved="yes">
 				<source>Third Level Of Website</source>
-			<target xml:lang="de" state="translated">Dritte Ebene der Website</target></trans-unit>
+			<target state="translated">Dritte Ebene der Website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.4" xml:space="preserve" approved="yes">
 				<source>Fourth Level Of Website</source>
-			<target xml:lang="de" state="translated">Vierte Ebene der Website</target></trans-unit>
+			<target state="translated">Vierte Ebene der Website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.5" xml:space="preserve" approved="yes">
 				<source>Fifth Level Of Website</source>
-			<target xml:lang="de" state="translated">Fünfte Ebene der Website</target></trans-unit>
+			<target state="translated">Fünfte Ebene der Website</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.6" xml:space="preserve" approved="yes">
 				<source>Sixth Level Of Website</source>
-			<target xml:lang="de" state="translated">Sechste Ebene der Website</target></trans-unit>
+			<target state="translated">Sechste Ebene der Website</target></trans-unit>
       <trans-unit id="properties.selection" xml:space="preserve" approved="yes">
 				<source>Selection</source>
-			<target xml:lang="de" state="translated">Auswahl</target></trans-unit>
+			<target state="translated">Auswahl</target></trans-unit>
       <trans-unit id="properties.startingPoint" xml:space="preserve" approved="yes">
 				<source>Starting Point</source>
-			<target xml:lang="de" state="translated">Startpunkt</target></trans-unit>
+			<target state="translated">Startpunkt</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve" approved="yes">
 				<source>Maximum Levels</source>
-			<target xml:lang="de" state="translated">Maximale Tiefe</target></trans-unit>
+			<target state="translated">Maximale Tiefe</target></trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve" approved="yes">
 				<source>Empty Menu</source>
-			<target xml:lang="de" state="translated">Leeres Menü</target></trans-unit>
+			<target state="translated">Leeres Menü</target></trans-unit>
     </body>
   </file>
 </xliff>

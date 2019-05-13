@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target xml:lang="hu" state="translated">Elrejtés innentől</target></trans-unit>
+			<target state="translated">Elrejtés előtte</target><alt-trans><target>Elrejtés innentől</target></alt-trans></trans-unit>
       <trans-unit id="properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target xml:lang="hu" state="translated">Elrejtés ezután</target></trans-unit>
+			<target state="translated">Elrejtés utána</target><alt-trans><target>Elrejtés ezután</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

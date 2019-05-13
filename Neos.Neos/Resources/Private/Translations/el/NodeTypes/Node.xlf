@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="tabs.default" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="el" state="translated">Γενικά</target></trans-unit>
+			<target state="translated">Γενικά</target></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="el" state="translated">Μεταδεδομένα</target></trans-unit>
+			<target state="translated">Μεταδεδομένα</target></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="el" state="translated">Μεταδεδομένα</target></trans-unit>
+			<target state="translated">Μεταδεδομένα</target></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="el" state="translated">Πρόσθετες πληροφορίες</target></trans-unit>
+			<target state="translated">Πρόσθετες πληροφορίες</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="el" state="needs-translation">Change type</target></trans-unit>
+			<target state="needs-translation">Change type</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="el" state="translated">Τύπος</target></trans-unit>
+			<target state="translated">Τύπος</target></trans-unit>
     </body>
   </file>
 </xliff>
