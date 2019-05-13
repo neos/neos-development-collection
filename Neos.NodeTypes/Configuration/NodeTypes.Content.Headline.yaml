@@ -6,3 +6,6 @@
     label: i18n
     icon: 'icon-header'
     position: 100
+  options:
+    fusion:
+      prototypeGenerator: Neos\Neos\Domain\Service\DefaultContentPrototypeGenerator
