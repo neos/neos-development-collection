@@ -92,13 +92,21 @@ class UsersController extends AbstractModuleController
     /**
      * Shows a list of all users
      *
+     * @param string $searchTerm
      * @return void
      */
-    public function indexAction()
+    public function indexAction(string $searchTerm = '')
     {
+        if (empty($searchTerm)) {
+            $users = $this->userService->getUsers();
+        } else {
+            $users = $this->userService->searchUsers($searchTerm);
+        }
+
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
-            'users' => $this->userService->getUsers()
+            'users' => $users,
+            'searchTerm' => $searchTerm
         ]);
     }
 
