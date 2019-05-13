@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Tests\Functional\TypeConverter;
  */
 
 use Neos\Error\Messages\Error;
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Model\Node;
@@ -113,8 +114,9 @@ class NodeConverterTest extends FunctionalTestCase
 
     public function tearDown()
     {
+        $configuredDimensions = $this->objectManager->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepository.contentDimensions');
         $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
-        $contentDimensionRepository->setDimensionsConfiguration(array());
+        $contentDimensionRepository->setDimensionsConfiguration($configuredDimensions);
         parent::tearDown();
     }
 
