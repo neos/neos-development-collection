@@ -1,0 +1,61 @@
+# Base node, which just configures the "removed" property of the node.
+'Neos.Neos:Node':
+  label: "${String.cropAtWord(String.trim(String.stripTags(String.pregReplace(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + (node.autoCreated ? ' (' + node.name + ')' : '')), '/<br\\W*?\\/?>|\\x{00a0}|[[^:print:]]|\\s+/u', ' '))), 100, '...')}"
+  abstract: true
+  options:
+    fusion:
+      prototypeGenerator: ~
+  ui:
+    inspector:
+      tabs:
+        default:
+          label: i18n
+          position: 10
+          icon: 'icon-pencil'
+        meta:
+          label: i18n
+          position: 20
+          icon: 'icon-cog'
+      groups:
+        type:
+          label: i18n
+          tab: 'meta'
+          icon: 'icon-exchange'
+          position: 990
+        nodeInfo:
+          label: i18n
+          icon: 'icon-info'
+          tab: 'meta'
+          position: 1000
+          collapsed: true
+      views:
+        nodeInfo:
+          label: i18n
+          group: 'nodeInfo'
+          view: 'Neos.Neos/Inspector/Views/NodeInfoView'
+  properties:
+    _removed:
+      type: boolean
+    _creationDateTime:
+      type: DateTime
+    _lastModificationDateTime:
+      type: DateTime
+    _lastPublicationDateTime:
+      type: DateTime
+    _path:
+      type: string
+    _name:
+      type: string
+    _nodeType:
+      type: string
+      ui:
+        label: i18n
+        reloadIfChanged: true
+        inspector:
+          group: 'type'
+          position: 100
+          editor: 'Neos.Neos/Inspector/Editors/NodeTypeEditor'
+          editorOptions:
+            placeholder: 'Loading ...'
+            baseNodeType: ''
+

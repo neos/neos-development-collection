@@ -1,0 +1,20 @@
+# Hidable Mixin
+'Neos.Neos:Hidable':
+  abstract: true
+  ui:
+    inspector:
+      groups:
+        visibility:
+          label: 'Neos.Neos:Inspector:groups.visibility'
+          icon: 'icon-eye'
+          position: 100
+          tab: meta
+  properties:
+    _hidden:
+      type: boolean
+      ui:
+        label: i18n
+        inspector:
+          group: 'visibility'
+          position: 30
+
