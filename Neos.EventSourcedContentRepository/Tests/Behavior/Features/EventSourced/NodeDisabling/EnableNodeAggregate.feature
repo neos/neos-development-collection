@@ -41,37 +41,37 @@ Feature: Enable a node aggregate
 
   Scenario: Try to enable a node aggregate in a non-existing content stream
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                        | Value                    |
-      | contentStreamIdentifier    | "i-do-not-exist"         |
-      | nodeAggregateIdentifier    | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint | {}                       |
-      | nodeDisablingStrategy      | "allVariants"            |
+      | Key                            | Value                    |
+      | contentStreamIdentifier        | "i-do-not-exist"         |
+      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint     | {}                       |
+      | nodeAggregateDisablingStrategy | "allVariants"            |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to enable a node aggregate in a non-existing dimension space point
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                        | Value                       |
-      | contentStreamIdentifier    | "cs-identifier"             |
-      | nodeAggregateIdentifier    | "sir-david-nodenborough"    |
-      | coveredDimensionSpacePoint | {"undeclared": "undefined"} |
-      | nodeDisablingStrategy      | "allVariants"               |
+      | Key                            | Value                       |
+      | contentStreamIdentifier        | "cs-identifier"             |
+      | nodeAggregateIdentifier        | "sir-david-nodenborough"    |
+      | coveredDimensionSpacePoint     | {"undeclared": "undefined"} |
+      | nodeAggregateDisablingStrategy | "allVariants"               |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to enable a non-existing node aggregate
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                        | Value            |
-      | contentStreamIdentifier    | "cs-identifier"  |
-      | nodeAggregateIdentifier    | "i-do-not-exist" |
-      | coveredDimensionSpacePoint | {}               |
-      | nodeDisablingStrategy      | "allVariants"    |
+      | Key                            | Value            |
+      | contentStreamIdentifier        | "cs-identifier"  |
+      | nodeAggregateIdentifier        | "i-do-not-exist" |
+      | coveredDimensionSpacePoint     | {}               |
+      | nodeAggregateDisablingStrategy | "allVariants"    |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to enable an already enabled node aggregate
 
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:
-      | Key                        | Value                    |
-      | contentStreamIdentifier    | "cs-identifier"          |
-      | nodeAggregateIdentifier    | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint | {}                       |
-      | nodeDisablingStrategy      | "allVariants"            |
+      | Key                            | Value                    |
+      | contentStreamIdentifier        | "cs-identifier"          |
+      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint     | {}                       |
+      | nodeAggregateDisablingStrategy | "allVariants"            |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint"

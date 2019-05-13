@@ -70,7 +70,7 @@ final class NodeAggregateDisablingStrategy implements \JsonSerializable
     /**
      * @param null|string $serialization
      * @return self
-     * @throws NodeDisablingStrategyIsInvalid
+     * @throws NodeAggregateDisablingStrategyIsInvalid
      */
     public static function fromString(string $serialization): self
     {
@@ -78,7 +78,7 @@ final class NodeAggregateDisablingStrategy implements \JsonSerializable
             && !$serialization === self::STRATEGY_VIRTUAL_SPECIALIZATIONS
             && !$serialization === self::STRATEGY_ALL_SPECIALIZATIONS
         ) {
-            throw new NodeDisablingStrategyIsInvalid('Given node disabling strategy "' . $serialization . '" is invalid, must be one of the defined constants.', 1555074043);
+            throw new NodeAggregateDisablingStrategyIsInvalid('Given node disabling strategy "' . $serialization . '" is invalid, must be one of the defined constants.', 1555074043);
         }
 
         return new static($serialization);

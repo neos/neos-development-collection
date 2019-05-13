@@ -85,11 +85,11 @@ Feature: Enable a node aggregate
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
-      | Key                        | Value                    |
-      | contentStreamIdentifier    | "cs-identifier"          |
-      | nodeAggregateIdentifier    | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint | {}                       |
-      | nodeDisablingStrategy      | "allVariants"            |
+      | Key                            | Value                    |
+      | contentStreamIdentifier        | "cs-identifier"          |
+      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint     | {}                       |
+      | nodeAggregateDisablingStrategy | "allVariants"            |
 
     Then I expect exactly 9 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 8 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
@@ -159,11 +159,11 @@ Feature: Enable a node aggregate
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
-      | Key                        | Value                    |
-      | contentStreamIdentifier    | "cs-identifier"          |
-      | nodeAggregateIdentifier    | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint | {}                       |
-      | nodeDisablingStrategy      | "allVariants"            |
+      | Key                            | Value                    |
+      | contentStreamIdentifier        | "cs-identifier"          |
+      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint     | {}                       |
+      | nodeAggregateDisablingStrategy | "allVariants"            |
     Then I expect exactly 10 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 9 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
       | Key                          | Expected                 |
@@ -187,7 +187,7 @@ Feature: Enable a node aggregate
       | document            | {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {}}  |
       | succeeding-document | {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"succeeding-nodenborough", "originDimensionSpacePoint": {}} |
     And I expect the node aggregate "sir-david-nodenborough" to have the following child nodes:
-      | Name                | NodeDiscriminator                                                                                                                 |
+      | Name | NodeDiscriminator |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
       | Level | NodeAggregateIdentifier |
       | 0     | lady-eleonode-rootford  |
@@ -228,11 +228,11 @@ Feature: Enable a node aggregate
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
-      | Key                        | Value              |
-      | contentStreamIdentifier    | "cs-identifier"    |
-      | nodeAggregateIdentifier    | "nody-mc-nodeface" |
-      | coveredDimensionSpacePoint | {}                 |
-      | nodeDisablingStrategy      | "allVariants"      |
+      | Key                            | Value              |
+      | contentStreamIdentifier        | "cs-identifier"    |
+      | nodeAggregateIdentifier        | "nody-mc-nodeface" |
+      | coveredDimensionSpacePoint     | {}                 |
+      | nodeAggregateDisablingStrategy | "allVariants"      |
     Then I expect exactly 10 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 9 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
       | Key                          | Expected           |

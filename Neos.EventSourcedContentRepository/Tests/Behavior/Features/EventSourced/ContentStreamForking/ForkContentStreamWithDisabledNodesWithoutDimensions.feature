@@ -50,12 +50,12 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | nodeName                      | "pet"                                    |
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
-    And the command DisableNode is executed with payload:
-      | Key                        | Value              |
-      | contentStreamIdentifier    | "cs-identifier"    |
-      | nodeAggregateIdentifier    | "the-great-nodini" |
-      | coveredDimensionSpacePoint | {}                 |
-      | nodeDisablingStrategy      | "scatter"          |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                            | Value              |
+      | contentStreamIdentifier        | "cs-identifier"    |
+      | nodeAggregateIdentifier        | "the-great-nodini" |
+      | coveredDimensionSpacePoint     | {}                 |
+      | nodeAggregateDisablingStrategy | "scatter"          |
     And the graph projection is fully up to date
 
   Scenario: on ForkContentStream, the hidden nodes in the target content stream should still be invisible.
@@ -71,7 +71,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
     When I am in content stream "user-cs-identifier" and Dimension Space Point {}
     And VisibilityConstraints are set to "withoutRestrictions"
     Then I expect the node aggregate "lady-eleonode-rootford" to have the following child nodes:
-      | Name           | NodeDiscriminator                                                                                                          |
+      | Name           | NodeDiscriminator                                                                                                               |
       | court-magician | {"contentStreamIdentifier":"user-cs-identifier", "nodeAggregateIdentifier":"the-great-nodini", "originDimensionSpacePoint": {}} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
       | Level | NodeAggregateIdentifier |

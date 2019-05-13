@@ -55,12 +55,12 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeAggregateDisablingStrategy $nodeDisablingStrategy
+        NodeAggregateDisablingStrategy $nodeAggregateDisablingStrategy
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
-        $this->nodeAggregateDisablingStrategy = $nodeDisablingStrategy;
+        $this->nodeAggregateDisablingStrategy = $nodeAggregateDisablingStrategy;
     }
 
     public static function fromArray(array $array): self
@@ -69,7 +69,7 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
-            NodeAggregateDisablingStrategy::fromString($array['nodeDisablingStrategy'])
+            NodeAggregateDisablingStrategy::fromString($array['nodeAggregateDisablingStrategy'])
         );
     }
 

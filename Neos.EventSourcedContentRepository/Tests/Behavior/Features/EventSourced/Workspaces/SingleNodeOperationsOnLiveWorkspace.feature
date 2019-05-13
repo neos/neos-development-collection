@@ -58,22 +58,3 @@ Feature: Single Node operations on live workspace
     And I expect this node to have the properties:
       | Key  | Value |
       | text | Hello |
-
-  Scenario: Show a node
-    Given the command "ShowNode" is executed with payload:
-      | Key                          | Value              |
-      | contentStreamIdentifier      | "cs-identifier"    |
-      | nodeAggregateIdentifier      | "nody-mc-nodeface" |
-      | affectedDimensionSpacePoints | [{}]               |
-
-    Then I expect exactly 4 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 3 is of type "Neos.EventSourcedContentRepository:NodeWasShown" with payload:
-      | Key                          | Expected           |
-      | contentStreamIdentifier      | "cs-identifier"    |
-      | nodeAggregateIdentifier      | "nody-mc-nodeface" |
-      | affectedDimensionSpacePoints | [[]]               |
-
-    When the graph projection is fully up to date
-    And I am in the active content stream of workspace "live" and Dimension Space Point {}
-
-    Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph

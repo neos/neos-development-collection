@@ -78,11 +78,11 @@ Feature: Disable a node aggregate
 
   Scenario: Disable node with arbitrary strategy since dimensions are not involved
     When the command DisableNodeAggregate is executed with payload:
-      | Key                        | Value                    |
-      | contentStreamIdentifier    | "cs-identifier"          |
-      | nodeAggregateIdentifier    | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint | {}                       |
-      | nodeDisablingStrategy      | "allVariants"            |
+      | Key                            | Value                    |
+      | contentStreamIdentifier        | "cs-identifier"          |
+      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint     | {}                       |
+      | nodeAggregateDisablingStrategy | "allVariants"            |
 
     Then I expect exactly 8 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 7 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasDisabled" with payload:

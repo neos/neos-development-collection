@@ -191,8 +191,8 @@ Feature: Move a node without content dimensions
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"     |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
-    Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 6 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
+    Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    And event at index 5 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
       | Key                                         | Expected                                                                                                                 |
       | contentStreamIdentifier                     | "cs-identifier"                                                                                                          |
       | nodeAggregateIdentifier                     | "nody-mc-nodeface"                                                                                                       |

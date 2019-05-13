@@ -69,7 +69,7 @@ final class EnableNodeAggregate implements \JsonSerializable, CopyableAcrossCont
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
-            NodeAggregateDisablingStrategy::fromString($array['nodeDisablingStrategy'])
+            NodeAggregateDisablingStrategy::fromString($array['nodeAggregateDisablingStrategy'])
         );
     }
 
