@@ -9,3 +9,14 @@ Neos\EventSourcedNeosAdjustments\Ui\View\BackendFusionView:
       object: Neos\Fusion\Core\Parser
     fallbackView:
       object: Neos\FluidAdaptor\View\TemplateView
+
+
+Neos\EventSourcedNeosAdjustments\FusionCaching\FusionCachingAspect:
+  properties:
+    fusionCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_Neos_Fusion
