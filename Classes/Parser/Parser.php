@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\Afx\Exception;
+namespace Neos\Fusion\Afx\Parser;
 
 /*
  * This file is part of the Neos.Fusion.Afx package.
@@ -11,10 +11,15 @@ namespace Neos\Fusion\Afx\Exception;
  * source code.
  */
 
-/**
- * Class AfxException
- * @package Neos\Fusion\Afx\Exception
- */
-class AfxException extends \Exception
+class Parser
 {
+    public function __construct($string)
+    {
+        $this->lexer = new Lexer($string);
+    }
+
+    public function parse()
+    {
+        return Expression\NodeList::parse($this->lexer);
+    }
 }
