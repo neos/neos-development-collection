@@ -1,0 +1,13 @@
+# A content collection is a collection of "Neos.Neos:Content" (and its subclasses),
+# i.e. contains variable number of children.
+'Neos.Neos:ContentCollection':
+  superTypes:
+    'Neos.Neos:Node': true
+  ui:
+    label: i18n
+    icon: 'icon-folder-open-alt'
+    inlineEditable: true
+  constraints:
+    nodeTypes:
+      'Neos.Neos:Document': false
+      '*': true
