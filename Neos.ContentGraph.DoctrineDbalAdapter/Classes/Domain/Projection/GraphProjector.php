@@ -181,7 +181,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                 $event->getNodeName()
             );
 
-            $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
+            $this->connectRestrictionRelationsFromParentNodeToNewlyCreatedNode(
                 $event->getContentStreamIdentifier(),
                 $event->getParentNodeAggregateIdentifier(),
                 $event->getNodeAggregateIdentifier(),
@@ -223,7 +223,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
      * @param DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
+    private function connectRestrictionRelationsFromParentNodeToNewlyCreatedNode(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier,
@@ -231,7 +231,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     ) {
         // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
         $this->getDatabaseConnection()->executeUpdate('
-                INSERT IGNORE INTO neos_contentgraph_restrictionedge (
+                INSERT IGNORE INTO neos_contentgraph_restrictionrelation (
                   contentstreamidentifier,
                   dimensionspacepointhash,
                   originnodeaggregateidentifier,
@@ -243,7 +243,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                   r.originnodeaggregateidentifier,
                   "' . $newlyCreatedNodeAggregateIdentifier . '" as affectednodeaggregateidentifier
                 FROM
-                    neos_contentgraph_restrictionedge r
+                    neos_contentgraph_restrictionrelation r
                     WHERE 
                         r.contentstreamidentifier = :sourceContentStreamIdentifier
                         and r.dimensionspacepointhash IN (:visibleDimensionSpacePoints)
@@ -492,7 +492,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
             // 2) copy Hidden Node information to second content stream
             //
             $this->getDatabaseConnection()->executeUpdate('
-                INSERT INTO neos_contentgraph_restrictionedge (
+                INSERT INTO neos_contentgraph_restrictionrelation (
                   contentstreamidentifier,
                   dimensionspacepointhash,
                   originnodeaggregateidentifier,
@@ -504,7 +504,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                   r.originnodeaggregateidentifier,
                   r.affectednodeaggregateidentifier 
                 FROM
-                    neos_contentgraph_restrictionedge r
+                    neos_contentgraph_restrictionrelation r
                     WHERE r.contentstreamidentifier = :sourceContentStreamIdentifier
             ', [
                 'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
@@ -571,7 +571,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
             // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
             $this->getDatabaseConnection()->executeUpdate('
 -- GraphProjector::whenNodeWasHidden
-insert ignore into neos_contentgraph_restrictionedge
+insert ignore into neos_contentgraph_restrictionrelation
 (
     -- we build a recursive tree
     with recursive tree as (
@@ -636,7 +636,7 @@ insert ignore into neos_contentgraph_restrictionedge
     public function whenNodeWasShown(NodeWasShown $event)
     {
         $this->transactional(function () use ($event) {
-            $this->removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getAffectedDimensionSpacePoints());
+            $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getAffectedDimensionSpacePoints());
         });
     }
 
@@ -646,10 +646,10 @@ insert ignore into neos_contentgraph_restrictionedge
      * @param DimensionSpacePointSet $affectedDimensionSpacePoints
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
+    private function removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
     {
         $this->getDatabaseConnection()->executeUpdate('
-                -- GraphProjector::removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints
+                -- GraphProjector::removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints
  
                 delete r.* from
                     neos_contentgraph_restrictionedge r
@@ -716,13 +716,13 @@ insert ignore into neos_contentgraph_restrictionedge
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function removeAllRestrictionEdgesUnderneathNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
+    private function removeAllRestrictionRelationsUnderneathNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
     {
         $this->getDatabaseConnection()->executeUpdate('
-                -- GraphProjector::removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints
+                -- GraphProjector::removeAllRestrictionRelationsUnderneathNodeAggregate
  
                 delete r.* from
-                    neos_contentgraph_restrictionedge r
+                    neos_contentgraph_restrictionrelation r
                     join 
                      (
                         -- we build a recursive tree
@@ -953,7 +953,7 @@ insert ignore into neos_contentgraph_restrictionedge
                     // - TODO: this means that when moving a HIDDEN node itself (and none of its children), it will LOOSE its hidden state. TODO FIX!!!
                     //
                     /*
-                    $this->removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints(
+                    $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
                         $event->getContentStreamIdentifier(),
                         $event->getNodeAggregateIdentifier(),
                         $moveNodeMapping->getRelationDimensionSpacePoints()
@@ -987,7 +987,7 @@ insert ignore into neos_contentgraph_restrictionedge
                     // - if parent node is hidden, hide the moved-to target as well.
                     //
                     /*
-                    $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
+                    $this->connectRestrictionRelationsFromParentNodeToNewlyCreatedNode(
                         $event->getContentStreamIdentifier(),
                         $newParentNode->nodeIdentifier,
                         $nodeToBeMoved->nodeAggregateIdentifier,
@@ -1019,7 +1019,7 @@ insert ignore into neos_contentgraph_restrictionedge
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
-            $this->removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
+            $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
             $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
             foreach ($inboundRelations as $inboundRelation) {
                 $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($inboundRelation);
@@ -1036,7 +1036,7 @@ insert ignore into neos_contentgraph_restrictionedge
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
-            $this->removeAllRestrictionEdgesUnderneathNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
+            $this->removeAllRestrictionRelationsUnderneathNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
 
             $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
             foreach ($inboundRelations as $inboundRelation) {
