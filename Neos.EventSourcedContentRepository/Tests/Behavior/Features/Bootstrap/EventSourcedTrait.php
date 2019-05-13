@@ -871,11 +871,11 @@ trait EventSourcedTrait
      */
     public function iExpectExactlyEventToBePublishedOnStream(int $numberOfEvents, string $streamName)
     {
-        $streamName = StreamName::fromString($streamName);
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $stream = $eventStore->load($streamName);
+        $eventStoreStreamName = StreamName::fromString($streamName);
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($eventStoreStreamName);
+        $stream = $eventStore->load($eventStoreStreamName);
         $this->currentEventStreamAsArray = iterator_to_array($stream, false);
-        Assert::assertEquals($numberOfEvents, count($this->currentEventStreamAsArray), 'Number of events did not match');
+        Assert::assertCount($numberOfEvents, $this->currentEventStreamAsArray, 'Number of events did not match');
     }
 
     /**

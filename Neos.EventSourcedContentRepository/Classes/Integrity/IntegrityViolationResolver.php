@@ -74,7 +74,7 @@ final class IntegrityViolationResolver
         foreach ($this->nodesOfType($nodeTypeName) as $contentStreamIdentifier => $nodeAggregate) {
             // FIXME this should probably be filled with ids using NodeAggregateIdentifier::forAutoCreatedChildNode() to be deterministic
             $nodeAggregateIdentifiers = new NodeAggregateIdentifiersByNodePaths([]);
-            foreach ($nodeAggregate->getNodes() as $node) {
+            foreach ($nodeAggregate->getNodesByOccupiedDimensionSpacePoint() as $node) {
                 if ($this->tetheredNodeExists($contentStreamIdentifier, $node->getNodeAggregateIdentifier(), $tetheredNodeName)) {
                     continue;
                 }
@@ -113,7 +113,12 @@ final class IntegrityViolationResolver
 
     private function tetheredNodeExists(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $parentNodeIdentifier, NodeName $tetheredNodeName): bool
     {
-        return $this->contentGraph->findChildNodeAggregateByName($contentStreamIdentifier, $parentNodeIdentifier, $tetheredNodeName) !== null;
+        foreach ($this->contentGraph->findTetheredChildNodeAggregates($contentStreamIdentifier, $parentNodeIdentifier) as $tetheredNodeAggregate) {
+            if ($tetheredNodeAggregate->getNodeName()->equals($tetheredNodeName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
