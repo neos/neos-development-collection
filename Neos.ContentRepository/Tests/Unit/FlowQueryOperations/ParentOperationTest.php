@@ -43,7 +43,7 @@ class ParentOperationTest extends AbstractQueryOperationsTest
      */
     protected $secondLevelNode;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->siteNode = $this->mockNode('site-identifier-uuid');
         $this->firstLevelNode = $this->mockNode('node1');

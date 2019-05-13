@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
@@ -53,7 +54,7 @@ class NodeConstraintsTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->nodeDataRepository = new NodeDataRepository();
@@ -71,7 +72,7 @@ class NodeConstraintsTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->inject($this->contextFactory, 'contextInstances', []);
@@ -79,10 +80,10 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeConstraintException
      */
     public function movingNodeToWhereItsTypeIsDisallowedThrowsException()
     {
+        $this->expectException(NodeConstraintException::class);
         $documentNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Document');
         $contentNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Content');
         $documentNode = $this->rootNode->createNode('document', $documentNodeType);
@@ -92,10 +93,10 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeConstraintException
      */
     public function movingNodeToWhereItsSuperTypeIsDisallowedThrowsException()
     {
+        $this->expectException(NodeConstraintException::class);
         $nodeTypeExtendingDocument = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Page');
         $nodeTypeExtendingContent = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Text');
         $documentNode = $this->rootNode->createNode('document', $nodeTypeExtendingDocument);
@@ -105,10 +106,10 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeConstraintException
      */
     public function creatingNodeInChildNodeWithChildNodeConstraintsThrowsException()
     {
+        $this->expectException(NodeConstraintException::class);
         $nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithSubnodesAndConstraints');
         $documentNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Document');
         $nodeWithChildNode = $this->rootNode->createNode('node-with-child-node', $nodeTypeWithChildNodeAndConstraints);
@@ -132,10 +133,10 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeConstraintException
      */
     public function childNodeWithChildNodeConstraintsAndNodeTypeConstraintsThrowsException()
     {
+        $this->expectException(NodeConstraintException::class);
         $nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithSubnodesAndConstraints');
         $textNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Text');
 

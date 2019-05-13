@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Tests\Functional\TypeConverter;
 
 use Neos\Error\Messages\Error;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Model\Node;
@@ -84,7 +85,7 @@ class NodeConverterTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
@@ -111,7 +112,7 @@ class NodeConverterTest extends FunctionalTestCase
         $this->rootNodeInPersonalWorkspace = $this->personalContext->getNode('/');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $configuredDimensions = $this->objectManager->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepository.contentDimensions');
         $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
@@ -201,10 +202,10 @@ class NodeConverterTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
      */
     public function settingUnknownNodePropertiesThrowsException()
     {
+        $this->expectException(TypeConverterException::class);
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
         $input = [
             '__contextNodePath' => '/headline@' . $this->currentTestWorkspaceName,

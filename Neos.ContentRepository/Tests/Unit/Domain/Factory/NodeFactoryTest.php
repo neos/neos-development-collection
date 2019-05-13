@@ -47,7 +47,7 @@ class NodeFactoryTest extends UnitTestCase
     /**
      * Prepare test objects
      */
-    protected function setUp()
+    public function setUp(): void
     {
         $this->nodeFactory = $this->getMockBuilder(NodeFactory::class)->setMethods(['filterNodeByContext'])->getMock();
 

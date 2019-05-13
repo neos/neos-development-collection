@@ -11,6 +11,8 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
+
 /**
  * Testcase for basic Fusion rendering
  *
@@ -46,10 +48,10 @@ class BasicRenderingTest extends AbstractFusionObjectTest
      * TODO: test different exception handlers
      *
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function basicRenderingCrashing()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         $view = $this->buildView();
         $view->setFusionPath('basicRendering/crashing');
         $this->assertEquals('XHello World', $view->render());

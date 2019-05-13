@@ -25,7 +25,7 @@ class TagImplementationTest extends UnitTestCase
      */
     protected $mockRuntime;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();

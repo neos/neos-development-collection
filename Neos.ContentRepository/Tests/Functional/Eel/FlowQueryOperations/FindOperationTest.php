@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
+use Neos\Eel\FlowQuery\FlowQueryException;
 
 /**
  * Functional test case which tests FlowQuery FindOperation
@@ -22,10 +23,10 @@ class FindOperationTest extends AbstractNodeTest
 {
     /**
      * @test
-     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function findByNodeIdentifierThrowsExceptionOnInvalidIdentifier()
     {
+        $this->expectException(FlowQueryException::class);
         $q = new FlowQuery([$this->node]);
         $q->find('#_test')->get(0);
     }
@@ -126,10 +127,10 @@ class FindOperationTest extends AbstractNodeTest
 
     /**
      * @test
-     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function findWithNonInstanceofAttributeFilterAsFirstPartThrowsException()
     {
+        $this->expectException(FlowQueryException::class);
         $q = new FlowQuery([$this->node]);
         $q->find('[title *= "Welcome"][instanceof Neos.ContentRepository.Testing:Headline]')->get(0);
     }
@@ -249,10 +250,10 @@ class FindOperationTest extends AbstractNodeTest
 
     /**
      * @test
-     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function findOperationThrowsExceptionOnAtLeastOneInvalidContext()
     {
+        $this->expectException(FlowQueryException::class);
         $q = new FlowQuery([$this->node, '1']);
         $q->find('/sites/example/home/main/limbo')->get();
     }

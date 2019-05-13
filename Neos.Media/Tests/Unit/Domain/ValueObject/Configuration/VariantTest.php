@@ -34,11 +34,11 @@ class VariantTest extends UnitTestCase
     /**
      * @param $identifier
      * @dataProvider invalidIdentifiers()
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function invalidIdentifiersAreRejected($identifier): void
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Variant($identifier, new Label('Test'));
     }
 

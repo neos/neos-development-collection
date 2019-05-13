@@ -57,7 +57,7 @@ class SiteImportExportServiceTest extends FunctionalTestCase
      */
     protected $siteExportService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
@@ -71,7 +71,7 @@ class SiteImportExportServiceTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

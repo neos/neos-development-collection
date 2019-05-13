@@ -84,7 +84,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $templateVariables = [];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->editableViewHelper = $this->getAccessibleMock(EditableViewHelper::class, ['renderChildren']);
@@ -143,10 +143,10 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfTheGivenPropertyIsNotAccessible()
     {
+        $this->expectException(\Neos\FluidAdaptor\Core\ViewHelper\Exception::class);
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
         $this->setUpViewMockAccess();
         $this->editableViewHelper->render('someProperty');
@@ -154,10 +154,10 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfTheTsTemplateObjectIsNotSet()
     {
+        $this->expectException(\Neos\FluidAdaptor\Core\ViewHelper\Exception::class);
         $this->templateVariables = [
             'someProperty' => 'somePropertyValue',
         ];

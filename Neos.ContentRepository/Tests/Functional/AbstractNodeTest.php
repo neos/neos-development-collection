@@ -83,7 +83,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
         $this->fixtureFileName = __DIR__ . '/Fixtures/NodeStructure.xml';
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->markSkippedIfNodeTypesPackageIsNotInstalled();
@@ -123,7 +123,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
         return $node;
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
