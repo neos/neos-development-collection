@@ -19,11 +19,24 @@ namespace Neos\Fusion\Afx\Parser;
  */
 class Parser
 {
+    /**
+     * @var Lexer
+     */
+    protected $lexer;
+
+    /**
+     * Parser constructor.
+     * @param $string
+     */
     public function __construct($string)
     {
         $this->lexer = new Lexer($string);
     }
 
+    /**
+     * @return array
+     * @throws AfxParserException
+     */
     public function parse(): array
     {
         return Expression\NodeList::parse($this->lexer);
