@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Afx\Parser\Expression;
 
 /*
@@ -11,12 +13,21 @@ namespace Neos\Fusion\Afx\Parser\Expression;
  * source code.
  */
 
-use Neos\Fusion\Afx\Parser\Exception;
+use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Lexer;
 
+/**
+ * Class Expression
+ * @package Neos\Fusion\Afx\Parser\Expression
+ */
 class Expression
 {
-    public static function parse(Lexer $lexer)
+    /**
+     * @param Lexer $lexer
+     * @return string
+     * @throws AfxParserException
+     */
+    public static function parse(Lexer $lexer): string
     {
         $contents = '';
         $braceCount = 0;
@@ -24,12 +35,12 @@ class Expression
         if ($lexer->isOpeningBrace()) {
             $lexer->consume();
         } else {
-            throw new Exception('Expression without braces');
+            throw new AfxParserException('Expression without braces', 1557860467921);
         }
 
         while (true) {
             if ($lexer->isEnd()) {
-                throw new Exception(sprintf('Unfinished Expression "%s"', $contents));
+                throw new AfxParserException(sprintf('Unfinished Expression "%s"', $contents), 1557860496139);
             }
 
             if ($lexer->isOpeningBrace()) {

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Afx\Parser;
 
 /*
@@ -12,8 +14,9 @@ namespace Neos\Fusion\Afx\Parser;
  */
 
 /**
- * AFX-Exception
+ * Class AfxParserException
+ * @package Neos\Fusion\Afx\Parser
  */
-class Exception extends \Exception
+class AfxParserException extends \Exception
 {
 }

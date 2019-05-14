@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Afx\Parser;
 
 /*
@@ -14,6 +16,7 @@ namespace Neos\Fusion\Afx\Parser;
 /**
  * A primitive lexer that recognizes Afx-specific characters while iterating
  * through a string
+ * @package Neos\Fusion\Afx\Parser
  */
 class Lexer
 {
@@ -55,7 +58,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isWhiteSpace()
+    public function isWhiteSpace(): bool
     {
         return ctype_space($this->currentCharacter);
     }
@@ -65,7 +68,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isAlpha()
+    public function isAlpha(): bool
     {
         return ctype_alpha($this->currentCharacter);
     }
@@ -75,7 +78,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isAlphaNumeric()
+    public function isAlphaNumeric(): bool
     {
         return ctype_alnum($this->currentCharacter);
     }
@@ -85,7 +88,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isColon()
+    public function isColon(): bool
     {
         return $this->currentCharacter === ':';
     }
@@ -95,7 +98,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isDot()
+    public function isDot(): bool
     {
         return $this->currentCharacter === '.';
     }
@@ -105,7 +108,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isAt()
+    public function isAt(): bool
     {
         return $this->currentCharacter === '@';
     }
@@ -115,7 +118,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isMinus()
+    public function isMinus(): bool
     {
         return $this->currentCharacter === '-';
     }
@@ -125,7 +128,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isUnderscore()
+    public function isUnderscore(): bool
     {
         return $this->currentCharacter === '_';
     }
@@ -135,7 +138,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isEqualSign()
+    public function isEqualSign(): bool
     {
         return $this->currentCharacter === '=';
     }
@@ -145,7 +148,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isOpeningBracket()
+    public function isOpeningBracket(): bool
     {
         return $this->currentCharacter === '<';
     }
@@ -155,7 +158,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isClosingBracket()
+    public function isClosingBracket(): bool
     {
         return $this->currentCharacter === '>';
     }
@@ -165,7 +168,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isOpeningBrace()
+    public function isOpeningBrace(): bool
     {
         return $this->currentCharacter === '{';
     }
@@ -175,7 +178,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isClosingBrace()
+    public function isClosingBrace(): bool
     {
         return $this->currentCharacter === '}';
     }
@@ -185,7 +188,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isForwardSlash()
+    public function isForwardSlash(): bool
     {
         return $this->currentCharacter === '/';
     }
@@ -195,7 +198,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isBackSlash()
+    public function isBackSlash(): bool
     {
         return $this->currentCharacter === '\\';
     }
@@ -205,7 +208,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isSingleQuote()
+    public function isSingleQuote(): bool
     {
         return $this->currentCharacter === '\'';
     }
@@ -215,7 +218,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isDoubleQuote()
+    public function isDoubleQuote(): bool
     {
         return $this->currentCharacter === '"';
     }
@@ -225,7 +228,7 @@ class Lexer
      *
      * @return boolean
      */
-    public function isEnd()
+    public function isEnd(): bool
     {
         return $this->currentCharacter === null;
     }
@@ -235,7 +238,7 @@ class Lexer
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->currentCharacter = $this->string{--$this->characterPosition};
     }
@@ -246,7 +249,7 @@ class Lexer
      * @param int $characterNumber
      * @return string|null
      */
-    public function peek($characterNumber = 1)
+    public function peek($characterNumber = 1): ?string
     {
         if ($this->characterPosition < strlen($this->string) - 1) {
             return substr($this->string, $this->characterPosition, $characterNumber);
@@ -260,7 +263,7 @@ class Lexer
      *
      * @return string|null
      */
-    public function consume()
+    public function consume(): ?string
     {
         $c = $this->currentCharacter;
         if ($this->characterPosition < strlen($this->string) - 1) {

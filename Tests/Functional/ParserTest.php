@@ -750,7 +750,7 @@ class ParserTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\Exception
+     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
     public function shouldThrowExceptionForUnclosedTag()
     {
@@ -760,7 +760,7 @@ class ParserTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\Exception
+     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
     public function shouldThrowExceptionForUnclosedTagWithContent()
     {
@@ -770,7 +770,7 @@ class ParserTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\Exception
+     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
     public function shouldThrowExceptionForUnclosedStringAttribute()
     {
@@ -780,7 +780,7 @@ class ParserTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\Exception
+     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
     public function shouldThrowExceptionForUnclosedAttributeExpression()
     {
@@ -790,7 +790,7 @@ class ParserTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\Exception
+     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
     public function shouldThrowExceptionForUnclosedContentExpression()
     {
@@ -800,7 +800,7 @@ class ParserTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\Exception
+     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
     public function shouldThrowExceptionForUnclosedSpreadExpression()
     {
