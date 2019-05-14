@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Afx\Parser;
 
 /*
@@ -11,6 +13,10 @@ namespace Neos\Fusion\Afx\Parser;
  * source code.
  */
 
+/**
+ * Class Parser
+ * @package Neos\Fusion\Afx\Parser
+ */
 class Parser
 {
     public function __construct($string)
@@ -18,7 +24,7 @@ class Parser
         $this->lexer = new Lexer($string);
     }
 
-    public function parse()
+    public function parse(): array
     {
         return Expression\NodeList::parse($this->lexer);
     }

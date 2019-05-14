@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Afx\Parser\Expression;
 
 /*
@@ -11,7 +13,7 @@ namespace Neos\Fusion\Afx\Parser\Expression;
  * source code.
  */
 
-use Neos\Fusion\Afx\Parser\Exception;
+use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Lexer;
 
 /**
@@ -20,7 +22,12 @@ use Neos\Fusion\Afx\Parser\Lexer;
  */
 class StringLiteral
 {
-    public static function parse(Lexer $lexer)
+    /**
+     * @param Lexer $lexer
+     * @return string
+     * @throws AfxParserException
+     */
+    public static function parse(Lexer $lexer): string
     {
         $openingQuoteSign = '';
         $contents = '';
@@ -28,12 +35,12 @@ class StringLiteral
         if ($lexer->isSingleQuote() || $lexer->isDoubleQuote()) {
             $openingQuoteSign = $lexer->consume();
         } else {
-            throw new Exception('Unquoted String literal');
+            throw new AfxParserException('Unquoted String literal', 1557860514707);
         }
 
         while (true) {
             if ($lexer->isEnd()) {
-                throw new Exception(sprintf('Unfinished string literal "%s"', $contents));
+                throw new AfxParserException(sprintf('Unfinished string literal "%s"', $contents), 1557860504068);
             }
 
             if ($lexer->isBackSlash() && !$willBeEscaped) {

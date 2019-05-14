@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Afx\Parser\Expression;
 
 /*
@@ -11,12 +13,21 @@ namespace Neos\Fusion\Afx\Parser\Expression;
  * source code.
  */
 
-use Neos\Fusion\Afx\Parser\Exception;
+use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Lexer;
 
+/**
+ * Class NodeList
+ * @package Neos\Fusion\Afx\Parser\Expression
+ */
 class NodeList
 {
-    public static function parse(Lexer $lexer)
+    /**
+     * @param Lexer $lexer
+     * @return array
+     * @throws AfxParserException
+     */
+    public static function parse(Lexer $lexer): array
     {
         $contents = [];
         $currentText = '';
