@@ -5,6 +5,18 @@
     main:
       type: 'Neos.Neos:ContentCollection'
 
+'Acme.Demo:TwoColumn':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: 'Two column content'
+    group: 'structure'
+  childNodes:
+    column0:
+      type: 'Neos.Neos:ContentCollection'
+    column1:
+      type: 'Neos.Neos:ContentCollection'
+
 'Acme.Demo:ThreeColumn':
   superTypes:
     'Neos.Neos:Content': true
