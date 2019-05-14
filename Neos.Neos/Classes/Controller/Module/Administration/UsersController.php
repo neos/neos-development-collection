@@ -17,7 +17,7 @@ use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
-use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
+use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Neos\Controller\Module\AbstractModuleController;
@@ -55,9 +55,9 @@ class UsersController extends AbstractModuleController
 
     /**
      * @Flow\Inject
-     * @var AuthenticationManagerInterface
+     * @var TokenAndProviderFactoryInterface
      */
-    protected $authenticationManager;
+    protected $tokenAndProviderFactory;
 
     /**
      * @return void
@@ -313,7 +313,7 @@ class UsersController extends AbstractModuleController
      */
     protected function getAuthenticationProviders()
     {
-        $providerNames = array_keys($this->authenticationManager->getProviders());
+        $providerNames = array_keys($this->tokenAndProviderFactory->getProviders());
         sort($providerNames);
         return array_combine($providerNames, $providerNames);
     }
