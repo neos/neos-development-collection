@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Afx\Parser\Expression;
 
 /*
@@ -11,12 +13,21 @@ namespace Neos\Fusion\Afx\Parser\Expression;
  * source code.
  */
 
-use Neos\Fusion\Afx\Parser\Exception;
+use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Lexer;
 
+/**
+ * Class Prop
+ * @package Neos\Fusion\Afx\Parser\Expression
+ */
 class Prop
 {
-    public static function parse(Lexer $lexer)
+    /**
+     * @param Lexer $lexer
+     * @return array
+     * @throws AfxParserException
+     */
+    public static function parse(Lexer $lexer): array
     {
         $identifier = Identifier::parse($lexer);
 
@@ -40,10 +51,10 @@ class Prop
                     ];
                     break;
                 default:
-                    throw new Exception(sprintf(
+                    throw new AfxParserException(sprintf(
                         'Prop-assignment "%s" was not followed by quotes or braces',
                         $identifier
-                    ));
+                    ), 1557860545099);
             }
         } elseif ($lexer->isWhiteSpace() || $lexer->isForwardSlash() || $lexer->isClosingBracket()) {
             $value = [
@@ -52,7 +63,7 @@ class Prop
                 'identifier' => $identifier
             ];
         } else {
-            throw new Exception(sprintf('Prop identifier "%s" is neither assignment nor boolean', $identifier));
+            throw new AfxParserException(sprintf('Prop identifier "%s" is neither assignment nor boolean', $identifier), 1557860552278);
         }
 
         return $value;

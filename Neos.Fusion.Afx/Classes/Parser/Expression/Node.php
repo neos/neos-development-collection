@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Afx\Parser\Expression;
 
 /*
@@ -11,12 +13,21 @@ namespace Neos\Fusion\Afx\Parser\Expression;
  * source code.
  */
 
-use Neos\Fusion\Afx\Parser\Exception;
+use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Lexer;
 
+/**
+ * Class Node
+ * @package Neos\Fusion\Afx\Parser\Expression
+ */
 class Node
 {
-    public static function parse(Lexer $lexer)
+    /**
+     * @param Lexer $lexer
+     * @return array
+     * @throws AfxParserException
+     */
+    public static function parse(Lexer $lexer): array
     {
         if ($lexer->isOpeningBracket()) {
             $lexer->consume();
@@ -63,14 +74,14 @@ class Node
                         'selfClosing' => true
                     ];
                 } else {
-                    throw new Exception(sprintf('Self closing tag "%s" misses closing bracket.', $identifier));
+                    throw new AfxParserException(sprintf('Self closing tag "%s" misses closing bracket.', $identifier), 1557860567682);
                 }
             }
 
             if ($lexer->isClosingBracket()) {
                 $lexer->consume();
             } else {
-                throw new Exception(sprintf('Tag "%s" did not end with closing bracket.', $identifier));
+                throw new AfxParserException(sprintf('Tag "%s" did not end with closing bracket.', $identifier), 1557860573945);
             }
 
             $children = NodeList::parse($lexer);
@@ -81,26 +92,26 @@ class Node
                 if ($lexer->isForwardSlash()) {
                     $lexer->consume();
                 } else {
-                    throw new Exception(sprintf(
+                    throw new AfxParserException(sprintf(
                         'Opening-bracket for closing of tag "%s" was not followed by slash.',
                         $identifier
-                    ));
+                    ), 1557860584196);
                 }
             } else {
-                throw new Exception(sprintf(
+                throw new AfxParserException(sprintf(
                     'Opening-bracket for closing of tag "%s" expected.',
                     $identifier
-                ));
+                ), 1557860587680);
             }
 
             $closingIdentifier = Identifier::parse($lexer);
 
             if ($closingIdentifier !== $identifier) {
-                throw new Exception(sprintf(
+                throw new AfxParserException(sprintf(
                     'Closing-tag identifier "%s" did not match opening-tag identifier "%s".',
                     $closingIdentifier,
                     $identifier
-                ));
+                ), 1557860595281);
             }
 
             if ($lexer->isClosingBracket()) {
@@ -112,14 +123,14 @@ class Node
                     'selfClosing' => false
                 ];
             } else {
-                throw new Exception(sprintf('Closing tag "%s" did not end with closing-bracket.', $identifier));
+                throw new AfxParserException(sprintf('Closing tag "%s" did not end with closing-bracket.', $identifier), 1557860618559);
             }
 
             if ($lexer->isEnd()) {
-                throw new Exception(sprintf('Tag was %s is not closed.', $identifier));
+                throw new AfxParserException(sprintf('Tag was %s is not closed.', $identifier), 1557860622684);
             }
-        } catch (Exception $e) {
-            throw new Exception(sprintf('<%s> %s', $identifier, $e->getMessage()));
+        } catch (AfxParserException $e) {
+            throw new AfxParserException(sprintf('<%s> %s', $identifier, $e->getMessage()), 1557860627201);
         }
     }
 }

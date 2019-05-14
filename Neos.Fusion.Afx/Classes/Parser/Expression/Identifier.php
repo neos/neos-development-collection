@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Afx\Parser\Expression;
 
 /*
@@ -11,12 +13,21 @@ namespace Neos\Fusion\Afx\Parser\Expression;
  * source code.
  */
 
-use Neos\Fusion\Afx\Parser\Exception;
+use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Lexer;
 
+/**
+ * Class Identifier
+ * @package Neos\Fusion\Afx\Parser\Expression
+ */
 class Identifier
 {
-    public static function parse(Lexer $lexer)
+    /**
+     * @param Lexer $lexer
+     * @return string
+     * @throws AfxParserException
+     */
+    public static function parse(Lexer $lexer): string
     {
         $identifier = '';
 
@@ -38,11 +49,11 @@ class Identifier
                     break;
                 default:
                     $unexpected_character = $lexer->consume();
-                    throw new Exception(sprintf(
+                    throw new AfxParserException(sprintf(
                         'Unexpected character "%s" in identifier "%s"',
                         $unexpected_character,
                         $identifier
-                    ));
+                    ), 1557860650835);
             }
         }
     }

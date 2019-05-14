@@ -713,7 +713,7 @@ EOF;
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\Exception
+     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
     public function unclosedTagsRaisesException()
     {
@@ -723,7 +723,7 @@ EOF;
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\Exception
+     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
     public function unclosedAttributeRaisesException()
     {
@@ -733,7 +733,7 @@ EOF;
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\Exception
+     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
     public function unclosedExpressionRaisesException()
     {
@@ -743,7 +743,7 @@ EOF;
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\Exception
+     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
     public function unclosedSpreadRaisesException()
     {
