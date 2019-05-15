@@ -30,7 +30,7 @@ class UserRepository extends Repository
     public function findAllOrderedByUsername(): QueryResultInterface
     {
         return $this->createQuery()
-            ->setOrderings(['name.alias' => QueryInterface::ORDER_ASCENDING])
+            ->setOrderings(['accounts.accountIdentifier' => QueryInterface::ORDER_ASCENDING])
             ->execute();
     }
 
@@ -44,11 +44,11 @@ class UserRepository extends Repository
             $query = $this->createQuery();
             $query->matching(
                 $query->logicalOr(
-                    $query->like('name.alias', '%'.$searchTerm.'%'),
+                    $query->like('accounts.accountIdentifier', '%'.$searchTerm.'%'),
                     $query->like('name.fullName', '%'.$searchTerm.'%')
                 )
             );
-            return $query->setOrderings(['name.alias' => QueryInterface::ORDER_ASCENDING])->execute();
+            return $query->setOrderings(['accounts.accountIdentifier' => QueryInterface::ORDER_ASCENDING])->execute();
         } catch (\Neos\Flow\Persistence\Exception\InvalidQueryException $e) {
             throw new \RuntimeException($e->getMessage(), 1557767046, $e);
         }

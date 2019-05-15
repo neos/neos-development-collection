@@ -156,7 +156,6 @@ class UsersController extends AbstractModuleController
      */
     public function createAction(string $username, array $password, User $user, array $roleIdentifiers, string $authenticationProviderName = null): void
     {
-        $user->getName()->setAlias($username);
         $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
         $this->addFlashMessage('The user "%s" has been created.', 'User created', Message::SEVERITY_OK, [htmlspecialchars($username)], 1416225561);
         $this->redirect('index');
