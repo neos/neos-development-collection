@@ -53,7 +53,7 @@ class Identifier
                         'Unexpected character "%s" in identifier "%s"',
                         $unexpected_character,
                         $identifier
-                    ), 1557860650835);
+                    ), 1557860650);
             }
         }
     }

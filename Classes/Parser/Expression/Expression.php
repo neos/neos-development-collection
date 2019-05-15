@@ -35,12 +35,12 @@ class Expression
         if ($lexer->isOpeningBrace()) {
             $lexer->consume();
         } else {
-            throw new AfxParserException('Expression without braces', 1557860467921);
+            throw new AfxParserException('Expression without braces', 1557860467);
         }
 
         while (true) {
             if ($lexer->isEnd()) {
-                throw new AfxParserException(sprintf('Unfinished Expression "%s"', $contents), 1557860496139);
+                throw new AfxParserException(sprintf('Unfinished Expression "%s"', $contents), 1557860496);
             }
 
             if ($lexer->isOpeningBrace()) {
