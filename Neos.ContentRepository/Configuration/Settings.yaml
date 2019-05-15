@@ -56,6 +56,7 @@ Neos:
           Math: Neos\Eel\Helper\MathHelper
           Json: Neos\Eel\Helper\JsonHelper
           I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
+          q: Neos\Eel\FlowQuery\FlowQuery::q
 
     # the fallback NodeType can be used as a replacement for unknown NodeTypes
     #
