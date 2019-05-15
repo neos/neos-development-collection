@@ -16,7 +16,6 @@ use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Service\LinkingService;
-use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 

@@ -21,7 +21,6 @@ use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\ThumbnailServiceException;
-use Webmozart\Assert\Assert;
 
 /**
  * Renders an <img> HTML tag from a given Neos.Media's asset instance
