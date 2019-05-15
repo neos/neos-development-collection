@@ -67,7 +67,7 @@ Lateron, we will also support [PostgreSQL](https://www.postgresql.org/docs/8.4/q
 
 ### PHP
 
-The new code should be compatible with **PHP 7.1** but we recommend to use **PHP 7.2** or higher
+The new code should be compatible with **PHP 7.2**
 
 ## Getting Started / Installation
 
