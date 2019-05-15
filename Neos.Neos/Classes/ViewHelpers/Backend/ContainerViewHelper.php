@@ -73,11 +73,23 @@ class ContainerViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @param NodeInterface $node
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('node', NodeInterface::class, 'Node', true);
+    }
+
+    /**
      * @return string
      * @throws NeosException
+     * @throws \Neos\FluidAdaptor\Exception
      */
-    public function render(NodeInterface $node)
+    public function render(): string
     {
         if ($this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess') === false) {
             return '';
@@ -93,7 +105,7 @@ class ContainerViewHelper extends AbstractViewHelper
         $user = $this->partyService->getAssignedPartyOfAccount($this->securityContext->getAccount());
 
         $innerView->assignMultiple([
-            'node' => $node,
+            'node' => $this->arguments['node'],
             'modules' => $this->menuHelper->buildModuleList($this->controllerContext),
             'sites' => $this->menuHelper->buildSiteList($this->controllerContext),
             'user' => $user

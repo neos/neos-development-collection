@@ -84,14 +84,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     private $throwableStorage;
 
     /**
-     * @param LoggerInterface $logger
-     */
-    public function injectLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
      * @param ThrowableStorageInterface $throwableStorage
      */
     public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
