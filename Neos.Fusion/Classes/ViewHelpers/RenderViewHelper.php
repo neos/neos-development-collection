@@ -89,19 +89,10 @@ class RenderViewHelper extends AbstractViewHelper
 
         $slashSeparatedPath = str_replace('.', '/', $path);
 
-        if ($this->hasArgument('fusionPackageKey')) {
-            $this->initializeFusionView();
-            $this->fusionView->setPackageKey($this->arguments['fusionPackageKey']);
-            $this->fusionView->setFusionPath($slashSeparatedPath);
-            if ($this->hasArgument('context') !== null) {
-                $this->fusionView->assignMultiple($this->arguments['context']);
-            }
-
-            $output = $this->fusionView->render();
-        } else {
+        if ($this->arguments['fusionPackageKey'] === null) {
             /** @var $fusionObject AbstractFusionObject */
             $fusionObject = $this->viewHelperVariableContainer->getView()->getFusionObject();
-            if ($this->hasArgument('context')) {
+            if ($this->arguments['context'] !== null) {
                 $currentContext = $fusionObject->getRuntime()->getCurrentContext();
                 foreach ($this->arguments['context'] as $key => $value) {
                     $currentContext[$key] = $value;
@@ -112,9 +103,18 @@ class RenderViewHelper extends AbstractViewHelper
 
             $output = $fusionObject->getRuntime()->render($absolutePath);
 
-            if ($this->hasArgument('context')) {
+            if ($this->arguments['context'] !== null) {
                 $fusionObject->getRuntime()->popContext();
             }
+        } else {
+            $this->initializeFusionView();
+            $this->fusionView->setPackageKey($this->arguments['fusionPackageKey']);
+            $this->fusionView->setFusionPath($slashSeparatedPath);
+            if ($this->arguments['context'] !== null) {
+                $this->fusionView->assignMultiple($this->arguments['context']);
+            }
+
+            $output = $this->fusionView->render();
         }
 
         return $output;

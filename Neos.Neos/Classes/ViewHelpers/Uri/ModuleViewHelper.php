@@ -71,7 +71,7 @@ class ModuleViewHelper extends AbstractViewHelper
         if ($this->arguments['arguments'] !== []) {
             $modifiedArguments['moduleArguments'] = $this->arguments['arguments'];
         }
-        if ($this->hasArgument('action')) {
+        if ($this->arguments['action'] !== null) {
             $modifiedArguments['moduleArguments']['@action'] = $this->arguments['action'];
         }
 

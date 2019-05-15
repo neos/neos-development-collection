@@ -83,11 +83,11 @@ class ImageViewHelper extends AbstractViewHelper
      */
     public function render(): string
     {
-        if (!$this->hasArgument('image')) {
+        if ($this->arguments['image'] === null) {
             return '';
         }
 
-        if ($this->hasArgument('preset')) {
+        if ($this->arguments['preset'] !== null) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($this->arguments['preset'], $this->arguments['async']);
         } else {
             $thumbnailConfiguration = new ThumbnailConfiguration($this->arguments['width'], $this->arguments['maximumWidth'], $this->arguments['height'], $this->arguments['maximumHeight'], $this->arguments['allowCropping'], $this->arguments['allowUpScaling'], $this->arguments['async'], $this->arguments['quality'], $this->arguments['format']);

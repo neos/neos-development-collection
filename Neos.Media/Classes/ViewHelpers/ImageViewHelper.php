@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
+use Neos\Media\Domain\Service\AssetService;
+use Neos\Media\Domain\Service\ThumbnailService;
 
 /**
  * Renders an <img> HTML tag from a given Neos.Media's image instance
@@ -69,13 +71,13 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
 {
     /**
      * @Flow\Inject
-     * @var \Neos\Media\Domain\Service\ThumbnailService
+     * @var ThumbnailService
      */
     protected $thumbnailService;
 
     /**
      * @Flow\Inject
-     * @var \Neos\Media\Domain\Service\AssetService
+     * @var AssetService
      */
     protected $assetService;
 
@@ -120,11 +122,11 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      */
     public function render(): string
     {
-        if (!$this->hasArgument('image')) {
+        if ($this->arguments['image'] === null) {
             return '';
         }
 
-        if ($this->hasArgument('preset')) {
+        if ($this->arguments['preset'] !== null) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($this->arguments['preset'], $this->arguments['async']);
         } else {
             $thumbnailConfiguration = new ThumbnailConfiguration($this->arguments['width'], $this->arguments['maximumWidth'], $this->arguments['height'], $this->arguments['maximumHeight'], $this->arguments['allowCropping'], $this->arguments['allowUpScaling'], $this->arguments['async'], $this->arguments['quality'], $this->arguments['format']);

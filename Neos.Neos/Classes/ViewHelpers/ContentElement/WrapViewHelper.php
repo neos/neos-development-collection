@@ -77,11 +77,7 @@ class WrapViewHelper extends AbstractViewHelper
         $fusionObject = $view->getFusionObject();
         $currentContext = $fusionObject->getRuntime()->getCurrentContext();
 
-        if ($this->hasArgument('node')) {
-            $node = $this->arguments['node'];
-        } else {
-            $node = $currentContext['node'];
-        }
+        $node = $this->arguments['node'] ?? $currentContext['node'];
         return $this->contentElementWrappingService->wrapContentObject($node, $this->renderChildren(), $fusionObject->getPath());
     }
 }
