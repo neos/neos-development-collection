@@ -24,15 +24,25 @@ class ChangeStatsViewHelper extends AbstractViewHelper
      * @var boolean
      */
     protected $escapeOutput = false;
+    /**
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('changeCounts', 'array', 'Expected keys: new, changed, removed', true);
+    }
 
     /**
      * Expects an array of change count data and adds calculated ratios to the rendered child view
      *
-     * @param array $changeCounts Expected keys: new, changed, removed
      * @return string
      */
-    public function render(array $changeCounts)
+    public function render(): string
     {
+        $changeCounts = $this->arguments['changeCounts'];
+
         $this->templateVariableContainer->add('newCountRatio', $changeCounts['new'] / $changeCounts['total'] * 100);
         $this->templateVariableContainer->add('changedCountRatio', $changeCounts['changed'] / $changeCounts['total'] * 100);
         $this->templateVariableContainer->add('removedCountRatio', $changeCounts['removed'] / $changeCounts['total'] * 100);

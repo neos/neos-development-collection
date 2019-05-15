@@ -51,27 +51,28 @@ class ModuleViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
         $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
+
+        $this->registerArgument('path', 'string', 'Target module path', true);
+        $this->registerArgument('action', 'string', 'Target module action');
+        $this->registerArgument('arguments', 'array', 'Arguments', false, []);
+        $this->registerArgument('section', 'string', 'The anchor to be added to the URI');
+        $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"');
+        $this->registerArgument('additionalParams', 'array', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, []);
+        $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
+        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
     }
 
     /**
      * Render a link to a specific module
      *
-     * @param string $path Target module path
-     * @param string $action Target module action
-     * @param array $arguments Arguments
-     * @param string $section The anchor to be added to the URI
-     * @param string $format The requested format, e.g. ".html"
-     * @param array $additionalParams additional query parameters that won't be prefixed like $arguments (overrule $arguments)
-     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
      * @return string The rendered link
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render($path, $action = null, $arguments = [], $section = '', $format = '', array $additionalParams = [], $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [])
+    public function render(): string
     {
         $this->uriModuleViewHelper->setRenderingContext($this->renderingContext);
 
-        $uri = $this->uriModuleViewHelper->render($path, $action, $arguments, $section, $format, $additionalParams, $addQueryString, $argumentsToBeExcludedFromQueryString);
+        $uri = $this->uriModuleViewHelper->render($this->arguments['path'], $this->arguments['action'], $this->arguments['arguments'], $this->arguments['section'], $this->arguments['format'], $this->arguments['additionalParams'], $this->arguments['addQueryString'], $this->arguments['argumentsToBeExcludedFromQueryString']);
         if ($uri !== null) {
             $this->tag->addAttribute('href', $uri);
         }

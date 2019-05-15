@@ -61,7 +61,10 @@ class RenderViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('fusionFilePathPattern', 'string', 'Resource pattern to load Fusion from. Defaults to: resource://@package/Private/Fusion/', false);
+        $this->registerArgument('path', 'string', 'Relative Fusion path to be rendered', true);
+        $this->registerArgument('context', 'array', 'ReAdditional context variables to be set');
+        $this->registerArgument('fusionPackageKey', 'string', 'The key of the package to load Fusion from, if not from the current context');
+        $this->registerArgument('fusionFilePathPattern', 'string', 'Resource pattern to load Fusion from. Defaults to: resource://@package/Private/Fusion/');
     }
 
     /**
@@ -74,8 +77,9 @@ class RenderViewHelper extends AbstractViewHelper
      * @throws \Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function render($path, array $context = null, $fusionPackageKey = null)
+    public function render(): string
     {
+        $path = $this->arguments['path'];
         if (strpos($path, '/') === 0 || strpos($path, '.') === 0) {
             throw new \InvalidArgumentException('When calling the Fusion render view helper only relative paths are allowed.', 1368740480);
         }
@@ -85,12 +89,21 @@ class RenderViewHelper extends AbstractViewHelper
 
         $slashSeparatedPath = str_replace('.', '/', $path);
 
-        if ($fusionPackageKey === null) {
+        if ($this->hasArgument('fusionPackageKey')) {
+            $this->initializeFusionView();
+            $this->fusionView->setPackageKey($this->arguments['fusionPackageKey']);
+            $this->fusionView->setFusionPath($slashSeparatedPath);
+            if ($this->hasArgument('context') !== null) {
+                $this->fusionView->assignMultiple($this->arguments['context']);
+            }
+
+            $output = $this->fusionView->render();
+        } else {
             /** @var $fusionObject AbstractFusionObject */
             $fusionObject = $this->viewHelperVariableContainer->getView()->getFusionObject();
-            if ($context !== null) {
+            if ($this->hasArgument('context')) {
                 $currentContext = $fusionObject->getRuntime()->getCurrentContext();
-                foreach ($context as $key => $value) {
+                foreach ($this->arguments['context'] as $key => $value) {
                     $currentContext[$key] = $value;
                 }
                 $fusionObject->getRuntime()->pushContextArray($currentContext);
@@ -99,18 +112,9 @@ class RenderViewHelper extends AbstractViewHelper
 
             $output = $fusionObject->getRuntime()->render($absolutePath);
 
-            if ($context !== null) {
+            if ($this->hasArgument('context')) {
                 $fusionObject->getRuntime()->popContext();
             }
-        } else {
-            $this->initializeFusionView();
-            $this->fusionView->setPackageKey($fusionPackageKey);
-            $this->fusionView->setFusionPath($slashSeparatedPath);
-            if ($context !== null) {
-                $this->fusionView->assignMultiple($context);
-            }
-
-            $output = $this->fusionView->render();
         }
 
         return $output;
@@ -120,8 +124,9 @@ class RenderViewHelper extends AbstractViewHelper
      * Initialize the Fusion View
      *
      * @return void
+     * @throws \Neos\Flow\Mvc\Exception
      */
-    protected function initializeFusionView()
+    protected function initializeFusionView(): void
     {
         $this->fusionView = new FusionView();
         $this->fusionView->setControllerContext($this->controllerContext);

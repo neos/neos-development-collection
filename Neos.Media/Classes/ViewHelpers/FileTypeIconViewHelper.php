@@ -56,46 +56,44 @@ class FileTypeIconViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function initializeArguments()
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
+
+        $this->registerArgument('asset', AssetInterface::class, 'An Asset object to determine the file type icon for. Alternatively $filename can be specified.');
+        $this->registerArgument('filename', 'string', 'A filename to determine the file type icon for. Alternatively $asset can be specified.');
+        $this->registerArgument('width', 'integer', 'Desired width of the icon');
+        $this->registerArgument('height', 'integer', 'Desired height of the icon');
     }
 
     /**
      * Renders an <img> HTML tag for a file type icon for a given Neos.Media's asset instance
      *
-     * @param AssetInterface|null $file The Asset object. DEPRECATED, use $asset instead!
-     * @param AssetInterface|null $asset An Asset object to determine the file type icon for. Alternatively $filename can be specified.
-     * @param string|null $filename  A filename to determine the file type icon for. Alternatively $asset can be specified.
-     * @param integer|null $width
-     * @param integer|null $height
      * @return string
      */
-    public function render(AssetInterface $file = null, AssetInterface $asset = null, string $filename = null, $width = null, $height = null)
+    public function render(): string
     {
-        if ($asset === null) {
-            $asset = $file;
-        }
-        if ($asset === null && $filename === null) {
+        if (!$this->hasArgument('asset') && !$this->hasArgument('filename')) {
             throw new \InvalidArgumentException('You must either specify "asset" or "filename" for the ' . __CLASS__ . '.', 1524039575);
         }
 
-        if ($asset instanceof AssetInterface) {
-            $filename = $asset->getResource()->getFilename();
+        if ($this->arguments['asset'] instanceof AssetInterface) {
+            $filename = $this->arguments['asset']->getResource()->getFilename();
         }
 
         $icon = FileTypeIconService::getIcon($filename);
         $this->tag->addAttribute('src', $this->resourceManager->getPublicPackageResourceUriByPath($icon['src']));
         $this->tag->addAttribute('alt', $icon['alt']);
 
-        if ($width !== null) {
-            $this->tag->addAttribute('width', $width);
+        if ($this->arguments['width'] !== null) {
+            $this->tag->addAttribute('width', $this->arguments['width']);
         }
 
-        if ($height !== null) {
-            $this->tag->addAttribute('height', $height);
+        if ($this->arguments['height'] !== null) {
+            $this->tag->addAttribute('height', $this->arguments['height']);
         }
 
         return $this->tag->render();

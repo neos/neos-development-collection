@@ -55,17 +55,30 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 class InEditModeViewHelper extends AbstractRenderingStateViewHelper
 {
     /**
-     * @param NodeInterface $node Optional Node to use context from
-     * @param string $mode Optional rendering mode name to check if this specific mode is active
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('node', NodeInterface::class, 'Optional Node to use context from');
+        $this->registerArgument('mode', 'string', 'Optional rendering mode name to check if this specific mode is active');
+    }
+
+    /**
      * @return boolean
      * @throws \Neos\Neos\Exception
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(NodeInterface $node = null, $mode = null)
+    public function render(): bool
     {
+        $node = $this->hasArgument('node') ? $this->arguments['node'] : null;
         $context = $this->getNodeContext($node);
         $renderingMode = $context->getCurrentRenderingMode();
-        if ($mode !== null) {
-            $result = ($renderingMode->getName() === $mode) && $renderingMode->isEdit();
+        if ($this->hasArgument('mode')) {
+            $result = ($renderingMode->getName() === $this->arguments['mode']) && $renderingMode->isEdit();
         } else {
             $result = $renderingMode->isEdit();
         }

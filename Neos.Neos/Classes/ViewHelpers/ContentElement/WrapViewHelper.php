@@ -50,14 +50,25 @@ class WrapViewHelper extends AbstractViewHelper
     protected $contentElementWrappingService;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('node', NodeInterface::class, 'Node');
+    }
+
+    /**
      * In live workspace this just renders a the content.
      * For logged in users with access to the Backend this also adds the attributes for the RTE to work.
      *
-     * @param NodeInterface $node The node of the content element. Optional, will be resolved from the Fusion context by default.
      * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
      * @throws ViewHelperException
      */
-    public function render(NodeInterface $node = null)
+    public function render(): string
     {
         $view = $this->viewHelperVariableContainer->getView();
         if (!$view instanceof FusionAwareViewInterface) {
@@ -66,7 +77,9 @@ class WrapViewHelper extends AbstractViewHelper
         $fusionObject = $view->getFusionObject();
         $currentContext = $fusionObject->getRuntime()->getCurrentContext();
 
-        if ($node === null) {
+        if ($this->hasArgument('node')) {
+            $node = $this->arguments['node'];
+        } else {
             $node = $currentContext['node'];
         }
         return $this->contentElementWrappingService->wrapContentObject($node, $this->renderChildren(), $fusionObject->getPath());

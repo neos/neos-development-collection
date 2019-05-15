@@ -11,6 +11,7 @@ namespace Neos\Neos\Tests\Unit\ViewHelpers;
  * source code.
  */
 
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
@@ -105,16 +106,14 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->mockContentContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
-        $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
-        $this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue(new NodeType('Acme.Test:Headline', [], [])));
+        $this->mockNode->expects($this->any())->method('getContext')->willReturn($this->mockContentContext);
+        $this->mockNode->expects($this->any())->method('getNodeType')->willReturn(new NodeType('Acme.Test:Headline', [], []));
 
         $this->mockContext = ['node' => $this->mockNode];
-        $this->mockRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockContext));
-        $this->mockTemplateImplementation->expects($this->any())->method('getRuntime')->will($this->returnValue($this->mockRuntime));
+        $this->mockRuntime->expects($this->any())->method('getCurrentContext')->willReturn($this->mockContext);
+        $this->mockTemplateImplementation->expects($this->any())->method('getRuntime')->willReturn($this->mockRuntime);
         $this->mockView = $this->getAccessibleMock(FluidView::class, [], [], '', false);
-        $this->mockView->expects($this->any())->method('getFusionObject')->will($this->returnValue($this->mockTemplateImplementation));
-
-        $this->editableViewHelper->initializeArguments();
+        $this->mockView->expects($this->any())->method('getFusionObject')->willReturn($this->mockTemplateImplementation);
     }
 
     /**
@@ -125,12 +124,12 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
     {
         parent::injectDependenciesIntoViewHelper($viewHelper);
         $templateVariables = $this->templateVariables;
-        $this->templateVariableContainer->expects($this->any())->method('exists')->will($this->returnCallback(function ($variableName) use ($templateVariables) {
+        $this->templateVariableContainer->expects($this->any())->method('exists')->willReturnCallback(static function ($variableName) use ($templateVariables) {
             return isset($templateVariables[$variableName]);
-        }));
-        $this->templateVariableContainer->expects($this->any())->method('get')->will($this->returnCallback(function ($variableName) use ($templateVariables) {
+        });
+        $this->templateVariableContainer->expects($this->any())->method('get')->willReturnCallback(static function ($variableName) use ($templateVariables) {
             return $templateVariables[$variableName];
-        }));
+        });
     }
 
     /**
@@ -138,83 +137,91 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
      */
     protected function setUpViewMockAccess()
     {
-        $this->viewHelperVariableContainer->expects($this->any())->method('getView')->will($this->returnValue($this->mockView));
+        $this->viewHelperVariableContainer->expects($this->any())->method('getView')->willReturn($this->mockView);
     }
 
     /**
      * @test
      */
-    public function renderThrowsExceptionIfTheGivenPropertyIsNotAccessible()
+    public function renderThrowsExceptionIfTheGivenPropertyIsNotAccessible(): void
     {
-        $this->expectException(\Neos\FluidAdaptor\Core\ViewHelper\Exception::class);
+        $this->expectException(Exception::class);
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
         $this->setUpViewMockAccess();
-        $this->editableViewHelper->render('someProperty');
+        $this->editableViewHelper = $this->prepareArguments($this->editableViewHelper);
+        $this->editableViewHelper->render();
     }
 
     /**
      * @test
      */
-    public function renderThrowsExceptionIfTheTsTemplateObjectIsNotSet()
+    public function renderThrowsExceptionIfTheTsTemplateObjectIsNotSet(): void
     {
-        $this->expectException(\Neos\FluidAdaptor\Core\ViewHelper\Exception::class);
+        $this->expectException(Exception::class);
         $this->templateVariables = [
             'someProperty' => 'somePropertyValue',
         ];
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-        $this->editableViewHelper->render('someProperty');
+        $this->editableViewHelper = $this->prepareArguments($this->editableViewHelper);
+        $this->editableViewHelper->render();
     }
 
     /**
      * @test
      */
-    public function renderSetsThePropertyValueAsTagContentIfItExists()
+    public function renderSetsThePropertyValueAsTagContentIfItExists(): void
     {
+        $this->mockContentElementEditableService->expects($this->once())->method('wrapContentProperty')->willReturn('someWrappedContent');
         $this->templateVariables = [
             'someProperty' => 'somePropertyValue'
         ];
         $this->tagBuilder->expects($this->once())->method('setContent')->with('somePropertyValue');
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
         $this->setUpViewMockAccess();
-        $this->editableViewHelper->render('someProperty');
+        $this->editableViewHelper = $this->prepareArguments($this->editableViewHelper, ['property' => 'someProperty']);
+        $this->editableViewHelper->render();
     }
 
     /**
      * @test
      */
-    public function renderSetsTheChildNodesAsTagContentIfTheyAreSet()
+    public function renderSetsTheChildNodesAsTagContentIfTheyAreSet(): void
     {
+        $this->mockContentElementEditableService->expects($this->once())->method('wrapContentProperty')->willReturn('someWrappedContent');
         $this->templateVariables = [
             'someProperty' => 'somePropertyValue'
         ];
 
-        $this->editableViewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('overriddenPropertyValue'));
+        $this->editableViewHelper->expects($this->atLeastOnce())->method('renderChildren')->willReturn('overriddenPropertyValue');
         $this->tagBuilder->expects($this->once())->method('setContent')->with('overriddenPropertyValue');
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
         $this->setUpViewMockAccess();
-        $this->editableViewHelper->render('someProperty');
+        $this->editableViewHelper = $this->prepareArguments($this->editableViewHelper, ['property' => 'someProperty']);
+        $this->editableViewHelper->render();
     }
 
     /**
      * @test
      */
-    public function renderCallsContentElementEditableServiceForAugmentation()
+    public function renderCallsContentElementEditableServiceForAugmentation(): void
     {
         $this->templateVariables = [
             'someProperty' => 'somePropertyValue'
         ];
         $this->tagBuilder->expects($this->once())->method('render')->with()->willReturn('<div>somePropertyValue</div>');
-        $this->mockContentElementEditableService->expects($this->once())->method('wrapContentProperty')->with($this->mockNode, 'someProperty', '<div>somePropertyValue</div>');
+        $this->mockContentElementEditableService->expects($this->once())->method('wrapContentProperty')->with($this->mockNode, 'someProperty', '<div>somePropertyValue</div>')->willReturn('someWrappedContent');
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
         $this->setUpViewMockAccess();
-        $this->editableViewHelper->render('someProperty');
+        $this->editableViewHelper = $this->prepareArguments($this->editableViewHelper, ['property' => 'someProperty']);
+        $this->editableViewHelper->render();
     }
 
     /**
      * @test
      */
-    public function renderUsesTheNodeArgumentIfSet()
+    public function renderUsesTheNodeArgumentIfSet(): void
     {
+        $this->mockContentElementEditableService->expects($this->once())->method('wrapContentProperty')->willReturn('someWrappedContent');
         $this->templateVariables = [
             'someProperty' => 'somePropertyValue'
         ];
@@ -222,6 +229,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->tagBuilder->expects($this->once())->method('render');
 
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-        $this->editableViewHelper->render('someProperty', 'div', $this->mockNode);
+        $this->editableViewHelper = $this->prepareArguments($this->editableViewHelper, ['property' => 'someProperty', 'node' => $this->mockNode]);
+        $this->editableViewHelper->render();
     }
 }
