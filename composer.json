@@ -7,11 +7,10 @@
     "packagefactory/atomicfusion-afx": "*"
   },
   "require": {
-    "neos/fusion": "^4.2.0 || dev-master",
-    "packagefactory/afx": "^3.0.0"
+    "neos/fusion": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "~6.0.0"
+    "phpunit/phpunit": "^8.1"
   },
   "autoload": {
     "psr-4": {
