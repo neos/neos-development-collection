@@ -15,7 +15,6 @@ namespace Neos\Media\Browser\ViewHelpers;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 use Neos\Media\Browser\ViewHelpers\Controller\PaginateController;
-use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 
 /**
  * This ViewHelper renders a pagination for asset proxy objects
