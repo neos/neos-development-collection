@@ -76,7 +76,7 @@ class FileTypeIconViewHelper extends AbstractTagBasedViewHelper
      */
     public function render(): string
     {
-        if (!$this->hasArgument('asset') && !$this->hasArgument('filename')) {
+        if ($this->arguments['asset'] === null && !$this->arguments['filename'] === null) {
             throw new \InvalidArgumentException('You must either specify "asset" or "filename" for the ' . __CLASS__ . '.', 1524039575);
         }
 

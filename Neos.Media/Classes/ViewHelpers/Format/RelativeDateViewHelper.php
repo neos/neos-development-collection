@@ -41,7 +41,7 @@ class RelativeDateViewHelper extends AbstractViewHelper
      */
     public function render(): string
     {
-        if ($this->hasArgument('date')) {
+        if ($this->arguments['date'] === null) {
             $date = $this->arguments['date'];
         } else {
             $date = $this->renderChildren();

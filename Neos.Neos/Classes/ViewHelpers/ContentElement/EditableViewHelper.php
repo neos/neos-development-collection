@@ -80,11 +80,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
         $this->tag->forceClosingTag(true);
         $content = $this->renderChildren();
 
-        if ($this->hasArgument('node')) {
-            $node = $this->arguments['node'];
-        } else {
-            $node = $this->getNodeFromFusionContext();
-        }
+        $node = $this->arguments['node'] ?? $this->getNodeFromFusionContext();
 
         if ($node === null) {
             throw new ViewHelperException('A node is required, but one was not supplied and could not be found in the Fusion context.', 1408521638);
@@ -106,7 +102,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
      * @return NodeInterface
      * @throws ViewHelperException
      */
-    protected function getNodeFromFusionContext()
+    protected function getNodeFromFusionContext(): NodeInterface
     {
         $node = $this->getContextVariable('node');
         if ($node === null) {

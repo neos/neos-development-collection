@@ -74,10 +74,9 @@ class InEditModeViewHelper extends AbstractRenderingStateViewHelper
      */
     public function render(): bool
     {
-        $node = $this->hasArgument('node') ? $this->arguments['node'] : null;
-        $context = $this->getNodeContext($node);
+        $context = $this->getNodeContext($this->arguments['node']);
         $renderingMode = $context->getCurrentRenderingMode();
-        if ($this->hasArgument('mode')) {
+        if ($this->arguments['mode'] !== null) {
             $result = ($renderingMode->getName() === $this->arguments['mode']) && $renderingMode->isEdit();
         } else {
             $result = $renderingMode->isEdit();
