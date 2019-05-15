@@ -35,12 +35,12 @@ class StringLiteral
         if ($lexer->isSingleQuote() || $lexer->isDoubleQuote()) {
             $openingQuoteSign = $lexer->consume();
         } else {
-            throw new AfxParserException('Unquoted String literal', 1557860514707);
+            throw new AfxParserException('Unquoted String literal', 1557860514);
         }
 
         while (true) {
             if ($lexer->isEnd()) {
-                throw new AfxParserException(sprintf('Unfinished string literal "%s"', $contents), 1557860504068);
+                throw new AfxParserException(sprintf('Unfinished string literal "%s"', $contents), 1557860504);
             }
 
             if ($lexer->isBackSlash() && !$willBeEscaped) {

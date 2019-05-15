@@ -38,12 +38,12 @@ class Spread
             $lexer->consume();
             $lexer->consume();
         } else {
-            throw new AfxParserException('Spread without braces', 1557860522837);
+            throw new AfxParserException('Spread without braces', 1557860522);
         }
 
         while (true) {
             if ($lexer->isEnd()) {
-                throw new AfxParserException(sprintf('Unfinished Spread "%s"', $contents), 1557860526973);
+                throw new AfxParserException(sprintf('Unfinished Spread "%s"', $contents), 1557860526);
             }
 
             if ($lexer->isOpeningBrace()) {

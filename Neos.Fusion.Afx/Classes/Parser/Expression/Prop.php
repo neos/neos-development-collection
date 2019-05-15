@@ -54,7 +54,7 @@ class Prop
                     throw new AfxParserException(sprintf(
                         'Prop-assignment "%s" was not followed by quotes or braces',
                         $identifier
-                    ), 1557860545099);
+                    ), 1557860545);
             }
         } elseif ($lexer->isWhiteSpace() || $lexer->isForwardSlash() || $lexer->isClosingBracket()) {
             $value = [
@@ -63,7 +63,7 @@ class Prop
                 'identifier' => $identifier
             ];
         } else {
-            throw new AfxParserException(sprintf('Prop identifier "%s" is neither assignment nor boolean', $identifier), 1557860552278);
+            throw new AfxParserException(sprintf('Prop identifier "%s" is neither assignment nor boolean', $identifier), 1557860552);
         }
 
         return $value;
