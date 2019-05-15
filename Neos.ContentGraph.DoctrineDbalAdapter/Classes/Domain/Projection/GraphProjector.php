@@ -635,35 +635,9 @@ insert ignore into neos_contentgraph_restrictionrelation
         NodeAggregateIdentifier $entryNodeAggregateIdentifier,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
-        $parentRestrictionRelations = $this->getDatabaseConnection()->executeQuery(
-            'SELECT * FROM neos_contentgraph_restrictionrelation
-                        WHERE contentstreamidentifier = :contentStreamIdentifier
-                        AND affectednodeaggregateidentifier = :parentNodeAggregateIdentifier
-                        AND dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
-            ',
-            [
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
-                'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
-            ],
-            [
-                'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-            ]
-        )->fetchAll();
-
-        if (empty($parentRestrictionRelations)) {
-            return;
-        }
-
-        $restrictingAncestorIdentifiers = [];
-        foreach ($parentRestrictionRelations as $restrictionRelationRecord) {
-            $restrictingAncestorIdentifiers[] = $restrictionRelationRecord['originnodeaggregateidentifier'];
-        }
-
-        // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
         $this->getDatabaseConnection()->executeUpdate('
             -- GraphProjector::cascadeRestrictionRelations
-            INSERT IGNORE INTO neos_contentgraph_restrictionrelation
+            INSERT INTO neos_contentgraph_restrictionrelation
             (
                 -- we build a recursive tree
                 with recursive tree as (
@@ -709,18 +683,22 @@ insert ignore into neos_contentgraph_restrictionrelation
                     tree.nodeaggregateidentifier as affectednodeaggregateidentifier
                 FROM tree
                     INNER JOIN (
-                        SELECT originnodeaggregateidentifier FROM (
-                            SELECT "' . implode('" AS originnodeaggregateidentifier UNION SELECT "', $restrictingAncestorIdentifiers) . '" AS originnodeaggregateidentifier
-                        ) AS ancestoraggregateidentifiers
+                        SELECT originnodeaggregateidentifier FROM neos_contentgraph_restrictionrelation
+                            WHERE contentstreamidentifier = :contentStreamIdentifier
+                            AND affectednodeaggregateidentifier = :parentNodeAggregateIdentifier
+                            AND dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
                     ) AS joinedrestrictingancestors
             )',
             [
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
                 'entryNodeAggregateIdentifier' => (string)$entryNodeAggregateIdentifier,
-                'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
+                'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
+                'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
             ],
             [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+                'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
             ]
         );
     }
