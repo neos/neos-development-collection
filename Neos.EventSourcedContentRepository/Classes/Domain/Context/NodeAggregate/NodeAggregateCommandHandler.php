@@ -1073,7 +1073,8 @@ final class NodeAggregateCommandHandler
                         $command->getNodeAggregateIdentifier(),
                         $command->getNewParentNodeAggregateIdentifier(),
                         $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
-                        $nodeMoveMappings
+                        $nodeMoveMappings,
+                        $affectedDimensionSpacePoints
                     )
                 )
             );

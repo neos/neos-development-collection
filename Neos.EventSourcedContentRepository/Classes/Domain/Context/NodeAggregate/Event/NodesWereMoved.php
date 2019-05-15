@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
@@ -41,18 +42,25 @@ final class NodesWereMoved implements DomainEventInterface, CopyableAcrossConten
      */
     private $nodeMoveMappings;
 
+    /**
+     * @var DimensionSpacePointSet
+     */
+    private $affectedDimensionSpacePoints;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier,
         ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier,
-        ?NodeMoveMappings $nodeMoveMappings
+        ?NodeMoveMappings $nodeMoveMappings,
+        DimensionSpacePointSet $affectedDimensionSpacePoints
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newParentNodeAggregateIdentifier = $newParentNodeAggregateIdentifier;
         $this->newSucceedingSiblingNodeAggregateIdentifier = $newSucceedingSiblingNodeAggregateIdentifier;
         $this->nodeMoveMappings = $nodeMoveMappings;
+        $this->affectedDimensionSpacePoints = $affectedDimensionSpacePoints;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -80,6 +88,11 @@ final class NodesWereMoved implements DomainEventInterface, CopyableAcrossConten
         return $this->nodeMoveMappings;
     }
 
+    public function getAffectedDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->affectedDimensionSpacePoints;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodesWereMoved
     {
         return new NodesWereMoved(
@@ -87,7 +100,8 @@ final class NodesWereMoved implements DomainEventInterface, CopyableAcrossConten
             $this->nodeAggregateIdentifier,
             $this->newParentNodeAggregateIdentifier,
             $this->newSucceedingSiblingNodeAggregateIdentifier,
-            $this->nodeMoveMappings
+            $this->nodeMoveMappings,
+            $this->affectedDimensionSpacePoints
         );
     }
 }
