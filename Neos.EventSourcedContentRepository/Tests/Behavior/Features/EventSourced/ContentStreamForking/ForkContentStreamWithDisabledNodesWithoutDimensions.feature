@@ -51,11 +51,11 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
-      | Key                            | Value              |
-      | contentStreamIdentifier        | "cs-identifier"    |
-      | nodeAggregateIdentifier        | "the-great-nodini" |
-      | coveredDimensionSpacePoint     | {}                 |
-      | nodeAggregateDisablingStrategy | "scatter"          |
+      | Key                          | Value              |
+      | contentStreamIdentifier      | "cs-identifier"    |
+      | nodeAggregateIdentifier      | "the-great-nodini" |
+      | coveredDimensionSpacePoint   | {}                 |
+      | nodeVariantSelectionStrategy | "allVariants"      |
     And the graph projection is fully up to date
 
   Scenario: on ForkContentStream, the disabled nodes in the target content stream should still be invisible.

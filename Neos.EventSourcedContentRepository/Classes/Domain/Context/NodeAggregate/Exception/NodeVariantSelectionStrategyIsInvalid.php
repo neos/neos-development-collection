@@ -14,8 +14,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  */
 
 /**
- * The exception to be thrown if an invalid node disabling strategy was tried to be initialized
+ * The exception to be thrown if an invalid node variant selection strategy was tried to be initialized
  */
-final class NodeAggregateDisablingStrategyIsInvalid extends \DomainException
+final class NodeVariantSelectionStrategyIsInvalid extends \DomainException
 {
 }

@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
@@ -33,10 +34,26 @@ final class NodeAggregateWasRemoved implements DomainEventInterface, CopyableAcr
      */
     private $nodeAggregateIdentifier;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
-    {
+    /**
+     * @var DimensionSpacePointSet
+     */
+    private $affectedOccupiedDimensionSpacePoints;
+
+    /**
+     * @var DimensionSpacePointSet
+     */
+    private $affectedCoveredDimensionSpacePoints;
+
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePointSet $affectedOccupiedDimensionSpacePoints,
+        DimensionSpacePointSet $affectedCoveredDimensionSpacePoints
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->affectedOccupiedDimensionSpacePoints = $affectedOccupiedDimensionSpacePoints;
+        $this->affectedCoveredDimensionSpacePoints = $affectedCoveredDimensionSpacePoints;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -49,11 +66,23 @@ final class NodeAggregateWasRemoved implements DomainEventInterface, CopyableAcr
         return $this->nodeAggregateIdentifier;
     }
 
+    public function getAffectedOccupiedDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->affectedOccupiedDimensionSpacePoints;
+    }
+
+    public function getAffectedCoveredDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->affectedCoveredDimensionSpacePoints;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodeAggregateWasRemoved(
             $targetContentStreamIdentifier,
-            $this->nodeAggregateIdentifier
+            $this->nodeAggregateIdentifier,
+            $this->affectedOccupiedDimensionSpacePoints,
+            $this->affectedCoveredDimensionSpacePoints
         );
     }
 }

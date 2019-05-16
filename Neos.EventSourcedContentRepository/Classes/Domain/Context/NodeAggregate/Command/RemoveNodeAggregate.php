@@ -12,10 +12,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
 final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
@@ -30,17 +32,37 @@ final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossCont
      */
     private $nodeAggregateIdentifier;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
-    {
+    /**
+     * One of the dimension space points covered by the node aggregate in which the user intends to remove it
+     *
+     * @var DimensionSpacePoint
+     */
+    private $coveredDimensionSpacePoint;
+
+    /**
+     * @var NodeVariantSelectionStrategy
+     */
+    private $nodeVariantSelectionStrategy;
+
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $coveredDimensionSpacePoint,
+        NodeVariantSelectionStrategy $nodeVariantSelectionStrategy
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
+        $this->nodeVariantSelectionStrategy = $nodeVariantSelectionStrategy;
     }
 
     public static function fromArray(array $array): self
     {
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier'])
+            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
+            NodeVariantSelectionStrategy::fromString($array['nodeVariantSelectionStrategy'])
         );
     }
 
@@ -54,11 +76,23 @@ final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossCont
         return $this->nodeAggregateIdentifier;
     }
 
+    public function getCoveredDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->coveredDimensionSpacePoint;
+    }
+
+    public function getNodeVariantSelectionStrategy(): NodeVariantSelectionStrategy
+    {
+        return $this->nodeVariantSelectionStrategy;
+    }
+
     public function jsonSerialize(): array
     {
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
+            'nodeVariantSelectionStrategy' => $this->nodeVariantSelectionStrategy
         ];
     }
 
@@ -66,7 +100,9 @@ final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossCont
     {
         return new RemoveNodeAggregate(
             $targetContentStreamIdentifier,
-            $this->nodeAggregateIdentifier
+            $this->nodeAggregateIdentifier,
+            $this->coveredDimensionSpacePoint,
+            $this->nodeVariantSelectionStrategy
         );
     }
 
@@ -75,6 +111,7 @@ final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossCont
         return (
             (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
             && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+            && $this->coveredDimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint())
         );
     }
 }

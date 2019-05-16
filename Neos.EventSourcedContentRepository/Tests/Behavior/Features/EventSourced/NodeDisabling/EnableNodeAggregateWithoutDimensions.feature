@@ -85,11 +85,11 @@ Feature: Enable a node aggregate
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
-      | Key                            | Value                    |
-      | contentStreamIdentifier        | "cs-identifier"          |
-      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint     | {}                       |
-      | nodeAggregateDisablingStrategy | "allVariants"            |
+      | Key                          | Value                    |
+      | contentStreamIdentifier      | "cs-identifier"          |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
 
     Then I expect exactly 9 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 8 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
@@ -159,11 +159,11 @@ Feature: Enable a node aggregate
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
-      | Key                            | Value                    |
-      | contentStreamIdentifier        | "cs-identifier"          |
-      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint     | {}                       |
-      | nodeAggregateDisablingStrategy | "allVariants"            |
+      | Key                          | Value                    |
+      | contentStreamIdentifier      | "cs-identifier"          |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
     Then I expect exactly 10 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 9 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
       | Key                          | Expected                 |
@@ -228,11 +228,11 @@ Feature: Enable a node aggregate
     And the graph projection is fully up to date
 
     When the command EnableNodeAggregate is executed with payload:
-      | Key                            | Value              |
-      | contentStreamIdentifier        | "cs-identifier"    |
-      | nodeAggregateIdentifier        | "nody-mc-nodeface" |
-      | coveredDimensionSpacePoint     | {}                 |
-      | nodeAggregateDisablingStrategy | "allVariants"      |
+      | Key                          | Value              |
+      | contentStreamIdentifier      | "cs-identifier"    |
+      | nodeAggregateIdentifier      | "nody-mc-nodeface" |
+      | coveredDimensionSpacePoint   | {}                 |
+      | nodeVariantSelectionStrategy | "allVariants"      |
     Then I expect exactly 10 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 9 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasEnabled" with payload:
       | Key                          | Expected           |

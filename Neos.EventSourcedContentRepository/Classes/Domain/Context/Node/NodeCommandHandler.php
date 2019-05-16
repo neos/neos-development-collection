@@ -17,12 +17,10 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeep
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -139,53 +137,6 @@ final class NodeCommandHandler
             );
         });
 
-        return CommandResult::fromPublishedEvents($events);
-    }
-
-    /**
-     * @param RemoveNodesFromAggregate $command
-     * @return CommandResult
-     * @throws SpecializedDimensionsMustBePartOfDimensionSpacePointSet
-     */
-    public function handleRemoveNodesFromAggregate(RemoveNodesFromAggregate $command): CommandResult
-    {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        foreach ($command->getDimensionSpacePointSet()->getPoints() as $point) {
-            $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($point, false);
-            foreach ($specializations->getPoints() as $specialization) {
-                if (!$command->getDimensionSpacePointSet()->contains($specialization)) {
-                    throw new SpecializedDimensionsMustBePartOfDimensionSpacePointSet('The parent dimension ' . json_encode($point->getCoordinates()) . ' is in the given DimensionSpacePointSet, but its specialization ' . json_encode($specialization->getCoordinates()) . ' is not. This is currently not supported; and we might need to think through the implications of this case more before allowing it. There is no "technical hard reason" to prevent it; but to me (SK) it feels that it will lead to inconsistent behavior otherwise.',
-                        1532154238);
-                }
-            }
-        }
-
-        $events = null;
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-
-            // Check if node aggregate exists
-            $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $command->getNodeAggregateIdentifier());
-            if ($nodeAggregate === null) {
-                throw new NodeAggregateNotFound('Node aggregate ' . $command->getNodeAggregateIdentifier() . ' not found', 1532026858);
-            }
-
-            $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
-                    new NodesWereRemovedFromAggregate(
-                        $contentStreamIdentifier,
-                        $command->getNodeAggregateIdentifier(),
-                        $command->getDimensionSpacePointSet()
-                    )
-                )
-            );
-
-            $this->nodeEventPublisher->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
-                $events
-            );
-        });
         return CommandResult::fromPublishedEvents($events);
     }
 }

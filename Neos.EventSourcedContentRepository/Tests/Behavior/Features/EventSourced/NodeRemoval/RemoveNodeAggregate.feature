@@ -1,128 +1,69 @@
 @fixtures
 Feature: Remove NodeAggregate
 
-  As a user of the CR I want to be able to remove a NodeAggregate completely.
+  As a user of the CR I want to be able to remove a NodeAggregate or parts of it.
+
+  These are the base test cases for the NodeAggregateCommandHandler to block invalid commands.
+
+  # @todo catch removal of node aggregates in a non-covered dimension space point in the multidimensional case
 
   Background:
-    Given I have the following content dimensions:
-      | Identifier | Default | Values  | Generalizations |
-      | language   | de      | de, gsw | gsw->de         |
+    Given I have no content dimensions
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
-    And the command CreateRootWorkspace is executed with payload:
-      | Key                      | Value                                  |
-      | workspaceName            | "live"                                 |
-      | workspaceTitle           | "Live"                                 |
-      | workspaceDescription     | "The live workspace"                   |
-      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
-      | contentStreamIdentifier  | "live-cs-identifier"                   |
-    And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                      | Value                                  |
-      | contentStreamIdentifier  | "live-cs-identifier"                   |
-      | nodeAggregateIdentifier  | "lady-eleonode-nodesworth"             |
-      | nodeTypeName             | "Neos.ContentRepository:Root"          |
-      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
-    And the graph projection is fully up to date
-    # We have to add another node since root nodes are in all dimension space points and thus cannot be varied
-    # Node /document
-    And the command CreateNodeAggregateWithNode is executed with payload:
+    And the event RootWorkspaceWasCreated was published with payload:
+      | Key                            | Value                                  |
+      | workspaceName                  | "live"                                 |
+      | workspaceTitle                 | "Live"                                 |
+      | workspaceDescription           | "The live workspace"                   |
+      | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
+      | currentContentStreamIdentifier | "cs-identifier"                        |
+    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+      | Key                         | Value                                  |
+      | contentStreamIdentifier     | "cs-identifier"                        |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
+      | nodeTypeName                | "Neos.ContentRepository:Root"          |
+      | coveredDimensionSpacePoints | [{}]                                   |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification | "root"                                 |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "live-cs-identifier"                      |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
+      | contentStreamIdentifier       | "cs-identifier"                           |
+      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"language":"de"}                         |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                |
+      | originDimensionSpacePoint     | {}                                        |
+      | coveredDimensionSpacePoints   | [{}]                                      |
+      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
-    And the graph projection is fully up to date
-    # We also want to add a child node to make sure it is correctly removed when the parent is removed
-    # Node /document/child-document
-    And the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamIdentifier       | "live-cs-identifier"                      |
-      | nodeAggregateIdentifier       | "nodimus-prime"                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"language":"de"}                         |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "nody-mc-nodeface"                        |
-      | nodeName                      | "child-document"                          |
-    And the graph projection is fully up to date
-    And the command CreateNodeVariant is executed with payload:
-      | Key                       | Value                |
-      | contentStreamIdentifier   | "live-cs-identifier" |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
-      | sourceOrigin | {"language":"de"}    |
-      | targetOrigin | {"language":"gsw"}   |
+      | nodeAggregateClassification   | "regular"                                 |
     And the graph projection is fully up to date
 
-  ########################
-  # Section: EXTRA testcases
-  ########################
-  Scenario: (Exception) Trying to remove a non existing nodeAggregate should fail with an exception
-    When the command RemoveNodeAggregate was published with payload and exceptions are caught:
-      | Key                     | Value                         |
-      | contentStreamIdentifier | "live-cs-identifier"          |
-      | nodeAggregateIdentifier | "non-existing-agg-identifier" |
+  Scenario: Try to remove a node aggregate in a non-existing content stream
+    When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value                    |
+      | contentStreamIdentifier      | "i-do-not-exist"         |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+    Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
+
+  Scenario: Try to remove a node aggregate in a non-existing dimension space point
+    When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value                       |
+      | contentStreamIdentifier      | "cs-identifier"             |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough"    |
+      | coveredDimensionSpacePoint   | {"undeclared": "undefined"} |
+      | nodeVariantSelectionStrategy | "allVariants"               |
+    Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
+
+  Scenario: Try to remove a non-existing node aggregate
+    When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
+      | Key                          | Value            |
+      | contentStreamIdentifier      | "cs-identifier"  |
+      | nodeAggregateIdentifier      | "i-do-not-exist" |
+      | coveredDimensionSpacePoint   | {}               |
+      | nodeVariantSelectionStrategy | "allVariants"    |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
-
-  Scenario: In LIVE workspace, removing a NodeAggregate removes all nodes completely
-    When the command RemoveNodeAggregate is executed with payload:
-      | Key                     | Value                |
-      | contentStreamIdentifier | "live-cs-identifier" |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"   |
-    And the graph projection is fully up to date
-
-    Then I expect the graph projection to consist of exactly 1 nodes
-    And I expect a node with identifier {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}} to exist in the content graph
-
-    When I am in content stream "live-cs-identifier" and Dimension Space Point {"language":"de"}
-    Then I expect the subgraph projection to consist of exactly 1 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
-
-    When I am in content stream "live-cs-identifier" and Dimension Space Point {"language":"gsw"}
-    Then I expect the subgraph projection to consist of exactly 1 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
-
-  Scenario: In USER workspace, removing a NodeAggregate removes all nodes completely; leaving the live workspace untouched
-
-    When the command "ForkContentStream" is executed with payload:
-      | Key                           | Value                |
-      | contentStreamIdentifier       | "user-cs-identifier" |
-      | sourceContentStreamIdentifier | "live-cs-identifier" |
-    And the graph projection is fully up to date
-
-    When the command RemoveNodeAggregate is executed with payload:
-      | Key                     | Value                |
-      | contentStreamIdentifier | "user-cs-identifier" |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"   |
-    And the graph projection is fully up to date
-
-    Then I expect the graph projection to consist of exactly 4 nodes
-    And I expect a node with identifier {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint":{"language":"gsw"}} to exist in the content graph
-    And I expect a node with identifier {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint":{"language":"de"}} to exist in the content graph
-
-    When I am in content stream "user-cs-identifier" and Dimension Space Point {"language":"de"}
-    Then I expect the subgraph projection to consist of exactly 1 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"user-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
-
-    When I am in content stream "user-cs-identifier" and Dimension Space Point {"language":"gsw"}
-    Then I expect the subgraph projection to consist of exactly 1 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"user-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
-
-    # ensure LIVE ContentStream is untouched
-    When I am in content stream "live-cs-identifier" and Dimension Space Point {"language":"de"}
-    Then I expect the subgraph projection to consist of exactly 3 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
-    And I expect node aggregate identifier "nody-mc-nodeface" and path "document" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}}
-    And I expect node aggregate identifier "nodimus-prime" and path "document/child-document" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint":{"language":"de"}}
-
-    When I am in content stream "live-cs-identifier" and Dimension Space Point {"language":"gsw"}
-    Then I expect the subgraph projection to consist of exactly 3 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
-    And I expect node aggregate identifier "nody-mc-nodeface" and path "document" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint":{"language":"gsw"}}
-    And I expect node aggregate identifier "nodimus-prime" and path "document/child-document" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint":{"language":"de"}}

@@ -13,34 +13,35 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDisablingStrategyIsInvalid;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeVariantSelectionStrategyIsInvalid;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The disabling strategy for node aggregates as selected when creating commands.
- * Used for calculate the affected dimension space points to build restriction relations to other node aggregates.
- *
- * - `scatter` means that different nodes within the aggregate may be individually restricted.
- * - `gatherVirtualSpecializations` means that all virtual specializations of the node will be restricted alongside with it
- * - `gatherAllSpecializations` means that all specializations of the node will be restricted alongside with it,
- *      regardless of whether they are virtual or another node of the aggregate originates there.
+ * The node variant selection strategy for node aggregates as selected when creating commands.
+ * Used for calculating the affected dimension space points to e.g. build restriction relations to other node aggregates.
  *
  * @Flow\Proxy(false)
  */
-final class NodeAggregateDisablingStrategy implements \JsonSerializable
+final class NodeVariantSelectionStrategy implements \JsonSerializable
 {
     /**
      * The "only this" strategy, meaning only the given dimension space point is affected
      */
     const STRATEGY_ONLY_THIS = 'onlyThis';
+
     /**
      * The "virtual specializations" strategy, meaning only the specializations covered but unoccupied by this node aggregate are affected
      */
     const STRATEGY_VIRTUAL_SPECIALIZATIONS = 'virtualSpecializations';
+
     /**
-     * The "all specializations" strategy, meaning all covered specializations of
+     * The "all specializations" strategy, meaning all specializations covered by this node aggregate are affected
      */
     const STRATEGY_ALL_SPECIALIZATIONS = 'allSpecializations';
+
+    /**
+     * The "all variants" strategy, meaning all dimension space points covered by this node aggregate are affected
+     */
     const STRATEGY_ALL_VARIANTS = 'allVariants';
 
     /**
@@ -58,20 +59,25 @@ final class NodeAggregateDisablingStrategy implements \JsonSerializable
         return new static(static::STRATEGY_ONLY_THIS);
     }
 
-    public static function gatherVirtualSpecializations(): self
+    public static function virtualSpecializations(): self
     {
         return new static(static::STRATEGY_VIRTUAL_SPECIALIZATIONS);
     }
 
-    public static function gatherAllSpecializations(): self
+    public static function allSpecializations(): self
     {
         return new static(static::STRATEGY_ALL_SPECIALIZATIONS);
     }
 
+    public static function allVariants(): self
+    {
+        return new static(static::STRATEGY_ALL_VARIANTS);
+    }
+
     /**
-     * @param null|string $serialization
+     * @param string $serialization
      * @return self
-     * @throws NodeAggregateDisablingStrategyIsInvalid
+     * @throws NodeVariantSelectionStrategyIsInvalid
      */
     public static function fromString(string $serialization): self
     {
@@ -79,23 +85,23 @@ final class NodeAggregateDisablingStrategy implements \JsonSerializable
             && !$serialization === self::STRATEGY_VIRTUAL_SPECIALIZATIONS
             && !$serialization === self::STRATEGY_ALL_SPECIALIZATIONS
         ) {
-            throw new NodeAggregateDisablingStrategyIsInvalid('Given node disabling strategy "' . $serialization . '" is invalid, must be one of the defined constants.', 1555074043);
+            throw new NodeVariantSelectionStrategyIsInvalid('Given node variant selection strategy "' . $serialization . '" is invalid, must be one of the defined constants.', 1555074043);
         }
 
         return new static($serialization);
     }
 
-    public function isScatter(): bool
+    public function isOnlyThis(): bool
     {
         return $this->strategy === self::STRATEGY_ONLY_THIS;
     }
 
-    public function isGatherVirtualSpecializations(): bool
+    public function isVirtualSpecializations(): bool
     {
         return $this->strategy === self::STRATEGY_VIRTUAL_SPECIALIZATIONS;
     }
 
-    public function isGatherAllSpecializations(): bool
+    public function isAllSpecializations(): bool
     {
         return $this->strategy === self::STRATEGY_ALL_SPECIALIZATIONS;
     }

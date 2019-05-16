@@ -32,7 +32,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Crea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDisablingStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -367,7 +367,7 @@ class ContentRepositoryExportService
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
-                    NodeAggregateDisablingStrategy::gatherVirtualSpecializations()
+                    NodeVariantSelectionStrategy::virtualSpecializations()
                 ));
             }
 

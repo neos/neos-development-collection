@@ -78,11 +78,11 @@ Feature: Disable a node aggregate
 
   Scenario: Disable node with arbitrary strategy since dimensions are not involved
     When the command DisableNodeAggregate is executed with payload:
-      | Key                            | Value                    |
-      | contentStreamIdentifier        | "cs-identifier"          |
-      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint     | {}                       |
-      | nodeAggregateDisablingStrategy | "allVariants"            |
+      | Key                          | Value                    |
+      | contentStreamIdentifier      | "cs-identifier"          |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
 
     Then I expect exactly 8 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 7 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasDisabled" with payload:
@@ -168,9 +168,11 @@ Feature: Disable a node aggregate
       | nodeAggregateIdentifier      | "nody-mc-nodeface" |
       | affectedDimensionSpacePoints | [{}]               |
     And the event NodeAggregateWasRemoved was published with payload:
-      | Key                     | Value              |
-      | contentStreamIdentifier | "cs-identifier"    |
-      | nodeAggregateIdentifier | "nody-mc-nodeface" |
+      | Key                                  | Value              |
+      | contentStreamIdentifier              | "cs-identifier"    |
+      | nodeAggregateIdentifier              | "nody-mc-nodeface" |
+      | affectedOccupiedDimensionSpacePoints | [{}]               |
+      | affectedCoveredDimensionSpacePoints  | [{}]               |
     And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNode is executed with payload:

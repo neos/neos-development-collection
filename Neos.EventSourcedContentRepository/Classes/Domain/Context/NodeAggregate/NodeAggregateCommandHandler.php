@@ -1149,6 +1149,52 @@ final class NodeAggregateCommandHandler
     }
 
     /**
+     * @param RemoveNodeAggregate $command
+     * @return CommandResult
+     * @throws NodeAggregatesTypeIsAmbiguous
+     * @throws ContentStream\ContentStreamDoesNotExistYet
+     * @throws DimensionSpacePointNotFound
+     */
+    public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): CommandResult
+    {
+        $this->readSideMemoryCacheManager->disableCache();
+
+        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $this->requireDimensionSpacePointToExist($command->getCoveredDimensionSpacePoint());
+        $this->requireNodeAggregateToCoverDimensionSpacePoint($nodeAggregate, $command->getCoveredDimensionSpacePoint());
+
+        $events = null;
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
+            $events = DomainEvents::withSingleEvent(
+                EventWithIdentifier::create(
+                    new NodeAggregateWasRemoved(
+                        $command->getContentStreamIdentifier(),
+                        $command->getNodeAggregateIdentifier(),
+                        $this->getAffectedOccupiedDimensionSpacePoints(
+                            $nodeAggregate,
+                            $command->getCoveredDimensionSpacePoint(),
+                            $command->getNodeVariantSelectionStrategy()
+                        ),
+                        $this->getAffectedCoveredDimensionSpacePoints(
+                            $nodeAggregate,
+                            $command->getCoveredDimensionSpacePoint(),
+                            $command->getNodeVariantSelectionStrategy()
+                        )
+                    )
+                )
+            );
+
+            $this->nodeEventPublisher->publishMany(
+                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
+                $events
+            );
+        });
+
+        return CommandResult::fromPublishedEvents($events);
+    }
+
+    /**
      * @param DisableNodeAggregate $command
      * @return CommandResult
      * @throws ContentStream\ContentStreamDoesNotExistYet
@@ -1168,7 +1214,7 @@ final class NodeAggregateCommandHandler
 
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
-            $affectedDimensionSpacePoints = $this->getAffectedDimensionSpacePoints($nodeAggregate, $command->getCoveredDimensionSpacePoint(), $command->getNodeAggregateDisablingStrategy());
+            $affectedDimensionSpacePoints = $this->getAffectedCoveredDimensionSpacePoints($nodeAggregate, $command->getCoveredDimensionSpacePoint(), $command->getNodeVariantSelectionStrategy());
 
             $events = DomainEvents::withSingleEvent(
                 EventWithIdentifier::create(
@@ -1208,7 +1254,7 @@ final class NodeAggregateCommandHandler
 
         $events = null;
         $this->nodeEventPublisher->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
-            $affectedDimensionSpacePoints = $this->getAffectedDimensionSpacePoints($nodeAggregate, $command->getCoveredDimensionSpacePoint(), $command->getNodeAggregateDisablingStrategy());
+            $affectedDimensionSpacePoints = $this->getAffectedCoveredDimensionSpacePoints($nodeAggregate, $command->getCoveredDimensionSpacePoint(), $command->getNodeVariantSelectionStrategy());
 
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
@@ -1230,17 +1276,20 @@ final class NodeAggregateCommandHandler
         return CommandResult::fromPublishedEvents($events);
     }
 
-    private function getAffectedDimensionSpacePoints(
+    private function getAffectedCoveredDimensionSpacePoints(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $referenceDimensionSpacePoint,
-        NodeAggregateDisablingStrategy $nodeAggregateDisablingStrategy
+        NodeVariantSelectionStrategy $nodeVariantSelectionStrategy
     ): DimensionSpacePointSet {
-        switch ($nodeAggregateDisablingStrategy->getStrategy()) {
-            case NodeAggregateDisablingStrategy::STRATEGY_ALL_SPECIALIZATIONS:
+        switch ($nodeVariantSelectionStrategy->getStrategy()) {
+            case NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS:
+                $affectedDimensionSpacePoints = $nodeAggregate->getCoveredDimensionSpacePoints();
+                break;
+            case NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS:
                 $affectedDimensionSpacePoints = $this->interDimensionalVariationGraph->getSpecializationSet($referenceDimensionSpacePoint)
                     ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints());
                 break;
-            case NodeAggregateDisablingStrategy::STRATEGY_VIRTUAL_SPECIALIZATIONS:
+            case NodeVariantSelectionStrategy::STRATEGY_VIRTUAL_SPECIALIZATIONS:
                 $specializationSet = $this->interDimensionalVariationGraph->getSpecializationSet($referenceDimensionSpacePoint);
                 $affectedDimensionSpacePoints = $specializationSet
                     ->getIntersection($nodeAggregate->getCoveredDimensionSpacePoints());
@@ -1255,9 +1304,34 @@ final class NodeAggregateCommandHandler
                     }
                 }
                 break;
-            case NodeAggregateDisablingStrategy::STRATEGY_ONLY_THIS:
+            case NodeVariantSelectionStrategy::STRATEGY_ONLY_THIS:
             default:
                 $affectedDimensionSpacePoints = new DimensionSpacePointSet([$referenceDimensionSpacePoint]);
+        }
+
+        return $affectedDimensionSpacePoints;
+    }
+
+    private function getAffectedOccupiedDimensionSpacePoints(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        DimensionSpacePoint $referenceDimensionSpacePoint,
+        NodeVariantSelectionStrategy $nodeVariantSelectionStrategy
+    ): DimensionSpacePointSet {
+        switch ($nodeVariantSelectionStrategy->getStrategy()) {
+            case NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS:
+                $affectedDimensionSpacePoints = $nodeAggregate->getOccupiedDimensionSpacePoints();
+                break;
+            case NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS:
+                $affectedDimensionSpacePoints = $this->interDimensionalVariationGraph->getSpecializationSet($referenceDimensionSpacePoint)
+                    ->getIntersection($nodeAggregate->getOccupiedDimensionSpacePoints());
+                break;
+            case NodeVariantSelectionStrategy::STRATEGY_VIRTUAL_SPECIALIZATIONS:
+            case NodeVariantSelectionStrategy::STRATEGY_ONLY_THIS:
+            default:
+                $affectedDimensionSpacePoints = $nodeAggregate->occupiesDimensionSpacePoint($referenceDimensionSpacePoint)
+                    ? new DimensionSpacePointSet([$referenceDimensionSpacePoint])
+                    : new DimensionSpacePointSet([]);
+                break;
         }
 
         return $affectedDimensionSpacePoints;
@@ -1354,36 +1428,5 @@ final class NodeAggregateCommandHandler
         } catch (NodeTypeNotFoundException $e) {
             throw new NodeTypeNotFound('Node type "' . $nodeTypeName . '" is unknown to the node type manager.', 1541671070);
         }
-    }
-
-    /**
-     * @param RemoveNodeAggregate $command
-     * @return CommandResult
-     * @throws NodeAggregatesTypeIsAmbiguous
-     */
-    public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): CommandResult
-    {
-        $this->readSideMemoryCacheManager->disableCache();
-
-        /* @todo add DSP support */
-        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-
-        $events = null;
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
-            $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
-                    new NodeAggregateWasRemoved(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNodeAggregateIdentifier()
-                    )
-                )
-            );
-
-            $this->nodeEventPublisher->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
-                $events
-            );
-        });
-        return CommandResult::fromPublishedEvents($events);
     }
 }

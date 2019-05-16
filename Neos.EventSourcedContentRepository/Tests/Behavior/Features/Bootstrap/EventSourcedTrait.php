@@ -630,7 +630,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^the command RemoveNodeAggregate was published with payload and exceptions are caught:$/
+     * @Given /^the command RemoveNodeAggregate is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */

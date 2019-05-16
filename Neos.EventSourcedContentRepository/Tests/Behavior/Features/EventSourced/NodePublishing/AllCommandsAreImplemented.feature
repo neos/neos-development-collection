@@ -84,17 +84,17 @@ Feature: Publishing hide/show scenario of nodes
 
     # SETUP: hide two nodes in USER workspace
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                            | Value                    |
-      | contentStreamIdentifier        | "user-cs-identifier"     |
-      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint     | {}                       |
-      | nodeAggregateDisablingStrategy | "allVariants"            |
+      | Key                          | Value                    |
+      | contentStreamIdentifier      | "user-cs-identifier"     |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
     And the command DisableNodeAggregate is executed with payload:
-      | Key                            | Value                        |
-      | contentStreamIdentifier        | "user-cs-identifier"         |
-      | nodeAggregateIdentifier        | "sir-nodeward-nodington-iii" |
-      | coveredDimensionSpacePoint     | {}                           |
-      | nodeAggregateDisablingStrategy | "allVariants"                |
+      | Key                          | Value                        |
+      | contentStreamIdentifier      | "user-cs-identifier"         |
+      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {}                           |
+      | nodeVariantSelectionStrategy | "allVariants"                |
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
@@ -117,17 +117,17 @@ Feature: Publishing hide/show scenario of nodes
   Scenario: (ShowNode) It is possible to publish showing of a node.
     # BEFORE: ensure two nodes are hidden in live (and user WS)
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                            | Value                    |
-      | contentStreamIdentifier        | "cs-identifier"          |
-      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint     | {}                       |
-      | nodeAggregateDisablingStrategy | "allVariants"            |
+      | Key                          | Value                    |
+      | contentStreamIdentifier      | "cs-identifier"          |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
     Given the command DisableNodeAggregate is executed with payload:
-      | Key                            | Value                        |
-      | contentStreamIdentifier        | "cs-identifier"              |
-      | nodeAggregateIdentifier        | "sir-nodeward-nodington-iii" |
-      | coveredDimensionSpacePoint     | {}                           |
-      | nodeAggregateDisablingStrategy | "allVariants"                |
+      | Key                          | Value                        |
+      | contentStreamIdentifier      | "cs-identifier"              |
+      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {}                           |
+      | nodeVariantSelectionStrategy | "allVariants"                |
     Given the command CreateWorkspace is executed with payload:
       | Key                     | Value                |
       | workspaceName           | "user-test"          |
@@ -137,17 +137,17 @@ Feature: Publishing hide/show scenario of nodes
 
     # SETUP: show two nodes in USER workspace
     Given the command EnableNodeAggregate is executed with payload:
-      | Key                            | Value                    |
-      | contentStreamIdentifier        | "user-cs-identifier"     |
-      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint     | {}                       |
-      | nodeAggregateDisablingStrategy | "allVariants"            |
+      | Key                          | Value                    |
+      | contentStreamIdentifier      | "user-cs-identifier"     |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
     Given the command EnableNodeAggregate is executed with payload:
-      | Key                            | Value                        |
-      | contentStreamIdentifier        | "user-cs-identifier"         |
-      | nodeAggregateIdentifier        | "sir-nodeward-nodington-iii" |
-      | coveredDimensionSpacePoint     | {}                           |
-      | nodeAggregateDisablingStrategy | "allVariants"                |
+      | Key                          | Value                        |
+      | contentStreamIdentifier      | "user-cs-identifier"         |
+      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {}                           |
+      | nodeVariantSelectionStrategy | "allVariants"                |
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
@@ -219,13 +219,18 @@ Feature: Publishing hide/show scenario of nodes
 
     # SETUP: remove two nodes in USER workspace
     When the command RemoveNodeAggregate is executed with payload:
-      | Key                     | Value                    |
-      | contentStreamIdentifier | "user-cs-identifier"     |
-      | nodeAggregateIdentifier | "sir-david-nodenborough" |
+      | Key                          | Value                    |
+      | contentStreamIdentifier      | "user-cs-identifier"     |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+
     When the command RemoveNodeAggregate is executed with payload:
-      | Key                     | Value                        |
-      | contentStreamIdentifier | "user-cs-identifier"         |
-      | nodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
+      | Key                          | Value                        |
+      | contentStreamIdentifier      | "user-cs-identifier"         |
+      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {}                           |
+      | nodeVariantSelectionStrategy | "allVariants"                |
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
@@ -254,16 +259,18 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     # SETUP: remove two nodes in USER workspace
-    When the command RemoveNodesFromAggregate was published with payload:
-      | Key                     | Value                    |
-      | contentStreamIdentifier | "user-cs-identifier"     |
-      | nodeAggregateIdentifier | "sir-david-nodenborough" |
-      | dimensionSpacePointSet  | [{}]                     |
     When the command RemoveNodeAggregate is executed with payload:
-      | Key                     | Value                        |
-      | contentStreamIdentifier | "user-cs-identifier"         |
-      | nodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
-      | dimensionSpacePointSet  | [{}]                         |
+      | Key                          | Value                    |
+      | contentStreamIdentifier      | "user-cs-identifier"     |
+      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+    When the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                        |
+      | contentStreamIdentifier      | "user-cs-identifier"         |
+      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint   | {}                           |
+      | nodeVariantSelectionStrategy | "allVariants"                |
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:

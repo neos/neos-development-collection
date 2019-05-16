@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDisablingStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
 /**
@@ -47,20 +47,20 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
     /**
      * The strategy the user chose to determine which specialization variants will also be disabled
      *
-     * @var NodeAggregateDisablingStrategy
+     * @var NodeVariantSelectionStrategy
      */
-    private $nodeAggregateDisablingStrategy;
+    private $nodeVariantSelectionStrategy;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeAggregateDisablingStrategy $nodeAggregateDisablingStrategy
+        NodeVariantSelectionStrategy $nodeVariantSelectionStrategy
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
-        $this->nodeAggregateDisablingStrategy = $nodeAggregateDisablingStrategy;
+        $this->nodeVariantSelectionStrategy = $nodeVariantSelectionStrategy;
     }
 
     public static function fromArray(array $array): self
@@ -69,7 +69,7 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
-            NodeAggregateDisablingStrategy::fromString($array['nodeAggregateDisablingStrategy'])
+            NodeVariantSelectionStrategy::fromString($array['nodeVariantSelectionStrategy'])
         );
     }
 
@@ -88,9 +88,9 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
         return $this->coveredDimensionSpacePoint;
     }
 
-    public function getNodeAggregateDisablingStrategy(): NodeAggregateDisablingStrategy
+    public function getNodeVariantSelectionStrategy(): NodeVariantSelectionStrategy
     {
-        return $this->nodeAggregateDisablingStrategy;
+        return $this->nodeVariantSelectionStrategy;
     }
 
     public function jsonSerialize(): array
@@ -99,7 +99,7 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
-            'nodeAggregateDisablingStrategy' => $this->nodeAggregateDisablingStrategy,
+            'nodeVariantSelectionStrategy' => $this->nodeVariantSelectionStrategy,
         ];
     }
 
@@ -109,7 +109,7 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->coveredDimensionSpacePoint,
-            $this->nodeAggregateDisablingStrategy
+            $this->nodeVariantSelectionStrategy
         );
     }
 
