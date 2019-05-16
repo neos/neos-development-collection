@@ -421,7 +421,7 @@ final class WorkspaceCommandHandler
      * @throws \Neos\ContentRepository\Exception\NodeConstraintException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeNameIsAlreadyOccupied
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet
      * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound

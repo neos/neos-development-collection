@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a requested node aggregate does already exist
+ * The exception to be thrown if a node name is already covered by a node in a node aggregate but is supposed not to be
  */
-final class NodeAggregateCurrentlyExists extends \DomainException
+final class NodeNameIsAlreadyCovered extends \DomainException
 {
 }

@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,8 +14,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a node aggregate currently disables a given dimension space point but wasn't expected to do
+ * The exception to be thrown if an invalid relation distribution strategy was tried to be initialized
  */
-final class NodeAggregateCurrentlyDisablesDimensionSpacePoint extends \DomainException
+final class RelationDistributionStrategyIsInvalid extends \DomainException
 {
 }

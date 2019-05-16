@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a node aggregate is a descendant of a reference node aggregate but wasn't expected to be
+ * The exception to be thrown if a node aggregate is classified as tethered but wasn't expected to be
  */
-final class NodeAggregateIsDescendant extends \DomainException
+final class NodeAggregateIsTethered extends \DomainException
 {
 }

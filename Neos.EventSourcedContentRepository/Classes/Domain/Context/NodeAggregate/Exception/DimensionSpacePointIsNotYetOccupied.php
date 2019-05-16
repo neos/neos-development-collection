@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,8 +14,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a node aggregate currently does not disable a given dimension space point but was expected to do
+ * The exception to be thrown if a dimension space point is not yet occupied by a node in a node aggregate but is supposed to be
  */
-final class NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint extends \DomainException
+final class DimensionSpacePointIsNotYetOccupied extends \DomainException
 {
 }

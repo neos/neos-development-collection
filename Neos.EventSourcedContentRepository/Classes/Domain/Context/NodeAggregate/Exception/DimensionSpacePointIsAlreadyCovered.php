@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,8 +14,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a node aggregate is classified as tethered but wasn't expected to be
+ * The exception to be thrown if a dimension space point is already covered by a node aggregate but is supposed not to be
  */
-final class NodeAggregateIsTethered extends \DomainException
+final class DimensionSpacePointIsAlreadyCovered extends \DomainException
 {
 }

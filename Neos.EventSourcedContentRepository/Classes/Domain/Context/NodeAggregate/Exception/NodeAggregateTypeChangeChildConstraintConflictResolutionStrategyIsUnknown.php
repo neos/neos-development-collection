@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,8 +13,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a node aggregate does currently not occupy a given dimension space point but is supposed to be
+ * The exception to be thrown when trying to initialize an unknown
+ * NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
  */
-class NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint extends \DomainException
+final class NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown extends \DomainException
 {
 }

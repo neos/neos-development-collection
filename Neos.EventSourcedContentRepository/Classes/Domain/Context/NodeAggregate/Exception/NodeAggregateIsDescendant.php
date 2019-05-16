@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,11 +11,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Exception;
 
 /**
- * The exception to be thrown if a node name is already occupied by a node in a node aggregate but is supposed not to be
+ * The exception to be thrown if a node aggregate is a descendant of a reference node aggregate but wasn't expected to be
  */
-class NodeNameIsAlreadyOccupied extends Exception
+final class NodeAggregateIsDescendant extends \DomainException
 {
 }

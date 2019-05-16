@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a child node aggregate was tried to be fetched but is ambiguous
+ * The exception to be thrown if a node aggregate is classified as root but wasn't expected to be
  */
-class ChildNodeAggregateIsAmbiguous extends \DomainException
+final class NodeAggregateIsRoot extends \DomainException
 {
 }

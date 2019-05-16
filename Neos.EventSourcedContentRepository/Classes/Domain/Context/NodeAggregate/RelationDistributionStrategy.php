@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\RelationDistributionStrategyIsInvalid;
 use Neos\Flow\Annotations as Flow;
 
 /**

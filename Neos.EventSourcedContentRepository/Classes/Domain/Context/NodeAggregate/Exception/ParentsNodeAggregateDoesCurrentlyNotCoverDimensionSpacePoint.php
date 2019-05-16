@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,9 +13,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
-/**
- * The exception to be thrown if a node aggregate was tried to be fetched but is ambiguous
- */
-class NodeAggregateIsAmbiguous extends \DomainException
+final class ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint extends \DomainException
 {
 }

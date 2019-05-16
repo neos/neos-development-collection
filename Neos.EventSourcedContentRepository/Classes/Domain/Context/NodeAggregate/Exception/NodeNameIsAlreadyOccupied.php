@@ -1,7 +1,6 @@
 <?php
-declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a given node type was not found
+ * The exception to be thrown if a node name is already occupied by a node in a node aggregate but is supposed not to be
  */
-final class NodeTypeNotFound extends \OutOfBoundsException
+final class NodeNameIsAlreadyOccupied extends \DomainException
 {
 }

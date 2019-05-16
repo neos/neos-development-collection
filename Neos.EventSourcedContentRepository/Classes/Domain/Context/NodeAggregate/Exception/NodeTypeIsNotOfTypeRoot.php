@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a non-root node is tried to be created with a node type which is of type root
+ * The exception to be thrown if a root node is tried to be created with a node type which is not of type root
  */
-final class NodeTypeIsOfTypeRoot extends \DomainException
+final class NodeTypeIsNotOfTypeRoot extends \DomainException
 {
 }

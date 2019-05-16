@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,12 +13,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
-use Neos\Flow\Exception;
-
 /**
- * The exception to be thrown when trying to initialize an unknown
- * NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+ * The exception to be thrown if a dimension space point is already occupied by a node in a node aggregate but is supposed not to be
  */
-final class NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyUnknown extends Exception
+final class DimensionSpacePointIsAlreadyOccupied extends \DomainException
 {
 }

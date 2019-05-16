@@ -1,7 +1,6 @@
 <?php
-declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if an invalid node disabling strategy was tried to be initialized
+ * The exception to be thrown if a requested node aggregate does already exist
  */
-class NodeAggregateDisablingStrategyIsInvalid extends \DomainException
+final class NodeAggregateCurrentlyExists extends \DomainException
 {
 }

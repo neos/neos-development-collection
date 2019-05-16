@@ -1,7 +1,6 @@
 <?php
-declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a dimension space point is already covered by a node aggregate but is supposed not to be
+ * The exception to be thrown if a non-root node is tried to be created with a node type which is of type root
  */
-class DimensionSpacePointIsAlreadyCovered extends \DomainException
+final class NodeTypeIsOfTypeRoot extends \DomainException
 {
 }

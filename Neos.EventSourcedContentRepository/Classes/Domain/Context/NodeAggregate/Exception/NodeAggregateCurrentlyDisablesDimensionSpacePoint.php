@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 /**
- * The exception to be thrown if a node aggregate is classified as root but wasn't expected to be
+ * The exception to be thrown if a node aggregate currently disables a given dimension space point but wasn't expected to do
  */
-final class NodeAggregateIsRoot extends \DomainException
+final class NodeAggregateCurrentlyDisablesDimensionSpacePoint extends \DomainException
 {
 }
