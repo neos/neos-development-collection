@@ -6,6 +6,3 @@
     label: i18n
     icon: 'icon-picture'
     position: 300
-  options:
-    fusion:
-      prototypeGenerator: Neos\Neos\Domain\Service\DefaultContentPrototypeGenerator
