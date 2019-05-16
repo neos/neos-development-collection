@@ -376,7 +376,7 @@ class ContentCache
      * @param string $cacheIdentifier
      * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
      */
-    public function getCacheByIdentifier(string $cacheIdentifier)
+    protected function getCacheByIdentifier(string $cacheIdentifier)
     {
         return $this->cache->get($cacheIdentifier);
     }
