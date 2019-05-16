@@ -110,5 +110,4 @@ class MoveInto extends AbstractMove
             $this->finish($subject);
         }
     }
-
 }

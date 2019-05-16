@@ -998,7 +998,6 @@ insert ignore into neos_contentgraph_restrictionrelation
     public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event)
     {
         $this->transactional(function () use ($event) {
-
             if ($event->getNewParentNodeAggregateIdentifier()) {
                 $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
                     $event->getContentStreamIdentifier(),
