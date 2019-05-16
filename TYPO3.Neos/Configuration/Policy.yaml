@@ -18,7 +18,13 @@ privilegeTargets:
       matcher: 'method(TYPO3\Fluid\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(TYPO3\Fluid\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
 
     'TYPO3.Neos:PublicFrontendAccess':
-      matcher: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showAction()) || method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName === "live"))'
+      matcher: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showAction())'
+
+    'TYPO3.Neos:PublicWorkspaceAccess':
+      matcher: 'method(TYPO3\TYPO3CR\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.publicWorkspace === true)'
+
+    'TYPO3.Neos:OtherWorkspacesAccess':
+      matcher: 'method(TYPO3\TYPO3CR\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.publicWorkspace === false)'
 
     'TYPO3.Neos:BackendLogin':
       matcher: 'method(TYPO3\Neos\Controller\LoginController->(index|tokenLogin|authenticate)Action()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
@@ -150,6 +156,10 @@ roles:
     privileges:
       -
         privilegeTarget: 'TYPO3.Neos:PublicFrontendAccess'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Neos:PublicWorkspaceAccess'
         permission: GRANT
 
       -
