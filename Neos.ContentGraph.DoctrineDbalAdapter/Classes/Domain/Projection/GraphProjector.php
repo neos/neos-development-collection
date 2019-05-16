@@ -642,7 +642,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                 -- we build a recursive tree
                 with recursive tree as (
                      -- --------------------------------
-                     -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
+                     -- INITIAL query: select the nodes of the given entry node aggregate as roots of the tree
                      -- --------------------------------
                      select
                         n.relationanchorpoint,
@@ -676,12 +676,18 @@ insert ignore into neos_contentgraph_restrictionrelation
                         and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
                 )
 
+                     -- --------------------------------
+                     -- create new restriction relations...
+                     -- --------------------------------
                 SELECT
                     "' . (string)$contentStreamIdentifier . '" as contentstreamidentifier,
                     tree.dimensionspacepointhash,
                     originnodeaggregateidentifier,
                     tree.nodeaggregateidentifier as affectednodeaggregateidentifier
                 FROM tree
+                     -- --------------------------------
+                     -- ...by joining the tree with all restriction relations ingoing to the given parent
+                     -- --------------------------------
                     INNER JOIN (
                         SELECT originnodeaggregateidentifier FROM neos_contentgraph_restrictionrelation
                             WHERE contentstreamidentifier = :contentStreamIdentifier
