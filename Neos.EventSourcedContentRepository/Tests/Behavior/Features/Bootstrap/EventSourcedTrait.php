@@ -39,7 +39,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\DimensionSpacePointIsNotYetOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
@@ -706,7 +706,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^the command MoveNode is executed with payload:$/
+     * @Given /^the command MoveNodeAggregate is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */
@@ -716,14 +716,14 @@ trait EventSourcedTrait
         if (!isset($commandArguments['relationDistributionStrategy'])) {
             $commandArguments['relationDistributionStrategy'] = RelationDistributionStrategy::STRATEGY_GATHER_ALL;
         }
-        $command = MoveNode::fromArray($commandArguments);
+        $command = MoveNodeAggregate::fromArray($commandArguments);
 
         $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleMoveNode($command);
+            ->handleMoveNodeAggregate($command);
     }
 
     /**
-     * @Given /^the command MoveNode is executed with payload and exceptions are caught:$/
+     * @Given /^the command MoveNodeAggregate is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      */
     public function theCommandMoveNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
@@ -953,11 +953,11 @@ trait EventSourcedTrait
                     NodeAggregateCommandHandler::class,
                     'handleEnableNodeAggregate'
                 ];
-            case 'MoveNode':
+            case 'MoveNodeAggregate':
                 return [
-                    MoveNode::class,
-                    NodeCommandHandler::class,
-                    'handleMoveNode'
+                    MoveNodeAggregate::class,
+                    NodeAggregateCommandHandler::class,
+                    'handleMoveNodeAggregate'
                 ];
             case 'SetNodeReferences':
                 return [

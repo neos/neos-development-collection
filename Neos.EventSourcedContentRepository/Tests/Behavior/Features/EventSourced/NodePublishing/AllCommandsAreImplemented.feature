@@ -381,6 +381,5 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect a node identified by aggregate identifier "new2-agg" to exist in the subgraph
 
 
-  # TODO: implement MoveNode testcase
-  # TODO: implement MoveNodesInAggregate testcase
+  # TODO: implement MoveNodeAggregate testcase
   # TODO: implement CreateNodeVariant testcase

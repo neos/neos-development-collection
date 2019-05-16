@@ -29,7 +29,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Enab
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
@@ -438,8 +438,8 @@ final class WorkspaceCommandHandler
             case CreateNodeAggregateWithNode::class:
                 return $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command);
                 break;
-            case MoveNode::class:
-                return $this->nodeAggregateCommandHandler->handleMoveNode($command);
+            case MoveNodeAggregate::class:
+                return $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command);
                 break;
             case SetNodeProperties::class:
                 return $this->nodeCommandHandler->handleSetNodeProperties($command);

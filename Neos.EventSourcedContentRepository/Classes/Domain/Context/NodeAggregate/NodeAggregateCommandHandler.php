@@ -36,13 +36,13 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Crea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateNameWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePeerVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodesWereMoved;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -1001,7 +1001,7 @@ final class NodeAggregateCommandHandler
     }
 
     /**
-     * @param MoveNode $command
+     * @param MoveNodeAggregate $command
      * @return CommandResult
      * @throws ContentStream\ContentStreamDoesNotExistYet
      * @throws NodeAggregatesTypeIsAmbiguous
@@ -1009,7 +1009,7 @@ final class NodeAggregateCommandHandler
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregateIsDescendant
      */
-    public function handleMoveNode(MoveNode $command): CommandResult
+    public function handleMoveNodeAggregate(MoveNodeAggregate $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 
@@ -1068,7 +1068,7 @@ final class NodeAggregateCommandHandler
 
             $events = DomainEvents::withSingleEvent(
                 EventWithIdentifier::create(
-                    new NodesWereMoved(
+                    new NodeAggregateWasMoved(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $command->getNewParentNodeAggregateIdentifier(),

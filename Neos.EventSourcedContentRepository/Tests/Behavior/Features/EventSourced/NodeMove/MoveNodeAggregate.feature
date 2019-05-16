@@ -67,7 +67,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     And the graph projection is fully up to date
 
   Scenario: Try to move a node in a non-existing content stream:
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                              |
       | contentStreamIdentifier      | "non-existing"                     |
       | nodeAggregateIdentifier      | "sir-david-nodenborough"           |
@@ -76,7 +76,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to move a node of a non-existing node aggregate:
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                              |
       | contentStreamIdentifier      | "cs-identifier"                    |
       | nodeAggregateIdentifier      | "i-do-not-exist"                   |
@@ -85,7 +85,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to move a node of a root node aggregate:
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                            |
       | contentStreamIdentifier      | "cs-identifier"                  |
       | nodeAggregateIdentifier      | "lady-eleonode-rootford"         |
@@ -94,7 +94,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
 
   Scenario: Try to move a node of a tethered node aggregate:
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                              |
       | contentStreamIdentifier      | "cs-identifier"                    |
       | nodeAggregateIdentifier      | "nodewyn-tetherton"                |
@@ -103,7 +103,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "NodeAggregateIsTethered"
 
   Scenario: Try to move a node in a non-existing dimension space point:
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                                     |
       | contentStreamIdentifier      | "cs-identifier"                           |
       | nodeAggregateIdentifier      | "sir-david-nodenborough"                  |
@@ -112,7 +112,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to move a node in a dimension space point the aggregate does not cover
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                              |
       | contentStreamIdentifier      | "cs-identifier"                    |
       | nodeAggregateIdentifier      | "sir-david-nodenborough"           |
@@ -121,7 +121,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
 
   Scenario: Try to move existing node to a non-existing parent
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                              | Value                              |
       | contentStreamIdentifier          | "cs-identifier"                    |
       | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
@@ -143,7 +143,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the graph projection is fully up to date
 
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                              | Value                              |
       | contentStreamIdentifier          | "cs-identifier"                    |
       | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
@@ -165,7 +165,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the graph projection is fully up to date
 
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                              | Value                              |
       | contentStreamIdentifier          | "cs-identifier"                    |
       | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
@@ -186,7 +186,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeName                      | "content"                                                                                                                                          |
       | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the graph projection is fully up to date
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                              | Value                              |
       | contentStreamIdentifier          | "cs-identifier"                    |
       | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
@@ -196,7 +196,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move existing node to a non-existing succeeding sibling
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                                         | Value                              |
       | contentStreamIdentifier                     | "cs-identifier"                    |
       | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
@@ -206,7 +206,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to move a node to one of its children
-    When the command MoveNode is executed with payload and exceptions are caught:
+    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                              | Value                              |
       | contentStreamIdentifier          | "cs-identifier"                    |
       | dimensionSpacePoint              | {"market": "DE", "language": "de"} |

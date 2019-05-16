@@ -11,11 +11,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 
 /**
- * Nodes of a node aggregate were moved in a content stream as defined in the node move mappings
+ * A node aggregate was moved in a content stream as defined in the node move mappings
  *
  * @Flow\Proxy(false)
  */
-final class NodesWereMoved implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -93,9 +93,9 @@ final class NodesWereMoved implements DomainEventInterface, CopyableAcrossConten
         return $this->affectedDimensionSpacePoints;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodesWereMoved
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeAggregateWasMoved
     {
-        return new NodesWereMoved(
+        return new NodeAggregateWasMoved(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->newParentNodeAggregateIdentifier,

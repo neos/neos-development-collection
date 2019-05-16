@@ -64,7 +64,7 @@ Feature: Move a node without content dimensions
     And the graph projection is fully up to date
 
   Scenario: Move a node to the end of its siblings
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                    |
       | contentStreamIdentifier                     | "cs-identifier"          |
       | nodeAggregateIdentifier                     | "sir-david-nodenborough" |
@@ -96,7 +96,7 @@ Feature: Move a node without content dimensions
     And I expect this node to have the succeeding siblings []
 
   Scenario: Move a node before one of its siblings
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
       | contentStreamIdentifier                     | "cs-identifier"              |
       | nodeAggregateIdentifier                     | "sir-nodeward-nodington-iii" |
@@ -139,7 +139,7 @@ Feature: Move a node without content dimensions
       | nodeName                      | "other-document"                          |
       | nodeAggregateClassification   | "regular"                                 |
     And the graph projection is fully up to date
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                              | Value                        |
       | contentStreamIdentifier          | "cs-identifier"              |
       | nodeAggregateIdentifier          | "sir-david-nodenborough"     |
@@ -147,7 +147,7 @@ Feature: Move a node without content dimensions
       | newParentNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
 
     Then I expect exactly 7 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 6 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
+    And event at index 6 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasMoved" with payload:
       | Key                                  | Expected                                                                                                                   |
       | contentStreamIdentifier              | "cs-identifier"                                                                                                            |
       | nodeAggregateIdentifier              | "sir-david-nodenborough"                                                                                                   |
@@ -184,7 +184,7 @@ Feature: Move a node without content dimensions
     And I expect this node to have the succeeding siblings []
 
   Scenario: Move a node to a new parent and before one of its children
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
       | contentStreamIdentifier                     | "cs-identifier"              |
       | nodeAggregateIdentifier                     | "nody-mc-nodeface"           |
@@ -192,7 +192,7 @@ Feature: Move a node without content dimensions
       | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"     |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
     Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 5 is of type "Neos.EventSourcedContentRepository:NodesWereMoved" with payload:
+    And event at index 5 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasMoved" with payload:
       | Key                                         | Expected                                                                                                                 |
       | contentStreamIdentifier                     | "cs-identifier"                                                                                                          |
       | nodeAggregateIdentifier                     | "nody-mc-nodeface"                                                                                                       |

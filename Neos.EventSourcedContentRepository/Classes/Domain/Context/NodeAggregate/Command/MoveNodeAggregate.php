@@ -22,18 +22,16 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDist
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
 /**
- * Move node command
+ * The "Move node aggregate" command
  *
  * In `contentStreamIdentifier`
  * and `dimensionSpacePoint`,
- * move node `nodeAggregateIdentifier`
+ * move node aggregate `nodeAggregateIdentifier`
  * into `newParentNodeAggregateIdentifier` (or keep the current parent)
- * before `newSucceedingSiblingIdentifier` (or as last of all siblings)
+ * before `newSucceedingSiblingNodeAggregateIdentifier` (or as last of all siblings)
  * using `relationDistributionStrategy`
- *
- * This is only allowed if both nodes exist and the new parent aggregate's type allows children of the given aggregate's type
  */
-final class MoveNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
+final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -86,7 +84,7 @@ final class MoveNode implements \JsonSerializable, CopyableAcrossContentStreamsI
 
     /**
      * @param array $array
-     * @return MoveNode
+     * @return MoveNodeAggregate
      * @throws RelationDistributionStrategyIsInvalid
      */
     public static function fromArray(array $array): self
@@ -101,49 +99,31 @@ final class MoveNode implements \JsonSerializable, CopyableAcrossContentStreamsI
         );
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    /**
-     * @return DimensionSpacePoint
-     */
     public function getDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->dimensionSpacePoint;
     }
 
-    /**
-     * @return NodeAggregateIdentifier
-     */
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier|null
-     */
     public function getNewParentNodeAggregateIdentifier(): ?NodeAggregateIdentifier
     {
         return $this->newParentNodeAggregateIdentifier;
     }
 
-    /**
-     * @return NodeAggregateIdentifier|null
-     */
     public function getNewSucceedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
     {
         return $this->newSucceedingSiblingNodeAggregateIdentifier;
     }
 
-    /**
-     * @return RelationDistributionStrategy
-     */
     public function getRelationDistributionStrategy(): RelationDistributionStrategy
     {
         return $this->relationDistributionStrategy;
@@ -163,7 +143,7 @@ final class MoveNode implements \JsonSerializable, CopyableAcrossContentStreamsI
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new MoveNode(
+        return new MoveNodeAggregate(
             $targetContentStreamIdentifier,
             $this->dimensionSpacePoint,
             $this->nodeAggregateIdentifier,

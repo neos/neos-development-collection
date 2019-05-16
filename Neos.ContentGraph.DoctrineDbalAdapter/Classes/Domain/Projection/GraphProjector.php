@@ -30,7 +30,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodesWereMoved;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -992,10 +992,10 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param NodesWereMoved $event
+     * @param NodeAggregateWasMoved $event
      * @throws \Throwable
      */
-    public function whenNodesWereMoved(NodesWereMoved $event)
+    public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event)
     {
         $this->transactional(function () use ($event) {
 

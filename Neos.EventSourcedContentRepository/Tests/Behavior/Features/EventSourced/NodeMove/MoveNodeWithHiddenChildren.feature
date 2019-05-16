@@ -86,7 +86,7 @@ Feature: Move a node without content dimensions
       | affectedDimensionSpacePoints | [{}]                     |
     And the graph projection is fully up to date
 
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
       | contentStreamIdentifier                     | "cs-identifier"              |
       | nodeAggregateIdentifier                     | "nody-mc-nodeface"           |
@@ -110,7 +110,7 @@ Feature: Move a node without content dimensions
       | affectedDimensionSpacePoints | [{}]               |
     And the graph projection is fully up to date
 
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
       | contentStreamIdentifier                     | "cs-identifier"              |
       | nodeAggregateIdentifier                     | "nody-mc-nodeface"           |
@@ -131,7 +131,7 @@ Feature: Move a node without content dimensions
       | affectedDimensionSpacePoints | [{}]                     |
     And the graph projection is fully up to date
 
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
       | contentStreamIdentifier                     | "cs-identifier"              |
       | nodeAggregateIdentifier                     | "sir-david-nodenborough"     |
@@ -158,7 +158,7 @@ Feature: Move a node without content dimensions
       | affectedDimensionSpacePoints | [{}]                         |
     And the graph projection is fully up to date
 
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
       | contentStreamIdentifier                     | "cs-identifier"              |
       | nodeAggregateIdentifier                     | "nody-mc-nodeface"           |
@@ -183,7 +183,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
       | contentStreamIdentifier                     | "cs-identifier"              |
       | nodeAggregateIdentifier                     | "sir-david-nodenborough"     |
@@ -203,7 +203,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
       | contentStreamIdentifier                     | "cs-identifier"              |
       | nodeAggregateIdentifier                     | "sir-david-nodenborough"     |
@@ -228,7 +228,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
       | contentStreamIdentifier                     | "cs-identifier"              |
       | nodeAggregateIdentifier                     | "sir-david-nodenborough"     |
@@ -254,7 +254,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value              |
       | contentStreamIdentifier                     | "cs-identifier"    |
       | nodeAggregateIdentifier                     | "nody-mc-nodeface" |
@@ -279,7 +279,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                    |
       | contentStreamIdentifier                     | "cs-identifier"          |
       | nodeAggregateIdentifier                     | "sir-david-nodenborough" |
@@ -304,7 +304,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                    |
       | contentStreamIdentifier                     | "cs-identifier"          |
       | nodeAggregateIdentifier                     | "sir-david-nodenborough" |
@@ -325,7 +325,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                    |
       | contentStreamIdentifier                     | "cs-identifier"          |
       | nodeAggregateIdentifier                     | "sir-david-nodenborough" |
