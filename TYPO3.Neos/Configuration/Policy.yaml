@@ -24,7 +24,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\TYPO3CR\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.publicWorkspace === true)'
 
     'TYPO3.Neos:OtherWorkspacesAccess':
-      matcher: 'method(TYPO3\TYPO3CR\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.publicWorkspace === false)'
+      matcher: 'method(TYPO3\TYPO3CR\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.publicWorkspace === false) && evaluate(this.workspace.personalWorkspace === false)'
 
     'TYPO3.Neos:BackendLogin':
       matcher: 'method(TYPO3\Neos\Controller\LoginController->(index|tokenLogin|authenticate)Action()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
@@ -271,6 +271,10 @@ roles:
 
       -
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.History'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Neos:OtherWorkspacesAccess'
         permission: GRANT
 
   'TYPO3.Neos:RestrictedEditor':
