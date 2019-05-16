@@ -45,11 +45,11 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
     protected $nodeTypeName;
 
     /**
-     * Root nodes are by definition visible in *all* dimension space points; so we need to include the full list here.
+     * Root nodes by definition cover *all* dimension space points; so we need to include the full list here.
      *
      * @var DimensionSpacePointSet
      */
-    private $visibleInDimensionSpacePoints;
+    private $coveredDimensionSpacePoints;
 
     /**
      * @var NodeAggregateClassification
@@ -65,14 +65,14 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
-        DimensionSpacePointSet $visibleInDimensionSpacePoints,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateClassification $nodeAggregateClassification,
         UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
-        $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
+        $this->coveredDimensionSpacePoints = $coveredDimensionSpacePoints;
         $this->nodeAggregateClassification = $nodeAggregateClassification;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
@@ -92,9 +92,9 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
         return $this->nodeTypeName;
     }
 
-    public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
+    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
     {
-        return $this->visibleInDimensionSpacePoints;
+        return $this->coveredDimensionSpacePoints;
     }
 
     public function getNodeAggregateClassification(): NodeAggregateClassification
@@ -113,7 +113,7 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
-            $this->visibleInDimensionSpacePoints,
+            $this->coveredDimensionSpacePoints,
             $this->nodeAggregateClassification,
             $this->initiatingUserIdentifier
         );

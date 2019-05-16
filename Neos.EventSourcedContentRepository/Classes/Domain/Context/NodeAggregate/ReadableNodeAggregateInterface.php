@@ -53,7 +53,7 @@ interface ReadableNodeAggregateInterface
     public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet;
 
     /**
-     * A node aggregate covers a dimension space point if any node is visible in it
+     * A node aggregate covers a dimension space point if any node is covers it
      * in that is has an incoming edge in it.
      *
      * @param DimensionSpacePoint $dimensionSpacePoint

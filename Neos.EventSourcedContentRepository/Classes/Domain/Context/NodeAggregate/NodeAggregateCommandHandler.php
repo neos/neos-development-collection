@@ -31,7 +31,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAg
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
@@ -176,7 +176,7 @@ final class NodeAggregateCommandHandler
 
     private function createRootWithNode(
         CreateRootNodeAggregateWithNode $command,
-        DimensionSpacePointSet $visibleDimensionSpacePoints
+        DimensionSpacePointSet $coveredDimensionSpacePoints
     ): DomainEvents {
         $events = DomainEvents::withSingleEvent(
             EventWithIdentifier::create(
@@ -184,7 +184,7 @@ final class NodeAggregateCommandHandler
                     $command->getContentStreamIdentifier(),
                     $command->getNodeAggregateIdentifier(),
                     $command->getNodeTypeName(),
-                    $visibleDimensionSpacePoints,
+                    $coveredDimensionSpacePoints,
                     NodeAggregateClassification::root(),
                     $command->getInitiatingUserIdentifier()
                 )
@@ -228,7 +228,7 @@ final class NodeAggregateCommandHandler
             $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getOriginDimensionSpacePoint());
 
             $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($command->getOriginDimensionSpacePoint());
-            $visibleDimensionSpacePoints = $specializations->getIntersection($parentNodeAggregate->getCoveredDimensionSpacePoints());
+            $coveredDimensionSpacePoints = $specializations->getIntersection($parentNodeAggregate->getCoveredDimensionSpacePoints());
 
             if ($command->getNodeName()) {
                 $this->requireNodeNameToBeUnoccupied(
@@ -236,7 +236,7 @@ final class NodeAggregateCommandHandler
                     $command->getNodeName(),
                     $command->getParentNodeAggregateIdentifier(),
                     $command->getOriginDimensionSpacePoint(),
-                    $visibleDimensionSpacePoints
+                    $coveredDimensionSpacePoints
                 );
             }
 
@@ -251,14 +251,14 @@ final class NodeAggregateCommandHandler
 
             $events = $this->createRegularWithNode(
                 $command,
-                $visibleDimensionSpacePoints,
+                $coveredDimensionSpacePoints,
                 $initialPropertyValues
             );
 
             $events = $this->handleTetheredChildNodes(
                 $command,
                 $nodeType,
-                $visibleDimensionSpacePoints,
+                $coveredDimensionSpacePoints,
                 $command->getNodeAggregateIdentifier(),
                 $descendantNodeAggregateIdentifiers,
                 $events
@@ -270,7 +270,7 @@ final class NodeAggregateCommandHandler
 
     private function createRegularWithNode(
         CreateNodeAggregateWithNode $command,
-        DimensionSpacePointSet $visibleDimensionSpacePoints,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
         PropertyValues $initialPropertyValues
     ): DomainEvents {
         $events = DomainEvents::withSingleEvent(
@@ -280,7 +280,7 @@ final class NodeAggregateCommandHandler
                     $command->getNodeAggregateIdentifier(),
                     $command->getNodeTypeName(),
                     $command->getOriginDimensionSpacePoint(),
-                    $visibleDimensionSpacePoints,
+                    $coveredDimensionSpacePoints,
                     $command->getParentNodeAggregateIdentifier(),
                     $command->getNodeName(),
                     $initialPropertyValues,
@@ -302,7 +302,7 @@ final class NodeAggregateCommandHandler
     /**
      * @param CreateNodeAggregateWithNode $command
      * @param NodeType $nodeType
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
+     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers
      * @param DomainEvents $events
@@ -316,7 +316,7 @@ final class NodeAggregateCommandHandler
     protected function handleTetheredChildNodes(
         CreateNodeAggregateWithNode $command,
         NodeType $nodeType,
-        DimensionSpacePointSet $visibleDimensionSpacePoints,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers,
         DomainEvents $events,
@@ -333,7 +333,7 @@ final class NodeAggregateCommandHandler
                 $command,
                 $childNodeAggregateIdentifier,
                 NodeTypeName::fromString($childNodeType->getName()),
-                $visibleDimensionSpacePoints,
+                $coveredDimensionSpacePoints,
                 $parentNodeAggregateIdentifier,
                 $nodeName,
                 $initialPropertyValues
@@ -342,7 +342,7 @@ final class NodeAggregateCommandHandler
             $events = $this->handleTetheredChildNodes(
                 $command,
                 $childNodeType,
-                $visibleDimensionSpacePoints,
+                $coveredDimensionSpacePoints,
                 $childNodeAggregateIdentifier,
                 $nodeAggregateIdentifiers,
                 $events,
@@ -357,7 +357,7 @@ final class NodeAggregateCommandHandler
         CreateNodeAggregateWithNode $command,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
-        DimensionSpacePointSet $visibleDimensionSpacePoints,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $nodeName,
         PropertyValues $initialPropertyValues,
@@ -370,7 +370,7 @@ final class NodeAggregateCommandHandler
                     $nodeAggregateIdentifier,
                     $nodeTypeName,
                     $command->getOriginDimensionSpacePoint(),
-                    $visibleDimensionSpacePoints,
+                    $coveredDimensionSpacePoints,
                     $parentNodeAggregateIdentifier,
                     $nodeName,
                     $initialPropertyValues,
@@ -1300,9 +1300,9 @@ final class NodeAggregateCommandHandler
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param DimensionSpacePoint $sourceDimensionSpacePoint
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @throws ParentsNodeAggregateNotVisibleInDimensionSpacePoint
+     * @throws ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
      */
-    protected function requireParentNodesAggregateToBeVisibleInDimensionSpacePoint(
+    protected function requireParentNodesAggregateToCoverDimensionSpacePoint(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $sourceDimensionSpacePoint,
@@ -1319,7 +1319,7 @@ final class NodeAggregateCommandHandler
             try {
                 $this->requireNodeAggregateToCoverDimensionSpacePoint($sourceParentNodeAggregate, $dimensionSpacePoint);
             } catch (NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint $exception) {
-                throw new ParentsNodeAggregateNotVisibleInDimensionSpacePoint(
+                throw new ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
                     'No suitable parent could be found for node "' . $nodeAggregateIdentifier . '" in target dimension space point ' . $dimensionSpacePoint,
                     1521322565
                 );

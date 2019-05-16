@@ -28,20 +28,20 @@ Feature: Publishing individual nodes (basics)
           type: string
     """
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                         |
-      | contentStreamIdentifier       | "cs-identifier"               |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"      |
-      | nodeTypeName                  | "Neos.ContentRepository:Root" |
-      | visibleInDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier      | "system"                      |
-      | nodeAggregateClassification   | "root"                        |
+      | Key                         | Value                         |
+      | contentStreamIdentifier     | "cs-identifier"               |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | coveredDimensionSpacePoints | [{}]                          |
+      | initiatingUserIdentifier    | "system"                      |
+      | nodeAggregateClassification | "root"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                            |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"            |
       | originDimensionSpacePoint     | {}                                                  |
-      | visibleInDimensionSpacePoints | [{}]                                                |
+      | coveredDimensionSpacePoints   | [{}]                                                |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
       | initialPropertyValues         | {"text": {"type": "string", "value": "Initial t1"}} |
       | nodeAggregateClassification   | "regular"                                           |
@@ -51,7 +51,7 @@ Feature: Publishing individual nodes (basics)
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"            |
       | originDimensionSpacePoint     | {}                                                  |
-      | visibleInDimensionSpacePoints | [{}]                                                |
+      | coveredDimensionSpacePoints   | [{}]                                                |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                            |
       | initialPropertyValues         | {"text": {"type": "string", "value": "Initial t2"}} |
       | nodeAggregateClassification   | "regular"                                           |
@@ -61,7 +61,7 @@ Feature: Publishing individual nodes (basics)
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Image"                 |
       | originDimensionSpacePoint     | {}                                                     |
-      | visibleInDimensionSpacePoints | [{}]                                                   |
+      | coveredDimensionSpacePoints   | [{}]                                                   |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                               |
       | initialPropertyValues         | {"image": {"type": "image", "value": "Initial image"}} |
       | nodeAggregateClassification   | "regular"                                              |

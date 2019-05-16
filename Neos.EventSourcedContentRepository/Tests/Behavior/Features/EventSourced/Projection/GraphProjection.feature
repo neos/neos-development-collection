@@ -11,20 +11,20 @@ Feature: Reading of our Graph Projection
 
   Scenario: Single node connected to root
     Given the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                  |
-      | contentStreamIdentifier       | "cs-identifier"                        |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"               |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
-      | visibleInDimensionSpacePoints | [{}]                                   |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
-      | nodeAggregateClassification   | "root"                                 |
+      | Key                         | Value                                  |
+      | contentStreamIdentifier     | "cs-identifier"                        |
+      | nodeAggregateIdentifier     | "sir-david-nodenborough"               |
+      | nodeTypeName                | "Neos.ContentRepository:Root"          |
+      | coveredDimensionSpacePoints | [{}]                                   |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | visibleInDimensionSpacePoints | [{}]                                      |
+      | coveredDimensionSpacePoints   | [{}]                                      |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
       | nodeName                      | "foo"                                     |
       | nodeAggregateClassification   | "regular"                                 |

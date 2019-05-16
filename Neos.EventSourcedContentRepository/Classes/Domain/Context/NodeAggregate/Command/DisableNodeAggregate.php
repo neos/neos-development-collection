@@ -38,7 +38,7 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
     private $nodeAggregateIdentifier;
 
     /**
-     * One of the visible dimension space points of the node aggregate in which the user intends to disable it
+     * One of the dimension space points covered by the node aggregate in which the user intends to disable it
      *
      * @var DimensionSpacePoint
      */

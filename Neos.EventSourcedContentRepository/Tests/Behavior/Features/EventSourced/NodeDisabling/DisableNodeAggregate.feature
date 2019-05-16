@@ -22,20 +22,20 @@ Feature: Disable a node
       | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
       | currentContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                  |
-      | contentStreamIdentifier       | "cs-identifier"                        |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"               |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
-      | visibleInDimensionSpacePoints | [{}]                                   |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
-      | nodeAggregateClassification   | "root"                                 |
+      | Key                         | Value                                  |
+      | contentStreamIdentifier     | "cs-identifier"                        |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
+      | nodeTypeName                | "Neos.ContentRepository:Root"          |
+      | coveredDimensionSpacePoints | [{}]                                   |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | visibleInDimensionSpacePoints | [{}]                                      |
+      | coveredDimensionSpacePoints   | [{}]                                      |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "regular"                                 |

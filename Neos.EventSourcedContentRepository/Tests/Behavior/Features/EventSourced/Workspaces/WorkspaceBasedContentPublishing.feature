@@ -22,13 +22,13 @@ Feature: Workspace based content publishing
       | workspaceName           | "live"          |
       | contentStreamIdentifier | "cs-identifier" |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                         |
-      | contentStreamIdentifier       | "cs-identifier"               |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"      |
-      | nodeTypeName                  | "Neos.ContentRepository:Root" |
-      | visibleInDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier      | "initiating-user-identifier"  |
-      | nodeAggregateClassification   | "root"                        |
+      | Key                         | Value                         |
+      | contentStreamIdentifier     | "cs-identifier"               |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | coveredDimensionSpacePoints | [{}]                          |
+      | initiatingUserIdentifier    | "initiating-user-identifier"  |
+      | nodeAggregateClassification | "root"                        |
 
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
@@ -36,7 +36,7 @@ Feature: Workspace based content publishing
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint     | {}                                       |
-      | visibleInDimensionSpacePoints | [{}]                                     |
+      | coveredDimensionSpacePoints   | [{}]                                     |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "child"                                  |
       | nodeAggregateClassification   | "regular"                                |

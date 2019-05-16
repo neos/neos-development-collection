@@ -33,7 +33,7 @@ Feature: Change node aggregate type
       | contentStreamIdentifier       | "cs-identifier"                          |
       | nodeAggregateIdentifier       | "lady-eleonode-nodesworth"               |
       | nodeTypeName                  | "Neos.ContentRepository:Root"            |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
+      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
       | initiatingUserIdentifier      | "system"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                           |
@@ -41,7 +41,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:ParentNodeType" |
       | originDimensionSpacePoint     | {"language":"de"}                               |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]        |
+      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]        |
       | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                      |
       | nodeName                      | "parent"                                        |
       | initialPropertyValues         | {}                                              |
@@ -86,7 +86,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint     | {"language":"de"}                          |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
+      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                   |
     And the graph projection is fully up to date
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
@@ -115,7 +115,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | "autocreated-child"                          |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:AutoCreated" |
       | originDimensionSpacePoint     | {"language": "de"}                           |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]     |
+      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]     |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                     |
       | nodeName                      | "autocreated"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -124,7 +124,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint     | {"language":"de"}                          |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
+      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
       | parentNodeAggregateIdentifier | "autocreated-child"                        |
     And the graph projection is fully up to date
 
@@ -150,7 +150,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:AutoCreated" |
       | originDimensionSpacePoint     | {"language":"de"}                            |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]     |
+      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]     |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                     |
       | nodeName                      | "autocreated"                                |
     And the graph projection is fully up to date
@@ -177,7 +177,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint     | {"language":"de"}                          |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
+      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                     |
     And the graph projection is fully up to date
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
@@ -214,7 +214,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | "autocreated-child"                          |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:AutoCreated" |
       | originDimensionSpacePoint     | {"language":"de"}                            |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]     |
+      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]     |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                     |
       | nodeName                      | "autocreated"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -223,7 +223,7 @@ Feature: Change node aggregate type
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint     | {"language":"de"}                          |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
+      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
       | parentNodeAggregateIdentifier | "autocreated-child"                        |
     And the graph projection is fully up to date
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
@@ -240,7 +240,7 @@ Feature: Change node aggregate type
 #      | nodeAggregateIdentifier                  | "nodea-agg-identifier"                                                               |
 #      | nodeTypeName                             | "Neos.ContentRepository.Testing:NodeTypeA"                                           |
 #      | dimensionSpacePoint                      | {"language":"de"}                                                                    |
-#      | visibleInDimensionSpacePoints            | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} |
+#      | coveredDimensionSpacePoints            | {"points":[{"coordinates":{"language": "de"}}, {"coordinates":{"language": "gsw"}}]} |
 #      | nodeIdentifier                           | "nodea-identifier-de"                                                                |
 #      | parentNodeIdentifier                     | "parent-identifier"                                                                  |
 #      | nodeName                                 | "nodea"                                                                              |

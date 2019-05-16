@@ -14,13 +14,13 @@ Feature: Reading of our Graph Projection
           type: string
     """
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                           |
-      | contentStreamIdentifier       | "cs-identifier"                                                                 |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                        |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"                                                   |
-      | visibleInDimensionSpacePoints | [{"language": "mul"},{"language": "en"},{"language": "de"},{"language": "gsw"}] |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                          |
-      | nodeAggregateClassification   | "root"                                                                          |
+      | Key                         | Value                                                                           |
+      | contentStreamIdentifier     | "cs-identifier"                                                                 |
+      | nodeAggregateIdentifier     | "sir-david-nodenborough"                                                        |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                                                   |
+      | coveredDimensionSpacePoints | [{"language": "mul"},{"language": "en"},{"language": "de"},{"language": "gsw"}] |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000"                                          |
+      | nodeAggregateClassification | "root"                                                                          |
 
   Scenario: Property Changes with two dimension values
     When the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -29,7 +29,7 @@ Feature: Reading of our Graph Projection
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language": "de"}                        |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]  |
+      | coveredDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}]  |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
       | nodeName                      | "foo"                                     |
       | nodeAggregateClassification   | "regular"                                 |
@@ -57,7 +57,7 @@ Feature: Reading of our Graph Projection
   #    | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
   #    | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
   #    | originDimensionSpacePoint     | {"language": "de"}                        |
-  #    | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]  |
+  #    | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]  |
   #    | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
   #    | nodeName                      | "foo"                                     |#
 
@@ -69,7 +69,7 @@ Feature: Reading of our Graph Projection
      ## | destinationNodeIdentifier       | "01831e48-a20c-11e7-851a-dfef4f55c64c" |
      # | destinationParentNodeIdentifier | "ead94f26-a20d-11e7-8ecc-43aabe596a03" |
      # | dimensionSpacePoint             | {"language":"en"}                      |
-     # | visibleInDimensionSpacePoints   | [{"language":"en"}]                    |
+     # | coveredDimensionSpacePoints   | [{"language":"en"}]                    |
 
     #When the graph projection is fully up to date
     #And I am in content stream "cs-identifier" and Dimension Space Point {"language": "en"}

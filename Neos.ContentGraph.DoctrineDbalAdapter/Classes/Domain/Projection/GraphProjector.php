@@ -155,7 +155,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                 $event->getContentStreamIdentifier(),
                 NodeRelationAnchorPoint::forRootEdge(),
                 $node->relationAnchorPoint,
-                $event->getVisibleInDimensionSpacePoints(),
+                $event->getCoveredDimensionSpacePoints(),
                 null
             );
         });
@@ -174,7 +174,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                 $event->getNodeTypeName(),
                 $event->getParentNodeAggregateIdentifier(),
                 $event->getOriginDimensionSpacePoint(),
-                $event->getVisibleInDimensionSpacePoints(),
+                $event->getCoveredDimensionSpacePoints(),
                 $event->getInitialPropertyValues(),
                 $event->getNodeAggregateClassification(),
                 $event->getSucceedingNodeAggregateIdentifier(),
@@ -185,7 +185,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                 $event->getContentStreamIdentifier(),
                 $event->getParentNodeAggregateIdentifier(),
                 $event->getNodeAggregateIdentifier(),
-                $event->getVisibleInDimensionSpacePoints()
+                $event->getCoveredDimensionSpacePoints()
             );
         });
     }
@@ -718,37 +718,6 @@ insert ignore into neos_contentgraph_restrictionrelation
         $this->transactional(function () use ($event) {
             $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getAffectedDimensionSpacePoints());
         });
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $affectedNodeAggregateIdentifier
-     * @param DimensionSpacePointSet $affectedDimensionSpacePoints
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    private function removeIngoingRestrictionRelationsOfNodeAggregateInDimensionSpacePointsExceptOwn(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $affectedNodeAggregateIdentifier,
-        DimensionSpacePointSet $affectedDimensionSpacePoints
-    ): void {
-        $this->getDatabaseConnection()->executeUpdate('
-                -- GraphProjector::removeIngoingRestrictionRelationsOfNodeAggregateInDimensionSpacePointsExceptOwn
- 
-                DELETE r.*
-                    FROM neos_contentgraph_restrictionrelation r
-                    WHERE r.contentstreamidentifier = :contentStreamIdentifier
-                    AND r.originnodeaggregateidentifier != :affectedNodeAggregateIdentifier
-                    AND r.affectednodeaggregateidentifier = :affectedNodeAggregateIdentifier
-                    AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
-            [
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'affectedNodeAggregateIdentifier' => (string)$affectedNodeAggregateIdentifier,
-                'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
-            ],
-            [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-            ]
-        );
     }
 
     /**

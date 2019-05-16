@@ -22,20 +22,20 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
       | currentContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                  |
-      | contentStreamIdentifier       | "cs-identifier"                        |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"               |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
-      | visibleInDimensionSpacePoints | [{}]                                   |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
-      | nodeAggregateClassification   | "root"                                 |
+      | Key                         | Value                                  |
+      | contentStreamIdentifier     | "cs-identifier"                        |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
+      | nodeTypeName                | "Neos.ContentRepository:Root"          |
+      | coveredDimensionSpacePoints | [{}]                                   |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
       | nodeAggregateIdentifier       | "the-great-nodini"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint     | {}                                       |
-      | visibleInDimensionSpacePoints | [{}]                                     |
+      | coveredDimensionSpacePoints   | [{}]                                     |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "court-magician"                         |
       | nodeAggregateClassification   | "regular"                                |
@@ -45,7 +45,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | nodeAggregateIdentifier       | "nodingers-cat"                          |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint     | {}                                       |
-      | visibleInDimensionSpacePoints | [{}]                                     |
+      | coveredDimensionSpacePoints   | [{}]                                     |
       | parentNodeAggregateIdentifier | "the-great-nodini"                       |
       | nodeName                      | "pet"                                    |
       | nodeAggregateClassification   | "regular"                                |
@@ -58,7 +58,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | nodeAggregateDisablingStrategy | "scatter"          |
     And the graph projection is fully up to date
 
-  Scenario: on ForkContentStream, the hidden nodes in the target content stream should still be invisible.
+  Scenario: on ForkContentStream, the disabled nodes in the target content stream should still be invisible.
     When the command ForkContentStream is executed with payload:
       | Key                           | Value                |
       | sourceContentStreamIdentifier | "cs-identifier"      |

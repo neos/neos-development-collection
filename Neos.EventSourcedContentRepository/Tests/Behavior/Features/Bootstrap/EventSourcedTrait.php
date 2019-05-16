@@ -238,8 +238,8 @@ trait EventSourcedTrait
         if (!isset($eventPayload['originDimensionSpacePoint'])) {
             $eventPayload['originDimensionSpacePoint'] = [];
         }
-        if (!isset($eventPayload['visibleInDimensionSpacePoints'])) {
-            $eventPayload['visibleInDimensionSpacePoints'] = [[]];
+        if (!isset($eventPayload['coveredDimensionSpacePoints'])) {
+            $eventPayload['coveredDimensionSpacePoints'] = [[]];
         }
         if (!isset($eventPayload['nodeName'])) {
             $eventPayload['nodeName'] = null;

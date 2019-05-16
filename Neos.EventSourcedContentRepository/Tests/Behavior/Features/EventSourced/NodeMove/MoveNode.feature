@@ -37,20 +37,20 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
       | currentContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                   |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"                                                                                                                |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"                                                                                                           |
-      | visibleInDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                                                                                  |
-      | nodeAggregateClassification   | "root"                                                                                                                                  |
+      | Key                         | Value                                                                                                                                   |
+      | contentStreamIdentifier     | "cs-identifier"                                                                                                                         |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                                                                                |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                                                                                                           |
+      | coveredDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000"                                                                                                  |
+      | nodeAggregateClassification | "root"                                                                                                                                  |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                   |
       | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                                                                                |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:DocumentWithTetheredChildNode"                                                                          |
       | originDimensionSpacePoint     | {"market":"DE", "language":"de"}                                                                                                        |
-      | visibleInDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | coveredDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                                |
       | nodeName                      | "document"                                                                                                                              |
       | nodeAggregateClassification   | "regular"                                                                                                                               |
@@ -60,7 +60,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateIdentifier       | "nodewyn-tetherton"                                                                                                                     |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                |
       | originDimensionSpacePoint     | {"market":"DE", "language":"de"}                                                                                                        |
-      | visibleInDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | coveredDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                |
       | nodeName                      | "tethered"                                                                                                                              |
       | nodeAggregateClassification   | "tethered"                                                                                                                              |
@@ -137,7 +137,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                                                                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
       | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
-      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | coveredDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
       | nodeName                      | "document"                                                                                                                                         |
       | nodeAggregateClassification   | "regular"                                                                                                                                          |
@@ -159,7 +159,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                                                                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
       | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
-      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | coveredDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                                           |
       | nodeName                      | "other-document"                                                                                                                                   |
       | nodeAggregateClassification   | "regular"                                                                                                                                          |
@@ -181,7 +181,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                                                                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                           |
       | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
-      | visibleInDimensionSpacePoints | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
+      | coveredDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                                           |
       | nodeName                      | "content"                                                                                                                                          |
       | nodeAggregateClassification   | "regular"                                                                                                                                          |

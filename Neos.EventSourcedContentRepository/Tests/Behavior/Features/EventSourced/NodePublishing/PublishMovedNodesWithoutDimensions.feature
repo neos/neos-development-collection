@@ -22,20 +22,20 @@ Feature: Publishing moved nodes without dimensions
       | workspaceName           | "live"          |
       | contentStreamIdentifier | "cs-identifier" |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                  |
-      | contentStreamIdentifier       | "cs-identifier"                        |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"               |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
-      | visibleInDimensionSpacePoints | [{}]                                   |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
-      | nodeAggregateClassification   | "root"                                 |
+      | Key                         | Value                                  |
+      | contentStreamIdentifier     | "cs-identifier"                        |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
+      | nodeTypeName                | "Neos.ContentRepository:Root"          |
+      | coveredDimensionSpacePoints | [{}]                                   |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | visibleInDimensionSpacePoints | [{}]                                      |
+      | coveredDimensionSpacePoints   | [{}]                                      |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "regular"                                 |
@@ -45,7 +45,7 @@ Feature: Publishing moved nodes without dimensions
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | visibleInDimensionSpacePoints | [{}]                                      |
+      | coveredDimensionSpacePoints   | [{}]                                      |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
       | nodeName                      | "child-document"                          |
       | nodeAggregateClassification   | "regular"                                 |
@@ -55,7 +55,7 @@ Feature: Publishing moved nodes without dimensions
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"              |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | visibleInDimensionSpacePoints | [{}]                                      |
+      | coveredDimensionSpacePoints   | [{}]                                      |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
       | nodeName                      | "esquire"                                 |
       | nodeAggregateClassification   | "regular"                                 |
@@ -147,7 +147,7 @@ Feature: Publishing moved nodes without dimensions
       | nodeAggregateIdentifier       | "lady-abigail-nodenborough"               |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | visibleInDimensionSpacePoints | [{}]                                      |
+      | coveredDimensionSpacePoints   | [{}]                                      |
       | parentNodeAggregateIdentifier | "sir-nodeward-nodington-iii"              |
       | nodeName                      | "other-document"                          |
       | nodeAggregateClassification   | "regular"                                 |

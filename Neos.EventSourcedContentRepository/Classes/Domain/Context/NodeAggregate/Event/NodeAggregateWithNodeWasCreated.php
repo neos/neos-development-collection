@@ -46,11 +46,11 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
     private $originDimensionSpacePoint;
 
     /**
-     * The dimension space points the node aggregate and its node are visible in
+     * The dimension space points the node aggregate and its node cover
      *
      * @var DimensionSpacePointSet
      */
-    private $visibleInDimensionSpacePoints;
+    private $coveredDimensionSpacePoints;
 
     /**
      * The node aggregate's identifier
@@ -106,7 +106,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeName $nodeTypeName
      * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param DimensionSpacePointSet $visibleInDimensionSpacePoints
+     * @param DimensionSpacePointSet $coveredDimensionSpacePoints
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $nodeName
      * @param PropertyValues $initialPropertyValues
@@ -118,7 +118,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
         DimensionSpacePoint $originDimensionSpacePoint,
-        DimensionSpacePointSet $visibleInDimensionSpacePoints,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         ?NodeName $nodeName,
         PropertyValues $initialPropertyValues,
@@ -129,7 +129,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
+        $this->coveredDimensionSpacePoints = $coveredDimensionSpacePoints;
         $this->parentNodeAggregateIdentifier = $parentNodeAggregateIdentifier;
         $this->nodeName = $nodeName;
         $this->initialPropertyValues = $initialPropertyValues;
@@ -157,9 +157,9 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         return $this->originDimensionSpacePoint;
     }
 
-    public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
+    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
     {
-        return $this->visibleInDimensionSpacePoints;
+        return $this->coveredDimensionSpacePoints;
     }
 
     public function getParentNodeAggregateIdentifier(): NodeAggregateIdentifier
@@ -194,7 +194,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
-            $this->visibleInDimensionSpacePoints,
+            $this->coveredDimensionSpacePoints,
             $this->parentNodeAggregateIdentifier,
             $this->nodeName,
             $this->initialPropertyValues,

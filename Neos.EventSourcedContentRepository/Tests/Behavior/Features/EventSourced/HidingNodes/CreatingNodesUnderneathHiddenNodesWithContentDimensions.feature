@@ -29,20 +29,20 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
       | currentContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                    |
-      | contentStreamIdentifier       | "cs-identifier"                          |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"                 |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"            |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"   |
-      | nodeAggregateClassification   | "root"                                   |
+      | Key                         | Value                                    |
+      | contentStreamIdentifier     | "cs-identifier"                          |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                 |
+      | nodeTypeName                | "Neos.ContentRepository:Root"            |
+      | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000"   |
+      | nodeAggregateClassification | "root"                                   |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
       | contentStreamIdentifier       | "cs-identifier"                          |
       | nodeAggregateIdentifier       | "the-great-nodini"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint     | {"language": "de"}                       |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
+      | coveredDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "text1"                                  |
       | nodeAggregateClassification   | "regular"                                |
@@ -52,15 +52,15 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
       | nodeAggregateIdentifier       | "nodingers-cat"                          |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint     | {"language": "de"}                       |
-      | visibleInDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}] |
+      | coveredDimensionSpacePoints   | [{"language": "de"},{"language": "gsw"}] |
       | parentNodeAggregateIdentifier | "the-great-nodini"                       |
       | nodeName                      | "text2"                                  |
       | nodeAggregateClassification   | "regular"                                |
     And the event NodeSpecializationVariantWasCreated was published with payload:
-      | Key                       | Value                 |
-      | contentStreamIdentifier   | "cs-identifier"       |
-      | nodeAggregateIdentifier   | "the-great-nodini"    |
-      | sourceOrigin | {"language": "de"}    |
+      | Key                     | Value                 |
+      | contentStreamIdentifier | "cs-identifier"       |
+      | nodeAggregateIdentifier | "the-great-nodini"    |
+      | sourceOrigin            | {"language": "de"}    |
       | specializationOrigin    | {"language": "gsw"}   |
       | specializationCoverage  | [{"language": "gsw"}] |
     And the event NodeAggregateWasDisabled was published with payload:
@@ -72,11 +72,11 @@ Feature: Creation of nodes underneath hidden nodes WITH content dimensions
 
   Scenario: When a new node is added to an already existing aggregate underneath a hidden node, this one should be hidden as well
     When the command CreateNodeVariant is executed with payload:
-      | Key                       | Value               |
-      | contentStreamIdentifier   | "cs-identifier"     |
-      | nodeAggregateIdentifier   | "nodingers-cat"     |
-      | sourceOrigin | {"language": "de"}  |
-      | targetOrigin | {"language": "gsw"} |
+      | Key                     | Value               |
+      | contentStreamIdentifier | "cs-identifier"     |
+      | nodeAggregateIdentifier | "nodingers-cat"     |
+      | sourceOrigin            | {"language": "de"}  |
+      | targetOrigin            | {"language": "gsw"} |
     And the graph projection is fully up to date
 
   #  When I am in content stream "cs-identifier" and Dimension Space Point {"language": "gsw"}

@@ -22,7 +22,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\ReferencePosition;
  *
  * Moves all nodes in the given `nodeAggregateIdentifier` to the `referencePosition` of the
  * `referenceNodeAggregateIdentifier`. Each node in the node aggregate needs a suitable
- * (visible in dimension space point) reference node in the referenced node aggregate.
+ * (covering dimension space point) reference node in the referenced node aggregate.
  */
 final class MoveNodesInAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface
 {

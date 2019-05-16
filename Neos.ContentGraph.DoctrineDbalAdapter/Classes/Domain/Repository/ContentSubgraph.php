@@ -242,7 +242,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
     private static function addRestrictionRelationConstraintsToQuery(SqlQueryBuilder $query, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints, string $aliasOfNodeInQuery = 'n', string $aliasOfHierarchyEdgeInQuery = 'h', $markerToReplaceInQuery = null): SqlQueryBuilder
     {
         // TODO: make QueryBuilder immutable
-        if (!$visibilityConstraints->isInvisibleContentShown()) {
+        if (!$visibilityConstraints->isDisabledContentShown()) {
             $query->addToQuery('
                 and not exists (
                     select

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,8 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Exception;
 
-class ParentsNodeAggregateNotVisibleInDimensionSpacePoint extends Exception
+class ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint extends \DomainException
 {
 }

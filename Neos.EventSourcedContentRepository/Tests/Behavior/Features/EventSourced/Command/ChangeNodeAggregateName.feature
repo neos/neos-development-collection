@@ -6,13 +6,13 @@ Feature: Change node name
   Background:
     Given I have no content dimensions
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                    |
-      | contentStreamIdentifier       | "cs-identifier"                          |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"                 |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"            |
-      | visibleInDimensionSpacePoints | [{}]                                     |
-      | initiatingUserIdentifier      | "system"                                 |
-      | nodeAggregateClassification   | "root"                                   |
+      | Key                         | Value                         |
+      | contentStreamIdentifier     | "cs-identifier"               |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | coveredDimensionSpacePoints | [{}]                          |
+      | initiatingUserIdentifier    | "system"                      |
+      | nodeAggregateClassification | "root"                        |
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository.Testing:Content': []
@@ -25,10 +25,10 @@ Feature: Change node name
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint     | {}                                       |
-      | visibleInDimensionSpacePoints | [{}]                                     |
+      | coveredDimensionSpacePoints   | [{}]                                     |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
       | nodeName                      | "dog"                                    |
-      | nodeAggregateClassification   | "regular"                                   |
+      | nodeAggregateClassification   | "regular"                                |
 
     And the graph projection is fully up to date
     When the command "ChangeNodeAggregateName" is executed with payload:
@@ -52,7 +52,7 @@ Feature: Change node name
   #    | nodeAggregateIdentifier       | "nody-mc-nodeface"                       |
    ##   | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
    #   | originDimensionSpacePoint     | {}                                       |
-   #   | visibleInDimensionSpacePoints | [{}]                                     |
+   #   | coveredDimensionSpacePoints | [{}]                                     |
    #   | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
    #   | nodeName                      | "dog"                                  |
    # And the graph projection is fully up to date
