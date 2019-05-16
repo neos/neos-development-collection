@@ -1,5 +1,5 @@
 @fixtures
-Feature: Move a node without content dimensions
+Feature: Move a node aggregate considering disable state but without content dimensions
 
   As a user of the CR I want to move a node that
   - is disabled by one of its ancestors
