@@ -950,11 +950,11 @@ class Runtime
             $objectType = $fusionConfiguration['__objectType'];
             throw new Exceptions\MissingFusionImplementationException(sprintf(
                 "The Fusion object `%s` cannot be rendered:
-					Most likely you misstyped the prototype name or did not define 
-					the fusion prototype with `prototype(%s) < prototype ...` . 
+					Most likely you mistyped the prototype name or did not define 
+					the Fusion prototype with `prototype(%s) < prototype ...` . 
 					Other possible reasons are a missing parent-prototype or 
 					a missing `@class` annotation for prototypes without parent.
-					It is also possible your fusion file ins not read because 
+					It is also possible your Fusion file is not read because 
 					of a missing `include:` statement.",
                 $objectType, $objectType), 1332493995);
         }
