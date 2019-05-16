@@ -12,10 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveNode;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
@@ -25,18 +25,11 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateN
  */
 class Remove extends AbstractChange
 {
-
     /**
      * @Flow\Inject
-     * @var InterDimensionalVariationGraph
+     * @var NodeAggregateCommandHandler
      */
-    protected $interDimensionalVariationGraph;
-
-    /**
-     * @Flow\Inject
-     * @var NodeCommandHandler
-     */
-    protected $nodeCommandHandler;
+    protected $nodeAggregateCommandHandler;
 
     /**
      * Checks whether this change can be applied to the subject
@@ -52,6 +45,9 @@ class Remove extends AbstractChange
      * Applies this change
      *
      * @return void
+     * @throws \Neos\ContentRepository\Exception\NodeException
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
+     * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
      */
     public function apply()
     {
@@ -62,12 +58,14 @@ class Remove extends AbstractChange
             // we have to schedule an the update workspace info before we actually delete the node; otherwise we cannot find the parent nodes anymore.
             $this->updateWorkspaceInfo();
 
-            $command = new RemoveNodesFromAggregate(
+            $command = new RemoveNodeAggregate(
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
-                $this->interDimensionalVariationGraph->getSpecializationSet($node->getDimensionSpacePoint(), true)
+                $node->getDimensionSpacePoint(),
+                NodeVariantSelectionStrategy::allSpecializations()
             );
-            $this->nodeCommandHandler->handleRemoveNodesFromAggregate($command)->blockUntilProjectionsAreUpToDate();
+
+            $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
 
             $removeNode = new RemoveNode($node, $parentNode);
             $this->feedbackCollection->add($removeNode);

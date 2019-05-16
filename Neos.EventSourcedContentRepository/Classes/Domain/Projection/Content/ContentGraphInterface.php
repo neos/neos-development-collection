@@ -20,6 +20,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 
 /**
  * The interface to be implemented by content graphs
@@ -61,7 +62,7 @@ interface ContentGraphInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeAggregate|null
-     * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @throws NodeAggregatesTypeIsAmbiguous
      */
     public function findNodeAggregateByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,

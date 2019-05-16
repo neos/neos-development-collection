@@ -30,13 +30,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
@@ -55,7 +52,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\Worksp
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
@@ -598,7 +595,7 @@ trait EventSourcedTrait
         }
         $command = SetNodeReferences::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getNodeCommandHandler()
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
             ->handleSetNodeReferences($command);
     }
 
@@ -638,37 +635,6 @@ trait EventSourcedTrait
     {
         try {
             $this->theCommandRemoveNodeAggregateIsExecutedWithPayload($payloadTable);
-        } catch (\Exception $exception) {
-            $this->lastCommandException = $exception;
-        }
-    }
-
-    /**
-     * @Given /^the command RemoveNodesFromAggregate was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws SpecializedDimensionsMustBePartOfDimensionSpacePointSet
-     * @throws Exception
-     */
-    public function theCommandRemoveNodesFromAggregateIsExecutedWithPayload(TableNode $payloadTable)
-    {
-        $commandArguments = $this->readPayloadTable($payloadTable);
-
-        $command = RemoveNodesFromAggregate::fromArray($commandArguments);
-        /** @var NodeCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
-
-        $this->lastCommandOrEventResult = $commandHandler->handleRemoveNodesFromAggregate($command);
-    }
-
-    /**
-     * @Given /^the command RemoveNodesFromAggregate was published with payload and exceptions are caught:$/
-     * @param TableNode $payloadTable
-     * @throws Exception
-     */
-    public function theCommandRemoveNodesFromAggregateIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
-    {
-        try {
-            $this->theCommandRemoveNodesFromAggregateIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
@@ -938,7 +904,7 @@ trait EventSourcedTrait
             case 'SetNodeProperties':
                 return [
                     SetNodeProperties::class,
-                    NodeCommandHandler::class,
+                    NodeAggregateCommandHandler::class,
                     'handleSetNodeProperties'
                 ];
             case 'DisableNodeAggregate':
@@ -962,7 +928,7 @@ trait EventSourcedTrait
             case 'SetNodeReferences':
                 return [
                     SetNodeReferences::class,
-                    NodeCommandHandler::class,
+                    NodeAggregateCommandHandler::class,
                     'handleSetNodeReferences'
                 ];
 
@@ -1753,14 +1719,6 @@ trait EventSourcedTrait
     {
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
-
-        return $commandHandler;
-    }
-
-    protected function getNodeCommandHandler(): NodeCommandHandler
-    {
-        /** @var NodeCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(NodeCommandHandler::class);
 
         return $commandHandler;
     }

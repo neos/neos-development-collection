@@ -16,13 +16,14 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -1190,13 +1191,13 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param ContentRepository\Context\Node\CopyableAcrossContentStreamsInterface $event
+     * @param CopyableAcrossContentStreamsInterface $event
      * @param callable $operations
      * @return mixed
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    protected function updateNodeWithCopyOnWrite(ContentRepository\Context\Node\CopyableAcrossContentStreamsInterface $event, callable $operations)
+    protected function updateNodeWithCopyOnWrite(CopyableAcrossContentStreamsInterface $event, callable $operations)
     {
         switch (get_class($event)) {
             case NodeReferencesWereSet::class:

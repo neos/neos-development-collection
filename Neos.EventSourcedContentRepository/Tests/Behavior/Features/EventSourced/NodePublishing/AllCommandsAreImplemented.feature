@@ -250,7 +250,7 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect a node identified by aggregate identifier "sir-nodeward-nodington-iii" not to exist in the subgraph
 
 
-  Scenario: (RemoveNodesFromAggregate) It is possible to publish a node removal
+  Scenario: (RemoveNodeAggregate) It is possible to publish a node removal
     Given the command CreateWorkspace is executed with payload:
       | Key                     | Value                |
       | workspaceName           | "user-test"          |

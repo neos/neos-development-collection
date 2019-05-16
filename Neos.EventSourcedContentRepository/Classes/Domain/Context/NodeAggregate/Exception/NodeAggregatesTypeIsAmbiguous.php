@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,11 +12,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Exception;
 
 /**
- * The exception to be thrown if a node aggregate was not found
+ * The exception to be thrown if a node aggregate's type is ambiguous
  */
-class NodeAggregateNotFound extends Exception
+final class NodeAggregatesTypeIsAmbiguous extends \DomainException
 {
 }

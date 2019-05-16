@@ -24,13 +24,16 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDisablesDimensionSpacePoint;
@@ -110,7 +113,7 @@ final class NodeAggregateCommandHandler
     /**
      * Used for publishing events
      *
-     * @var NodeEventPublisher
+     * @var NodeAggregateEventPublisher
      */
     protected $nodeEventPublisher;
 
@@ -131,7 +134,7 @@ final class NodeAggregateCommandHandler
         DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         ContentGraphInterface $contentGraph,
         DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        NodeEventPublisher $nodeEventPublisher,
+        NodeAggregateEventPublisher $nodeEventPublisher,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager
     ) {
         $this->contentStreamRepository = $contentStreamRepository;
@@ -628,6 +631,71 @@ final class NodeAggregateCommandHandler
         if (count($dimensionSpacePointsOccupiedByChildNodeName) > 0) {
             throw new NodeNameIsAlreadyOccupied('Child node name "' . $nodeName . '" is already occupied for parent "' . $parentNodeAggregateIdentifier . '" in dimension space points ' . $dimensionSpacePointsOccupiedByChildNodeName);
         }
+    }
+
+    /**
+     * @param SetNodeProperties $command
+     * @return CommandResult
+     */
+    public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
+    {
+        $this->readSideMemoryCacheManager->disableCache();
+
+        $events = null;
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
+
+            // Check if node exists
+            // @todo: this must also work when creating a copy on write
+            #$this->assertNodeWithOriginDimensionSpacePointExists($contentStreamIdentifier, $command->getNodeAggregateIdentifier(), $command->getOriginDimensionSpacePoint());
+
+            $events = DomainEvents::withSingleEvent(
+                EventWithIdentifier::create(
+                    new NodePropertiesWereSet(
+                        $contentStreamIdentifier,
+                        $command->getNodeAggregateIdentifier(),
+                        $command->getOriginDimensionSpacePoint(),
+                        $command->getPropertyValues()
+                    )
+                )
+            );
+
+            $this->nodeEventPublisher->publishMany(
+                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
+                $events
+            );
+        });
+        return CommandResult::fromPublishedEvents($events);
+    }
+
+    /**
+     * @param SetNodeReferences $command
+     * @return CommandResult
+     */
+    public function handleSetNodeReferences(SetNodeReferences $command): CommandResult
+    {
+        $this->readSideMemoryCacheManager->disableCache();
+
+        $events = null;
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
+            $events = DomainEvents::withSingleEvent(
+                EventWithIdentifier::create(
+                    new NodeReferencesWereSet(
+                        $command->getContentStreamIdentifier(),
+                        $command->getSourceNodeAggregateIdentifier(),
+                        $command->getSourceOriginDimensionSpacePoint(),
+                        $command->getDestinationNodeAggregateIdentifiers(),
+                        $command->getReferenceName()
+                    )
+                )
+            );
+            $this->nodeEventPublisher->publishMany(
+                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
+                $events
+            );
+        });
+
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**

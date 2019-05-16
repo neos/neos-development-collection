@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 15:04
  */
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
+namespace Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph;
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 

@@ -22,13 +22,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Chan
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodesFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
@@ -66,12 +64,6 @@ final class WorkspaceCommandHandler
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
-     * @var NodeCommandHandler
-     */
-    protected $nodeCommandHandler;
 
     /**
      * @Flow\Inject
@@ -422,15 +414,13 @@ final class WorkspaceCommandHandler
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous
      * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
     private function applyCommand($command): CommandResult
     {
-        // TODO: relay all commands to the node aggregate command handler as it is the single point of entry for all node related commands
         switch (get_class($command)) {
             case ChangeNodeAggregateName::class:
                 return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($command);
@@ -442,7 +432,7 @@ final class WorkspaceCommandHandler
                 return $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command);
                 break;
             case SetNodeProperties::class:
-                return $this->nodeCommandHandler->handleSetNodeProperties($command);
+                return $this->nodeAggregateCommandHandler->handleSetNodeProperties($command);
                 break;
             case DisableNodeAggregate::class:
                 return $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command);
@@ -451,13 +441,10 @@ final class WorkspaceCommandHandler
                 return $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command);
                 break;
             case SetNodeReferences::class:
-                return $this->nodeCommandHandler->handleSetNodeReferences($command);
+                return $this->nodeAggregateCommandHandler->handleSetNodeReferences($command);
                 break;
             case RemoveNodeAggregate::class:
                 return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command);
-                break;
-            case RemoveNodesFromAggregate::class:
-                return $this->nodeCommandHandler->handleRemoveNodesFromAggregate($command);
                 break;
             default:
                 throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($command)));
@@ -517,7 +504,7 @@ final class WorkspaceCommandHandler
         )->blockUntilProjectionsAreUpToDate();
 
         foreach ($matchingCommands as $matchingCommand) {
-            /* @var $matchingCommand \Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface */
+            /* @var $matchingCommand \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface */
             $this->applyCommand($matchingCommand->createCopyForContentStream($matchingContentStream))->blockUntilProjectionsAreUpToDate();
         }
 
@@ -531,7 +518,7 @@ final class WorkspaceCommandHandler
         )->blockUntilProjectionsAreUpToDate();
 
         foreach ($remainingCommands as $remainingCommand) {
-            /* @var $remainingCommand \Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface */
+            /* @var $remainingCommand \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface */
             $this->applyCommand($remainingCommand->createCopyForContentStream($remainingContentStream))->blockUntilProjectionsAreUpToDate();
         }
 

@@ -13,7 +13,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
