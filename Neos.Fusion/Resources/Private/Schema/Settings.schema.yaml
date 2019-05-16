@@ -24,8 +24,11 @@ properties:
           defaultContext:
             type: dictionary
             additionalProperties:
-              type: string
-              format: class-name
+              type:
+                - type: string
+                  format: class-name
+                - type: string
+                  pattern: '/^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff\\]*::[a-zA-Z_\x7f-\xff]*$/u'
           dsl:
             type: dictionary
             additionalProperties:
