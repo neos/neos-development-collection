@@ -224,7 +224,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
     /**
      * Returns the DimensionSpacePoint the node was *requested in*, i.e. one of the DimensionSpacePoints
-     * this node is visible in. If you need the DimensionSpacePoint where the node is actually at home,
+     * this node covers. If you need the DimensionSpacePoint where the node is actually at home,
      * see getOriginDimensionSpacePoint()
      *
      * @return DimensionSpacePoint

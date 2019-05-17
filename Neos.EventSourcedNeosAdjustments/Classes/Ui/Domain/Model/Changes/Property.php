@@ -16,10 +16,12 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDisablingStrategy;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -88,6 +90,12 @@ class Property extends AbstractChange
      * @var NodeCommandHandler
      */
     protected $nodeCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAggregateCommandHandler
+     */
+    protected $nodeAggregateCommandHandler;
 
     /**
      * Set the property name
@@ -189,6 +197,11 @@ class Property extends AbstractChange
      * Applies this change
      *
      * @return void
+     * @throws \Neos\ContentRepository\Exception\NodeException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
      */
     public function apply()
     {
@@ -223,16 +236,16 @@ class Property extends AbstractChange
                     $node = $this->changeNodeType($node, $nodeType);
                 } elseif ($propertyName === '_hidden') {
                     if ($value === true) {
-                        $command = new HideNode(
+                        $command = new DisableNodeAggregate(
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
-                            // TODO: what do we want to hide? I.e. including NESTED dimensions?
-                            new DimensionSpacePointSet([$node->getOriginDimensionSpacePoint()])
+                            $node->getOriginDimensionSpacePoint(),
+                            NodeAggregateDisablingStrategy::gatherAllSpecializations()
                         );
-                        $this->nodeCommandHandler->handleHideNode($command)->blockUntilProjectionsAreUpToDate();
+                        $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                     } else {
                         // unhide
-                        $command = new ShowNode(
+                        $command = new EnableNodeAggregate(
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
                             // TODO: what do we want to unhide? I.e. including NESTED dimensions?

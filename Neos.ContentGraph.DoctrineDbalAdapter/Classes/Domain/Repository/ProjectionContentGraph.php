@@ -538,6 +538,77 @@ class ProjectionContentGraph
     }
 
     /**
+     * Finds all descendant node aggregate identifiers, indexed by dimension space point hash
+     *
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $entryNodeAggregateIdentifier
+     * @param DimensionSpacePointSet $affectedDimensionSpacePoints
+     * @return array|NodeAggregateIdentifier[][]
+     * @throws DBALException
+     */
+    public function findDescendantNodeAggregateIdentifiers(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $entryNodeAggregateIdentifier,
+        DimensionSpacePointSet $affectedDimensionSpacePoints
+    ): array {
+        $rows = $this->getDatabaseConnection()->executeQuery('
+            -- ProjectionContentGraph::findDescendantNodeAggregateIdentifiers
+
+            WITH RECURSIVE nestedNodes AS (
+                    -- --------------------------------
+                    -- INITIAL query: select the root nodes
+                    -- --------------------------------
+                    SELECT
+                       n.nodeaggregateidentifier,
+                       n.relationanchorpoint,
+                       h.dimensionspacepointhash
+                    FROM
+                        neos_contentgraph_node n
+                    INNER JOIN neos_contentgraph_hierarchyrelation h
+                        on h.childnodeanchor = n.relationanchorpoint
+                    WHERE n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
+                    AND h.contentstreamidentifier = :contentStreamIdentifier
+                    AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
+
+                UNION
+                    -- --------------------------------
+                    -- RECURSIVE query: do one "child" query step
+                    -- --------------------------------
+                    SELECT
+                        c.nodeaggregateidentifier,
+                        c.relationanchorpoint,
+                       h.dimensionspacepointhash
+                    FROM
+                        nestedNodes p
+                    INNER JOIN neos_contentgraph_hierarchyrelation h
+                        on h.parentnodeanchor = p.relationanchorpoint
+                    INNER JOIN neos_contentgraph_node c
+                        on h.childnodeanchor = c.relationanchorpoint
+                    WHERE
+                        h.contentstreamidentifier = :contentStreamIdentifier
+                        AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
+            )
+            select nodeaggregateidentifier, dimensionspacepointhash from nestedNodes
+            ',
+            [
+                'entryNodeAggregateIdentifier' => (string)$entryNodeAggregateIdentifier,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
+            ],
+            [
+                'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+            ]
+        )->fetchAll();
+
+        $nodeAggregateIdentifiers = [];
+        foreach ($rows as $row) {
+            $nodeAggregateIdentifiers[$row['nodeaggregateidentifier']][$row['dimensionspacepointhash']] = NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']);
+        }
+
+        return $nodeAggregateIdentifiers;
+    }
+
+    /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeAggregate|null

@@ -20,16 +20,16 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\ShowNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodesFromAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
@@ -421,7 +421,7 @@ final class WorkspaceCommandHandler
      * @throws \Neos\ContentRepository\Exception\NodeConstraintException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeNameIsAlreadyOccupied
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\SpecializedDimensionsMustBePartOfDimensionSpacePointSet
      * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
@@ -430,8 +430,7 @@ final class WorkspaceCommandHandler
      */
     private function applyCommand($command): CommandResult
     {
-        // TODO: use a more clever dispatching mechanism than the hard coded switch!!
-        // TODO: add all commands!!
+        // TODO: relay all commands to the node aggregate command handler as it is the single point of entry for all node related commands
         switch (get_class($command)) {
             case ChangeNodeAggregateName::class:
                 return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($command);
@@ -439,26 +438,23 @@ final class WorkspaceCommandHandler
             case CreateNodeAggregateWithNode::class:
                 return $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command);
                 break;
-            case CreateRootNode::class:
-                return $this->nodeCommandHandler->handleCreateRootNode($command);
-                break;
-            case MoveNode::class:
-                return $this->nodeAggregateCommandHandler->handleMoveNode($command);
+            case MoveNodeAggregate::class:
+                return $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command);
                 break;
             case SetNodeProperties::class:
                 return $this->nodeCommandHandler->handleSetNodeProperties($command);
                 break;
-            case HideNode::class:
-                return $this->nodeCommandHandler->handleHideNode($command);
+            case DisableNodeAggregate::class:
+                return $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command);
                 break;
-            case ShowNode::class:
-                return $this->nodeCommandHandler->handleShowNode($command);
+            case EnableNodeAggregate::class:
+                return $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command);
                 break;
             case SetNodeReferences::class:
                 return $this->nodeCommandHandler->handleSetNodeReferences($command);
                 break;
             case RemoveNodeAggregate::class:
-                return $this->nodeCommandHandler->handleRemoveNodeAggregate($command);
+                return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command);
                 break;
             case RemoveNodesFromAggregate::class:
                 return $this->nodeCommandHandler->handleRemoveNodesFromAggregate($command);

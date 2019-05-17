@@ -13,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNode;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
@@ -66,7 +66,7 @@ class MoveAfter extends AbstractMove
                 // do nothing; $succeedingSibling is null.
             }
 
-            $command = new MoveNode(
+            $command = new MoveNodeAggregate(
                 $subject->getContentStreamIdentifier(),
                 $subject->getDimensionSpacePoint(),
                 $subject->getNodeAggregateIdentifier(),
@@ -75,7 +75,7 @@ class MoveAfter extends AbstractMove
                 RelationDistributionStrategy::gatherAll()
             );
 
-            $this->nodeAggregateCommandHandler->handleMoveNode($command)->blockUntilProjectionsAreUpToDate();
+            $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
 
             $updateParentNodeInfo = new UpdateNodeInfo();
             $updateParentNodeInfo->setNode($parentNodeOfPreviousSibling);

@@ -8,7 +8,7 @@ Feature: Publishing hide/show scenario of nodes
   -- sir-nodeward-nodington-iii (name=image) <== this one is modified
 
   The setup is always as follows:
-  - we modify two nodes using a certain command (e.g. HideNode) in the USER workspace
+  - we modify two nodes using a certain command (e.g. DisableNode) in the USER workspace
   - we publish one of them
   - we check that the user workspace still sees both nodes as hidden; and the live workspace only sees one of the changes.
 
@@ -35,20 +35,20 @@ Feature: Publishing hide/show scenario of nodes
           type: string
     """
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                         |
-      | contentStreamIdentifier       | "cs-identifier"               |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"      |
-      | nodeTypeName                  | "Neos.ContentRepository:Root" |
-      | visibleInDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier      | "system"                      |
-      | nodeAggregateClassification   | "root"                        |
+      | Key                         | Value                         |
+      | contentStreamIdentifier     | "cs-identifier"               |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | coveredDimensionSpacePoints | [{}]                          |
+      | initiatingUserIdentifier    | "system"                      |
+      | nodeAggregateClassification | "root"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                               |
       | contentStreamIdentifier       | "cs-identifier"                                     |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                            |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"            |
       | originDimensionSpacePoint     | {}                                                  |
-      | visibleInDimensionSpacePoints | [{}]                                                |
+      | coveredDimensionSpacePoints   | [{}]                                                |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
       | initialPropertyValues         | {"text": {"type": "string", "value": "Initial t1"}} |
       | nodeAggregateClassification   | "regular"                                           |
@@ -58,7 +58,7 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"            |
       | originDimensionSpacePoint     | {}                                                  |
-      | visibleInDimensionSpacePoints | [{}]                                                |
+      | coveredDimensionSpacePoints   | [{}]                                                |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                            |
       | initialPropertyValues         | {"text": {"type": "string", "value": "Initial t2"}} |
       | nodeAggregateClassification   | "regular"                                           |
@@ -68,13 +68,13 @@ Feature: Publishing hide/show scenario of nodes
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Image"                 |
       | originDimensionSpacePoint     | {}                                                     |
-      | visibleInDimensionSpacePoints | [{}]                                                   |
+      | coveredDimensionSpacePoints   | [{}]                                                   |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                               |
       | initialPropertyValues         | {"image": {"type": "image", "value": "Initial image"}} |
       | nodeAggregateClassification   | "regular"                                              |
     And the graph projection is fully up to date
 
-  Scenario: (HideNode) It is possible to publish hiding of a node.
+  Scenario: (DisableNode) It is possible to publish hiding of a node.
     Given the command CreateWorkspace is executed with payload:
       | Key                     | Value                |
       | workspaceName           | "user-test"          |
@@ -83,16 +83,18 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     # SETUP: hide two nodes in USER workspace
-    Given the command "HideNode" is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "user-cs-identifier"     |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | affectedDimensionSpacePoints | [{}]                     |
-    Given the command "HideNode" is executed with payload:
-      | Key                          | Value                        |
-      | contentStreamIdentifier      | "user-cs-identifier"         |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
-      | affectedDimensionSpacePoints | [{}]                         |
+    Given the command DisableNodeAggregate is executed with payload:
+      | Key                            | Value                    |
+      | contentStreamIdentifier        | "user-cs-identifier"     |
+      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint     | {}                       |
+      | nodeAggregateDisablingStrategy | "allVariants"            |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                            | Value                        |
+      | contentStreamIdentifier        | "user-cs-identifier"         |
+      | nodeAggregateIdentifier        | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint     | {}                           |
+      | nodeAggregateDisablingStrategy | "allVariants"                |
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
@@ -114,16 +116,18 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (ShowNode) It is possible to publish showing of a node.
     # BEFORE: ensure two nodes are hidden in live (and user WS)
-    Given the command "HideNode" is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | affectedDimensionSpacePoints | [{}]                     |
-    Given the command "HideNode" is executed with payload:
-      | Key                          | Value                        |
-      | contentStreamIdentifier      | "cs-identifier"              |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
-      | affectedDimensionSpacePoints | [{}]                         |
+    Given the command DisableNodeAggregate is executed with payload:
+      | Key                            | Value                    |
+      | contentStreamIdentifier        | "cs-identifier"          |
+      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint     | {}                       |
+      | nodeAggregateDisablingStrategy | "allVariants"            |
+    Given the command DisableNodeAggregate is executed with payload:
+      | Key                            | Value                        |
+      | contentStreamIdentifier        | "cs-identifier"              |
+      | nodeAggregateIdentifier        | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint     | {}                           |
+      | nodeAggregateDisablingStrategy | "allVariants"                |
     Given the command CreateWorkspace is executed with payload:
       | Key                     | Value                |
       | workspaceName           | "user-test"          |
@@ -132,16 +136,18 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     # SETUP: show two nodes in USER workspace
-    Given the command "ShowNode" is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamIdentifier      | "user-cs-identifier"     |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
-      | affectedDimensionSpacePoints | [{}]                     |
-    Given the command "ShowNode" is executed with payload:
-      | Key                          | Value                        |
-      | contentStreamIdentifier      | "user-cs-identifier"         |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
-      | affectedDimensionSpacePoints | [{}]                         |
+    Given the command EnableNodeAggregate is executed with payload:
+      | Key                            | Value                    |
+      | contentStreamIdentifier        | "user-cs-identifier"     |
+      | nodeAggregateIdentifier        | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint     | {}                       |
+      | nodeAggregateDisablingStrategy | "allVariants"            |
+    Given the command EnableNodeAggregate is executed with payload:
+      | Key                            | Value                        |
+      | contentStreamIdentifier        | "user-cs-identifier"         |
+      | nodeAggregateIdentifier        | "sir-nodeward-nodington-iii" |
+      | coveredDimensionSpacePoint     | {}                           |
+      | nodeAggregateDisablingStrategy | "allVariants"                |
     And the graph projection is fully up to date
 
     When the command "PublishIndividualNodesFromWorkspace" is executed with payload:
@@ -212,11 +218,11 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     # SETUP: remove two nodes in USER workspace
-    When the command RemoveNodeAggregate was published with payload:
+    When the command RemoveNodeAggregate is executed with payload:
       | Key                     | Value                    |
       | contentStreamIdentifier | "user-cs-identifier"     |
       | nodeAggregateIdentifier | "sir-david-nodenborough" |
-    When the command RemoveNodeAggregate was published with payload:
+    When the command RemoveNodeAggregate is executed with payload:
       | Key                     | Value                        |
       | contentStreamIdentifier | "user-cs-identifier"         |
       | nodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
@@ -253,7 +259,7 @@ Feature: Publishing hide/show scenario of nodes
       | contentStreamIdentifier | "user-cs-identifier"     |
       | nodeAggregateIdentifier | "sir-david-nodenborough" |
       | dimensionSpacePointSet  | [{}]                     |
-    When the command RemoveNodeAggregate was published with payload:
+    When the command RemoveNodeAggregate is executed with payload:
       | Key                     | Value                        |
       | contentStreamIdentifier | "user-cs-identifier"         |
       | nodeAggregateIdentifier | "sir-nodeward-nodington-iii" |
@@ -375,6 +381,5 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect a node identified by aggregate identifier "new2-agg" to exist in the subgraph
 
 
-  # TODO: implement MoveNode testcase
-  # TODO: implement MoveNodesInAggregate testcase
+  # TODO: implement MoveNodeAggregate testcase
   # TODO: implement CreateNodeVariant testcase

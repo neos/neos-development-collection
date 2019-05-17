@@ -105,13 +105,13 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
     }
 
     /**
-     * @param ContentStreamIdentifier $targetContentStream
+     * @param ContentStreamIdentifier $targetContentStreamIdentifier
      * @return NodePeerVariantWasCreated
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodePeerVariantWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodePeerVariantWasCreated
     {
         return new NodePeerVariantWasCreated(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->sourceOrigin,
             $this->peerOrigin,

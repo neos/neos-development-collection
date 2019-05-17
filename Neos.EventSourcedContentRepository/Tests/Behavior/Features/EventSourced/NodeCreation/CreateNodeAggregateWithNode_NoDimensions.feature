@@ -22,13 +22,13 @@ Feature: Create node aggregate with node
       | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
       | currentContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                  |
-      | contentStreamIdentifier       | "cs-identifier"                        |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"               |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
-      | visibleInDimensionSpacePoints | [[]]                                   |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
-      | nodeAggregateClassification   | "regular"                              |
+      | Key                         | Value                                  |
+      | contentStreamIdentifier     | "cs-identifier"                        |
+      | nodeAggregateIdentifier     | "sir-david-nodenborough"               |
+      | nodeTypeName                | "Neos.ContentRepository:Root"          |
+      | coveredDimensionSpacePoints | [[]]                                   |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification | "regular"                              |
     And the graph projection is fully up to date
 
   Scenario: Try to create a node aggregate in a content stream that currently does not exist:
@@ -123,7 +123,7 @@ Feature: Create node aggregate with node
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                   |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
       | originDimensionSpacePoint     | []                                                             |
-      | visibleInDimensionSpacePoints | [[]]                                                           |
+      | coveredDimensionSpacePoints   | [[]]                                                           |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                       |
       | nodeName                      | "esquire"                                                      |
       | initialPropertyValues         | {"text": {"value": "my default", "type": "string"}}            |
@@ -167,7 +167,7 @@ Feature: Create node aggregate with node
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes" |
       | originDimensionSpacePoint     | []                                                          |
-      | visibleInDimensionSpacePoints | [[]]                                                        |
+      | coveredDimensionSpacePoints   | [[]]                                                        |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                    |
       | nodeName                      | "esquire"                                                   |
       | initialPropertyValues         | {"text": {"value": "my default", "type": "string"}}         |
@@ -178,7 +178,7 @@ Feature: Create node aggregate with node
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:SubNode" |
       | originDimensionSpacePoint     | []                                       |
-      | visibleInDimensionSpacePoints | [[]]                                     |
+      | coveredDimensionSpacePoints   | [[]]                                     |
       | parentNodeAggregateIdentifier | "sir-nodeward-nodington-iii"             |
       | nodeName                      | "main"                                   |
       | nodeAggregateClassification   | "tethered"                               |
@@ -188,7 +188,7 @@ Feature: Create node aggregate with node
       | nodeAggregateIdentifier       | "nodimus-prime"                             |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:SubSubNode" |
       | originDimensionSpacePoint     | []                                          |
-      | visibleInDimensionSpacePoints | [[]]                                        |
+      | coveredDimensionSpacePoints   | [[]]                                        |
       | parentNodeAggregateIdentifier | "nody-mc-nodeface"                          |
       | nodeName                      | "foo"                                       |
       | nodeAggregateClassification   | "tethered"                                  |

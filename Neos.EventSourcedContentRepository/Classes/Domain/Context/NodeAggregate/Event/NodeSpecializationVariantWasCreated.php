@@ -107,13 +107,13 @@ final class NodeSpecializationVariantWasCreated implements DomainEventInterface,
     }
 
     /**
-     * @param ContentStreamIdentifier $targetContentStream
+     * @param ContentStreamIdentifier $targetContentStreamIdentifier
      * @return NodeSpecializationVariantWasCreated
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeSpecializationVariantWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeSpecializationVariantWasCreated
     {
         return new NodeSpecializationVariantWasCreated(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->sourceOrigin,
             $this->specializationOrigin,

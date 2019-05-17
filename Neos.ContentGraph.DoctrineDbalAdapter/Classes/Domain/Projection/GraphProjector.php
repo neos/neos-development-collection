@@ -16,13 +16,13 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWasRemoved;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -30,7 +30,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodesWereMoved;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -155,7 +155,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                 $event->getContentStreamIdentifier(),
                 NodeRelationAnchorPoint::forRootEdge(),
                 $node->relationAnchorPoint,
-                $event->getVisibleInDimensionSpacePoints(),
+                $event->getCoveredDimensionSpacePoints(),
                 null
             );
         });
@@ -174,18 +174,18 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                 $event->getNodeTypeName(),
                 $event->getParentNodeAggregateIdentifier(),
                 $event->getOriginDimensionSpacePoint(),
-                $event->getVisibleInDimensionSpacePoints(),
+                $event->getCoveredDimensionSpacePoints(),
                 $event->getInitialPropertyValues(),
                 $event->getNodeAggregateClassification(),
                 $event->getSucceedingNodeAggregateIdentifier(),
                 $event->getNodeName()
             );
 
-            $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
+            $this->connectRestrictionRelationsFromParentNodeToNewlyCreatedNode(
                 $event->getContentStreamIdentifier(),
                 $event->getParentNodeAggregateIdentifier(),
                 $event->getNodeAggregateIdentifier(),
-                $event->getVisibleInDimensionSpacePoints()
+                $event->getCoveredDimensionSpacePoints()
             );
         });
     }
@@ -223,7 +223,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
      * @param DimensionSpacePointSet $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
+    private function connectRestrictionRelationsFromParentNodeToNewlyCreatedNode(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeAggregateIdentifier $newlyCreatedNodeAggregateIdentifier,
@@ -231,7 +231,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     ) {
         // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
         $this->getDatabaseConnection()->executeUpdate('
-                INSERT IGNORE INTO neos_contentgraph_restrictionedge (
+                INSERT IGNORE INTO neos_contentgraph_restrictionrelation (
                   contentstreamidentifier,
                   dimensionspacepointhash,
                   originnodeaggregateidentifier,
@@ -243,7 +243,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                   r.originnodeaggregateidentifier,
                   "' . $newlyCreatedNodeAggregateIdentifier . '" as affectednodeaggregateidentifier
                 FROM
-                    neos_contentgraph_restrictionedge r
+                    neos_contentgraph_restrictionrelation r
                     WHERE 
                         r.contentstreamidentifier = :sourceContentStreamIdentifier
                         and r.dimensionspacepointhash IN (:visibleDimensionSpacePoints)
@@ -492,7 +492,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
             // 2) copy Hidden Node information to second content stream
             //
             $this->getDatabaseConnection()->executeUpdate('
-                INSERT INTO neos_contentgraph_restrictionedge (
+                INSERT INTO neos_contentgraph_restrictionrelation (
                   contentstreamidentifier,
                   dimensionspacepointhash,
                   originnodeaggregateidentifier,
@@ -504,7 +504,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
                   r.originnodeaggregateidentifier,
                   r.affectednodeaggregateidentifier 
                 FROM
-                    neos_contentgraph_restrictionedge r
+                    neos_contentgraph_restrictionrelation r
                     WHERE r.contentstreamidentifier = :sourceContentStreamIdentifier
             ', [
                 'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
@@ -562,16 +562,16 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     }
 
     /**
-     * @param NodeWasHidden $event
+     * @param NodeAggregateWasDisabled $event
      * @throws \Throwable
      */
-    public function whenNodeWasHidden(NodeWasHidden $event)
+    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event)
     {
         $this->transactional(function () use ($event) {
             // TODO: still unsure why we need an "INSERT IGNORE" here; normal "INSERT" can trigger a duplicate key constraint exception
             $this->getDatabaseConnection()->executeUpdate('
--- GraphProjector::whenNodeWasHidden
-insert ignore into neos_contentgraph_restrictionedge
+-- GraphProjector::whenNodeAggregateWasDisabled
+insert ignore into neos_contentgraph_restrictionrelation
 (
     -- we build a recursive tree
     with recursive tree as (
@@ -629,86 +629,125 @@ insert ignore into neos_contentgraph_restrictionedge
         });
     }
 
+    private function cascadeRestrictionRelations(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateIdentifier $entryNodeAggregateIdentifier,
+        DimensionSpacePointSet $affectedDimensionSpacePoints
+    ): void {
+        $this->getDatabaseConnection()->executeUpdate('
+            -- GraphProjector::cascadeRestrictionRelations
+            INSERT INTO neos_contentgraph_restrictionrelation
+            (
+                -- we build a recursive tree
+                with recursive tree as (
+                     -- --------------------------------
+                     -- INITIAL query: select the nodes of the given entry node aggregate as roots of the tree
+                     -- --------------------------------
+                     select
+                        n.relationanchorpoint,
+                        n.nodeaggregateidentifier,
+                        h.dimensionspacepointhash
+                     from
+                        neos_contentgraph_node n
+                     -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
+                     inner join neos_contentgraph_hierarchyrelation h
+                        on h.childnodeanchor = n.relationanchorpoint
+                     where
+                        n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
+                        and h.contentstreamidentifier = :contentStreamIdentifier
+                        and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+                union
+                     -- --------------------------------
+                     -- RECURSIVE query: do one "child" query step
+                     -- --------------------------------
+                     select
+                        c.relationanchorpoint,
+                        c.nodeaggregateidentifier,
+                        h.dimensionspacepointhash
+                     from
+                        tree p
+                     inner join neos_contentgraph_hierarchyrelation h
+                        on h.parentnodeanchor = p.relationanchorpoint
+                     inner join neos_contentgraph_node c
+                        on h.childnodeanchor = c.relationanchorpoint
+                     where
+                        h.contentstreamidentifier = :contentStreamIdentifier
+                        and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+                )
+
+                     -- --------------------------------
+                     -- create new restriction relations...
+                     -- --------------------------------
+                SELECT
+                    "' . (string)$contentStreamIdentifier . '" as contentstreamidentifier,
+                    tree.dimensionspacepointhash,
+                    originnodeaggregateidentifier,
+                    tree.nodeaggregateidentifier as affectednodeaggregateidentifier
+                FROM tree
+                     -- --------------------------------
+                     -- ...by joining the tree with all restriction relations ingoing to the given parent
+                     -- --------------------------------
+                    INNER JOIN (
+                        SELECT originnodeaggregateidentifier FROM neos_contentgraph_restrictionrelation
+                            WHERE contentstreamidentifier = :contentStreamIdentifier
+                            AND affectednodeaggregateidentifier = :parentNodeAggregateIdentifier
+                            AND dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
+                    ) AS joinedrestrictingancestors
+            )',
+            [
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
+                'entryNodeAggregateIdentifier' => (string)$entryNodeAggregateIdentifier,
+                'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
+                'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
+            ],
+            [
+                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+                'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+            ]
+        );
+    }
+
     /**
-     * @param NodeWasShown $event
+     * @param NodeAggregateWasEnabled $event
      * @throws \Throwable
      */
-    public function whenNodeWasShown(NodeWasShown $event)
+    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event)
     {
         $this->transactional(function () use ($event) {
-            $this->removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getAffectedDimensionSpacePoints());
+            $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getAffectedDimensionSpacePoints());
         });
     }
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $originNodeAggregateIdentifier
      * @param DimensionSpacePointSet $affectedDimensionSpacePoints
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $affectedDimensionSpacePoints)
-    {
+    private function removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $originNodeAggregateIdentifier,
+        DimensionSpacePointSet $affectedDimensionSpacePoints
+    ): void {
         $this->getDatabaseConnection()->executeUpdate('
-                -- GraphProjector::removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints
+                -- GraphProjector::removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints
  
-                delete r.* from
-                    neos_contentgraph_restrictionedge r
-                    join 
-                     (
-                        -- we build a recursive tree
-                        with recursive tree as (
-                             -- --------------------------------
-                             -- INITIAL query: select the root nodes of the tree
-                             -- --------------------------------
-                             select
-                                n.relationanchorpoint,
-                                n.nodeaggregateidentifier,
-                                h.dimensionspacepointhash
-                             from
-                                neos_contentgraph_node n
-                             -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
-                             inner join neos_contentgraph_hierarchyrelation h
-                                on h.childnodeanchor = n.relationanchorpoint
-                             where
-                                n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
-                                and h.contentstreamidentifier = :contentStreamIdentifier
-                                and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
-                        union
-                             -- --------------------------------
-                             -- RECURSIVE query: do one "child" query step
-                             -- --------------------------------
-                             select
-                                c.relationanchorpoint,
-                                c.nodeaggregateidentifier,
-                                h.dimensionspacepointhash
-                             from
-                                tree p
-                             inner join neos_contentgraph_hierarchyrelation h
-                                on h.parentnodeanchor = p.relationanchorpoint
-                             inner join neos_contentgraph_node c
-                                on h.childnodeanchor = c.relationanchorpoint
-                             where
-                                h.contentstreamidentifier = :contentStreamIdentifier
-                                and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
-                        )
-                        select * from tree
-                     ) as tree
-
-                -- the "tree" CTE now contains a list of tuples (nodeAggregateIdentifier,dimensionSpacePointHash)
-                -- which are *descendants* of the starting NodeAggregateIdentifier (in the given DimensionSpacePointHashes).
-                where
-                    r.contentstreamidentifier = :contentStreamIdentifier
-                    and r.dimensionspacepointhash = tree.dimensionspacepointhash
-                    and r.affectednodeaggregateidentifier = tree.nodeaggregateidentifier
-            ',
+                DELETE r.*
+                    FROM neos_contentgraph_restrictionrelation r
+                    WHERE r.contentstreamidentifier = :contentStreamIdentifier
+                    AND r.originnodeaggregateidentifier = :originNodeAggregateIdentifier
+                    AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
             [
-                'entryNodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'originNodeAggregateIdentifier' => (string)$originNodeAggregateIdentifier,
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
             ],
             [
                 'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-            ]);
+            ]
+        );
     }
 
     /**
@@ -716,13 +755,13 @@ insert ignore into neos_contentgraph_restrictionedge
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function removeAllRestrictionEdgesUnderneathNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
+    private function removeAllRestrictionRelationsUnderneathNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier)
     {
         $this->getDatabaseConnection()->executeUpdate('
-                -- GraphProjector::removeRestrictionEdgesUnderneathNodeAggregateAndDimensionSpacePoints
+                -- GraphProjector::removeAllRestrictionRelationsUnderneathNodeAggregate
  
                 delete r.* from
-                    neos_contentgraph_restrictionedge r
+                    neos_contentgraph_restrictionrelation r
                     join 
                      (
                         -- we build a recursive tree
@@ -773,6 +812,40 @@ insert ignore into neos_contentgraph_restrictionedge
                 'entryNodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
             ]);
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $entryNodeAggregateIdentifier
+     * @param DimensionSpacePointSet $affectedDimensionSpacePoints
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    private function removeAllRestrictionRelationsInSubtreeImposedByAncestors(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $entryNodeAggregateIdentifier,
+        DimensionSpacePointSet $affectedDimensionSpacePoints
+    ) {
+        $descendantNodeAggregateIdentifiers = $this->projectionContentGraph->findDescendantNodeAggregateIdentifiers($contentStreamIdentifier, $entryNodeAggregateIdentifier, $affectedDimensionSpacePoints);
+
+        $this->getDatabaseConnection()->executeUpdate('
+                -- GraphProjector::removeAllRestrictionRelationsInSubtreeImposedByAncestors
+ 
+                DELETE r.*
+                    FROM neos_contentgraph_restrictionrelation r
+                    WHERE r.contentstreamidentifier = :contentStreamIdentifier
+                    AND r.originnodeaggregateidentifier NOT IN (:descendantNodeAggregateIdentifiers)
+                    AND r.affectednodeaggregateidentifier IN (:descendantNodeAggregateIdentifiers)
+                    AND r.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)',
+            [
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'descendantNodeAggregateIdentifiers' => array_keys($descendantNodeAggregateIdentifiers),
+                'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
+            ],
+            [
+                'descendantNodeAggregateIdentifiers' => Connection::PARAM_STR_ARRAY,
+                'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+            ]
+        );
     }
 
     /**
@@ -919,12 +992,20 @@ insert ignore into neos_contentgraph_restrictionedge
     }
 
     /**
-     * @param NodesWereMoved $event
+     * @param NodeAggregateWasMoved $event
      * @throws \Throwable
      */
-    public function whenNodesWereMoved(NodesWereMoved $event)
+    public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event)
     {
         $this->transactional(function () use ($event) {
+            if ($event->getNewParentNodeAggregateIdentifier()) {
+                $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
+                    $event->getContentStreamIdentifier(),
+                    $event->getNodeAggregateIdentifier(),
+                    $event->getAffectedDimensionSpacePoints()
+                );
+            }
+
             foreach ($event->getNodeMoveMappings() as $moveNodeMapping) {
                 $nodeToBeMoved = $this->projectionContentGraph->findNodeByIdentifiers(
                     $event->getContentStreamIdentifier(),
@@ -944,30 +1025,12 @@ insert ignore into neos_contentgraph_restrictionedge
 
                 $inboundHierarchyRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNode($nodeToBeMoved->relationAnchorPoint, $event->getContentStreamIdentifier());
                 if ($event->getNewParentNodeAggregateIdentifier()) {
-
-                    // @todo remove inbound restriction edges of to-be-moved node
-                    // @todo remove inbound restriction edges with same parent anchor as the above and child anchor of node's descendants
-
-                    // 1. PRE-MOVE HOUSEKEEPING
-                    // - of the to-be moved nodes, remove all restriction edges
-                    // - TODO: this means that when moving a HIDDEN node itself (and none of its children), it will LOOSE its hidden state. TODO FIX!!!
-                    //
-                    /*
-                    $this->removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints(
-                        $event->getContentStreamIdentifier(),
-                        $event->getNodeAggregateIdentifier(),
-                        $moveNodeMapping->getRelationDimensionSpacePoints()
-                    );*/
-
-                    //
-                    // 2. do the MOVE ITSELF
-                    //
-
                     $newParentNode = $this->projectionContentGraph->findNodeByIdentifiers(
                         $event->getContentStreamIdentifier(),
                         $event->getNewParentNodeAggregateIdentifier(),
                         $moveNodeMapping->getNewParentNodeOrigin()
                     );
+
                     foreach ($moveNodeMapping->getRelationDimensionSpacePoints() as $relationDimensionSpacePoint) {
                         $newPosition = $this->getRelationPosition(
                             $newParentNode->relationAnchorPoint,
@@ -980,19 +1043,12 @@ insert ignore into neos_contentgraph_restrictionedge
                         $inboundHierarchyRelations[$relationDimensionSpacePoint->getHash()]->assignNewParentNode($newParentNode->relationAnchorPoint, $newPosition, $this->getDatabaseConnection());
                     }
 
-                    // @todo connect inbound restriction edges of new parent to moved node and all of its descendants
-
-                    //
-                    // 3. POST-MOVE HOUSEKEEPING
-                    // - if parent node is hidden, hide the moved-to target as well.
-                    //
-                    /*
-                    $this->connectRestrictionEdgesFromParentNodeToNewlyCreatedNode(
+                    $this->cascadeRestrictionRelations(
                         $event->getContentStreamIdentifier(),
-                        $newParentNode->nodeIdentifier,
-                        $nodeToBeMoved->nodeAggregateIdentifier,
-                        $moveNodeMapping->getDimensionSpacePointSet()
-                    );*/
+                        $event->getNewParentNodeAggregateIdentifier(),
+                        $event->getNodeAggregateIdentifier(),
+                        $moveNodeMapping->getRelationDimensionSpacePoints()
+                    );
                 } else {
                     foreach ($inboundHierarchyRelations as $inboundHierarchyRelation) {
                         $newPosition = $this->getRelationPosition(
@@ -1019,7 +1075,7 @@ insert ignore into neos_contentgraph_restrictionedge
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
-            $this->removeOutgoingRestrictionEdgesOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
+            $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
             $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
             foreach ($inboundRelations as $inboundRelation) {
                 $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($inboundRelation);
@@ -1036,7 +1092,7 @@ insert ignore into neos_contentgraph_restrictionedge
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
-            $this->removeAllRestrictionEdgesUnderneathNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
+            $this->removeAllRestrictionRelationsUnderneathNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
 
             $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
             foreach ($inboundRelations as $inboundRelation) {

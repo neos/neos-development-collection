@@ -25,13 +25,13 @@ Feature: Create node aggregate with node
       | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
       | currentContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                      |
-      | contentStreamIdentifier       | "cs-identifier"                                                            |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                   |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"                                              |
-      | visibleInDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                     |
-      | nodeAggregateClassification   | "root"                                                                     |
+      | Key                         | Value                                                                      |
+      | contentStreamIdentifier     | "cs-identifier"                                                            |
+      | nodeAggregateIdentifier     | "sir-david-nodenborough"                                                   |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
+      | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000"                                     |
+      | nodeAggregateClassification | "root"                                                                     |
     And the graph projection is fully up to date
 
   Scenario:  Create node aggregate with node with content dimensions
@@ -53,7 +53,7 @@ Feature: Create node aggregate with node
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                             |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
       | originDimensionSpacePoint     | {"language": "de"}                                             |
-      | visibleInDimensionSpacePoints | [{"language":"de"},{"language":"ch"}]                          |
+      | coveredDimensionSpacePoints   | [{"language":"de"},{"language":"ch"}]                          |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                       |
       | initialPropertyValues         | {"text": {"value": "my default", "type": "string"}}            |
       | nodeAggregateClassification   | "regular"                                                      |

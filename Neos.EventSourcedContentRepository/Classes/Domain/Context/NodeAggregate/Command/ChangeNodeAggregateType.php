@@ -50,7 +50,7 @@ final class ChangeNodeAggregateType
     /**
      * @param array $array
      * @return ChangeNodeAggregateType
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyUnknown
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown
      */
     public static function fromArray(array $array): self
     {

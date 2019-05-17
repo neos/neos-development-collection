@@ -129,12 +129,6 @@ interface ContentGraphInterface
      */
     public function getDimensionSpacePointsOccupiedByChildNodeName(ContentStreamIdentifier $contentStreamIdentifier, NodeName $nodeName, NodeAggregateIdentifier $parentNodeAggregateIdentifier, DimensionSpacePoint $parentNodeOriginDimensionSpacePoints, DimensionSpacePointSet $dimensionSpacePointsToCheck);
 
-    /**
-     * @param NodeInterface $node
-     * @return DimensionSpacePointSet
-     */
-    public function findVisibleDimensionSpacePointsOfNode(NodeInterface $node): DimensionSpacePointSet;
-
     public function countNodes(): int;
 
     /**

@@ -23,15 +23,16 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDisablingStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -362,11 +363,11 @@ class ContentRepositoryExportService
             }
 
             if ($isHidden === true) {
-                $this->nodeCommandHandler->handleHideNode(new HideNode(
+                $this->nodeAggregateCommandHandler->handleDisableNodeAggregate(new DisableNodeAggregate(
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
-                    // HINT: we currently *always* hide the specializations; this is a DEVIATION from the old behavior where only non-materialized nodes were affected by the hiding.
-                    $this->interDimensionalFallbackGraph->getSpecializationSet($originDimensionSpacePoint)
+                    $originDimensionSpacePoint,
+                    NodeAggregateDisablingStrategy::gatherVirtualSpecializations()
                 ));
             }
 

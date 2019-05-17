@@ -22,20 +22,20 @@ Feature: Publishing moved nodes without dimensions
       | workspaceName           | "live"          |
       | contentStreamIdentifier | "cs-identifier" |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                  |
-      | contentStreamIdentifier       | "cs-identifier"                        |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"               |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"          |
-      | visibleInDimensionSpacePoints | [{}]                                   |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000" |
-      | nodeAggregateClassification   | "root"                                 |
+      | Key                         | Value                                  |
+      | contentStreamIdentifier     | "cs-identifier"                        |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
+      | nodeTypeName                | "Neos.ContentRepository:Root"          |
+      | coveredDimensionSpacePoints | [{}]                                   |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
+      | nodeAggregateClassification | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
       | contentStreamIdentifier       | "cs-identifier"                           |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | visibleInDimensionSpacePoints | [{}]                                      |
+      | coveredDimensionSpacePoints   | [{}]                                      |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "regular"                                 |
@@ -45,7 +45,7 @@ Feature: Publishing moved nodes without dimensions
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | visibleInDimensionSpacePoints | [{}]                                      |
+      | coveredDimensionSpacePoints   | [{}]                                      |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
       | nodeName                      | "child-document"                          |
       | nodeAggregateClassification   | "regular"                                 |
@@ -55,7 +55,7 @@ Feature: Publishing moved nodes without dimensions
       | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"              |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | visibleInDimensionSpacePoints | [{}]                                      |
+      | coveredDimensionSpacePoints   | [{}]                                      |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
       | nodeName                      | "esquire"                                 |
       | nodeAggregateClassification   | "regular"                                 |
@@ -69,7 +69,7 @@ Feature: Publishing moved nodes without dimensions
     And the graph projection is fully up to date
 
   Scenario: Publish the move of a node to the end of its siblings
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                    |
       | contentStreamIdentifier                     | "user-cs-identifier"     |
       | dimensionSpacePoint                         | {}                       |
@@ -105,7 +105,7 @@ Feature: Publishing moved nodes without dimensions
     And I expect this node to have the succeeding siblings []
 
   Scenario: Publish the move of a node before one of its siblings
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
       | contentStreamIdentifier                     | "user-cs-identifier"         |
       | nodeAggregateIdentifier                     | "sir-nodeward-nodington-iii" |
@@ -147,12 +147,12 @@ Feature: Publishing moved nodes without dimensions
       | nodeAggregateIdentifier       | "lady-abigail-nodenborough"               |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | visibleInDimensionSpacePoints | [{}]                                      |
+      | coveredDimensionSpacePoints   | [{}]                                      |
       | parentNodeAggregateIdentifier | "sir-nodeward-nodington-iii"              |
       | nodeName                      | "other-document"                          |
       | nodeAggregateClassification   | "regular"                                 |
     And the graph projection is fully up to date
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                              | Value                        |
       | contentStreamIdentifier          | "user-cs-identifier"         |
       | nodeAggregateIdentifier          | "sir-david-nodenborough"     |
@@ -192,7 +192,7 @@ Feature: Publishing moved nodes without dimensions
     And I expect this node to have the succeeding siblings []
 
   Scenario: Publish the move of a node to a new parent and before one of its children
-    When the command MoveNode is executed with payload:
+    When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
       | contentStreamIdentifier                     | "user-cs-identifier"         |
       | nodeAggregateIdentifier                     | "nody-mc-nodeface"           |
