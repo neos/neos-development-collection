@@ -41,6 +41,7 @@
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
         "neos/fusion": "self.version",
+        "neos/fusion-form": "self.version",
         "neos/media-browser": "self.version",
         "neos/media": "self.version",
         "neos/neos": "self.version",
@@ -69,6 +70,9 @@
             ],
             "Neos\\Fusion\\": [
                 "Neos.Fusion/Classes"
+            ],
+            "Neos\\Fusion\\Form\\": [
+              "Neos.Fusion.Form/Classes"
             ],
             "Neos\\Media\\Browser\\": [
                 "Neos.Media.Browser/Classes"

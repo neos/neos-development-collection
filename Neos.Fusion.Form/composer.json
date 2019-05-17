@@ -1,0 +1,27 @@
+{
+    "name": "neos/fusion-form",
+    "type": "neos-package",
+    "description": "Fusion Form",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "require": {
+        "neos/fusion": "*",
+        "neos/fusion-afx": "*",
+        "neos/eel": "*",
+        "neos/utility-arrays": "*",
+        "neos/utility-objecthandling": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Fusion\\Form\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Fusion\\Form\\Tests\\": "Tests"
+        }
+    },
+    "extra": {
+    }
+}

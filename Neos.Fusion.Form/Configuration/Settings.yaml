@@ -1,0 +1,4 @@
+Neos:
+  Fusion:
+    defaultContext:
+      Form: 'Neos\Fusion\Form\Eel\FormHelper'

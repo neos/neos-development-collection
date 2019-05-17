@@ -29,6 +29,7 @@ Neos:
       # This also allows disabling of autoIncludes if needed.
       autoInclude:
         Neos.Fusion: true
+        Neos.Fusion.Form: true
         Neos.Neos: true
 
     # If a node name is specified here it will be used as default siteNode

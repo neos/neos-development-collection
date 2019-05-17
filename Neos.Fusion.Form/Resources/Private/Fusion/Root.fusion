@@ -1,0 +1,89 @@
+prototype(Neos.Fusion:FormDefinition) {
+    @class = 'Neos\\Fusion\\Form\\FusionObjects\\FormDefinitionImplementation'
+    request = ${request}
+}
+
+prototype(Neos.Fusion:FieldDefinition) {
+    @class = 'Neos\\Fusion\\Form\\FusionObjects\\FieldDefinitionImplementation'
+    form = ${form}
+}
+
+prototype(Neos.Fusion:Fragment) < prototype(Neos.Fusion:Component) {
+    renderer = ${props.content}
+}
+
+prototype(Neos.Fusion:Form) < prototype(Neos.Fusion:Component) {
+    @context.form = ${this.form}
+    form = Neos.Fusion:FormDefinition
+    attributes = Neos.Fusion:DataStructure
+    action = Neos.Fusion:UriBuilder
+    method = 'post'
+    enctype = null
+
+    renderer = afx`
+        <form
+          {...props.attributes}
+          action={props.action}
+          method={props.method}
+          enctype={props.enctype}
+        >
+            <div style="display: none">
+
+                <Neos.Fusion:Fragment @if.isNotMainRequest={!request.mainRequest} >
+                    <input type="hidden" name={request.argumentNamespace + "[__referrer][@package]"} value={request.parentRequest.controllerPackageKey} />
+                    <input type="hidden" name={request.argumentNamespace + "[__referrer][@subpackage]"} value={request.parentRequest.controllerSubpackageKey} />
+                    <input type="hidden" name={request.argumentNamespace + "[__referrer][@controller]"} value={request.parentRequest.controllerName} />
+                    <input type="hidden" name={request.argumentNamespace + "[__referrer][@action]"} value={request.parentRequest.controllerActionName} />
+                    <input type="hidden" name={request.argumentNamespace + "[__referrer][arguments]"} value={Form.argumentsWithHmac(request.parentRequest.arguments)} />
+                </Neos.Fusion:Fragment>
+
+                <Neos.Fusion:Fragment>
+                    <input type="hidden" name="__referrer[@package]" value={request.controllerPackageKey} />
+                    <input type="hidden" name="__referrer[@subpackage]" value={request.controllerSubpackageKey} />
+                    <input type="hidden" name="__referrer[@controller]" value={request.controllerName} />
+                    <input type="hidden" name="__referrer[@action]" value={request.controllerActionName} />
+                    <input type="hidden" name="__referrer[arguments]" value={Form.argumentsWithHmac(request.arguments, request.argumentNamespace)} />
+                </Neos.Fusion:Fragment>
+
+                <input
+                    type="hidden"
+                    name={Form.prefixFieldName('__trustedProperties', form.fieldNamePrefix)}
+                    value={Form.trustedPropertiesToken(props.content, form.fieldNamePrefix)}
+                    />
+
+                <input type="hidden" name="__csrfToken" value={Form.csrfToken()} />
+            </div>
+            {props.content}
+        </form>
+    `
+}
+
+prototype(Neos.Fusion:Field)  < prototype(Neos.Fusion:Component) {
+    @context.field = ${this.field}
+    field = Neos.Fusion:FieldDefinition
+    renderer = ${props.content}
+}
+
+prototype(Neos.Fusion:Textfield)  < prototype(Neos.Fusion:Field) {
+    attributes = Neos.Fusion:DataStructure
+    renderer = afx`
+        <input
+            {...props.attributes}
+            type="text"
+            name={field.name}
+            value={field.value}
+            />
+    `
+}
+
+prototype(Neos.Fusion:Submit) < prototype(Neos.Fusion:Field) {
+    attributes = Neos.Fusion:DataStructure
+    renderer = afx`
+        <input
+            {...props.attributes}
+            type="submit"
+            name={field.name}
+            value={field.value}
+            />
+    `
+}
