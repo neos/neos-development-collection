@@ -12,7 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
 use Neos\Flow\Annotations as Flow;
@@ -45,9 +48,10 @@ class Remove extends AbstractChange
      * Applies this change
      *
      * @return void
+     * @throws NodeAggregatesTypeIsAmbiguous
+     * @throws ContentStreamDoesNotExistYet
+     * @throws DimensionSpacePointNotFound
      * @throws \Neos\ContentRepository\Exception\NodeException
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
-     * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
      */
     public function apply()
     {

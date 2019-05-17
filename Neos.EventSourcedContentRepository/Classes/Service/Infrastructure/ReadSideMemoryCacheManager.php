@@ -24,7 +24,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class ReadSideMemoryCacheManager
 {
-
     /**
      * @Flow\Inject
      * @var ContentGraphInterface

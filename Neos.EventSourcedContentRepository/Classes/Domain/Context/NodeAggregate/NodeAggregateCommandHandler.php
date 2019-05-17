@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -24,6 +25,7 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
@@ -70,7 +72,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
-use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -221,49 +222,52 @@ final class NodeAggregateCommandHandler
     /**
      * @param CreateNodeAggregateWithNode $command
      * @return CommandResult
+     * @throws ContentStreamDoesNotExistYet
+     * @throws DimensionSpacePointNotFound
+     * @throws NodeTypeNotFound
+     * @throws NodeTypeIsOfTypeRoot
+     * @throws NodeTypeNotFoundException
+     * @throws NodeConstraintException
+     * @throws NodeAggregateCurrentlyDoesNotExist
+     * @throws NodeAggregateCurrentlyExists
      */
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): CommandResult
     {
         $this->readSideMemoryCacheManager->disableCache();
 
+        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $this->requireDimensionSpacePointToExist($command->getOriginDimensionSpacePoint());
+        $nodeType = $this->requireNodeType($command->getNodeTypeName());
+        $this->requireNodeTypeToNotBeOfTypeRoot($nodeType);
+        $this->requireTetheredDescendantNodeTypesToExist($nodeType);
+        $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($nodeType);
+        if ($this->ancestorNodeTypeConstraintChecksEnabled) {
+            $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $nodeType, $command->getNodeName(), [$command->getParentNodeAggregateIdentifier()]);
+        }
+        $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $parentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
+        if ($command->getSucceedingSiblingNodeAggregateIdentifier()) {
+            $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getSucceedingSiblingNodeAggregateIdentifier());
+        }
+        $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getOriginDimensionSpacePoint());
+        $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($command->getOriginDimensionSpacePoint());
+        $coveredDimensionSpacePoints = $specializations->getIntersection($parentNodeAggregate->getCoveredDimensionSpacePoints());
+        if ($command->getNodeName()) {
+            $this->requireNodeNameToBeUnoccupied(
+                $command->getContentStreamIdentifier(),
+                $command->getNodeName(),
+                $command->getParentNodeAggregateIdentifier(),
+                $command->getOriginDimensionSpacePoint(),
+                $coveredDimensionSpacePoints
+            );
+        }
+        $descendantNodeAggregateIdentifiers = $this->populateNodeAggregateIdentifiers($nodeType, $command->getTetheredDescendantNodeAggregateIdentifiers());
+        foreach ($descendantNodeAggregateIdentifiers as $rawNodePath => $descendantNodeAggregateIdentifier) {
+            $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $descendantNodeAggregateIdentifier);
+        }
+
         $events = DomainEvents::createEmpty();
-        $this->nodeEventPublisher->withCommand($command, function () use ($command, &$events) {
-            $this->requireContentStreamToExist($command->getContentStreamIdentifier());
-            $this->requireDimensionSpacePointToExist($command->getOriginDimensionSpacePoint());
-            $nodeType = $this->requireNodeType($command->getNodeTypeName());
-            $this->requireNodeTypeToNotBeOfTypeRoot($nodeType);
-            $this->requireTetheredDescendantNodeTypesToExist($nodeType);
-            $this->requireTetheredDescendantNodeTypesToNotBeOfTypeRoot($nodeType);
-            if ($this->ancestorNodeTypeConstraintChecksEnabled) {
-                $this->requireConstraintsImposedByAncestorsAreMet($command->getContentStreamIdentifier(), $nodeType, $command->getNodeName(), [$command->getParentNodeAggregateIdentifier()]);
-            }
-            $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-            $parentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getParentNodeAggregateIdentifier());
-
-            if ($command->getSucceedingSiblingNodeAggregateIdentifier()) {
-                $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getSucceedingSiblingNodeAggregateIdentifier());
-            }
-            $this->requireNodeAggregateToCoverDimensionSpacePoint($parentNodeAggregate, $command->getOriginDimensionSpacePoint());
-
-            $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($command->getOriginDimensionSpacePoint());
-            $coveredDimensionSpacePoints = $specializations->getIntersection($parentNodeAggregate->getCoveredDimensionSpacePoints());
-
-            if ($command->getNodeName()) {
-                $this->requireNodeNameToBeUnoccupied(
-                    $command->getContentStreamIdentifier(),
-                    $command->getNodeName(),
-                    $command->getParentNodeAggregateIdentifier(),
-                    $command->getOriginDimensionSpacePoint(),
-                    $coveredDimensionSpacePoints
-                );
-            }
-
-            $descendantNodeAggregateIdentifiers = $this->populateNodeAggregateIdentifiers($nodeType, $command->getTetheredDescendantNodeAggregateIdentifiers());
-
-            foreach ($descendantNodeAggregateIdentifiers as $rawNodePath => $descendantNodeAggregateIdentifier) {
-                $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $descendantNodeAggregateIdentifier);
-            }
-
+        $this->nodeEventPublisher->withCommand($command, function () use ($command, $nodeType, $parentNodeAggregate, $coveredDimensionSpacePoints, $descendantNodeAggregateIdentifiers, &$events) {
             $defaultPropertyValues = $this->getDefaultPropertyValues($nodeType);
             $initialPropertyValues = $defaultPropertyValues->merge($command->getInitialPropertyValues());
 
@@ -326,7 +330,7 @@ final class NodeAggregateCommandHandler
      * @param DomainEvents $events
      * @param NodePath|null $nodePath
      * @return DomainEvents
-     * @throws ContentStream\ContentStreamDoesNotExistYet
+     * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFoundException
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
@@ -872,7 +876,7 @@ final class NodeAggregateCommandHandler
     /**
      * @param CreateNodeVariant $command
      * @return CommandResult
-     * @throws ContentStream\ContentStreamDoesNotExistYet
+     * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregatesTypeIsAmbiguous
@@ -1086,7 +1090,7 @@ final class NodeAggregateCommandHandler
     /**
      * @param MoveNodeAggregate $command
      * @return CommandResult
-     * @throws ContentStream\ContentStreamDoesNotExistYet
+     * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws DimensionSpacePointNotFound
@@ -1220,7 +1224,7 @@ final class NodeAggregateCommandHandler
      * @param RemoveNodeAggregate $command
      * @return CommandResult
      * @throws NodeAggregatesTypeIsAmbiguous
-     * @throws ContentStream\ContentStreamDoesNotExistYet
+     * @throws ContentStreamDoesNotExistYet
      * @throws DimensionSpacePointNotFound
      */
     public function handleRemoveNodeAggregate(RemoveNodeAggregate $command): CommandResult
@@ -1265,7 +1269,7 @@ final class NodeAggregateCommandHandler
     /**
      * @param DisableNodeAggregate $command
      * @return CommandResult
-     * @throws ContentStream\ContentStreamDoesNotExistYet
+     * @throws ContentStreamDoesNotExistYet
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws NodeAggregatesTypeIsAmbiguous
@@ -1306,7 +1310,7 @@ final class NodeAggregateCommandHandler
     /**
      * @param EnableNodeAggregate $command
      * @return CommandResult
-     * @throws ContentStream\ContentStreamDoesNotExistYet
+     * @throws ContentStreamDoesNotExistYet
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregatesTypeIsAmbiguous
      */
@@ -1431,13 +1435,13 @@ final class NodeAggregateCommandHandler
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @throws ContentStream\ContentStreamDoesNotExistYet
+     * @throws ContentStreamDoesNotExistYet
      */
     protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier): void
     {
         $contentStream = $this->contentStreamRepository->findContentStream($contentStreamIdentifier);
         if (!$contentStream) {
-            throw new ContentStream\ContentStreamDoesNotExistYet('Content stream "' . $contentStreamIdentifier . " does not exist yet.", 1521386692);
+            throw new ContentStreamDoesNotExistYet('Content stream "' . $contentStreamIdentifier . " does not exist yet.", 1521386692);
         }
     }
 

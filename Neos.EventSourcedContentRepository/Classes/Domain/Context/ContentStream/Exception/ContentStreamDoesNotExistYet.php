@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
+namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
