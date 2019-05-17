@@ -34,4 +34,6 @@ properties:
             additionalProperties:
               type: string
               format: class-name
+          Afx:
+            type: dictionary
 
