@@ -6386,7 +6386,7 @@ readers do not read off random characters that represent icons */
 }
 .neos .neos-row-fluid .neos-offset10:first-child {
   margin-left: 85.10638%;
-  *margin-left: 85.0%;
+  *margin-left: 85%;
 }
 .neos .neos-row-fluid .neos-offset11 {
   margin-left: 95.74468%;
@@ -14462,6 +14462,12 @@ readers do not read off random characters that represent icons */
 }
 .neos.neos-module.neos-module-user-usersettings .neos-content i.fa-user, .neos.neos-module.neos-module-administration-users .neos-content i.fa-user {
   margin-right: 11px;
+}
+.neos.neos-module.neos-module-user-usersettings .neos-search-bar button.neos-button, .neos.neos-module.neos-module-administration-users .neos-search-bar button.neos-button {
+  border-right: 1px solid #222;
+}
+.neos.neos-module.neos-module-user-usersettings .neos-search-bar a.neos-button, .neos.neos-module.neos-module-administration-users .neos-search-bar a.neos-button {
+  border-left: 1px solid #222;
 }
 .neos.neos-module .neos-breadcrumb {
   -webkit-border-radius: 0;
