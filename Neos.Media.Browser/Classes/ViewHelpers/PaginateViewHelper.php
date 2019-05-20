@@ -44,7 +44,7 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('queryString', 'string', '', true);
+        $this->registerArgument('queryResult', AssetProxyQueryResultInterface::class, '', true);
         $this->registerArgument('as', 'string', '', true);
         $this->registerArgument('configuration', 'array', '', false, ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99]);
     }
