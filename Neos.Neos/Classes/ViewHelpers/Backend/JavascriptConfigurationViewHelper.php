@@ -86,7 +86,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     /**
      * @param LoggerInterface $logger
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }

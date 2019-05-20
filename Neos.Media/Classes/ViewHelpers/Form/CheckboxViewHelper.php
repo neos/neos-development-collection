@@ -77,7 +77,7 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
      * @return string
      * @api
      */
-    public function render($checked = null, $multiple = null)
+    public function render($checked = null, $multiple = null): string
     {
         $this->tag->addAttribute('type', 'checkbox');
 
@@ -126,7 +126,7 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
      *
      * @return string name
      */
-    protected function getNameWithoutPrefix()
+    protected function getNameWithoutPrefix(): string
     {
         $name = parent::getNameWithoutPrefix();
         return str_replace('[__identity]', '', $name);
