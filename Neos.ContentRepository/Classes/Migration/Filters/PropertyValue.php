@@ -13,13 +13,13 @@ namespace Neos\ContentRepository\Migration\Filters;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Exception\NodeException;
+use Neos\Flow\Persistence\Doctrine\Query;
+use Neos\Flow\Persistence\Exception\InvalidQueryException;
 
 /**
  * Filter nodes having the given property and a matching value.
  */
-class PropertyValue implements FilterInterface
+class PropertyValue implements DoctrineFilterInterface
 {
     /**
      * @var string
@@ -54,14 +54,20 @@ class PropertyValue implements FilterInterface
     }
 
     /**
-     * Returns true if the given node has the property and the value matches.
+     * Filters for nodes having the property and value requested.
      *
-     * @param NodeData $node
-     * @return boolean
-     * @throws NodeException
+     * @param Query $baseQuery
+     * @return array
+     * @throws InvalidQueryException
      */
-    public function matches(NodeData $node)
+    public function getFilterExpressions(Query $baseQuery): array
     {
-        return ($node->hasProperty($this->propertyName) && $node->getProperty($this->propertyName) === $this->propertyValue);
+        // Build the like parameter as "key": "value" to search by a specific key and value
+        // See NodeDataRepository.findByProperties() for the "inspiration"
+        $likeParameter = trim(json_encode(
+            [$this->propertyName => $this->propertyValue], JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE
+        ), "{}\n\t ");
+
+        return [$baseQuery->like('properties', $likeParameter, false)];
     }
 }
