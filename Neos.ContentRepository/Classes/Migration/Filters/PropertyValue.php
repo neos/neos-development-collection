@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\Migration\Filters;
 
 /*
@@ -36,7 +38,7 @@ class PropertyValue implements FilterInterface
      * @param string $propertyName
      * @return void
      */
-    public function setPropertyName($propertyName)
+    public function setPropertyName(string $propertyName): void
     {
         $this->propertyName = $propertyName;
     }
@@ -47,7 +49,7 @@ class PropertyValue implements FilterInterface
      * @param string $propertyValue
      * @return void
      */
-    public function setPropertyValue($propertyValue)
+    public function setPropertyValue(string $propertyValue): void
     {
         $this->propertyValue = $propertyValue;
     }
