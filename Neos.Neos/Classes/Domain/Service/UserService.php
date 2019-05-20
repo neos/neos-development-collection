@@ -14,6 +14,7 @@ namespace Neos\Neos\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountFactory;
 use Neos\Flow\Security\AccountRepository;
@@ -154,12 +155,21 @@ class UserService
     /**
      * Retrieves a list of all existing users
      *
-     * @return array<User> The users
+     * @return QueryResultInterface The users
      * @api
      */
-    public function getUsers()
+    public function getUsers(): QueryResultInterface
     {
-        return $this->userRepository->findAll();
+        return $this->userRepository->findAllOrderedByUsername();
+    }
+
+    /**
+     * @param string $searchTerm
+     * @return QueryResultInterface
+     */
+    public function searchUsers(string $searchTerm): QueryResultInterface
+    {
+        return $this->userRepository->findBySearchTerm($searchTerm);
     }
 
     /**
