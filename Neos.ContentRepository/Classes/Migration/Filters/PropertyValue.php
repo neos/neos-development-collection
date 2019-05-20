@@ -15,7 +15,6 @@ namespace Neos\ContentRepository\Migration\Filters;
 
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Exception\NodeException;
-use Neos\ContentRepository\Migration\Filters\FilterInterface;
 
 /**
  * Filter nodes having the given property and a matching value.
