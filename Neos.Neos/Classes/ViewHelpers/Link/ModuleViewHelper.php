@@ -43,6 +43,7 @@ class ModuleViewHelper extends AbstractTagBasedViewHelper
      * Initialize arguments
      *
      * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function initializeArguments()
     {
@@ -72,7 +73,17 @@ class ModuleViewHelper extends AbstractTagBasedViewHelper
     {
         $this->uriModuleViewHelper->setRenderingContext($this->renderingContext);
 
-        $uri = $this->uriModuleViewHelper->render($this->arguments['path'], $this->arguments['action'], $this->arguments['arguments'], $this->arguments['section'], $this->arguments['format'], $this->arguments['additionalParams'], $this->arguments['addQueryString'], $this->arguments['argumentsToBeExcludedFromQueryString']);
+        $this->uriModuleViewHelper->setArguments([
+            'path' => $this->arguments['path'],
+            'action' => $this->arguments['action'],
+            'arguments' => $this->arguments['arguments'],
+            'section' => $this->arguments['section'],
+            'format' => $this->arguments['format'],
+            'additionalParams' => $this->arguments['additionalParams'],
+            'addQueryString' => $this->arguments['addQueryString'],
+            'argumentsToBeExcludedFromQueryString' => $this->arguments['argumentsToBeExcludedFromQueryString']
+        ]);
+        $uri = $this->uriModuleViewHelper->render();
         if ($uri !== null) {
             $this->tag->addAttribute('href', $uri);
         }
