@@ -39,12 +39,25 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 class LiveViewHelper extends AbstractRenderingStateViewHelper
 {
     /**
-     * @param NodeInterface $node
-     * @return boolean
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(NodeInterface $node = null)
+    public function initializeArguments()
     {
-        $context = $this->getNodeContext($node);
+        parent::initializeArguments();
+        $this->registerArgument('node', NodeInterface::class, 'Node');
+    }
+
+    /**
+     * @return boolean
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function render(): bool
+    {
+        $context = $this->getNodeContext($this->arguments['node']);
 
         return $context->isLive();
     }

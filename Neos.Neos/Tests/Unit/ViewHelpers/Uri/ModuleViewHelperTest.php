@@ -12,20 +12,21 @@ namespace Neos\Neos\Tests\Unit\ViewHelpers\Uri;
  */
 
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Neos\ViewHelpers\Uri\ModuleViewHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  */
-class ModuleViewHelperTest extends UnitTestCase
+class ModuleViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ModuleViewHelper
+     * @var MockObject|ModuleViewHelper
      */
     protected $viewHelper;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UriBuilder
+     * @var MockObject|UriBuilder
      */
     protected $uriBuilder;
 
@@ -54,20 +55,22 @@ class ModuleViewHelperTest extends UnitTestCase
             'moduleArguments' => ['arguments', '@action' => 'action']
         ];
 
-        $this->uriBuilder->expects($this->once())->method('uriFor')->with('index', $expectedModifiedArguments);
+        $this->uriBuilder->expects($this->once())->method('uriFor')->with('index', $expectedModifiedArguments)->willReturn('expectedUri');
 
         // fallback for the method chaining of the URI builder
-        $this->uriBuilder->expects($this->any())->method($this->anything())->will($this->returnValue($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method($this->anything())->willReturn($this->uriBuilder);
 
-        $this->viewHelper->render(
-            'the/path',
-            'action',
-            ['arguments'],
-            'section',
-            'format',
-            ['additionalParams'],
-            true, // `addQueryString`,
-            ['argumentsToBeExcludedFromQueryString']
-        );
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, [
+            'path' => 'the/path',
+            'action' => 'action',
+            'arguments' => ['arguments'],
+            'section' => 'section',
+            'format' => 'format',
+            'additionalParams' => ['additionalParams'],
+            'addQueryString' => true,
+            'argumentsToBeExcludedFromQueryString' => ['argumentsToBeExcludedFromQueryString']
+
+        ]);
+        $this->viewHelper->render();
     }
 }

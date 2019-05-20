@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
+use Neos\Media\Domain\Service\AssetService;
+use Neos\Media\Domain\Service\ThumbnailService;
 
 /**
  * Renders an <img> HTML tag from a given Neos.Media's image instance
@@ -69,13 +71,13 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
 {
     /**
      * @Flow\Inject
-     * @var \Neos\Media\Domain\Service\ThumbnailService
+     * @var ThumbnailService
      */
     protected $thumbnailService;
 
     /**
      * @Flow\Inject
-     * @var \Neos\Media\Domain\Service\AssetService
+     * @var AssetService
      */
     protected $assetService;
 
@@ -94,38 +96,42 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
         $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', true);
-        $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', false);
-        $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', false);
+        $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead');
+        $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map');
+
+        $this->registerArgument('image', ImageInterface::class, 'The image to be rendered as an image');
+        $this->registerArgument('width', 'integer', 'Desired width of the image');
+        $this->registerArgument('maximumWidth', 'integer', 'Desired maximum width of the image');
+        $this->registerArgument('height', 'integer', 'Desired height of the image');
+        $this->registerArgument('maximumHeight', 'integer', 'Desired maximum height of the image');
+        $this->registerArgument('allowCropping', 'boolean', 'Whether the image should be cropped if the given sizes would hurt the aspect ratio', false, false);
+        $this->registerArgument('allowUpScaling', 'boolean', 'Whether the resulting image size might exceed the size of the original asset', false, false);
+        $this->registerArgument('async', 'boolean', 'Return asynchronous image URI in case the requested image does not exist already', false, false);
+        $this->registerArgument('preset', 'string', 'Preset used to determine image configuration');
+        $this->registerArgument('quality', 'integer', 'Quality of the image, from 0 to 100');
+        $this->registerArgument('format', 'string', 'Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported');
     }
 
     /**
      * Renders an HTML img tag with a thumbnail image, created from a given image.
      *
-     * @param ImageInterface $image The image to be rendered as an image
-     * @param integer $width Desired width of the image
-     * @param integer $maximumWidth Desired maximum width of the image
-     * @param integer $height Desired height of the image
-     * @param integer $maximumHeight Desired maximum height of the image
-     * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
-     * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
-     * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
-     * @param string $preset Preset used to determine image configuration
-     * @param integer $quality Image quality, from 0 to 100
-     * @param string $format Format for the image, jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported
      * @return string an <img...> html tag
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Media\Exception\AssetServiceException
+     * @throws \Neos\Media\Exception\ThumbnailServiceException
      */
-    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null, $quality = null, $format = null)
+    public function render(): string
     {
-        if ($image === null) {
+        if ($this->arguments['image'] === null) {
             return '';
         }
 
-        if ($preset) {
-            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
+        if ($this->arguments['preset'] !== null) {
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($this->arguments['preset'], $this->arguments['async']);
         } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async, $quality, $format);
+            $thumbnailConfiguration = new ThumbnailConfiguration($this->arguments['width'], $this->arguments['maximumWidth'], $this->arguments['height'], $this->arguments['maximumHeight'], $this->arguments['allowCropping'], $this->arguments['allowUpScaling'], $this->arguments['async'], $this->arguments['quality'], $this->arguments['format']);
         }
-        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration, $this->controllerContext->getRequest());
+        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($this->arguments['image'], $thumbnailConfiguration, $this->controllerContext->getRequest());
 
         if ($thumbnailData === null) {
             return '';

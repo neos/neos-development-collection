@@ -11,14 +11,14 @@ namespace Neos\Neos\ViewHelpers\Uri;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Neos\Exception as NeosException;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Neos\Service\LinkingService;
-use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
+use Neos\Neos\Exception as NeosException;
+use Neos\Neos\Service\LinkingService;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -86,6 +86,7 @@ use Neos\Fusion\ViewHelpers\FusionContextTrait;
  * about/us.html
  * (depending on current workspace, current node, format etc.)
  * </output>
+ *
  * @api
  */
 class NodeViewHelper extends AbstractViewHelper
@@ -99,26 +100,46 @@ class NodeViewHelper extends AbstractViewHelper
     protected $linkingService;
 
     /**
+     * @Flow\Inject
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
+
+    /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('node', 'mixed', 'A node object, a string node path (absolute or relative), a string node://-uri or NULL');
+        $this->registerArgument('format', 'string', 'Format to use for the URL, for example "html" or "json"');
+        $this->registerArgument('absolute', 'boolean', 'If set, an absolute URI is rendered', false, false);
+        $this->registerArgument('arguments', 'array', 'Additional arguments to be passed to the UriBuilder (for example pagination parameters)', false, []);
+        $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
+        $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
+        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
+        $this->registerArgument('baseNodeName', 'string', 'The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths', false, 'documentNode');
+        $this->registerArgument('resolveShortcuts', 'boolean', 'INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.', false, true);
+    }
+
+    /**
      * Renders the URI.
      *
-     * @param mixed $node A node object, a string node path (absolute or relative), a string node://-uri or NULL
-     * @param string $format Format to use for the URL, for example "html" or "json"
-     * @param boolean $absolute If set, an absolute URI is rendered
-     * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
-     * @param string $section
-     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
-     * @param string $baseNodeName The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
-     * @param boolean $resolveShortcuts INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
      * @return string The rendered URI or NULL if no URI could be resolved for the given node
-     * @throws ViewHelperException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
-    public function render($node = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $baseNodeName = 'documentNode', $resolveShortcuts = true)
+    public function render(): string
     {
         $baseNode = null;
+        $node = $this->arguments['node'];
         if (!$node instanceof NodeInterface) {
-            $baseNode = $this->getContextVariable($baseNodeName);
-            if (is_string($node) && substr($node, 0, 7) === 'node://') {
+            $baseNode = $this->getContextVariable($this->arguments['baseNodeName']);
+            if (is_string($node) && strpos($node, 'node://') === 0) {
                 $node = $this->linkingService->convertUriToObject($node, $baseNode);
             }
         }
@@ -128,18 +149,18 @@ class NodeViewHelper extends AbstractViewHelper
                 $this->controllerContext,
                 $node,
                 $baseNode,
-                $format,
-                $absolute,
-                $arguments,
-                $section,
-                $addQueryString,
-                $argumentsToBeExcludedFromQueryString,
-                $resolveShortcuts
+                $this->arguments['format'],
+                $this->arguments['absolute'],
+                $this->arguments['arguments'],
+                $this->arguments['section'],
+                $this->arguments['addQueryString'],
+                $this->arguments['argumentsToBeExcludedFromQueryString'],
+                $this->arguments['resolveShortcuts']
             );
         } catch (NeosException $exception) {
-            $this->systemLogger->logException($exception);
+            $this->throwableStorage->logThrowable($exception);
         } catch (NoMatchingRouteException $exception) {
-            $this->systemLogger->logException($exception);
+            $this->throwableStorage->logThrowable($exception);
         }
         return '';
     }

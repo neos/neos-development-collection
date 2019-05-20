@@ -12,6 +12,8 @@ namespace Neos\Neos\ViewHelpers;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\View\StandaloneView;
 
 /**
  * A View Helper to render a fluid template based on the given template path and filename.
@@ -32,7 +34,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("prototype")
  */
-class StandaloneViewViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+class StandaloneViewViewHelper extends AbstractViewHelper
 {
     /**
      * @var boolean
@@ -40,14 +42,24 @@ class StandaloneViewViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\Abstra
     protected $escapeOutput = false;
 
     /**
-     * @param string $templatePathAndFilename Path and filename of the template to render
-     * @param array $arguments Arguments to assign to the template before rendering
-     * @return string
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render($templatePathAndFilename, $arguments = [])
+    public function initializeArguments()
     {
-        $standaloneView = new \Neos\FluidAdaptor\View\StandaloneView($this->controllerContext->getRequest());
-        $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
-        return $standaloneView->assignMultiple($arguments)->render();
+        parent::initializeArguments();
+        $this->registerArgument('templatePathAndFilename', 'string', 'Path and filename of the template to render', true);
+        $this->registerArgument('arguments', 'array', 'Arguments to assign to the template before rendering', false, []);
+    }
+
+    /**
+     * @return string
+     * @throws \Neos\FluidAdaptor\Exception
+     */
+    public function render(): string
+    {
+        $standaloneView = new StandaloneView($this->controllerContext->getRequest());
+        $standaloneView->setTemplatePathAndFilename($this->arguments['templatePathAndFilename']);
+        return $standaloneView->assignMultiple($this->arguments['arguments'])->render();
     }
 }
