@@ -13,6 +13,7 @@ namespace Neos\Neos\ViewHelpers\Uri;
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
@@ -99,6 +100,12 @@ class NodeViewHelper extends AbstractViewHelper
     protected $linkingService;
 
     /**
+     * @Flow\Inject
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
+
+    /**
      * Initialize the arguments.
      *
      * @return void
@@ -151,9 +158,9 @@ class NodeViewHelper extends AbstractViewHelper
                 $this->arguments['resolveShortcuts']
             );
         } catch (NeosException $exception) {
-            $this->systemLogger->logException($exception);
+            $this->throwableStorage->logThrowable($exception);
         } catch (NoMatchingRouteException $exception) {
-            $this->systemLogger->logException($exception);
+            $this->throwableStorage->logThrowable($exception);
         }
         return '';
     }
