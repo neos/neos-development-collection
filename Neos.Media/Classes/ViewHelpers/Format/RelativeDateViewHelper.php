@@ -20,21 +20,33 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 class RelativeDateViewHelper extends AbstractViewHelper
 {
     /**
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('date', \DateTimeInterface::class, 'The date to be formatted');
+    }
+
+    /**
      * Renders a DateTime formatted relative to the current date.
      * Shows the time if the date is the current date.
      * Shows the month and date if the date is the current year.
      * Shows the year/month/date if the date is not the current year.
      *
-     * @param \DateTime $date
      * @return string an <img...> html tag
      * @throws \InvalidArgumentException
+     * @throws \Exception
      */
-    public function render(\DateTime $date = null)
+    public function render(): string
     {
-        if ($date === null) {
+        if ($this->arguments['date'] === null) {
+            $date = $this->arguments['date'];
+        } else {
             $date = $this->renderChildren();
         }
-        if (!$date instanceof \DateTime) {
+        if (!$date instanceof \DateTimeInterface) {
             throw new \InvalidArgumentException('No valid date given,', 1424647058);
         }
         // More than 11 months ago

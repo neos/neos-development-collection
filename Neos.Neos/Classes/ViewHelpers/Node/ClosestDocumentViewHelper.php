@@ -21,12 +21,24 @@ use Neos\Eel\FlowQuery\FlowQuery;
 class ClosestDocumentViewHelper extends AbstractViewHelper
 {
     /**
-     * @param NodeInterface $node
-     * @return NodeInterface
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(NodeInterface $node)
+    public function initializeArguments()
     {
-        $flowQuery = new FlowQuery([$node]);
+        parent::initializeArguments();
+        $this->registerArgument('node', NodeInterface::class, 'Node', true);
+    }
+
+    /**
+     * @return NodeInterface
+     * @throws \Neos\Eel\Exception
+     */
+    public function render()
+    {
+        $flowQuery = new FlowQuery([$this->arguments['node']]);
         return $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
     }
 }

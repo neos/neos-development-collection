@@ -36,11 +36,20 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 class GetTypeViewHelper extends AbstractViewHelper
 {
     /**
-     * @param mixed $value The value to determine the type of
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('value', 'mixed', 'The value to get the type of');
+    }
+
+    /**
      * @return string
      */
-    public function render($value = null)
+    public function render(): string
     {
-        return gettype($value ?: $this->renderChildren());
+        return gettype($this->arguments['value'] ?: $this->renderChildren());
     }
 }
