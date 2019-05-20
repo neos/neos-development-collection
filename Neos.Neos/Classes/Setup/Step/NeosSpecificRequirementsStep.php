@@ -97,7 +97,7 @@ class NeosSpecificRequirementsStep extends AbstractStep
 
         if ($foundImageHandler === false) {
             $formElement = $imageSection->createElement('noImageLibrary', 'Neos.Form:StaticText');
-            $formElement->setProperty('text', 'No suitable PHP extension for image manipulation was found. Please install one of the required PHP extensions and restart the server respectively the php process. Then try the setup again.');
+            $formElement->setProperty('text', 'No suitable PHP extension for image manipulation was found. Please install one of the required PHP extensions and restart the php process. Then proceed with the setup.');
             $formElement->setProperty('elementClassAttribute', 'alert alert-error');
         } else {
             $formElement = $imageSection->createElement('configuredImageLibrary', 'Neos.Form:StaticText');
