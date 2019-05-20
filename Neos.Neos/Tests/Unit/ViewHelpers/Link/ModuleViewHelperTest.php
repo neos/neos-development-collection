@@ -49,7 +49,7 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper = $this->getAccessibleMock(ModuleViewHelper::class, ['renderChildren']);
         $this->tagBuilder = $this->createMock(TagBuilder::class);
         $this->tagBuilder->expects($this->once())->method('render')->willReturn('renderingResult');
-        $this->uriModuleViewHelper = $this->getMockBuilder(UriModuleViewHelper::class)->setMethods(['setRenderingContext', 'render'])->getMock();
+        $this->uriModuleViewHelper = $this->getMockBuilder(UriModuleViewHelper::class)->setMethods(['setRenderingContext', 'setArguments', 'render'])->getMock();
 
         $this->dummyRenderingContext = $this->createMock(RenderingContextInterface::class);
         $this->inject($this->viewHelper, 'renderingContext', $this->dummyRenderingContext);
@@ -71,11 +71,18 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
     /**
      * @test
      */
-    public function callingRenderCallsTheUriModuleViewHelpersRenderMethodWithTheCorrectArguments(): void
+    public function callingRenderCallsTheUriModuleViewHelpersSetArgumentsMethodWithTheCorrectArguments(): void
     {
-        $this->uriModuleViewHelper->expects($this->once())->method('render')->with(
-            'path', 'action', ['arguments'], 'section', 'format', ['additionalParams'], true, ['argumentsToBeExcludedFromQueryString']
-        );
+        $this->uriModuleViewHelper->expects($this->once())->method('setArguments')->with([
+            'path' => 'path',
+            'action' => 'action',
+            'arguments' => ['arguments'],
+            'section' => 'section',
+            'format' => 'format',
+            'additionalParams' => ['additionalParams'],
+            'addQueryString' => true,
+            'argumentsToBeExcludedFromQueryString' => ['argumentsToBeExcludedFromQueryString']
+        ]);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => 'path',
             'action' => 'action',
