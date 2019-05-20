@@ -12,6 +12,7 @@ namespace Neos\Neos\ViewHelpers\Link;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Neos\Exception as NeosException;
@@ -120,9 +121,16 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     protected $linkingService;
 
     /**
+     * @Flow\Inject
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
+
+    /**
      * Initialize arguments
      *
      * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function initializeArguments()
     {
@@ -178,9 +186,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             );
             $this->tag->addAttribute('href', $uri);
         } catch (NeosException $exception) {
-            $this->systemLogger->logException($exception);
+            $this->throwableStorage->logThrowable($exception);
         } catch (NoMatchingRouteException $exception) {
-            $this->systemLogger->logException($exception);
+            $this->throwableStorage->logThrowable($exception);
         }
 
         $linkedNode = $this->linkingService->getLastLinkedNode();
