@@ -82,6 +82,8 @@ class FileTypeIconViewHelper extends AbstractTagBasedViewHelper
 
         if ($this->arguments['asset'] instanceof AssetInterface) {
             $filename = $this->arguments['asset']->getResource()->getFilename();
+        } else {
+            $filename = $this->arguments['filename'];
         }
 
         $icon = FileTypeIconService::getIcon($filename);
