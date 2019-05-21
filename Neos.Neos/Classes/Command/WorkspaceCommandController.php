@@ -317,38 +317,6 @@ class WorkspaceCommandController extends CommandController
     }
 
     /**
-     * Publish changes of a workspace
-     *
-     * This command publishes all modified, created or deleted nodes in the specified workspace to the live workspace.
-     *
-     * @param string $workspaceName Name of the workspace, for example "user-john"
-     * @param boolean $verbose If enabled, information about individual nodes will be displayed
-     * @return void
-     * @deprecated since 1.2
-     * @see neos.neos:workspace:publish
-     */
-    public function publishAllCommand($workspaceName, $verbose = false)
-    {
-        $this->publishCommand($workspaceName, $verbose);
-    }
-
-    /**
-     * Discard changes in workspace
-     *
-     * This command discards all modified, created or deleted nodes in the specified workspace.
-     *
-     * @param string $workspaceName Name of the workspace, for example "user-john"
-     * @param boolean $verbose If enabled, information about individual nodes will be displayed
-     * @return void
-     * @deprecated since 1.2
-     * @see neos.neos:workspace:discard
-     */
-    public function discardAllCommand($workspaceName, $verbose = false)
-    {
-        $this->discardCommand($workspaceName, $verbose);
-    }
-
-    /**
      * Display a list of existing workspaces
      *
      * @return void
