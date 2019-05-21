@@ -21,6 +21,8 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Fusion\Core\Cache\ContentCache;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\ContentContextFactory;
 
 /**
  * This service flushes Fusion content caches triggered by node changes.
@@ -64,9 +66,20 @@ class ContentCacheFlusher
 
     /**
      * @Flow\Inject
+     * @var ContentContextFactory
+     */
+    protected $contextFactory;
+
+    /**
+     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @var ContentContext[]
+     */
+    protected $contexts = [];
 
     /**
      * Register a node change for a later cache flush. This method is triggered by a signal sent via ContentRepository's Node
@@ -150,7 +163,9 @@ class ContentCacheFlusher
                 continue;
             }
 
-            $this->registerChangeOnNodeIdentifier($reference->getNodeIdentifier());
+            $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
+            $this->registerNodeChange($node);
+
             $this->registerChangeOnNodeType($reference->getNodeTypeName(), $reference->getNodeIdentifier());
 
             $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
@@ -174,6 +189,25 @@ class ContentCacheFlusher
                 }
             }
         }
+    }
+
+    /**
+     * @param AssetUsageInNodeProperties $assetUsage
+     * @return ContentContext
+     */
+    protected function getContextForReference(AssetUsageInNodeProperties $assetUsage)
+    {
+        $hash = md5(sprintf('%s-%s', $assetUsage->getWorkspaceName(), json_encode($assetUsage->getDimensionValues())));
+        if (!isset($this->contexts[$hash])) {
+            $this->contexts[$hash] = $this->contextFactory->create([
+                'workspaceName' => $assetUsage->getWorkspaceName(),
+                'dimensions' => $assetUsage->getDimensionValues(),
+                'invisibleContentShown' => true,
+                'inaccessibleContentShown' => true
+            ]);
+        }
+
+        return $this->contexts[$hash];
     }
 
     /**
