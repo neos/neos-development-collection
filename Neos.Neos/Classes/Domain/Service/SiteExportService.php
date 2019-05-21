@@ -12,7 +12,7 @@ namespace Neos\Neos\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Exception as NeosException;
@@ -41,7 +41,7 @@ class SiteExportService
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 

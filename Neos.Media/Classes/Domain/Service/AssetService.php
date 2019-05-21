@@ -17,7 +17,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -80,7 +80,7 @@ class AssetService
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 

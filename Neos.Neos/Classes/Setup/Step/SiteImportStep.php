@@ -17,7 +17,7 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\FlashMessageContainer;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Validation\Validator\NotEmptyValidator;
 use Neos\Form\Core\Model\FinisherContext;
@@ -49,7 +49,7 @@ class SiteImportStep extends AbstractStep
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
