@@ -12,8 +12,6 @@ namespace Neos\Neos\Service\Controller;
  */
 
 use Neos\Flow\Exception as FlowException;
-use Neos\Flow\Http\Response as HttpResponse;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -79,7 +77,7 @@ abstract class AbstractServiceController extends ActionController
         } catch (StopActionException $exception) {
             throw $exception;
         } catch (\Exception $exception) {
-            if ($this->request->getFormat() !== 'json' || !$response instanceof HttpResponse) {
+            if ($this->request->getFormat() !== 'json' || !$response instanceof ActionResponse) {
                 throw $exception;
             }
             $exceptionData = $this->convertException($exception);

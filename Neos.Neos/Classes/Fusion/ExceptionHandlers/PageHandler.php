@@ -11,10 +11,9 @@ namespace Neos\Neos\Fusion\ExceptionHandlers;
  * source code.
  */
 
+use function GuzzleHttp\Psr7\str;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
-use Neos\Flow\Http\ContentStream;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\FluidAdaptor\View\StandaloneView;
@@ -22,6 +21,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Fusion\Core\ExceptionHandlers\HtmlMessageHandler;
 use Neos\Neos\Service\ContentElementWrappingService;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * A special exception handler that is used on the outer path to catch all unhandled exceptions and uses other exception
@@ -100,17 +100,14 @@ class PageHandler extends AbstractRenderingExceptionHandler
      */
     protected function wrapHttpResponse(\Exception $exception, $bodyContent)
     {
-        $body = fopen('php://temp', 'rw');
-        fputs($body, $bodyContent);
-        rewind($body);
+        /** @var ResponseInterface $response */
+        $response = new \GuzzleHttp\Psr7\Response(
+            $exception instanceof FlowException ? $exception->getStatusCode() : 500,
+            ['Cache-Control' => 'no-store'],
+            $bodyContent
+            );
 
-        /** @var Response $response */
-        $response = (new Response())
-            ->withStatus($exception instanceof FlowException ? $exception->getStatusCode() : 500)
-            ->withBody(new ContentStream($body))
-            ->withHeader('Cache-Control', 'no-store');
-
-        return implode("\r\n", $response->renderHeaders()) . "\r\n\r\n" . $response->getContent();
+        return str($response);
     }
 
     /**

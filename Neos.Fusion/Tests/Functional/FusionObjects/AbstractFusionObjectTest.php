@@ -19,6 +19,8 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\View\FusionView;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the Fusion View
@@ -40,7 +42,8 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     {
         $view = new FusionView();
 
-        $httpRequest = Request::createFromEnvironment();
+
+        $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost/');
         $request = new ActionRequest($httpRequest);
 
         $uriBuilder = new UriBuilder();

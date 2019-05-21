@@ -11,8 +11,7 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -25,6 +24,7 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Fusion\Core\Runtime;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the ConvertNodeUris Fusion implementation
@@ -91,8 +91,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->mockHttpUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpUri->expects($this->any())->method('getHost')->will($this->returnValue('localhost'));
 
-        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockHttpUri));
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest->expects($this->any())->method('getUri')->willReturn($this->mockHttpUri);
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));

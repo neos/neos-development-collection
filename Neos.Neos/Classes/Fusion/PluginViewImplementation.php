@@ -13,7 +13,6 @@ namespace Neos\Neos\Fusion;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
@@ -110,9 +109,9 @@ class PluginViewImplementation extends PluginImplementation
     {
         $currentContext = $this->runtime->getCurrentContext();
         $this->pluginViewNode = $currentContext['node'];
-        /** @var $parentResponse Response */
+        /** @var $parentResponse ActionResponse */
         $parentResponse = $this->runtime->getControllerContext()->getResponse();
-        $pluginResponse = new ActionResponse($parentResponse);
+        $pluginResponse = new ActionResponse();
 
         $pluginRequest = $this->buildPluginRequest();
         if ($pluginRequest->getControllerObjectName() === '') {

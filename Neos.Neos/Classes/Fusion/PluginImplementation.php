@@ -13,7 +13,6 @@ namespace Neos\Neos\Fusion;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\Flow\Mvc\ActionResponseRenderer\IntoActionResponse;
@@ -98,7 +97,7 @@ class PluginImplementation extends AbstractArrayFusionObject
     {
         /** @var $parentRequest ActionRequest */
         $parentRequest = $this->runtime->getControllerContext()->getRequest();
-        $pluginRequest = new ActionRequest($parentRequest);
+        $pluginRequest = new ActionRequest();
         $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
         $this->passArgumentsToPluginRequest($pluginRequest);
 
@@ -146,13 +145,13 @@ class PluginImplementation extends AbstractArrayFusionObject
         $currentContext = $this->runtime->getCurrentContext();
         $this->node = $currentContext['node'];
         $this->documentNode = $currentContext['documentNode'];
-        /** @var $parentResponse Response */
+        /** @var $parentResponse ActionResponse */
         $parentResponse = $this->runtime->getControllerContext()->getResponse();
         $pluginResponse = new ActionResponse($parentResponse);
 
         $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
-        $pluginResponse->prepareRendering(new IntoActionResponse($parentResponse))->render();
-        return $pluginResponse->prepareRendering(new Content())->render();
+        $pluginResponse->mergeIntoParentResponse($parentResponse);
+        return $pluginResponse->getContent();
     }
 
     /**
