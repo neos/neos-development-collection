@@ -12,14 +12,14 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  */
 
 use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\PluginImplementation;
 use Neos\Fusion\Core\Runtime;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Testcase for the ConvertNodeUris Fusion implementation
@@ -101,12 +101,12 @@ class PluginImplementationTest extends UnitTestCase
     {
         $this->pluginImplementation->expects($this->any())->method('buildPluginRequest')->will($this->returnValue($this->mockActionRequest));
 
-        $parentResponse = new Response();
+        $parentResponse = new \GuzzleHttp\Psr7\Response();
         $this->_setHeadersIntoResponse($parentResponse, $input['parent']);
         $this->mockControllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($parentResponse));
 
         $this->mockDispatcher->expects($this->any())->method('dispatch')->will($this->returnCallback(function ($request, $response) use ($input) {
-            $this->_setHeadersIntoResponse($response, $input['plugin']);
+            $response = $this->_setHeadersIntoResponse($response, $input['plugin']);
         }));
 
         $this->pluginImplementation->evaluate();
@@ -119,13 +119,16 @@ class PluginImplementationTest extends UnitTestCase
     /**
      *  Sets the array based headers into the Response
      *
-     * @param Response $response
+     * @param ResponseInterface $response
      * @param $headers
+     * @return ResponseInterface
      */
-    private function _setHeadersIntoResponse(Response $response, $headers)
+    private function _setHeadersIntoResponse(ResponseInterface $response, $headers): ResponseInterface
     {
         foreach ($headers as $key => $value) {
-            $response->getHeaders()->set($key, $value);
+            $response = $response->withHeader($key, $value);
         }
+
+        return $response;
     }
 }

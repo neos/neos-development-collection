@@ -100,16 +100,14 @@ class ModuleController extends ActionController
 
         $this->dispatcher->dispatch($moduleRequest, $moduleResponse);
 
-        $rawResponse = $moduleResponse->prepareRendering(new ToArray())->render();
-
-        if ($rawResponse['redirectUri'] !== null) {
-            $this->redirectToUri($rawResponse['redirectUri'], 0, $rawResponse['statusCode']);
+        if ($moduleResponse->getRedirectUri() !== null) {
+            $this->redirectToUri($moduleResponse->getRedirectUri(), 0, $moduleResponse->getStatusCode());
         } elseif ($moduleRequest->getFormat() !== 'html') {
             $mediaType = MediaTypes::getMediaTypeFromFilename('file.' . $moduleRequest->getFormat());
             if ($mediaType !== 'application/octet-stream') {
                 $this->controllerContext->getResponse()->setContentType($mediaType);
             }
-            return $rawResponse['content'];
+            return $moduleResponse->getContent();
         } else {
             $user = $this->partyService->getAssignedPartyOfAccount($this->securityContext->getAccount());
 
@@ -117,7 +115,7 @@ class ModuleController extends ActionController
 
             $this->view->assignMultiple([
                 'moduleClass' => implode('-', $modules),
-                'moduleContents' => $rawResponse['content'],
+                'moduleContents' => $moduleResponse->getContent(),
                 'title' => $moduleRequest->hasArgument('title') ? $moduleRequest->getArgument('title') : $moduleConfiguration['label'],
                 'rootModule' => array_shift($modules),
                 'submodule' => array_shift($modules),

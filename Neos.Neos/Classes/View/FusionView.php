@@ -14,10 +14,8 @@ namespace Neos\Neos\View;
 use function GuzzleHttp\Psr7\parse_response;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service;
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
@@ -25,6 +23,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface as LegacyNodeInterface;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Flow\Security\Context;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * A Fusion view for Neos
@@ -109,27 +108,19 @@ class FusionView extends AbstractView
 
     /**
      * @param string $output
-     * @param Runtime $fusionRuntime
-     * @return string The message body without the message head
+     * @return ResponseInterface The message body without the message head
      */
-    protected function mergeHttpResponseFromOutput($output, Runtime $fusionRuntime)
+    protected function mergeHttpResponseFromOutput($output)
     {
+        if (!is_string($output)) {
+            return $output;
+        }
+
         if (!strpos($output, 'HTTP/') === 0) {
             return $output;
         }
 
-        $renderedResponse = parse_response($output);
-        try {
-            /** @var ActionResponse $response */
-            $response = $fusionRuntime->getControllerContext()->getResponse();
-            $response->setStatusCode($renderedResponse->getStatusCode());
-            foreach ($renderedResponse->getHeaders() as $headerName => $headerValues) {
-                $response->setComponentParameter(SetHeaderComponent::class, $headerName, $headerValues);
-            }
-        } catch (\InvalidArgumentException $exception) {
-        }
-
-        return $renderedResponse->getBody()->getContents();
+        return parse_response($output);
     }
 
     /**

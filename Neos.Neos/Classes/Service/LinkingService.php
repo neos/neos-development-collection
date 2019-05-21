@@ -12,9 +12,8 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Http\ServerRequestAttributes;
-use Neos\Flow\Http\Uri;
+use Psr\Http\Message\UriInterface as Uri;
 use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
@@ -307,7 +306,7 @@ class LinkingService
             $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         }
 
-        $baseUri = $request->getHttpRequest()->getAttribute(ServerRequestAttributes::ATTRIBUTE_BASE_URI);
+        $baseUri = $request->getHttpRequest()->getAttribute(ServerRequestAttributes::BASE_URI);
         if ($site->hasActiveDomains()) {
             $requestUriHost = $baseUri->getHost();
             $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {

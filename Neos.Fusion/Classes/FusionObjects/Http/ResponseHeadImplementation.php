@@ -11,9 +11,11 @@ namespace Neos\Fusion\FusionObjects\Http;
  * source code.
  */
 
-use function GuzzleHttp\Psr7\str;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Response Head generate a standard HTTP response head
@@ -21,6 +23,12 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
  */
 class ResponseHeadImplementation extends AbstractFusionObject
 {
+    /**
+     * @Flow\Inject
+     * @var ResponseFactoryInterface
+     */
+    protected $responseFactory;
+
     /**
      * Get HTTP protocol version
      *
@@ -53,7 +61,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
     /**
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         $headers = $this->fusionValue('headers');
         if (!is_array($headers)) {
@@ -65,16 +73,19 @@ class ResponseHeadImplementation extends AbstractFusionObject
     /**
      * Just return the processed value
      *
-     * @return mixed
+     * @return ResponseInterface
      */
-    public function evaluate()
+    public function evaluate(): ResponseInterface
     {
         $httpVersion = $this->getHttpVersion();
         if (strpos($httpVersion, 'HTTP/') === 0) {
             $httpVersion = substr($httpVersion, 5);
         }
 
-        $httpResponse = new \GuzzleHttp\Psr7\Response($this->getStatusCode(), $this->getHeaders(), null, $httpVersion);
-        return str($httpResponse);
+        $response = $this->responseFactory->createResponse($this->getStatusCode())->withProtocolVersion($httpVersion);
+        foreach ($this->getHeaders() as $headerName => $headerValue) {
+            $response = $response->withHeader($headerName, $headerValue);
+        }
+        return $response;
     }
 }

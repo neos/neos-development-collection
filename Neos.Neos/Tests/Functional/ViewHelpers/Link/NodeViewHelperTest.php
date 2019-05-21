@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Functional\ViewHelpers\Link;
  * source code.
  */
 
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
