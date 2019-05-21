@@ -13,7 +13,7 @@ namespace Neos\Neos\Controller\Module\Administration;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 
 /**
@@ -23,7 +23,7 @@ class PackagesController extends AbstractModuleController
 {
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
