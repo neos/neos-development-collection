@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Tests\Functional;
  * source code.
  */
 
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Domain\Service\SiteImportService;
@@ -132,7 +132,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
 
     protected function markSkippedIfNodeTypesPackageIsNotInstalled()
     {
-        $packageManager = $this->objectManager->get(PackageManagerInterface::class);
+        $packageManager = $this->objectManager->get(PackageManager::class);
         if (!$packageManager->isPackageAvailable('Neos.NodeTypes')) {
             $this->markTestSkipped('This test needs the Neos.NodeTypes package.');
         }

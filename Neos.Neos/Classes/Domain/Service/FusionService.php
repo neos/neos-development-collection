@@ -105,7 +105,7 @@ class FusionService
 
     /**
      * @Flow\Inject
-     * @var \Neos\Flow\Package\PackageManagerInterface
+     * @var \Neos\Flow\Package\PackageManager
      */
     protected $packageManager;
 

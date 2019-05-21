@@ -12,7 +12,7 @@ namespace Neos\SiteKickstarter\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Utility;
@@ -24,7 +24,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
 {
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
