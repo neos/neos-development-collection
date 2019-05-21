@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Migration\Configuration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files as Files;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
 
@@ -31,7 +31,7 @@ class YamlConfiguration extends Configuration
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
