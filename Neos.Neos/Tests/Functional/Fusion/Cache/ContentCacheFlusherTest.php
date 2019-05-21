@@ -78,7 +78,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function flushingANodeWillResolveAllWorkspacesToFlush()
+    public function flushingANodeWillResolveAllWorkspacesToFlush(): void
     {
         // Add more workspaces
         $workspaceFirstLevel = new Workspace('first-level');
@@ -124,7 +124,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function flushingANodeWithAnAdditionalTargetWorkspaceWillAlsoResolveThatWorkspace()
+    public function flushingANodeWithAnAdditionalTargetWorkspaceWillAlsoResolveThatWorkspace(): void
     {
         // Add more workspaces
         $workspaceFirstLevel = new Workspace('first-level');
@@ -169,7 +169,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function aNodeChangeWillRegisterNodeIdentifierTagsForAllWorkspaces()
+    public function aNodeChangeWillRegisterNodeIdentifierTagsForAllWorkspaces(): void
     {
         $workspaceFirstLevel = new Workspace('first-level');
 
@@ -206,7 +206,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function aNodeChangeWillRegisterNodeTypeTagsForAllWorkspaces()
+    public function aNodeChangeWillRegisterNodeTypeTagsForAllWorkspaces(): void
     {
         $workspaceFirstLevel = new Workspace('first-level');
 
@@ -246,7 +246,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function aNodeChangeWillRegisterAllDescendantOfTagsForAllWorkspaces()
+    public function aNodeChangeWillRegisterAllDescendantOfTagsForAllWorkspaces(): void
     {
         $workspaceFirstLevel = new Workspace('first-level');
 

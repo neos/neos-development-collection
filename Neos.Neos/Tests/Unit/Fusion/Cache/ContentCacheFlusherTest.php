@@ -16,7 +16,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
-use Neos\Neos\Fusion\Helper\CachingHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests the CachingHelper
@@ -26,8 +26,9 @@ class ContentCacheFlusherTest extends UnitTestCase
     /**
      * @test
      */
-    public function theWorkspaceChainWillOnlyEvaluatedIfNeeded()
+    public function theWorkspaceChainWillOnlyEvaluatedIfNeeded(): void
     {
+        /** @var MockObject|ContentCacheFlusher $contentCacheFlusher */
         $contentCacheFlusher = $this->getMockBuilder(ContentCacheFlusher::class)->setMethods(['resolveWorkspaceChain', 'registerChangeOnNodeIdentifier', 'registerChangeOnNodeType'])->disableOriginalConstructor()->getMock();
         $contentCacheFlusher->expects($this->never())->method('resolveWorkspaceChain');
 
@@ -41,6 +42,7 @@ class ContentCacheFlusherTest extends UnitTestCase
 
         $nodeType = new NodeType('Some.Node:Type', [], []);
 
+        /** @var MockObject|NodeInterface $nodeMock */
         $nodeMock = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
         $nodeMock->expects($this->any())->method('getWorkspace')->willReturn($workspace);
         $nodeMock->expects($this->any())->method('getNodeType')->willReturn($nodeType);

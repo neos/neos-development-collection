@@ -25,6 +25,8 @@ use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\Neos\Fusion\Helper\CachingHelper;
 use Psr\Log\LoggerInterface;
 
@@ -83,6 +85,17 @@ class ContentCacheFlusher
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var ContentContextFactory
+     */
+    protected $contextFactory;
+
+    /**
+     * @var ContentContext[]
+     */
+    protected $contexts = [];
 
     /**
      * @Flow\Inject
@@ -263,9 +276,10 @@ class ContentCacheFlusher
                 continue;
             }
 
-            $workspaceHash = $cachingHelper->renderWorkspaceTagForContextNode($reference->getWorkspaceName());
+            $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
+            $this->registerNodeChange($node);
 
-            $this->registerChangeOnNodeIdentifier($workspaceHash . '_' . $reference->getNodeIdentifier());
+            $workspaceHash = $cachingHelper->renderWorkspaceTagForContextNode($reference->getWorkspaceName());
             $this->registerChangeOnNodeType($reference->getNodeTypeName(), $reference->getNodeIdentifier(), $workspaceHash);
 
             $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
@@ -290,6 +304,25 @@ class ContentCacheFlusher
                 }
             }
         }
+    }
+
+    /**
+     * @param AssetUsageInNodeProperties $assetUsage
+     * @return ContentContext
+     */
+    protected function getContextForReference(AssetUsageInNodeProperties $assetUsage): ContentContext
+    {
+        $hash = md5(sprintf('%s-%s', $assetUsage->getWorkspaceName(), json_encode($assetUsage->getDimensionValues())));
+        if (!isset($this->contexts[$hash])) {
+            $this->contexts[$hash] = $this->contextFactory->create([
+                'workspaceName' => $assetUsage->getWorkspaceName(),
+                'dimensions' => $assetUsage->getDimensionValues(),
+                'invisibleContentShown' => true,
+                'inaccessibleContentShown' => true
+            ]);
+        }
+
+        return $this->contexts[$hash];
     }
 
     /**
