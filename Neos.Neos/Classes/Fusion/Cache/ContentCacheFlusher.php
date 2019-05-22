@@ -228,18 +228,6 @@ class ContentCacheFlusher
     }
 
     /**
-     * Deprecated. Please use ContentCacheFlush::registerAssetChange
-     *
-     * @deprecated
-     * @param AssetInterface $asset
-     * @return void
-     */
-    public function registerAssetResourceChange(AssetInterface $asset)
-    {
-        $this->registerAssetChange($asset);
-    }
-
-    /**
      * Fetches possible usages of the asset and registers nodes that use the asset as changed.
      *
      * @param AssetInterface $asset
