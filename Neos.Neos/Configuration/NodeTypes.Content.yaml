@@ -7,9 +7,6 @@
   constraints:
     nodeTypes:
       '*': false
-  options:
-    fusion:
-      prototypeGenerator: Neos\Neos\Domain\Service\DefaultContentPrototypeGenerator
   ui:
     label: i18n
     icon: 'icon-square-o'

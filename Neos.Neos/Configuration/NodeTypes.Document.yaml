@@ -14,8 +14,6 @@
       '*': false
       'Neos.Neos:Document': true
   options:
-    fusion:
-      prototypeGenerator: ~
     nodeCreationHandlers:
       documentTitle:
         nodeCreationHandler: 'Neos\Neos\Ui\NodeCreationHandler\DocumentTitleNodeCreationHandler'

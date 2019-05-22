@@ -7,7 +7,7 @@
 
 'Acme.Demo:ThreeColumn':
   superTypes:
-    'Neos.NodeTypes:Column': true
+    'Neos.Neos:Content': true
   ui:
     label: 'Three column content'
     group: 'structure'
