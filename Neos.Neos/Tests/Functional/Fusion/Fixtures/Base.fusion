@@ -5,14 +5,17 @@
 # Definition of custom Fusion types
 prototype(Acme.Demo:Text) < prototype(Neos.Neos:Content) {
   templatePath = ${fixturesDirectory + '/TextTemplate.html'}
+  text = ${q(node).property('text')}
 }
 
 prototype(Acme.Demo:Headline) < prototype(Neos.Neos:Content) {
   templatePath = ${fixturesDirectory + '/HeadlineTemplate.html'}
+  title = ${q(node).property('title')}
 }
 
 prototype(Acme.Demo:Html) < prototype(Neos.Neos:Content) {
   templatePath = ${fixturesDirectory + '/HtmlTemplate.html'}
+  source = ${q(node).property('source')}
 }
 
 prototype(Acme.Demo:AssetList) < prototype(Neos.Neos:Content) {
