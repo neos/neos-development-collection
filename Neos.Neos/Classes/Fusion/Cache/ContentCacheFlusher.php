@@ -166,9 +166,8 @@ class ContentCacheFlusher
             $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
             $this->registerNodeChange($node);
 
-            $this->registerChangeOnNodeType($reference->getNodeTypeName(), $reference->getNodeIdentifier());
-
             $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
+            // @see RuntimeContentCache.addTag
             $tagName = 'AssetDynamicTag_' . $assetIdentifier;
             $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because asset "%s" has changed.', $tagName, $assetIdentifier);
         }
@@ -195,7 +194,7 @@ class ContentCacheFlusher
      * @param AssetUsageInNodeProperties $assetUsage
      * @return ContentContext
      */
-    protected function getContextForReference(AssetUsageInNodeProperties $assetUsage)
+    protected function getContextForReference(AssetUsageInNodeProperties $assetUsage): ContentContext
     {
         $hash = md5(sprintf('%s-%s', $assetUsage->getWorkspaceName(), json_encode($assetUsage->getDimensionValues())));
         if (!isset($this->contexts[$hash])) {
