@@ -280,10 +280,8 @@ class ContentCacheFlusher
             $this->registerNodeChange($node);
 
             $workspaceHash = $cachingHelper->renderWorkspaceTagForContextNode($reference->getWorkspaceName());
-            $this->registerChangeOnNodeType($reference->getNodeTypeName(), $reference->getNodeIdentifier(), $workspaceHash);
-
             $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
-
+            // @see RuntimeContentCache.addTag
             $tagName = 'AssetDynamicTag_' . $workspaceHash . '_' . $assetIdentifier;
             $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because asset "%s" has changed.', $tagName, $assetIdentifier);
         }
