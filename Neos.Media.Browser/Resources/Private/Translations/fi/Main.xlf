@@ -26,6 +26,9 @@
       <trans-unit id="field.caption" xml:space="preserve" approved="yes">
 				<source>Caption</source>
 			<target state="translated">Kuvateksti</target></trans-unit>
+      <trans-unit id="field.copyrightnotice" xml:space="preserve">
+				<source>Copyright Notice</source>
+			<target state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified</source>
 			<target state="translated">Viimeksi muokattu</target></trans-unit>
