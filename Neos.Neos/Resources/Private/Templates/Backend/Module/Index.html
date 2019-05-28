@@ -27,18 +27,6 @@
 			<script src="{f:uri.resource(path: additionalResource)}"></script>
 		</f:for>
 	</f:if>
-
-	<script type="text/javascript">
-		// TODO: Get rid of those global variables
-		{neos:backend.javascriptConfiguration()}
-	</script>
-
-	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
-	<!-- TODO: Make sure the schema information and edit / preview panel data isn't necessary in backend modules -->
-	<link rel="neos-vieschema" href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
-	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
-	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
-	<link rel="neos-xliff" href="{f:uri.action(action: 'xliffAsJson', arguments: {locale: '{neos:backend.interfaceLanguage()}', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'Neos.Neos', absolute: true) -> f:format.raw()}" />
 </f:section>
 
 <f:section name="body">
@@ -71,44 +59,5 @@
 			</div>
 		</div>
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Neos.Twitter.Bootstrap')}"></script>
-		<script src="{f:uri.resource(path: 'Library/fixedsticky/fixedsticky.js', package: 'Neos.Neos')}"></script>
-
-		<script type="text/javascript">
-			(function($) {
-				$(function() {
-					$('.neos-footer').fixedsticky();
-				});
-			})(jQuery);
-		</script>
-
-		<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'Neos.Neos')}"></script>
-		<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
-			<f:then>
-				<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'Neos.Neos')}?bust={neos:backend.javascriptBuiltVersion()}"></script>
-			</f:then>
-			<f:else>
-				<script src="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'Neos.Neos')}"></script>
-			</f:else>
-		</f:if>
-
-		<script><![CDATA[
-			$(function() {
-				require(
-					{
-						baseUrl: 'resource://Neos.Neos/Public/JavaScript',
-						paths: requirePaths,
-						context: 'neos',
-						locale: 'en'
-					},
-					[
-						'Library/jquery-with-dependencies'
-					],
-					function($) {
-						$('[data-neos-toggle="popover"]').popover();
-						$('[data-neos-toggle="tooltip"]').tooltip();
-					}
-				)
-			});
-        ]]></script>
 	</body>
 </f:section>
