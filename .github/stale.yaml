@@ -1,6 +1,6 @@
 daysUntilStale: 90
 daysUntilClose: 14
-exemptLabels:
+exemptLabels: []
 staleLabel: stale
 only: pulls
 markComment: >
