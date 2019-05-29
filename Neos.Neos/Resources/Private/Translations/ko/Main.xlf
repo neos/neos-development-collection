@@ -772,7 +772,7 @@
 			<target state="needs-translation">Strikethrough</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
-			<target state="needs-translation">Link</target></trans-unit>
+			<target state="translated">링크:</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
 			<target state="needs-translation">Ordered list</target></trans-unit>
