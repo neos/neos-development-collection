@@ -81,6 +81,10 @@ class ArrayConverter extends AbstractTypeConverter
         if ($source instanceof ImageVariant) {
             $sourceChildPropertiesToBeConverted['adjustments'] = $source->getAdjustments();
         }
+        if ($source instanceof AssetInterface) {
+            $sourceChildPropertiesToBeConverted['tags'] = $source->getTags();
+            $sourceChildPropertiesToBeConverted['assetCollections'] = $source->getAssetCollections();
+        }
 
         return $sourceChildPropertiesToBeConverted;
     }
@@ -128,6 +132,12 @@ class ArrayConverter extends AbstractTypeConverter
                 if (!isset($convertedChildProperties['resource']) || !is_array($convertedChildProperties['resource'])) {
                     return null;
                 }
+                if (!isset($convertedChildProperties['tags']) || !is_array($convertedChildProperties['tags'])) {
+                    return null;
+                }
+                if (!isset($convertedChildProperties['assetCollections']) || !is_array($convertedChildProperties['assetCollections'])) {
+                    return null;
+                }
 
                 $convertedChildProperties['resource']['__identity'] = $this->persistenceManager->getIdentifierByObject($source->getResource());
 
@@ -137,7 +147,9 @@ class ArrayConverter extends AbstractTypeConverter
                     'title' => $source->getTitle(),
                     'copyrightNotice' => $source->getCopyrightNotice(),
                     'caption' => $source->getCaption(),
-                    'resource' => $convertedChildProperties['resource']
+                    'resource' => $convertedChildProperties['resource'],
+                    'tags' => $convertedChildProperties['tags'],
+                    'assetCollections' => $convertedChildProperties['assetCollections'],
                 ];
         }
     }
