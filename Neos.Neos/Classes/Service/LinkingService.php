@@ -316,7 +316,9 @@ class LinkingService
                 $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
             }
         } elseif ($absolute === true) {
-            $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+            if (substr($uri, 0, 7) !== 'http://' && substr($uri, 0, 8) !== 'https://') {
+                $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+            }
         }
 
         return $uri;
