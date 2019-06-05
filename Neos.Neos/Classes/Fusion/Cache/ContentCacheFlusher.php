@@ -264,20 +264,17 @@ class ContentCacheFlusher
             return;
         }
 
-        $cachingHelper = $this->getCachingHelper();
-
         foreach ($this->assetService->getUsageReferences($asset) as $reference) {
             if (!$reference instanceof AssetUsageInNodeProperties) {
                 continue;
             }
 
-            $workspaceHash = $cachingHelper->renderWorkspaceTagForContextNode($reference->getWorkspaceName());
             $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
             $this->registerNodeChange($node);
 
             $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
             // @see RuntimeContentCache.addTag
-            $tagName = 'AssetDynamicTag_' . $workspaceHash . '_' . $assetIdentifier;
+            $tagName = 'AssetDynamicTag_' . $assetIdentifier;
             $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because asset "%s" has changed.', $tagName, $assetIdentifier);
         }
     }
