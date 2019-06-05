@@ -23,7 +23,7 @@
 			<target state="translated">Mégsem</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target state="needs-translation">Back</target></trans-unit>
+			<target state="translated">Vissza</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			<target state="translated">Választás</target></trans-unit>
@@ -173,7 +173,7 @@
 			<target state="translated">Frissités</target></trans-unit>
       <trans-unit id="save" xml:space="preserve">
 				<source>Save</source>
-			<target state="needs-translation">Save</target></trans-unit>
+			<target state="translated">Mentés</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
 			<target state="translated">Mentés</target></trans-unit>
@@ -212,10 +212,10 @@
 			<target state="translated">Verzió</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
-			<target state="needs-translation">This operation cannot be undone.</target></trans-unit>
+			<target state="translated">Ez a művelet nem vonható vissza.</target></trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
-			<target state="translated">Eszköz</target></trans-unit>
+			<target state="translated">Tartalom</target><alt-trans><target>Eszköz</target></alt-trans></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
 			<target state="translated">Létrehozva</target></trans-unit>
@@ -227,10 +227,10 @@
 			<target state="translated">Utolsó közzététel</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
-			<target state="needs-translation">Identifier</target></trans-unit>
+			<target state="translated">Azonosító</target></trans-unit>
       <trans-unit id="name" xml:space="preserve">
 				<source>Name</source>
-			<target state="needs-translation">Name</target></trans-unit>
+			<target state="translated">Név</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
 			<target state="translated">Munkaterület</target></trans-unit>
@@ -287,67 +287,67 @@
 			<target state="translated">Elsődleges</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target state="needs-translation">Package</target></trans-unit>
+			<target state="translated">Csomag</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
-			<target state="needs-translation">Deactivated</target></trans-unit>
+			<target state="translated">Deaktiválva</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target state="needs-translation">Unavailable</target></trans-unit>
+			<target state="translated">Elérhetetlen</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target state="needs-translation">Inactive</target></trans-unit>
+			<target state="translated">Inaktív</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target state="needs-translation">Click to edit</target></trans-unit>
+			<target state="translated">Szerkesztés</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target state="needs-translation">Click to deactivate</target></trans-unit>
+			<target state="translated">Deaktiválás</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target state="needs-translation">Click to activate</target></trans-unit>
+			<target state="translated">Aktiválás</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
-			<target state="needs-translation">Click to delete</target></trans-unit>
+			<target state="translated">Kattintson ide a törléshez</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target state="needs-translation">Click to create new</target></trans-unit>
+			<target state="translated">Új létrehozása</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target state="needs-translation">Status</target></trans-unit>
+			<target state="translated">Állapot</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target state="needs-translation">Active</target></trans-unit>
+			<target state="translated">Aktív</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target state="needs-translation">Domains</target></trans-unit>
+			<target state="translated">Domainek</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target state="needs-translation">Domain</target></trans-unit>
+			<target state="translated">Domain</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target state="translated">Igen, töröl!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
-			<target state="needs-translation">Package Key</target></trans-unit>
+			<target state="translated">Csomagszám</target></trans-unit>
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
 			<target state="translated">Leírás</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target state="needs-translation">Toggle content tree</target></trans-unit>
+			<target state="translated">Tartalmi fa megnyitása/bezárása</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target state="needs-translation">Show publish options</target></trans-unit>
+			<target state="translated">Publikálási beállítások</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Teljes képernyős szerkesztési mód aktiválása</target></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Teljes képernyős szerkesztési mód kikapcsolása</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target state="needs-translation">Show preview</target></trans-unit>
+			<target state="translated">Előnézet</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -397,6 +397,9 @@
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target state="translated">Biztos benne, hogy elveti az összes módosítást ezen a munkaterületen?</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
+			<target state="translated">Biztos elvet {numberOfChanges} módosítást a munkafelületen?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target state="translated">Minden közzététele</target></trans-unit>
@@ -681,10 +684,10 @@
 			<target state="translated">Adatbázis hiba</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+			<target state="translated">Nincs adatbázis kapcsolat vagy a Neos adatbázis séma nem lett létrehozva.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+			<target state="translated">Futtassa a telepítőt az adatbázis beállításához.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target state="translated">Az oldal nem található</target></trans-unit>
@@ -693,25 +696,25 @@
 			<target state="translated">Nem található a kért cikk. (Automatic Translation).</target></trans-unit>
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
 				<source>Invalid NodeType</source>
-			<target state="needs-translation">Invalid NodeType</target></trans-unit>
+			<target state="translated">Érvénytelen csomópont</target></trans-unit>
       <trans-unit id="error.invalidNodeType.description" xml:space="preserve">
 				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
-			<target state="needs-translation">The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</target></trans-unit>
+			<target state="translated">A csomópont konfigurációja nem érhető el. Valószínűleg a csomópontot átnevezték és hiányzik a migrálás vagy egyszerűen elírta.</target></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
-			<target state="needs-translation">Unexpected error while creating node</target></trans-unit>
+			<target state="translated">Váratlan hiba a csomópont létrehozása során</target></trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
-			<target state="needs-translation">Unexpected error while deleting node</target></trans-unit>
+			<target state="translated">Váratlan hiba a csomópont törlése során</target></trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
 				<source>Unexpected error while updating node</source>
-			<target state="needs-translation">Unexpected error while updating node</target></trans-unit>
+			<target state="translated">Váratlan hiba a csomópont frissítése során</target></trans-unit>
       <trans-unit id="error.node.move.unexpected" xml:space="preserve">
 				<source>Unexpected error while moving node</source>
-			<target state="needs-translation">Unexpected error while moving node</target></trans-unit>
+			<target state="translated">Váratlan hiba a csomópont mozgatása során</target></trans-unit>
       <trans-unit id="error.nodeTree.load" xml:space="preserve">
 				<source>Node Tree loading error.</source>
-			<target state="needs-translation">Node Tree loading error.</target></trans-unit>
+			<target state="translated">Csomópont fa töltési hiba.</target></trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
@@ -719,99 +722,99 @@
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
-			<target state="needs-translation">"{nodeTypeName}" on page "{pageLabel}"</target></trans-unit>
+			<target state="translated">"{nodeTypeName}" oldalon "{pageLabel}"</target></trans-unit>
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve">
 				<source>Nodes</source>
 			<target state="translated">Csomópontok</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
-			<target state="needs-translation">Show</target></trans-unit>
+			<target state="translated">Mutat</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
 			<target state="translated">Ez a csomópont nem érhető el nyilvános URL-címen</target></trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
-			<target state="needs-translation">Node Properties</target></trans-unit>
+			<target state="translated">Csomópont tulajdonságai</target></trans-unit>
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
 				<source>Copy {source} to {target}</source>
-			<target state="needs-translation">Copy {source} to {target}</target></trans-unit>
+			<target state="translated">Másolás {source} {target}</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
-			<target state="needs-translation">Move {source} to {target}</target></trans-unit>
+			<target state="translated">Mozgatás {source} {target}</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target state="needs-translation">Please select the position at which you want {source} inserted relative to {target}.</target></trans-unit>
+			<target state="translated">Válassza ki azt a pozíciót, ahová {source} értékét kívánja beilleszteni {target}.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
-			<target state="needs-translation">Insert</target></trans-unit>
+			<target state="translated">Beszúrás</target></trans-unit>
       <trans-unit id="insertMode" xml:space="preserve">
 				<source>Insert mode</source>
-			<target state="needs-translation">Insert mode</target></trans-unit>
+			<target state="translated">Beszúrás mód</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target state="needs-translation">Choose an Aspect Ratio</target></trans-unit>
+			<target state="translated">Képarány</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
-			<target state="needs-translation">Bold</target></trans-unit>
+			<target state="translated">Vastag betűtípus</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
 				<source>Italic</source>
-			<target state="needs-translation">Italic</target></trans-unit>
+			<target state="translated">Dőlt betűtípus</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
 				<source>Underline</source>
-			<target state="needs-translation">Underline</target></trans-unit>
+			<target state="translated">Aláhúzott</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
-			<target state="needs-translation">Subscript</target></trans-unit>
+			<target state="translated">Alsó index</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
-			<target state="needs-translation">Superscript</target></trans-unit>
+			<target state="translated">Felső index</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
-			<target state="needs-translation">Strikethrough</target></trans-unit>
+			<target state="translated">Áthúzás</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
-			<target state="needs-translation">Link</target></trans-unit>
+			<target state="translated">Hivatkozás</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
-			<target state="needs-translation">Ordered list</target></trans-unit>
+			<target state="translated">Sorkizárt</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
 				<source>Unordered list</source>
-			<target state="needs-translation">Unordered list</target></trans-unit>
+			<target state="translated">Szétszort</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
 				<source>Align left</source>
-			<target state="needs-translation">Align left</target></trans-unit>
+			<target state="translated">Balra igazítás</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
 				<source>Align right</source>
-			<target state="needs-translation">Align right</target></trans-unit>
+			<target state="translated">Jobbra igazítás</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
 				<source>Align center</source>
-			<target state="needs-translation">Align center</target></trans-unit>
+			<target state="translated">Középre igazítás</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
 				<source>Align justify</source>
-			<target state="needs-translation">Align justify</target></trans-unit>
+			<target state="translated">Sorkizárt</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
 				<source>Table</source>
-			<target state="needs-translation">Table</target></trans-unit>
+			<target state="translated">Asztal</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
 				<source>Remove format</source>
-			<target state="needs-translation">Remove format</target></trans-unit>
+			<target state="translated">Formázás eltávolítása</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target state="needs-translation">Outdent</target></trans-unit>
+			<target state="translated">Befejezés</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target state="needs-translation">Indent</target></trans-unit>
+			<target state="translated">Bekezdés</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target state="translated">Új létrehozása</target></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
-			<target state="needs-translation">No matches found</target></trans-unit>
+			<target state="translated">Nincs egyezés</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target state="needs-translation">Please enter ###CHARACTERS### more character</target></trans-unit>
+			<target state="translated">Kérjük adjon meg ###CHARACTERS### több karaktert</target></trans-unit>
     </body>
   </file>
 </xliff>
