@@ -335,19 +335,19 @@
 			<target state="translated">Açıklama</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
-			<target state="needs-translation">Toggle content tree</target></trans-unit>
+			<target state="translated">İçerik ağacı</target></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve">
 				<source>Show publish options</source>
-			<target state="needs-translation">Show publish options</target></trans-unit>
+			<target state="translated">Yayınlama seçeneklerini göster</target></trans-unit>
       <trans-unit id="activateFullscreen" xml:space="preserve">
 				<source>Activate Fullscreen edit mode</source>
-			<target state="needs-translation">Activate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Tam ekran düzenleme seçeneğini aktif et</target></trans-unit>
       <trans-unit id="deactivateFullscreen" xml:space="preserve">
 				<source>Deactivate Fullscreen edit mode</source>
-			<target state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
+			<target state="translated">Tam ekran düzenleme seçeneğini kapat</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target state="needs-translation">Show preview</target></trans-unit>
+			<target state="translated">Ön izlemeyi göster</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -397,6 +397,9 @@
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target state="translated">Bu çalışma alanındaki tüm değişiklikleri iptal etmek istediğinizden emin misiniz?</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
+			<target state="translated">Bu çalışma alanındaki ({numberOfChanges} tane) değişikliği geri almak istediğinden emin misin?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
 			<target state="translated">Tümünü yayımla</target></trans-unit>
@@ -681,10 +684,10 @@
 			<target state="translated">Veri tabanı hatası</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target state="needs-translation">There is no database connection yet or the Neos database schema has not been created.</target></trans-unit>
+			<target state="translated">Herhangi bir veri bağlantısı yok yada Neos veri tabanını oluşturulmamış.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
-			<target state="needs-translation">Run the setup to configure your database.</target></trans-unit>
+			<target state="translated">Veritabanınızı yapılandırmak için kurulumu çalıştırın.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target state="translated">Sayfa bulunamadı</target></trans-unit>

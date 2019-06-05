@@ -73,7 +73,7 @@
 			<target state="translated">Вид</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target state="translated">View asset</target></trans-unit>
+			<target state="translated">Показать актив</target><alt-trans><target>View asset</target></alt-trans></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target state="translated">Редактировать медиа-ресурс</target><alt-trans><target>Редактировать ресурс</target></alt-trans><alt-trans><target>Править медиа-ресурс</target></alt-trans></trans-unit>
@@ -184,13 +184,13 @@
 			<target state="translated">Отображать в виде миниатюр</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target state="translated">Connection error</target></trans-unit>
+			<target state="translated">Ошибка соединения</target><alt-trans><target>Connection error</target></alt-trans></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target state="translated">Media source</target></trans-unit>
+			<target state="translated">Медиа источник</target><alt-trans><target>Media source</target></alt-trans></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target state="translated">Media sources</target></trans-unit>
+			<target state="translated">Медиа источник</target><alt-trans><target>Media sources</target></alt-trans></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target state="translated">Коллекции</target></trans-unit>
