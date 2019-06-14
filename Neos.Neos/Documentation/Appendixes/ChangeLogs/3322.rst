@@ -1,0 +1,105 @@
+`3.3.22 (2019-06-14) <https://github.com/neos/neos-development-collection/releases/tag/3.3.22>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Flush affected document node on asset change <https://github.com/neos/neos-development-collection/pull/2527>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When an asset is replaced, the content cache is flushed, but in most
+cases this does not have an effect. As most content nodes do not have
+a cache entry, the cache entry higher in the chain needs to be
+flushed.
+
+This is now done by fetching the affected node for an asset usage and
+passing that to `registerNodeChange(…)` in the `ContentCacheFlusher`.
+
+Fixes #2061
+
+* Packages: ``BaseMixins`` ``Navigation`` ``Neos``
+
+`BUGFIX: Changed Domains by UriConstraints will not no longer get destroyed by the LinkingService <https://github.com/neos/neos-development-collection/pull/2523>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+With `UriConstraints` we have the ability to modify the Host but there is a problem with the `LinkingService` in combination with `UriConstraints`. If you ask the `LinkingService` for a absolut Uri then it add the current base to the Url.
+
+Fixes #2398
+
+* Packages: ``Neos``
+
+`BUGFIX: node label sanitizing regex strips characters <https://github.com/neos/neos-development-collection/pull/2524>`_
+------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+[[^:print:]] resulted in the characters print: followed by ] being removed from the node label. Non-printable characters should be matched with [^[:print:]].
+
+Resolves neos/neos-ui#2496
+
+**How to verify it**
+Output node labels normally including n], i] etc. e.g. in the document tree.
+
+This PR replaces and closes #2515 which was targeting master.
+
+* Packages: ``Neos``
+
+`BUGFIX: Adjust warning text in setup <https://github.com/neos/neos-development-collection/pull/2510>`_
+-------------------------------------------------------------------------------------------------------
+
+Fixes Issue #2488
+In this PR I adjusted the somewhat missleading warning text, which is displayed in the image driver setup step, if none of the requiered drivers is installed. Additionaly I added some javascript to the image driver and the database configuration step in the setup package to disable the next button, if an error message is shown. See the PR https://github.com/neos/setup/pull/53
+
+* Packages: ``Neos``
+
+`BUGFIX: Workspace review module no longer shows target dimension <https://github.com/neos/neos-development-collection/pull/2509>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Fix the behaviour Workspace review module don't shows target dimension
+
+Fixes #2423
+
+* Packages: ``BaseMixins`` ``Browser`` ``Neos``
+
+`BUGFIX: Assigned asset collections cannot be unassigned <https://github.com/neos/neos-development-collection/pull/2502>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Fix the behaviour when the asset can't be unassigned from collections
+
+Fixes #2473
+
+`BUGFIX: Make exception for non renderable fusion path more helpful <https://github.com/neos/neos-development-collection/pull/2489>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+The existing exception for non renderable fusion pathes was not very helpful hard to read and missed mentioning likely reasons like a typo in the prototype name. It also suggested a solution that is unlikely to fix the problem.
+
+With this change the prototype name is moved to the front of the error message
+as it is the most important information.
+
+The path is removed from the message-body as the fusion exception handler will render it anyway.
+
+The most likely reasons typo + missing prototype are mentioned first and other possible reasons
+like missing parent-protopype, missing `@class` and missing `include:` later.
+
+The proposed solution to inherit from `Neos.Fusion:Template` is removed as it was misleading
+
+* Packages: ``Browser`` ``Fusion`` ``Neos``
+
+`[TASK] Create .codeclimate.yml <https://github.com/neos/neos-development-collection/pull/6>`_
+----------------------------------------------------------------------------------------------
+
+Adds a codeclimate configuration excluding Migrations, Tests and
+JavaScript libraries.
+
+* Packages: ``Browser`` ``Neos``
+
+`Bugfix: Do access objects by key 0 in canEvaluate() of sort-operation <https://github.com/neos/neos-development-collection/pull/2474>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+For the current use of the sort operation, the element with key 0 must be present in $context. But this is not necessary for the sort itself. Consequently, the sort operation does not work using arrays without key 0. 
+
+Access via pointer avoids this problem in this PR.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.3.21...3.3.22>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
