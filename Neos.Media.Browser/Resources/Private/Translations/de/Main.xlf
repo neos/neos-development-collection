@@ -59,10 +59,10 @@
       <trans-unit id="sortDirection.desc" xml:space="preserve" approved="yes">
 				<source>Descending</source>
 			<target state="translated">Absteigend</target><alt-trans><target>Absteigende Reihenfolge</target></alt-trans></trans-unit>
-      <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
+      <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve" approved="yes">
 				<source>Sort direction Ascending</source>
 			<target state="translated">Sortierrichtung Aufsteigend</target></trans-unit>
-      <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
+      <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve" approved="yes">
 				<source>Sort direction Descending</source>
 			<target state="translated">Sortierrichtung Absteigend</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
@@ -86,13 +86,13 @@
       <trans-unit id="message.reallyDeleteCollection" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete collection "{0}"?</source>
 			<target state="translated">Wollen Sie die Sammlung "{0}" wirklich löschen?</target></trans-unit>
-      <trans-unit id="message.reallyDeleteTag" xml:space="preserve">
+      <trans-unit id="message.reallyDeleteTag" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete tag "{0}"?</source>
 			<target state="translated">Wollen Sie das Tag "{0}" wirklich löschen?</target></trans-unit>
-      <trans-unit id="message.willBeDeleted" xml:space="preserve">
+      <trans-unit id="message.willBeDeleted" xml:space="preserve" approved="yes">
 				<source>This will delete the asset.</source>
 			<target state="translated">Dadurch wird das Asset gelöscht.</target></trans-unit>
-      <trans-unit id="message.willDeleteCollection" xml:space="preserve">
+      <trans-unit id="message.willDeleteCollection" xml:space="preserve" approved="yes">
 				<source>This will delete the collection, but not the assets that it contains.</source>
 			<target state="translated">Dadurch wird die Sammlung gelöscht, aber nicht die darin enthaltenen Assets.</target></trans-unit>
       <trans-unit id="message.willDeleteTag" xml:space="preserve" approved="yes">
@@ -107,7 +107,7 @@
       <trans-unit id="replace" xml:space="preserve" approved="yes">
 				<source>Replace</source>
 			<target state="translated">Ersetzen</target></trans-unit>
-      <trans-unit id="replaceAssetResource" xml:space="preserve">
+      <trans-unit id="replaceAssetResource" xml:space="preserve" approved="yes">
 				<source>Replace asset resource</source>
 			<target state="translated">Ressource ersetzen</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
@@ -314,7 +314,7 @@
       <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target state="translated">Datei kann nicht hochgeladen werden</target></trans-unit>
-      <trans-unit id="noFileSelected" xml:space="preserve">
+      <trans-unit id="noFileSelected" xml:space="preserve" approved="yes">
 				<source>No file selected</source>
 			<target state="translated">Keine Datei ausgewählt</target></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
@@ -351,31 +351,31 @@
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
 			<target state="translated">Verweise auf "{asset}"</target><alt-trans><target>Verweist auf "{asset}"</target></alt-trans></trans-unit>
-      <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
+      <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve" approved="yes">
 				<source>Replace "{filename}"</source>
-			<target state="translated">Datei "{filename}" ersetzen</target></trans-unit>
-      <trans-unit id="replaceAsset.description" xml:space="preserve">
+			<target state="translated">"{filename}" ersetzen</target><alt-trans><target>Datei "{filename}" ersetzen</target></alt-trans></trans-unit>
+      <trans-unit id="replaceAsset.description" xml:space="preserve" approved="yes">
 				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
 			<target state="translated">Sie können durch Hochladen einer neuen Datei die Vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target></trans-unit>
-      <trans-unit id="replaceAsset.note" xml:space="preserve">
+      <trans-unit id="replaceAsset.note" xml:space="preserve" approved="yes">
 				<source>Note</source>
 			<target state="translated">Hinweis</target></trans-unit>
-      <trans-unit id="replaceAsset.noteText" xml:space="preserve">
+      <trans-unit id="replaceAsset.noteText" xml:space="preserve" approved="yes">
 				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
 			<target state="translated">Diese Aktion wird die Datei in allen veröffentlichten und unveröffentlichten Arbeitsbereichen ersetzen, inklusive der Live-Website.</target></trans-unit>
-      <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
+      <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve" approved="yes">
 				<source>Choose a new file</source>
 			<target state="translated">Neue Datei auswählen</target></trans-unit>
-      <trans-unit id="replace.usageCount" xml:space="preserve">
+      <trans-unit id="replace.usageCount" xml:space="preserve" approved="yes">
 				<source>Currently the asset is used {usageCount} times.</source>
-			<target state="translated">Derzeit wird die Datei {usageCount} Mal verwendet.</target></trans-unit>
-      <trans-unit id="replace.allUsages" xml:space="preserve">
+			<target state="translated">Derzeit wird die Datei {usageCount} mal verwendet.</target><alt-trans><target>Derzeit wird die Datei {usageCount} Mal verwendet.</target></alt-trans></trans-unit>
+      <trans-unit id="replace.allUsages" xml:space="preserve" approved="yes">
 				<source>Show all usages</source>
 			<target state="translated">Zeige alle Verwendungen</target></trans-unit>
-      <trans-unit id="replace.notUsed" xml:space="preserve">
+      <trans-unit id="replace.notUsed" xml:space="preserve" approved="yes">
 				<source>Currently the asset is not in used anywhere on the website.</source>
 			<target state="translated">Derzeit wird die Datei auf der Website nicht verwendet.</target></trans-unit>
-      <trans-unit id="replace.previewFile" xml:space="preserve">
+      <trans-unit id="replace.previewFile" xml:space="preserve" approved="yes">
 				<source>Preview current file</source>
 			<target state="translated">Vorschau der aktuellen Datei</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve" approved="yes">
@@ -420,13 +420,13 @@
       <trans-unit id="replace.options.generateRedirects" xml:space="preserve" approved="yes">
 				<source>Generate redirects from original file url to the new url</source>
 			<target state="translated">Erstelle Weiterleitungen vom ursprünglichen Dateipfad auf die neue URL</target><alt-trans><target>Erstelle Redirects von der Original-URL auf die Neue</target></alt-trans></trans-unit>
-      <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
+      <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve" approved="yes">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target state="translated">'Eine Ressource vom Typ "{0}" kann nur mit einer Ressource ähnlichen Typs ersetzt werden. Typ "{1}" erkannt'</target></trans-unit>
-      <trans-unit id="noAccessToWorkspace" xml:space="preserve">
+			<target state="translated">'Ressourcen vom Typ "{0}" können nur mit Ressourcen ähnlichen Typs ersetzt werden. Typ "{1}" erkannt'</target><alt-trans><target>'Eine Ressource vom Typ "{0}" kann nur mit einer Ressource ähnlichen Typs ersetzt werden. Typ "{1}" erkannt'</target></alt-trans></trans-unit>
+      <trans-unit id="noAccessToWorkspace" xml:space="preserve" approved="yes">
 				<source>No access to workspace "{0}"</source>
 			<target state="translated">Kein Zugriff auf den Arbeitsbereich "{0}"</target></trans-unit>
-      <trans-unit id="missingDocumentNode" xml:space="preserve">
+      <trans-unit id="missingDocumentNode" xml:space="preserve" approved="yes">
 				<source>No document node found for this node</source>
 			<target state="translated">Kein Dokumentknoten für diesen Knoten gefunden</target></trans-unit>
     </body>
