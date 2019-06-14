@@ -285,46 +285,46 @@
       <trans-unit id="primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
 			<target state="translated">Primär</target></trans-unit>
-      <trans-unit id="package" xml:space="preserve">
+      <trans-unit id="package" xml:space="preserve" approved="yes">
 				<source>Package</source>
 			<target state="translated">Paket</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve" approved="yes">
 				<source>Deactivated</source>
 			<target state="translated">Deaktiviert</target></trans-unit>
-      <trans-unit id="unavailable" xml:space="preserve">
+      <trans-unit id="unavailable" xml:space="preserve" approved="yes">
 				<source>Unavailable</source>
 			<target state="translated">Nicht verfügbar</target></trans-unit>
-      <trans-unit id="inactive" xml:space="preserve">
+      <trans-unit id="inactive" xml:space="preserve" approved="yes">
 				<source>Inactive</source>
 			<target state="translated">Deaktiviert</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
 				<source>Click to edit</source>
 			<target state="translated">Zum Bearbeiten klicken</target></trans-unit>
-      <trans-unit id="clickToDeactivate" xml:space="preserve">
+      <trans-unit id="clickToDeactivate" xml:space="preserve" approved="yes">
 				<source>Click to deactivate</source>
 			<target state="translated">Klicken zum Deaktivieren</target></trans-unit>
-      <trans-unit id="clickToActivate" xml:space="preserve">
+      <trans-unit id="clickToActivate" xml:space="preserve" approved="yes">
 				<source>Click to activate</source>
 			<target state="translated">Klicken zum Aktivieren</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
 				<source>Click to delete</source>
 			<target state="translated">Klicken zum Löschen</target></trans-unit>
-      <trans-unit id="clickToCreate" xml:space="preserve">
+      <trans-unit id="clickToCreate" xml:space="preserve" approved="yes">
 				<source>Click to create new</source>
 			<target state="translated">Klicken zur Neuerstellung</target></trans-unit>
-      <trans-unit id="state" xml:space="preserve">
+      <trans-unit id="state" xml:space="preserve" approved="yes">
 				<source>Status</source>
 			<target state="translated">Status</target></trans-unit>
-      <trans-unit id="active" xml:space="preserve">
+      <trans-unit id="active" xml:space="preserve" approved="yes">
 				<source>Active</source>
 			<target state="translated">Aktiv</target></trans-unit>
-      <trans-unit id="domains" xml:space="preserve">
+      <trans-unit id="domains" xml:space="preserve" approved="yes">
 				<source>Domains</source>
 			<target state="translated">Domains</target></trans-unit>
-      <trans-unit id="domain" xml:space="preserve">
+      <trans-unit id="domain" xml:space="preserve" approved="yes">
 				<source>Domain</source>
 			<target state="translated">Domain</target></trans-unit>
-      <trans-unit id="deleteConfirm" xml:space="preserve">
+      <trans-unit id="deleteConfirm" xml:space="preserve" approved="yes">
 				<source>Yes, delete it!</source>
 			<target state="translated">Ja, wirklich löschen!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve" approved="yes">
@@ -397,6 +397,9 @@
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target state="translated">Sind Sie sicher, dass Sie alle Änderungen in diesem Workspace verwerfen möchten?</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve" approved="yes">
+				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
+			<target state="translated">Sind Sie sicher, dass Sie {numberOfChanges} Änderung(en) in diesem Arbeitsbereich verwerfen möchten?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
 				<source>Publish all</source>
 			<target state="translated">Alles veröffentlichen</target><alt-trans><target>Alle veröffentlichen</target></alt-trans></trans-unit>
@@ -499,15 +502,15 @@
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve" approved="yes">
 				<source>The given value was not a valid date.</source>
 			<target state="translated">Der angegebene Wert ist kein gültiges Datum.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve" approved="yes">
 				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
-			<target state="translated">Das angegebene Datum muss zwischen {{formatEarliestDate}} und {{formatLatestDate}} liegen</target><alt-trans><target>Das angegebene Datum muss zwischen {formatEarliestDate} und {formatLatestDate} liegen</target></alt-trans></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
+			<target state="translated">Das angegebene Datum muss zwischen {formatEarliestDate} und {formatLatestDate} liegen</target><alt-trans><target>Das angegebene Datum muss zwischen {{formatEarliestDate}} und {{formatLatestDate}} liegen</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve" approved="yes">
 				<source>The given date must be after {formatEarliestDate}</source>
-			<target state="translated">Das angegebene Datum muss nach {{formatEarliestDate}} liegen</target><alt-trans><target>Das angegebene Datum muss nach {formatEarliestDate} liegen</target></alt-trans></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
+			<target state="translated">Das angegebene Datum muss nach {formatEarliestDate} liegen</target><alt-trans><target>Das angegebene Datum muss nach {{formatEarliestDate}} liegen</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve" approved="yes">
 				<source>The given date must be before {formatLatestDate}</source>
-			<target state="translated">Das angegebene Datum muss vor {{formatLatestDate}} liegen</target><alt-trans><target>Das angegebene Datum muss vor {formatLatestDate} liegen</target></alt-trans></trans-unit>
+			<target state="translated">Das angegebene Datum muss vor {formatLatestDate} liegen</target><alt-trans><target>Das angegebene Datum muss vor {{formatLatestDate}} liegen</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address.</source>
 			<target state="translated">Bitte geben Sie eine gültige E-Mail-Adresse an.</target></trans-unit>
@@ -568,9 +571,9 @@
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve" approved="yes">
 				<source>Toggle menu group</source>
 			<target state="translated">Menügruppe umschalten</target></trans-unit>
-      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
+      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve" approved="yes">
 				<source>Toggle sticky menu mode</source>
-			<target state="translated">Sticky Menu verbergen / anzeigen</target><alt-trans><target>Festes Menü verbergen / anzeigen</target></alt-trans></trans-unit>
+			<target state="translated">Festes Menü verbergen / anzeigen</target><alt-trans><target>Sticky Menu verbergen / anzeigen</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
 			<target state="translated">Möchten Sie das Element wirklich löschen</target></trans-unit>
@@ -681,7 +684,7 @@
 			<target state="translated">Datenbankfehler</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>There is no database connection yet or the Neos database schema has not been created.</source>
-			<target state="translated">Es gibt noch keine Datenbankverbindung oder das Neos-Datenbankschema wurde noch nicht erstellt.</target></trans-unit>
+			<target state="translated">Es konnte keine Datenbankverbindung hergestellt werden oder das Neos Datenbankschema wurde noch nicht erstellt.</target><alt-trans><target>Es gibt noch keine Datenbankverbindung oder das Neos-Datenbankschema wurde noch nicht erstellt.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>Run the setup to configure your database.</source>
 			<target state="translated">Führen Sie das Setup aus, um die Datenbank zu konfigurieren.</target></trans-unit>
@@ -737,49 +740,49 @@
       <trans-unit id="copy__from__to--title" xml:space="preserve" approved="yes">
 				<source>Copy {source} to {target}</source>
 			<target state="translated">{source} zu {target} kopieren</target></trans-unit>
-      <trans-unit id="move__from__to--title" xml:space="preserve">
+      <trans-unit id="move__from__to--title" xml:space="preserve" approved="yes">
 				<source>Move {source} to {target}</source>
 			<target state="translated">{source} zu {target} verschieben</target></trans-unit>
-      <trans-unit id="copy__from__to--description" xml:space="preserve">
+      <trans-unit id="copy__from__to--description" xml:space="preserve" approved="yes">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
 			<target state="translated">Bitte wählen Sie die Position an der Sie {source} relativ zu {target} Einfügen möchten.</target></trans-unit>
-      <trans-unit id="insert" xml:space="preserve">
+      <trans-unit id="insert" xml:space="preserve" approved="yes">
 				<source>Insert</source>
 			<target state="translated">Einfügen</target></trans-unit>
-      <trans-unit id="insertMode" xml:space="preserve">
+      <trans-unit id="insertMode" xml:space="preserve" approved="yes">
 				<source>Insert mode</source>
 			<target state="translated">Einfügemodus</target></trans-unit>
-      <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
+      <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve" approved="yes">
 				<source>Choose an Aspect Ratio</source>
 			<target state="translated">Wählen Sie ein Seitenverhältnis</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve" approved="yes">
 				<source>Bold</source>
 			<target state="translated">Fett</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve" approved="yes">
 				<source>Italic</source>
 			<target state="translated">Kursiv</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve" approved="yes">
 				<source>Underline</source>
 			<target state="translated">Unterstrichen</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve" approved="yes">
 				<source>Subscript</source>
 			<target state="translated">Tiefgestellt</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve" approved="yes">
 				<source>Superscript</source>
 			<target state="translated">Hochgestellt</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve" approved="yes">
 				<source>Strikethrough</source>
 			<target state="translated">Durchgestrichen</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve" approved="yes">
 				<source>Link</source>
 			<target state="translated">Link</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve" approved="yes">
 				<source>Ordered list</source>
 			<target state="translated">Geordnete Liste</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve" approved="yes">
 				<source>Unordered list</source>
 			<target state="translated">Ungeordnete Liste</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve" approved="yes">
 				<source>Align left</source>
 			<target state="translated">Linksbündig</target><alt-trans><target>Links ausrichten</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve" approved="yes">
@@ -788,28 +791,28 @@
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve" approved="yes">
 				<source>Align center</source>
 			<target state="translated">Zentriert</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve" approved="yes">
 				<source>Align justify</source>
 			<target state="translated">Blocksatz</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve" approved="yes">
 				<source>Table</source>
 			<target state="translated">Tabelle</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve" approved="yes">
 				<source>Remove format</source>
 			<target state="translated">Format entfernen</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve" approved="yes">
 				<source>Outdent</source>
 			<target state="translated">Einzug verringern</target></trans-unit>
-      <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
+      <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve" approved="yes">
 				<source>Indent</source>
 			<target state="translated">Einzug vergrößern</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve" approved="yes">
 				<source>Create new</source>
 			<target state="translated">Neu erstellen</target><alt-trans><target>Neues Element erstellen</target></alt-trans></trans-unit>
-      <trans-unit id="noMatchesFound" xml:space="preserve">
+      <trans-unit id="noMatchesFound" xml:space="preserve" approved="yes">
 				<source>No matches found</source>
 			<target state="translated">Keine Treffer gefunden</target></trans-unit>
-      <trans-unit id="searchBoxLeftToType" xml:space="preserve">
+      <trans-unit id="searchBoxLeftToType" xml:space="preserve" approved="yes">
 				<source>Please enter ###CHARACTERS### more character</source>
 			<target state="translated">Bitte geben Sie ###CHARACTERS### mehr Zeichen ein</target></trans-unit>
     </body>
