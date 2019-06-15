@@ -11,7 +11,6 @@ namespace Neos\Neos\Tests\Functional\Configuration;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Tests\Functional\Configuration\ConfigurationValidationTest as FlowConfigurationValidationTest;
 
 /**
