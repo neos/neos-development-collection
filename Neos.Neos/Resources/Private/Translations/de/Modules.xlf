@@ -542,12 +542,12 @@
       <trans-unit id="sites.add" xml:space="preserve" approved="yes">
 				<source>Add new site</source>
 			<target state="translated">Neue Seite hinzufügen</target></trans-unit>
-      <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
+      <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target state="translated">Website erstellen</target><alt-trans><target>Seite erstellen</target></alt-trans></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve" approved="yes">
 				<source>Create a new site</source>
-			<target state="translated">Neue Webseite erstellen</target><alt-trans><target>Eine neue Seite erstellen</target></alt-trans></trans-unit>
+			<target state="translated">Neue Website erstellen</target><alt-trans><target>Neue Webseite erstellen</target></alt-trans><alt-trans><target>Eine neue Seite erstellen</target></alt-trans></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve" approved="yes">
 				<source>Root node name</source>
 			<target state="translated">Wurzelknoten Name</target></trans-unit>
