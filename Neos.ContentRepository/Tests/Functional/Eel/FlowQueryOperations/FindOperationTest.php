@@ -156,6 +156,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findByNodeIdentifierReturnsCorrectNodeInContext()
     {
+        $this->authenticateRoles(['Neos.ContentRepository:TestingAdministrator']);
         $q = new FlowQuery([$this->node]);
         $foundNode = $q->find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')->get(0);
         $this->assertSame($this->node->getNode('about-us'), $foundNode);
@@ -286,6 +287,7 @@ class FindOperationTest extends AbstractNodeTest
      */
     public function findByMultipleNodesReturnsMatchingNodesForAllNodes()
     {
+        $this->authenticateRoles(['Neos.ContentRepository:TestingAdministrator']);
         $testContext = $this->contextFactory->create(['workspaceName' => 'test']);
         $testNodeA = $testContext->getNode('/sites/example/home/main/dummy44');
         $testNodeB = $testContext->getNode('/sites/example/home/main/dummy45');
