@@ -1,0 +1,18 @@
+`3.0.20 (2019-06-17) <https://github.com/neos/neos-development-collection/releases/tag/3.0.20>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Do not cache non-existing accounts <https://github.com/neos/neos-development-collection/pull/2247>`_
+-------------------------------------------------------------------------------------------------------------
+
+When creating a new user and retrieving it within the same request from the user service will result in `null` even though, the user has been created successfully. This happens because of an error in the internal runtime cache. 
+
+This regression was introduced in:
+https://github.com/neos/neos-development-collection/commit/`dce483f9b0d17e3478777270eadebebbaca0d2dd <https://github.com/neos/neos-development-collection/commit/dce483f9b0d17e3478777270eadebebbaca0d2dd>`_
+
+Since this is broken in the most recent bugfix release, I would like to propose to merge this into 2.3. (which is otherwise only open for security fixes).
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.0.19...3.0.20>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
