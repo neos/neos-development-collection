@@ -450,7 +450,7 @@ class Runtime
 
         try {
             if ($this->hasExpressionOrValue($fusionConfiguration)) {
-                return $this->evaluteExpressionOrValueInternal($fusionPath, $fusionConfiguration, $cacheContext, $contextObject);
+                return $this->evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $cacheContext, $contextObject);
             }
             $needToPopApply = $this->prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration);
             $fusionObject = $this->instantiatefusionObject($fusionPath, $fusionConfiguration);
@@ -520,7 +520,7 @@ class Runtime
      * @param mixed $contextObject
      * @return mixed
      */
-    protected function evaluteExpressionOrValueInternal($fusionPath, $fusionConfiguration, $cacheContext, $contextObject)
+    protected function evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $cacheContext, $contextObject)
     {
         if ($this->evaluateIfCondition($fusionConfiguration, $fusionPath, $contextObject) === false) {
             $this->finalizePathEvaluation($cacheContext);
