@@ -120,12 +120,8 @@ final class ContentGraph implements ContentGraphInterface
 
         $query = 'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint AS covereddimensionspacepoint FROM neos_contentgraph_node n
                       JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-                      JOIN neos_contentgraph_restrictionrelation r
                       WHERE h.contentstreamidentifier = :contentStreamIdentifier
                       AND h.parentnodeanchor = :rootEdgeParentAnchorIdentifier
-                      AND r.dimensionspacepointhash = h.dimensionspacepointhash
-                      AND r.originnodeaggregateidentifier = n.nodeAggregateIdentifier
-                      AND r.affectednodeaggregateidentifier = n.nodeAggregateIdentifier
                       AND n.nodetypename = :nodeTypeName';
 
         $parameters = [
