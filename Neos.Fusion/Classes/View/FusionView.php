@@ -37,7 +37,7 @@ class FusionView extends AbstractView
      * @var array
      */
     protected $supportedOptions = [
-        'fusionPathPatterns' => [['resource://@package/Private/Fusion/Root.fusion'], 'Fusion files will be recursively loaded from this paths.', 'array'],
+        'fusionPathPatterns' => [['resource://@package/Private/Fusion'], 'Fusion files that will be loaded if directories are given the Root.fusion is used.', 'array'],
         'fusionPath' => [null, 'The Fusion path which should be rendered; derived from the controller and action names or set by the user.', 'string'],
         'packageKey' => [null, 'The package key where the Fusion should be loaded from. If not given, is automatically derived from the current request.', 'string'],
         'debugMode' => [false, 'Flag to enable debug mode of the Fusion runtime explicitly (overriding the global setting).', 'boolean'],
@@ -181,6 +181,9 @@ class FusionView extends AbstractView
         $fusionPathPatterns = $this->getOption('fusionPathPatterns');
         foreach ($fusionPathPatterns as $fusionPathPattern) {
             $fusionPathPattern = str_replace('@package', $this->getPackageKey(), $fusionPathPattern);
+            if (is_dir($fusionPathPattern)) {
+                $fusionPathPattern .= '/Root.fusion';
+            }
             if (file_exists($fusionPathPattern)) {
                 $parsedFusion = $this->fusionParser->parse(file_get_contents($fusionPathPattern), $fusionPathPattern, $parsedFusion);
             }
