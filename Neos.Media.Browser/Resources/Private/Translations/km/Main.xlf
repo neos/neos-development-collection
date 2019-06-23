@@ -27,9 +27,6 @@
 				<source>Caption</source>
 			<target state="translated">
 ចំណងជើង</target></trans-unit>
-      <trans-unit id="field.copyrightnotice" xml:space="preserve">
-				<source>Copyright Notice</source>
-			<target state="needs-translation">Copyright Notice</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified</source>
 			<target state="translated">ការកែប្រែចុងក្រោយ</target></trans-unit>
