@@ -238,7 +238,10 @@ class UserService
         if ($this->securityContext->canBeInitialized() === true) {
             $account = $this->securityContext->getAccount();
             if ($account !== null) {
-                return $this->getUser($account->getAccountIdentifier());
+                return $this->getUser(
+                    $account->getAccountIdentifier(),
+                    $account->getAuthenticationProviderName()
+                );
             }
         }
 
