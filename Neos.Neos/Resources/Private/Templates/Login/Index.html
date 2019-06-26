@@ -2,6 +2,7 @@
 <f:layout name="Default" />
 
 <f:section name="head">
+	<meta name="robots" content="noindex">
 	<title><neos:backend.translate id="login.index.title">Login to</neos:backend.translate> {site.name}</title>
 	<f:for each="{styles}" as="style">
 		<link rel="stylesheet" href="{f:uri.resource(path: style)}" />
