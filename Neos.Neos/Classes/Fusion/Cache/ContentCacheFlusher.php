@@ -14,6 +14,7 @@ namespace Neos\Neos\Fusion\Cache;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
@@ -80,6 +81,12 @@ class ContentCacheFlusher
      * @var ContentContext[]
      */
     protected $contexts = [];
+
+    /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
 
     /**
      * Register a node change for a later cache flush. This method is triggered by a signal sent via ContentRepository's Node
@@ -163,7 +170,9 @@ class ContentCacheFlusher
                 continue;
             }
 
-            $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
+            $this->securityContext->withoutAuthorizationChecks(function () use ($reference, &$node) {
+                $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
+            });
             $this->registerNodeChange($node);
 
             $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
