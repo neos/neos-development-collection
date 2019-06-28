@@ -130,7 +130,6 @@ class RenderViewHelper extends AbstractViewHelper
     {
         $this->fusionView = new FusionView();
         $this->fusionView->setControllerContext($this->controllerContext);
-        $this->fusionView->disableFallbackView();
         if ($this->hasArgument('fusionFilePathPattern')) {
             $this->fusionView->setFusionPathPattern($this->arguments['fusionFilePathPattern']);
         }
