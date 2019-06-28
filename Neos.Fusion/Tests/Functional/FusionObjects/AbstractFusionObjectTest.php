@@ -54,7 +54,6 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
         );
 
         $view->setControllerContext($this->controllerContext);
-        $view->disableFallbackView();
         $view->setPackageKey('Neos.Fusion');
         $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
         $view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
