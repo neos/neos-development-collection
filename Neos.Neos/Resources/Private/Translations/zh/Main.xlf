@@ -89,13 +89,13 @@
 			<target state="translated">取消隐藏</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target state="needs-translation">into</target></trans-unit>
+			<target state="translated">进入</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target state="needs-translation">before</target></trans-unit>
+			<target state="translated">之前</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target state="needs-translation">after</target></trans-unit>
+			<target state="translated">之后</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
 			<target state="translated">正在加载...</target></trans-unit>
@@ -218,7 +218,7 @@
 			<target state="translated">素材</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target state="needs-translation">Created</target></trans-unit>
+			<target state="translated">已创建</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
 			<target state="translated">最后修改</target></trans-unit>
@@ -239,16 +239,16 @@
 			<target state="translated">结构</target></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
-			<target state="needs-translation">Toggle context structure</target></trans-unit>
+			<target state="translated">更换文本结构</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
 			<target state="translated">筛选</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
-			<target state="needs-translation">Toggle menu</target></trans-unit>
+			<target state="translated">更换菜单</target></trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
-			<target state="needs-translation">Load error!</target></trans-unit>
+			<target state="translated">加载错误</target></trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
 				<source>You have to select a node</source>
 			<target state="translated">您必须选择一个节点。</target></trans-unit>
@@ -260,10 +260,10 @@
 			<target state="translated">您不能复制此节点</target></trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
-			<target state="needs-translation">You cannot cut this node</target></trans-unit>
+			<target state="translated">您不能裁剪此节点</target></trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
 				<source>Content Dimensions</source>
-			<target state="needs-translation">Content Dimensions</target></trans-unit>
+			<target state="translated">内容尺寸</target></trans-unit>
       <trans-unit id="site" xml:space="preserve">
 				<source>Site</source>
 			<target state="translated">站点</target></trans-unit>
@@ -272,13 +272,13 @@
 			<target state="translated">文档</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target state="needs-translation">Reference</target></trans-unit>
+			<target state="translated">参考</target></trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
 			<target state="translated">主机</target></trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
-			<target state="needs-translation">Scheme</target></trans-unit>
+			<target state="translated">计划</target></trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
 			<target state="translated">端口</target></trans-unit>
@@ -546,10 +546,10 @@
 			<target state="translated">给定的标题不是一个有效的 UUID。</target></trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
 				<source>Toggle content dimensions selector</source>
-			<target state="needs-translation">Toggle content dimensions selector</target></trans-unit>
+			<target state="translated">更改内容尺寸工具</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
-			<target state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
+			<target state="translated">要使用空的或预填写的问档吗？</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
 				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
 			<target state="translated">在 {currentDimensionChoiceText} 中不存在 {nodeTypeLabel}</target></trans-unit>
@@ -558,7 +558,7 @@
 			<target state="translated">你可以现在通过打开一个空的{nodeTypeLabel} 或者从复制当前在{currentDocumentDimensionChoiceText} 中显示的{nodeTypeLabel} 里的所有内容来创建它。</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
-			<target state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
+			<target state="translated">另外，还有 {numberOfNodesMissingInRootline} 的父系文件，在选定的变量中没有，继续将会创建。</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
 			<target state="translated">创建空的</target></trans-unit>
@@ -570,7 +570,7 @@
 			<target state="translated">内容</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
-			<target state="needs-translation">Toggle menu group</target></trans-unit>
+			<target state="translated">更换菜单组</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
 			<target state="needs-translation">Toggle sticky menu mode</target></trans-unit>
