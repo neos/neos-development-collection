@@ -136,7 +136,7 @@ class Runtime
     /**
      * @var \Closure
      */
-    protected $shouldUnsetClosure;
+    protected $shouldOverrideFirstClosure;
 
 
     /**
@@ -159,8 +159,8 @@ class Runtime
             ];
         };
 
-        $this->shouldUnsetClosure = function ($value): bool {
-            return is_array($value) && isset($value['__valueUnAssignment']);
+        $this->shouldOverrideFirstClosure = function ($key, $firstValue, $secondValue): bool {
+            return is_array($secondValue) && isset($secondValue['__valueUnAssignment']);
         };
     }
 
@@ -683,7 +683,7 @@ class Runtime
         }
 
         if (isset($configuration['__prototypes'])) {
-            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $configuration['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldUnsetClosure);
+            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $configuration['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
         }
 
         $currentPathSegmentType = null;
@@ -734,17 +734,17 @@ class Runtime
                         $prototypeName, $currentPathSegmentType), 1427134340);
                 }
 
-                $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $this->simpleTypeToArrayClosure, $this->shouldUnsetClosure);
+                $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
             }
 
             // We merge the already flattened prototype with the current configuration (in that order),
             // to make sure that the current configuration (not being defined in the prototype) wins.
-            $configuration = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $configuration, $this->simpleTypeToArrayClosure, $this->shouldUnsetClosure);
+            $configuration = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $configuration, $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
 
             // If context-dependent prototypes are set (such as prototype("foo").prototype("baz")),
             // we update the current prototype definitions.
             if (isset($currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'])) {
-                $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldUnsetClosure);
+                $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
             }
         }
 
