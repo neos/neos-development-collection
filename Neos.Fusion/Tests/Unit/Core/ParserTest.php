@@ -352,10 +352,16 @@ class ParserTest extends UnitTestCase
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture07');
 
         $expectedParseTree = [
+            'object1' => [
+                '__valueUnAssignment' => true
+            ],
             'object3' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
-                '__eelExpression' => null
+                '__eelExpression' => null,
+                'value' => [
+                    '__valueUnAssignment' => true
+                ]
             ]
         ];
 
