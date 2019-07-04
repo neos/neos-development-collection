@@ -61,9 +61,15 @@ class FormHelper implements ProtectedContextAwareInterface
      */
     public function trustedPropertiesToken(string $content, string $fieldNamePrefix = '')
     {
-        $dom = new \DOMDocument();
-        $dom->loadHTML($content);
-        $xpath = new \DOMXpath($dom);
+        $domDocument = new \DOMDocument('1.0', 'UTF-8');
+        // ignore parsing errors
+        $useInternalErrorsBackup = libxml_use_internal_errors(true);
+        $domDocument->loadHTML($content);
+        $xpath = new \DOMXPath($domDocument);
+        if ($useInternalErrorsBackup !== true) {
+            libxml_use_internal_errors($useInternalErrorsBackup);
+        }
+
         $elements = $xpath->query("//*[@name]");
         $formFieldNames = [];
         foreach($elements as $element) {
