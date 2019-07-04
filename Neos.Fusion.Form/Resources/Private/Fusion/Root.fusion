@@ -58,13 +58,13 @@ prototype(Neos.Fusion:Form) < prototype(Neos.Fusion:Component) {
     `
 }
 
-prototype(Neos.Fusion:Field)  < prototype(Neos.Fusion:Component) {
+prototype(Neos.Fusion:Form.Field)  < prototype(Neos.Fusion:Component) {
     @context.field = ${this.field}
     field = Neos.Fusion:FieldDefinition
     renderer = ${props.content}
 }
 
-prototype(Neos.Fusion:Textfield)  < prototype(Neos.Fusion:Field) {
+prototype(Neos.Fusion:Form.Textfield)  < prototype(Neos.Fusion:Form.Field) {
     attributes = Neos.Fusion:DataStructure
     renderer = afx`
         <input
@@ -76,7 +76,35 @@ prototype(Neos.Fusion:Textfield)  < prototype(Neos.Fusion:Field) {
     `
 }
 
-prototype(Neos.Fusion:Submit) < prototype(Neos.Fusion:Field) {
+prototype(Neos.Fusion:Form.Select)  < prototype(Neos.Fusion:Form.Field) {
+  attributes = Neos.Fusion:DataStructure
+  multiple = false
+  renderer = afx`
+        <select
+            {...props.attributes}
+            type="text"
+            name={field.name + (props.multiple ? '[]' : '')}
+            value={field.value}
+        >
+            {props.content}
+        </select>
+    `
+}
+
+prototype(Neos.Fusion:Form.Select.Option)  < prototype(Neos.Fusion:Component) {
+  attributes = Neos.Fusion:DataStructure
+  renderer = afx`
+        <option
+            {...props.attributes}
+            value={props.value}
+            selected={field.value ? (field.value == props.value) : false}
+        >
+            {props.content}
+        </option>
+    `
+}
+
+prototype(Neos.Fusion:Form.Submit) < prototype(Neos.Fusion:Form.Field) {
     attributes = Neos.Fusion:DataStructure
     renderer = afx`
         <input
