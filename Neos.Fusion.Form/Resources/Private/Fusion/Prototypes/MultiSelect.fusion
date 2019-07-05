@@ -1,0 +1,18 @@
+prototype(Neos.Fusion.Form:MultiSelect)  < prototype(Neos.Fusion.Form:Field) {
+    attributes = Neos.Fusion:DataStructure
+    renderer = afx`
+        <select
+            {...props.attributes}
+            type="text"
+            name={field.name + '[]'}
+            multiple={true}
+        >
+            {props.content}
+        </select>
+    `
+
+    // check against field.value as array for automatic selected state
+    prototype(Neos.Fusion.Form:Select.Option) {
+        selected = ${(field.value && (Array.indexOf(field.value, this.value) > -1)) ? true : false}
+    }
+}

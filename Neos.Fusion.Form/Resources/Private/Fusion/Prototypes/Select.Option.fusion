@@ -1,0 +1,7 @@
+prototype(Neos.Fusion.Form:Select.Option)  < prototype(Neos.Fusion:Component) {
+    selected = false
+    value = false
+    renderer = afx`
+       <option value={props.value} selected={props.selected} >{props.content}</option>
+    `
+}

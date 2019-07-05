@@ -1,0 +1,18 @@
+prototype(Neos.Fusion.Form:Select)  < prototype(Neos.Fusion.Form:Field) {
+    attributes = Neos.Fusion:DataStructure
+    renderer = afx`
+        <select
+            {...props.attributes}
+            type="text"
+            name={field.name}
+        >
+            {props.content}
+        </select>
+    `
+
+    // check against field.value as for automatic selected state
+    prototype(Neos.Fusion.Form:Select.Option) {
+        # selected = ${(field.value && (field.value == this.value)) ? true : false}
+        selected = ${Json.stringify({field:field.value, value:this.value})}
+    }
+}

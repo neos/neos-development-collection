@@ -1,0 +1,10 @@
+prototype(Neos.Fusion.Form:Textarea)  < prototype(Neos.Fusion.Form:Field) {
+    attributes = Neos.Fusion:DataStructure
+    renderer = afx`
+        <textarea
+            {...props.attributes}
+            type="text"
+            name={field.name}
+        >{field.value}</textarea>
+    `
+}

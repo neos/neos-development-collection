@@ -1,0 +1,5 @@
+prototype(Neos.Fusion.Form:Field)  < prototype(Neos.Fusion:Component) {
+    @context.field = ${this.field}
+    field = Neos.Fusion.Form:FieldDefinition
+    renderer = ${props.content}
+}

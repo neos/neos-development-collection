@@ -1,0 +1,4 @@
+prototype(Neos.Fusion.Form:FieldDefinition) {
+    @class = 'Neos\\Fusion\\Form\\FusionObjects\\FieldDefinitionImplementation'
+    form = ${form}
+}
