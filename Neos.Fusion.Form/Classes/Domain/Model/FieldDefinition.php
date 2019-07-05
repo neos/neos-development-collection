@@ -29,34 +29,20 @@ class FieldDefinition
     /**
      * @var bool
      */
-    protected $multiple;
-
-    /**
-     * @var bool
-     */
     protected $validationResult;
 
     /**
      * FieldDefinition constructor.
      *
      * @param string|null $name
-     * @param string|null $value
+     * @param string|array|null $value
      * @param bool $multiple
      */
-    public function __construct(string $name = null, string $value = null, bool $multiple = false, Result $validationResult = null)
+    public function __construct(string $name = null, $value = null, Result $validationResult = null)
     {
         $this->name = $name;
         $this->value = $value;
-        $this->multiple = $multiple;
         $this->validationResult = $validationResult;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isMultiple(): bool
-    {
-        return $this->multiple;
     }
 
     /**
@@ -68,9 +54,9 @@ class FieldDefinition
     }
 
     /**
-     * @return string|null
+     * @return string|array|null
      */
-    public function getValue(): ?string
+    public function getValue()
     {
         return $this->value;
     }

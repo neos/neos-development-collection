@@ -46,8 +46,7 @@ class FieldDefinitionImplementation extends AbstractFusionObject
 
         return new FieldDefinition(
             $this->getName($form),
-            $this->getValue($form),
-            (bool)$this->fusionValue('multiple')
+            $this->getValue($form)
         );
     }
 
@@ -70,9 +69,9 @@ class FieldDefinitionImplementation extends AbstractFusionObject
     }
 
     /**
-     * @return string
+     * @return string|array|null
      */
-    public function getValue(FormDefinition $form = null): string
+    public function getValue(FormDefinition $form = null)
     {
         $value = null;
         $propertyPath = $this->getPropertyPath($form);
@@ -95,7 +94,12 @@ class FieldDefinitionImplementation extends AbstractFusionObject
                 $value = $identifier;
             }
         }
-        return (string)$value;
+
+        if (is_array($value)) {
+            return $value;
+        } else {
+            return (string)$value;
+        }
     }
 
     /**
