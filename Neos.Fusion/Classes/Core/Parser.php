@@ -199,7 +199,7 @@ class Parser implements ParserInterface
      *
      * @var array
      */
-    public static $reservedParseTreeKeys = ['__meta', '__prototypes', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
+    public static $reservedParseTreeKeys = ['__meta', '__prototypes', '__valueUnAssignments', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
 
     /**
      * @Flow\Inject
@@ -512,11 +512,13 @@ class Parser implements ParserInterface
      *
      * @param string $objectPath The object path as a string
      * @return void
+     * @throws Fusion\Exception
      */
     protected function parseValueUnAssignment($objectPath)
     {
         $objectPathArray = $this->getParsedObjectPath($objectPath);
         $this->setValueInObjectTree($objectPathArray, null);
+        $this->setValueInObjectTree($objectPathArray, ['__valueUnAssignment' => true]);
     }
 
     /**

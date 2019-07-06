@@ -134,6 +134,12 @@ class Runtime
     protected $simpleTypeToArrayClosure;
 
     /**
+     * @var \Closure
+     */
+    protected $shouldUnsetClosure;
+
+
+    /**
      * Constructor for the Fusion Runtime
      *
      * @param array $fusionConfiguration
@@ -151,6 +157,10 @@ class Runtime
                 '__value' => $simpleType,
                 '__objectType' => null
             ];
+        };
+
+        $this->shouldUnsetClosure = function ($value): bool {
+            return is_array($value) && isset($value['__valueUnAssignment']);
         };
     }
 
@@ -644,6 +654,9 @@ class Runtime
             $this->configurationOnPathRuntimeCache[$pathUntilNow]['p'] = $currentPrototypeDefinitions;
         }
 
+        // Remove any leftover internal __valueUnAssignment keys
+        unset($configuration['__valueUnAssignment']);
+
         return $configuration;
     }
 
@@ -670,7 +683,7 @@ class Runtime
         }
 
         if (isset($configuration['__prototypes'])) {
-            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $configuration['__prototypes'], $this->simpleTypeToArrayClosure);
+            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $configuration['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldUnsetClosure);
         }
 
         $currentPathSegmentType = null;
@@ -721,20 +734,19 @@ class Runtime
                         $prototypeName, $currentPathSegmentType), 1427134340);
                 }
 
-                $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $this->simpleTypeToArrayClosure);
+                $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $this->simpleTypeToArrayClosure, $this->shouldUnsetClosure);
             }
 
             // We merge the already flattened prototype with the current configuration (in that order),
             // to make sure that the current configuration (not being defined in the prototype) wins.
-            $configuration = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $configuration, $this->simpleTypeToArrayClosure);
+            $configuration = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $configuration, $this->simpleTypeToArrayClosure, $this->shouldUnsetClosure);
 
             // If context-dependent prototypes are set (such as prototype("foo").prototype("baz")),
             // we update the current prototype definitions.
             if (isset($currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'])) {
-                $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'], $this->simpleTypeToArrayClosure);
+                $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldUnsetClosure);
             }
         }
-
 
         return $configuration;
     }
@@ -971,6 +983,12 @@ class Runtime
                 if ($this->evaluateIfCondition($processorConfiguration[$key], $processorPath, $contextObject) === false) {
                     continue;
                 }
+
+                # If there is only the internal "__valueUnAssignment" path set, skip evaluation
+                if (count($processorConfiguration[$key]) === 1 && isset($processorConfiguration[$key]['__valueUnAssignment'])) {
+                    continue;
+                }
+
                 if (isset($processorConfiguration[$key]['expression'])) {
                     $processorPath .= '/expression';
                 }
