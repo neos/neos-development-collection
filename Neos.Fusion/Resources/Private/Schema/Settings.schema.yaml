@@ -19,6 +19,8 @@ properties:
                 format: class-name
           debugMode:
             type: boolean
+          enableObjectTreeCache:
+            type: boolean
           enableContentCache:
             type: boolean
           defaultContext:
