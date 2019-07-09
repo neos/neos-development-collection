@@ -22,7 +22,7 @@ use Neos\Media\Domain\ValueObject\Configuration\AspectRatio;
  * @api
  * @Flow\Scope("singleton")
  */
-class AspectRatioTypeConverter extends ObjectConverter
+class AspectRatioFromStringConverter extends ObjectConverter
 {
     /**
      * @var array
@@ -48,7 +48,6 @@ class AspectRatioTypeConverter extends ObjectConverter
         try {
             return AspectRatio::fromString($source);
         } catch (\InvalidArgumentException $e) {
-
         }
         return null;
     }
