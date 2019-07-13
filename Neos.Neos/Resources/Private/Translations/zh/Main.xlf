@@ -447,7 +447,7 @@
 			<target state="translated">没有设置日期</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
 				<source>Today</source>
-			<target state="needs-translation">Today</target></trans-unit>
+			<target state="translated">今天</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve">
 				<source>Apply</source>
 			<target state="translated">应用</target><alt-trans><target>发布</target></alt-trans></trans-unit>
