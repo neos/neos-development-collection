@@ -1,6 +1,7 @@
 {namespace neos=Neos\Neos\ViewHelpers}
-<noscript>
-	<div id="neos-menu-panel" class="neos-noscript">
+<div class="neos-menu">
+	<button class="neos-menu-button neos-button" title="{neos:backend.translate(id: 'toggleMenu', value: 'Toggle menu')}"></button>
+	<div class="neos-menu-panel">
 		<div class="neos-menu-section">
 			<f:link.action package="Neos.Neos" controller="Backend\Backend" action="index" title="{neos:backend.translate(id: 'contentView', value: 'Content View')}" class="neos-menu-headline">
 				<i class="fas fa-file"></i> {neos:backend.translate(id: 'content', value: 'Content')}
@@ -41,7 +42,7 @@
 			</f:if>
 		</f:for>
 	</div>
-</noscript>
+</div>
 
 <f:section name="moduleMenu">
 	<div class="neos-menu-section">

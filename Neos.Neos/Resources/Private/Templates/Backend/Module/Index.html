@@ -49,7 +49,11 @@
 			</f:if>
 			<div id="neos-application" class="neos">
 				<div id="neos-top-bar">
-					<div id="neos-top-bar-right">
+					<div class="neos-top-bar-left">
+						<f:render partial="Backend/Menu" arguments="{_all}" />
+						<f:render partial="Backend/Branding" />
+					</div>
+					<div class="neos-top-bar-right">
 						<div id="neos-user-actions">
 							<f:render partial="Backend/UserMenu" arguments="{_all}" />
 						</div>

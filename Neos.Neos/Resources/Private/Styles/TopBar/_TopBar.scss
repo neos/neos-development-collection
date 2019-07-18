@@ -1,5 +1,8 @@
 #neos-top-bar {
 	position: fixed;
+	display: none;
+	-webkit-flex-flow: row wrap;
+	justify-content: space-between;
 	left: 0;
 	right: 0;
 	top: 0;
@@ -7,15 +10,31 @@
 	background-color: $grayDark;
 	height: $unit;
 	border-bottom: 1px solid $grayLight;
-	display: none;
 	@include font;
 	font-size: 0;
 
 	@include transition-property(top);
 	@include transition-duration(0.2s);
 
-	#neos-top-bar-right {
-		float: right;
+	.neos-top-bar-left {
+		display: flex;
+		-webkit-flex-flow: row wrap;
+		justify-content: space-around;
+
+		.neos-branding {
+			padding: $relatedMargin 1px;
+
+			svg {
+				height: $unit * 0.6;
+				width: auto;
+			}
+		}
+	}
+
+	.neos-top-bar-right {
+		display: flex;
+		-webkit-flex-flow: row wrap;
+		justify-content: space-around;
 	}
 
 	#neos-user-actions,
