@@ -1,9 +1,8 @@
-#neos-menu-button {
+.neos-menu-button {
 	float: left;
 	width: $menuButtonWidth;
 	height: $unit;
 	background-color: $grayDark;
-	border-right: 1px solid $grayLight;
 
 	@include transition-property(top);
 	@include transition-duration(0.2s);
@@ -48,7 +47,8 @@
 	}
 }
 
-#neos-menu-panel {
+.neos-menu-panel {
+	display: none;
 	position: fixed;
 	top: $unit;
 	bottom: 0;
