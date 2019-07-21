@@ -239,7 +239,7 @@
 			<target state="translated">Structure</target></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
-			<target state="needs-translation">Toggle context structure</target></trans-unit>
+			<target state="translated">Basculer la structure du contexte</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve" approved="yes">
 				<source>Filter</source>
 			<target state="translated">Filtrer</target></trans-unit>
@@ -399,7 +399,7 @@
 			<target state="translated">Êtes-vous sûr de vouloir ignorer toutes les modifications dans cet espace de travail ?</target><alt-trans><target>Etes-vous sûr de vouloir ignorer toutes les modifications dans cet espace de travail ?</target></alt-trans></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
-			<target state="needs-translation">Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</target></trans-unit>
+			<target state="translated">Êtes-vous sûr de vouloir ignorer {numberOfChanges} modification(s) dans cet espace de travail ?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve" approved="yes">
 				<source>Publish all</source>
 			<target state="translated">Publier tous</target></trans-unit>
