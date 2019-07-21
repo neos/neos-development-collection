@@ -13,7 +13,7 @@
       <!-- PasswordValidator -->
       <trans-unit id="1324641097" xml:space="preserve">
 				<source>The given password was empty.</source>
-			<target state="needs-translation">The given password was empty.</target></trans-unit>
+			<target state="translated">La password data era vuota.</target></trans-unit>
       <trans-unit id="1324640997" xml:space="preserve">
 				<source>The passwords did not match.</source>
 			<target state="translated">Le passwords non coincidono.</target></trans-unit>
