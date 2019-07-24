@@ -1,11 +1,10 @@
 // Core variables and mixins
-@import "compass";
 @import "Foundation/variables"; // Modify this for custom colors, font-sizes, etc
 @import "Foundation/mixins";
 @import "Constants";
 @import "Mixins";
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic');
-@import "../../Public/Library/fontawesome/scss/fontawesome.scss";
+@import "FontAwesome/fontawesome.scss";
 
 $errorBoxWidth: $unit * 18;
 $errorBoxHeight: $unit * 3;
