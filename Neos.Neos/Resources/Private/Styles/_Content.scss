@@ -1,6 +1,6 @@
 .neos-contentelement {
 	&.neos-contentelement-hidden > * {
-		@include opacity(0.2);
+		opacity: 0.2;
 	}
 
 	&.neos-contentelement-removed {
@@ -48,7 +48,7 @@
 			top: 0;
 			left: 0;
 			z-index: 10000;
-			@include background-image(linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1)));
+			background-image: linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1));
 		}
 	}
 
@@ -126,5 +126,5 @@ button.neos-create-new-content {
 }
 
 .aloha-placeholder {
-	@include opacity(.75);
+	opacity: .75;
 }

@@ -88,7 +88,7 @@
 	}
 
 	.neos-breadcrumb {
-		@include border-radius(0);
+		border-radius: 0;
 		background-color: transparent;
 		padding: 0;
 		border-bottom: 1px solid $grayLight;
@@ -96,7 +96,7 @@
 		a {
 			color: #fff;
 			line-height: $unit;
-			@include text-shadow(none);
+			text-shadow: none;
 
 			&.active {
 				color: $blue;
@@ -129,8 +129,8 @@
 		&.neos-well {
 			background-color: #777;
 			border-color: #666;
-			@include box-shadow(0 0 5px rgba(#000, 0.2) inset);
-			@include border-radius(0);
+			box-shadow: 0 0 5px rgba(#000, 0.2) inset;
+			border-radius: 0;
 			padding: 0px;
 
 			h1 {
@@ -143,7 +143,7 @@
 		}
 
 		.widget {
-			@include border-radius(0);
+			border-radius: 0;
 		}
 	}
 
@@ -185,17 +185,17 @@
 		font-size: 14px;
 		padding: 0 ($defaultMargin - 2px);
 		margin: 0;
-		@include box-sizing(border-box);
-		@include box-shadow(none);
-		@include transition(none);
-		@include border-radius(0px);
+		box-sizing: border-box;
+		box-shadow: none;
+		transition: none;
+		border-radius: 0px;
 
 		&:focus {
 			background-color: #fff;
 			border: 2px solid #fff;
 			color: $textOnWhite;
 			outline: none;
-			@include box-shadow(none);
+			box-shadow: none;
 		}
 
 		// Highlight changed elements in the Property Panel
@@ -212,17 +212,17 @@
 		font-size: 14px;
 		padding: 0 ($defaultMargin - 2px);
 		margin: 0;
-		@include box-sizing(border-box);
-		@include box-shadow(none);
-		@include transition(none);
-		@include border-radius(0px);
+		box-sizing: border-box;
+		box-shadow: none;
+		transition: none;
+		border-radius: 0px;
 
 		&:focus {
 			background-color: #fff;
 			border: 2px solid #fff;
 			color: $textOnWhite;
 			outline: none;
-			@include box-shadow(none);
+			box-shadow: none;
 		}
 
 		// Highlight changed elements in the Property Panel
@@ -268,7 +268,7 @@
 		}
 
 		select {
-			@include appearance(none);
+			appearance: none;
 			-webkit-border-radius: 0px;
 			-o-appearance: window;
 			-moz-appearance: window;
@@ -287,7 +287,7 @@
 		}
 
 		option {
-			@include appearance(none);
+			appearance: none;
 			-webkit-border-radius: 0px;
 			background-color: $grayLight;
 		}
@@ -304,8 +304,8 @@
 		bottom: 0;
 		z-index: 100;
 		overflow: hidden;
-		@include box-sizing(border-box);
-		@include clearfix;
+		box-sizing: border-box;
+		overflow: hidden;
 
 		&.fixedsticky-on {
 			width: 100%;
@@ -356,7 +356,7 @@
 	// Tables within Modules
 	table {
 		&.table-bordered {
-			@include border-radius(0);
+			border-radius: 0;
 			border-left: none;
 			border-right: none;
 			border-top: 1px solid $grayLight;
@@ -364,7 +364,7 @@
 
 			tr,
 			th {
-				@include border-radius(0);
+				border-radius: 0;
 			}
 
 			th,
@@ -471,7 +471,7 @@
 		}
 
 		th {
-			@include text-shadow(none);
+			text-shadow: none;
 		}
 
 		td,
@@ -479,7 +479,7 @@
 			height: $unit;
 			padding: 0 $defaultMargin;
 			line-height: $unit;
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 
 			&:first-child {
 				padding-left: $wideMargin !important;

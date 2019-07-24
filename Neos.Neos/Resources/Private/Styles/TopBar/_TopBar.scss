@@ -13,8 +13,8 @@
 	@include font;
 	font-size: 0;
 
-	@include transition-property(top);
-	@include transition-duration(0.2s);
+	transition-property: top;
+	transition-duration: 0.2s;
 
 	.neos-top-bar-left {
 		display: flex;
@@ -70,7 +70,7 @@
 					font-size: $generalFontSize;
 					line-height: $unit;
 					padding: 0 $defaultMargin;
-					@include box-sizing(border-box);
+					box-sizing: border-box;
 
 					&:hover {
 						background: $blue;

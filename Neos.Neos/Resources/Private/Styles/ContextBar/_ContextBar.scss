@@ -10,8 +10,8 @@
 	border-bottom: 1px solid $grayLight;
 	padding-right: $unit;
 
-	@include transition-property(top,padding);
-	@include transition-duration(0.2s);
+	transition-property: top,padding;
+	transition-duration: 0.2s;
 
 	.neos-edit-preview-panel-open & {
 		top: $editPreviewPanelHeight + $unit + 1;

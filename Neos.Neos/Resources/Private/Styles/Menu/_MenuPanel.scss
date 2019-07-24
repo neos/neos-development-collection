@@ -4,8 +4,8 @@
 	height: $unit;
 	background-color: $grayDark;
 
-	@include transition-property(top);
-	@include transition-duration(0.2s);
+	transition-property: top;
+	transition-duration: 0.2s;
 
 	&:hover,
 	&.neos-pressed {
@@ -61,8 +61,8 @@
 	padding-top: 1px;
 	overflow-x: hidden;
 	overflow-y: auto;
-	@include transition-property(left, width);
-	@include transition-duration(.2s);
+	transition-property: left, width;
+	transition-duration: .2s;
 	@include font;
 
 	.neos-menu-panel-open & {
@@ -105,7 +105,7 @@
 		position: relative;
 
 		.neos-menu-headline {
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			padding-left: $menuButtonWidth;
 			height: $unit;
 			border-top: 1px solid $grayLight;
@@ -146,12 +146,12 @@
 			}
 
 			&.neos-collapsed::before {
-				@include rotate(90deg);
+				rotate: 90deg;
 				left: 19px;
 			}
 
 			&.neos-open::before {
-				@include rotate(-90deg);
+				rotate: -90deg;
 				left: 13px;
 			}
 		}
@@ -164,7 +164,7 @@
 			font-weight: bold;
 			line-height: $unit;
 			height: $unit;
-			@include user-select(none);
+			user-select: none;
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
@@ -219,8 +219,8 @@
 		height: $unit + 2;
 		background-color: $grayDark;
 		background-image: none;
-		@include text-shadow(none);
-		@include box-shadow(none);
+		text-shadow: none;
+		box-shadow: none;
 
 		&::before {
 			position: relative;

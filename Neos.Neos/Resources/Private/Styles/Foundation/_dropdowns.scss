@@ -50,7 +50,7 @@
 	margin: 1px 0 0;
 	list-style: none;
 	background-color: $grayMedium;
-	@include box-shadow(0 5px 10px rgba(0,0,0,.2));
+	box-shadow: 0 5px 10px rgba(0,0,0,.2);
 
 	// Aligns the dropdown menu to right
 	&.neos-pull-right {
@@ -79,7 +79,7 @@
 			text-align: left;
 			line-height: $unit;
 			padding: 0 $defaultMargin;
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 
 			&:hover,
 			&.neos-active {
@@ -106,7 +106,7 @@
 	z-index: $zindexDropdown;
 	display: none; // none by default, but block on "open" of the menu
 	background-color: $grayMedium;
-	@include box-shadow(0 5px 10px rgba(0,0,0,.2));
+	box-shadow: 0 5px 10px rgba(0,0,0,.2);
 
 	// Aligns the dropdown menu to right
 	&.neos-pull-right {
@@ -153,7 +153,7 @@
 				text-align: left;
 				line-height: $unit;
 				padding: 0 $defaultMargin;
-				@include box-sizing(border-box);
+				box-sizing: border-box;
 
 				&:hover,
 				&.neos-active {
@@ -320,5 +320,5 @@
 .neos-typeahead {
 	z-index: 1051;
 	margin-top: 2px; // give it some space to breathe
-	@include border-radius($baseBorderRadius);
+	border-radius: $baseBorderRadius;
 }

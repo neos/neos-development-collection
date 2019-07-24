@@ -45,8 +45,8 @@
 	z-index: 10013;
 	border-bottom: 1px solid $grayLight;
 
-	@include transition-property(top,left,right);
-	@include transition-duration(0.2s);
+	transition-property: top,left,right;
+	transition-duration: 0.2s;
 
 	.neos-edit-preview-panel-open & {
 		top: $unit + 1;
@@ -74,7 +74,7 @@
 		width: 50%;
 		height: $editPreviewPanelHeight;
 		float: left;
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 
 		.neos-edit-preview-panel-title {
 			padding: 0 $unit;
@@ -88,7 +88,7 @@
 			padding: 0 $unit;
 			padding-top: $unit / 4;
 			padding-bottom: $unit / 4;
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			position: relative;
 
 			.neos-frame {
@@ -100,7 +100,7 @@
 			padding: 0px;
 			overflow: hidden;
 			min-width: 100%;
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			height: 100%;
 
 			li {
@@ -133,7 +133,7 @@
 				content: "";
 				height: 100%;
 				width: 1px;
-				@include background-image(linear-gradient(rgba($grayLight, 0) 0%, rgba($grayLight, 0.7) 16px, rgba($grayLight, 0.7) 37px, rgba($grayLight, 0) 100%));
+				background-image: linear-gradient(rgba($grayLight, 0) 0%, rgba($grayLight, 0.7) 16px, rgba($grayLight, 0.7) 37px, rgba($grayLight, 0) 100%);
 				position: absolute;
 				top: 0px;
 			}
@@ -145,7 +145,7 @@
 
 		.neos-scroll-previous {
 			left: 0px;
-			@include background-image(linear-gradient(right, rgba($black, 0) 0%, rgba($grayDarker, 0.4) 13px, $grayDarker 27px));
+			background-image: linear-gradient(right, rgba($black, 0) 0%, rgba($grayDarker, 0.4) 13px, $grayDarker 27px);
 
 			&::after {
 				content: "‹";
@@ -159,7 +159,7 @@
 
 		.neos-scroll-next {
 			right: 0px;
-			@include background-image(linear-gradient(left, rgba($black, 0) 0%, rgba($grayDarker, 0.4) 13px, $grayDarker 27px));
+			background-image: linear-gradient(left, rgba($black, 0) 0%, rgba($grayDarker, 0.4) 13px, $grayDarker 27px);
 
 			&::after {
 				content: "›";

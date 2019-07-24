@@ -38,7 +38,7 @@
 					border-bottom: none;
 					border-left: none;
 					border-right: none;
-					@include box-shadow(none);
+					box-shadow: none;
 				}
 			}
 		}
