@@ -41,9 +41,9 @@
 	padding-bottom: $unit * 1 + 1;
 	border-top: 1px solid $grayLight;
 	border-right: 1px solid $grayLight;
-	@include box-sizing(border-box);
-	@include transition-property(left, margin-top);
-	@include transition-duration(.2s);
+	box-sizing: border-box;
+	transition-property: left, margin-top;
+	transition-duration: .2s;
 	@include font;
 
 	.neos-navigate-panel-open & {
@@ -59,8 +59,8 @@
 
 	#neos-node-tree {
 		height: 50%;
-		@include transition-property(height);
-		@include transition-duration(.2s);
+		transition-property: height;
+		transition-duration: .2s;
 	}
 
 	#neos-context-structure {
@@ -70,7 +70,7 @@
 	&.neos-navigate-panel-context-structure-open {
 		#neos-node-tree {
 			height: 100%;
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 		}
 
 		#neos-context-structure {

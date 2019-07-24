@@ -4,7 +4,7 @@
 
 	&.neos-open {
 		.neos-dropdown-toggle {
-			@include opacity(1);
+			opacity: 1;
 		}
 	}
 
@@ -27,7 +27,7 @@
 	.neos-dropdown-toggle.neos-publish-menu-active {
 		background-color: $orange;
 		cursor: pointer;
-		@include opacity(1);
+		opacity: 1;
 
 		&:after {
 			opacity: .25;
@@ -52,7 +52,7 @@
 		}
 
 		&.neos-publish-menu-active.neos-disabled {
-			@include opacity(.75);
+			opacity: .75;
 		}
 
 		.fa-lock {

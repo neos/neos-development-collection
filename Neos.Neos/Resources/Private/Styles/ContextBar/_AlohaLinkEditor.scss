@@ -11,14 +11,14 @@
 		padding: 0;
 		width: $unit * 12 !important;
 		border: 1px solid $grayLight;
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		@include font;
 
 		.ui-menu-item {
 			padding: 0;
 			border-bottom: 1px solid $grayLight;
 			cursor: pointer;
-			@include transition(background .2s ease);
+			transition: background .2s ease;
 
 			&:hover {
 				background: $grayLight;
@@ -52,7 +52,7 @@
 						position: absolute;
 						top: 50%;
 						left: 50%;
-						@include translate(-50%, -50%);
+						translate: -50%, -50%;
 						width: auto;
 						height: auto;
 						max-width: 100%;

@@ -93,7 +93,7 @@
 	direction: ltr;
 
 	* {
-		@include user-select(none);
+		user-select: none;
 	}
 
 	&.neos-datetimepicker-rtl {

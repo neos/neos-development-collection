@@ -1,14 +1,13 @@
 // Core variables and mixins
-@import "compass";
 @import "Foundation/variables"; // Modify this for custom colors, font-sizes, etc
 @import "Foundation/mixins";
 @import "Constants";
 @import "Mixins";
 @import "Fonts";
-@import "../../Public/Library/fontawesome/scss/fontawesome.scss";
-@import "../../Public/Library/fontawesome/scss/brands.scss";
-@import "../../Public/Library/fontawesome/scss/regular.scss";
-@import "../../Public/Library/fontawesome/scss/solid.scss";
+// @import "../../Public/Library/fontawesome/scss/fontawesome.scss";
+// @import "../../Public/Library/fontawesome/scss/brands.scss";
+// @import "../../Public/Library/fontawesome/scss/regular.scss";
+// @import "../../Public/Library/fontawesome/scss/solid.scss";
 @import "Icons";
 
 .neos {

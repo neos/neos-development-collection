@@ -9,8 +9,8 @@
 		background-color: $grayMedium;
 		background-image: none;
 		padding-left: $defaultMargin;
-		@include border-radius(0);
-		@include box-shadow(none);
+		border-radius: 0;
+		box-shadow: none;
 		color: inherit;
 		line-height: inherit;
 		text-decoration: none;
@@ -84,8 +84,8 @@
 		border: none;
 		background-color: $grayMedium;
 		background-image: none;
-		@include border-radius(0);
-		@include box-shadow(1px 2px 5px $grayDark);
+		border-radius: 0;
+		box-shadow: 1px 2px 5px $grayDark;
 		color: inherit;
 		margin-top: 0;
 
@@ -105,8 +105,8 @@
 				font-size: 14px;
 				margin: 0;
 				padding: 0 $defaultMargin;
-				@include box-sizing(border-box);
-				@include box-shadow(none);
+				box-sizing: border-box;
+				box-shadow: none;
 				background: none;
 				background-image: none !important;
 				background-color: #fff;
@@ -137,7 +137,7 @@
 				border-bottom: 1px solid $grayDark;
 				line-height: $unit - $defaultMargin;
 				padding: ($unit - $defaultMargin * 2) $defaultMargin;
-				@include box-sizing(border-box);
+				box-sizing: border-box;
 
 				&:first-child {
 					border-top: 1px solid $grayDark;
