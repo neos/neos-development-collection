@@ -34,7 +34,7 @@
 					position: absolute;
 					top: 50%;
 					left: 50%;
-					@include translate(-50%, -50%);
+					translate: -50%, -50%;
 					width: auto;
 					height: auto;
 					max-width: 100%;

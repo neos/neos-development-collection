@@ -10,10 +10,10 @@
 		padding: $relatedMargin $defaultMargin;
 		color: white !important;
 		background: $grayLight;
-		@include transition-property(margin-left);
-		@include transition-duration(.2s);
+		transition-property: margin-left;
+		transition-duration: .2s;
 		@include font();
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		font-weight: 400;
 		width: $unit * 12 !important;
 
@@ -54,7 +54,7 @@
 
 			a {
 				color: $textOnGray;
-				@include transition(none);
+				transition: none;
 				line-height: $unit;
 				padding-left: $defaultMargin;
 				text-align: center;
@@ -71,7 +71,7 @@
 			ul.ui-widget-content {
 				background: $grayMedium;
 				border: none;
-				@include box-shadow(1px 2px 5px $grayDark);
+				box-shadow: 1px 2px 5px $grayDark;
 				border-top: 1px solid $grayLight;
 				min-width: 67px;
 

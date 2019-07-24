@@ -39,7 +39,7 @@ ul.neos-dynatree-container {
 		position: relative;
 		height: 24px;
 		line-height: 24px;
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		border-left: 3px solid transparent;
 
 		&.neos-hidden {
@@ -56,7 +56,7 @@ ul.neos-dynatree-container {
 				width: 8px;
 				margin-top: 11px;
 				line-height: 9px;
-				@include border-radius(10px);
+				border-radius: 10px;
 			}
 		}
 
@@ -75,13 +75,13 @@ ul.neos-dynatree-container {
 				width: 10px;
 				margin-top: 11px;
 				line-height: 9px;
-				@include border-radius(10px);
+				border-radius: 10px;
 			}
 		}
 
 		&.neos-hiddenInIndex {
 			span + span {
-				@include opacity(.5);
+				opacity: .5;
 			}
 		}
 
@@ -131,7 +131,7 @@ ul.neos-dynatree-container {
 				line-height: 24px;
 				@extend .#{$fa-css-prefix}-caret-right;
 				@extend .fas;
-				@include rotate(90deg);
+				rotate: 90deg;
 
 				&:before {
 					left: 11px;
@@ -146,7 +146,7 @@ ul.neos-dynatree-container {
 				background-image: url('../Images/ajax-preloader-222222.gif');
 				background-repeat: no-repeat;
 				background-position: 5px 4px;
-				@include rotate(0);
+				rotate: 0;
 
 				&:before {
 					display: none;
@@ -190,7 +190,7 @@ ul.neos-dynatree-container {
 
 		&.dynatree-drag-source {
 			background-color: $grayMedium;
-			@include opacity(.5);
+			opacity: .5;
 		}
 
 		&.dynatree-drop-before,
@@ -266,7 +266,7 @@ ul.neos-dynatree-container {
 			max-width: $unit * 5.5;
 			padding-right: $relatedMargin;
 			font-size: $generalFontSize;
-			@include text-shadow(none);
+			text-shadow: none;
 			&:hover,
 			&:focus {
 				text-decoration: none;
@@ -278,17 +278,7 @@ ul.neos-dynatree-container {
 	$selector: 'ul';
 	$level: 0;
 	$levels: 20;
-	@while $level < $levels {
-		#{$selector} .neos-dynatree-node {
-			@if $level == 0 {
-				padding-left: 0;
-			} @else {
-				padding-left: ($defaultMargin - $tightMargin) * $level - 3;
-			}
-		}
-		$selector: #{nest(#{$selector}, 'ul')};
-		$level: $level + 1;
-	}
+	
 }
 
 .neos-tree-drag-in-progress {

@@ -40,7 +40,7 @@
 			margin-bottom: 0;
 			font-size: inherit;
 			line-height: $unit;
-			@include user-select(none);
+			user-select: none;
 		}
 	}
 

@@ -1,8 +1,8 @@
 body {
 	// States
 	&.neos-backend {
-		@include transition-property(margin);
-		@include transition-duration(0.2s);
+		transition-property: margin;
+		transition-duration: 0.2s;
 	}
 
 	&.neos-controls {
@@ -86,7 +86,7 @@ body {
 			position: fixed;
 			top: $defaultMargin;
 			right: $defaultMargin;
-			@include box-shadow(0 0 $relatedMargin rgba(0, 0, 0, .25));
+			box-shadow: 0 0 $relatedMargin rgba(0, 0, 0, .25);
 			z-index: 9999;
 
 			.neos-button {

@@ -43,12 +43,12 @@
 			}
 
 			&.neos-collapsed::before {
-				@include rotate(90deg);
+				rotate: 90deg;
 				left: 19px;
 			}
 
 			&.neos-open::before {
-				@include rotate(-90deg);
+				rotate: -90deg;
 				left: 13px;
 			}
 		}
@@ -81,7 +81,7 @@
 			height: $unit;
 			text-align: left;
 			background-color: transparent;
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
