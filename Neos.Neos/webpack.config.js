@@ -26,6 +26,11 @@ const webpackConfig = {
         }
       },
       {
+        test    : /\.(gif|png|jpg|svg)$/,
+        include : __dirname + '/Resources/Public/Images/',
+        loader  : 'url-loader?limit=30000&name=images/[name].[ext]'
+      },
+      {
         test: /\.scss$/,
         use: [
             MiniCssExtractPlugin.loader,
