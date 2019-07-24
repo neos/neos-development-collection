@@ -4,10 +4,10 @@
 @import "Constants";
 @import "Mixins";
 @import "Fonts";
-// @import "../../Public/Library/fontawesome/scss/fontawesome.scss";
-// @import "../../Public/Library/fontawesome/scss/brands.scss";
-// @import "../../Public/Library/fontawesome/scss/regular.scss";
-// @import "../../Public/Library/fontawesome/scss/solid.scss";
+@import "FontAwesome/fontawesome.scss";
+@import "FontAwesome/brands.scss";
+@import "FontAwesome/regular.scss";
+@import "FontAwesome/solid.scss";
 @import "Icons";
 
 .neos {
