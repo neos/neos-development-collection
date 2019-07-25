@@ -5,14 +5,8 @@
 	<title><neos:backend.translate id="{title}" /></title>
 
 	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
-		<f:then>
-			<link rel="stylesheet" type="text/css"
-				  href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'Neos.Neos')}?bust={neos:backend.cssBuiltVersion()}"/>
-		</f:then>
-		<f:else>
-			<link rel="stylesheet" type="text/css"
-				  href="{f:uri.resource(path: 'Styles/Includes.css', package: 'Neos.Neos')}"/>
-		</f:else>
+		<link rel="stylesheet" type="text/css"
+			href="{f:uri.resource(path: 'Styles/Main.css', package: 'Neos.Neos')}?bust={neos:backend.cssBuiltVersion()}"/>
 	</f:if>
 
 	<f:if condition="{moduleConfiguration.additionalResources.styleSheets}">
