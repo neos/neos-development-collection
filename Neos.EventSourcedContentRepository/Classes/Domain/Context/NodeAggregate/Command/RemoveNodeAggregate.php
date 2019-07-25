@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
 final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
@@ -40,7 +40,7 @@ final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossCont
     private $coveredDimensionSpacePoint;
 
     /**
-     * @var NodeVariantSelectionStrategy
+     * @var NodeVariantSelectionStrategyIdentifier
      */
     private $nodeVariantSelectionStrategy;
 
@@ -48,7 +48,7 @@ final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossCont
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeVariantSelectionStrategy $nodeVariantSelectionStrategy
+        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -62,7 +62,7 @@ final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossCont
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategy::fromString($array['nodeVariantSelectionStrategy'])
+            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy'])
         );
     }
 
@@ -81,7 +81,7 @@ final class RemoveNodeAggregate implements \JsonSerializable, CopyableAcrossCont
         return $this->coveredDimensionSpacePoint;
     }
 
-    public function getNodeVariantSelectionStrategy(): NodeVariantSelectionStrategy
+    public function getNodeVariantSelectionStrategy(): NodeVariantSelectionStrategyIdentifier
     {
         return $this->nodeVariantSelectionStrategy;
     }

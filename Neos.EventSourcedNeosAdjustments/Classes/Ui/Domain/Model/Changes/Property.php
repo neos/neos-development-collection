@@ -22,7 +22,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetN
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -235,7 +235,7 @@ class Property extends AbstractChange
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
                             $node->getOriginDimensionSpacePoint(),
-                            NodeVariantSelectionStrategy::allSpecializations()
+                            NodeVariantSelectionStrategyIdentifier::allSpecializations()
                         );
                         $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                     } else {
@@ -244,7 +244,7 @@ class Property extends AbstractChange
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
                             $node->getOriginDimensionSpacePoint(),
-                            NodeVariantSelectionStrategy::allSpecializations()
+                            NodeVariantSelectionStrategyIdentifier::allSpecializations()
                         );
                         $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                     }
