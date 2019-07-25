@@ -300,7 +300,7 @@ textarea[class*="neos-span"],
 
 // Control row for multiple inputs per line
 .neos-controls-row {
-  overflow: hidden; // Clear the float from controls
+  @include clearfix(); // Clear the float from controls
 }
 
 // Float to collapse white-space for proper grid alignment
@@ -388,7 +388,7 @@ select:focus:invalid {
   margin-bottom: $baseLineHeight;
   background-color: $formActionsBackground;
   border-top: 1px solid #e5e5e5;
-  overflow: hidden; // Adding clearfix to allow for .neos-pull-right button containers
+  @include clearfix(); // Adding clearfix to allow for .neos-pull-right button containers
 }
 
 
@@ -646,7 +646,7 @@ fieldset > .neos-control-group:first-child {
   // Increase spacing between groups
   .neos-control-group {
     margin-bottom: $baseLineHeight;
-    overflow: hidden;
+    @include clearfix();
   }
   // Float the labels left
   .neos-control-label {

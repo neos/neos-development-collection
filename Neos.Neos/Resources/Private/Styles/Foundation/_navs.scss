@@ -92,7 +92,7 @@
 // Common styles
 .neos-nav-tabs,
 .neos-nav-pills {
-  overflow: hidden;
+  @include clearfix();
 }
 .neos-nav-tabs > li,
 .neos-nav-pills > li {
@@ -286,7 +286,7 @@
 
 // Clear any floats
 .neos-tabbable {
-  overflow: hidden;
+  @include clearfix();
 }
 .neos-tab-content {
   overflow: auto; // prevent content from running below tabs

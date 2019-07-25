@@ -559,7 +559,7 @@
 @mixin container-fixed() {
   margin-right: auto;
   margin-left: auto;
-  overflow: hidden;
+  @include clearfix();
 }
 
 // Table columns
@@ -573,7 +573,7 @@
 // Use .makeRow and .makeColumn to assign semantic layouts grid system behavior
 @mixin makeRow() {
   margin-left: $gridGutterWidth * -1;
-  overflow: hidden;
+  @include clearfix();
 }
 @mixin makeColumn($columns: 1, $offset: 0) {
   float: left;
@@ -585,7 +585,7 @@
 @mixin grid-core($gridColumnWidth, $gridGutterWidth) {
   .neos-row {
     margin-left: $gridGutterWidth * -1;
-    overflow: hidden;
+    @include clearfix();
   }
 
   [class*="neos-span"] {
@@ -632,7 +632,7 @@
 @mixin grid-fluid($fluidGridColumnWidth, $fluidGridGutterWidth) {
   .neos-row-fluid {
     width: 100%;
-    overflow: hidden;
+    @include clearfix();
     [class*="neos-span"] {
       @include input-block-level();
       float: left;

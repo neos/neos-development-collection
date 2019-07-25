@@ -9,7 +9,7 @@
 .neos-thumbnails {
 	margin-left: -$gridGutterWidth;
 	list-style: none;
-	overflow: hidden;
+	@include clearfix();
 }
 // Fluid rows have no left margin
 .neos-row-fluid .neos-thumbnails {
