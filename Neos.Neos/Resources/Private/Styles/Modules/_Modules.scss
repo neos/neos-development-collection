@@ -305,7 +305,7 @@
 		z-index: 100;
 		overflow: hidden;
 		box-sizing: border-box;
-		overflow: hidden;
+		@include clearfix();
 
 		&.fixedsticky-on {
 			width: 100%;

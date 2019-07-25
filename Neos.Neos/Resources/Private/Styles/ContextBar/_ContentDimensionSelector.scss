@@ -1,5 +1,5 @@
 #neos-context-bar .neos-content-dimension-selector {
-	overflow: hidden;
+	@include clearfix();
 	position: relative;
 	float: left;
 	border-right: 1px solid $grayLight;
@@ -24,7 +24,7 @@
 
 	.neos-content-dimension-selector-summary {
 		cursor: pointer;
-		overflow: hidden;
+		@include clearfix();
 		user-select: none;
 		padding-left: $defaultMargin;
 		padding-right: $defaultMargin + $unit + 1;

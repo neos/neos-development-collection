@@ -12,5 +12,5 @@
 .neos-container-fluid {
   padding-right: $gridGutterWidth;
   padding-left: $gridGutterWidth;
-  overflow: hidden;
+  @include clearfix();
 }
