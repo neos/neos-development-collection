@@ -5,8 +5,11 @@ Neos Documentation
 How it works
 ============
 
-We use Read The Docs (http://neos.readthedocs.org) to host the documentation
-for Neos.
+Our documentation is managed in a Neos instance at https://docs.neos.io/
+
+We use Read The Docs (http://neos.readthedocs.org) to host the versionized API 
+documentation for Neos. 
+
 This service listens for commits on Github and automatically builds the
 documentation for all branches.
 
