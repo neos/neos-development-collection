@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
  * This file is part of the Neos.ContentRepository package.

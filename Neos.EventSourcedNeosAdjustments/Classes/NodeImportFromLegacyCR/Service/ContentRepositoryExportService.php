@@ -26,13 +26,12 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariati
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDisablingStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -65,7 +64,6 @@ use Neos\Utility\TypeHandling;
  */
 class ContentRepositoryExportService
 {
-
     /**
      * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
      * interface ...
@@ -91,13 +89,10 @@ class ContentRepositoryExportService
      */
     protected $persistenceManager;
 
-    protected $contentStreamIdentifier;
-
     /**
-     * @Flow\Inject
-     * @var NodeCommandHandler
+     * @var ContentStreamIdentifier
      */
-    protected $nodeCommandHandler;
+    protected $contentStreamIdentifier;
 
     /**
      * @Flow\Inject
@@ -306,7 +301,7 @@ class ContentRepositoryExportService
             if ($isTethered) {
                 // we KNOW that tethered nodes already exist; so we just set its properties.
                 if (!empty($propertyValues)) {
-                    $this->nodeCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                    $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
@@ -325,7 +320,7 @@ class ContentRepositoryExportService
                         $originDimensionSpacePoint
                     ))->blockUntilProjectionsAreUpToDate();
 
-                    $this->nodeCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                    $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
@@ -353,7 +348,7 @@ class ContentRepositoryExportService
 
             // publish reference edges
             foreach ($propertyReferences as $propertyName => $references) {
-                $this->nodeCommandHandler->handleSetNodeReferences(new SetNodeReferences(
+                $this->nodeAggregateCommandHandler->handleSetNodeReferences(new SetNodeReferences(
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
@@ -367,7 +362,7 @@ class ContentRepositoryExportService
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
-                    NodeAggregateDisablingStrategy::gatherVirtualSpecializations()
+                    NodeVariantSelectionStrategyIdentifier::virtualSpecializations()
                 ));
             }
 

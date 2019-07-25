@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,11 +13,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  * source code.
  */
 
-use Neos\Flow\Exception;
-
 /**
- * The exception to be thrown if a content stream does not exists yet but is expected to
+ * The exception to be thrown if an invalid node variant selection strategy was tried to be initialized
  */
-final class ContentStreamDoesNotExistYet extends Exception
+final class NodeVariantSelectionStrategyIsInvalid extends \DomainException
 {
 }

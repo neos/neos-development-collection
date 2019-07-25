@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
+namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,9 +12,11 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  * source code.
  */
 
+use Neos\Flow\Exception;
+
 /**
- * The exception to be thrown if an invalid node disabling strategy was tried to be initialized
+ * The exception to be thrown if a content stream already exists but is not expected to
  */
-final class NodeAggregateDisablingStrategyIsInvalid extends \DomainException
+final class ContentStreamAlreadyExists extends Exception
 {
 }

@@ -16,14 +16,14 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodesWereRemovedFromAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertiesWereSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -296,7 +296,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 
         // reconnect parent relations
         $missingParentRelations = $visibleInDimensionSpacePoints->getPoints();
-        $existingParentRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate(
+        $existingParentRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier,
             $visibleInDimensionSpacePoints
@@ -338,7 +338,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
         }
 
         // reconnect child relations
-        $existingChildRelations = $this->projectionContentGraph->findOutboundHierarchyRelationsForNodeAggregate(
+        $existingChildRelations = $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier,
             $visibleInDimensionSpacePoints
@@ -437,8 +437,8 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
         $offset = 0;
         $position = 0;
         $hierarchyRelations = $parentAnchorPoint
-            ? $this->projectionContentGraph->getOutboundHierarchyRelationsForNodeAndSubgraph($parentAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint)
-            : $this->projectionContentGraph->getInboundHierarchyRelationsForNodeAndSubgraph($childAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
+            ? $this->projectionContentGraph->getOutgoingHierarchyRelationsForNodeAndSubgraph($parentAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint)
+            : $this->projectionContentGraph->getIngoingHierarchyRelationsForNodeAndSubgraph($childAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
 
         foreach ($hierarchyRelations as $relation) {
             $offset += self::RELATION_DEFAULT_OFFSET;
@@ -860,14 +860,14 @@ insert ignore into neos_contentgraph_restrictionrelation
 
             $specializedNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getSpecializationOrigin());
 
-            foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNode(
+            foreach ($this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
                 $sourceNode->relationAnchorPoint,
                 $event->getContentStreamIdentifier(),
                 $event->getSpecializationCoverage()
             ) as $hierarchyRelation) {
                 $hierarchyRelation->assignNewChildNode($specializedNode->relationAnchorPoint, $this->getDatabaseConnection());
             }
-            foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNode(
+            foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNode(
                 $sourceNode->relationAnchorPoint,
                 $event->getContentStreamIdentifier(),
                 $event->getSpecializationCoverage()
@@ -893,32 +893,32 @@ insert ignore into neos_contentgraph_restrictionrelation
             );
             $generalizedNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getGeneralizationOrigin());
 
-            $unassignedInboundDimensionSpacePoints = $event->getGeneralizationCoverage();
-            foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate(
+            $unassignedIngoingDimensionSpacePoints = $event->getGeneralizationCoverage();
+            foreach ($this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getGeneralizationCoverage()
-            ) as $existingInboundHierarchyRelation) {
-                $existingInboundHierarchyRelation->assignNewChildNode($generalizedNode->relationAnchorPoint, $this->getDatabaseConnection());
-                $unassignedInboundDimensionSpacePoints = $unassignedInboundDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingInboundHierarchyRelation->dimensionSpacePoint]));
+            ) as $existingIngoingHierarchyRelation) {
+                $existingIngoingHierarchyRelation->assignNewChildNode($generalizedNode->relationAnchorPoint, $this->getDatabaseConnection());
+                $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingIngoingHierarchyRelation->dimensionSpacePoint]));
             }
 
-            foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNodeAggregate(
+            foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getGeneralizationCoverage()
-            ) as $existingOutboundHierarchyRelation) {
-                $existingOutboundHierarchyRelation->assignNewParentNode($generalizedNode->relationAnchorPoint, null, $this->getDatabaseConnection());
+            ) as $existingOutgoingHierarchyRelation) {
+                $existingOutgoingHierarchyRelation->assignNewParentNode($generalizedNode->relationAnchorPoint, null, $this->getDatabaseConnection());
             }
 
-            if (count($unassignedInboundDimensionSpacePoints) > 0) {
-                $inboundSourceHierarchyRelation = $this->projectionContentGraph->findInboundHierarchyRelationsForNode(
+            if (count($unassignedIngoingDimensionSpacePoints) > 0) {
+                $ingoingSourceHierarchyRelation = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
                         $sourceNode->relationAnchorPoint,
                         $event->getContentStreamIdentifier(),
                         new DimensionSpacePointSet([$event->getSourceOrigin()])
                     )[$event->getSourceOrigin()->getHash()] ?? null;
                 // the null case is caught by the NodeAggregate or its command handler
-                foreach ($unassignedInboundDimensionSpacePoints as $unassignedDimensionSpacePoint) {
+                foreach ($unassignedIngoingDimensionSpacePoints as $unassignedDimensionSpacePoint) {
                     // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
                     $generalizationParentNode = $this->projectionContentGraph->getNodeInAggregate(
                         $event->getContentStreamIdentifier(),
@@ -927,7 +927,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                     );
 
                     $this->copyHierarchyRelationToDimensionSpacePoint(
-                        $inboundSourceHierarchyRelation,
+                        $ingoingSourceHierarchyRelation,
                         $event->getContentStreamIdentifier(),
                         $unassignedDimensionSpacePoint,
                         $generalizationParentNode->relationAnchorPoint,
@@ -953,25 +953,25 @@ insert ignore into neos_contentgraph_restrictionrelation
             );
             $peerNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getPeerOrigin());
 
-            $unassignedInboundDimensionSpacePoints = $event->getPeerCoverage();
-            foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate(
+            $unassignedIngoingDimensionSpacePoints = $event->getPeerCoverage();
+            foreach ($this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getPeerCoverage()
-            ) as $existingInboundHierarchyRelation) {
-                $existingInboundHierarchyRelation->assignNewChildNode($peerNode->relationAnchorPoint, $this->getDatabaseConnection());
-                $unassignedInboundDimensionSpacePoints = $unassignedInboundDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingInboundHierarchyRelation->dimensionSpacePoint]));
+            ) as $existingIngoingHierarchyRelation) {
+                $existingIngoingHierarchyRelation->assignNewChildNode($peerNode->relationAnchorPoint, $this->getDatabaseConnection());
+                $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(new DimensionSpacePointSet([$existingIngoingHierarchyRelation->dimensionSpacePoint]));
             }
 
-            foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNodeAggregate(
+            foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
                 $event->getPeerCoverage()
-            ) as $existingOutboundHierarchyRelation) {
-                $existingOutboundHierarchyRelation->assignNewParentNode($peerNode->relationAnchorPoint, null, $this->getDatabaseConnection());
+            ) as $existingOutgoingHierarchyRelation) {
+                $existingOutgoingHierarchyRelation->assignNewParentNode($peerNode->relationAnchorPoint, null, $this->getDatabaseConnection());
             }
 
-            foreach ($unassignedInboundDimensionSpacePoints as $coveredDimensionSpacePoint) {
+            foreach ($unassignedIngoingDimensionSpacePoints as $coveredDimensionSpacePoint) {
                 // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
                 $peerParentNode = $this->projectionContentGraph->getNodeInAggregate(
                     $event->getContentStreamIdentifier(),
@@ -1023,7 +1023,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                     );
                 }
 
-                $inboundHierarchyRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNode($nodeToBeMoved->relationAnchorPoint, $event->getContentStreamIdentifier());
+                $ingoingHierarchyRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode($nodeToBeMoved->relationAnchorPoint, $event->getContentStreamIdentifier());
                 if ($event->getNewParentNodeAggregateIdentifier()) {
                     $newParentNode = $this->projectionContentGraph->findNodeByIdentifiers(
                         $event->getContentStreamIdentifier(),
@@ -1040,7 +1040,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                             $relationDimensionSpacePoint
                         );
 
-                        $inboundHierarchyRelations[$relationDimensionSpacePoint->getHash()]->assignNewParentNode($newParentNode->relationAnchorPoint, $newPosition, $this->getDatabaseConnection());
+                        $ingoingHierarchyRelations[$relationDimensionSpacePoint->getHash()]->assignNewParentNode($newParentNode->relationAnchorPoint, $newPosition, $this->getDatabaseConnection());
                     }
 
                     $this->cascadeRestrictionRelations(
@@ -1050,35 +1050,18 @@ insert ignore into neos_contentgraph_restrictionrelation
                         $moveNodeMapping->getRelationDimensionSpacePoints()
                     );
                 } else {
-                    foreach ($inboundHierarchyRelations as $inboundHierarchyRelation) {
+                    foreach ($ingoingHierarchyRelations as $ingoingHierarchyRelation) {
                         $newPosition = $this->getRelationPosition(
                             null,
                             $nodeToBeMoved->relationAnchorPoint,
                             $newSucceedingSibling ? $newSucceedingSibling->relationAnchorPoint : null,
                             $event->getContentStreamIdentifier(),
-                            $inboundHierarchyRelation->dimensionSpacePoint
+                            $ingoingHierarchyRelation->dimensionSpacePoint
                         );
 
-                        $inboundHierarchyRelation->assignNewPosition($newPosition, $this->getDatabaseConnection());
+                        $ingoingHierarchyRelation->assignNewPosition($newPosition, $this->getDatabaseConnection());
                     }
                 }
-            }
-        });
-    }
-
-    /**
-     * @param NodesWereRemovedFromAggregate $event
-     * @throws \Throwable
-     */
-    public function whenNodesWereRemovedFromAggregate(NodesWereRemovedFromAggregate $event)
-    {
-        // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
-        // lateron find tricks to improve performance
-        $this->transactional(function () use ($event) {
-            $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
-            $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getDimensionSpacePointSet());
-            foreach ($inboundRelations as $inboundRelation) {
-                $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($inboundRelation);
             }
         });
     }
@@ -1092,25 +1075,33 @@ insert ignore into neos_contentgraph_restrictionrelation
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
-            $this->removeAllRestrictionRelationsUnderneathNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
+            $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getAffectedCoveredDimensionSpacePoints()
+            );
 
-            $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier());
-            foreach ($inboundRelations as $inboundRelation) {
-                $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($inboundRelation);
+            $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getAffectedCoveredDimensionSpacePoints()
+            );
+            foreach ($ingoingRelations as $ingoingRelation) {
+                $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($ingoingRelation);
             }
         });
     }
 
     /**
-     * @param HierarchyRelation $inboundRelation
+     * @param HierarchyRelation $ingoingRelation
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(HierarchyRelation $inboundRelation)
+    protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(HierarchyRelation $ingoingRelation)
     {
-        $inboundRelation->removeFromDatabase($this->getDatabaseConnection());
+        $ingoingRelation->removeFromDatabase($this->getDatabaseConnection());
 
-        foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNode($inboundRelation->childNodeAnchor, $inboundRelation->contentStreamIdentifier, new DimensionSpacePointSet([$inboundRelation->dimensionSpacePoint])) as $outboundRelation) {
-            $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($outboundRelation);
+        foreach ($this->projectionContentGraph->findOutgoingHierarchyRelationsForNode($ingoingRelation->childNodeAnchor, $ingoingRelation->contentStreamIdentifier, new DimensionSpacePointSet([$ingoingRelation->dimensionSpacePoint])) as $outgoingRelation) {
+            $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($outgoingRelation);
         }
 
         // remove node itself if it does not have any incoming edges anymore
@@ -1123,7 +1114,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                     AND h.contentstreamidentifier IS NULL
                 ',
             [
-                'anchorPointForNode' => (string)$inboundRelation->childNodeAnchor,
+                'anchorPointForNode' => (string)$ingoingRelation->childNodeAnchor,
             ]
         );
     }
@@ -1200,13 +1191,13 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param ContentRepository\Context\Node\CopyableAcrossContentStreamsInterface $event
+     * @param CopyableAcrossContentStreamsInterface $event
      * @param callable $operations
      * @return mixed
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    protected function updateNodeWithCopyOnWrite(ContentRepository\Context\Node\CopyableAcrossContentStreamsInterface $event, callable $operations)
+    protected function updateNodeWithCopyOnWrite(CopyableAcrossContentStreamsInterface $event, callable $operations)
     {
         switch (get_class($event)) {
             case NodeReferencesWereSet::class:

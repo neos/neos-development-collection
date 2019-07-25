@@ -15,9 +15,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDisablingStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 
 /**
@@ -47,20 +47,20 @@ final class EnableNodeAggregate implements \JsonSerializable, CopyableAcrossCont
     /**
      * The strategy the user chose to determine which specialization variants will also be disabled
      *
-     * @var NodeAggregateDisablingStrategy
+     * @var NodeVariantSelectionStrategyIdentifier
      */
-    private $nodeAggregateDisablingStrategy;
+    private $nodeVariantSelectionStrategy;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeAggregateDisablingStrategy $nodeAggregateDisablingStrategy
+        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
-        $this->nodeAggregateDisablingStrategy = $nodeAggregateDisablingStrategy;
+        $this->nodeVariantSelectionStrategy = $nodeVariantSelectionStrategy;
     }
 
     public static function fromArray(array $array): self
@@ -69,7 +69,7 @@ final class EnableNodeAggregate implements \JsonSerializable, CopyableAcrossCont
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
-            NodeAggregateDisablingStrategy::fromString($array['nodeAggregateDisablingStrategy'])
+            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy'])
         );
     }
 
@@ -88,9 +88,9 @@ final class EnableNodeAggregate implements \JsonSerializable, CopyableAcrossCont
         return $this->coveredDimensionSpacePoint;
     }
 
-    public function getNodeAggregateDisablingStrategy(): NodeAggregateDisablingStrategy
+    public function getNodeVariantSelectionStrategy(): NodeVariantSelectionStrategyIdentifier
     {
-        return $this->nodeAggregateDisablingStrategy;
+        return $this->nodeVariantSelectionStrategy;
     }
 
     public function jsonSerialize(): array
@@ -99,7 +99,7 @@ final class EnableNodeAggregate implements \JsonSerializable, CopyableAcrossCont
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
-            'nodeAggregateDisablingStrategy' => $this->nodeAggregateDisablingStrategy
+            'nodeVariantSelectionStrategy' => $this->nodeVariantSelectionStrategy
         ];
     }
 
@@ -109,7 +109,7 @@ final class EnableNodeAggregate implements \JsonSerializable, CopyableAcrossCont
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->coveredDimensionSpacePoint,
-            $this->nodeAggregateDisablingStrategy
+            $this->nodeVariantSelectionStrategy
         );
     }
 

@@ -12,16 +12,17 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDisablingStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -84,12 +85,6 @@ class Property extends AbstractChange
      * @var bool
      */
     protected $isInline;
-
-    /**
-     * @Flow\Inject
-     * @var NodeCommandHandler
-     */
-    protected $nodeCommandHandler;
 
     /**
      * @Flow\Inject
@@ -199,9 +194,9 @@ class Property extends AbstractChange
      * @return void
      * @throws \Neos\ContentRepository\Exception\NodeException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
-     * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
+     * @throws ContentStreamDoesNotExistYet
+     * @throws NodeAggregatesTypeIsAmbiguous
+     * @throws DimensionSpacePointNotFound
      */
     public function apply()
     {
@@ -227,7 +222,7 @@ class Property extends AbstractChange
                         ]
                     )
                 );
-                $this->nodeCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
+                $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
             } else {
                 // property starts with "_"
                 if ($propertyName === '_nodeType') {
@@ -240,7 +235,7 @@ class Property extends AbstractChange
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
                             $node->getOriginDimensionSpacePoint(),
-                            NodeAggregateDisablingStrategy::gatherAllSpecializations()
+                            NodeVariantSelectionStrategyIdentifier::allSpecializations()
                         );
                         $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                     } else {
@@ -248,10 +243,10 @@ class Property extends AbstractChange
                         $command = new EnableNodeAggregate(
                             $node->getContentStreamIdentifier(),
                             $node->getNodeAggregateIdentifier(),
-                            // TODO: what do we want to unhide? I.e. including NESTED dimensions?
-                            new DimensionSpacePointSet([$node->getOriginDimensionSpacePoint()])
+                            $node->getOriginDimensionSpacePoint(),
+                            NodeVariantSelectionStrategyIdentifier::allSpecializations()
                         );
-                        $this->nodeCommandHandler->handleShowNode($command)->blockUntilProjectionsAreUpToDate();
+                        $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
                     }
                 } else {
                     throw new \Exception("TODO FIX");

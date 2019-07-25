@@ -17,7 +17,6 @@ use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeAggregate;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -298,7 +297,7 @@ class ProjectionContentGraph
      * @return HierarchyRelation[]
      * @throws DBALException
      */
-    public function getOutboundHierarchyRelationsForNodeAndSubgraph(
+    public function getOutgoingHierarchyRelationsForNodeAndSubgraph(
         NodeRelationAnchorPoint $parentAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
@@ -328,7 +327,7 @@ class ProjectionContentGraph
      * @return HierarchyRelation[]
      * @throws DBALException
      */
-    public function getInboundHierarchyRelationsForNodeAndSubgraph(
+    public function getIngoingHierarchyRelationsForNodeAndSubgraph(
         NodeRelationAnchorPoint $childAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
@@ -358,7 +357,7 @@ class ProjectionContentGraph
      * @return HierarchyRelation[]
      * @throws DBALException
      */
-    public function findInboundHierarchyRelationsForNode(NodeRelationAnchorPoint $childAnchorPoint, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePointSet $restrictToSet = null): array
+    public function findIngoingHierarchyRelationsForNode(NodeRelationAnchorPoint $childAnchorPoint, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePointSet $restrictToSet = null): array
     {
         $relations = [];
         $query = 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
@@ -390,7 +389,7 @@ class ProjectionContentGraph
      * @return HierarchyRelation[]
      * @throws DBALException
      */
-    public function findOutboundHierarchyRelationsForNode(NodeRelationAnchorPoint $parentAnchorPoint, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePointSet $restrictToSet = null): array
+    public function findOutgoingHierarchyRelationsForNode(NodeRelationAnchorPoint $parentAnchorPoint, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePointSet $restrictToSet = null): array
     {
         $relations = [];
         $query = 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
@@ -422,7 +421,7 @@ class ProjectionContentGraph
      * @return array|HierarchyRelation[]
      * @throws DBALException
      */
-    public function findOutboundHierarchyRelationsForNodeAggregate(
+    public function findOutgoingHierarchyRelationsForNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet
@@ -456,7 +455,7 @@ class ProjectionContentGraph
      * @return array|HierarchyRelation[]
      * @throws DBALException
      */
-    public function findInboundHierarchyRelationsForNodeAggregate(
+    public function findIngoingHierarchyRelationsForNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet = null
@@ -481,34 +480,6 @@ class ProjectionContentGraph
         }
 
         foreach ($this->getDatabaseConnection()->executeQuery($query, $parameters, $types)->fetchAll() as $relationData) {
-            $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
-        }
-
-        return $relations;
-    }
-
-    /**
-     * @param string $parentNodesIdentifierInGraph
-     * @param array $subgraphIdentityHashs
-     * @return array|HierarchyRelation[]
-     * @throws DBALException
-     */
-    public function findOutboundHierarchyRelationsForNodeAndSubgraphs(string $parentNodesIdentifierInGraph, array $subgraphIdentityHashs): array
-    {
-        // TODO needs to be fixed
-        $relations = [];
-        foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
- WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
- AND subgraphIdentityHash IN (:subgraphIdentityHashs)',
-            [
-                'parentNodesIdentifierInGraph' => $parentNodesIdentifierInGraph,
-                'subgraphIdentityHashs' => $subgraphIdentityHashs
-            ],
-            [
-                'subgraphIdentityHashs' => Connection::PARAM_STR_ARRAY
-            ]
-        )->fetchAll() as $relationData) {
             $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
@@ -606,29 +577,6 @@ class ProjectionContentGraph
         }
 
         return $nodeAggregateIdentifiers;
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeAggregate|null
-     * @throws DBALException
-     */
-    public function getNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier): ?NodeAggregate
-    {
-        $nodeAggregateRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.nodetypename, n.nodeaggregateidentifier FROM neos_contentgraph_node n
-                        INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-                        WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
-                        AND h.contentstreamidentifier = :contentStreamIdentifier
-                        LIMIT 1',
-            [
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier
-            ]
-        )->fetch();
-
-        return $nodeAggregateRow ? NodeAggregate::fromDatabaseRow($nodeAggregateRow) : null;
     }
 
     /**

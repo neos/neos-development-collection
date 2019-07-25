@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
+
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,11 +13,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  * source code.
  */
 
-use Neos\Flow\Exception;
-
 /**
- * The exception to be thrown if a content stream already exists but is not expected to
+ * The exception to be thrown if a node aggregate's type is ambiguous
  */
-final class ContentStreamAlreadyExists extends Exception
+final class NodeAggregatesTypeIsAmbiguous extends \DomainException
 {
 }

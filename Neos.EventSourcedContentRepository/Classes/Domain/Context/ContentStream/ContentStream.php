@@ -13,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcing\EventStore;
 use Neos\EventSourcing\EventStore\StreamName;
 
@@ -35,7 +35,7 @@ final class ContentStream
     private $streamName;
 
     /**
-     * @var NodeEventPublisher
+     * @var NodeAggregateEventPublisher
      */
     private $nodeEventPublisher;
 
@@ -45,7 +45,7 @@ final class ContentStream
     private $eventStore;
 
 
-    public function __construct(ContentStreamIdentifier $identifier, EventStore\EventStoreManager $eventStoreManager, NodeEventPublisher $nodeEventPublisher)
+    public function __construct(ContentStreamIdentifier $identifier, EventStore\EventStoreManager $eventStoreManager, NodeAggregateEventPublisher $nodeEventPublisher)
     {
         $this->identifier = $identifier;
         $this->streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($identifier)->getEventStreamName();
