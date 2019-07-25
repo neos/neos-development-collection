@@ -4,8 +4,10 @@
   "description": "Dependencies for building neos cms none react backend",
   "license": "GNU GPLv3",
   "scripts": {
-    "build": "webpack --mode development",
-    "build:production": "NODE_ENV=production webpack --mode production"
+    "build": "yarn build:js && yarn build:styles",
+    "build:production": "NODE_ENV=production yarn build:js --mode production && NODE_ENV=production yarn build:styles --mode production",
+    "build:js": "webpack -p --env=js",
+    "build:styles": "webpack -d --env=styles"
   },
   "devDependencies": {
     "@babel/core": "^7.5.4",
