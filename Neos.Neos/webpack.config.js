@@ -3,13 +3,12 @@ const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 
-const webpackConfig = {
+const javascriptConfig = {
   context: __dirname,
   devtool: debug ? 'inline-sourcemap' : false,
   entry: {
     Main: [
         './Resources/Public/JavaScript/index.js',
-        './Resources/Private/Styles/Neos.scss',
     ],
   },
   output: {
@@ -24,31 +23,6 @@ const webpackConfig = {
         use: {
           loader: 'babel-loader'
         }
-      },
-      {
-        test    : /\.(gif|png|jpg|svg)$/,
-        include : __dirname + '/Resources/Public/Images/',
-        loader  : 'url-loader?limit=30000&name=images/[name].[ext]'
-      },
-      {
-        test: /\.scss$/,
-        use: [
-            MiniCssExtractPlugin.loader,
-            'css-loader',
-            'sass-loader'
-          ]
-      },
-      {
-        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]',
-              outputPath: '../Fonts/'
-            }
-          }
-        ]
       }
     ],
   },
@@ -56,8 +30,7 @@ const webpackConfig = {
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery"
-    }),
-    new MiniCssExtractPlugin({filename: '../Styles/[name].css'})
+    })
   ],
   optimization: {
     minimizer: []
@@ -71,6 +44,9 @@ const stylesConfig = {
     context: __dirname,
     devtool: debug ? 'inline-sourcemap' : false,
     entry: {
+        Main: [
+          './Resources/Private/Styles/Neos.scss',
+        ],
         Login: [
             './Resources/Private/Styles/Login.scss',
         ],
@@ -141,9 +117,18 @@ if (!debug) {
     }
   };
 
-  webpackConfig.optimization.minimizer.push(new TerserPlugin(terserOptions));
+  javascriptConfig.optimization.minimizer.push(new TerserPlugin(terserOptions));
   stylesConfig.optimization.minimizer.push(new TerserPlugin(terserOptions));
 }
 
-module.exports = webpackConfig;
-// module.exports = stylesConfig;
+function buildConfig(env) {
+  if (env === 'js') {
+    return javascriptConfig;
+  } else if (env === 'styles') {
+    return stylesConfig;
+  } else {
+    console.log("Wrong webpack build parameter. Possible choices: 'js' or 'styles'.")
+  }
+}
+
+module.exports = buildConfig;
