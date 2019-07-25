@@ -53,6 +53,10 @@ const webpackConfig = {
     ],
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery"
+    }),
     new MiniCssExtractPlugin({filename: '../Styles/[name].css'})
   ],
   optimization: {
@@ -126,32 +130,20 @@ const stylesConfig = {
 
 
 if (!debug) {
-  webpackConfig.optimization.minimizer.push(
-      new TerserPlugin({
-          terserOptions: {
-              sourceMap: true,
-              warnings: false,
-              parse: {},
-              compress: {},
-              mangle: true,
-              keep_fnames: true
-          }
-      }),
-  );
+  const terserOptions = {
+    terserOptions: {
+        sourceMap: true,
+        warnings: false,
+        parse: {},
+        compress: {},
+        mangle: true,
+        keep_fnames: true
+    }
+  };
 
-  stylesConfig.optimization.minimizer.push(
-    new TerserPlugin({
-        terserOptions: {
-            sourceMap: true,
-            warnings: false,
-            parse: {},
-            compress: {},
-            mangle: true,
-            keep_fnames: true
-        }
-    }),
-);
+  webpackConfig.optimization.minimizer.push(new TerserPlugin(terserOptions));
+  stylesConfig.optimization.minimizer.push(new TerserPlugin(terserOptions));
 }
 
 module.exports = webpackConfig;
-module.exports = stylesConfig;
+// module.exports = stylesConfig;
