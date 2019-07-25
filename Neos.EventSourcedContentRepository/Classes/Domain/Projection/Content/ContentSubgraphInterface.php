@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
@@ -27,7 +28,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
  */
 interface ContentSubgraphInterface extends \JsonSerializable
 {
-
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeConstraints $nodeTypeConstraints
@@ -71,11 +71,11 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findParentNode(NodeAggregateIdentifier $childAggregateIdentifier): ?NodeInterface;
 
     /**
-     * @param string $path
+     * @param NodePath $path
      * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
      * @return NodeInterface|null
      */
-    public function findNodeByPath(string $path, NodeAggregateIdentifier $startingNodeAggregateIdentifier): ?NodeInterface;
+    public function findNodeByPath(NodePath $path, NodeAggregateIdentifier $startingNodeAggregateIdentifier): ?NodeInterface;
 
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
@@ -134,6 +134,12 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @return mixed
      */
     public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
+
+    /**
+     * @param array $entryNodeAggregateIdentifiers
+     * @return array|NodeInterface[]
+     */
+    public function findDescendants(array $entryNodeAggregateIdentifiers): array;
 
     public function countNodes(): int;
 

@@ -437,26 +437,25 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
     }
 
     /**
-     * @param string $path
+     * @param NodePath $path
      * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
      * @return NodeInterface|null
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function findNodeByPath(string $path, NodeAggregateIdentifier $startingNodeAggregateIdentifier): ?NodeInterface
+    public function findNodeByPath(NodePath $path, NodeAggregateIdentifier $startingNodeAggregateIdentifier): ?NodeInterface
     {
         $currentNode = $this->findNodeByNodeAggregateIdentifier($startingNodeAggregateIdentifier);
         if (!$currentNode) {
             throw new \RuntimeException('Starting Node (identified by ' . $startingNodeAggregateIdentifier . ') does not exist.');
         }
-        $edgeNames = explode('/', trim($path, '/'));
-        if ($edgeNames !== [""]) {
-            foreach ($edgeNames as $edgeName) {
-                // identifier exists here :)
-                $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->getNodeAggregateIdentifier(),
-                    NodeName::fromString($edgeName));
-                if (!$currentNode) {
-                    return null;
-                }
+        foreach ($path->getParts() as $edgeName) {
+            // identifier exists here :)
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName(
+                $currentNode->getNodeAggregateIdentifier(),
+                $edgeName
+            );
+            if (!$currentNode) {
+                return null;
             }
         }
 
@@ -741,6 +740,8 @@ WHERE
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @return mixed|void
      * @throws \Doctrine\DBAL\DBALException
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findSubtrees(
         array $entryNodeAggregateIdentifiers,
@@ -842,6 +843,88 @@ order by level asc, position asc;')
         }
 
         return $subtreesByNodeIdentifier['ROOT'];
+    }
+
+    /**
+     * @param array $entryNodeAggregateIdentifiers
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function findDescendants(array $entryNodeAggregateIdentifiers): array
+    {
+        $query = new SqlQueryBuilder();
+        $query->addToQuery('
+-- ContentSubgraph::findSubtrees
+
+-- we build a set of recursive trees, ready to be rendered e.g. in a menu. Because the menu supports starting at multiple nodes, we also support starting at multiple nodes at once.
+with recursive tree as (
+     -- --------------------------------
+     -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
+     -- --------------------------------
+     select
+     	n.*,
+     	h.contentstreamidentifier,
+     	h.name,
+
+     	-- see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
+     	CAST("ROOT" AS CHAR(50)) as parentNodeAggregateIdentifier,
+     	0 as level,
+     	0 as position
+     from
+        neos_contentgraph_node n
+     -- we need to join with the hierarchy relation, because we need the node name.
+     inner join neos_contentgraph_hierarchyrelation h
+        on h.childnodeanchor = n.relationanchorpoint
+     where
+        n.nodeaggregateidentifier in (:entryNodeAggregateIdentifiers)
+        and h.contentstreamidentifier = :contentStreamIdentifier
+		AND h.dimensionspacepointhash = :dimensionSpacePointHash
+		###VISIBILITY_CONSTRAINTS_INITIAL###
+union
+     -- --------------------------------
+     -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
+     -- --------------------------------
+     select
+        c.*,
+        h.contentstreamidentifier,
+        h.name,
+
+     	p.nodeaggregateidentifier as parentNodeAggregateIdentifier,
+     	p.level + 1 as level,
+     	h.position
+     from
+        tree p
+	 inner join neos_contentgraph_hierarchyrelation h
+        on h.parentnodeanchor = p.relationanchorpoint
+	 inner join neos_contentgraph_node c
+	    on h.childnodeanchor = c.relationanchorpoint
+	 where
+	 	h.contentstreamidentifier = :contentStreamIdentifier
+		AND h.dimensionspacepointhash = :dimensionSpacePointHash
+		and p.level + 1 <= :maximumLevels
+        ###VISIBILITY_CONSTRAINTS_RECURSION###
+
+   -- select relationanchorpoint from neos_contentgraph_node
+)
+select * from tree
+order by level asc, position asc;')
+            ->parameter('entryNodeAggregateIdentifiers', array_map(function (NodeAggregateIdentifier $nodeAggregateIdentifier) {
+                return (string)$nodeAggregateIdentifier;
+            }, $entryNodeAggregateIdentifiers), Connection::PARAM_STR_ARRAY)
+            ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+
+        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'n', 'h', '###VISIBILITY_CONSTRAINTS_INITIAL###');
+        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c', 'h', '###VISIBILITY_CONSTRAINTS_RECURSION###');
+
+        $result = [];
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
+        }
+
+        return $result;
     }
 
     /**

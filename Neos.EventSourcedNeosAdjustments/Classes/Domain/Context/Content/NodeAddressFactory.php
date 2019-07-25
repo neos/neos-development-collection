@@ -13,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -81,7 +82,7 @@ class NodeAddressFactory
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($pathValues['workspaceName']));
         $contentStreamIdentifier = $workspace->getCurrentContentStreamIdentifier();
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($pathValues['dimensions']);
-        $nodePath = \mb_strpos($pathValues['nodePath'], '/sites') === 0 ? \mb_substr($pathValues['nodePath'], 6) : $pathValues['nodePath'];
+        $nodePath = NodePath::fromString(\mb_strpos($pathValues['nodePath'], '/sites') === 0 ? \mb_substr($pathValues['nodePath'], 6) : $pathValues['nodePath']);
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
         $node = $subgraph->findNodeByPath(
