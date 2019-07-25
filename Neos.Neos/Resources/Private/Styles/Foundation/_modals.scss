@@ -112,7 +112,7 @@
 		border: 0px;
 		padding: $defaultMargin;
 		text-align: right;
-		overflow: hidden; // clear it in case folks use .neos-pull-* classes on buttons
+		@include clearfix(); // clear it in case folks use .neos-pull-* classes on buttons
 
 		// Properly space out buttons
 		.neos-button {

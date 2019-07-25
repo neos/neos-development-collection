@@ -60,7 +60,7 @@
 
 // Clearing floats
 .neos-clearfix {
-  overflow: hidden;
+  @include clearfix();
 }
 
 // Accessible yet invisible text
