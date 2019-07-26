@@ -16,8 +16,8 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\MatchableWithNodeAddressInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
@@ -27,7 +27,7 @@ use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
  * CreateNodeAggregateWithNode command
  *
  * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
- * The node will be appended as child node of the given `parentNodeIdentifier` which must be visible in the given
+ * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
  * `dimensionSpacePoint`.
  */
 final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
@@ -55,7 +55,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
 
     /**
      * Origin of the new node in the dimension space.
-     * Will also be used to calculate a set of dimension points where the new node will be visible in
+     * Will also be used to calculate a set of dimension points where the new node will cover
      * from the configured specializations.
      *
      * @var DimensionSpacePoint
@@ -227,10 +227,10 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifierIdentifier): self
     {
         return new CreateNodeAggregateWithNode(
-            $targetContentStreamIdentifier,
+            $targetContentStreamIdentifierIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,

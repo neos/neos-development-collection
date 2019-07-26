@@ -78,7 +78,7 @@ final class IntegrityViolationResolver
                 if ($this->tetheredNodeExists($contentStreamIdentifier, $node->getNodeAggregateIdentifier(), $tetheredNodeName)) {
                     continue;
                 }
-                $events = $this->nodeAggregateCommandHandler->handleTetheredChildNode(
+                $events = $this->nodeAggregateCommandHandler->createTetheredChildNode(
                     $contentStreamIdentifier,
                     $nodeAggregate->getCoveredDimensionSpacePoints(),
                     $node->getOriginDimensionSpacePoint(),
@@ -114,7 +114,8 @@ final class IntegrityViolationResolver
     private function tetheredNodeExists(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $parentNodeIdentifier, NodeName $tetheredNodeName): bool
     {
         foreach ($this->contentGraph->findTetheredChildNodeAggregates($contentStreamIdentifier, $parentNodeIdentifier) as $tetheredNodeAggregate) {
-            if ($tetheredNodeAggregate->getNodeName()->equals($tetheredNodeName)) {
+            // TODO replace with $tetheredNodeAggregate->getNodeName()->equals($tetheredNodeName) once that's available
+            if ((string)$tetheredNodeAggregate->getNodeName() === (string)$tetheredNodeName) {
                 return true;
             }
         }

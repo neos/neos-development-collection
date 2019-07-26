@@ -13,8 +13,8 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\Flow\Annotations as Flow;
@@ -30,9 +30,9 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
 
     /**
      * @Flow\Inject
-     * @var NodeCommandHandler
+     * @var NodeAggregateCommandHandler
      */
-    protected $nodeCommandHandler;
+    protected $nodeAggregateCommandHandler;
 
     /**
      * Set the node title for the newly created Document node
@@ -45,7 +45,7 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             if (isset($data['title'])) {
-                $this->nodeCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
@@ -57,7 +57,7 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                 ));
             }
 
-            $this->nodeCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+            $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),

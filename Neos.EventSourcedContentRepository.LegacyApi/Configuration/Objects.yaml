@@ -1,0 +1,7 @@
+Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface:
+  scope: singleton
+  factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+  factoryMethodName: get
+  arguments:
+    1:
+      value: eventSourcedContentRepositoryLegacyLogger

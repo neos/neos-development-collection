@@ -3,6 +3,8 @@ Feature: Create node generalization
 
   As a user of the CR I want to create a copy of a node within an aggregate to a more general dimension space point.
 
+  # @todo generalize hidden nodes
+
   Background:
     Given I have the following content dimensions:
       | Identifier | Default | Values      | Generalizations |
@@ -29,13 +31,13 @@ Feature: Create node generalization
       | currentContentStreamIdentifier | "cs-identifier"      |
       | initiatingUserIdentifier       | "system-user"        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                                                                                                                                                     |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                                                                           |
-      | nodeAggregateIdentifier       | "lady-eleonode-rootford"                                                                                                                                                                                  |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"                                                                                                                                                                             |
-      | visibleInDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | initiatingUserIdentifier      | "system-user"                                                                                                                                                                                             |
-      | nodeAggregateClassification   | "root"                                                                                                                                                                                                    |
+      | Key                         | Value                                                                                                                                                                                                     |
+      | contentStreamIdentifier     | "cs-identifier"                                                                                                                                                                                           |
+      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                                                                                                                                                  |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                                                                                                                                                                             |
+      | coveredDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | initiatingUserIdentifier    | "system-user"                                                                                                                                                                                             |
+      | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -44,7 +46,7 @@ Feature: Create node generalization
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"market":"CH", "language":"gsw"}         |
-      | visibleInDimensionSpacePoints | [{"market":"CH", "language":"gsw"}]       |
+      | coveredDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}]       |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "regular"                                 |
@@ -56,7 +58,7 @@ Feature: Create node generalization
       | nodeAggregateIdentifier       | "nodewyn-tetherton"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Tethered" |
       | originDimensionSpacePoint     | {"market":"CH", "language":"gsw"}         |
-      | visibleInDimensionSpacePoints | [{"market":"CH", "language":"gsw"}]       |
+      | coveredDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}]       |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
       | nodeName                      | "tethered-node"                           |
       | nodeAggregateClassification   | "tethered"                                |
@@ -68,7 +70,7 @@ Feature: Create node generalization
       | nodeAggregateIdentifier       | "nodimer-tetherton"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:TetheredLeaf" |
       | originDimensionSpacePoint     | {"market":"CH", "language":"gsw"}             |
-      | visibleInDimensionSpacePoints | [{"market":"CH", "language":"gsw"}]           |
+      | coveredDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}]           |
       | parentNodeAggregateIdentifier | "nodewyn-tetherton"                           |
       | nodeName                      | "tethered-leaf"                               |
       | nodeAggregateClassification   | "tethered"                                    |
@@ -80,7 +82,7 @@ Feature: Create node generalization
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"market":"CH", "language":"gsw"}         |
-      | visibleInDimensionSpacePoints | [{"market":"CH", "language":"gsw"}]       |
+      | coveredDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}]       |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
       | nodeName                      | "child-document"                          |
       | nodeAggregateClassification   | "regular"                                 |

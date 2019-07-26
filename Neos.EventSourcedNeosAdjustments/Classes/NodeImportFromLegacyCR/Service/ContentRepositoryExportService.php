@@ -23,15 +23,15 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\HideNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -64,7 +64,6 @@ use Neos\Utility\TypeHandling;
  */
 class ContentRepositoryExportService
 {
-
     /**
      * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
      * interface ...
@@ -90,13 +89,10 @@ class ContentRepositoryExportService
      */
     protected $persistenceManager;
 
-    protected $contentStreamIdentifier;
-
     /**
-     * @Flow\Inject
-     * @var NodeCommandHandler
+     * @var ContentStreamIdentifier
      */
-    protected $nodeCommandHandler;
+    protected $contentStreamIdentifier;
 
     /**
      * @Flow\Inject
@@ -305,7 +301,7 @@ class ContentRepositoryExportService
             if ($isTethered) {
                 // we KNOW that tethered nodes already exist; so we just set its properties.
                 if (!empty($propertyValues)) {
-                    $this->nodeCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                    $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
@@ -324,7 +320,7 @@ class ContentRepositoryExportService
                         $originDimensionSpacePoint
                     ))->blockUntilProjectionsAreUpToDate();
 
-                    $this->nodeCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                    $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
@@ -352,7 +348,7 @@ class ContentRepositoryExportService
 
             // publish reference edges
             foreach ($propertyReferences as $propertyName => $references) {
-                $this->nodeCommandHandler->handleSetNodeReferences(new SetNodeReferences(
+                $this->nodeAggregateCommandHandler->handleSetNodeReferences(new SetNodeReferences(
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
@@ -362,11 +358,11 @@ class ContentRepositoryExportService
             }
 
             if ($isHidden === true) {
-                $this->nodeCommandHandler->handleHideNode(new HideNode(
+                $this->nodeAggregateCommandHandler->handleDisableNodeAggregate(new DisableNodeAggregate(
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
-                    // HINT: we currently *always* hide the specializations; this is a DEVIATION from the old behavior where only non-materialized nodes were affected by the hiding.
-                    $this->interDimensionalFallbackGraph->getSpecializationSet($originDimensionSpacePoint)
+                    $originDimensionSpacePoint,
+                    NodeVariantSelectionStrategyIdentifier::virtualSpecializations()
                 ));
             }
 

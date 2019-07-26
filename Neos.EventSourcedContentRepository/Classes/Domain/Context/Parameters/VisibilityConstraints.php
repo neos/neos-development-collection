@@ -30,15 +30,15 @@ final class VisibilityConstraints
     /**
      * @var boolean
      */
-    protected $invisibleContentShown = false;
+    protected $disabledContentShown = false;
 
     protected static $currentDateTimeOnInitialization;
 
 
-    private function __construct(\DateTimeImmutable $currentDateTime, bool $invisibleContentShown)
+    private function __construct(\DateTimeImmutable $currentDateTime, bool $disabledContentShown)
     {
         $this->currentDateTime = $currentDateTime;
-        $this->invisibleContentShown = $invisibleContentShown;
+        $this->disabledContentShown = $disabledContentShown;
     }
 
     /**
@@ -52,14 +52,14 @@ final class VisibilityConstraints
     /**
      * @return bool
      */
-    public function isInvisibleContentShown(): bool
+    public function isDisabledContentShown(): bool
     {
-        return $this->invisibleContentShown;
+        return $this->disabledContentShown;
     }
 
     public function getHash(): string
     {
-        return md5($this->currentDateTime->format(\DateTime::W3C) . '-invisible' . $this->invisibleContentShown);
+        return md5($this->currentDateTime->format(\DateTime::W3C) . '-disabled' . $this->disabledContentShown);
     }
 
     public static function withoutRestrictions(): VisibilityConstraints

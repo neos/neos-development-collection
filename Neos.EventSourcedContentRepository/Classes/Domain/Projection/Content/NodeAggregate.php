@@ -17,8 +17,8 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -82,6 +82,14 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     private $occupationByCovered;
 
     /**
+     * The dimension space point set this node aggregate disables.
+     * This is *not* necessarily the set it is disabled in, since that is determined by its ancestors
+     *
+     * @var DimensionSpacePointSet
+     */
+    private $disabledDimensionSpacePoints;
+
+    /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeAggregateClassification $classification
      * @param NodeTypeName $nodeTypeName
@@ -92,6 +100,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
      * @param DimensionSpacePointSet $coveredDimensionSpacePoints
      * @param array|NodeInterface[] $nodesByCoveredDimensionSpacePoint
      * @param array|DimensionSpacePoint[] $occupationByCovered
+     * @param DimensionSpacePointSet $disabledDimensionSpacePoints
      */
     public function __construct(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -103,7 +112,8 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         array $coverageByOccupant,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         array $nodesByCoveredDimensionSpacePoint,
-        array $occupationByCovered
+        array $occupationByCovered,
+        DimensionSpacePointSet $disabledDimensionSpacePoints
     ) {
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->classification = $classification;
@@ -115,6 +125,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         $this->coveredDimensionSpacePoints = $coveredDimensionSpacePoints;
         $this->nodesByCoveredDimensionSpacePoint = $nodesByCoveredDimensionSpacePoint;
         $this->occupationByCovered = $occupationByCovered;
+        $this->disabledDimensionSpacePoints = $disabledDimensionSpacePoints;
     }
 
     /**
@@ -209,6 +220,17 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
 
         return $this->occupationByCovered[$coveredDimensionSpacePoint->getHash()];
     }
+
+    public function getDisabledDimensionSpacePoints(): DimensionSpacePointSet
+    {
+        return $this->disabledDimensionSpacePoints;
+    }
+
+    public function disablesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
+    {
+        return $this->disabledDimensionSpacePoints->contains($dimensionSpacePoint);
+    }
+
 
     public function getClassification(): NodeAggregateClassification
     {

@@ -20,9 +20,8 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeNameIsAlreadyOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
 use Neos\Flow\Annotations as Flow;
@@ -30,12 +29,6 @@ use Neos\Neos\Ui\Exception\InvalidNodeCreationHandlerException;
 
 abstract class AbstractCreate extends AbstractStructuralChange
 {
-    /**
-     * @Flow\Inject
-     * @var NodeCommandHandler
-     */
-    protected $nodeCommandHandler;
-
     /**
      * @Flow\Inject
      * @var NodeAggregateCommandHandler
@@ -153,7 +146,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
      * @throws \Neos\ContentRepository\Exception\NodeException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamDoesNotExistYet
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous
      * @throws \Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception

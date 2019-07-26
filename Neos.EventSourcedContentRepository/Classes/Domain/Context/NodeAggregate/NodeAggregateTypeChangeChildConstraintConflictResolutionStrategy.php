@@ -12,6 +12,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown;
+
 /**
  * The strategy how to handle node type constraint conflicts with already present child nodes
  * when changing a node aggregate's type.
@@ -35,12 +37,12 @@ final class NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy imp
     /**
      * @param string $strategy
      * @return NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
-     * @throws NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyUnknown
+     * @throws NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown
      */
     public static function fromString(string $strategy): self
     {
         if ($strategy !== self::STRATEGY_DELETE) {
-            throw new NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyUnknown(
+            throw new NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown(
                 'Given strategy "' . $strategy . '" is not known for resolving child node type constraint conflicts when changing a node type.', 15200134492
             );
         }

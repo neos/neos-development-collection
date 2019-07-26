@@ -23,7 +23,7 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
@@ -184,7 +184,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
         self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints);
-        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 'c');
+        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c');
         $query->addToQuery('ORDER BY h.position ASC');
 
         $result = [];
@@ -224,7 +224,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
                 ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
                 ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
-            $query = self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints);
+            $query = self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints);
 
             $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
             if ($nodeRow === false) {
@@ -239,16 +239,16 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
         }
     }
 
-    private static function addRestrictionEdgeConstraintsToQuery(SqlQueryBuilder $query, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints, string $aliasOfNodeInQuery = 'n', string $aliasOfHierarchyEdgeInQuery = 'h', $markerToReplaceInQuery = null): SqlQueryBuilder
+    private static function addRestrictionRelationConstraintsToQuery(SqlQueryBuilder $query, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints, string $aliasOfNodeInQuery = 'n', string $aliasOfHierarchyEdgeInQuery = 'h', $markerToReplaceInQuery = null): SqlQueryBuilder
     {
         // TODO: make QueryBuilder immutable
-        if (!$visibilityConstraints->isInvisibleContentShown()) {
+        if (!$visibilityConstraints->isDisabledContentShown()) {
             $query->addToQuery('
                 and not exists (
                     select
                         1 
                     from
-                        neos_contentgraph_restrictionedge r
+                        neos_contentgraph_restrictionrelation r
                     where
                         r.contentstreamidentifier = ' . $aliasOfHierarchyEdgeInQuery . '.contentstreamidentifier 
                         and r.dimensionspacepointhash = ' . $aliasOfHierarchyEdgeInQuery . '.dimensionspacepointhash
@@ -276,7 +276,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
-        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 'c');
+        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c');
 
         if ($nodeTypeConstraints) {
             self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints);
@@ -314,7 +314,7 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
             ->parameter('dimensionSpacePointHash', (string)$this->getDimensionSpacePoint()->getHash())
             ->parameter('name', (string)$name);
 
-        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 'd', 'dh');
+        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'd', 'dh');
 
         if ($name) {
             $query->addToQuery('
@@ -368,7 +368,7 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchy
             $query->addToQuery('AND r.name = :name');
         }
 
-        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 's', 'sh');
+        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 's', 'sh');
 
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
@@ -419,7 +419,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
-        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 'p');
+        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'p');
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
 
@@ -502,7 +502,7 @@ WHERE
                 ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash())
                 ->parameter('edgeName', (string)$edgeName);
 
-            self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 'c');
+            self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c');
 
             $query->addToQuery('ORDER BY h.position LIMIT 1');
 
@@ -580,6 +580,8 @@ WHERE
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints);
+
         $query->addToQuery('
     AND h.position < (
         SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
@@ -628,6 +630,8 @@ WHERE
             ->parameter('siblingNodeAggregateIdentifier', (string)$sibling)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
+        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints);
+
         $query->addToQuery('
     AND h.position > (
         SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
@@ -658,7 +662,7 @@ WHERE
     protected function getSiblingBaseQuery(): string
     {
         return '
-  SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint FROM neos_contentgraph_node n
+  SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
   INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
   WHERE h.contentstreamidentifier = :contentStreamIdentifier AND h.dimensionspacepointhash = :dimensionSpacePointHash
   AND h.parentnodeanchor = (
@@ -809,8 +813,8 @@ order by level asc, position asc;')
 
         self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints, '###NODE_TYPE_CONSTRAINTS###');
 
-        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 'n', 'h', '###VISIBILITY_CONSTRAINTS_INITIAL###');
-        self::addRestrictionEdgeConstraintsToQuery($query, $this->visibilityConstraints, 'c', 'h', '###VISIBILITY_CONSTRAINTS_RECURSION###');
+        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'n', 'h', '###VISIBILITY_CONSTRAINTS_INITIAL###');
+        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c', 'h', '###VISIBILITY_CONSTRAINTS_RECURSION###');
 
         $result = $query->execute($this->getDatabaseConnection())->fetchAll();
 

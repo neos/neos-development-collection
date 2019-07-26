@@ -22,13 +22,13 @@ Feature: Create a root node aggregate
       | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
       | currentContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                             |
-      | contentStreamIdentifier       | "cs-identifier"                                                                   |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                          |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"                                                     |
-      | visibleInDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "ch"}] |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                            |
-      | nodeAggregateClassification   | "root"                                                                            |
+      | Key                         | Value                                                                             |
+      | contentStreamIdentifier     | "cs-identifier"                                                                   |
+      | nodeAggregateIdentifier     | "sir-david-nodenborough"                                                          |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                                                     |
+      | coveredDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "ch"}] |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000"                                            |
+      | nodeAggregateClassification | "root"                                                                            |
 
   Scenario: Create a root node aggregate using valid payload with dimensions
     When the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -40,13 +40,13 @@ Feature: Create a root node aggregate
 
     Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 2 is of type "Neos.EventSourcedContentRepository:RootNodeAggregateWithNodeWasCreated" with payload:
-      | Key                           | Expected                                                                          |
-      | contentStreamIdentifier       | "cs-identifier"                                                                   |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                |
-      | nodeTypeName                  | "Neos.ContentRepository:Root"                                                     |
-      | visibleInDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "ch"}] |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"                                            |
-      | nodeAggregateClassification   | "root"                                                                            |
+      | Key                         | Expected                                                                          |
+      | contentStreamIdentifier     | "cs-identifier"                                                                   |
+      | nodeAggregateIdentifier     | "nody-mc-nodeface"                                                                |
+      | nodeTypeName                | "Neos.ContentRepository:Root"                                                     |
+      | coveredDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "ch"}] |
+      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000"                                            |
+      | nodeAggregateClassification | "root"                                                                            |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 2 nodes

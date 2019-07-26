@@ -12,10 +12,13 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\RemoveNodesFromAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveNode;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
@@ -25,18 +28,11 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateN
  */
 class Remove extends AbstractChange
 {
-
     /**
      * @Flow\Inject
-     * @var InterDimensionalVariationGraph
+     * @var NodeAggregateCommandHandler
      */
-    protected $interDimensionalVariationGraph;
-
-    /**
-     * @Flow\Inject
-     * @var NodeCommandHandler
-     */
-    protected $nodeCommandHandler;
+    protected $nodeAggregateCommandHandler;
 
     /**
      * Checks whether this change can be applied to the subject
@@ -52,6 +48,10 @@ class Remove extends AbstractChange
      * Applies this change
      *
      * @return void
+     * @throws NodeAggregatesTypeIsAmbiguous
+     * @throws ContentStreamDoesNotExistYet
+     * @throws DimensionSpacePointNotFound
+     * @throws \Neos\ContentRepository\Exception\NodeException
      */
     public function apply()
     {
@@ -62,12 +62,14 @@ class Remove extends AbstractChange
             // we have to schedule an the update workspace info before we actually delete the node; otherwise we cannot find the parent nodes anymore.
             $this->updateWorkspaceInfo();
 
-            $command = new RemoveNodesFromAggregate(
+            $command = new RemoveNodeAggregate(
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
-                $this->interDimensionalVariationGraph->getSpecializationSet($node->getDimensionSpacePoint(), true)
+                $node->getDimensionSpacePoint(),
+                NodeVariantSelectionStrategyIdentifier::allSpecializations()
             );
-            $this->nodeCommandHandler->handleRemoveNodesFromAggregate($command)->blockUntilProjectionsAreUpToDate();
+
+            $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
 
             $removeNode = new RemoveNode($node, $parentNode);
             $this->feedbackCollection->add($removeNode);

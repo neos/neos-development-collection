@@ -16,7 +16,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
@@ -45,11 +45,11 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
     protected $nodeTypeName;
 
     /**
-     * Root nodes are by definition visible in *all* dimension space points; so we need to include the full list here.
+     * Root nodes by definition cover *all* dimension space points; so we need to include the full list here.
      *
      * @var DimensionSpacePointSet
      */
-    private $visibleInDimensionSpacePoints;
+    private $coveredDimensionSpacePoints;
 
     /**
      * @var NodeAggregateClassification
@@ -65,14 +65,14 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
-        DimensionSpacePointSet $visibleInDimensionSpacePoints,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
         NodeAggregateClassification $nodeAggregateClassification,
         UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
-        $this->visibleInDimensionSpacePoints = $visibleInDimensionSpacePoints;
+        $this->coveredDimensionSpacePoints = $coveredDimensionSpacePoints;
         $this->nodeAggregateClassification = $nodeAggregateClassification;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
@@ -92,9 +92,9 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
         return $this->nodeTypeName;
     }
 
-    public function getVisibleInDimensionSpacePoints(): DimensionSpacePointSet
+    public function getCoveredDimensionSpacePoints(): DimensionSpacePointSet
     {
-        return $this->visibleInDimensionSpacePoints;
+        return $this->coveredDimensionSpacePoints;
     }
 
     public function getNodeAggregateClassification(): NodeAggregateClassification
@@ -107,13 +107,13 @@ final class RootNodeAggregateWithNodeWasCreated implements DomainEventInterface,
         return $this->initiatingUserIdentifier;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): RootNodeAggregateWithNodeWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): RootNodeAggregateWithNodeWasCreated
     {
         return new RootNodeAggregateWithNodeWasCreated(
-            $targetContentStream,
+            $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,
-            $this->visibleInDimensionSpacePoints,
+            $this->coveredDimensionSpacePoints,
             $this->nodeAggregateClassification,
             $this->initiatingUserIdentifier
         );
