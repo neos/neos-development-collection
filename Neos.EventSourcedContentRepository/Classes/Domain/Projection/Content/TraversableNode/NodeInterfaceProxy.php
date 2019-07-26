@@ -85,11 +85,6 @@ trait NodeInterfaceProxy
         return $this->node->getProperty($propertyName);
     }
 
-    public function getLabel(): string
-    {
-        return $this->node->getLabel();
-    }
-
     public function isRoot(): bool
     {
         return $this->node->isRoot();

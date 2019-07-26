@@ -132,7 +132,8 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): array
+    {
         $nodes = $this->subgraph->findSiblings($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
 
         $traversableNodes = [];
@@ -155,7 +156,8 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): array
+    {
         $nodes = $this->subgraph->findPrecedingSiblings($this->node->getNodeAggregateIdentifier());
 
         $traversableNodes = [];
@@ -178,7 +180,8 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): array
+    {
         $nodes = $this->subgraph->findSucceedingSiblings($this->node->getNodeAggregateIdentifier());
 
         $traversableNodes = [];
@@ -241,6 +244,17 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
     public function allowsCallOfMethod($methodName)
     {
         return true;
+    }
+
+    /**
+     * We need to re-implement getLabel here; and can NOT delegate it to the underlying Node,
+     * so that the user can work with FlowQuery operations (which only operate on TraversableNodes).
+     *
+     * @return string
+     */
+    public function getLabel(): string
+    {
+        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this) ?? '';
     }
 
     /**
