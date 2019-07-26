@@ -112,10 +112,13 @@ class LinkHelper implements ProtectedContextAwareInterface
 
         switch ($matches[1]) {
             case 'node':
+                $isLiveWorkspace = $this->nodeAddressFactory->createFromTraversableNode($contextNode)->getWorkspaceName()->isLive();
+                $visibilityConstraints = $isLiveWorkspace ? VisibilityConstraints::frontend() : VisibilityConstraints::withoutRestrictions();
+
                 $subgraph = $this->contentGraph->getSubgraphByIdentifier(
                     $contextNode->getContentStreamIdentifier(),
                     $contextNode->getDimensionSpacePoint(),
-                    VisibilityConstraints::frontend() // TODO: is this correct?
+                    $visibilityConstraints
                 );
 
                 $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($matches[2]));
