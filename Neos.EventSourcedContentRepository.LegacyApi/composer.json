@@ -9,7 +9,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\EventSourcedContentRepository\\LegacyApi": "Classes"
+            "Neos\\EventSourcedContentRepository\\LegacyApi\\": "Classes"
         }
     },
     "autoload-dev": {
