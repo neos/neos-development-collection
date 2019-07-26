@@ -137,9 +137,10 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * @param array $entryNodeAggregateIdentifiers
+     * @param NodeTypeConstraints $nodeTypeConstraints
      * @return array|NodeInterface[]
      */
-    public function findDescendants(array $entryNodeAggregateIdentifiers): array;
+    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints): array;
 
     public function countNodes(): int;
 

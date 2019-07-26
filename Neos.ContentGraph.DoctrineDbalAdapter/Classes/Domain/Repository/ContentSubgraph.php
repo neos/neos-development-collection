@@ -102,32 +102,36 @@ final class ContentSubgraph implements ContentSubgraphInterface
      * @param SqlQueryBuilder $query
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @param string|null $markerToReplaceInQuery
+     * @param string $tableReference
+     * @param string $concatenation
      */
     protected static function addNodeTypeConstraintsToQuery(
         SqlQueryBuilder $query,
         NodeTypeConstraints $nodeTypeConstraints = null,
-        string $markerToReplaceInQuery = null
+        string $markerToReplaceInQuery = null,
+        string $tableReference = 'c',
+        string $concatenation = 'AND'
     ): void {
         if ($nodeTypeConstraints) {
             if (!empty($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames())) {
-                $allowanceQueryPart = 'c.nodetypename IN (:explicitlyAllowedNodeTypeNames)';
+                $allowanceQueryPart = ($tableReference ? $tableReference . '.' : '') . 'nodetypename IN (:explicitlyAllowedNodeTypeNames)';
                 $query->parameter('explicitlyAllowedNodeTypeNames', $nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames(), Connection::PARAM_STR_ARRAY);
             } else {
                 $allowanceQueryPart = '';
             }
             if (!empty($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
-                $disAllowanceQueryPart = 'c.nodetypename NOT IN (:explicitlyDisallowedNodeTypeNames)';
+                $disAllowanceQueryPart = ($tableReference ? $tableReference . '.' : '') . 'nodetypename NOT IN (:explicitlyDisallowedNodeTypeNames)';
                 $query->parameter('explicitlyDisallowedNodeTypeNames', $nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames(), Connection::PARAM_STR_ARRAY);
             } else {
                 $disAllowanceQueryPart = '';
             }
 
             if ($allowanceQueryPart && $disAllowanceQueryPart) {
-                $query->addToQuery(' AND (' . $allowanceQueryPart . ($nodeTypeConstraints->isWildcardAllowed() ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')', $markerToReplaceInQuery);
+                $query->addToQuery(' ' . $concatenation .' (' . $allowanceQueryPart . ($nodeTypeConstraints->isWildcardAllowed() ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')', $markerToReplaceInQuery);
             } elseif ($allowanceQueryPart && !$nodeTypeConstraints->isWildcardAllowed()) {
-                $query->addToQuery(' AND ' . $allowanceQueryPart, $markerToReplaceInQuery);
+                $query->addToQuery(' ' . $concatenation .' ' . $allowanceQueryPart, $markerToReplaceInQuery);
             } elseif ($disAllowanceQueryPart) {
-                $query->addToQuery(' AND ' . $disAllowanceQueryPart, $markerToReplaceInQuery);
+                $query->addToQuery(' ' . $concatenation .' ' . $disAllowanceQueryPart, $markerToReplaceInQuery);
             } else {
                 $query->addToQuery('', $markerToReplaceInQuery);
             }
@@ -847,21 +851,22 @@ order by level asc, position asc;')
 
     /**
      * @param array $entryNodeAggregateIdentifiers
+     * @param NodeTypeConstraints $nodeTypeConstraints
      * @return array
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findDescendants(array $entryNodeAggregateIdentifiers): array
+    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints): array
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery('
--- ContentSubgraph::findSubtrees
+-- ContentSubgraph::findDescendants
 
--- we build a set of recursive trees, ready to be rendered e.g. in a menu. Because the menu supports starting at multiple nodes, we also support starting at multiple nodes at once.
+-- we find all nodes matching the given constraints that are descendants of one of the given aggregates
 with recursive tree as (
      -- --------------------------------
-     -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
+     -- INITIAL query: select the entry nodes
      -- --------------------------------
      select
      	n.*,
@@ -875,12 +880,18 @@ with recursive tree as (
      from
         neos_contentgraph_node n
      -- we need to join with the hierarchy relation, because we need the node name.
-     inner join neos_contentgraph_hierarchyrelation h
-        on h.childnodeanchor = n.relationanchorpoint
-     where
-        n.nodeaggregateidentifier in (:entryNodeAggregateIdentifiers)
-        and h.contentstreamidentifier = :contentStreamIdentifier
+     INNER JOIN neos_contentgraph_hierarchyrelation h
+        ON h.childnodeanchor = n.relationanchorpoint
+     INNER JOIN neos_contentgraph_node p
+        ON p.relationanchorpoint = h.parentnodeanchor
+     INNER JOIN neos_contentgraph_hierarchyrelation ph
+        on ph.childnodeanchor = p.relationanchorpoint
+     WHERE
+        p.nodeaggregateidentifier in (:entryNodeAggregateIdentifiers)
+        AND h.contentstreamidentifier = :contentStreamIdentifier
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
+		AND ph.contentstreamidentifier = :contentStreamIdentifier
+		AND ph.dimensionspacepointhash = :dimensionSpacePointHash
 		###VISIBILITY_CONSTRAINTS_INITIAL###
 union
      -- --------------------------------
@@ -903,12 +914,12 @@ union
 	 where
 	 	h.contentstreamidentifier = :contentStreamIdentifier
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
-		and p.level + 1 <= :maximumLevels
         ###VISIBILITY_CONSTRAINTS_RECURSION###
 
    -- select relationanchorpoint from neos_contentgraph_node
 )
 select * from tree
+###NODE_TYPE_CONSTRAINTS###
 order by level asc, position asc;')
             ->parameter('entryNodeAggregateIdentifiers', array_map(function (NodeAggregateIdentifier $nodeAggregateIdentifier) {
                 return (string)$nodeAggregateIdentifier;
@@ -916,6 +927,7 @@ order by level asc, position asc;')
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
+        self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints, '###NODE_TYPE_CONSTRAINTS###', '', 'WHERE');
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'n', 'h', '###VISIBILITY_CONSTRAINTS_INITIAL###');
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c', 'h', '###VISIBILITY_CONSTRAINTS_RECURSION###');
 

@@ -12,8 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
-use Neos\ContentRepository\Domain\NodeAggregate\Exception\NodeAggregateIdentifierIsInvalid;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
@@ -25,6 +25,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "find" operation working on ContentRepository nodes. This operation allows for retrieval
@@ -73,7 +75,7 @@ class FindOperation extends AbstractOperation
      *
      * @var integer
      */
-    protected static $priority = 100;
+    protected static $priority = 110;
 
     /**
      * @Flow\Inject
@@ -116,6 +118,7 @@ class FindOperation extends AbstractOperation
             return;
         }
 
+        /** @var TraversableNodeInterface[] $result */
         $result = [];
         $selectorAndFilter = $arguments[0];
 
@@ -125,6 +128,54 @@ class FindOperation extends AbstractOperation
         /** @todo fetch them $elsewhere (fusion runtime?) */
         $visibilityConstraints = VisibilityConstraints::frontend();
 
+        $entryPoints = $this->getEntryPoints($contextNodes, $visibilityConstraints);
+        foreach ($parsedFilter['Filters'] as $filter) {
+            $filterResults = [];
+            $generatedNodes = false;
+            if (isset($filter['IdentifierFilter'])) {
+                $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($filter['IdentifierFilter']);
+                $filterResults = $this->addNodesByIdentifier($nodeAggregateIdentifier, $entryPoints, $filterResults);
+                $generatedNodes = true;
+            } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
+                $nodePath = NodePath::fromString(isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter']);
+                $filterResults = $this->addNodesByPath($nodePath, $entryPoints, $filterResults);
+                $generatedNodes = true;
+            }
+
+            if (isset($filter['AttributeFilters']) && $filter['AttributeFilters'][0]['Operator'] === 'instanceof') {
+                $nodeTypeName = NodeTypeName::fromString($filter['AttributeFilters'][0]['Operand']);
+                $filterResults = $this->addNodesByType($nodeTypeName, $entryPoints, $filterResults);
+                unset($filter['AttributeFilters'][0]);
+                $generatedNodes = true;
+            }
+            if (isset($filter['AttributeFilters']) && count($filter['AttributeFilters']) > 0) {
+                if (!$generatedNodes) {
+                    throw new FlowQueryException('find() needs an identifier, path or instanceof filter for the first filter part', 1436884196);
+                }
+                $filterQuery = new FlowQuery($filterResults);
+                foreach ($filter['AttributeFilters'] as $attributeFilter) {
+                    $filterQuery->pushOperation('filter', [$attributeFilter['text']]);
+                }
+                $filterResults = $filterQuery->get();
+            }
+            $result = array_merge($result, $filterResults);
+        }
+
+        $uniqueResult = [];
+        $usedKeys = [];
+        foreach ($result as $item) {
+            $identifier = (string) new NodeAddress($item->getContentStreamIdentifier(), $item->getDimensionSpacePoint(), $item->getNodeAggregateIdentifier(), null);
+            if (!isset($usedKeys[$identifier])) {
+                $uniqueResult[] = $item;
+                $usedKeys[$identifier] = $identifier;
+            }
+        }
+
+        $flowQuery->setContext($uniqueResult);
+    }
+
+    protected function getEntryPoints(TraversableNodes $contextNodes, VisibilityConstraints $visibilityConstraints): array
+    {
         $entryPoints = [];
         foreach ($contextNodes as $contextNode) {
             $subgraph = $this->contentGraph->getSubgraphByIdentifier(
@@ -142,84 +193,62 @@ class FindOperation extends AbstractOperation
             $entryPoints[(string) $subgraphIdentifier]['nodes'][] = $contextNode;
         }
 
-        foreach ($parsedFilter['Filters'] as $filter) {
-            $filterResults = [];
-            $generatedNodes = false;
-            if (isset($filter['IdentifierFilter'])) {
-                try {
-                    $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($filter['IdentifierFilter']);
-                } catch (NodeAggregateIdentifierIsInvalid $exception) {
-                    throw new FlowQueryException('find() requires a valid node aggregate identifier, ' . $filter['IdentifierFilter'] . ' given.', 1489921359);
-                }
-                foreach ($entryPoints as $entryPoint) {
-                    /** @var ContentSubgraphInterface $subgraph */
-                    $subgraph = $entryPoint['subgraph'];
-                    $nodeByIdentifier = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
-                    if ($nodeByIdentifier) {
-                        $filterResults[] = new TraversableNode($nodeByIdentifier, $subgraph);
-                    }
-                }
-                $generatedNodes = true;
-            } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
-                $nodePath = NodePath::fromString(isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter']);
-                $rootNode = null;
-                foreach ($entryPoints as $entryPoint) {
-                    /** @var ContentSubgraphInterface $subgraph */
-                    $subgraph = $entryPoint['subgraph'];
-                    if ($nodePath->isAbsolute()) {
-                        if (is_null($rootNode)) {
-                            $rootNode = $this->contentGraph->findRootNodeAggregateByType($subgraph->getContentStreamIdentifier(), NodeTypeName::fromString('Neos.Neos:Sites'));
-                        }
-                        $nodeByPath = $subgraph->findNodeByPath($nodePath, $rootNode->getIdentifier());
-                        if ($nodeByPath) {
-                            $filterResults[] = new TraversableNode($nodeByPath, $subgraph);
-                        }
-                    } else {
-                        foreach ($entryPoint['nodes'] as $node) {
-                            /** @var TraversableNodeInterface $node */
-                            $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->getNodeAggregateIdentifier());
-                            if ($nodeByPath) {
-                                $filterResults[] = new TraversableNode($nodeByPath, $subgraph);
-                            }
-                        }
-                    }
-                }
-                $generatedNodes = true;
-            }
+        return $entryPoints;
+    }
 
-            if (isset($filter['AttributeFilters']) && $filter['AttributeFilters'][0]['Operator'] === 'instanceof') {
-                $nodeTypeName = NodeTypeName::fromString($filter['AttributeFilters'][0]['Operand']);
-                foreach ($entryPoints as $entryPoint) {
-                    /** @var ContentSubgraphInterface $subgraph */
-                    $subgraph = $entryPoint['subgraph'];
-                    $entryIdentifiers = [];
-                    foreach ($entryPoint['nodes'] as $node) {
-                        /** @var TraversableNodeInterface $node */
-                        $entryIdentifiers[] = $node->getNodeAggregateIdentifier();
-                    }
-
-                    foreach ($subgraph->findDescendants($entryIdentifiers) as $descendant) {
-                        if ($descendant->getNodeType()->isOfType((string)$nodeTypeName)) {
-                            $filterResults[] = new TraversableNode($descendant, $subgraph);
-                        }
-                    }
-                }
-                unset($filter['AttributeFilters'][0]);
-                $generatedNodes = true;
+    protected function addNodesByIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier, array $entryPoints, array $result): array
+    {
+        foreach ($entryPoints as $entryPoint) {
+            /** @var ContentSubgraphInterface $subgraph */
+            $subgraph = $entryPoint['subgraph'];
+            $nodeByIdentifier = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+            if ($nodeByIdentifier) {
+                $result[] = new TraversableNode($nodeByIdentifier, $subgraph);
             }
-            if (isset($filter['AttributeFilters']) && count($filter['AttributeFilters']) > 0) {
-                if (!$generatedNodes) {
-                    throw new FlowQueryException('find() needs an identifier, path or instanceof filter for the first filter part', 1436884196);
-                }
-                $filterQuery = new FlowQuery($filterResults);
-                foreach ($filter['AttributeFilters'] as $attributeFilter) {
-                    $filterQuery->pushOperation('filter', [$attributeFilter['text']]);
-                }
-                $filterResults = $filterQuery->get();
-            }
-            $result = array_merge($result, $filterResults);
         }
 
-        $flowQuery->setContext(array_unique($result));
+        return $result;
+    }
+
+    protected function addNodesByPath(NodePath $nodePath, array $entryPoints, array $result): array
+    {
+        foreach ($entryPoints as $entryPoint) {
+            /** @var ContentSubgraphInterface $subgraph */
+            $subgraph = $entryPoint['subgraph'];
+            foreach ($entryPoint['nodes'] as $node) {
+                /** @var TraversableNodeInterface $node */
+                if ($nodePath->isAbsolute()) {
+                    $rootNode = $node;
+                    while (!$rootNode->isRoot()) {
+                        $rootNode = $rootNode->findParentNode();
+                    }
+                    $nodeByPath = $subgraph->findNodeByPath($nodePath, $rootNode->getNodeAggregateIdentifier());
+                } else {
+                    $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->getNodeAggregateIdentifier());
+                }
+                if ($nodeByPath) {
+                    $result[] = new TraversableNode($nodeByPath, $subgraph);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result): array
+    {
+        foreach ($entryPoints as $entryPoint) {
+            /** @var ContentSubgraphInterface $subgraph */
+            $subgraph = $entryPoint['subgraph'];
+            $entryIdentifiers = array_map(function (TraversableNodeInterface $node) {
+                return $node->getNodeAggregateIdentifier();
+            }, $entryPoint['nodes']);
+
+            foreach ($subgraph->findDescendants($entryIdentifiers, new NodeTypeConstraints(false, [$nodeTypeName])) as $descendant) {
+                $result[] = new TraversableNode($descendant, $subgraph);
+            }
+        }
+
+        return $result;
     }
 }
