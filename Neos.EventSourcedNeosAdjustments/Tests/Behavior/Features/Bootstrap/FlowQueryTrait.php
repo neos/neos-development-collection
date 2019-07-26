@@ -79,18 +79,12 @@ trait FlowQueryTrait
     {
         switch ($operationName) {
             case 'find':
-                $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-                    $this->contentStreamIdentifier,
-                    $this->dimensionSpacePoint,
-                    VisibilityConstraints::withoutRestrictions()
-                );
                 $operation = new FindOperation();
                 $operation->evaluate($this->currentFlowQuery, [$argument]);
             break;
             default:
                 throw new \InvalidArgumentException('given FlowQuery operation ' . $operationName . ' is currently not supported in test cases');
         }
-        $this->currentFlowQuery->$operationName($argument);
     }
 
     /**
