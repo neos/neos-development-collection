@@ -37,7 +37,8 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
  *   - *tethered*: for nodes "attached" to the parent node (i.e. the old "AutoCreatedChildNodes")
  *   - *regular*: for all other nodes.
  *
- * This interface is called *Readable* because it belongs to the Read/Projection side.
+ * This interface is called *Readable* because it exposes read operations on the set of nodes inside
+ * a single NodeAggregate; often used for constraint checks (in command handlers).
  */
 interface ReadableNodeAggregateInterface
 {
