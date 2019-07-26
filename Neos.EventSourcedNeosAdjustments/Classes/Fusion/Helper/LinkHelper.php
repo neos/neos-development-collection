@@ -101,6 +101,10 @@ class LinkHelper implements ProtectedContextAwareInterface
      */
     public function convertUriToObject($uri, TraversableNodeInterface $contextNode = null)
     {
+        if (empty($uri)) {
+            return null;
+        }
+
         $matches = null;
         if (!preg_match(LinkingService::PATTERN_SUPPORTED_URIS, $uri, $matches)) {
             return null;

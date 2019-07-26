@@ -12,8 +12,8 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -34,6 +34,12 @@ class NodeShortcutResolver
      * @var LinkingService
      */
     protected $linkingService;
+
+    /**
+     * @Flow\Inject
+     * @var NodeTypeConstraintFactory
+     */
+    protected $nodeTypeConstraintFactory;
 
     /**
      * Resolves a shortcut node to the target. The return value can be
@@ -75,7 +81,7 @@ class NodeShortcutResolver
                     break;
                 case 'firstChildNode':
                 default:
-                    $childNodes = $subgraph->findChildNodes($resolvedNode->getNodeAggregateIdentifier(), new NodeTypeConstraints(false, ['Neos.Neos:Document']), 1);
+                    $childNodes = $subgraph->findChildNodes($resolvedNode->getNodeAggregateIdentifier(), $this->nodeTypeConstraintFactory->parseFilterString('Neos.Neos:Document'), 1);
                     $resolvedNode = reset($childNodes) ?? null;
             }
         }
