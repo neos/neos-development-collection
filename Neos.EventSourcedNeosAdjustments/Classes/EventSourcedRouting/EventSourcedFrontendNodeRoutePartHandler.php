@@ -316,7 +316,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
     /**
      * @return int
      */
-    protected function getUriPathSegmentOffset(): int
+    protected function getUriPathSegmentOffset(): ?int
     {
         return $this->parameters->getValue('uriPathSegmentOffset');
     }

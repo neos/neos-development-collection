@@ -89,6 +89,6 @@ class NodeShortcutResolver
         $uriBuilder->setFormat($format);
 
         return $uriBuilder->setCreateAbsoluteUri(true)
-            ->uriFor('show', ['node' => $newNodeAddress], 'EventSourcedNode', 'Neos.EventSourcedNeosAdjustments');
+            ->uriFor('show', ['node' => $newNodeAddress], 'Frontend\Node', 'Neos.Neos');
     }
 }
