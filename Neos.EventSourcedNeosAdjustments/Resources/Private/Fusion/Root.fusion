@@ -31,7 +31,7 @@ prototype(Neos.Neos:ContentCollection) {
 
 prototype(Neos.Neos:ContentCollectionRenderer) {
     @context.nodeAvailable = ${node}
-    @process.appendRemovedContentForBackend = ''
+    @process.appendRemovedContentForBackend = ${value}
 }
 
 prototype(Neos.Neos:ContentElementEditable) {
