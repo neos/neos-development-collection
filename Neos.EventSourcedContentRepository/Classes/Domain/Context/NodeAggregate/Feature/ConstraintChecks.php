@@ -199,7 +199,7 @@ trait ConstraintChecks
     protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): NodeAggregate {
+    ): ReadableNodeAggregateInterface {
         $nodeAggregate = $this->getContentGraph()->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         if (!$nodeAggregate) {
