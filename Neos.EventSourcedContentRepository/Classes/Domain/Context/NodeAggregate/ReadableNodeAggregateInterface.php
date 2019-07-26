@@ -21,7 +21,23 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
 /**
- * The interface to implemented by all (readable) node aggregates that are to be used for hard or soft constraint checks.
+ * Implemented by all (readable) node aggregates that are to be used for hard or soft constraint checks.
+ *
+ * A *Node Aggregate* is the set of all nodes across different dimensions which belong to each other; i.e.
+ * which represent the same "thing" (the same Page, the same Text node, the same Product).
+ *
+ * The system guarantees the following invariants:
+ *
+ * - Inside a NodeAggregate, each DimensionSpacePoint has at most one Node which covers it.
+ *   To check this, the ReadableNodeAggregateInterface is used (mainly in constraint checks).
+ * - The NodeType is always the same for all Nodes in a NodeAggregate
+ * - all Nodes inside the NodeAggregate always have the same NodeName.
+ * - all nodes inside a NodeAggregate are all of the same *classification*, which can be:
+ *   - *root*: for root nodes
+ *   - *tethered*: for nodes "attached" to the parent node (i.e. the old "AutoCreatedChildNodes")
+ *   - *regular*: for all other nodes.
+ *
+ * This interface is called *Readable* because it belongs to the Read/Projection side.
  */
 interface ReadableNodeAggregateInterface
 {
