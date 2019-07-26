@@ -122,7 +122,12 @@ class LinkHelper implements ProtectedContextAwareInterface
                 );
 
                 $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($matches[2]));
-                return new TraversableNode($node, $subgraph);
+                if ($node) {
+                    return new TraversableNode($node, $subgraph);
+                } else {
+                    return null;
+                }
+
 
                 break;
             case 'asset':
