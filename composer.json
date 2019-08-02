@@ -27,6 +27,7 @@
         "doctrine/dbal": "^2.8",
         "neos/party": "*",
         "neos/setup": "*",
+        "neos/neos-setup": "*",
         "neos/twitter-bootstrap": "*",
         "neos/form": "*",
         "neos/kickstarter": "*"
