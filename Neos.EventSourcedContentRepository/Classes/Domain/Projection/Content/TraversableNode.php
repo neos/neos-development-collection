@@ -132,8 +132,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array
-    {
+    ): array {
         $nodes = $this->subgraph->findSiblings($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
 
         $traversableNodes = [];
@@ -156,8 +155,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array
-    {
+    ): array {
         $nodes = $this->subgraph->findPrecedingSiblings($this->node->getNodeAggregateIdentifier());
 
         $traversableNodes = [];
@@ -180,8 +178,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array
-    {
+    ): array {
         $nodes = $this->subgraph->findSucceedingSiblings($this->node->getNodeAggregateIdentifier());
 
         $traversableNodes = [];
