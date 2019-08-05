@@ -114,7 +114,7 @@ class ContentElementWrappingService
      * @return string
      * @throws \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException
      */
-    public function wrapContentObject(TraversableNodeInterface $node, $content, $fusionPath): string
+    public function wrapContentObject(TraversableNodeInterface $node, $content, $fusionPath): ?string
     {
         if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
             return $content;
@@ -169,7 +169,7 @@ class ContentElementWrappingService
                 continue;
             }
 
-            if (isset($this->renderedNodes[(string)$node->getNodeIdentifier()]) === false) {
+            if (isset($this->renderedNodes[(string)$node->getNodeAggregateIdentifier()]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
                 $nodeContextPath = $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri();
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";

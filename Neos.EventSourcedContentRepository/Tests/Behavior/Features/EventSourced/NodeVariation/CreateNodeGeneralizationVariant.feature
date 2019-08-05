@@ -154,7 +154,7 @@ Feature: Create node generalization
     And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"gsw"}]
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
@@ -164,7 +164,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
@@ -174,7 +174,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
@@ -184,7 +184,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
@@ -194,7 +194,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
@@ -204,7 +204,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
@@ -280,21 +280,21 @@ Feature: Create node generalization
     And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"gsw"}]
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to no node
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to no node
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to no node
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to no node
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"gsw"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"gsw"}}
@@ -304,21 +304,21 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to no node
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to no node
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to no node
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to no node
     And I expect node aggregate identifier "nodimer-tetherton" and path "document/tethered-node/tethered-leaf" to lead to no node
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
@@ -423,7 +423,7 @@ Feature: Create node generalization
     And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"gsw"}]
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
@@ -433,7 +433,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
@@ -443,7 +443,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
@@ -453,7 +453,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
@@ -463,7 +463,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
@@ -473,7 +473,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
@@ -578,7 +578,7 @@ Feature: Create node generalization
     And I expect this node aggregate to cover dimension space points [{"market":"CH", "language":"gsw"}]
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
@@ -588,7 +588,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
@@ -598,7 +598,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"DE", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
@@ -608,7 +608,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"en"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"en"}}
@@ -618,7 +618,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"de"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"DE", "language":"de"}}
@@ -628,7 +628,7 @@ Feature: Create node generalization
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document/child-document" to lead to no node
 
     When I am in content stream "cs-identifier" and Dimension Space Point {"market":"CH", "language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" and path "" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "sir-david-nodenborough" and path "document" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"sir-david-nodenborough", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}
     And I expect this node to be a child of node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-rootford", "originDimensionSpacePoint": {}}
     And I expect node aggregate identifier "nodewyn-tetherton" and path "document/tethered-node" to lead to node {"contentStreamIdentifier":"cs-identifier", "nodeAggregateIdentifier":"nodewyn-tetherton", "originDimensionSpacePoint": {"market":"CH", "language":"gsw"}}

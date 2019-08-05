@@ -75,11 +75,11 @@ Feature: Remove NodeAggregate
 
     When I am in content stream "live-cs-identifier" and Dimension Space Point {"language":"de"}
     Then I expect the subgraph projection to consist of exactly 1 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
 
     When I am in content stream "live-cs-identifier" and Dimension Space Point {"language":"gsw"}
     Then I expect the subgraph projection to consist of exactly 1 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
 
   Scenario: In USER workspace, removing a NodeAggregate removes all nodes completely; leaving the live workspace untouched
 
@@ -105,21 +105,21 @@ Feature: Remove NodeAggregate
 
     When I am in content stream "user-cs-identifier" and Dimension Space Point {"language":"de"}
     Then I expect the subgraph projection to consist of exactly 1 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"user-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node {"contentStreamIdentifier":"user-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
 
     When I am in content stream "user-cs-identifier" and Dimension Space Point {"language":"gsw"}
     Then I expect the subgraph projection to consist of exactly 1 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"user-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node {"contentStreamIdentifier":"user-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
 
     # ensure LIVE ContentStream is untouched
     When I am in content stream "live-cs-identifier" and Dimension Space Point {"language":"de"}
     Then I expect the subgraph projection to consist of exactly 3 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint":{"language":"de"}}
     And I expect node aggregate identifier "nodimus-prime" and path "document/child-document" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint":{"language":"de"}}
 
     When I am in content stream "live-cs-identifier" and Dimension Space Point {"language":"gsw"}
     Then I expect the subgraph projection to consist of exactly 3 nodes
-    And I expect node aggregate identifier "lady-eleonode-nodesworth" and path "" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
+    And I expect node aggregate identifier "lady-eleonode-nodesworth" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"lady-eleonode-nodesworth", "originDimensionSpacePoint":{}}
     And I expect node aggregate identifier "nody-mc-nodeface" and path "document" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"nody-mc-nodeface", "originDimensionSpacePoint":{"language":"gsw"}}
     And I expect node aggregate identifier "nodimus-prime" and path "document/child-document" to lead to node {"contentStreamIdentifier":"live-cs-identifier", "nodeAggregateIdentifier":"nodimus-prime", "originDimensionSpacePoint":{"language":"de"}}
