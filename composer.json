@@ -7,6 +7,7 @@
     "type": "neos-package-collection",
     "require": {
         "neos/flow-development-collection": "dev-master",
+        "neos/neos-setup": "^1.0",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -26,8 +27,6 @@
         "imagine/imagine": "*",
         "doctrine/dbal": "^2.8",
         "neos/party": "*",
-        "neos/setup": "*",
-        "neos/neos-setup": "*",
         "neos/twitter-bootstrap": "*",
         "neos/form": "*",
         "neos/kickstarter": "*"
