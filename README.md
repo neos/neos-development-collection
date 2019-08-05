@@ -277,6 +277,7 @@ Neos:
 - [x] command to import from NodeData to events
 - [x] make it work with Neos.ContentRepository.DimensionSpace package
 - [x] ensure Behavioral Tests run again
+- [ ] Content Cache (#103)
 - [ ] ensure Functional Tests run again
 - [x] figure out how/if to use event sourced Site/Domain (!possibly difficult!) -> fixed; won't use event sourced site/domain
 - [x] change RoutePart Handler when using event-sourced mode
