@@ -167,7 +167,7 @@ The resulting `composer.json` file should look something like this:
 
 6. After that, run `./flow flow:package:rescan`.
 
-**HINT**: If you experice issues clear the Date/Temporary directory and run the command again.
+**HINT**: If you experice issues clear the `Data/Temporary` directory and run the command again.
 
 7. If using dimensions, the dimension configuration has changed. Use the following configuration in `Settings.yaml` for the Demo site (Adjust as needed):
 
