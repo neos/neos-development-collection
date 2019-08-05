@@ -661,15 +661,9 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target state="translated">Il tuo accesso è scaduto. Sei pregato di accedere nuovamente.</target></trans-unit>
       <!-- Error handlers -->
-      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
-				<source>Welcome to Neos</source>
-			<target state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
 			<target state="translated">Vai all'impostazione</target></trans-unit>
-      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
-				<source>Technical Information</source>
-			<target state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target state="translated">Homepage mancante</target></trans-unit>
@@ -683,10 +677,10 @@
 				<source>Database Error</source>
 			<target state="translated">Errore database</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
-				<source>There is no database connection yet or the Neos database schema has not been created.</source>
+				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
 			<target state="translated">Non c'e ancora una connessione database o lo schema del database Neos non è stato creato.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>Run the setup to configure your database.</source>
+				<source>You might want to configure or check your database configuration in the setup.</source>
 			<target state="translated">Esegui la configurazione per configurare il tuo database.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
