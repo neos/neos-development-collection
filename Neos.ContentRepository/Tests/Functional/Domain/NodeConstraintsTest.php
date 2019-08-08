@@ -128,7 +128,7 @@ class NodeConstraintsTest extends FunctionalTestCase
         $nodeWithChildNode = $this->rootNode->createNode('node-with-child-node', $nodeTypeWithChildNodeAndConstraints);
         $childNode = $nodeWithChildNode->getNode('subnode1');
         $childNode->createNode('headline', $headlineNodeType);
-        $this->assertCount(1, $childNode->getChildNodes());
+        self::assertCount(1, $childNode->getChildNodes());
     }
 
     /**
@@ -155,6 +155,6 @@ class NodeConstraintsTest extends FunctionalTestCase
 
         $nodeWithChildNode = $this->rootNode->createNode('node-with-child-node', $testingNodeTypeWithSubnodes);
         $nodeWithChildNode->createNode('page', $testingNodeTypeThatInheritsFromDocumentType);
-        $this->assertCount(2, $nodeWithChildNode->getChildNodes());
+        self::assertCount(2, $nodeWithChildNode->getChildNodes());
     }
 }

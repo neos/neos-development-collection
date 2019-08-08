@@ -64,7 +64,7 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
         $mockNode = $this->mockNode('node');
 
         $result = $this->operation->canEvaluate([$mockNode]);
-        $this->assertTrue($result);
+        self::assertTrue($result);
     }
 
     public function nodePropertiesAndLifetime()
@@ -134,9 +134,9 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
         $lifetime = $this->operation->evaluate($mockFlowQuery, []);
 
         if ($expectedLifetime === null) {
-            $this->assertNull($lifetime);
+            self::assertNull($lifetime);
         } else {
-            $this->assertEqualsWithDelta($expectedLifetime, $lifetime, 1, 'Lifetime did not match expected value +/- 1');
+            self::assertEqualsWithDelta($expectedLifetime, $lifetime, 1, 'Lifetime did not match expected value +/- 1');
         }
     }
 

@@ -157,7 +157,7 @@ class NodeConverterTest extends FunctionalTestCase
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
 
         $headlineNode = $this->convert('/headline');
-        $this->assertSame('Hello World', $headlineNode->getProperty('title'));
+        self::assertSame('Hello World', $headlineNode->getProperty('title'));
     }
 
     /**
@@ -168,9 +168,9 @@ class NodeConverterTest extends FunctionalTestCase
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
 
         $headlineNode = $this->convert('/headline@' . $this->currentTestWorkspaceName);
-        $this->assertSame('Hello World', $headlineNode->getProperty('title'));
+        self::assertSame('Hello World', $headlineNode->getProperty('title'));
 
-        $this->assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
+        self::assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
     }
 
     /**
@@ -181,7 +181,7 @@ class NodeConverterTest extends FunctionalTestCase
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
 
         $headlineNode = $this->convert('/headline@' . $this->currentTestWorkspaceName . ';language=de_DE');
-        $this->assertSame('Hallo Welt', $headlineNode->getProperty('title'));
+        self::assertSame('Hallo Welt', $headlineNode->getProperty('title'));
     }
 
     /**
@@ -196,8 +196,8 @@ class NodeConverterTest extends FunctionalTestCase
         ];
 
         $headlineNode = $this->convert($input);
-        $this->assertSame('New title', $headlineNode->getProperty('title'));
-        $this->assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
+        self::assertSame('New title', $headlineNode->getProperty('title'));
+        self::assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
     }
 
     /**
@@ -229,9 +229,9 @@ class NodeConverterTest extends FunctionalTestCase
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         $propertyMappingConfiguration->skipUnknownProperties();
         $headlineNode = $this->convert($input, $propertyMappingConfiguration);
-        $this->assertSame('New title', $headlineNode->getProperty('title'));
-        $this->assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
-        $this->assertFalse($headlineNode->hasProperty('non-existing-input'));
+        self::assertSame('New title', $headlineNode->getProperty('title'));
+        self::assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
+        self::assertFalse($headlineNode->hasProperty('non-existing-input'));
     }
 
     /**

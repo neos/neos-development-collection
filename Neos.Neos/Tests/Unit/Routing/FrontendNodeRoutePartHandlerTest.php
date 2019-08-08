@@ -159,8 +159,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue($expectedContextPath));
 
         $routePath = 'home';
-        $this->assertTrue($this->routePartHandler->match($routePath));
-        $this->assertSame($expectedContextPath, $this->routePartHandler->getValue());
+        self::assertTrue($this->routePartHandler->match($routePath));
+        self::assertSame($expectedContextPath, $this->routePartHandler->getValue());
     }
 
     /**
@@ -184,7 +184,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
 
         $routePath = 'home';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
     }
 
     /**
@@ -200,7 +200,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         $routePath = 'home/about-us';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
     }
 
     /**
@@ -221,7 +221,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockWorkspace = null;
 
         $routePath = 'home';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
     }
 
     /**
@@ -240,8 +240,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/features@user-robert'));
 
         $routePath = 'features';
-        $this->assertTrue($this->routePartHandler->match($routePath));
-        $this->assertEquals('/sites/examplecom/features@user-robert', $this->routePartHandler->getValue());
+        self::assertTrue($this->routePartHandler->match($routePath));
+        self::assertEquals('/sites/examplecom/features@user-robert', $this->routePartHandler->getValue());
     }
 
     /**
@@ -263,16 +263,16 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'features';
 
         $routePath = 'features';
-        $this->assertTrue($this->routePartHandler->match($routePath));
+        self::assertTrue($this->routePartHandler->match($routePath));
         $routePath = '';
-        $this->assertTrue($this->routePartHandler->match($routePath));
+        self::assertTrue($this->routePartHandler->match($routePath));
 
         $this->routePartHandler->setOptions(['onlyMatchSiteNodes' => true]);
 
         $routePath = 'features';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
         $routePath = '';
-        $this->assertTrue($this->routePartHandler->match($routePath));
+        self::assertTrue($this->routePartHandler->match($routePath));
     }
 
 
@@ -374,7 +374,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'features';
 
         $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
-        $this->assertTrue($this->routePartHandler->match($requestPath));
+        self::assertTrue($this->routePartHandler->match($requestPath));
         $value = $this->routePartHandler->getValue();
     }
 
@@ -393,7 +393,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         $routePath = 'home@user-robert.html';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
     }
 
     /**
@@ -411,7 +411,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->routePartHandler->setOptions(['splitString' => '.']);
 
         $routePath = 'home@user-robert.html';
-        $this->assertFalse($this->routePartHandler->match($routePath));
+        self::assertFalse($this->routePartHandler->match($routePath));
     }
 
     /**
@@ -432,8 +432,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/home/ae178bc9184@user-robert'));
 
         $routeValues = ['node' => $mockSubSubNode];
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
-        $this->assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
+        self::assertTrue($this->routePartHandler->resolve($routeValues));
+        self::assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
     }
 
     /**
@@ -454,8 +454,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/otherdotcom/home/ae178bc9184@user-robert'));
 
         $routeValues = ['node' => $mockSubSubNode];
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
-        $this->assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
+        self::assertTrue($this->routePartHandler->resolve($routeValues));
+        self::assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
     }
 
     /**
@@ -471,10 +471,10 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
         $routeValues = ['node' => null];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
 
         $routeValues = ['node' => 42];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -502,7 +502,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = ['node' => '/sites/examplecom/home'];
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
+        self::assertTrue($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -530,7 +530,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = ['node' => '/sites/examplecom/home@user-johndoe'];
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
+        self::assertTrue($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -551,7 +551,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockWorkspace = null;
 
         $routeValues = ['node' => '/sites/examplecom@user-johndoe'];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -565,7 +565,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSiteNode = $mockSiteNode;
 
         $routeValues = ['node' => '/sites/examplecom/not-found'];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -586,7 +586,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = ['node' => '/sites/examplecom/some-content'];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -608,7 +608,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = ['node' => '/sites/examplecom/features'];
-        $this->assertFalse($this->routePartHandler->resolve($routeValues));
+        self::assertFalse($this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -681,8 +681,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $routeValues = ['node' => $contextPath];
         $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
-        $this->assertSame($expectedUriPath, $this->routePartHandler->getValue());
+        self::assertTrue($this->routePartHandler->resolve($routeValues));
+        self::assertSame($expectedUriPath, $this->routePartHandler->getValue());
     }
 
     /**
@@ -750,8 +750,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function dimensionRequestPathRegex($requestPath, $doesMatch, $expected)
     {
         $matches = [];
-        $this->assertSame($doesMatch, (boolean)preg_match(FrontendNodeRoutePartHandler::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches));
-        $this->assertSame($expected, $matches);
+        self::assertSame($doesMatch, (boolean)preg_match(FrontendNodeRoutePartHandler::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches));
+        self::assertSame($expected, $matches);
     }
 
     /********************************************************************************************************************

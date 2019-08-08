@@ -403,7 +403,7 @@ class NodeServiceTest extends UnitTestCase
             ->will($this->returnValue($mockNodeType));
 
         $mockNodeType = $this->mockNodeType('Neos.ContentRepository.Testing:ContentObject');
-        $this->assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
+        self::assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
     }
 
     /**
@@ -421,7 +421,7 @@ class NodeServiceTest extends UnitTestCase
             ->method('getNodeType')
             ->will($this->returnValue($mockNodeType));
 
-        $this->assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
+        self::assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
     }
 
 
@@ -458,7 +458,7 @@ class NodeServiceTest extends UnitTestCase
     public function normalizePathReturnsANormalizedAbsolutePath($currentPath, $relativePath, $normalizedPath)
     {
         $nodeService = $this->createNodeService();
-        $this->assertSame($normalizedPath, $nodeService->normalizePath($relativePath, $currentPath));
+        self::assertSame($normalizedPath, $nodeService->normalizePath($relativePath, $currentPath));
     }
 
     /**

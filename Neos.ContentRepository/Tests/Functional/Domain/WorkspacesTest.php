@@ -124,11 +124,11 @@ class WorkspacesTest extends FunctionalTestCase
     public function nodesCreatedInAPersonalWorkspacesCanBeRetrievedAgainInThePersonalContext()
     {
         $fooNode = $this->rootNode->createNode('foo');
-        $this->assertSame($fooNode, $this->rootNode->getNode('foo'));
+        self::assertSame($fooNode, $this->rootNode->getNode('foo'));
 
         $this->persistenceManager->persistAll();
 
-        $this->assertSame($fooNode, $this->rootNode->getNode('foo'));
+        self::assertSame($fooNode, $this->rootNode->getNode('foo'));
     }
 
     /**
@@ -144,7 +144,7 @@ class WorkspacesTest extends FunctionalTestCase
         $liveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $liveRootNode = $liveContext->getRootNode();
 
-        $this->assertNull($liveRootNode->getNode('/homepage/about'));
+        self::assertNull($liveRootNode->getNode('/homepage/about'));
     }
 
     /**
@@ -157,7 +157,7 @@ class WorkspacesTest extends FunctionalTestCase
         $liveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $liveRootNode = $liveContext->getRootNode();
 
-        $this->assertNull($liveRootNode->getNode('/homepage/imprint'));
+        self::assertNull($liveRootNode->getNode('/homepage/imprint'));
     }
 
     /**
@@ -190,20 +190,20 @@ class WorkspacesTest extends FunctionalTestCase
 
         $parentNode2 = $this->rootNode->getNode('parent-node');
 
-        $this->assertSame($parentNode->getIdentifier(), $parentNode2->getIdentifier());
+        self::assertSame($parentNode->getIdentifier(), $parentNode2->getIdentifier());
         $childNodeA2 = $parentNode2->getNode('child-node-a');
-        $this->assertNotNull($childNodeA2, 'Child node A must be there');
+        self::assertNotNull($childNodeA2, 'Child node A must be there');
         $childNodeB2 = $parentNode2->getNode('child-node-b');
-        $this->assertNotNull($childNodeB2, 'Child node B must be there');
+        self::assertNotNull($childNodeB2, 'Child node B must be there');
         $childNodeB2->moveInto($childNodeA2);
 
         $this->saveNodesAndTearDownRootNodeAndRepository();
         $this->setUpRootNodeAndRepository();
 
         $parentNode3 = $this->rootNode->getNode('parent-node');
-        //$this->assertNotSame($parentNode2, $parentNode3);
+        //self::assertNotSame($parentNode2, $parentNode3);
         $childNodeB3 = $parentNode3->getNode('child-node-b');
-        $this->assertTrue($childNodeB3 === null, 'child node B should not shine through as it has been moved.');
+        self::assertTrue($childNodeB3 === null, 'child node B should not shine through as it has been moved.');
     }
 
     /**
@@ -225,17 +225,17 @@ class WorkspacesTest extends FunctionalTestCase
         $this->saveNodesAndTearDownRootNodeAndRepository();
         $this->setUpRootNodeAndRepository();
 
-        $this->assertNotSame($rootNode, $this->rootNode);
-        $this->assertNotSame($rootNodeWorkspace, $this->rootNode->getWorkspace(), 'Workspace is not correctly cleaned up.');
+        self::assertNotSame($rootNode, $this->rootNode);
+        self::assertNotSame($rootNodeWorkspace, $this->rootNode->getWorkspace(), 'Workspace is not correctly cleaned up.');
         $parentNode2 = $this->rootNode->getNode('parent-node1');
-        $this->assertNotSame($parentNode, $parentNode2);
-        $this->assertSame('live', $parentNode2->getWorkspace()->getName());
+        self::assertNotSame($parentNode, $parentNode2);
+        self::assertSame('live', $parentNode2->getWorkspace()->getName());
         $childNodeA2 = $parentNode2->getNode('child-node-1a');
-        $this->assertNotNull($childNodeA2, 'Child node A must be there');
-        $this->assertNotSame($childNodeA, $childNodeA2);
+        self::assertNotNull($childNodeA2, 'Child node A must be there');
+        self::assertNotSame($childNodeA, $childNodeA2);
         $childNodeB2 = $parentNode2->getNode('child-node-1b');
-        $this->assertNotNull($childNodeB2, 'Child node B must be there');
-        $this->assertNotSame($childNodeB, $childNodeB2);
+        self::assertNotNull($childNodeB2, 'Child node B must be there');
+        self::assertNotSame($childNodeB, $childNodeB2);
 
         $childNodeB2->moveInto($childNodeA2);
 
@@ -244,7 +244,7 @@ class WorkspacesTest extends FunctionalTestCase
 
         $parentNode3 = $this->rootNode->getNode('parent-node1');
         $childNodes = $parentNode3->getChildNodes();
-        $this->assertSame(1, count($childNodes), 'parent node is only allowed to have a single child node (child-node-1A).');
+        self::assertSame(1, count($childNodes), 'parent node is only allowed to have a single child node (child-node-1A).');
     }
 
     /**
@@ -273,10 +273,10 @@ class WorkspacesTest extends FunctionalTestCase
         $this->setUpRootNodeAndRepository();
 
         $childNodeB3 = $this->rootNode->getNode('parent-node/child-node-b');
-        $this->assertTrue($childNodeB3->getPrimaryChildNode() === null, 'Overlaid child node should be null');
+        self::assertTrue($childNodeB3->getPrimaryChildNode() === null, 'Overlaid child node should be null');
         $childNodeA3 = $this->rootNode->getNode('parent-node/child-node-a');
         $childNodeC3 = $childNodeA3->getPrimaryChildNode();
-        $this->assertNotNull($childNodeC3);
+        self::assertNotNull($childNodeC3);
     }
 
     /**
@@ -303,7 +303,7 @@ class WorkspacesTest extends FunctionalTestCase
 
         $teaserNode = $liveRootNode->getNode('/homepage/teaser/node52697bdfee199');
 
-        $this->assertInstanceOf(NodeInterface::class, $teaserNode);
+        self::assertInstanceOf(NodeInterface::class, $teaserNode);
     }
 
     /**
@@ -324,6 +324,6 @@ class WorkspacesTest extends FunctionalTestCase
 
         $liveHomepageNode = $liveRootNode->getNode('homepage');
 
-        $this->assertTrue($liveHomepageNode === null, 'A removed node should be removed after publishing, but it was still found');
+        self::assertTrue($liveHomepageNode === null, 'A removed node should be removed after publishing, but it was still found');
     }
 }

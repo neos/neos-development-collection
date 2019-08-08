@@ -41,7 +41,7 @@ class DebugTest extends AbstractFusionObjectTest
         $view->render();
         $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
-        $this->assertEquals('NULL', $lines[1]);
+        self::assertEquals('NULL', $lines[1]);
     }
 
     /**
@@ -54,7 +54,7 @@ class DebugTest extends AbstractFusionObjectTest
         $view->render();
         $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
-        $this->assertEquals('NULL', $lines[1]);
+        self::assertEquals('NULL', $lines[1]);
     }
 
     /**
@@ -67,8 +67,8 @@ class DebugTest extends AbstractFusionObjectTest
         $view->render();
         $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
-        $this->assertEquals('Title @ debug/nullWithTitle<Neos.Fusion:Debug>.value', $lines[0]);
-        $this->assertEquals('NULL', $lines[1]);
+        self::assertEquals('Title @ debug/nullWithTitle<Neos.Fusion:Debug>.value', $lines[0]);
+        self::assertEquals('NULL', $lines[1]);
     }
 
     /**
@@ -81,7 +81,7 @@ class DebugTest extends AbstractFusionObjectTest
         $view->render();
         $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
-        $this->assertEquals('string "hello world" (11)', $lines[1]);
+        self::assertEquals('string "hello world" (11)', $lines[1]);
     }
 
     /**
@@ -94,7 +94,7 @@ class DebugTest extends AbstractFusionObjectTest
         $view->render();
         $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
-        $this->assertEquals('string "hello world" (11)', $lines[1]);
+        self::assertEquals('string "hello world" (11)', $lines[1]);
     }
 
     /**
@@ -107,9 +107,9 @@ class DebugTest extends AbstractFusionObjectTest
         $view->render();
         $result = $this->debugStack->dump();
         $lines = explode(chr(10), $result);
-        $this->assertEquals('@ debug/multipleValues<Neos.Fusion:Debug>.foo', $lines[0]);
-        $this->assertEquals('string "foo" (3)', $lines[1]);
-        $this->assertEquals('@ debug/multipleValues<Neos.Fusion:Debug>.bar', $lines[3]);
-        $this->assertEquals('string "bar" (3)', $lines[4]);
+        self::assertEquals('@ debug/multipleValues<Neos.Fusion:Debug>.foo', $lines[0]);
+        self::assertEquals('string "foo" (3)', $lines[1]);
+        self::assertEquals('@ debug/multipleValues<Neos.Fusion:Debug>.bar', $lines[3]);
+        self::assertEquals('string "bar" (3)', $lines[4]);
     }
 }

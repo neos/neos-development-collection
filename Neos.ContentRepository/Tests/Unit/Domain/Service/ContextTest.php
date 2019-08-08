@@ -47,8 +47,8 @@ class ContextTest extends UnitTestCase
         $context = $this->contextFactory->create([]);
 
         $currentTime = $context->getCurrentDateTime();
-        $this->assertInstanceOf('\DateTimeInterface', $currentTime);
-        $this->assertEquals($now->getTimestamp(), $currentTime->getTimestamp(), 1);
+        self::assertInstanceOf('\DateTimeInterface', $currentTime);
+        self::assertEquals($now->getTimestamp(), $currentTime->getTimestamp(), 1);
     }
 
     /**
@@ -61,6 +61,6 @@ class ContextTest extends UnitTestCase
 
         $context = $this->contextFactory->create(['currentDateTime' => $simulatedCurrentTime]);
 
-        $this->assertEquals($simulatedCurrentTime, $context->getCurrentDateTime());
+        self::assertEquals($simulatedCurrentTime, $context->getCurrentDateTime());
     }
 }

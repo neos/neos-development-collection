@@ -31,7 +31,7 @@ class FusionParserTest extends FunctionalTestCase
         $expectedAst = [
             'value' => 'StringExpressionValue'
         ];
-        $this->assertEquals($expectedAst, $actualAst);
+        self::assertEquals($expectedAst, $actualAst);
     }
 
     /**
@@ -44,7 +44,7 @@ class FusionParserTest extends FunctionalTestCase
         $expectedAst = [
             'value' => 'String' . chr(10) . 'Expression' . chr(10) . 'Value'
         ];
-        $this->assertEquals($expectedAst, $actualAst);
+        self::assertEquals($expectedAst, $actualAst);
     }
 
     /**
@@ -58,13 +58,13 @@ class FusionParserTest extends FunctionalTestCase
         $expectedAst = [
             'value' => true
         ];
-        $this->assertEquals($expectedAst, $actualAst);
+        self::assertEquals($expectedAst, $actualAst);
 
         $actualAst = $parser->parse('value = TestPassthroughDsl`false`');
         $expectedAst = [
             'value' => false
         ];
-        $this->assertEquals($expectedAst, $actualAst);
+        self::assertEquals($expectedAst, $actualAst);
     }
 
     /**
@@ -78,19 +78,19 @@ class FusionParserTest extends FunctionalTestCase
         $expectedAst = [
             'value' => 1234
         ];
-        $this->assertEquals($expectedAst, $actualAst);
+        self::assertEquals($expectedAst, $actualAst);
 
         $actualAst = $parser->parse('value = TestPassthroughDsl`12.34`');
         $expectedAst = [
             'value' => 12.34
         ];
-        $this->assertEquals($expectedAst, $actualAst);
+        self::assertEquals($expectedAst, $actualAst);
 
         $actualAst = $parser->parse('value = TestPassthroughDsl`-12.34`');
         $expectedAst = [
             'value' => -12.34
         ];
-        $this->assertEquals($expectedAst, $actualAst);
+        self::assertEquals($expectedAst, $actualAst);
     }
 
     /**
@@ -103,7 +103,7 @@ class FusionParserTest extends FunctionalTestCase
         $expectedAst = [
             'value' => ["__eelExpression" => "1234","__value" => null, "__objectType" => null]
         ];
-        $this->assertEquals($expectedAst, $actualAst);
+        self::assertEquals($expectedAst, $actualAst);
     }
 
     /**
@@ -116,7 +116,7 @@ class FusionParserTest extends FunctionalTestCase
         $expectedAst = [
             'value' => ["__eelExpression" => null,"__value" => null, "__objectType" => 'Neos.Fusion:Value', 'value' => "foo"]
         ];
-        $this->assertEquals($expectedAst, $actualAst);
+        self::assertEquals($expectedAst, $actualAst);
     }
 
     /**
@@ -132,7 +132,7 @@ class FusionParserTest extends FunctionalTestCase
         $expectedAst = [
             'value' => ["__eelExpression" => null,"__value" => null, "__objectType" => 'Neos.Fusion:Value', 'value' => "foo"]
         ];
-        $this->assertEquals($expectedAst, $actualAst);
+        self::assertEquals($expectedAst, $actualAst);
     }
 
     /**

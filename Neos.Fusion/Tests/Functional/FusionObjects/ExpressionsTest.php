@@ -37,6 +37,6 @@ class ExpressionsTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath($path);
         $view->assign('foo', 'Bar');
-        $this->assertSame($expected, $view->render());
+        self::assertSame($expected, $view->render());
     }
 }

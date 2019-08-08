@@ -151,7 +151,7 @@ class NodeExportServiceTest extends UnitTestCase
 			  </node>
 			</nodes>
 		', $output);
-        $this->assertStringContainsString('<!--Skipped node', $output);
+        self::assertStringContainsString('<!--Skipped node', $output);
     }
 
     /**

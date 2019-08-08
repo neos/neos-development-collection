@@ -115,7 +115,7 @@ class SortOperationTest extends FunctionalTestCase
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['title', 'ASC']);
 
-        $this->assertEquals($correctOrder, $flowQuery->getContext());
+        self::assertEquals($correctOrder, $flowQuery->getContext());
     }
 
     /**
@@ -137,7 +137,7 @@ class SortOperationTest extends FunctionalTestCase
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['title', 'DESC']);
 
-        $this->assertEquals($correctOrder, $flowQuery->getContext());
+        self::assertEquals($correctOrder, $flowQuery->getContext());
     }
 
     /**
@@ -159,7 +159,7 @@ class SortOperationTest extends FunctionalTestCase
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['_lastPublicationDateTime', 'ASC']);
 
-        $this->assertEquals($correctOrder, $flowQuery->getContext());
+        self::assertEquals($correctOrder, $flowQuery->getContext());
     }
 
     /**
@@ -181,6 +181,6 @@ class SortOperationTest extends FunctionalTestCase
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['_lastPublicationDateTime', 'DESC']);
 
-        $this->assertEquals($correctOrder, $flowQuery->getContext());
+        self::assertEquals($correctOrder, $flowQuery->getContext());
     }
 }

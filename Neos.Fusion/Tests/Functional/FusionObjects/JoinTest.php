@@ -24,7 +24,7 @@ class JoinTest extends AbstractFusionObjectTest
         $view = $this->buildView();
 
         $view->setFusionPath('join/basicOrdering');
-        $this->assertEquals('Xtest10Xtest100', $view->render());
+        self::assertEquals('Xtest10Xtest100', $view->render());
     }
 
     /**
@@ -35,7 +35,7 @@ class JoinTest extends AbstractFusionObjectTest
         $view = $this->buildView();
 
         $view->setFusionPath('join/positionalOrdering');
-        $this->assertEquals('XbeforeXmiddleXafter', $view->render());
+        self::assertEquals('XbeforeXmiddleXafter', $view->render());
     }
 
     /**
@@ -46,7 +46,7 @@ class JoinTest extends AbstractFusionObjectTest
         $view = $this->buildView();
 
         $view->setFusionPath('join/startEndOrdering');
-        $this->assertEquals('XbeforeXmiddleXafter', $view->render());
+        self::assertEquals('XbeforeXmiddleXafter', $view->render());
     }
 
     /**
@@ -57,7 +57,7 @@ class JoinTest extends AbstractFusionObjectTest
         $view = $this->buildView();
 
         $view->setFusionPath('join/advancedStartEndOrdering');
-        $this->assertEquals('XeXdXfoobarXfXgX100XbXaXc', $view->render());
+        self::assertEquals('XeXdXfoobarXfXgX100XbXaXc', $view->render());
     }
 
     /**
@@ -68,7 +68,7 @@ class JoinTest extends AbstractFusionObjectTest
         $view = $this->buildView();
 
         $view->setFusionPath('join/ignoreProperties');
-        $this->assertEquals('XbeforeXafter', $view->render());
+        self::assertEquals('XbeforeXafter', $view->render());
     }
 
     /**
@@ -78,6 +78,6 @@ class JoinTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('join/withGlue');
-        $this->assertEquals('a, b, d', $view->render());
+        self::assertEquals('a, b, d', $view->render());
     }
 }

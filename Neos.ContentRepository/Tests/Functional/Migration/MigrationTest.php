@@ -259,7 +259,7 @@ class MigrationTest extends AbstractNodeTest
 
         /** @var NodeData $nodeData */
         $nodeData = $nodeDataRepository->findByNodeIdentifier($migratedNodeIdentifier)->getFirst();
-        $this->assertEquals($expectedBefore, $nodeData->getProperty($propertyName));
+        self::assertEquals($expectedBefore, $nodeData->getProperty($propertyName));
 
         $migration = new Migration('20180409182707', $migrationConfiguration);
         $nodeMigration = new NodeMigration($migration->getUpConfiguration()->getMigration());
@@ -267,6 +267,6 @@ class MigrationTest extends AbstractNodeTest
         $this->persistenceManager->persistAll();
 
         $nodeData = $nodeDataRepository->findByNodeIdentifier($migratedNodeIdentifier)->getFirst();
-        $this->assertEquals($expectedAfter, $nodeData->getProperty($propertyName));
+        self::assertEquals($expectedAfter, $nodeData->getProperty($propertyName));
     }
 }

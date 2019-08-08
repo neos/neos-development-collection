@@ -54,6 +54,6 @@ class ParentsOperationTest extends UnitTestCase
         $operation->evaluate($q, []);
 
         $ancestors = $q->getContext();
-        $this->assertEquals([$siteNode, $firstLevelNode], $ancestors);
+        self::assertEquals([$siteNode, $firstLevelNode], $ancestors);
     }
 }

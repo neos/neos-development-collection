@@ -26,7 +26,7 @@ class ReduceTest extends AbstractFusionObjectTest
         $view->assign('items', ['element1', 'element2']);
         $view->assign('initialValue', 'InitialValue::');
         $view->setFusionPath('reduce/basicLoop');
-        $this->assertEquals('XXInitialValue::element1element2', $view->render());
+        self::assertEquals('XXInitialValue::element1element2', $view->render());
     }
 
     /**
@@ -38,7 +38,7 @@ class ReduceTest extends AbstractFusionObjectTest
         $view->assign('items', [1,2,3,4]);
         $view->assign('initialValue', 5);
         $view->setFusionPath('reduce/additionLoop');
-        $this->assertEquals(15, $view->render());
+        self::assertEquals(15, $view->render());
     }
 
     /**
@@ -50,7 +50,7 @@ class ReduceTest extends AbstractFusionObjectTest
         $view->assign('items', ['element1', 'element2']);
         $view->assign('other', 'var');
         $view->setFusionPath('reduce/basicLoopOtherContextVariables');
-        $this->assertEquals('XXelement1varelement2var', $view->render());
+        self::assertEquals('XXelement1varelement2var', $view->render());
     }
 
     /**
@@ -63,7 +63,7 @@ class ReduceTest extends AbstractFusionObjectTest
         $view->assign('items', null);
         $view->assign('initialValue', $initialValue);
         $view->setFusionPath('reduce/basicLoop');
-        $this->assertEquals($initialValue, $view->render());
+        self::assertEquals($initialValue, $view->render());
     }
 
     /**
@@ -74,6 +74,6 @@ class ReduceTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2', 'element3', 'element4']);
         $view->setFusionPath('reduce/iteration');
-        $this->assertEquals('::element1-0-1-1--1-::element2-1-2----1::element3-2-3---1-::element4-3-4--1--1', $view->render());
+        self::assertEquals('::element1-0-1-1--1-::element2-1-2----1::element3-2-3---1-::element4-3-4--1--1', $view->render());
     }
 }

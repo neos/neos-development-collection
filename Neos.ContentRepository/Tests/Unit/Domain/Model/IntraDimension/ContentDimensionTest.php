@@ -28,7 +28,7 @@ class ContentDimensionTest extends UnitTestCase
         $dimension = new IntraDimension\ContentDimension('test');
         $testValue = $dimension->createValue('test');
 
-        $this->assertSame($testValue, $dimension->getValue('test'));
+        self::assertSame($testValue, $dimension->getValue('test'));
     }
 
     /**
@@ -39,7 +39,7 @@ class ContentDimensionTest extends UnitTestCase
         $dimension = new IntraDimension\ContentDimension('test');
         $dimension->createValue('test');
 
-        $this->assertSame(0, $dimension->getDepth());
+        self::assertSame(0, $dimension->getDepth());
     }
 
     /**
@@ -53,7 +53,7 @@ class ContentDimensionTest extends UnitTestCase
         $fallbackValue = $dimension->createValue('fallback');
         $dimension->createValue('test', $fallbackValue);
 
-        $this->assertSame($testDepth, $dimension->getDepth());
+        self::assertSame($testDepth, $dimension->getDepth());
     }
 
     /**
@@ -68,7 +68,7 @@ class ContentDimensionTest extends UnitTestCase
         ObjectAccess::setProperty($fallbackValue, 'depth', $testDepth, true);
         $dimension->createValue('test', $fallbackValue);
 
-        $this->assertSame($testDepth + 1, $dimension->getDepth());
+        self::assertSame($testDepth + 1, $dimension->getDepth());
     }
 
     /**
@@ -82,7 +82,7 @@ class ContentDimensionTest extends UnitTestCase
         $depthGreaterZeroValue = $dimension->createValue('depthGreaterZero');
         ObjectAccess::setProperty($depthGreaterZeroValue, 'depth', $testDepth, true);
 
-        $this->assertContains($depthZeroValue, $dimension->getRootValues());
-        $this->assertNotContains($depthGreaterZeroValue, $dimension->getRootValues());
+        self::assertContains($depthZeroValue, $dimension->getRootValues());
+        self::assertNotContains($depthGreaterZeroValue, $dimension->getRootValues());
     }
 }

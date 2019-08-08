@@ -26,7 +26,7 @@ class SiteTest extends UnitTestCase
     {
         $site = new Site('');
         $site->setName('My cool website');
-        $this->assertSame('My cool website', $site->getName());
+        self::assertSame('My cool website', $site->getName());
     }
 
     /**
@@ -35,7 +35,7 @@ class SiteTest extends UnitTestCase
     public function theDefaultStateOfASiteIsOffline()
     {
         $site = new Site('');
-        $this->assertSame(Site::STATE_OFFLINE, $site->getState());
+        self::assertSame(Site::STATE_OFFLINE, $site->getState());
     }
 
     /**
@@ -45,7 +45,7 @@ class SiteTest extends UnitTestCase
     {
         $site = new Site('');
         $site->setState(Site::STATE_ONLINE);
-        $this->assertSame(Site::STATE_ONLINE, $site->getState());
+        self::assertSame(Site::STATE_ONLINE, $site->getState());
     }
 
     /**
@@ -55,6 +55,6 @@ class SiteTest extends UnitTestCase
     {
         $site = new Site('');
         $site->setSiteResourcesPackageKey('Foo');
-        $this->assertSame('Foo', $site->getSiteResourcesPackageKey());
+        self::assertSame('Foo', $site->getSiteResourcesPackageKey());
     }
 }

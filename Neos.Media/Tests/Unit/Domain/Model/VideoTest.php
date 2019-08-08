@@ -29,7 +29,7 @@ class VideoTest extends UnitTestCase
 
         $video = new Video($mockResource);
 
-        $this->assertEquals(-1, $video->getWidth());
-        $this->assertEquals(-1, $video->getHeight());
+        self::assertEquals(-1, $video->getWidth());
+        self::assertEquals(-1, $video->getHeight());
     }
 }
