@@ -41,7 +41,7 @@ class PluginViewImplementation extends PluginImplementation
      *
      * @return ActionRequest
      */
-    protected function buildPluginRequest()
+    protected function buildPluginRequest(): ActionRequest
     {
         /** @var $parentRequest ActionRequest */
         $parentRequest = $this->runtime->getControllerContext()->getRequest();
@@ -105,7 +105,7 @@ class PluginViewImplementation extends PluginImplementation
      * @return string The rendered content as a string
      * @throws StopActionException
      */
-    public function evaluate()
+    public function evaluate(): string
     {
         $currentContext = $this->runtime->getCurrentContext();
         $this->pluginViewNode = $currentContext['node'];
@@ -125,6 +125,7 @@ class PluginViewImplementation extends PluginImplementation
             return $this->pluginViewNode->getContext()->getWorkspaceName() !== 'live' || $this->objectManager->getContext()->isDevelopment() ? '<p>' . $message . '</p>' : '<!-- ' . $message . '-->';
         }
         $this->dispatcher->dispatch($pluginRequest, $pluginResponse);
+        $pluginResponse->mergeIntoParentResponse($parentResponse);
         return $pluginResponse->getContent();
     }
 }
