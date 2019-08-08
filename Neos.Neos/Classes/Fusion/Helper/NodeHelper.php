@@ -12,7 +12,6 @@ namespace Neos\Neos\Fusion\Helper;
  */
 
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Neos\Domain\Exception;
 
