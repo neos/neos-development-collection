@@ -24,7 +24,6 @@ use Neos\Utility\PositionalArraySorter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Utility\BackendAssetsUtility;
-use Psr\Log\LoggerInterface;
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -82,14 +81,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      * @var ThrowableStorageInterface
      */
     private $throwableStorage;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function injectLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
 
     /**
      * @param ThrowableStorageInterface $throwableStorage

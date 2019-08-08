@@ -13,8 +13,6 @@ namespace Neos\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\ServerRequestAttributes;
-use Psr\Http\Message\UriInterface as Uri;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -31,6 +29,7 @@ use Neos\Neos\Exception as NeosException;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Psr\Log\LoggerInterface;
 
 /**
  * A service for creating URIs pointing to nodes and assets.
@@ -99,7 +98,7 @@ class LinkingService
 
     /**
      * @Flow\Inject
-     * @var PsrSystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 
@@ -318,7 +317,9 @@ class LinkingService
                 $uri = $baseUri. ltrim($uri, '/');
             }
         } elseif ($absolute === true) {
+            if (substr($uri, 0, 7) !== 'http://' && substr($uri, 0, 8) !== 'https://') {
             $uri = $baseUri . ltrim($uri, '/');
+            }
         }
 
         return $uri;

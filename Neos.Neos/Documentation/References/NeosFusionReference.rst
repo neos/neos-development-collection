@@ -1258,6 +1258,7 @@ overriding the target attribute for external links and resource links.
 :resourceLinkTarget: (string) Override the target attribute for resource links, defaults to ``_blank``. Can be disabled with an empty value.
 :forceConversion: (boolean) Whether to convert URIs in a non-live workspace, defaults to ``FALSE``
 :absolute: (boolean) Can be used to convert node URIs to absolute links, defaults to ``FALSE``
+:setNoOpener: (boolean) Sets the rel="noopener" attribute to external links, which is good practice, defaults to ``TRUE``
 
 Example::
 

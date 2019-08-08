@@ -14,11 +14,13 @@ namespace Neos\Neos\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountFactory;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\Token\UsernamePassword;
+use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
@@ -123,6 +125,12 @@ class UserService
 
     /**
      * @Flow\Inject
+     * @var TokenAndProviderFactoryInterface
+     */
+    protected $tokenAndProviderFactory;
+
+    /**
+     * @Flow\Inject
      * @var HashService
      */
     protected $hashService;
@@ -147,12 +155,21 @@ class UserService
     /**
      * Retrieves a list of all existing users
      *
-     * @return array<User> The users
+     * @return QueryResultInterface The users
      * @api
      */
-    public function getUsers()
+    public function getUsers(): QueryResultInterface
     {
-        return $this->userRepository->findAll();
+        return $this->userRepository->findAllOrderedByUsername();
+    }
+
+    /**
+     * @param string $searchTerm
+     * @return QueryResultInterface
+     */
+    public function searchUsers(string $searchTerm): QueryResultInterface
+    {
+        return $this->userRepository->findBySearchTerm($searchTerm);
     }
 
     /**
@@ -348,7 +365,7 @@ class UserService
      */
     public function setUserPassword(User $user, $password)
     {
-        $tokens = $this->authenticationManager->getTokens();
+        $tokens = $this->tokenAndProviderFactory->getTokens();
         $indexedTokens = [];
         foreach ($tokens as $token) {
             /** @var TokenInterface $token */

@@ -12,11 +12,11 @@ namespace Neos\Neos\ViewHelpers\Link;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Service\LinkingService;
-use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 
@@ -121,9 +121,16 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     protected $linkingService;
 
     /**
+     * @Flow\Inject
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
+
+    /**
      * Initialize arguments
      *
      * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function initializeArguments()
     {
@@ -132,30 +139,34 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
         $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
+
+        $this->registerArgument('node', 'mixed', 'A node object, a string node path (absolute or relative), a string node://-uri or NULL');
+        $this->registerArgument('format', 'string', 'Format to use for the URL, for example "html" or "json"');
+        $this->registerArgument('absolute', 'boolean', 'If set, an absolute URI is rendered', false, false);
+        $this->registerArgument('arguments', 'array', 'Additional arguments to be passed to the UriBuilder (for example pagination parameters)', false, []);
+        $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
+        $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
+        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
+        $this->registerArgument('baseNodeName', 'string', 'The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths', false, 'documentNode');
+        $this->registerArgument('nodeVariableName', 'string', 'The variable the node will be assigned to for the rendered child content', false, 'linkedNode');
+        $this->registerArgument('resolveShortcuts', 'boolean', 'INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself', false, true);
     }
 
     /**
      * Renders the link. Renders the linked node's label if there's no child content.
      *
-     * @param mixed $node A node object, a string node path (absolute or relative), a string node://-uri or NULL
-     * @param string $format Format to use for the URL, for example "html" or "json"
-     * @param boolean $absolute If set, an absolute URI is rendered
-     * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
-     * @param string $section The anchor to be added to the URI
-     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
-     * @param string $nodeVariableName The variable the node will be assigned to for the rendered child content
-     * @param string $baseNodeName The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
-     * @param boolean $resolveShortcuts INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
      * @return string The rendered link
-     * @throws ViewHelperException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
-    public function render($node = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode', $resolveShortcuts = true)
+    public function render(): string
     {
+        $node = $this->arguments['node'];
         $baseNode = null;
         if (!$node instanceof NodeInterface) {
-            $baseNode = $this->getContextVariable($baseNodeName);
-            if (is_string($node) && substr($node, 0, 7) === 'node://') {
+            $baseNode = $this->getContextVariable($this->arguments['baseNodeName']);
+            if (is_string($node) && strpos($node, 'node://') === 0) {
                 $node = $this->linkingService->convertUriToObject($node, $baseNode);
             }
         }
@@ -165,25 +176,25 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 $this->controllerContext,
                 $node,
                 $baseNode,
-                $format,
-                $absolute,
-                $arguments,
-                $section,
-                $addQueryString,
-                $argumentsToBeExcludedFromQueryString,
-                $resolveShortcuts
+                $this->arguments['format'],
+                $this->arguments['absolute'],
+                $this->arguments['arguments'],
+                $this->arguments['section'],
+                $this->arguments['addQueryString'],
+                $this->arguments['argumentsToBeExcludedFromQueryString'],
+                $this->arguments['resolveShortcuts']
             );
             $this->tag->addAttribute('href', $uri);
         } catch (NeosException $exception) {
-            $this->systemLogger->logException($exception);
+            $this->throwableStorage->logThrowable($exception);
         } catch (NoMatchingRouteException $exception) {
-            $this->systemLogger->logException($exception);
+            $this->throwableStorage->logThrowable($exception);
         }
 
         $linkedNode = $this->linkingService->getLastLinkedNode();
-        $this->templateVariableContainer->add($nodeVariableName, $linkedNode);
+        $this->templateVariableContainer->add($this->arguments['nodeVariableName'], $linkedNode);
         $content = $this->renderChildren();
-        $this->templateVariableContainer->remove($nodeVariableName);
+        $this->templateVariableContainer->remove($this->arguments['nodeVariableName']);
 
         if ($content === null && $linkedNode !== null) {
             $content = $linkedNode->getLabel();

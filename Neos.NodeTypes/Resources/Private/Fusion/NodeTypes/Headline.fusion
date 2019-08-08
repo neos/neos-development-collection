@@ -1,0 +1,5 @@
+prototype(Neos.NodeTypes:Headline) < prototype(Neos.Neos:Content) {
+  templatePath = 'resource://Neos.NodeTypes/Private/Templates/NodeTypes/Headline.html'
+  title = ${q(node).property("title")}
+  title.@process.convertUris = Neos.Neos:ConvertUris
+}

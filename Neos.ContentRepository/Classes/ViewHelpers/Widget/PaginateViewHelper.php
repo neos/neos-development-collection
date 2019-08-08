@@ -51,16 +51,30 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
     protected $controller;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('as', 'string', 'Variable name for the result set', true);
+        $this->registerArgument('parentNode', NodeInterface::class, 'The parent node of the child nodes to show (instead of specifying the specific node set)');
+        $this->registerArgument('nodes', 'array', 'The specific collection of nodes to use for this paginator (instead of specifying the parentNode)', false, []);
+        $this->registerArgument('nodeTypeFilter', 'string', 'A node type (or more complex filter) to filter for in the results');
+        $this->registerArgument('configuration', 'array', 'Widget configuration', false, ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99, 'maximumNumberOfNodes' => 0]);
+    }
+
+    /**
      * Render this view helper
      *
-     * @param string $as Variable name for the result set
-     * @param \Neos\ContentRepository\Domain\Model\NodeInterface $parentNode The parent node of the child nodes to show (instead of specifying the specific node set)
-     * @param array $nodes The specific collection of nodes to use for this paginator (instead of specifying the parentNode)
-     * @param string $nodeTypeFilter A node type (or more complex filter) to filter for in the results
-     * @param array $configuration Additional configuration
      * @return string
+     * @throws \Neos\Flow\Mvc\Exception\InfiniteLoopException
+     * @throws \Neos\FluidAdaptor\Core\Widget\Exception\InvalidControllerException
+     * @throws \Neos\FluidAdaptor\Core\Widget\Exception\MissingControllerException
      */
-    public function render($as, NodeInterface $parentNode = null, array $nodes = [], $nodeTypeFilter = null, array $configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99, 'maximumNumberOfNodes' => 0])
+    public function render(): string
     {
         $response = $this->initiateSubRequest();
         return $response->prepareRendering(new Content())->render();

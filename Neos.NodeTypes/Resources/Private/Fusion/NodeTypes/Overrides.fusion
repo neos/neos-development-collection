@@ -2,10 +2,7 @@
 
 
 # Neos.NodeTypes.AssetList
-prototype(Neos.NodeTypes:AssetList) {
-  templatePath = 'resource://Neos.NodeTypes.AssetList/Private/Templates/NodeTypes/AssetList.html'
-}
-
+prototype(Neos.NodeTypes:AssetList) < prototype(Neos.NodeTypes.AssetList:AssetList)
 
 # Neos.NodeTypes.Form
 prototype(Neos.NodeTypes:Form) >
@@ -13,34 +10,23 @@ prototype(Neos.NodeTypes:Form) < prototype(Neos.NodeTypes.Form:Form)
 
 
 # Neos.NodeTypes.ColumnLayouts
-prototype(Neos.NodeTypes:MultiColumn) >
 prototype(Neos.NodeTypes:MultiColumn) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn) {
   columns.itemRenderer = Neos.NodeTypes:MultiColumnItem
 }
 
-prototype(Neos.NodeTypes:MultiColumnItem) >
 prototype(Neos.NodeTypes:MultiColumnItem) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumnItem)
 
-prototype(Neos.NodeTypes:TwoColumn) >
 prototype(Neos.NodeTypes:TwoColumn) < prototype(Neos.NodeTypes:MultiColumn)
 
-prototype(Neos.NodeTypes:ThreeColumn) >
 prototype(Neos.NodeTypes:ThreeColumn) < prototype(Neos.NodeTypes:MultiColumn)
 
-prototype(Neos.NodeTypes:FourColumn) >
 prototype(Neos.NodeTypes:FourColumn) < prototype(Neos.NodeTypes:MultiColumn)
 
-
 # Neos.NodeTypes.ContentReferences
-prototype(Neos.NodeTypes:ContentReferences) >
 prototype(Neos.NodeTypes:ContentReferences) < prototype(Neos.NodeTypes.ContentReferences:ContentReferences)
 
-
 # Neos.NodeTypes.Html
-prototype(Neos.NodeTypes:Html) {
-  templatePath = 'resource://Neos.NodeTypes.Html/Private/Templates/NodeTypes/Html.html'
-}
-
+prototype(Neos.NodeTypes:Html) < prototype(Neos.NodeTypes.Html:Html)
 
 # Neos.NodeTypes.Menu
 prototype(Neos.NodeTypes:Menu) >

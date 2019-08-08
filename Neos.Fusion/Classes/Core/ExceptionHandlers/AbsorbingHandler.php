@@ -12,7 +12,7 @@ namespace Neos\Fusion\Core\ExceptionHandlers;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Renders the element as an empty string
@@ -21,7 +21,7 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
 {
     /**
      * @Flow\Inject
-     * @var PsrSystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 

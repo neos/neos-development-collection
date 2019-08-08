@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Controller\Module\Administration;
 
 /*
@@ -14,13 +16,18 @@ namespace Neos\Neos\Controller\Module\Administration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
+use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
-use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
+use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Party\Domain\Model\ElectronicAddress;
@@ -55,12 +62,13 @@ class UsersController extends AbstractModuleController
 
     /**
      * @Flow\Inject
-     * @var AuthenticationManagerInterface
+     * @var TokenAndProviderFactoryInterface
      */
-    protected $authenticationManager;
+    protected $tokenAndProviderFactory;
 
     /**
      * @return void
+     * @throws NoSuchArgumentException
      */
     protected function initializeAction()
     {
@@ -84,13 +92,21 @@ class UsersController extends AbstractModuleController
     /**
      * Shows a list of all users
      *
+     * @param string $searchTerm
      * @return void
      */
-    public function indexAction()
+    public function indexAction(string $searchTerm = '')
     {
+        if (empty($searchTerm)) {
+            $users = $this->userService->getUsers();
+        } else {
+            $users = $this->userService->searchUsers($searchTerm);
+        }
+
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
-            'users' => $this->userService->getUsers()
+            'users' => $users,
+            'searchTerm' => $searchTerm
         ]);
     }
 
@@ -100,7 +116,7 @@ class UsersController extends AbstractModuleController
      * @param User $user
      * @return void
      */
-    public function showAction(User $user)
+    public function showAction(User $user): void
     {
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
@@ -114,7 +130,7 @@ class UsersController extends AbstractModuleController
      * @param User $user
      * @return void
      */
-    public function newAction(User $user = null)
+    public function newAction(User $user = null): void
     {
         $this->view->assignMultiple([
             'currentUser' => $this->currentUser,
@@ -136,8 +152,9 @@ class UsersController extends AbstractModuleController
      * @Flow\Validate(argumentName="username", type="\Neos\Neos\Validation\Validator\UserDoesNotExistValidator")
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
      * @return void
+     * @throws StopActionException
      */
-    public function createAction($username, array $password, User $user, array $roleIdentifiers, $authenticationProviderName = null)
+    public function createAction(string $username, array $password, User $user, array $roleIdentifiers, string $authenticationProviderName = null): void
     {
         $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
         $this->addFlashMessage('The user "%s" has been created.', 'User created', Message::SEVERITY_OK, [htmlspecialchars($username)], 1416225561);
@@ -150,7 +167,7 @@ class UsersController extends AbstractModuleController
      * @param User $user
      * @return void
      */
-    public function editAction(User $user)
+    public function editAction(User $user): void
     {
         $this->assignElectronicAddressOptions();
 
@@ -166,8 +183,9 @@ class UsersController extends AbstractModuleController
      *
      * @param User $user The user to update, including updated data already (name, email address etc)
      * @return void
+     * @throws StopActionException
      */
-    public function updateAction(User $user)
+    public function updateAction(User $user): void
     {
         $this->userService->updateUser($user);
         $this->addFlashMessage('The user "%s" has been updated.', 'User updated', Message::SEVERITY_OK, [$user->getName()->getFullName()], 1412374498);
@@ -179,8 +197,10 @@ class UsersController extends AbstractModuleController
      *
      * @param User $user
      * @return void
+     * @throws Exception
+     * @throws StopActionException
      */
-    public function deleteAction(User $user)
+    public function deleteAction(User $user): void
     {
         if ($user === $this->currentUser) {
             $this->addFlashMessage('You can not delete the currently logged in user', 'Current user can\'t be deleted', Message::SEVERITY_WARNING, [], 1412374546);
@@ -196,8 +216,9 @@ class UsersController extends AbstractModuleController
      *
      * @param Account $account
      * @return void
+     * @throws Exception
      */
-    public function editAccountAction(Account $account)
+    public function editAccountAction(Account $account): void
     {
         $this->view->assignMultiple([
             'account' => $account,
@@ -212,10 +233,14 @@ class UsersController extends AbstractModuleController
      * @param Account $account The account to update
      * @param array $roleIdentifiers A possibly updated list of roles for the user's primary account
      * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
-     * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      * @return void
+     * @throws StopActionException
+     * @throws ForwardException
+     * @throws NoSuchRoleException
+     * @throws Exception
+     * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      */
-    public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = [])
+    public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = []): void
     {
         $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
         if ($user === $this->currentUser) {
@@ -245,7 +270,7 @@ class UsersController extends AbstractModuleController
      * @Flow\IgnoreValidation("$user")
      * @return void
      */
-    public function newElectronicAddressAction(User $user)
+    public function newElectronicAddressAction(User $user): void
     {
         $this->assignElectronicAddressOptions();
         $this->view->assign('user', $user);
@@ -257,8 +282,9 @@ class UsersController extends AbstractModuleController
      * @param User $user
      * @param ElectronicAddress $electronicAddress
      * @return void
+     * @throws StopActionException
      */
-    public function createElectronicAddressAction(User $user, ElectronicAddress $electronicAddress)
+    public function createElectronicAddressAction(User $user, ElectronicAddress $electronicAddress): void
     {
         /** @var User $user */
         $user->addElectronicAddress($electronicAddress);
@@ -274,8 +300,9 @@ class UsersController extends AbstractModuleController
      * @param User $user
      * @param ElectronicAddress $electronicAddress
      * @return void
+     * @throws StopActionException
      */
-    public function deleteElectronicAddressAction(User $user, ElectronicAddress $electronicAddress)
+    public function deleteElectronicAddressAction(User $user, ElectronicAddress $electronicAddress): void
     {
         $user->removeElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
@@ -285,9 +312,9 @@ class UsersController extends AbstractModuleController
     }
 
     /**
-     *  @return void
+     * @return void
      */
-    protected function assignElectronicAddressOptions()
+    protected function assignElectronicAddressOptions(): void
     {
         $electronicAddress = new ElectronicAddress();
         $electronicAddressTypes = [];
@@ -309,11 +336,11 @@ class UsersController extends AbstractModuleController
     /**
      * Returns sorted list of auth providers by name.
      *
-     * @return array
+     * @return string[]
      */
-    protected function getAuthenticationProviders()
+    protected function getAuthenticationProviders(): array
     {
-        $providerNames = array_keys($this->authenticationManager->getProviders());
+        $providerNames = array_keys($this->tokenAndProviderFactory->getProviders());
         sort($providerNames);
         return array_combine($providerNames, $providerNames);
     }

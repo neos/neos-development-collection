@@ -15,7 +15,6 @@ namespace Neos\Media\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\Exception;
@@ -31,6 +30,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
 use Neos\Media\Exception\AssetSourceServiceException;
+use Psr\Log\LoggerInterface;
 
 /**
  * A service for Asset Sources and Asset Proxies
@@ -83,7 +83,7 @@ final class AssetSourceService
 
     /**
      * @Flow\Inject
-     * @var PsrSystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 

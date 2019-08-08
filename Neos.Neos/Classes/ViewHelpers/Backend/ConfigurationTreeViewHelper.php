@@ -31,16 +31,25 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
     protected $output = '';
 
     /**
-     * Render the given $configuration
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('configuration', 'array', 'Configuration to show', true);
+    }
+
+    /**
+     * Render the $configuration
      *
-     * @param array $configuration
      * @return string
      * @throws \Exception
      */
-    public function render(array $configuration)
+    public function render(): string
     {
         $this->output = '';
-        $this->renderSingleLevel($configuration);
+        $this->renderSingleLevel($this->arguments['configuration']);
         return $this->output;
     }
 
@@ -51,7 +60,7 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
      * @param string $relativePath the path up-to-now
      * @return void
      */
-    protected function renderSingleLevel(array $configuration, $relativePath = null)
+    protected function renderSingleLevel(array $configuration, ?string $relativePath = null): void
     {
         $this->output .= '<ul>';
         foreach ($configuration as $key => $value) {
