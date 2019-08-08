@@ -28,16 +28,15 @@ class ImageViewHelperTest extends ViewHelperBaseTestcase
         parent::setUp();
         $this->viewHelper = new ImageViewHelper();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
      * @test
      */
-    public function doNotThrowExceptionIfImageIsNull()
+    public function doNotThrowExceptionIfImageIsNull(): void
     {
-        $this->viewHelper->initialize();
-        $actualResult = $this->viewHelper->render(null);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper);
+        $actualResult = $this->viewHelper->render();
 
         $this->assertEquals('', $actualResult);
     }

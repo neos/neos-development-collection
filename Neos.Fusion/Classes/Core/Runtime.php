@@ -1051,12 +1051,14 @@ class Runtime
         if (isset($fusionConfiguration['__objectType'])) {
             $objectType = $fusionConfiguration['__objectType'];
             throw new Exceptions\MissingFusionImplementationException(sprintf(
-                "The Fusion object at path `%s` could not be rendered:
-					The Fusion object `%s` is not completely defined (missing property `@class`).
-					Most likely you didn't inherit from a basic object.
-					For example you could add the following line to your Fusion:
-					`prototype(%s) < prototype(Neos.Fusion:Template)`",
-                $fusionPath, $objectType, $objectType), 1332493995);
+                "The Fusion object `%s` cannot be rendered:
+					Most likely you mistyped the prototype name or did not define 
+					the Fusion prototype with `prototype(%s) < prototype ...` . 
+					Other possible reasons are a missing parent-prototype or 
+					a missing `@class` annotation for prototypes without parent.
+					It is also possible your Fusion file is not read because 
+					of a missing `include:` statement.",
+                $objectType, $objectType), 1332493995);
         }
 
         if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {

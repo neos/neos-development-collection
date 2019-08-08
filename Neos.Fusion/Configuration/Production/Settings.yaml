@@ -1,0 +1,7 @@
+#                                                                        #
+# Settings for the Production context                                    #
+#                                                                        #
+
+Neos:
+  Fusion:
+    enableObjectTreeCache: true

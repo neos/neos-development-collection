@@ -1,8 +1,3 @@
-Neos\Fusion\View\FusionView:
-  properties:
-    fallbackView:
-      object: Neos\FluidAdaptor\View\TemplateView
-
 Neos\Fusion\Core\Cache\ContentCache:
   properties:
     cache:
@@ -12,3 +7,13 @@ Neos\Fusion\Core\Cache\ContentCache:
         arguments:
           1:
             value: Neos_Fusion_Content
+
+Neos\Fusion\Aspects\FusionCachingAspect:
+  properties:
+    fusionCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_Fusion_ObjectTree

@@ -15,7 +15,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -28,6 +27,7 @@ use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\ThumbnailService;
+use Psr\Log\LoggerInterface;
 
 /**
  * An Asset, the base for all more specific assets in this package.
@@ -47,7 +47,7 @@ class Asset implements AssetInterface
 
     /**
      * @Flow\Inject
-     * @var PsrSystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 
@@ -448,7 +448,9 @@ class Asset implements AssetInterface
     {
         $this->lastModified = new \DateTime();
         foreach ($this->assetCollections as $existingAssetCollection) {
-            $existingAssetCollection->removeAsset($this);
+            if (!$assetCollections->contains($existingAssetCollection)) {
+                $existingAssetCollection->removeAsset($this);
+            }
         }
         foreach ($assetCollections as $newAssetCollection) {
             $newAssetCollection->addAsset($this);

@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target state="needs-translation">Visibility</target></trans-unit>
+			<target state="translated">Visibilità</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Document</source>
 			<target state="translated">Documento</target></trans-unit>

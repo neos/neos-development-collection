@@ -41,24 +41,31 @@ class ThumbnailViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function initializeArguments()
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
         $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an asset', true);
+
+        $this->registerArgument('assetProxy', AssetProxyInterface::class, 'The asset to be rendered as a thumbnail', true);
+        $this->registerArgument('width', 'integer', 'Desired width of the thumbnail');
+        $this->registerArgument('height', 'integer', 'Desired height of the thumbnail');
     }
 
     /**
      * Renders an HTML img tag with a thumbnail or preview image, created from a given asset proxy.
      *
-     * @param AssetProxyInterface $assetProxy The asset to be rendered as a thumbnail
-     * @param integer $width Desired width of the thumbnail
-     * @param integer $height Desired height of the thumbnail
      * @return string an <img...> html tag
      */
-    public function render(AssetProxyInterface $assetProxy = null, $width = null, $height = null)
+    public function render(): string
     {
+        /** @var AssetProxyInterface $assetProxy */
+        $assetProxy = $this->arguments['assetProxy'];
+        $width= $this->arguments['width'];
+        $height= $this->arguments['height'];
+
         if ($width === null || $height === null) {
             $width = 250;
             $height = 250;

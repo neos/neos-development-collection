@@ -135,6 +135,8 @@ class ArrayConverter extends AbstractTypeConverter
                     '__identity' => $identity,
                     '__type' => \Neos\Utility\TypeHandling::getTypeForValue($source),
                     'title' => $source->getTitle(),
+                    'copyrightNotice' => $source->getCopyrightNotice(),
+                    'caption' => $source->getCaption(),
                     'resource' => $convertedChildProperties['resource']
                 ];
         }

@@ -54,6 +54,7 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
      * Initialize the arguments.
      *
      * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      * @api
      */
     public function initializeArguments()
@@ -63,6 +64,9 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
         $this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this view helper', false, 'f3-form-error');
         $this->overrideArgument('value', 'mixed', 'Value of input tag. Required for checkboxes', true);
         $this->registerUniversalTagAttributes();
+
+        $this->registerArgument('checked', 'boolean', 'Specifies that the input element should be preselected');
+        $this->registerArgument('multiple', 'boolean', 'Specifies whether this checkbox belongs to a multivalue (is part of a checkbox group)');
     }
 
     /**
@@ -71,14 +75,12 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
      * This is changed to use the actual provided value of the value attribute
      * to support selecting object values.
      *
-     * @param boolean $checked Specifies that the input element should be preselected
-     * @param boolean $multiple Specifies whether this checkbox belongs to a multivalue (is part of a checkbox group)
-     *
      * @return string
      * @api
      */
-    public function render($checked = null, $multiple = null)
+    public function render(): string
     {
+        $checked = $this->arguments['checked'];
         $this->tag->addAttribute('type', 'checkbox');
 
         $nameAttribute = $this->getName();
@@ -93,12 +95,13 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
             if ($propertyValue instanceof \Traversable) {
                 $propertyValue = iterator_to_array($propertyValue);
             }
+
             if (is_array($propertyValue)) {
                 if ($checked === null) {
                     $checked = in_array($this->arguments['value'], $propertyValue, true);
                 }
                 $nameAttribute .= '[]';
-            } elseif ($multiple === true) {
+            } elseif ($this->arguments['multiple'] === true) {
                 $nameAttribute .= '[]';
             } elseif ($checked === null && $propertyValue !== null) {
                 $checked = (boolean)$propertyValue === (boolean)$valueAttribute;
@@ -126,7 +129,7 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
      *
      * @return string name
      */
-    protected function getNameWithoutPrefix()
+    protected function getNameWithoutPrefix(): string
     {
         $name = parent::getNameWithoutPrefix();
         return str_replace('[__identity]', '', $name);
