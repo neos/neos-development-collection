@@ -187,7 +187,7 @@
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[2]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+          <target state="translated">Nevar izdzēst darba virsmu "{0}", jo tā satur {1} mezglus.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
