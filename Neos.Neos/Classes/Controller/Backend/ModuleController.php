@@ -14,8 +14,6 @@ namespace Neos\Neos\Controller\Backend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\ActionResponseRenderer\IntoActionResponse;
-use Neos\Flow\Mvc\ActionResponseRenderer\ToArray;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Security\Context;

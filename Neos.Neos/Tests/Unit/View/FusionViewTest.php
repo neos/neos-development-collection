@@ -12,10 +12,8 @@ namespace Neos\Neos\Tests\Unit\View;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Service\ContentContext;
@@ -25,7 +23,6 @@ use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\Fusion\Core\Runtime;
-use Neos\Utility\ObjectAccess;
 
 /**
  * Testcase for the Fusion View

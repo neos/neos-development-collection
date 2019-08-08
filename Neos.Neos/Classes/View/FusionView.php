@@ -97,7 +97,7 @@ class FusionView extends AbstractView
         ]);
         try {
             $output = $fusionRuntime->render($this->fusionPath);
-            $output = $this->mergeHttpResponseFromOutput($output, $fusionRuntime);
+            $output = $this->parsePotentialRawHttpResponse($output);
         } catch (RuntimeException $exception) {
             throw $exception->getPrevious();
         }
@@ -108,19 +108,30 @@ class FusionView extends AbstractView
 
     /**
      * @param string $output
-     * @return ResponseInterface The message body without the message head
+     * @return mixed If output is a string with a HTTP preamble a ResponseInterface otherwise the original output.
      */
-    protected function mergeHttpResponseFromOutput($output)
+    protected function parsePotentialRawHttpResponse($output)
     {
-        if (!is_string($output)) {
-            return $output;
+        if ($this->isRawHttpResponse($output)) {
+            return parse_response($output);
         }
 
-        if (!strpos($output, 'HTTP/') === 0) {
-            return $output;
+        return $output;
+    }
+
+    /**
+     * Checks if the mixed input looks like a raw HTTTP response.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isRawHttpResponse($value): bool
+    {
+        if (is_string($value) && strpos($value, 'HTTP/') === 0) {
+            return true;
         }
 
-        return parse_response($output);
+        return false;
     }
 
     /**

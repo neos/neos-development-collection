@@ -11,7 +11,6 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
@@ -20,7 +19,6 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\View\FusionView;
 use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the Fusion View
