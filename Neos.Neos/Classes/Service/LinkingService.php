@@ -318,7 +318,7 @@ class LinkingService
             }
         } elseif ($absolute === true) {
             if (substr($uri, 0, 7) !== 'http://' && substr($uri, 0, 8) !== 'https://') {
-            $uri = $baseUri . ltrim($uri, '/');
+                $uri = $baseUri . ltrim($uri, '/');
             }
         }
 
