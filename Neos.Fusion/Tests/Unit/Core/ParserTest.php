@@ -108,7 +108,7 @@ class ParserTest extends UnitTestCase
 
         $actualParseTree = $this->parser->parse($sourceCode);
 
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 01.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 01.');
     }
 
     /**
@@ -155,7 +155,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 02.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 02.');
     }
 
     /**
@@ -202,7 +202,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 03.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 03.');
     }
 
     /**
@@ -271,7 +271,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 04.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 04.');
     }
 
     /**
@@ -340,7 +340,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 05.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 05.');
     }
 
     /**
@@ -361,7 +361,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 07.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 07.');
     }
 
     /**
@@ -425,7 +425,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 08.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 08.');
     }
 
     /**
@@ -504,7 +504,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 10.');
+        self::assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 10.');
     }
 
     /**
@@ -556,7 +556,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 13.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 13.');
     }
 
     /**
@@ -596,7 +596,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 14.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 14.');
     }
 
     /**
@@ -616,7 +616,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 15.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 15.');
     }
 
     protected function getExpectedParseTreeForFixture16()
@@ -712,7 +712,7 @@ class ParserTest extends UnitTestCase
         $expectedParseTree = $this->getExpectedParseTreeForFixture16();
 
         $actualParseTree = $this->parser->parse($sourceCode, $fixture);
-        $this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 16');
+        self::assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 16');
     }
 
     /**
@@ -759,7 +759,7 @@ class ParserTest extends UnitTestCase
         $expectedParseTree['globbingWithDots1'] = $text;
 
         $actualParseTree = $this->parser->parse($sourceCode, $fixture);
-        $this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 17');
+        self::assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 17');
     }
 
     /**
@@ -817,7 +817,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 18.');
+        self::assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 18.');
     }
 
     /**
@@ -840,7 +840,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 19.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 19.');
     }
 
     /**
@@ -866,7 +866,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 20.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 20.');
     }
 
     /**
@@ -910,7 +910,7 @@ class ParserTest extends UnitTestCase
         ];
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 23.');
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 23.');
     }
 
     /**
@@ -922,7 +922,7 @@ class ParserTest extends UnitTestCase
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixtureLongString');
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertArrayHasKey('longString', $actualParseTree);
+        self::assertArrayHasKey('longString', $actualParseTree);
     }
 
     /**
@@ -935,7 +935,7 @@ class ParserTest extends UnitTestCase
         $sourceCode = $this->readFusionFixture('ParserTestFusionComments01');
         $expected = []; // Fixture contains only comments, so expect empty parse tree
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestFusionComments01.fusion`');
+        self::assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestFusionComments01.fusion`');
     }
 
     /**

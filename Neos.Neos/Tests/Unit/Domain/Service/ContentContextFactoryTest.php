@@ -54,7 +54,7 @@ class ContentContextFactoryTest extends \Neos\Flow\Tests\UnitTestCase
 
         /** @var ContentContext $context */
         $context = $contentContextFactory->create(['workspaceName' => 'user-test']);
-        $this->assertEquals($mockSite, $context->getCurrentSite());
-        $this->assertEquals($mockDomain, $context->getCurrentDomain());
+        self::assertEquals($mockSite, $context->getCurrentSite());
+        self::assertEquals($mockDomain, $context->getCurrentDomain());
     }
 }

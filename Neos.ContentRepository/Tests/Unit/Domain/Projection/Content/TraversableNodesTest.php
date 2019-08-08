@@ -98,7 +98,7 @@ class TraversableNodesTest extends UnitTestCase
         $nodes1 = TraversableNodes::fromArray($nodes1);
         $nodes2 = TraversableNodes::fromArray($nodes2);
         $mergeResult = $nodes1->merge($nodes2);
-        $this->assertSame($expectedResult, $mergeResult->toArray());
+        self::assertSame($expectedResult, $mergeResult->toArray());
     }
 
     /**
@@ -107,7 +107,7 @@ class TraversableNodesTest extends UnitTestCase
     public function isEmptyIsTrueIfTraversableNodesDoesNotContainAnyNodes()
     {
         $nodes = TraversableNodes::fromArray([]);
-        $this->assertTrue($nodes->isEmpty());
+        self::assertTrue($nodes->isEmpty());
     }
 
     /**
@@ -116,7 +116,7 @@ class TraversableNodesTest extends UnitTestCase
     public function isEmptyIsFalseIfTraversableNodesContainNodes()
     {
         $nodes = TraversableNodes::fromArray([$this->mockNode1]);
-        $this->assertFalse($nodes->isEmpty());
+        self::assertFalse($nodes->isEmpty());
     }
 
     /**
@@ -125,7 +125,7 @@ class TraversableNodesTest extends UnitTestCase
     public function countReturnsZeroIfTraversableNodesIsEmpty()
     {
         $nodes = TraversableNodes::fromArray([]);
-        $this->assertSame(0, $nodes->count());
+        self::assertSame(0, $nodes->count());
     }
 
     /**
@@ -134,7 +134,7 @@ class TraversableNodesTest extends UnitTestCase
     public function countReturnsNumberOfNodes()
     {
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2]);
-        $this->assertSame(2, $nodes->count());
+        self::assertSame(2, $nodes->count());
     }
 
     /**
@@ -167,7 +167,7 @@ class TraversableNodesTest extends UnitTestCase
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2, $this->mockNode3]);
         $result = $nodes->previous($this->mockNode2);
 
-        $this->assertSame($this->mockNode1, $result);
+        self::assertSame($this->mockNode1, $result);
     }
 
     /**
@@ -206,7 +206,7 @@ class TraversableNodesTest extends UnitTestCase
         $traversableNodes = TraversableNodes::fromArray($nodes);
         $result = $traversableNodes->previousAll($reference);
 
-        $this->assertSame($expectedResult, $result->toArray());
+        self::assertSame($expectedResult, $result->toArray());
     }
 
     /**
@@ -239,7 +239,7 @@ class TraversableNodesTest extends UnitTestCase
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2, $this->mockNode3]);
         $result = $nodes->next($this->mockNode2);
 
-        $this->assertSame($this->mockNode3, $result);
+        self::assertSame($this->mockNode3, $result);
     }
 
     /**
@@ -278,6 +278,6 @@ class TraversableNodesTest extends UnitTestCase
         $traversableNodes = TraversableNodes::fromArray($nodes);
         $result = $traversableNodes->nextAll($reference);
 
-        $this->assertSame($expectedResult, $result->toArray());
+        self::assertSame($expectedResult, $result->toArray());
     }
 }

@@ -72,7 +72,7 @@ class ParentOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([], $output);
+        self::assertEquals([], $output);
     }
 
     /**
@@ -87,6 +87,6 @@ class ParentOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([$this->firstLevelNode], $output);
+        self::assertEquals([$this->firstLevelNode], $output);
     }
 }

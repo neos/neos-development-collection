@@ -33,8 +33,8 @@ class WorkspaceTest extends UnitTestCase
         $baseWorkspace = new Workspace('BaseWorkspace');
 
         $workspace = new Workspace('MyWorkspace', $baseWorkspace);
-        $this->assertSame('MyWorkspace', $workspace->getName());
-        $this->assertSame($baseWorkspace, $workspace->getBaseWorkspace());
+        self::assertSame('MyWorkspace', $workspace->getName());
+        self::assertSame($baseWorkspace, $workspace->getBaseWorkspace());
     }
 
     /**
@@ -51,7 +51,7 @@ class WorkspaceTest extends UnitTestCase
 
         $workspace->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
-        $this->assertInstanceOf(NodeData::class, $workspace->getRootNodeData());
+        self::assertInstanceOf(NodeData::class, $workspace->getRootNodeData());
     }
 
     /**
@@ -66,7 +66,7 @@ class WorkspaceTest extends UnitTestCase
 
         $mockNodeDataRepository->expects($this->once())->method('countByWorkspace')->with($workspace)->will($this->returnValue(42));
 
-        $this->assertSame(42, $workspace->getNodeCount());
+        self::assertSame(42, $workspace->getNodeCount());
     }
 
     /**
@@ -116,7 +116,7 @@ class WorkspaceTest extends UnitTestCase
 
         $currentWorkspace->_call('verifyPublishingTargetWorkspace', $reviewWorkspace);
         $currentWorkspace->_call('verifyPublishingTargetWorkspace', $someBaseWorkspace);
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     /**
@@ -152,7 +152,7 @@ class WorkspaceTest extends UnitTestCase
     public function contextNodePathMatchPatternMatchesNodeContextPaths($contextNodePath)
     {
         preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
-        $this->assertArrayHasKey('WorkspaceName', $matches);
+        self::assertArrayHasKey('WorkspaceName', $matches);
     }
 
     /**
@@ -173,7 +173,7 @@ class WorkspaceTest extends UnitTestCase
     public function contextNodePathMatchPatternDoesNotMatchInvalidNodeContextPaths($contextNodePath)
     {
         preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
-        $this->assertArrayNotHasKey('WorkspaceName', $matches);
+        self::assertArrayNotHasKey('WorkspaceName', $matches);
     }
 
     /**
@@ -203,7 +203,7 @@ class WorkspaceTest extends UnitTestCase
         $liveWorkspace = new Workspace('live');
         $personalWorkspace = new Workspace('user-admin', $liveWorkspace);
 
-        $this->assertFalse($liveWorkspace->isPersonalWorkspace());
-        $this->assertTrue($personalWorkspace->isPersonalWorkspace());
+        self::assertFalse($liveWorkspace->isPersonalWorkspace());
+        self::assertTrue($personalWorkspace->isPersonalWorkspace());
     }
 }

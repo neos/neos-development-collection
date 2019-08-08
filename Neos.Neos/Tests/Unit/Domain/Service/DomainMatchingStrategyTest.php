@@ -32,7 +32,7 @@ class DomainMatchingStrategyTest extends UnitTestCase
 
         $strategy = new DomainMatchingStrategy();
         $actualDomains = $strategy->getSortedMatches('www.neos.io', $mockDomains);
-        $this->assertSame($expectedDomains, $actualDomains);
+        self::assertSame($expectedDomains, $actualDomains);
     }
 
     /**
@@ -58,7 +58,7 @@ class DomainMatchingStrategyTest extends UnitTestCase
 
         $strategy = new DomainMatchingStrategy();
         $actualDomains = $strategy->getSortedMatches('flow.neos.io', $mockDomains);
-        $this->assertSame($expectedDomains, $actualDomains);
+        self::assertSame($expectedDomains, $actualDomains);
     }
 
     /**
@@ -76,6 +76,6 @@ class DomainMatchingStrategyTest extends UnitTestCase
 
         $strategy = new DomainMatchingStrategy();
         $actualDomains = $strategy->getSortedMatches('neos.io', $mockDomains);
-        $this->assertSame($expectedDomains, $actualDomains);
+        self::assertSame($expectedDomains, $actualDomains);
     }
 }

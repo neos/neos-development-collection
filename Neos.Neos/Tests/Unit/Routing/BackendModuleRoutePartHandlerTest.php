@@ -71,7 +71,7 @@ class BackendModuleRoutePartHandlerTest extends UnitTestCase
         $matches = $routePartHandler->match($requestPath);
         $value = $routePartHandler->getValue();
 
-        $this->assertSame($matchResult, $matches);
-        $this->assertEquals($expectedValue, $value);
+        self::assertSame($matchResult, $matches);
+        self::assertEquals($expectedValue, $value);
     }
 }

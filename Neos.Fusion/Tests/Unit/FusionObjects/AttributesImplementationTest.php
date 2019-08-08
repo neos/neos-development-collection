@@ -68,6 +68,6 @@ class AttributesImplementationTest extends UnitTestCase
         }
 
         $result = $renderer->evaluate();
-        $this->assertEquals($expectedOutput, $result);
+        self::assertEquals($expectedOutput, $result);
     }
 }

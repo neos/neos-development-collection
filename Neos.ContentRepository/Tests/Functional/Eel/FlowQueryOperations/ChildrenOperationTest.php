@@ -26,7 +26,7 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('')->get();
-        $this->assertEquals(5, count($foundNodes));
+        self::assertEquals(5, count($foundNodes));
     }
 
     /**
@@ -36,9 +36,9 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('teaser')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNodes = $q->children('x')->get();
-        $this->assertEquals(0, count($foundNodes));
+        self::assertEquals(0, count($foundNodes));
     }
 
     /**
@@ -48,13 +48,13 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('teaser, sidebar')->get();
-        $this->assertEquals(2, count($foundNodes));
+        self::assertEquals(2, count($foundNodes));
         $foundNodes = $q->children('teaser, x')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNodes = $q->children('x, sidebar')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNodes = $q->children('x, y')->get();
-        $this->assertEquals(0, count($foundNodes));
+        self::assertEquals(0, count($foundNodes));
     }
 
     /**
@@ -64,7 +64,7 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('teaser/dummy42, sidebar')->get();
-        $this->assertEquals(2, count($foundNodes));
+        self::assertEquals(2, count($foundNodes));
     }
 
     /**
@@ -74,9 +74,9 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('[title]')->get();
-        $this->assertEquals(2, count($foundNodes));
+        self::assertEquals(2, count($foundNodes));
         $foundNodes = $q->children('[x]')->get();
-        $this->assertEquals(0, count($foundNodes));
+        self::assertEquals(0, count($foundNodes));
     }
 
     /**
@@ -86,9 +86,9 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('[title][title != ""]')->get();
-        $this->assertEquals(2, count($foundNodes));
+        self::assertEquals(2, count($foundNodes));
         $foundNodes = $q->children('[title][title *= "Products"]')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
     }
 
     /**
@@ -98,9 +98,9 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('[instanceof Neos.ContentRepository.Testing:Page]')->get();
-        $this->assertEquals(2, count($foundNodes));
+        self::assertEquals(2, count($foundNodes));
         $foundNodes = $q->children('[instanceof Neos.ContentRepository.Testing:ContentCollection]')->get();
-        $this->assertEquals(3, count($foundNodes));
+        self::assertEquals(3, count($foundNodes));
     }
 
     /**
@@ -110,7 +110,7 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('[instanceof Neos.ContentRepository.Testing:Document][instanceof Neos.ContentRepository.Testing:Page]')->get();
-        $this->assertEquals(2, count($foundNodes));
+        self::assertEquals(2, count($foundNodes));
     }
 
     /**
@@ -120,7 +120,7 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('[instanceof Neos.ContentRepository.Testing:Page], [instanceof Neos.ContentRepository.Testing:ContentCollection]')->get();
-        $this->assertEquals(5, count($foundNodes));
+        self::assertEquals(5, count($foundNodes));
     }
 
     /**
@@ -130,9 +130,9 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('[instanceof !Neos.ContentRepository.Testing:ContentCollection]')->get();
-        $this->assertEquals(2, count($foundNodes));
+        self::assertEquals(2, count($foundNodes));
         $foundNodes = $q->children('[instanceof !Neos.ContentRepository.Testing:Page]')->get();
-        $this->assertEquals(3, count($foundNodes));
+        self::assertEquals(3, count($foundNodes));
     }
 
     /**
@@ -142,7 +142,7 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('[instanceof !Neos.ContentRepository.Testing:Page][instanceof !Neos.ContentRepository.Testing:ContentCollection]')->get();
-        $this->assertEquals(0, count($foundNodes));
+        self::assertEquals(0, count($foundNodes));
     }
 
     /**
@@ -152,13 +152,13 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"]')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNodes = $q->children('x[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"]')->get();
-        $this->assertEquals(0, count($foundNodes));
+        self::assertEquals(0, count($foundNodes));
         $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:X][title *= "Products"]')->get();
-        $this->assertEquals(0, count($foundNodes));
+        self::assertEquals(0, count($foundNodes));
         $foundNodes = $q->children('x[instanceof Neos.ContentRepository.Testing:Page][title *= "X"]')->get();
-        $this->assertEquals(0, count($foundNodes));
+        self::assertEquals(0, count($foundNodes));
     }
 
     /**
@@ -168,18 +168,18 @@ class ChildrenOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"], about-us[instanceof Neos.ContentRepository.Testing:Page][title *= "About Us"]')->get();
-        $this->assertEquals(2, count($foundNodes));
+        self::assertEquals(2, count($foundNodes));
         $foundNodes = $q->children('x[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"], about-us[instanceof Neos.ContentRepository.Testing:Page][title *= "About Us"]')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:X][title *= "Products"], about-us[instanceof Neos.ContentRepository.Testing:Page][title *= "About Us"]')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNodes = $q->children('x[instanceof Neos.ContentRepository.Testing:Page][title *= "X"], about-us[instanceof Neos.ContentRepository.Testing:Page][title *= "About Us"]')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"], x[instanceof Neos.ContentRepository.Testing:Page][title *= "About Us"]')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"], about-us[instanceof Neos.ContentRepository.Testing:X][title *= "About Us"]')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"], about-us[instanceof Neos.ContentRepository.Testing:Page][title *= "X"]')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
     }
 }

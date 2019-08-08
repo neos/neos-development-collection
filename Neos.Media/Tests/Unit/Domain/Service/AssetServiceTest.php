@@ -58,6 +58,6 @@ class AssetServiceTest extends UnitTestCase
         $this->inject($mockAssetService, 'objectManager', $mockObjectManager);
 
         $repository = $mockAssetService->_call('getRepository', $mockAsset);
-        $this->assertInstanceOf($expectedRepositoryClassName, $repository);
+        self::assertInstanceOf($expectedRepositoryClassName, $repository);
     }
 }

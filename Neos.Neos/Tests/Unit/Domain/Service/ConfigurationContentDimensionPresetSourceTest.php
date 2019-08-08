@@ -64,8 +64,8 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->validConfiguration);
         $preset = $source->findPresetByUriSegment('language', 'deutsch');
-        $this->assertArrayHasKey('values', $preset);
-        $this->assertEquals(['de_DE', 'de_ZZ', 'mul_ZZ'], $preset['values']);
+        self::assertArrayHasKey('values', $preset);
+        self::assertEquals(['de_DE', 'de_ZZ', 'mul_ZZ'], $preset['values']);
     }
 
     /**
@@ -76,7 +76,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->validConfiguration);
         $preset = $source->findPresetByUriSegment('language', 'english');
-        $this->assertNull($preset);
+        self::assertNull($preset);
     }
 
     /**
@@ -87,8 +87,8 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->validConfiguration);
         $preset = $source->findPresetByDimensionValues('language', ['de_DE', 'de_ZZ', 'mul_ZZ']);
-        $this->assertArrayHasKey('uriSegment', $preset);
-        $this->assertEquals('deutsch', $preset['uriSegment']);
+        self::assertArrayHasKey('uriSegment', $preset);
+        self::assertEquals('deutsch', $preset['uriSegment']);
     }
 
     /**
@@ -99,6 +99,6 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->validConfiguration);
         $preset = $source->findPresetByDimensionValues('language', ['ja_JP', 'mul_ZZ']);
-        $this->assertNull($preset);
+        self::assertNull($preset);
     }
 }

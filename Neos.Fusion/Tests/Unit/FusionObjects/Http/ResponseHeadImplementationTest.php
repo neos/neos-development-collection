@@ -65,6 +65,6 @@ class ResponseHeadImplementationTest extends UnitTestCase
         $renderer = new ResponseHeadImplementation($this->mockRuntime, $path, $fusionObjectName);
 
         $result = $renderer->evaluate();
-        $this->assertEquals($expectedOutput, $result);
+        self::assertEquals($expectedOutput, $result);
     }
 }
