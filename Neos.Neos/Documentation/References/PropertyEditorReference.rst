@@ -704,7 +704,7 @@ Property Validation
 -------------------
 
 The validators that can be assigned to properties in the node type configuration are used on properties
-that are edited via the inspector and are applied on the client-side only. The available validators can
+that are edited via the inspector or inline. They are applied on the client-side only. The available validators can
 be found in the Neos package in ``Resources/Public/JavaScript/Shared/Validation``:
 
 * AlphanumericValidator
