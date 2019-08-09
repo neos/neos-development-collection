@@ -9,6 +9,8 @@
 
 	&:hover,
 	&.neos-pressed {
+    background: transparent !important;
+
 		&:before {
 			border-top: 3px solid $blue;
 			border-bottom: 3px solid $blue;
@@ -16,11 +18,11 @@
 
 		&:after {
 			background-color: $blue;
-		}
+    }
 	}
 
 	&.neos-pressed {
-		height: $unit + 1px;
+    height: $unit + 1px;
 	}
 
 	&:before {
@@ -66,7 +68,8 @@
 	@include font;
 
 	.neos-menu-panel-open & {
-		left: 0;
+    left: 0;
+    display: block;
 	}
 
 	.neos-menu-panel-sticky & {
