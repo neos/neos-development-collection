@@ -368,7 +368,7 @@
 			<target state="translated">Seleccione un nuevo archivo</target></trans-unit>
       <trans-unit id="replace.usageCount" xml:space="preserve">
 				<source>Currently the asset is used {usageCount} times.</source>
-			<target state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+			<target state="translated">Actualmente el activo es utilizado {usageCount} veces.</target></trans-unit>
       <trans-unit id="replace.allUsages" xml:space="preserve" approved="yes">
 				<source>Show all usages</source>
 			<target state="translated">Mostrar todos los usos</target></trans-unit>
