@@ -106,7 +106,7 @@ class ContentCacheTest extends UnitTestCase
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $segement = $contentCache->createCacheSegment('My content', '/foo/bar', $entryIdentifierValues);
-        $this->assertNotEmpty($segement);
+        self::assertNotEmpty($segement);
     }
 
     /**
@@ -118,7 +118,7 @@ class ContentCacheTest extends UnitTestCase
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $segment = $contentCache->createCacheSegment('My content', '/foo/bar', [42], ['Foo', 'Bar'], 60);
-        $this->assertStringContainsString('Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segment);
+        self::assertStringContainsString('Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segment);
     }
 
     /**
@@ -170,7 +170,7 @@ class ContentCacheTest extends UnitTestCase
 
         $output = $contentCache->processCacheSegments($content);
 
-        $this->assertSame($invalidContent . $validContent, $output);
+        self::assertSame($invalidContent . $validContent, $output);
     }
 
     /**
@@ -194,7 +194,7 @@ class ContentCacheTest extends UnitTestCase
 
         $output = $contentCache->processCacheSegments($content);
 
-        $this->assertSame($invalidContent, $output);
+        self::assertSame($invalidContent, $output);
     }
 
     /**
@@ -238,7 +238,7 @@ class ContentCacheTest extends UnitTestCase
 
         $expectedOutput = $outerContentStart . $invalidContent . $outerContentMiddle . $uncachedCommandOutput . $outerContentEnd;
 
-        $this->assertSame($expectedOutput, $output);
+        self::assertSame($expectedOutput, $output);
 
         $cachedContent = $contentCache->getCachedSegment(function ($command) use ($uncachedCommandOutput) {
             if ($command === 'eval=some.fusionh.path.innerUncached') {
@@ -248,6 +248,6 @@ class ContentCacheTest extends UnitTestCase
             }
         }, 'some.fusionh.path', ['node' => 'bar']);
 
-        $this->assertSame($expectedOutput, $cachedContent);
+        self::assertSame($expectedOutput, $cachedContent);
     }
 }

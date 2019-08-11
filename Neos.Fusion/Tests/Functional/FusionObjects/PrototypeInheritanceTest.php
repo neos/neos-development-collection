@@ -23,7 +23,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('prototypeInheritance/base');
-        $this->assertEquals('BaseModified', $view->render());
+        self::assertEquals('BaseModified', $view->render());
     }
 
     /**
@@ -33,7 +33,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('prototypeInheritance/subWithOverride');
-        $this->assertEquals('Sub', $view->render());
+        self::assertEquals('Sub', $view->render());
     }
 
     /**
@@ -43,7 +43,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('prototypeInheritance/subWithoutOverride');
-        $this->assertEquals('BaseModified', $view->render());
+        self::assertEquals('BaseModified', $view->render());
     }
 
     /**
@@ -53,7 +53,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('prototypeInheritanceAdvanced/base');
-        $this->assertEquals('prepend_beforeOverride|value_from_nested_prototype|append_afterOverride', $view->render());
+        self::assertEquals('prepend_beforeOverride|value_from_nested_prototype|append_afterOverride', $view->render());
     }
 
     /**
@@ -63,7 +63,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('prototypeInheritanceAdvanced/subWithoutOverride');
-        $this->assertEquals('prepend_beforeOverride|value_from_nested_prototype|append_afterOverride', $view->render());
+        self::assertEquals('prepend_beforeOverride|value_from_nested_prototype|append_afterOverride', $view->render());
     }
 
     /**
@@ -73,7 +73,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('prototypeInheritanceAdvanced/subWithOverride');
-        $this->assertEquals('prepend_inSub|value_from_nested_prototype|append_afterOverride', $view->render());
+        self::assertEquals('prepend_inSub|value_from_nested_prototype|append_afterOverride', $view->render());
     }
 
     /**
@@ -83,6 +83,6 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('prototypeInheritanceContentDependent/element');
-        $this->assertEquals('NEW VALUE in base class', $view->render());
+        self::assertEquals('NEW VALUE in base class', $view->render());
     }
 }

@@ -59,7 +59,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $actual = $nodePropertyConverterService->getProperty($node, 'dontcare');
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -102,7 +102,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $actual = $nodePropertyConverterService->getProperty($node, 'dontcare');
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -140,7 +140,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $actual = $nodePropertyConverterService->getProperty($node, 'dontcare');
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -182,6 +182,6 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $actual = $nodePropertyConverterService->getProperty($node, 'dontcare');
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 }

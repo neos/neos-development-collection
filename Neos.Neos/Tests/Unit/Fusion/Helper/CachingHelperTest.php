@@ -82,7 +82,7 @@ class CachingHelperTest extends UnitTestCase
     {
         $helper = new CachingHelper();
         $actualResult = $helper->nodeTypeTag($input);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -159,7 +159,7 @@ class CachingHelperTest extends UnitTestCase
     {
         $helper = new CachingHelper();
         $actualResult = $helper->nodeTypeTag($input, $contextNode);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -209,7 +209,7 @@ class CachingHelperTest extends UnitTestCase
     {
         $helper = new CachingHelper();
         $actualResult = $helper->nodeTag($nodes);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -235,7 +235,7 @@ class CachingHelperTest extends UnitTestCase
 
         $actual = $helper->nodeTagForIdentifier($nodeIdentifier, $node);
 
-        $this->assertEquals('Node_'.$hashedWorkspaceName.'_'.$nodeIdentifier, $actual);
+        self::assertEquals('Node_'.$hashedWorkspaceName.'_'.$nodeIdentifier, $actual);
     }
 
     /**
@@ -247,7 +247,7 @@ class CachingHelperTest extends UnitTestCase
         $identifier = 'some-uuid-identifier';
 
         $actual = $helper->nodeTagForIdentifier($identifier);
-        $this->assertEquals('Node_'.$identifier, $actual);
+        self::assertEquals('Node_'.$identifier, $actual);
     }
 
     /**
@@ -297,6 +297,6 @@ class CachingHelperTest extends UnitTestCase
     {
         $helper = new CachingHelper();
         $actualResult = $helper->descendantOfTag($nodes);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 }

@@ -41,7 +41,7 @@ class FusionViewTest extends FunctionalTestCase
     public function fusionViewIsUsedForRendering()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
-        $this->assertEquals('X', $view->render());
+        self::assertEquals('X', $view->render());
     }
 
     /**
@@ -51,7 +51,7 @@ class FusionViewTest extends FunctionalTestCase
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->setFusionPath('foo/bar');
-        $this->assertEquals('Xfoobar', $view->render());
+        self::assertEquals('Xfoobar', $view->render());
     }
 
     /**
@@ -61,7 +61,7 @@ class FusionViewTest extends FunctionalTestCase
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->assign('test', 'Hallo Welt');
-        $this->assertEquals('XHallo Welt', $view->render());
+        self::assertEquals('XHallo Welt', $view->render());
     }
 
     /**

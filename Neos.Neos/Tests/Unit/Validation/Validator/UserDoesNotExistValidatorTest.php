@@ -45,7 +45,7 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
 
         $result = $validator->validate('j.doe');
 
-        $this->assertFalse($result->hasErrors());
+        self::assertFalse($result->hasErrors());
     }
 
     /**
@@ -68,6 +68,6 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
 
         $result = $validator->validate('j.doe');
 
-        $this->assertTrue($result->hasErrors());
+        self::assertTrue($result->hasErrors());
     }
 }

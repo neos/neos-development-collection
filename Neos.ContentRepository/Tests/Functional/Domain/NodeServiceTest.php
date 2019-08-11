@@ -107,6 +107,6 @@ class NodeServiceTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $actualResult = $this->nodeService->nodePathAvailableForNode('/foo/bar', $bazNode);
-        $this->assertFalse($actualResult);
+        self::assertFalse($actualResult);
     }
 }

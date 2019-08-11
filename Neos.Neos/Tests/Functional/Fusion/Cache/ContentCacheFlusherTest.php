@@ -102,7 +102,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         // Make sure that we do have multiple workspaces set up in our database
-        $this->assertEquals(5, $this->workspaceRepository->countAll());
+        self::assertEquals(5, $this->workspaceRepository->countAll());
 
         // Create/Fetch a node in workspace "first-level"
         $fistLevelContext = $this->contextFactory->create(['workspaceName' => $workspaceFirstLevel->getName()]);
@@ -114,11 +114,11 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToFlush = ObjectAccess::getProperty($this->contentCacheFlusher, 'workspacesToFlush', true);
         $workspaceChain = $workspacesToFlush['first-level'];
 
-        $this->assertArrayNotHasKey('live', $workspaceChain);
-        $this->assertArrayHasKey('first-level', $workspaceChain);
-        $this->assertArrayHasKey('second-level', $workspaceChain);
-        $this->assertArrayHasKey('also-second-level', $workspaceChain);
-        $this->assertArrayHasKey('third-level', $workspaceChain);
+        self::assertArrayNotHasKey('live', $workspaceChain);
+        self::assertArrayHasKey('first-level', $workspaceChain);
+        self::assertArrayHasKey('second-level', $workspaceChain);
+        self::assertArrayHasKey('also-second-level', $workspaceChain);
+        self::assertArrayHasKey('third-level', $workspaceChain);
     }
 
     /**
@@ -151,7 +151,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         // Make sure that we do have multiple workspaces set up in our database
-        $this->assertEquals(6, $this->workspaceRepository->countAll());
+        self::assertEquals(6, $this->workspaceRepository->countAll());
 
         // Create/Fetch a node in workspace "first-level"
         $fistLevelContext = $this->contextFactory->create(['workspaceName' => $workspaceFirstLevel->getName()]);
@@ -162,8 +162,8 @@ class ContentCacheFlusherTest extends FunctionalTestCase
 
         $workspacesToFlush = ObjectAccess::getProperty($this->contentCacheFlusher, 'workspacesToFlush', true);
 
-        $this->assertArrayHasKey('also-first-level', $workspacesToFlush);
-        $this->assertArrayHasKey('first-level', $workspacesToFlush);
+        self::assertArrayHasKey('also-first-level', $workspacesToFlush);
+        self::assertArrayHasKey('first-level', $workspacesToFlush);
     }
 
     /**
@@ -194,12 +194,12 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
 
         // Check for legacy tags wich are still supported
-        $this->assertArrayHasKey('Node_'.$nodeIdentifier, $tagsToFlush);
-        $this->assertArrayHasKey('DescendantOf_'.$nodeIdentifier, $tagsToFlush);
+        self::assertArrayHasKey('Node_'.$nodeIdentifier, $tagsToFlush);
+        self::assertArrayHasKey('DescendantOf_'.$nodeIdentifier, $tagsToFlush);
 
         foreach ($workspacesToTest as $name => $workspaceHash) {
-            $this->assertArrayHasKey('Node_'.$workspaceHash.'_'.$nodeIdentifier, $tagsToFlush, 'on workspace ' . $name);
-            $this->assertArrayHasKey('DescendantOf_'.$workspaceHash.'_'.$nodeIdentifier, $tagsToFlush, 'on workspace ' . $name);
+            self::assertArrayHasKey('Node_'.$workspaceHash.'_'.$nodeIdentifier, $tagsToFlush, 'on workspace ' . $name);
+            self::assertArrayHasKey('DescendantOf_'.$workspaceHash.'_'.$nodeIdentifier, $tagsToFlush, 'on workspace ' . $name);
         }
     }
 
@@ -231,15 +231,15 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
 
         // Check for legacy tags wich are still supported
-        $this->assertArrayHasKey('NodeType_Neos.Neos:Content', $tagsToFlush);
-        $this->assertArrayHasKey('NodeType_Neos.Neos:Node', $tagsToFlush);
-        $this->assertArrayHasKey('NodeType_Acme.Demo:Text', $tagsToFlush);
+        self::assertArrayHasKey('NodeType_Neos.Neos:Content', $tagsToFlush);
+        self::assertArrayHasKey('NodeType_Neos.Neos:Node', $tagsToFlush);
+        self::assertArrayHasKey('NodeType_Acme.Demo:Text', $tagsToFlush);
 
         // Check for tags that respect the workspace hash
         foreach ($workspacesToTest as $name => $workspaceHash) {
-            $this->assertArrayHasKey('NodeType_'.$workspaceHash.'_Neos.Neos:Content', $tagsToFlush, 'on workspace ' . $name);
-            $this->assertArrayHasKey('NodeType_'.$workspaceHash.'_Neos.Neos:Node', $tagsToFlush, 'on workspace ' . $name);
-            $this->assertArrayHasKey('NodeType_'.$workspaceHash.'_Acme.Demo:Text', $tagsToFlush, 'on workspace ' . $name);
+            self::assertArrayHasKey('NodeType_'.$workspaceHash.'_Neos.Neos:Content', $tagsToFlush, 'on workspace ' . $name);
+            self::assertArrayHasKey('NodeType_'.$workspaceHash.'_Neos.Neos:Node', $tagsToFlush, 'on workspace ' . $name);
+            self::assertArrayHasKey('NodeType_'.$workspaceHash.'_Acme.Demo:Text', $tagsToFlush, 'on workspace ' . $name);
         }
     }
 
@@ -271,14 +271,14 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $workspacesToTest[$workspaceFirstLevel->getName()] = $cachingHelper->renderWorkspaceTagForContextNode($workspaceFirstLevel->getName());
 
         // Check for legacy tags wich are still supported
-        $this->assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115addd', $tagsToFlush);
-        $this->assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115adde', $tagsToFlush);
-        $this->assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115addf', $tagsToFlush);
+        self::assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115addd', $tagsToFlush);
+        self::assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115adde', $tagsToFlush);
+        self::assertArrayHasKey('DescendantOf_c381f64d-4269-429a-9c21-6d846115addf', $tagsToFlush);
 
         foreach ($workspacesToTest as $name => $workspaceHash) {
-            $this->assertArrayHasKey('DescendantOf_'.$workspaceHash.'_c381f64d-4269-429a-9c21-6d846115addd', $tagsToFlush, 'on workspace ' . $name);
-            $this->assertArrayHasKey('DescendantOf_'.$workspaceHash.'_c381f64d-4269-429a-9c21-6d846115adde', $tagsToFlush, 'on workspace ' . $name);
-            $this->assertArrayHasKey('DescendantOf_'.$workspaceHash.'_c381f64d-4269-429a-9c21-6d846115addf', $tagsToFlush, 'on workspace ' . $name);
+            self::assertArrayHasKey('DescendantOf_'.$workspaceHash.'_c381f64d-4269-429a-9c21-6d846115addd', $tagsToFlush, 'on workspace ' . $name);
+            self::assertArrayHasKey('DescendantOf_'.$workspaceHash.'_c381f64d-4269-429a-9c21-6d846115adde', $tagsToFlush, 'on workspace ' . $name);
+            self::assertArrayHasKey('DescendantOf_'.$workspaceHash.'_c381f64d-4269-429a-9c21-6d846115addf', $tagsToFlush, 'on workspace ' . $name);
         }
     }
 

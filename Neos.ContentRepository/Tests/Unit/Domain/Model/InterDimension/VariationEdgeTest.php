@@ -30,7 +30,7 @@ class VariationEdgeTest extends UnitTestCase
 
         $variationEdge = new InterDimension\VariationEdge($variant, $fallback, [1]);
 
-        $this->assertContains($variationEdge, $variant->getFallbackEdges());
-        $this->assertContains($variationEdge, $fallback->getVariantEdges());
+        self::assertContains($variationEdge, $variant->getFallbackEdges());
+        self::assertContains($variationEdge, $fallback->getVariantEdges());
     }
 }

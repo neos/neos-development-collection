@@ -27,7 +27,7 @@ class ContentDimensionValueTest extends UnitTestCase
     {
         $value = new IntraDimension\ContentDimensionValue('test');
 
-        $this->assertSame(0, $value->getDepth());
+        self::assertSame(0, $value->getDepth());
     }
 
     /**
@@ -40,7 +40,7 @@ class ContentDimensionValueTest extends UnitTestCase
         ObjectAccess::setProperty($fallbackValue, 'depth', $testDepth, true);
         $value = new IntraDimension\ContentDimensionValue('test', $fallbackValue);
 
-        $this->assertSame($testDepth + 1, $value->getDepth());
+        self::assertSame($testDepth + 1, $value->getDepth());
     }
 
     /**
@@ -50,7 +50,7 @@ class ContentDimensionValueTest extends UnitTestCase
     {
         $value = new IntraDimension\ContentDimensionValue('fallback');
 
-        $this->assertSame(0, $value->calculateFallbackDepth($value));
+        self::assertSame(0, $value->calculateFallbackDepth($value));
     }
 
     /**
@@ -70,7 +70,7 @@ class ContentDimensionValueTest extends UnitTestCase
             $previousFallback = $currentFallback;
         }
 
-        $this->assertSame($testLevel, $currentFallback->calculateFallbackDepth($rootFallback));
+        self::assertSame($testLevel, $currentFallback->calculateFallbackDepth($rootFallback));
     }
 
     /**
