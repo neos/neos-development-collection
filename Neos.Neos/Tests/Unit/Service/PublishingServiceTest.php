@@ -118,7 +118,7 @@ class PublishingServiceTest extends UnitTestCase
         $this->mockNodeDataRepository->expects($this->atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will($this->returnValue([]));
 
         $actualResult = $this->publishingService->getUnpublishedNodes($this->mockWorkspace);
-        $this->assertSame($actualResult, []);
+        self::assertSame($actualResult, []);
     }
 
     /**
@@ -157,7 +157,7 @@ class PublishingServiceTest extends UnitTestCase
         $this->mockNodeDataRepository->expects($this->atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will($this->returnValue([$mockNodeData1, $mockNodeData2]));
 
         $actualResult = $this->publishingService->getUnpublishedNodes($this->mockWorkspace);
-        $this->assertSame($actualResult, [$mockNode2, $mockNode1]);
+        self::assertSame($actualResult, [$mockNode2, $mockNode1]);
     }
 
     /**
@@ -193,7 +193,7 @@ class PublishingServiceTest extends UnitTestCase
         $this->mockNodeDataRepository->expects($this->atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will($this->returnValue([$mockNodeData1, $mockNodeData2]));
 
         $actualResult = $this->publishingService->getUnpublishedNodes($this->mockWorkspace);
-        $this->assertSame($actualResult, [$mockNode1]);
+        self::assertSame($actualResult, [$mockNode1]);
     }
 
     /**
@@ -204,7 +204,7 @@ class PublishingServiceTest extends UnitTestCase
         $this->mockWorkspace->expects($this->atLeastOnce())->method('getNodeCount')->will($this->returnValue(123));
         $actualResult = $this->publishingService->getUnpublishedNodesCount($this->mockWorkspace);
         $expectedResult = 122;
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**

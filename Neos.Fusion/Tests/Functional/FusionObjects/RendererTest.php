@@ -22,7 +22,7 @@ class RendererTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('cond', true);
         $view->setFusionPath($path);
-        $this->assertEquals($expectation, $view->render());
+        self::assertEquals($expectation, $view->render());
     }
 
     /**

@@ -50,7 +50,7 @@ class ConditionsTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath($path);
         $view->assign('foo', 'Foo');
-        $this->assertSame($expected, $view->render());
+        self::assertSame($expected, $view->render());
     }
 
     public function valuesForCondition()
@@ -79,7 +79,7 @@ class ConditionsTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('conditions/variableCondition');
         $view->assign('condition', $conditionValue);
-        $this->assertSame($expected, $view->render());
+        self::assertSame($expected, $view->render());
     }
 
     /**
@@ -89,6 +89,6 @@ class ConditionsTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('conditions/supportForFusionObjectWithSubEvaluationUsedInProcessor');
-        $this->assertEquals('basic appended', $view->render());
+        self::assertEquals('basic appended', $view->render());
     }
 }

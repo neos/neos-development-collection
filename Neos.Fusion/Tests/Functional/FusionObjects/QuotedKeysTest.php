@@ -26,9 +26,9 @@ class QuotedKeysTest extends AbstractFusionObjectTest
         $view->setFusionPath('quotedKeys/multipleKeys');
         $result = $view->render();
 
-        $this->assertSame(count($result), 6);
+        self::assertSame(count($result), 6);
         foreach ($result as $key => $value) {
-            $this->assertSame($value, 1);
+            self::assertSame($value, 1);
         }
     }
 
@@ -39,7 +39,7 @@ class QuotedKeysTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('quotedKeys/single');
-        $this->assertSame($view->render(), 1);
+        self::assertSame($view->render(), 1);
     }
 
     /**
@@ -49,7 +49,7 @@ class QuotedKeysTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('quotedKeys/double');
-        $this->assertSame($view->render(), 1);
+        self::assertSame($view->render(), 1);
     }
 
     /**
@@ -59,7 +59,7 @@ class QuotedKeysTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('quotedKeys/nested/keys');
-        $this->assertSame($view->render(), 1);
+        self::assertSame($view->render(), 1);
     }
 
     /**
@@ -69,7 +69,7 @@ class QuotedKeysTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('quotedKeys/@special/_!');
-        $this->assertSame($view->render(), 1);
+        self::assertSame($view->render(), 1);
     }
 
     /**
@@ -79,6 +79,6 @@ class QuotedKeysTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('quotedKeys/prototype/test');
-        $this->assertSame($view->render(), 'X1');
+        self::assertSame($view->render(), 'X1');
     }
 }

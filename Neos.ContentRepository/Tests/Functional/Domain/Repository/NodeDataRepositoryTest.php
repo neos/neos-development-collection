@@ -107,7 +107,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
         $result = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
 
-        $this->assertCount(1, $result);
+        self::assertCount(1, $result);
     }
 
     /**
@@ -132,7 +132,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
         $result = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
 
-        $this->assertCount(1, $result);
+        self::assertCount(1, $result);
     }
 
     protected function setUpNodes()
@@ -157,7 +157,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $workspace = $this->context->getWorkspace();
         $foundNodes = $this->nodeDataRepository->findByProperties('Vibiemme', 'unstructured', $workspace, [], '/test-123');
 
-        $this->assertCount(2, $foundNodes);
+        self::assertCount(2, $foundNodes);
     }
 
     /**
@@ -172,7 +172,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $workspace = $this->context->getWorkspace();
         $foundNodes = $this->nodeDataRepository->findByProperties('Vibiemme', 'unstructured', $workspace, [], '/');
 
-        $this->assertCount(4, $foundNodes);
+        self::assertCount(4, $foundNodes);
     }
 
     /**
@@ -187,7 +187,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $workspace = $this->context->getWorkspace();
         $foundNodes = $this->nodeDataRepository->findByParentAndNodeType('/test-123', 'unstructured', $workspace, [], false, true);
 
-        $this->assertCount(2, $foundNodes);
+        self::assertCount(2, $foundNodes);
     }
 
     /**
@@ -202,7 +202,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $workspace = $this->context->getWorkspace();
         $foundNodes = $this->nodeDataRepository->findByParentAndNodeType('/', 'unstructured', $workspace, [], false, true);
 
-        $this->assertCount(6, $foundNodes);
+        self::assertCount(6, $foundNodes);
     }
 
     /**
@@ -217,7 +217,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $workspace = $this->context->getWorkspace();
         $foundNodes = $this->nodeDataRepository->findByPathWithoutReduce('/test-123', $workspace, false, true);
 
-        $this->assertCount(3, $foundNodes);
+        self::assertCount(3, $foundNodes);
     }
 
     /**
@@ -232,7 +232,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $workspace = $this->context->getWorkspace();
         $foundNodes = $this->nodeDataRepository->findByPathWithoutReduce('/', $workspace, false, true);
 
-        $this->assertCount(7, $foundNodes);
+        self::assertCount(7, $foundNodes);
     }
 
     /**
@@ -243,7 +243,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $this->createNodesForNodeSearchTest();
 
         $result = $this->nodeDataRepository->findByProperties('simpleTestValue', 'Neos.ContentRepository.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
-        $this->assertCount(2, $result);
+        self::assertCount(2, $result);
         $this->assertResultConsistsOfNodes($result, ['test-node-1', 'test-node-2']);
     }
 
@@ -255,8 +255,8 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $this->createNodesForNodeSearchTest();
 
         $result = $this->nodeDataRepository->findByProperties(['test2' => 'simpleTestValue'], 'Neos.ContentRepository.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
-        $this->assertCount(1, $result);
-        $this->assertEquals('test-node-2', array_shift($result)->getName());
+        self::assertCount(1, $result);
+        self::assertEquals('test-node-2', array_shift($result)->getName());
     }
 
     /**
@@ -286,10 +286,10 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     protected function assertResultConsistsOfNodes($result, $nodeNames)
     {
         foreach ($result as $node) {
-            $this->assertTrue(in_array($node->getName(), $nodeNames), sprintf('The node with name %s was not part of the result.', $node->getName()));
+            self::assertTrue(in_array($node->getName(), $nodeNames), sprintf('The node with name %s was not part of the result.', $node->getName()));
             unset($nodeNames[array_search($node->getName(), $nodeNames)]);
         }
 
-        $this->assertCount(0, $nodeNames, sprintf('The expected node names %s were not part of the result', implode(',', $nodeNames)));
+        self::assertCount(0, $nodeNames, sprintf('The expected node names %s were not part of the result', implode(',', $nodeNames)));
     }
 }

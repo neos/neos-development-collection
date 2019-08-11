@@ -78,7 +78,7 @@ class NodeDataTest extends FunctionalTestCase
         $rootNode = $this->context->getRootNode();
         $newNode = $rootNode->createNodeFromTemplate($template);
 
-        $this->assertSame($identifier, $newNode->getIdentifier());
+        self::assertSame($identifier, $newNode->getIdentifier());
     }
 
     /**
@@ -105,8 +105,8 @@ class NodeDataTest extends FunctionalTestCase
         $newLiveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $newNodeAgain = $newLiveContext->getNode('/new-node');
 
-        $this->assertEquals($newNode->getIdentifier(), $newNodeAgain->getIdentifier());
-        $this->assertEquals('Reykjavik', $newNodeAgain->getProperty('entity')->getFavoritePlace());
+        self::assertEquals($newNode->getIdentifier(), $newNodeAgain->getIdentifier());
+        self::assertEquals('Reykjavik', $newNodeAgain->getProperty('entity')->getFavoritePlace());
     }
 
     /**
@@ -133,7 +133,7 @@ class NodeDataTest extends FunctionalTestCase
         $newLiveContext = $this->contextFactory->create(['workspaceName' => 'live']);
         $newNodeAgain = $newLiveContext->getNode('/new-node');
         $entity = $newNodeAgain->getProperty('entity');
-        $this->assertEquals('Reykjavik', $entity->getFavoritePlace());
+        self::assertEquals('Reykjavik', $entity->getFavoritePlace());
         $entity->setFavoritePlace('Iceland');
         $newNodeAgain->setProperty('entity', $entity);
 
@@ -145,7 +145,7 @@ class NodeDataTest extends FunctionalTestCase
         $newNodeAgain = $newLiveContext->getNode('/new-node');
         $entity = $newNodeAgain->getProperty('entity');
 
-        $this->assertEquals('Iceland', $entity->getFavoritePlace());
+        self::assertEquals('Iceland', $entity->getFavoritePlace());
     }
 
 
@@ -177,8 +177,8 @@ class NodeDataTest extends FunctionalTestCase
 
         $entityArray = $newNodeAgain->getProperty('entity');
 
-        $this->assertCount(2, $entityArray);
-        $this->assertEquals('Japan', $entityArray[1]->getFavoritePlace());
+        self::assertCount(2, $entityArray);
+        self::assertEquals('Japan', $entityArray[1]->getFavoritePlace());
     }
 
     /**
@@ -198,7 +198,7 @@ class NodeDataTest extends FunctionalTestCase
         // The identifier comes from the Fixture.
         $resultingNodeData = $nodeDataRepository->findOneByIdentifier('78f5c720-e8df-2573-1fc1-f7ce5b338485', $context->getWorkspace(true), []);
 
-        $this->assertEmpty($resultingNodeData->getDimensions());
+        self::assertEmpty($resultingNodeData->getDimensions());
     }
 
     /**
@@ -219,9 +219,9 @@ class NodeDataTest extends FunctionalTestCase
         // The identifier comes from the Fixture.
         /** @var NodeData $resultingNodeData */
         $resultingNodeData = $nodeDataRepository->findOneByIdentifier('9fa376af-a1b8-83ac-bedc-9ad83c8598bc', $context->getWorkspace(true), []);
-        $this->assertCount(1, $resultingNodeData->getDimensions());
+        self::assertCount(1, $resultingNodeData->getDimensions());
         $values = $resultingNodeData->getDimensionValues();
-        $this->assertEquals('en_US', $values['language'][0]);
+        self::assertEquals('en_US', $values['language'][0]);
         $nodeDimension = new NodeDimension($resultingNodeData, 'language', 'lv');
         $resultingNodeData->setDimensions([$nodeDimension]);
 
@@ -235,9 +235,9 @@ class NodeDataTest extends FunctionalTestCase
         // The identifier comes from the Fixture.
         /** @var NodeData $resultingNodeData */
         $resultingNodeData = $nodeDataRepository->findOneByIdentifier('9fa376af-a1b8-83ac-bedc-9ad83c8598bc', $context->getWorkspace(true), []);
-        $this->assertCount(1, $resultingNodeData->getDimensions());
+        self::assertCount(1, $resultingNodeData->getDimensions());
         $values = $resultingNodeData->getDimensionValues();
-        $this->assertEquals('lv', $values['language'][0]);
+        self::assertEquals('lv', $values['language'][0]);
     }
 
     /**
@@ -272,10 +272,10 @@ class NodeDataTest extends FunctionalTestCase
         // The identifier comes from the Fixture.
         /** @var NodeData $resultingNodeData */
         $resultingNodeData = $nodeDataRepository->findOneByIdentifier('9fa376af-a1b8-83ac-bedc-9ad83c8598bc', $context->getWorkspace(true), []);
-        $this->assertCount(2, $resultingNodeData->getDimensions());
+        self::assertCount(2, $resultingNodeData->getDimensions());
         $values = $resultingNodeData->getDimensionValues();
-        $this->assertEquals('en_US', $values['language'][0]);
-        $this->assertEquals('lv', $values['language'][1]);
+        self::assertEquals('en_US', $values['language'][0]);
+        self::assertEquals('lv', $values['language'][1]);
     }
 
     /**
@@ -295,7 +295,7 @@ class NodeDataTest extends FunctionalTestCase
         // The identifier comes from the Fixture.
         /** @var NodeData $resultingNodeData */
         $resultingNodeData = $nodeDataRepository->findOneByIdentifier('9fa376af-a1b8-83ac-bedc-9ad83c8598bc', $context->getWorkspace(true), []);
-        $this->assertNotEmpty($resultingNodeData->getDimensions());
+        self::assertNotEmpty($resultingNodeData->getDimensions());
         $resultingNodeData->setDimensions([]);
         $nodeDataRepository->update($resultingNodeData);
 
@@ -308,6 +308,6 @@ class NodeDataTest extends FunctionalTestCase
         // The identifier comes from the Fixture.
         /** @var NodeData $resultingNodeData */
         $resultingNodeData = $nodeDataRepository->findOneByIdentifier('9fa376af-a1b8-83ac-bedc-9ad83c8598bc', $context->getWorkspace(true), []);
-        $this->assertEmpty($resultingNodeData->getDimensions());
+        self::assertEmpty($resultingNodeData->getDimensions());
     }
 }

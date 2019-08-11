@@ -83,7 +83,7 @@ class NextOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([], $output);
+        self::assertEquals([], $output);
     }
 
     /**
@@ -98,7 +98,7 @@ class NextOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([$this->secondNodeInLevel], $output);
+        self::assertEquals([$this->secondNodeInLevel], $output);
     }
 
     /**
@@ -113,6 +113,6 @@ class NextOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
+        self::assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 }

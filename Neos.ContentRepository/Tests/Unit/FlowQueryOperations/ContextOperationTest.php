@@ -47,7 +47,7 @@ class ContextOperationTest extends AbstractQueryOperationsTest
         $mockNode = $this->createMock(NodeInterface::class);
 
         $result = $this->operation->canEvaluate([$mockNode]);
-        $this->assertTrue($result);
+        self::assertTrue($result);
     }
 
     /**

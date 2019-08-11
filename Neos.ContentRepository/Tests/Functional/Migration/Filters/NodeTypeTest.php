@@ -100,6 +100,6 @@ class NodeTypeTest extends FunctionalTestCase
         $query->matching(call_user_func_array([new Expr(), 'andX'], $filterExpressions));
 
         $actual = $query->getSql();
-        $this->assertStringEndsWith(' WHERE ' . $expected, $actual);
+        self::assertStringEndsWith(' WHERE ' . $expected, $actual);
     }
 }

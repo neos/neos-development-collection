@@ -102,9 +102,9 @@ class ClosestOperationTest extends AbstractNodeTest
             if ($actualNode !== null) {
                 $this->fail('Expected resulting node to be NULL');
             }
-            $this->assertNull($actualNode);
+            self::assertNull($actualNode);
         } else {
-            $this->assertSame($expectedNodePath, $actualNode->getPath());
+            self::assertSame($expectedNodePath, $actualNode->getPath());
         }
     }
 }

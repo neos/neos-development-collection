@@ -92,7 +92,7 @@ class FusionServiceTest extends FunctionalTestCase
     public function generateFusionForNodeDoesNotUseFusionPrototypeGeneratorWithoutConfiguration()
     {
         $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithoutFusionPrototypeGenerator');
-        $this->assertSame(0, $this->expectedPrototypeGenerator->getCallCount());
+        self::assertSame(0, $this->expectedPrototypeGenerator->getCallCount());
     }
 
     /**
@@ -101,7 +101,7 @@ class FusionServiceTest extends FunctionalTestCase
     public function generateFusionForNodeUsesDirectlyConfiguredFusionPrototypeGenerator()
     {
         $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithPrototypeGenerator');
-        $this->assertSame(1, $this->expectedPrototypeGenerator->getCallCount());
+        self::assertSame(1, $this->expectedPrototypeGenerator->getCallCount());
     }
 
     /**
@@ -110,7 +110,7 @@ class FusionServiceTest extends FunctionalTestCase
     public function generateFusionForNodeUsesInheritedFusionPrototypeGenerator()
     {
         $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithInheritedPrototypeGenerator');
-        $this->assertSame(1, $this->expectedPrototypeGenerator->getCallCount());
+        self::assertSame(1, $this->expectedPrototypeGenerator->getCallCount());
     }
 
     /**

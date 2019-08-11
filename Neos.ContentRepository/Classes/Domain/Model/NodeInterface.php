@@ -21,6 +21,7 @@ use Neos\ContentRepository\Exception\NodeExistsException;
  * up to version 4.X; it will be REMOVED in version 5.0 and is replaced
  * by {@see Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface}.
  *
+ * @deprecated
  * @api
  */
 interface NodeInterface

@@ -67,9 +67,9 @@ class ImageInterfaceConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['string', 'array'], $this->converter->getSupportedSourceTypes());
-        $this->assertEquals(ImageInterface::class, $this->converter->getSupportedTargetType());
-        $this->assertEquals(2, $this->converter->getPriority());
+        self::assertEquals(['string', 'array'], $this->converter->getSupportedSourceTypes());
+        self::assertEquals(ImageInterface::class, $this->converter->getSupportedTargetType());
+        self::assertEquals(2, $this->converter->getPriority());
     }
 
     /**
@@ -95,7 +95,7 @@ class ImageInterfaceConverterTest extends UnitTestCase
      */
     public function canConvertFromTests($source, $targetType, $expected)
     {
-        $this->assertEquals($expected, $this->converter->canConvertFrom($source, $targetType));
+        self::assertEquals($expected, $this->converter->canConvertFrom($source, $targetType));
     }
 
     /**
@@ -109,6 +109,6 @@ class ImageInterfaceConverterTest extends UnitTestCase
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption(ImageInterfaceConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
 
-        $this->assertNull($this->converter->convertFrom([], Image::class, [], $configuration));
+        self::assertNull($this->converter->convertFrom([], Image::class, [], $configuration));
     }
 }

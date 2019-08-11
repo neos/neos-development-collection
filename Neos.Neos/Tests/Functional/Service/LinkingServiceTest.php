@@ -198,7 +198,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceOnlySupportsNodesAndAssetSchemes($scheme, $match)
     {
-        $this->assertSame($match, $this->linkingService->hasSupportedScheme($scheme));
+        self::assertSame($match, $this->linkingService->hasSupportedScheme($scheme));
     }
 
     /**
@@ -206,7 +206,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceCanGetSchemeFromUrl()
     {
-        $this->assertSame('node', $this->linkingService->getScheme('node://aeabe76a-551a-495f-a324-ad9a86b2aff7'));
+        self::assertSame('node', $this->linkingService->getScheme('node://aeabe76a-551a-495f-a324-ad9a86b2aff7'));
     }
 
     /**
@@ -214,7 +214,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceCanResolveNodeUri()
     {
-        $this->assertSame('/en/home.html', $this->linkingService->resolveNodeUri('node://3239baee-3e7f-785c-0853-f4302ef32570', $this->baseNode, $this->controllerContext));
+        self::assertSame('/en/home.html', $this->linkingService->resolveNodeUri('node://3239baee-3e7f-785c-0853-f4302ef32570', $this->baseNode, $this->controllerContext));
     }
 
     /**
@@ -222,7 +222,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceResolveNodeUriReturnsNullForUnresolvableNodes()
     {
-        $this->assertSame(null, $this->linkingService->resolveNodeUri('node://3239baee-3e7f-785c-0853-f4302ef3257x', $this->baseNode, $this->controllerContext));
+        self::assertSame(null, $this->linkingService->resolveNodeUri('node://3239baee-3e7f-785c-0853-f4302ef3257x', $this->baseNode, $this->controllerContext));
     }
 
     /**
@@ -230,7 +230,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceCanResolveAssetUri()
     {
-        $this->assertSame('http://localhost/_Resources/Testing/Persistent/bed9a3e45070e97b921877e2bd9c35ba368beca0/Neos-logo_sRGB_color.pdf', $this->linkingService->resolveAssetUri('asset://1af89e5c-9e23-9a9d-ae15-1d77160cfb57'));
+        self::assertSame('http://localhost/_Resources/Testing/Persistent/bed9a3e45070e97b921877e2bd9c35ba368beca0/Neos-logo_sRGB_color.pdf', $this->linkingService->resolveAssetUri('asset://1af89e5c-9e23-9a9d-ae15-1d77160cfb57'));
     }
 
     /**
@@ -238,7 +238,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceResolveAssetUriReturnsNullForUnresolvableAssets()
     {
-        $this->assertSame(null, $this->linkingService->resolveAssetUri('asset://89cd85cc-270e-0902-7113-d14ac7539c7x'));
+        self::assertSame(null, $this->linkingService->resolveAssetUri('asset://89cd85cc-270e-0902-7113-d14ac7539c7x'));
     }
 
     /**
@@ -249,8 +249,8 @@ class LinkingServiceTest extends FunctionalTestCase
         $assetRepository = $this->objectManager->get(\Neos\Media\Domain\Repository\AssetRepository::class);
         $asset = $assetRepository->findByIdentifier('89cd85cc-270e-0902-7113-d14ac7539c75');
 
-        $this->assertSame($this->baseNode, $this->linkingService->convertUriToObject('node://3239baee-3e7f-785c-0853-f4302ef32570', $this->baseNode));
-        $this->assertSame($asset, $this->linkingService->convertUriToObject('asset://89cd85cc-270e-0902-7113-d14ac7539c75'));
+        self::assertSame($this->baseNode, $this->linkingService->convertUriToObject('node://3239baee-3e7f-785c-0853-f4302ef32570', $this->baseNode));
+        self::assertSame($asset, $this->linkingService->convertUriToObject('asset://89cd85cc-270e-0902-7113-d14ac7539c75'));
     }
 
     /**
@@ -288,9 +288,9 @@ class LinkingServiceTest extends FunctionalTestCase
         $targetNodeA = $this->baseNode;
         $targetNodeB = $this->baseNode->getNode('about-us');
         $this->linkingService->createNodeUri($this->controllerContext, $targetNodeA);
-        $this->assertSame($targetNodeA, $this->linkingService->getLastLinkedNode());
+        self::assertSame($targetNodeA, $this->linkingService->getLastLinkedNode());
         $this->linkingService->createNodeUri($this->controllerContext, $targetNodeB);
-        $this->assertSame($targetNodeB, $this->linkingService->getLastLinkedNode());
+        self::assertSame($targetNodeB, $this->linkingService->getLastLinkedNode());
     }
 
     /**
@@ -299,7 +299,7 @@ class LinkingServiceTest extends FunctionalTestCase
     public function linkingServiceStoresLastLinkedNodeEvenIfItsAShortcutToAnExternalUri()
     {
         $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/shortcuts/shortcut-to-target-uri', $this->baseNode);
-        $this->assertNotNull($this->linkingService->getLastLinkedNode());
+        self::assertNotNull($this->linkingService->getLastLinkedNode());
     }
 
     /**
@@ -308,12 +308,12 @@ class LinkingServiceTest extends FunctionalTestCase
     public function linkingServiceUnsetsLastLinkedNodeOnFailure()
     {
         $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home', $this->baseNode);
-        $this->assertNotNull($this->linkingService->getLastLinkedNode());
+        self::assertNotNull($this->linkingService->getLastLinkedNode());
         try {
             $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/non-existing-node', $this->baseNode);
         } catch (NeosException $exception) {
         }
-        $this->assertNull($this->linkingService->getLastLinkedNode());
+        self::assertNull($this->linkingService->getLastLinkedNode());
     }
 
 
@@ -323,6 +323,6 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     protected function assertOutputLinkValid($expected, $actual)
     {
-        $this->assertStringEndsWith($expected, $actual);
+        self::assertStringEndsWith($expected, $actual);
     }
 }

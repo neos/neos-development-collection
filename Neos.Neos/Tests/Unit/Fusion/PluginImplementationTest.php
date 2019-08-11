@@ -112,7 +112,7 @@ class PluginImplementationTest extends UnitTestCase
         $this->pluginImplementation->evaluate();
 
         foreach ($expected as $expectedKey => $expectedValue) {
-            $this->assertEquals($expectedValue, (string)$parentResponse->getHeaders()->get($expectedKey), $message);
+            self::assertEquals($expectedValue, (string)$parentResponse->getHeaders()->get($expectedKey), $message);
         }
     }
 

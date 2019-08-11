@@ -52,7 +52,7 @@ class ContentContextTest extends UnitTestCase
         ];
 
         $contentContext = $this->getAccessibleMock(ContentContext::class, ['dummy'], $contextProperties);
-        $this->assertSame($mockSite, $contentContext->getCurrentSite());
+        self::assertSame($mockSite, $contentContext->getCurrentSite());
     }
 
     /**
@@ -75,8 +75,8 @@ class ContentContextTest extends UnitTestCase
         ];
         $contentContext = $this->getAccessibleMock(ContentContext::class, ['dummy'], $contextProperties);
 
-        $this->assertNull($contentContext->getCurrentDomain());
+        self::assertNull($contentContext->getCurrentDomain());
         $contentContext->_set('currentDomain', $mockDomain);
-        $this->assertSame($mockDomain, $contentContext->getCurrentDomain());
+        self::assertSame($mockDomain, $contentContext->getCurrentDomain());
     }
 }

@@ -77,8 +77,8 @@ class AssetRepositoryTest extends AbstractTest
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        $this->assertCount(1, $this->assetRepository->findAll());
-        $this->assertInstanceOf(Asset::class, $this->assetRepository->findAll()->getFirst());
+        self::assertCount(1, $this->assetRepository->findAll());
+        self::assertInstanceOf(Asset::class, $this->assetRepository->findAll()->getFirst());
 
         // This is necessary to initialize all resource instances before the tables are deleted
         foreach ($this->assetRepository->findAll() as $asset) {
@@ -105,10 +105,10 @@ class AssetRepositoryTest extends AbstractTest
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        $this->assertCount(2, $this->assetRepository->findAll());
-        $this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('foo'));
-        $this->assertCount(1, $this->assetRepository->findBySearchTermOrTags(' bar'));
-        $this->assertCount(0, $this->assetRepository->findBySearchTermOrTags('baz'));
+        self::assertCount(2, $this->assetRepository->findAll());
+        self::assertCount(2, $this->assetRepository->findBySearchTermOrTags('foo'));
+        self::assertCount(1, $this->assetRepository->findBySearchTermOrTags(' bar'));
+        self::assertCount(0, $this->assetRepository->findBySearchTermOrTags('baz'));
 
         // This is necessary to initialize all resource instances before the tables are deleted
         foreach ($this->assetRepository->findAll() as $asset) {
@@ -138,9 +138,9 @@ class AssetRepositoryTest extends AbstractTest
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        $this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('home', [$tag]));
-        $this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('homepage', [$tag]));
-        $this->assertCount(1, $this->assetRepository->findBySearchTermOrTags('baz', [$tag]));
+        self::assertCount(2, $this->assetRepository->findBySearchTermOrTags('home', [$tag]));
+        self::assertCount(2, $this->assetRepository->findBySearchTermOrTags('homepage', [$tag]));
+        self::assertCount(1, $this->assetRepository->findBySearchTermOrTags('baz', [$tag]));
 
         // This is necessary to initialize all resource instances before the tables are deleted
         foreach ($this->assetRepository->findAll() as $asset) {
