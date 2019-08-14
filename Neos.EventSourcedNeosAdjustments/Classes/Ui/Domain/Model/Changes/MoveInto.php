@@ -91,11 +91,13 @@ class MoveInto extends AbstractMove
             // "subject" is the to-be-moved node
             $subject = $this->getSubject();
 
+            $hasEqualParentNode = $subject->findParentNode()->getNodeAggregateIdentifier()->equals($this->getParentNode()->getNodeAggregateIdentifier());
+
             $command = new MoveNodeAggregate(
                 $subject->getContentStreamIdentifier(),
                 $subject->getDimensionSpacePoint(),
                 $subject->getNodeAggregateIdentifier(),
-                $this->getParentNode()->getNodeAggregateIdentifier(),
+                $hasEqualParentNode ? null : $this->getParentNode()->getNodeAggregateIdentifier(),
                 null,
                 RelationDistributionStrategy::gatherAll()
             );
