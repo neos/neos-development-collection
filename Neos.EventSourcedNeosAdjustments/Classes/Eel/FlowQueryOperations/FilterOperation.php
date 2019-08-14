@@ -12,10 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Eel\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Utility\ObjectAccess;
-use Neos\ContentRepository\Domain\Model\Node;
 
 /**
  * This filter implementation contains specific behavior for use on ContentRepository

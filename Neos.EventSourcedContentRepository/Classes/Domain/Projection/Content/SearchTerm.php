@@ -29,7 +29,7 @@ final class SearchTerm
      * @param string $term
      * @return SearchTerm
      */
-    static public function fulltext(string $term): self
+    public static function fulltext(string $term): self
     {
         return new SearchTerm($term);
     }

@@ -145,8 +145,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         string $markerToReplaceInQuery = null,
         string $tableReference = 'c',
         string $concatenation = 'AND'
-    ): void
-    {
+    ): void {
         if ($searchTerm) {
             // Magic copied from legacy NodeSearchService.
 

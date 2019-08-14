@@ -208,8 +208,9 @@ class Property extends AbstractChange
             $propertyName = $this->getPropertyName();
 
             $propertyType = $node->getNodeType()->getPropertyType($propertyName);
-            if ($propertyType === 'reference' || $propertyType === 'references') {
 
+            // Use extra commands for reference handling
+            if ($propertyType === 'reference' || $propertyType === 'references') {
                 $value = $this->getValue();
                 $destinationNodeAggregateIdentifiers = [];
                 if ($propertyType === 'reference') {
