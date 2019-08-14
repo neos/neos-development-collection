@@ -57,12 +57,14 @@ class MoveBefore extends AbstractMove
             $subject = $this->getSubject();
             $succeedingSibling = $this->getSiblingNode();
 
+            $hasEqualParentNode = $subject->findParentNode()->getNodeAggregateIdentifier()->equals($succeedingSibling->findParentNode()->getNodeAggregateIdentifier());
+
             $command = new MoveNodeAggregate(
                 $subject->getContentStreamIdentifier(),
                 $subject->getDimensionSpacePoint(),
                 $subject->getNodeAggregateIdentifier(),
-                $succeedingSibling->findParentNode()->getNodeAggregateIdentifier(),
-                 $succeedingSibling->getNodeAggregateIdentifier(),
+                $hasEqualParentNode ? null : $succeedingSibling->findParentNode()->getNodeAggregateIdentifier(),
+                $succeedingSibling->getNodeAggregateIdentifier(),
                 RelationDistributionStrategy::gatherAll()
             );
 

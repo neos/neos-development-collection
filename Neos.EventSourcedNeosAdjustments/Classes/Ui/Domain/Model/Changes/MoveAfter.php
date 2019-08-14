@@ -66,11 +66,13 @@ class MoveAfter extends AbstractMove
                 // do nothing; $succeedingSibling is null.
             }
 
+            $hasEqualParentNode = $subject->findParentNode()->getNodeAggregateIdentifier()->equals($parentNodeOfPreviousSibling->getNodeAggregateIdentifier());
+
             $command = new MoveNodeAggregate(
                 $subject->getContentStreamIdentifier(),
                 $subject->getDimensionSpacePoint(),
                 $subject->getNodeAggregateIdentifier(),
-                $parentNodeOfPreviousSibling->getNodeAggregateIdentifier(),
+                $hasEqualParentNode ? null : $parentNodeOfPreviousSibling->getNodeAggregateIdentifier(),
                 $succeedingSibling ? $succeedingSibling->getNodeAggregateIdentifier() : null,
                 RelationDistributionStrategy::gatherAll()
             );
