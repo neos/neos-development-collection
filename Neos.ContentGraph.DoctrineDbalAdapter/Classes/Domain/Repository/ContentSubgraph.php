@@ -28,6 +28,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * The content subgraph application repository
@@ -138,6 +139,27 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
     }
 
+    protected static function addSearchTermConstraintsToQuery(
+        SqlQueryBuilder $query,
+        ?ContentRepository\Projection\Content\SearchTerm $searchTerm,
+        string $markerToReplaceInQuery = null,
+        string $tableReference = 'c',
+        string $concatenation = 'AND'
+    ): void
+    {
+        if ($searchTerm) {
+            // Magic copied from legacy NodeSearchService.
+
+            // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
+            $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($searchTerm->getTerm()), JSON_UNESCAPED_UNICODE), '"') . '%';
+
+            $query
+                ->addToQuery($concatenation . ' LOWER(CAST(' . ($tableReference ? $tableReference . '.' : '') . 'properties AS LONGTEXT)) LIKE :term', $markerToReplaceInQuery)
+                ->parameter('term', $likeParameter);
+        } else {
+            $query->addToQuery('', $markerToReplaceInQuery);
+        };
+    }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
@@ -852,12 +874,13 @@ order by level asc, position asc;')
     /**
      * @param array $entryNodeAggregateIdentifiers
      * @param NodeTypeConstraints $nodeTypeConstraints
+     * @param ContentRepository\Projection\Content\SearchTerm|null $searchTerm
      * @return array
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints): array
+    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints, ?ContentRepository\Projection\Content\SearchTerm $searchTerm): array
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery('
@@ -919,7 +942,10 @@ union
    -- select relationanchorpoint from neos_contentgraph_node
 )
 select * from tree
-###NODE_TYPE_CONSTRAINTS###
+where
+    1=1
+    ###NODE_TYPE_CONSTRAINTS###
+    ###SEARCH_TERM_CONSTRAINTS###
 order by level asc, position asc;')
             ->parameter('entryNodeAggregateIdentifiers', array_map(function (NodeAggregateIdentifier $nodeAggregateIdentifier) {
                 return (string)$nodeAggregateIdentifier;
@@ -927,7 +953,8 @@ order by level asc, position asc;')
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
-        self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints, '###NODE_TYPE_CONSTRAINTS###', '', 'WHERE');
+        self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints, '###NODE_TYPE_CONSTRAINTS###', '');
+        self::addSearchTermConstraintsToQuery($query, $searchTerm, '###SEACH_TERM_CONSTRAINTS###', '');
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'n', 'h', '###VISIBILITY_CONSTRAINTS_INITIAL###');
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c', 'h', '###VISIBILITY_CONSTRAINTS_RECURSION###');
 

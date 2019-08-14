@@ -135,11 +135,16 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
 
     /**
+     * Recursively find all nodes underneath the $entryNodeAggregateIdentifiers, which match the node type constraints specified by NodeTypeConstraints.
+     *
+     * If a Search Term is specified, the properties are searched for this search term.
+     *
      * @param array $entryNodeAggregateIdentifiers
      * @param NodeTypeConstraints $nodeTypeConstraints
+     * @param SearchTerm|null $searchTerm
      * @return array|NodeInterface[]
      */
-    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints): array;
+    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): array;
 
     public function countNodes(): int;
 
