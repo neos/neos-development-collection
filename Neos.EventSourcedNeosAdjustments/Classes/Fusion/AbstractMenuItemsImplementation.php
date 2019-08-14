@@ -125,7 +125,14 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
      */
     protected function isNodeHidden(NodeInterface $node)
     {
-        return (($this->getRenderHiddenInIndex() === false && $node->getProperty('_hiddenInIndex') === true));
+        if ($this->getRenderHiddenInIndex() === true) {
+            // Please show hiddenInIndex nodes
+            // -> node is *never* hidden!
+            return false;
+        }
+
+        // Node is hidden depending on the _hiddenInIndex property
+        return $node->getProperty('_hiddenInIndex');
     }
 
     /**
