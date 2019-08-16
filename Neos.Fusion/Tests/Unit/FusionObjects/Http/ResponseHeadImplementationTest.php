@@ -74,6 +74,6 @@ class ResponseHeadImplementationTest extends UnitTestCase
 
         $result = $renderer->evaluate();
 
-        $this->assertEquals($expectedOutput, str($result));
+        self::assertEquals($expectedOutput, str($result));
     }
 }

@@ -28,7 +28,7 @@ class DomainTest extends UnitTestCase
     {
         $domain = new Domain();
         $domain->setHostname('neos.io');
-        $this->assertSame('neos.io', $domain->getHostname());
+        self::assertSame('neos.io', $domain->getHostname());
     }
 
     /**
@@ -41,6 +41,6 @@ class DomainTest extends UnitTestCase
 
         $domain = new Domain;
         $domain->setSite($mockSite);
-        $this->assertSame($mockSite, $domain->getSite());
+        self::assertSame($mockSite, $domain->getSite());
     }
 }

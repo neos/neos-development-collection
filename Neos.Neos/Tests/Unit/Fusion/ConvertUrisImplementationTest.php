@@ -158,7 +158,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($value, $actualResult);
+        self::assertSame($value, $actualResult);
     }
 
     /**
@@ -172,7 +172,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->addValueExpectation($value);
 
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($value, $actualResult);
+        self::assertSame($value, $actualResult);
     }
 
     /**
@@ -200,7 +200,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $expectedResult = 'This string contains a node URI: http://replaced/uri/01 and two <a href="http://replaced/uri/02">node</a> <a href="http://replaced/uri/01">links</a>.';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -228,7 +228,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $expectedResult = 'This string contains a node URI: http://replaced/uri/01 and two <a href="http://replaced/uri/02">node</a> <a href="http://replaced/uri/01">links</a>.';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
 
@@ -247,7 +247,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $expectedResult = 'This string contains an unresolvable node URI:  and a link.';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -276,7 +276,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a target="' . $externalLinkTarget . '" rel="noopener" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" rel="noopener" href="http://www.example.org">example2</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -304,7 +304,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $expectedResult = 'This string contains two asset links and an external link: one with a target set <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example</a> and one without a target <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example2</a> and an external link <a href="http://www.example.org">example3</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -316,6 +316,6 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->addValueExpectation($value, null, false, '_blank', null, false, false);
         $expectedResult = 'This string contains an external link: <a href="http://www.example.org">example3</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 }

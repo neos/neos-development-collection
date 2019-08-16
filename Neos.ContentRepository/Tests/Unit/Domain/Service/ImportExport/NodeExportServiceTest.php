@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service\ImportExport;
 
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\ImportExport\NodeExportService;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
@@ -151,7 +150,7 @@ class NodeExportServiceTest extends UnitTestCase
 			  </node>
 			</nodes>
 		', $output);
-        $this->assertStringContainsString('<!--Skipped node', $output);
+        self::assertStringContainsString('<!--Skipped node', $output);
     }
 
     /**

@@ -153,7 +153,7 @@ class NodeTypeManagerTest extends UnitTestCase
     public function nodeTypeConfigurationIsMergedTogether()
     {
         $nodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Text');
-        $this->assertSame('Text', $nodeType->getLabel());
+        self::assertSame('Text', $nodeType->getLabel());
 
         $expectedProperties = [
             '_hidden' => [
@@ -171,7 +171,7 @@ class NodeTypeManagerTest extends UnitTestCase
                 'placeholder' => '<p>Enter text here</p>'
             ]
         ];
-        $this->assertSame($expectedProperties, $nodeType->getProperties());
+        self::assertSame($expectedProperties, $nodeType->getProperties());
     }
 
     /**
@@ -211,7 +211,7 @@ class NodeTypeManagerTest extends UnitTestCase
 
         $expectedNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository:FallbackNode');
         $fallbackNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:TextFooBarNotHere');
-        $this->assertSame($expectedNodeType, $fallbackNodeType);
+        self::assertSame($expectedNodeType, $fallbackNodeType);
     }
 
     /**
@@ -228,7 +228,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function hasNodeTypeReturnsTrueIfTheGivenNodeTypeIsFound()
     {
-        $this->assertTrue($this->nodeTypeManager->hasNodeType('Neos.ContentRepository.Testing:TextWithImage'));
+        self::assertTrue($this->nodeTypeManager->hasNodeType('Neos.ContentRepository.Testing:TextWithImage'));
     }
 
     /**
@@ -236,7 +236,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function hasNodeTypeReturnsFalseIfTheGivenNodeTypeIsNotFound()
     {
-        $this->assertFalse($this->nodeTypeManager->hasNodeType('Neos.ContentRepository.Testing:TextFooBarNotHere'));
+        self::assertFalse($this->nodeTypeManager->hasNodeType('Neos.ContentRepository.Testing:TextFooBarNotHere'));
     }
 
     /**
@@ -244,7 +244,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function hasNodeTypeReturnsTrueForAbstractNodeTypes()
     {
-        $this->assertTrue($this->nodeTypeManager->hasNodeType('Neos.ContentRepository.Testing:ContentObject'));
+        self::assertTrue($this->nodeTypeManager->hasNodeType('Neos.ContentRepository.Testing:ContentObject'));
     }
 
     /**
@@ -265,7 +265,7 @@ class NodeTypeManagerTest extends UnitTestCase
             'Neos.ContentRepository.Testing:DocumentWithSupertypes',
             'Neos.ContentRepository:FallbackNode'
         ];
-        $this->assertEquals($expectedNodeTypes, array_keys($this->nodeTypeManager->getNodeTypes()));
+        self::assertEquals($expectedNodeTypes, array_keys($this->nodeTypeManager->getNodeTypes()));
     }
 
     /**
@@ -274,7 +274,7 @@ class NodeTypeManagerTest extends UnitTestCase
     public function getNodeTypesContainsAbstractNodeTypes()
     {
         $nodeTypes = $this->nodeTypeManager->getNodeTypes();
-        $this->assertArrayHasKey('Neos.ContentRepository.Testing:ContentObject', $nodeTypes);
+        self::assertArrayHasKey('Neos.ContentRepository.Testing:ContentObject', $nodeTypes);
     }
 
     /**
@@ -283,7 +283,7 @@ class NodeTypeManagerTest extends UnitTestCase
     public function getNodeTypesWithoutIncludeAbstractContainsNoAbstractNodeTypes()
     {
         $nodeTypes = $this->nodeTypeManager->getNodeTypes(false);
-        $this->assertArrayNotHasKey('Neos.ContentRepository.Testing:ContentObject', $nodeTypes);
+        self::assertArrayNotHasKey('Neos.ContentRepository.Testing:ContentObject', $nodeTypes);
     }
 
     /**
@@ -292,7 +292,7 @@ class NodeTypeManagerTest extends UnitTestCase
     public function getSubNodeTypesReturnsInheritedNodeTypes()
     {
         $nodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.ContentRepository.Testing:ContentObject');
-        $this->assertArrayHasKey('Neos.ContentRepository.Testing:TextWithImage', $nodeTypes);
+        self::assertArrayHasKey('Neos.ContentRepository.Testing:TextWithImage', $nodeTypes);
     }
 
     /**
@@ -301,7 +301,7 @@ class NodeTypeManagerTest extends UnitTestCase
     public function getSubNodeTypesContainsAbstractNodeTypes()
     {
         $nodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.ContentRepository.Testing:ContentObject');
-        $this->assertArrayHasKey('Neos.ContentRepository.Testing:AbstractType', $nodeTypes);
+        self::assertArrayHasKey('Neos.ContentRepository.Testing:AbstractType', $nodeTypes);
     }
 
     /**
@@ -310,7 +310,7 @@ class NodeTypeManagerTest extends UnitTestCase
     public function getSubNodeTypesWithoutIncludeAbstractContainsNoAbstractNodeTypes()
     {
         $nodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.ContentRepository.Testing:ContentObject', false);
-        $this->assertArrayNotHasKey('Neos.ContentRepository.Testing:AbstractType', $nodeTypes);
+        self::assertArrayNotHasKey('Neos.ContentRepository.Testing:AbstractType', $nodeTypes);
     }
 
     /**
@@ -318,7 +318,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getNodeTypeAllowsToRetrieveFinalNodeTypes()
     {
-        $this->assertTrue($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:MyFinalType')->isFinal());
+        self::assertTrue($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:MyFinalType')->isFinal());
     }
 
     /**
@@ -326,7 +326,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function aggregateNodeTypeFlagIsFalseByDefault()
     {
-        $this->assertFalse($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Text')->isAggregate());
+        self::assertFalse($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Text')->isAggregate());
     }
 
     /**
@@ -334,8 +334,8 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function aggregateNodeTypeFlagIsInherited()
     {
-        $this->assertTrue($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Document')->isAggregate());
-        $this->assertTrue($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Page')->isAggregate());
+        self::assertTrue($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Document')->isAggregate());
+        self::assertTrue($this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Page')->isAggregate());
     }
 
     /**
@@ -363,9 +363,9 @@ class NodeTypeManagerTest extends UnitTestCase
     public function getSubNodeTypesWithDifferentIncludeFlagValuesReturnsCorrectValues()
     {
         $subNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.ContentRepository.Testing:ContentObject', true);
-        $this->assertArrayHasKey('Neos.ContentRepository.Testing:AbstractType', $subNodeTypes);
+        self::assertArrayHasKey('Neos.ContentRepository.Testing:AbstractType', $subNodeTypes);
 
         $subNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.ContentRepository.Testing:ContentObject', false);
-        $this->assertArrayNotHasKey('Neos.ContentRepository.Testing:AbstractType', $subNodeTypes);
+        self::assertArrayNotHasKey('Neos.ContentRepository.Testing:AbstractType', $subNodeTypes);
     }
 }

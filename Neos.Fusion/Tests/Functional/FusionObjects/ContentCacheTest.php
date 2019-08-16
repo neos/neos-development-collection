@@ -62,8 +62,8 @@ class ContentCacheTest extends AbstractFusionObjectTest
         // And this render call should use the existing cache entry
         $secondRenderResult = $view->render();
 
-        $this->assertSame('Cached segment|Object value 1', $firstRenderResult);
-        $this->assertSame($firstRenderResult, $secondRenderResult);
+        self::assertSame('Cached segment|Object value 1', $firstRenderResult);
+        self::assertSame($firstRenderResult, $secondRenderResult);
     }
 
     /**
@@ -82,14 +82,14 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $firstRenderResult = $view->render();
 
-        $this->assertSame('Outer segment|site=site1|Inner segment|object=Object value 1|End inner|End outer', $firstRenderResult);
+        self::assertSame('Outer segment|site=site1|Inner segment|object=Object value 1|End inner|End outer', $firstRenderResult);
 
         // This must not influence the output, since the inner segment should be fetched from cache
         $object->setValue('Object value 2');
 
         $view->assign('site', 'site2');
         $secondRenderResult = $view->render();
-        $this->assertSame('Outer segment|site=site2|Inner segment|object=Object value 1|End inner|End outer', $secondRenderResult);
+        self::assertSame('Outer segment|site=site2|Inner segment|object=Object value 1|End inner|End outer', $secondRenderResult);
     }
 
     /**
@@ -106,10 +106,10 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('object', $object);
 
         $firstRenderResult = $view->render();
-        $this->assertSame('Uncached segment|counter=1|End uncached', $firstRenderResult);
+        self::assertSame('Uncached segment|counter=1|End uncached', $firstRenderResult);
 
         $secondRenderResult = $view->render();
-        $this->assertSame('Uncached segment|counter=2|End uncached', $secondRenderResult);
+        self::assertSame('Uncached segment|counter=2|End uncached', $secondRenderResult);
     }
 
     /**
@@ -128,10 +128,10 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('otherContextVariable', $otherContextVariable);
 
         $firstRenderResult = $view->render();
-        $this->assertSame('Uncached segment|counter=|End uncached', $firstRenderResult);
+        self::assertSame('Uncached segment|counter=|End uncached', $firstRenderResult);
 
         $secondRenderResult = $view->render();
-        $this->assertSame('Uncached segment|counter=|End uncached', $secondRenderResult);
+        self::assertSame('Uncached segment|counter=|End uncached', $secondRenderResult);
     }
 
     /**
@@ -148,13 +148,13 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('object', $object);
 
         $firstRenderResult = $view->render();
-        $this->assertSame('Outer segment|object=Object value 1|Uncached segment|counter=1|End uncached|End outer', $firstRenderResult);
+        self::assertSame('Outer segment|object=Object value 1|Uncached segment|counter=1|End uncached|End outer', $firstRenderResult);
 
         // Update the object value to see that the outer segment is really cached
         $object->setValue('Object value 2');
 
         $secondRenderResult = $view->render();
-        $this->assertSame('Outer segment|object=Object value 1|Uncached segment|counter=2|End uncached|End outer', $secondRenderResult);
+        self::assertSame('Outer segment|object=Object value 1|Uncached segment|counter=2|End uncached|End outer', $secondRenderResult);
     }
 
     /**
@@ -171,17 +171,17 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('object', $object);
 
         $firstRenderResult = $view->render();
-        $this->assertSame('Outer segment|object=Object value 1|Uncached segment|counter=1|End uncached|End outer', $firstRenderResult);
+        self::assertSame('Outer segment|object=Object value 1|Uncached segment|counter=1|End uncached|End outer', $firstRenderResult);
 
         // Assigning a new object changes the identifier and therefore a new outer cache segment is created
         $newObject = new TestModel(21, 'New object value');
         $view->assign('object', $newObject);
 
         $renderResultAfterNewObject = $view->render();
-        $this->assertSame('Outer segment|object=New object value|Uncached segment|counter=1|End uncached|End outer', $renderResultAfterNewObject);
+        self::assertSame('Outer segment|object=New object value|Uncached segment|counter=1|End uncached|End outer', $renderResultAfterNewObject);
 
         $secondRenderResult = $view->render();
-        $this->assertSame('Outer segment|object=New object value|Uncached segment|counter=2|End uncached|End outer', $secondRenderResult);
+        self::assertSame('Outer segment|object=New object value|Uncached segment|counter=2|End uncached|End outer', $secondRenderResult);
     }
 
     /**
@@ -199,19 +199,19 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('site', 'site1');
 
         $firstRenderResult = $view->render();
-        $this->assertSame('Outer segment|counter=1|Inner segment 1|object=Object value 1|End innerInner segment 2|object=Object value 1|End inner|End outer', $firstRenderResult);
+        self::assertSame('Outer segment|counter=1|Inner segment 1|object=Object value 1|End innerInner segment 2|object=Object value 1|End inner|End outer', $firstRenderResult);
 
         $object->setValue('Object value 2');
 
         $secondRenderResult = $view->render();
-        $this->assertSame($firstRenderResult, $secondRenderResult);
+        self::assertSame($firstRenderResult, $secondRenderResult);
 
         // This should flush "Inner segment 1"
         $this->contentCache->flushByTag('Object_' . $object->getId());
 
         // Since the cache entry for "Inner segment 1" is missing, the outer segment is also evaluated, but not "Inner segment 2"
         $secondRenderResult = $view->render();
-        $this->assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
+        self::assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
     }
 
     /**
@@ -229,7 +229,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('site', 'site1');
 
         $firstRenderResult = $view->render();
-        $this->assertSame('Outer segment|counter=1|Inner segment 1|object=Object value 1|End innerInner segment 2|object=Object value 1|End inner|End outer', $firstRenderResult);
+        self::assertSame('Outer segment|counter=1|Inner segment 1|object=Object value 1|End innerInner segment 2|object=Object value 1|End inner|End outer', $firstRenderResult);
 
         $object->setValue('Object value 2');
 
@@ -238,14 +238,14 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         // Since the cache entry for "Inner segment 1" is missing, the outer segment is also evaluated, but not "Inner segment 2"
         $secondRenderResult = $view->render();
-        $this->assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
+        self::assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
 
         // This should flush "Inner segment 2"
         $this->contentCache->flushByTag('Node_47a6ee72-936a-4489-abc1-3666a63cdc4a');
 
         // Since the cache entry for "Inner segment 2" is missing, the outer segment is also evaluated, but not "Inner segment 1"
         $secondRenderResult = $view->render();
-        $this->assertSame('Outer segment|counter=3|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 2|End inner|End outer', $secondRenderResult);
+        self::assertSame('Outer segment|counter=3|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 2|End inner|End outer', $secondRenderResult);
     }
 
     /**
@@ -262,10 +262,10 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('object', $object);
 
         $firstRenderResult = $view->render();
-        $this->assertSame('Processor start|counter=1|Cached segment|object=Object value 1|End cached|Processor end', $firstRenderResult);
+        self::assertSame('Processor start|counter=1|Cached segment|object=Object value 1|End cached|Processor end', $firstRenderResult);
 
         $secondRenderResult = $view->render();
-        $this->assertSame($firstRenderResult, $secondRenderResult);
+        self::assertSame($firstRenderResult, $secondRenderResult);
     }
 
     /**
@@ -282,10 +282,10 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('object', $object);
 
         $firstRenderResult = $view->render();
-        $this->assertSame('Cached segment|Processor start|counter=1|Uncached segment|object=Object value 1|End cached|Processor end|End segment', $firstRenderResult);
+        self::assertSame('Cached segment|Processor start|counter=1|Uncached segment|object=Object value 1|End cached|Processor end|End segment', $firstRenderResult);
 
         $secondRenderResult = $view->render();
-        $this->assertSame('Cached segment|Processor start|counter=2|Uncached segment|object=Object value 1|End cached|Processor end|End segment', $secondRenderResult);
+        self::assertSame('Cached segment|Processor start|counter=2|Uncached segment|object=Object value 1|End cached|Processor end|End segment', $secondRenderResult);
     }
 
     /**
@@ -305,15 +305,15 @@ class ContentCacheTest extends AbstractFusionObjectTest
         ]);
 
         $firstRenderResult = $view->render();
-        $this->assertSame('Cached segment|object=Object value 1|End cached', $firstRenderResult);
+        self::assertSame('Cached segment|object=Object value 1|End cached', $firstRenderResult);
 
         $secondRenderResult = $view->render();
-        $this->assertSame($firstRenderResult, $secondRenderResult);
+        self::assertSame($firstRenderResult, $secondRenderResult);
 
         $view->assign('condition', false);
 
         $updatedRenderResult = $view->render();
-        $this->assertSame('', $updatedRenderResult);
+        self::assertSame('', $updatedRenderResult);
     }
 
     /**
@@ -336,17 +336,17 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $actionRequest->setArgument('currentPage', 1);
 
         $firstRenderResult = $view->render();
-        $this->assertSame('Cached segment|Uncached segment|request.currentPage=1|End cached|End segment', $firstRenderResult, 'Initial cached result');
+        self::assertSame('Cached segment|Uncached segment|request.currentPage=1|End cached|End segment', $firstRenderResult, 'Initial cached result');
 
         $actionRequest->setArgument('currentPage', 2);
 
         $secondRenderResult = $view->render();
-        $this->assertSame('Cached segment|Uncached segment|request.currentPage=2|End cached|End segment', $secondRenderResult, 'Evaluated result with updated request');
+        self::assertSame('Cached segment|Uncached segment|request.currentPage=2|End cached|End segment', $secondRenderResult, 'Evaluated result with updated request');
 
         $actionRequest->setArgument('currentPage', 3);
 
         $updatedRenderResult = $view->render();
-        $this->assertSame('Cached segment||End segment', $updatedRenderResult);
+        self::assertSame('Cached segment||End segment', $updatedRenderResult);
     }
 
     /**
@@ -363,10 +363,10 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('object', $object);
 
         $firstRenderResult = $view->render();
-        $this->assertStringStartsWith('Cached segment|counter=1|Exception', $firstRenderResult);
+        self::assertStringStartsWith('Cached segment|counter=1|Exception', $firstRenderResult);
 
         $secondRenderResult = $view->render();
-        $this->assertStringStartsWith('Cached segment|counter=2|Exception', $secondRenderResult);
+        self::assertStringStartsWith('Cached segment|counter=2|Exception', $secondRenderResult);
     }
 
     /**
@@ -384,13 +384,13 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('throwException', false);
 
         $firstRenderResult = $view->render();
-        $this->assertEquals('Cached segment|counter=1|It depends|End segment', $firstRenderResult);
+        self::assertEquals('Cached segment|counter=1|It depends|End segment', $firstRenderResult);
 
         $this->contentCache->flushByTag('Inner');
         $view->assign('throwException', true);
 
         $secondRenderResult = $view->render();
-        $this->assertStringStartsWith('Cached segment|counter=1|Exception', $secondRenderResult);
+        self::assertStringStartsWith('Cached segment|counter=1|Exception', $secondRenderResult);
     }
 
     /**
@@ -417,10 +417,10 @@ class ContentCacheTest extends AbstractFusionObjectTest
         }));
 
         $firstRenderResult = $view->render();
-        $this->assertEquals('Foo|Bar|Baz|Qux', $firstRenderResult);
+        self::assertEquals('Foo|Bar|Baz|Qux', $firstRenderResult);
 
-        $this->assertCount(4, $entriesWritten);
-        $this->assertEquals([
+        self::assertCount(4, $entriesWritten);
+        self::assertEquals([
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.5
             '7075cb501854d7d8b25926b8c7f79c3e' => [
                 'lifetime' => 60
@@ -467,14 +467,14 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $firstRenderResult = $view->render();
 
-        $this->assertSame('Cached segment|Object value 1', $firstRenderResult);
+        self::assertSame('Cached segment|Object value 1', $firstRenderResult);
 
         // As the site should be added to the entry identifier because it is in the Neos.Fusion:GlobalCacheIdentifiers prototype, changing the value should give us a different identifier
         $view->assign('site', 'site2');
         $secondRenderResult = $view->render();
-        $this->assertSame($firstRenderResult, $secondRenderResult);
-        $this->assertCount(2, $entriesWritten);
-        $this->assertEquals([
+        self::assertSame($firstRenderResult, $secondRenderResult);
+        self::assertCount(2, $entriesWritten);
+        self::assertEquals([
             '49c7f1e2dde942ea9cc6c658a7ece943' => [
                 'tags' => ['site1']
             ],
@@ -510,9 +510,9 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view->assign('site', 'site2');
         $secondRenderResult = $view->render();
-        $this->assertSame($firstRenderResult, $secondRenderResult);
-        $this->assertCount(2, $entriesWritten);
-        $this->assertEquals([
+        self::assertSame($firstRenderResult, $secondRenderResult);
+        self::assertCount(2, $entriesWritten);
+        self::assertEquals([
             'd9deea3648c9bfb24afdcb26bab8c023' => [
                 'tags' => ['site1']
             ],
@@ -564,14 +564,14 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $firstRenderResult = $view->render();
 
-        $this->assertSame('Cached segment|Object value 1', $firstRenderResult);
+        self::assertSame('Cached segment|Object value 1', $firstRenderResult);
 
         // We overwrote the prototype for cacheIdentifier, so site is not part of the identifier and therefor the same identifier should be created.
         $view->assign('site', 'site2');
         $secondRenderResult = $view->render();
-        $this->assertSame($firstRenderResult, $secondRenderResult);
-        $this->assertCount(1, $entriesWritten);
-        $this->assertEquals([
+        self::assertSame($firstRenderResult, $secondRenderResult);
+        self::assertCount(1, $entriesWritten);
+        self::assertEquals([
             '21fe7cb71a709292398e766a9bb45662' => [
                 'tags' => ['site1'],
                 'data' => 'Cached segment|Object value 1'
@@ -594,13 +594,13 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view->assign('object', $object);
 
         $firstRenderResult = $view->render();
-        $this->assertSame('Outer segment|object=Object value 1|Uncached segment|counter=1|End uncached|End outer', $firstRenderResult);
+        self::assertSame('Outer segment|object=Object value 1|Uncached segment|counter=1|End uncached|End outer', $firstRenderResult);
 
         // Update the object value to see that the outer segment is really cached
         $object->setValue('Object value 2');
 
         $secondRenderResult = $view->render();
-        $this->assertSame('Outer segment|object=Object value 1|Uncached segment|counter=2|End uncached|End outer', $secondRenderResult);
+        self::assertSame('Outer segment|object=Object value 1|Uncached segment|counter=2|End uncached|End outer', $secondRenderResult);
     }
 
     /**
@@ -623,8 +623,8 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $secondRenderResult = $view->render();
 
-        $this->assertSame('Dynamic segment|counter=1', $secondRenderResult);
-        $this->assertSame($firstRenderResult, $secondRenderResult);
+        self::assertSame('Dynamic segment|counter=1', $secondRenderResult);
+        self::assertSame($firstRenderResult, $secondRenderResult);
     }
 
     /**
@@ -647,8 +647,8 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $secondRenderResult = $view->render();
 
-        $this->assertSame('Dynamic segment|counter=2', $secondRenderResult);
-        $this->assertNotSame($firstRenderResult, $secondRenderResult);
+        self::assertSame('Dynamic segment|counter=2', $secondRenderResult);
+        self::assertNotSame($firstRenderResult, $secondRenderResult);
     }
 
     /**
@@ -673,10 +673,10 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $thirdRenderResult = $view->render();
         $fourthRenderResult = $view->render();
 
-        $this->assertSame('Dynamic segment|counter=1', $firstRenderResult);
-        $this->assertSame($firstRenderResult, $secondRenderResult);
-        $this->assertSame('Dynamic segment|counter=2', $thirdRenderResult);
-        $this->assertSame('Dynamic segment|counter=3', $fourthRenderResult);
+        self::assertSame('Dynamic segment|counter=1', $firstRenderResult);
+        self::assertSame($firstRenderResult, $secondRenderResult);
+        self::assertSame('Dynamic segment|counter=2', $thirdRenderResult);
+        self::assertSame('Dynamic segment|counter=3', $fourthRenderResult);
     }
 
     /**
@@ -694,8 +694,8 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $firstRenderResult = $view->render();
         $secondRenderResult = $view->render();
 
-        $this->assertSame('Cached segment|counter=1|Nested dynamic segment|counter=2|Nested cached segment|counter=3', $firstRenderResult);
-        $this->assertSame($firstRenderResult, $secondRenderResult);
+        self::assertSame('Cached segment|counter=1|Nested dynamic segment|counter=2|Nested cached segment|counter=3', $firstRenderResult);
+        self::assertSame($firstRenderResult, $secondRenderResult);
     }
 
     /**
@@ -715,9 +715,9 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $secondRenderResult = $view->render();
         $thirdRenderResult = $view->render();
 
-        $this->assertSame('prettyUnused', $firstRenderResult);
-        $this->assertSame('prettyUnused', $secondRenderResult);
-        $this->assertSame('prettyUnused', $thirdRenderResult);
+        self::assertSame('prettyUnused', $firstRenderResult);
+        self::assertSame('prettyUnused', $secondRenderResult);
+        self::assertSame('prettyUnused', $thirdRenderResult);
     }
     /**
      * @test
@@ -745,9 +745,9 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $actionRequest->setArgument('testArgument', '4');
         $fourthRenderResult = $view->render();
 
-        $this->assertSame('1', $firstRenderResult);
-        $this->assertSame('2', $secondRenderResult);
-        $this->assertSame('3', $thirdRenderResult);
-        $this->assertSame('4', $fourthRenderResult);
+        self::assertSame('1', $firstRenderResult);
+        self::assertSame('2', $secondRenderResult);
+        self::assertSame('3', $thirdRenderResult);
+        self::assertSame('4', $fourthRenderResult);
     }
 }

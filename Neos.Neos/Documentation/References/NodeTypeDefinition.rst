@@ -1,36 +1,11 @@
 .. _node-type-definition:
 
-Node Type Definition
-====================
+NodeType Definition Reference
+=============================
 
-Each Neos ContentRepository Node (we'll just call it Node in the remaining text) has a specific
-*node type*. Node Types can be defined in any package by declaring them in
-``Configuration/NodeTypes.yaml``. If you have a rather large list of Node Types, you can also split your
-NodeType definitions into multiple ``Configuration/NodeTypes.*.yaml`` files for organizing them.
+THe manual to understand NodeType definitions can be found in the Neos Docs (https://docs.neos.io/cms/manual/content-repository/nodetype-definition).
 
-Each node type can have *one or multiple parent types*. If these are specified,
-all properties and settings of the parent types are inherited.
-
-A node type definition can look as follows::
-
-	'My.Package:SpecialHeadline':
-	  superTypes:
-	    'Neos.Neos:Content': true
-	  ui:
-	    label: 'Special Headline'
-	    group: 'general'
-	  properties:
-	    headline:
-	      type: 'string'
-	      defaultValue: 'My Headline Default'
-	      ui:
-	        inlineEditable: true
-	      validation:
-	        'Neos.Neos/Validation/StringLengthValidator':
-	          minimum: 1
-	          maximum: 255
-
-The following options are allowed:
+The following options are allowed for defining a NodeType:
 
 ``abstract``
   A boolean flag, marking a node type as *abstract*. Abstract node types can never be used standalone,

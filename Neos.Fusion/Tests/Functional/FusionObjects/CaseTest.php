@@ -22,10 +22,10 @@ class CaseTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('cond', true);
         $view->setFusionPath($path);
-        $this->assertEquals('Xtestconditiontrue', $view->render());
+        self::assertEquals('Xtestconditiontrue', $view->render());
 
         $view->assign('cond', false);
-        $this->assertEquals('Xtestconditionfalse', $view->render());
+        self::assertEquals('Xtestconditionfalse', $view->render());
     }
 
     /**
@@ -47,10 +47,10 @@ class CaseTest extends AbstractFusionObjectTest
 
         $view->assign('cond', true);
         $view->setFusionPath('case/numericMatching');
-        $this->assertStringContainsString('Xtestconditiontrue', $view->render());
+        self::assertStringContainsString('Xtestconditiontrue', $view->render());
 
         $view->assign('cond', false);
-        $this->assertStringContainsString('Xtestconditionfalse', $view->render());
+        self::assertStringContainsString('Xtestconditionfalse', $view->render());
     }
 
     /**
@@ -125,6 +125,6 @@ class CaseTest extends AbstractFusionObjectTest
         $view = $this->buildView();
 
         $view->setFusionPath('case/rendererHasAccessToThis');
-        $this->assertStringContainsString('foo', $view->render());
+        self::assertStringContainsString('foo', $view->render());
     }
 }

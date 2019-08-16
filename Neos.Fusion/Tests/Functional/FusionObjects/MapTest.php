@@ -25,7 +25,7 @@ class MapTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2']);
         $view->setFusionPath('map/basicLoop');
-        $this->assertEquals(['Xelement1','Xelement2'], $view->render());
+        self::assertEquals(['Xelement1','Xelement2'], $view->render());
     }
 
     /**
@@ -36,7 +36,7 @@ class MapTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2']);
         $view->setFusionPath('map/basicLoopWithContentRenderer');
-        $this->assertEquals(['Xelement1','Xelement2'], $view->render());
+        self::assertEquals(['Xelement1','Xelement2'], $view->render());
     }
 
     /**
@@ -47,7 +47,7 @@ class MapTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('items', ['foo' => 'element1', 'bar' => 'element2']);
         $view->setFusionPath('map/basicLoop');
-        $this->assertEquals(['foo' => 'Xelement1', 'bar' => 'Xelement2'], $view->render());
+        self::assertEquals(['foo' => 'Xelement1', 'bar' => 'Xelement2'], $view->render());
     }
 
     /**
@@ -59,7 +59,7 @@ class MapTest extends AbstractFusionObjectTest
         $view->assign('items', ['element1', 'element2']);
         $view->assign('other', 'var');
         $view->setFusionPath('map/basicLoopOtherContextVariables');
-        $this->assertEquals(['Xelement1var','Xelement2var'], $view->render());
+        self::assertEquals(['Xelement1var','Xelement2var'], $view->render());
     }
 
     /**
@@ -70,7 +70,7 @@ class MapTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('items', null);
         $view->setFusionPath('map/basicLoop');
-        $this->assertEquals([], $view->render());
+        self::assertEquals([], $view->render());
     }
 
     /**
@@ -81,6 +81,6 @@ class MapTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2', 'element3', 'element4']);
         $view->setFusionPath('map/iteration');
-        $this->assertEquals(['Xelement1-0-1-1--1-','Xelement2-1-2----1','Xelement3-2-3---1-','Xelement4-3-4--1--1'], $view->render());
+        self::assertEquals(['Xelement1-0-1-1--1-','Xelement2-1-2----1','Xelement3-2-3---1-','Xelement4-3-4--1--1'], $view->render());
     }
 }

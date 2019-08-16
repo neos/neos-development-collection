@@ -168,7 +168,7 @@ class FusionViewTest extends UnitTestCase
         $output = $view->render();
 
         // FIXME: Check for content type
-        $this->assertInstanceOf(ResponseInterface::class, $output);
-        $this->assertEquals('Message body', $output->getBody()->getContents());
+        self::assertInstanceOf(ResponseInterface::class, $output);
+        self::assertEquals('Message body', $output->getBody()->getContents());
     }
 }

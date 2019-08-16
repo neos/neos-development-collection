@@ -89,6 +89,6 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     {
         $view = $this->buildView();
         $view->setFusionPath($path);
-        $this->assertSame($expected, $view->render(), 'Fusion at path "' . $path . '" produced wrong results.');
+        self::assertSame($expected, $view->render(), 'Fusion at path "' . $path . '" produced wrong results.');
     }
 }

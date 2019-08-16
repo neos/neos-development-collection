@@ -26,7 +26,7 @@ class NodeTemplateTest extends UnitTestCase
         $nodeTemplate = new NodeTemplate();
         $nodeTemplate->setName('valid-node-name');
 
-        $this->assertEquals('valid-node-name', $nodeTemplate->getName());
+        self::assertEquals('valid-node-name', $nodeTemplate->getName());
     }
 
     /**

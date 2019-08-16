@@ -34,7 +34,7 @@ class FilterOperationTest extends AbstractQueryOperationsTest
         $operation = new FilterOperation();
         $operation->evaluate($q, ['#node2-identifier-uuid']);
 
-        $this->assertEquals([$node2], $q->getContext());
+        self::assertEquals([$node2], $q->getContext());
     }
 
     /**
@@ -51,6 +51,6 @@ class FilterOperationTest extends AbstractQueryOperationsTest
         $operation = new FilterOperation();
         $operation->evaluate($q, [$node2]);
 
-        $this->assertEquals([$node2], $q->getContext());
+        self::assertEquals([$node2], $q->getContext());
     }
 }

@@ -114,7 +114,7 @@ class NextUntilOperationTest extends AbstractNodeTest
         $result = $q->nextUntil($subject)->get();
 
         if ($expectedNodePaths === [] && $unexpectedNodePaths === []) {
-            $this->assertEmpty($result);
+            self::assertEmpty($result);
         } else {
             foreach ($expectedNodePaths as $expectedNodePath) {
                 $expectedNode = $rootNode->getNode($expectedNodePath);
