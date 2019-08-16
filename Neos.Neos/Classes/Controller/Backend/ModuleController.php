@@ -61,7 +61,7 @@ class ModuleController extends ActionController
      */
     public function indexAction(array $module)
     {
-        $moduleRequest = new ActionRequest($this->request);
+        $moduleRequest = $this->request->createSubRequest();
         $moduleRequest->setArgumentNamespace('moduleArguments');
         $moduleRequest->setControllerObjectName($module['controller']);
         $moduleRequest->setControllerActionName($module['action']);

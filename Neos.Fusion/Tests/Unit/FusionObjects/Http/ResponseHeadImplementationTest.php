@@ -11,9 +11,12 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects\Http;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\Http\ResponseHeadImplementation;
+use Psr\Http\Message\ResponseFactoryInterface;
+use function GuzzleHttp\Psr7\str;
 
 /**
  * Testcase for the Fusion ResponseHead object
@@ -63,8 +66,14 @@ class ResponseHeadImplementationTest extends UnitTestCase
 
         $fusionObjectName = 'Neos.Fusion:Http.ResponseHead';
         $renderer = new ResponseHeadImplementation($this->mockRuntime, $path, $fusionObjectName);
+        $mockResponseFactory = $this->createMock(ResponseFactoryInterface::class);
+        $mockResponseFactory->expects(self::any())->method('createResponse')->willReturnCallback(function (int $code) {
+            return new Response($code);
+        });
+        $this->inject($renderer, 'responseFactory', $mockResponseFactory);
 
         $result = $renderer->evaluate();
-        $this->assertEquals($expectedOutput, $result);
+
+        $this->assertEquals($expectedOutput, str($result));
     }
 }

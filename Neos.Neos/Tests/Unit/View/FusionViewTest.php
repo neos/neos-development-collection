@@ -23,6 +23,7 @@ use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\Fusion\Core\Runtime;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Testcase for the Fusion View
@@ -163,9 +164,11 @@ class FusionViewTest extends UnitTestCase
 
         $view->_set('variables', ['value' => $mockContextualizedNode]);
 
+        /** @var ResponseInterface $output */
         $output = $view->render();
 
         // FIXME: Check for content type
-        $this->assertEquals('Message body', $output);
+        $this->assertInstanceOf(ResponseInterface::class, $output);
+        $this->assertEquals('Message body', $output->getBody()->getContents());
     }
 }

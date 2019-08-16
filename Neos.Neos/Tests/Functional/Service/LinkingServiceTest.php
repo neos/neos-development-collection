@@ -117,7 +117,7 @@ class LinkingServiceTest extends FunctionalTestCase
         $this->linkingService = $this->objectManager->get(LinkingService::class);
         /** @var $requestHandler FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $this->controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments([]), new UriBuilder());
+        $this->controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments([]), new UriBuilder());
     }
 
     /**
