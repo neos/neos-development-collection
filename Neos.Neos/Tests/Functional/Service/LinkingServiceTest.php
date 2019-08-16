@@ -11,6 +11,9 @@ namespace Neos\Neos\Tests\Functional\Service;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\ServerRequestAttributes;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Mvc\ActionRequest;
@@ -117,7 +120,10 @@ class LinkingServiceTest extends FunctionalTestCase
         $this->linkingService = $this->objectManager->get(LinkingService::class);
         /** @var $requestHandler FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $this->controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments([]), new UriBuilder());
+        $httpRequest = $requestHandler->getHttpRequest();
+        $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::BASE_URI, new Uri('http://neos.test/'));
+
+        $this->controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder());
     }
 
     /**

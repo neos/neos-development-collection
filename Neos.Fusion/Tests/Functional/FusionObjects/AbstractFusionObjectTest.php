@@ -11,6 +11,8 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
@@ -40,8 +42,10 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     {
         $view = new FusionView();
 
-
-        $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost/');
+        /** @var ServerRequestFactoryInterface $httpRequestFactory */
+        $httpRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
+        $httpRequest = $httpRequestFactory->createServerRequest('GET', 'http://localhost/');
+        $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::BASE_URI, new Uri('http://localhost/'));
         $request = ActionRequest::fromHttpRequest($httpRequest);
 
         $uriBuilder = new UriBuilder();
