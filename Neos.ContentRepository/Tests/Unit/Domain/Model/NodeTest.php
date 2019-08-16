@@ -77,7 +77,7 @@ class NodeTest extends UnitTestCase
 
         $primaryChildNode = $node->getPrimaryChildNode();
 
-        $this->assertSame($expectedNode, $primaryChildNode);
+        self::assertSame($expectedNode, $primaryChildNode);
     }
 
     /**
@@ -155,7 +155,7 @@ class NodeTest extends UnitTestCase
         $matches = [];
         preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
 
-        $this->assertSame($expected, $matches);
+        self::assertSame($expected, $matches);
     }
 
     /**
@@ -180,7 +180,7 @@ class NodeTest extends UnitTestCase
     public function contextPathPatternShouldNotMatchOnInvalidPaths($path)
     {
         $result = preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
-        $this->assertEquals(0, $result, 'The invalid context path yielded matches: ' . print_r($matches, true));
+        self::assertEquals(0, $result, 'The invalid context path yielded matches: ' . print_r($matches, true));
     }
 
     /**
@@ -220,6 +220,6 @@ class NodeTest extends UnitTestCase
         $node->createNode('foo', $mockNodeType);
         $node->createNode('bar', $mockNodeType);
 
-        $this->assertNotSame($generatedIdentifiers[1], $generatedIdentifiers[2], 'Child nodes should have distinct identifiers');
+        self::assertNotSame($generatedIdentifiers[1], $generatedIdentifiers[2], 'Child nodes should have distinct identifiers');
     }
 }

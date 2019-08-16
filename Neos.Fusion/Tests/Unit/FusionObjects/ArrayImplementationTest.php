@@ -30,7 +30,7 @@ class ArrayImplementationTest extends UnitTestCase
         $fusionObjectName = 'Neos.Fusion:Array';
         $renderer = new ArrayImplementation($mockRuntime, $path, $fusionObjectName);
         $result = $renderer->evaluate();
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
     /**
@@ -131,6 +131,6 @@ class ArrayImplementationTest extends UnitTestCase
         }
         $renderer->evaluate();
 
-        $this->assertSame($expectedKeyOrder, $renderedPaths, $message);
+        self::assertSame($expectedKeyOrder, $renderedPaths, $message);
     }
 }

@@ -38,6 +38,6 @@ class ImageViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper = $this->prepareArguments($this->viewHelper);
         $actualResult = $this->viewHelper->render();
 
-        $this->assertEquals('', $actualResult);
+        self::assertEquals('', $actualResult);
     }
 }

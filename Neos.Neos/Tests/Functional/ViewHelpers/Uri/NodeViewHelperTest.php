@@ -272,7 +272,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperCatchesExceptionAndReturnsEmptyStringIfTargetNodeDoesNotExist(): void
     {
         $result = $this->invoke(['node' => '/sites/example/non-existing-node']);
-        $this->assertSame('', $result);
+        self::assertSame('', $result);
     }
 
     /**
@@ -284,6 +284,6 @@ class NodeViewHelperTest extends FunctionalTestCase
      */
     protected function assertOutputLinkValid(string $expected, string $actual): void
     {
-        $this->assertStringEndsWith($expected, $actual);
+        self::assertStringEndsWith($expected, $actual);
     }
 }

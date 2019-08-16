@@ -129,7 +129,7 @@ class NodeTypeTest extends UnitTestCase
     public function aNodeTypeHasAName()
     {
         $nodeType = new NodeType('Neos.ContentRepository.Testing:Text', [], []);
-        $this->assertSame('Neos.ContentRepository.Testing:Text', $nodeType->getName());
+        self::assertSame('Neos.ContentRepository.Testing:Text', $nodeType->getName());
     }
 
     /**
@@ -178,7 +178,7 @@ class NodeTypeTest extends UnitTestCase
             []
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'Neos.ContentRepository.Testing:Document' => $documentType,
                 'Neos.ContentRepository.Testing:HideableContent' => $hideableNodeType,
@@ -186,13 +186,13 @@ class NodeTypeTest extends UnitTestCase
             $pageType->getDeclaredSuperTypes()
         );
 
-        $this->assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:Page'));
-        $this->assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:HideableContent'));
-        $this->assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:Document'));
-        $this->assertTrue($pageType->isOfType('Neos.ContentRepository:Base'));
+        self::assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:Page'));
+        self::assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:HideableContent'));
+        self::assertTrue($pageType->isOfType('Neos.ContentRepository.Testing:Document'));
+        self::assertTrue($pageType->isOfType('Neos.ContentRepository:Base'));
 
-        $this->assertFalse($pageType->isOfType('Neos.ContentRepository:Exotic'));
-        $this->assertFalse($pageType->isOfType('Neos.ContentRepository.Testing:TimeableContent'));
+        self::assertFalse($pageType->isOfType('Neos.ContentRepository:Exotic'));
+        self::assertFalse($pageType->isOfType('Neos.ContentRepository.Testing:TimeableContent'));
     }
 
     /**
@@ -201,7 +201,7 @@ class NodeTypeTest extends UnitTestCase
     public function labelIsEmptyStringByDefault()
     {
         $baseType = new NodeType('Neos.ContentRepository:Base', [], []);
-        $this->assertSame('', $baseType->getLabel());
+        self::assertSame('', $baseType->getLabel());
     }
 
     /**
@@ -210,7 +210,7 @@ class NodeTypeTest extends UnitTestCase
     public function propertiesAreEmptyArrayByDefault()
     {
         $baseType = new NodeType('Neos.ContentRepository:Base', [], []);
-        $this->assertSame([], $baseType->getProperties());
+        self::assertSame([], $baseType->getProperties());
     }
 
     /**
@@ -233,7 +233,7 @@ class NodeTypeTest extends UnitTestCase
                 'someSubKey' => 'someValue'
             ]
         ]);
-        $this->assertTrue($nodeType->hasConfiguration('someKey.someSubKey'));
+        self::assertTrue($nodeType->hasConfiguration('someKey.someSubKey'));
     }
 
     /**
@@ -242,7 +242,7 @@ class NodeTypeTest extends UnitTestCase
     public function hasConfigurationReturnsFalseIfSpecifiedConfigurationPathDoesNotExist()
     {
         $nodeType = new NodeType('Neos.ContentRepository:Base', [], []);
-        $this->assertFalse($nodeType->hasConfiguration('some.nonExisting.path'));
+        self::assertFalse($nodeType->hasConfiguration('some.nonExisting.path'));
     }
 
     /**
@@ -265,7 +265,7 @@ class NodeTypeTest extends UnitTestCase
                 'someSubKey' => 'someValue'
             ]
         ]);
-        $this->assertSame('someValue', $nodeType->getConfiguration('someKey.someSubKey'));
+        self::assertSame('someValue', $nodeType->getConfiguration('someKey.someSubKey'));
     }
 
     /**
@@ -274,7 +274,7 @@ class NodeTypeTest extends UnitTestCase
     public function getConfigurationReturnsNullIfTheSpecifiedPathDoesNotExist()
     {
         $nodeType = new NodeType('Neos.ContentRepository:Base', [], []);
-        $this->assertNull($nodeType->getConfiguration('some.nonExisting.path'));
+        self::assertNull($nodeType->getConfiguration('some.nonExisting.path'));
     }
 
     /**
@@ -320,7 +320,7 @@ class NodeTypeTest extends UnitTestCase
             ]
         ]);
 
-        $this->assertEquals($nodeType->getDefaultValuesForProperties(), ['date' => new \DateTime('2014-09-23')]);
+        self::assertEquals($nodeType->getDefaultValuesForProperties(), ['date' => new \DateTime('2014-09-23')]);
     }
 
     /**
@@ -329,7 +329,7 @@ class NodeTypeTest extends UnitTestCase
     public function nodeTypeConfigurationIsMergedTogether()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Text');
-        $this->assertSame('Text', $nodeType->getLabel());
+        self::assertSame('Text', $nodeType->getLabel());
 
         $expectedProperties = [
             '_hidden' => [
@@ -347,7 +347,7 @@ class NodeTypeTest extends UnitTestCase
                 'placeholder' => '<p>Enter text here</p>'
             ]
         ];
-        $this->assertSame($expectedProperties, $nodeType->getProperties());
+        self::assertSame($expectedProperties, $nodeType->getProperties());
     }
 
     /**
@@ -357,14 +357,14 @@ class NodeTypeTest extends UnitTestCase
     public function inheritedSuperTypesCanBeRemoved()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Shortcut');
-        $this->assertSame('Shortcut', $nodeType->getLabel());
+        self::assertSame('Shortcut', $nodeType->getLabel());
 
         $expectedProperties = [
             'target' => [
                 'type' => 'string'
             ]
         ];
-        $this->assertSame($expectedProperties, $nodeType->getProperties());
+        self::assertSame($expectedProperties, $nodeType->getProperties());
     }
 
     /**
@@ -373,7 +373,7 @@ class NodeTypeTest extends UnitTestCase
     public function isOfTypeReturnsFalseForDirectlyDisabledSuperTypes()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Shortcut');
-        $this->assertFalse($nodeType->isOfType('Neos.ContentRepository.Testing:SomeMixin'));
+        self::assertFalse($nodeType->isOfType('Neos.ContentRepository.Testing:SomeMixin'));
     }
 
     /**
@@ -382,7 +382,7 @@ class NodeTypeTest extends UnitTestCase
     public function isOfTypeReturnsFalseForIndirectlyDisabledSuperTypes()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubShortcut');
-        $this->assertFalse($nodeType->isOfType('Neos.ContentRepository.Testing:SomeMixin'));
+        self::assertFalse($nodeType->isOfType('Neos.ContentRepository.Testing:SomeMixin'));
     }
 
     /**
@@ -392,14 +392,14 @@ class NodeTypeTest extends UnitTestCase
     public function inheritedSuperSuperTypesCanBeRemoved()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubShortcut');
-        $this->assertSame('Sub-Shortcut', $nodeType->getLabel());
+        self::assertSame('Sub-Shortcut', $nodeType->getLabel());
 
         $expectedProperties = [
             'target' => [
                 'type' => 'string'
             ]
         ];
-        $this->assertSame($expectedProperties, $nodeType->getProperties());
+        self::assertSame($expectedProperties, $nodeType->getProperties());
     }
 
     /**
@@ -409,7 +409,7 @@ class NodeTypeTest extends UnitTestCase
     public function superTypesRemovedByInheritanceCanBeAddedAgain()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubSubSubShortcut');
-        $this->assertSame('Sub-Sub-Sub-Shortcut', $nodeType->getLabel());
+        self::assertSame('Sub-Sub-Sub-Shortcut', $nodeType->getLabel());
 
         $expectedProperties = [
             'someMixinProperty' => [
@@ -420,7 +420,7 @@ class NodeTypeTest extends UnitTestCase
                 'type' => 'string',
             ],
         ];
-        $this->assertSame($expectedProperties, $nodeType->getProperties());
+        self::assertSame($expectedProperties, $nodeType->getProperties());
     }
 
     /**
@@ -461,6 +461,6 @@ class NodeTypeTest extends UnitTestCase
 
         $autoCreatedChildNodes = $mockNodeTypeManager->getNodeType('Neos.ContentRepository:Base')->getAutoCreatedChildNodes();
 
-        $this->assertArrayHasKey('nodename', $autoCreatedChildNodes);
+        self::assertArrayHasKey('nodename', $autoCreatedChildNodes);
     }
 }

@@ -34,6 +34,6 @@ class UriBuilderTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setFusionPath('uriBuilder/foo');
-        $this->assertStringContainsString('/neos/flow/test/http/foo', $view->render());
+        self::assertStringContainsString('/neos/flow/test/http/foo', $view->render());
     }
 }

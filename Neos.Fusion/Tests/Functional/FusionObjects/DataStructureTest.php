@@ -24,7 +24,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         $view = $this->buildView();
 
         $view->setFusionPath('dataStructure/basicOrdering');
-        $this->assertEquals([10 => 'Xtest10', 100 => 'Xtest100'], $view->render());
+        self::assertEquals([10 => 'Xtest10', 100 => 'Xtest100'], $view->render());
     }
 
     /**
@@ -35,7 +35,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         $view = $this->buildView();
 
         $view->setFusionPath('dataStructure/positionalOrdering');
-        $this->assertEquals(['c' => 'Xbefore', 'f' => 'Xmiddle', 'a' => 'Xafter'], $view->render());
+        self::assertEquals(['c' => 'Xbefore', 'f' => 'Xmiddle', 'a' => 'Xafter'], $view->render());
     }
 
     /**
@@ -46,7 +46,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         $view = $this->buildView();
 
         $view->setFusionPath('dataStructure/startEndOrdering');
-        $this->assertEquals(['c' => 'Xbefore', 'f' => 'Xmiddle', 'a' => 'Xafter'], $view->render());
+        self::assertEquals(['c' => 'Xbefore', 'f' => 'Xmiddle', 'a' => 'Xafter'], $view->render());
     }
 
     /**
@@ -57,7 +57,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         $view = $this->buildView();
 
         $view->setFusionPath('dataStructure/advancedStartEndOrdering');
-        $this->assertEquals(['e' => 'Xe', 'd' => 'Xd', 'foobar' => 'Xfoobar', 'f' => 'Xf', 'g' => 'Xg', 100 => 'X100', 'b' => 'Xb', 'a' => 'Xa', 'c' => 'Xc'], $view->render());
+        self::assertEquals(['e' => 'Xe', 'd' => 'Xd', 'foobar' => 'Xfoobar', 'f' => 'Xf', 'g' => 'Xg', 100 => 'X100', 'b' => 'Xb', 'a' => 'Xa', 'c' => 'Xc'], $view->render());
     }
 
     /**
@@ -68,6 +68,6 @@ class DataStructureTest extends AbstractFusionObjectTest
         $view = $this->buildView();
 
         $view->setFusionPath('dataStructure/ignoreProperties');
-        $this->assertEquals(['c' => 'Xbefore', 'a' => 'Xafter'], $view->render());
+        self::assertEquals(['c' => 'Xbefore', 'a' => 'Xafter'], $view->render());
     }
 }

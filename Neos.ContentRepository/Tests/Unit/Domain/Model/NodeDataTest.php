@@ -76,10 +76,10 @@ class NodeDataTest extends UnitTestCase
     public function constructorSetsPathWorkspaceAndIdentifier()
     {
         $node = new NodeData('/foo/bar', $this->mockWorkspace, '12345abcde');
-        $this->assertSame('/foo/bar', $node->getPath());
-        $this->assertSame('bar', $node->getName());
-        $this->assertSame($this->mockWorkspace, $node->getWorkspace());
-        $this->assertSame('12345abcde', $node->getIdentifier());
+        self::assertSame('/foo/bar', $node->getPath());
+        self::assertSame('bar', $node->getName());
+        self::assertSame($this->mockWorkspace, $node->getWorkspace());
+        self::assertSame('12345abcde', $node->getIdentifier());
     }
 
     /**
@@ -115,7 +115,7 @@ class NodeDataTest extends UnitTestCase
     {
         $this->nodeData->_call('setPath', $path, false);
         // dummy assertion to avoid PHPUnit warning in strict mode
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     /**
@@ -140,16 +140,16 @@ class NodeDataTest extends UnitTestCase
     public function getDepthReturnsThePathDepthOfTheNode()
     {
         $node = new NodeData('/', $this->mockWorkspace);
-        $this->assertEquals(0, $node->getDepth());
+        self::assertEquals(0, $node->getDepth());
 
         $node = new NodeData('/foo', $this->mockWorkspace);
-        $this->assertEquals(1, $node->getDepth());
+        self::assertEquals(1, $node->getDepth());
 
         $node = new NodeData('/foo/bar', $this->mockWorkspace);
-        $this->assertEquals(2, $node->getDepth());
+        self::assertEquals(2, $node->getDepth());
 
         $node = new NodeData('/foo/bar/baz/quux', $this->mockWorkspace);
-        $this->assertEquals(4, $node->getDepth());
+        self::assertEquals(4, $node->getDepth());
     }
 
     /**
@@ -160,10 +160,10 @@ class NodeDataTest extends UnitTestCase
         /** @var Workspace|\PHPUnit_Framework_MockObject_MockObject $newWorkspace */
         $newWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
-        $this->assertSame($this->mockWorkspace, $this->nodeData->getWorkspace());
+        self::assertSame($this->mockWorkspace, $this->nodeData->getWorkspace());
 
         $this->nodeData->setWorkspace($newWorkspace);
-        $this->assertSame($newWorkspace, $this->nodeData->getWorkspace());
+        self::assertSame($newWorkspace, $this->nodeData->getWorkspace());
     }
 
     /**
@@ -172,7 +172,7 @@ class NodeDataTest extends UnitTestCase
     public function theIndexCanBeSetAndRetrieved()
     {
         $this->nodeData->setIndex(2);
-        $this->assertEquals(2, $this->nodeData->getIndex());
+        self::assertEquals(2, $this->nodeData->getIndex());
     }
 
     /**
@@ -181,7 +181,7 @@ class NodeDataTest extends UnitTestCase
     public function getParentReturnsNullForARootNode()
     {
         $node = new NodeData('/', $this->mockWorkspace);
-        $this->assertNull($node->getParent());
+        self::assertNull($node->getParent());
     }
 
     /**
@@ -192,10 +192,10 @@ class NodeDataTest extends UnitTestCase
         $contentObject = new \stdClass();
 
         $this->nodeData->setContentObject($contentObject);
-        $this->assertSame($contentObject, $this->nodeData->getContentObject());
+        self::assertSame($contentObject, $this->nodeData->getContentObject());
 
         $this->nodeData->unsetContentObject();
-        $this->assertNull($this->nodeData->getContentObject());
+        self::assertNull($this->nodeData->getContentObject());
     }
 
     /**
@@ -215,17 +215,17 @@ class NodeDataTest extends UnitTestCase
         $this->nodeData->setProperty('title', 'My Title');
         $this->nodeData->setProperty('body', 'My Body');
 
-        $this->assertTrue($this->nodeData->hasProperty('title'));
-        $this->assertFalse($this->nodeData->hasProperty('iltfh'));
+        self::assertTrue($this->nodeData->hasProperty('title'));
+        self::assertFalse($this->nodeData->hasProperty('iltfh'));
 
-        $this->assertEquals('My Body', $this->nodeData->getProperty('body'));
-        $this->assertEquals('My Title', $this->nodeData->getProperty('title'));
+        self::assertEquals('My Body', $this->nodeData->getProperty('body'));
+        self::assertEquals('My Title', $this->nodeData->getProperty('title'));
 
-        $this->assertEquals(['title' => 'My Title', 'body' => 'My Body'], $this->nodeData->getProperties());
+        self::assertEquals(['title' => 'My Title', 'body' => 'My Body'], $this->nodeData->getProperties());
 
         $actualPropertyNames = $this->nodeData->getPropertyNames();
         sort($actualPropertyNames);
-        $this->assertEquals(['body', 'title'], $actualPropertyNames);
+        self::assertEquals(['body', 'title'], $actualPropertyNames);
     }
 
     /**
@@ -234,15 +234,15 @@ class NodeDataTest extends UnitTestCase
     public function propertiesCanBeRemoved()
     {
         $this->nodeData->setProperty('title', 'My Title');
-        $this->assertTrue($this->nodeData->hasProperty('title'));
+        self::assertTrue($this->nodeData->hasProperty('title'));
 
         $this->nodeData->removeProperty('title');
 
-        $this->assertFalse($this->nodeData->hasProperty('title'));
+        self::assertFalse($this->nodeData->hasProperty('title'));
 
-        $this->assertNotContains('title', $this->nodeData->getPropertyNames());
+        self::assertNotContains('title', $this->nodeData->getPropertyNames());
 
-        $this->assertArrayNotHasKey('title', $this->nodeData->getProperties());
+        self::assertArrayNotHasKey('title', $this->nodeData->getProperties());
     }
 
     /**
@@ -252,21 +252,21 @@ class NodeDataTest extends UnitTestCase
     {
         $this->nodeData->setProperty('value', null);
 
-        $this->assertTrue($this->nodeData->hasProperty('value'));
+        self::assertTrue($this->nodeData->hasProperty('value'));
 
-        $this->assertNull($this->nodeData->getProperty('value'));
+        self::assertNull($this->nodeData->getProperty('value'));
 
-        $this->assertContains('value', $this->nodeData->getPropertyNames());
+        self::assertContains('value', $this->nodeData->getPropertyNames());
 
-        $this->assertArrayHasKey('value', $this->nodeData->getProperties());
+        self::assertArrayHasKey('value', $this->nodeData->getProperties());
 
         $this->nodeData->removeProperty('value');
 
-        $this->assertFalse($this->nodeData->hasProperty('value'));
+        self::assertFalse($this->nodeData->hasProperty('value'));
 
-        $this->assertNotContains('value', $this->nodeData->getPropertyNames());
+        self::assertNotContains('value', $this->nodeData->getPropertyNames());
 
-        $this->assertArrayNotHasKey('value', $this->nodeData->getProperties());
+        self::assertArrayNotHasKey('value', $this->nodeData->getProperties());
     }
 
     /**
@@ -294,8 +294,8 @@ class NodeDataTest extends UnitTestCase
 
         $this->nodeData->removeProperty('title');
 
-        $this->assertTrue($this->nodeData->hasProperty('title'));
-        $this->assertEquals('My Title', $this->nodeData->getProperty('title'));
+        self::assertTrue($this->nodeData->hasProperty('title'));
+        self::assertEquals('My Title', $this->nodeData->getProperty('title'));
     }
 
     /**
@@ -316,23 +316,23 @@ class NodeDataTest extends UnitTestCase
 
         $this->nodeData->setContentObject($contentObject);
 
-        $this->assertTrue($this->nodeData->hasProperty('title'));
-        $this->assertFalse($this->nodeData->hasProperty('iltfh'));
+        self::assertTrue($this->nodeData->hasProperty('title'));
+        self::assertFalse($this->nodeData->hasProperty('iltfh'));
 
-        $this->assertEquals('My Body', $this->nodeData->getProperty('body'));
-        $this->assertEquals('My Title', $this->nodeData->getProperty('title'));
+        self::assertEquals('My Body', $this->nodeData->getProperty('body'));
+        self::assertEquals('My Title', $this->nodeData->getProperty('title'));
 
-        $this->assertEquals(['title' => 'My Title', 'body' => 'My Body'], $this->nodeData->getProperties());
+        self::assertEquals(['title' => 'My Title', 'body' => 'My Body'], $this->nodeData->getProperties());
 
         $actualPropertyNames = $this->nodeData->getPropertyNames();
         sort($actualPropertyNames);
-        $this->assertEquals(['body', 'title'], $actualPropertyNames);
+        self::assertEquals(['body', 'title'], $actualPropertyNames);
 
         $this->nodeData->setProperty('title', 'My Other Title');
         $this->nodeData->setProperty('body', 'My Other Body');
 
-        $this->assertEquals('My Other Body', $this->nodeData->getProperty('body'));
-        $this->assertEquals('My Other Title', $this->nodeData->getProperty('title'));
+        self::assertEquals('My Other Body', $this->nodeData->getProperty('body'));
+        self::assertEquals('My Other Title', $this->nodeData->getProperty('title'));
     }
 
     /**
@@ -369,11 +369,11 @@ class NodeDataTest extends UnitTestCase
 
         $this->inject($this->nodeData, 'nodeTypeManager', $mockNodeTypeManager);
 
-        $this->assertEquals('unstructured', $this->nodeData->getNodeType()->getName());
+        self::assertEquals('unstructured', $this->nodeData->getNodeType()->getName());
 
         $myNodeType = $mockNodeTypeManager->getNodeType('typo3:mycontent');
         $this->nodeData->setNodeType($myNodeType);
-        $this->assertEquals($myNodeType, $this->nodeData->getNodeType());
+        self::assertEquals($myNodeType, $this->nodeData->getNodeType());
     }
 
     /**
@@ -392,7 +392,7 @@ class NodeDataTest extends UnitTestCase
         $this->inject($this->nodeData, 'nodeTypeManager', $mockNodeTypeManager);
         $this->inject($this->nodeData, 'nodeType', $mockNonExistingNodeType);
 
-        $this->assertSame($mockFallbackNodeType, $this->nodeData->getNodeType());
+        self::assertSame($mockFallbackNodeType, $this->nodeData->getNodeType());
     }
 
     /**
@@ -418,9 +418,9 @@ class NodeDataTest extends UnitTestCase
         $currentNode->expects($this->once())->method('filterNodeByContext')->will($this->returnArgument(0));
 
         $newNode = $currentNode->createNode('foo', 'mynodetype');
-        $this->assertSame($currentNode, $newNode->getParent());
-        $this->assertEquals(1, $newNode->getIndex());
-        $this->assertEquals('mynodetype', $newNode->getNodeType()->getName());
+        self::assertSame($currentNode, $newNode->getParent());
+        self::assertEquals(1, $newNode->getIndex());
+        self::assertEquals('mynodetype', $newNode->getNodeType()->getName());
     }
 
     /**
@@ -457,7 +457,7 @@ class NodeDataTest extends UnitTestCase
         $this->inject($currentNode, 'nodeDataRepository', $nodeDataRepository);
         $currentNode->expects($this->once())->method('normalizePath')->with('/foo/quux')->will($this->returnValue('/foo/quux'));
 
-        $this->assertNull($currentNode->getNode('/foo/quux'));
+        self::assertNull($currentNode->getNode('/foo/quux'));
     }
 
     /**
@@ -479,8 +479,8 @@ class NodeDataTest extends UnitTestCase
         $nodeData = $this->getAccessibleMock(NodeData::class, ['dummy'], ['/foo', $this->mockWorkspace]);
         $this->inject($nodeData, 'nodeDataRepository', $nodeDataRepository);
 
-        $this->assertSame($childNodeDataResults, $nodeData->_call('getChildNodeData', 'mynodetype'));
-        $this->assertSame([], $nodeData->_call('getChildNodeData', 'notexistingnodetype'));
+        self::assertSame($childNodeDataResults, $nodeData->_call('getChildNodeData', 'mynodetype'));
+        self::assertSame([], $nodeData->_call('getChildNodeData', 'notexistingnodetype'));
     }
 
 
@@ -504,7 +504,7 @@ class NodeDataTest extends UnitTestCase
 
         $currentNode->remove();
 
-        $this->assertTrue($currentNode->isRemoved());
+        self::assertTrue($currentNode->isRemoved());
     }
 
     /**
@@ -556,9 +556,9 @@ class NodeDataTest extends UnitTestCase
     {
         $this->nodeData->_set('accessRoles', $accessRoles);
         if ($expectedResult === true) {
-            $this->assertTrue($this->nodeData->hasAccessRestrictions());
+            self::assertTrue($this->nodeData->hasAccessRestrictions());
         } else {
-            $this->assertFalse($this->nodeData->hasAccessRestrictions());
+            self::assertFalse($this->nodeData->hasAccessRestrictions());
         }
     }
 
@@ -567,7 +567,7 @@ class NodeDataTest extends UnitTestCase
      */
     public function isAccessibleReturnsTrueIfAccessRolesIsNotSet()
     {
-        $this->assertTrue($this->nodeData->isAccessible());
+        self::assertTrue($this->nodeData->isAccessible());
     }
 
     /**
@@ -582,7 +582,7 @@ class NodeDataTest extends UnitTestCase
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
 
         $this->nodeData->setAccessRoles(['SomeOtherRole']);
-        $this->assertTrue($this->nodeData->isAccessible());
+        self::assertTrue($this->nodeData->isAccessible());
     }
 
     /**
@@ -597,7 +597,7 @@ class NodeDataTest extends UnitTestCase
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
 
         $this->nodeData->setAccessRoles(['SomeRole']);
-        $this->assertFalse($this->nodeData->isAccessible());
+        self::assertFalse($this->nodeData->isAccessible());
     }
 
     /**
@@ -613,7 +613,7 @@ class NodeDataTest extends UnitTestCase
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
 
         $this->nodeData->setAccessRoles(['SomeRole', 'SomeOtherRole']);
-        $this->assertTrue($this->nodeData->isAccessible());
+        self::assertTrue($this->nodeData->isAccessible());
     }
 
     /**
@@ -629,7 +629,7 @@ class NodeDataTest extends UnitTestCase
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
 
         $this->nodeData->setAccessRoles(['SomeRole', 'Everyone', 'SomeOtherRole']);
-        $this->assertTrue($this->nodeData->isAccessible());
+        self::assertTrue($this->nodeData->isAccessible());
     }
 
     /**
@@ -667,7 +667,7 @@ class NodeDataTest extends UnitTestCase
             'newProperty' => 'newPropertyValue',
             'someProperty' => 'someOverriddenPropertyValue'
         ];
-        $this->assertEquals($expectedProperties, $this->nodeData->getProperties());
+        self::assertEquals($expectedProperties, $this->nodeData->getProperties());
     }
 
     /**
@@ -682,7 +682,7 @@ class NodeDataTest extends UnitTestCase
         $otherWorkspace->expects($this->any())->method('getName')->will($this->returnValue('other'));
 
         $result = $this->nodeData->matchesWorkspaceAndDimensions($otherWorkspace, null);
-        $this->assertFalse($result);
+        self::assertFalse($result);
     }
 
     /**
@@ -695,7 +695,7 @@ class NodeDataTest extends UnitTestCase
         $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
         $result = $this->nodeData->matchesWorkspaceAndDimensions($this->mockWorkspace, ['language' => ['de_DE', 'mul_ZZ']]);
-        $this->assertFalse($result);
+        self::assertFalse($result);
     }
 
     /**
@@ -708,7 +708,7 @@ class NodeDataTest extends UnitTestCase
         $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
         $result = $this->nodeData->matchesWorkspaceAndDimensions($this->mockWorkspace, ['language' => ['de_DE', 'mul_ZZ']]);
-        $this->assertTrue($result);
+        self::assertTrue($result);
     }
 
     /**
@@ -719,7 +719,7 @@ class NodeDataTest extends UnitTestCase
         $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['c' => ['c1', 'c2'], 'a' => ['a1']]);
         $dimensionValues = $nodeData->getDimensionValues();
 
-        $this->assertSame(['a' => ['a1'], 'c' => ['c1', 'c2']], $dimensionValues);
+        self::assertSame(['a' => ['a1'], 'c' => ['c1', 'c2']], $dimensionValues);
     }
 
     /**
@@ -730,12 +730,12 @@ class NodeDataTest extends UnitTestCase
         $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['c' => ['c1', 'c2'], 'a' => ['a1']]);
         $dimensionsHash = $nodeData->getDimensionsHash();
 
-        $this->assertSame('955c716a191a0957f205ea9376600e72', $dimensionsHash);
+        self::assertSame('955c716a191a0957f205ea9376600e72', $dimensionsHash);
 
         $nodeData = new NodeData('/foo/bar', $this->mockWorkspace, null, ['a' => ['a1'], 'c' => ['c2', 'c1']]);
         $dimensionsHash = $nodeData->getDimensionsHash();
 
-        $this->assertSame('955c716a191a0957f205ea9376600e72', $dimensionsHash);
+        self::assertSame('955c716a191a0957f205ea9376600e72', $dimensionsHash);
     }
 
     /**
@@ -760,7 +760,7 @@ class NodeDataTest extends UnitTestCase
         $nodeData->setDimensions($dimensionsToSet);
         $setDimensionValues = $nodeData->getDimensionValues();
 
-        $this->assertSame($expectedDimensionValues, $setDimensionValues);
+        self::assertSame($expectedDimensionValues, $setDimensionValues);
     }
 
     /**
@@ -785,7 +785,7 @@ class NodeDataTest extends UnitTestCase
         $nodeData->setDimensions($dimensionsToSet);
         $setDimensionValues = $nodeData->getDimensionValues();
 
-        $this->assertSame($expectedDimensionValues, $setDimensionValues);
+        self::assertSame($expectedDimensionValues, $setDimensionValues);
     }
 
     /**
@@ -809,6 +809,6 @@ class NodeDataTest extends UnitTestCase
         $nodeData->setDimensions($dimensionsToSet);
         $setDimensionValues = $nodeData->getDimensionValues();
 
-        $this->assertSame($expectedDimensionValues, $setDimensionValues);
+        self::assertSame($expectedDimensionValues, $setDimensionValues);
     }
 }

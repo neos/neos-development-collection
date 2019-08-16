@@ -44,6 +44,6 @@ class DomainRepositoryTest extends UnitTestCase
         $domainRepository->_set('domainMatchingStrategy', $mockDomainMatchingStrategy);
 
         $actualDomains = $domainRepository->findByHost('myhost');
-        $this->assertSame($expectedDomains, $actualDomains);
+        self::assertSame($expectedDomains, $actualDomains);
     }
 }

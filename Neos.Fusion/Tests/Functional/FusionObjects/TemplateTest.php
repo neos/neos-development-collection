@@ -24,7 +24,7 @@ class TemplateTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('template/basicTemplate');
-        $this->assertEquals('Test Templatefoo', $view->render());
+        self::assertEquals('Test Templatefoo', $view->render());
     }
 
     /**
@@ -34,7 +34,7 @@ class TemplateTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('template/basicTemplateWithEelVariable');
-        $this->assertEquals('Test Templatefoobar', $view->render());
+        self::assertEquals('Test Templatefoobar', $view->render());
     }
 
     /**
@@ -44,7 +44,7 @@ class TemplateTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('template/partial');
-        $this->assertEquals('Test Template--partial contents', $view->render());
+        self::assertEquals('Test Template--partial contents', $view->render());
     }
 
     /**
@@ -54,7 +54,7 @@ class TemplateTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('template/layout');
-        $this->assertEquals('layout start -- Test Template -- layout end', $view->render());
+        self::assertEquals('layout start -- Test Template -- layout end', $view->render());
     }
 
     /**
@@ -64,7 +64,7 @@ class TemplateTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('template/offsetAccessException');
-        $this->assertStringStartsWith('Test TemplateException while rendering template', $view->render());
+        self::assertStringStartsWith('Test TemplateException while rendering template', $view->render());
     }
 
     /**
@@ -74,6 +74,6 @@ class TemplateTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('template/overrideWithSimpleValueInTemplate');
-        $this->assertSame('3', $view->render(), 'JSON encoded value should be a number');
+        self::assertSame('3', $view->render(), 'JSON encoded value should be a number');
     }
 }

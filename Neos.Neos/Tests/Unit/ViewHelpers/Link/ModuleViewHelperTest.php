@@ -134,6 +134,6 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
     public function callingRenderReturnsTagBuildersRenderResult(): void
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['path' => 'path']);
-        $this->assertSame('renderingResult', $this->viewHelper->render());
+        self::assertSame('renderingResult', $this->viewHelper->render());
     }
 }

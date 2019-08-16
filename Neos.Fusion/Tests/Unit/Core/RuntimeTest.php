@@ -40,7 +40,7 @@ class RuntimeTest extends UnitTestCase
 
         $output = $runtime->render('/foo/bar');
 
-        $this->assertEquals('Exception Message', $output);
+        self::assertEquals('Exception Message', $output);
     }
 
     /**
