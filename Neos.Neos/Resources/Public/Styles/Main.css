@@ -9863,7 +9863,7 @@ View-port and gutter both get little noise background to give it a real feel.
       height: 3px;
       border-top: 3px solid #fff;
       border-bottom: 3px solid #fff;
-      content: ""; }
+      content: ''; }
     .neos .neos-menu-button:after {
       display: block;
       position: absolute;
@@ -9872,7 +9872,7 @@ View-port and gutter both get little noise background to give it a real feel.
       width: 22px;
       height: 3px;
       background-color: #fff;
-      content: ""; }
+      content: ''; }
   .neos .neos-menu-panel {
     display: none;
     position: fixed;
@@ -9888,7 +9888,7 @@ View-port and gutter both get little noise background to give it a real feel.
     overflow-x: hidden;
     overflow-y: auto;
     transition-property: left, width;
-    transition-duration: .2s;
+    transition-duration: 0.2s;
     font-family: 'Noto Sans', sans-serif;
     -webkit-font-smoothing: antialiased; }
     .neos-menu-panel-open .neos .neos-menu-panel {
@@ -9915,6 +9915,14 @@ View-port and gutter both get little noise background to give it a real feel.
       height: 100%; }
     .neos .neos-menu-panel .neos-menu-section {
       position: relative; }
+      .neos .neos-menu-panel .neos-menu-section .neos-menu-section-header .neos-menu-panel-toggle {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: transparent; }
+        .neos .neos-menu-panel .neos-menu-section .neos-menu-section-header .neos-menu-panel-toggle:hover i {
+          color: #00b5ff;
+          text-decoration: none; }
       .neos .neos-menu-panel .neos-menu-section .neos-menu-headline {
         box-sizing: border-box;
         padding-left: 54px;
@@ -9938,7 +9946,7 @@ View-port and gutter both get little noise background to give it a real feel.
           .neos-menu-panel-sticky .neos .neos-menu-panel .neos-menu-section .neos-menu-collapse:hover {
             background-color: transparent; }
         .neos .neos-menu-panel .neos-menu-section .neos-menu-collapse::before {
-          content: "›";
+          content: '›';
           font-size: 26px;
           font-weight: normal;
           display: inline-block;
@@ -9966,7 +9974,8 @@ View-port and gutter both get little noise background to give it a real feel.
         text-overflow: ellipsis;
         padding-left: 38px;
         padding-right: 16px; }
-        .neos .neos-menu-panel .neos-menu-section a.neos-active,
+        .neos .neos-menu-panel .neos-menu-section a:hover, .neos .neos-menu-panel .neos-menu-section a.neos-active,
+        .neos .neos-menu-panel .neos-menu-section span.neos-menu-item:hover,
         .neos .neos-menu-panel .neos-menu-section span.neos-menu-item.neos-active {
           color: #00b5ff; }
         .neos .neos-menu-panel .neos-menu-section a.neos-disabled,
@@ -9981,7 +9990,7 @@ View-port and gutter both get little noise background to give it a real feel.
           left: 0;
           width: 54px;
           height: 40px;
-          font-size: 20px;
+          font-size: 14px;
           line-height: 40px;
           vertical-align: middle;
           text-align: center;
@@ -9994,30 +10003,6 @@ View-port and gutter both get little noise background to give it a real feel.
         .neos-menu-panel-sticky .neos .neos-menu-panel .neos-menu-section .neos-menu-list a, .neos-menu-panel-sticky
         .neos .neos-menu-panel .neos-menu-section .neos-menu-list span.neos-menu-item {
           padding-left: 0; }
-    .neos .neos-menu-panel #neos-menu-sticky-button {
-      position: absolute;
-      z-index: 10015;
-      bottom: 0;
-      left: 0;
-      width: 53px;
-      height: 42px;
-      background-color: #222;
-      background-image: none;
-      text-shadow: none;
-      box-shadow: none; }
-      .neos .neos-menu-panel #neos-menu-sticky-button::before {
-        position: relative;
-        top: 1px;
-        font-family: 'Noto Sans', sans-serif;
-        -webkit-font-smoothing: antialiased;
-        font-size: 26px;
-        line-height: 26px;
-        font-weight: normal;
-        content: "‹"; }
-      .neos .neos-menu-panel #neos-menu-sticky-button:hover {
-        background-color: #00b5ff; }
-      .neos .neos-menu-panel #neos-menu-sticky-button.neos-pressed::before {
-        content: "›"; }
   .neos #neos-navigate-button {
     position: relative;
     background-color: #222;
