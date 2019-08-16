@@ -103,7 +103,7 @@ class PluginImplementation extends AbstractArrayFusionObject
     {
         /** @var $parentRequest ActionRequest */
         $parentRequest = $this->runtime->getControllerContext()->getRequest();
-        $pluginRequest = new ActionRequest($parentRequest);
+        $pluginRequest = $parentRequest->createSubRequest();
         $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
         $this->passArgumentsToPluginRequest($pluginRequest);
 

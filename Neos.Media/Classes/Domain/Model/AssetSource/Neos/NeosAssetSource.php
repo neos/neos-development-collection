@@ -177,7 +177,7 @@ final class NeosAssetSource implements AssetSourceInterface
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if ($requestHandler instanceof HttpRequestHandlerInterface) {
-            return new ActionRequest($requestHandler->getHttpRequest());
+            return ActionRequest::fromHttpRequest($requestHandler->getHttpRequest());
         }
         return null;
     }

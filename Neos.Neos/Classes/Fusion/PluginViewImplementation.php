@@ -45,7 +45,7 @@ class PluginViewImplementation extends PluginImplementation
     {
         /** @var $parentRequest ActionRequest */
         $parentRequest = $this->runtime->getControllerContext()->getRequest();
-        $pluginRequest = new ActionRequest($parentRequest);
+        $pluginRequest = $parentRequest->createSubRequest();
 
         if (!$this->pluginViewNode instanceof NodeInterface) {
             $pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());

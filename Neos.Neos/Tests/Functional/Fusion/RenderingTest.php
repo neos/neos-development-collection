@@ -370,7 +370,7 @@ class RenderingTest extends AbstractNodeTest
     protected function buildMockControllerContext()
     {
         $httpRequest = new ServerRequest('GET', new Uri('http://foo.bar/bazfoo'));
-        $request = new ActionRequest($httpRequest);
+        $request = ActionRequest::fromHttpRequest($httpRequest);
         $response = new ActionResponse();
         /** @var Arguments $mockArguments */
         $mockArguments = $this->getMockBuilder(Arguments::class)->disableOriginalConstructor()->getMock();

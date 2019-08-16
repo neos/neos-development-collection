@@ -56,7 +56,7 @@ class RuntimeFactory
         $httpRequest = ServerRequest::fromGlobals();
 
         /** @var ActionRequest $request */
-        $request = new ActionRequest($httpRequest);
+        $request = ActionRequest::fromHttpRequest($httpRequest);
 
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
