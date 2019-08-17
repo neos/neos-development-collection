@@ -113,6 +113,7 @@
         top: 0;
         right: 0;
         background-color: transparent;
+        outline: none;
 
         &:hover {
           i {
@@ -120,6 +121,19 @@
             text-decoration: none;
           }
         }
+      }
+    }
+
+    .neos-menu-section-content {
+      display: none;
+      opacity: 0;
+    }
+
+    &.neos-open {
+      .neos-menu-section-content {
+        display: block;
+        opacity: 1;
+        transition: opacity 0.25s ease-in;
       }
     }
 
@@ -134,44 +148,6 @@
 
       .neos-menu-panel-sticky & {
         padding-left: 0;
-      }
-    }
-
-    .neos-menu-collapse {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: $unit;
-      height: $unit;
-      cursor: pointer;
-
-      &:hover {
-        background-color: $blue;
-        color: #fff;
-
-        .neos-menu-panel-sticky & {
-          background-color: transparent;
-        }
-      }
-
-      &::before {
-        content: '›';
-        font-size: 26px;
-        font-weight: normal;
-        display: inline-block;
-        position: relative;
-        top: 0;
-        line-height: $unit;
-      }
-
-      &.neos-collapsed::before {
-        rotate: 90deg;
-        left: 19px;
-      }
-
-      &.neos-open::before {
-        rotate: -90deg;
-        left: 13px;
       }
     }
 

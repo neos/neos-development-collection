@@ -6,8 +6,8 @@
   ></button>
   <div class="neos-menu-panel">
     <div class="neos-menu-wrapper">
-      <div class="neos-menu-section">
-        <div class="neos-menu-section-header" aria-expanded="true">
+      <div class="neos-menu-section" data-key="content">
+        <div class="neos-menu-section-header" aria-expanded="false">
           <h2>
             <f:link.action
               package="Neos.Neos"
@@ -21,7 +21,7 @@
             </f:link.action>
           </h2>
           <button type="button" class="neos-menu-panel-toggle" role="button">
-            <i class="fas fa-chevron-circle-up"></i>
+            <i class="fas fa-chevron-circle-down"></i>
           </button>
         </div>
         <f:if condition="{sites}">
@@ -60,12 +60,12 @@
 </div>
 
 <f:section name="moduleMenu">
-  <div class="neos-menu-section">
-    <div class="neos-menu-section-header" aria-expanded="true">
+  <div class="neos-menu-section" data-key="{module.modulePath}">
+    <div class="neos-menu-section-header" aria-expanded="false">
       <h2>
         <neos:link.module
           path="{module.modulePath}"
-          class="neos-menu-headline{f:if(condition: '{module.modulePath} === {modulePath}', then: ' neos-active')}"
+          class="neos-menu-headline"
         >
           <i
             class="{f:if(condition: module.icon, then: module.icon, else: 'fas fa-puzzle-piece')}"
@@ -75,7 +75,7 @@
         </neos:link.module>
       </h2>
       <button type="button" class="neos-menu-panel-toggle" role="button">
-        <i class="fas fa-chevron-circle-up"></i>
+        <i class="fas fa-chevron-circle-down"></i>
       </button>
     </div>
     <f:if condition="{module.submodules}">
