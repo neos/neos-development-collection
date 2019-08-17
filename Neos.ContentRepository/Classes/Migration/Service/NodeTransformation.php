@@ -109,12 +109,12 @@ class NodeTransformation
     protected function resolveTransformationClassName($transformationName)
     {
         $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($transformationName);
-        if ($resolvedObjectName !== false) {
+        if ($resolvedObjectName !== null) {
             return $resolvedObjectName;
         }
 
         $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('Neos\ContentRepository\Migration\Transformations\\' . $transformationName);
-        if ($resolvedObjectName !== false) {
+        if ($resolvedObjectName !== null) {
             return $resolvedObjectName;
         }
 
