@@ -12,7 +12,7 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Uri;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -305,19 +305,20 @@ class LinkingService
             $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         }
 
+        $baseUri = $request->getHttpRequest()->getAttribute(ServerRequestAttributes::BASE_URI);
         if ($site->hasActiveDomains()) {
-            $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
+            $requestUriHost = $baseUri->getHost();
             $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
                 return $domain->getHostname();
             })->toArray();
             if (!in_array($requestUriHost, $activeHostPatterns, true)) {
                 $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
             } elseif ($absolute === true) {
-                $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+                $uri = $baseUri. ltrim($uri, '/');
             }
         } elseif ($absolute === true) {
             if (substr($uri, 0, 7) !== 'http://' && substr($uri, 0, 8) !== 'https://') {
-                $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+                $uri = $baseUri . ltrim($uri, '/');
             }
         }
 

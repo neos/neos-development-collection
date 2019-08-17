@@ -11,9 +11,11 @@ namespace Neos\Fusion\FusionObjects\Http;
  * source code.
  */
 
-use Neos\Flow\Http\Headers;
-use Neos\Flow\Http\Response;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Response Head generate a standard HTTP response head
@@ -21,6 +23,12 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
  */
 class ResponseHeadImplementation extends AbstractFusionObject
 {
+    /**
+     * @Flow\Inject
+     * @var ResponseFactoryInterface
+     */
+    protected $responseFactory;
+
     /**
      * Get HTTP protocol version
      *
@@ -44,7 +52,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
         if ($statusCode === null) {
             $statusCode = 200;
         }
-        if (Response::getStatusMessageByCode($statusCode) === 'Unknown Status') {
+        if (ResponseInformationHelper::getStatusMessageByCode($statusCode) === 'Unknown Status') {
             throw new \InvalidArgumentException('Unknown HTTP status code', 1412085703);
         }
         return (integer)$statusCode;
@@ -53,7 +61,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
     /**
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         $headers = $this->fusionValue('headers');
         if (!is_array($headers)) {
@@ -65,20 +73,19 @@ class ResponseHeadImplementation extends AbstractFusionObject
     /**
      * Just return the processed value
      *
-     * @return mixed
+     * @return ResponseInterface
      */
-    public function evaluate()
+    public function evaluate(): ResponseInterface
     {
-        // TODO: Adjust for Neos 5.0 (PSR-7)
-        $httpResponse = new Response();
-        $httpResponse->setVersion($this->getHttpVersion());
-        $httpResponse->setStatus($this->getStatusCode());
-        $httpResponse->setHeaders(new Headers());
-
-        foreach ($this->getHeaders() as $name => $value) {
-            $httpResponse->setHeader($name, $value);
+        $httpVersion = $this->getHttpVersion();
+        if (strpos($httpVersion, 'HTTP/') === 0) {
+            $httpVersion = substr($httpVersion, 5);
         }
 
-        return implode("\r\n", $httpResponse->renderHeaders()) . "\r\n\r\n";
+        $response = $this->responseFactory->createResponse($this->getStatusCode())->withProtocolVersion($httpVersion);
+        foreach ($this->getHeaders() as $headerName => $headerValue) {
+            $response = $response->withHeader($headerName, $headerValue);
+        }
+        return $response;
     }
 }

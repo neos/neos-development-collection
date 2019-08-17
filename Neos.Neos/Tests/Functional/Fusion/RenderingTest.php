@@ -11,10 +11,11 @@ namespace Neos\Neos\Tests\Functional\Fusion;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\FlashMessageContainer;
@@ -369,9 +370,10 @@ class RenderingTest extends AbstractNodeTest
      */
     protected function buildMockControllerContext()
     {
-        $httpRequest = Request::create(new Uri('http://foo.bar/bazfoo'));
-        $request = new ActionRequest($httpRequest);
-        $response = new Response();
+        $httpRequest = new ServerRequest('GET', new Uri('http://foo.bar/bazfoo'));
+        $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::BASE_URI, new Uri('http://foo.bar/'));
+        $request = ActionRequest::fromHttpRequest($httpRequest);
+        $response = new ActionResponse();
         /** @var Arguments $mockArguments */
         $mockArguments = $this->getMockBuilder(Arguments::class)->disableOriginalConstructor()->getMock();
         $uriBuilder = new UriBuilder();

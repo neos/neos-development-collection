@@ -15,9 +15,9 @@ use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Neos\Service\LinkingService;
-use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Eel helper for the linking service
@@ -31,7 +31,7 @@ class LinkHelper implements ProtectedContextAwareInterface
     protected $linkingService;
 
     /**
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @return boolean
      */
     public function hasSupportedScheme($uri)
@@ -40,7 +40,7 @@ class LinkHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @return string
      */
     public function getScheme($uri)
@@ -49,7 +49,7 @@ class LinkHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @param NodeInterface $contextNode
      * @param ControllerContext $controllerContext
      * @return string
@@ -60,7 +60,7 @@ class LinkHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @return string
      */
     public function resolveAssetUri($uri)
@@ -69,7 +69,7 @@ class LinkHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @param NodeInterface $contextNode
      * @return NodeInterface|AssetInterface|NULL
      */

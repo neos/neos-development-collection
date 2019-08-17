@@ -132,8 +132,7 @@ class ContentController extends ActionController
      */
     public function uploadAssetAction(Asset $asset, string $metadata, NodeInterface $node, string $propertyName)
     {
-        $this->response->setHeader('Content-Type', 'application/json');
-
+        $this->response->setContentType('application/json');
         if ($metadata !== 'Asset' && $metadata !== 'Image') {
             $this->response->setStatus(400);
             $result = ['error' => 'Invalid "metadata" type: ' . $metadata];
@@ -190,7 +189,7 @@ class ContentController extends ActionController
      */
     public function imageWithMetadataAction(ImageInterface $image)
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
         $imageProperties = $this->getImageInterfacePreviewData($image);
 
         return json_encode($imageProperties);
@@ -279,7 +278,7 @@ class ContentController extends ActionController
      */
     public function assetsWithMetadataAction(array $assets)
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
 
         $result = [];
         foreach ($assets as $asset) {
@@ -317,7 +316,7 @@ class ContentController extends ActionController
      */
     public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
 
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
         /** @var $node NodeInterface */
@@ -363,7 +362,7 @@ class ContentController extends ActionController
      */
     public function masterPluginsAction($workspaceName = 'live', array $dimensions = [])
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
 
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
         $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions($contentContext);
