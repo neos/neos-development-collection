@@ -122,6 +122,8 @@ class LinkingServiceTest extends FunctionalTestCase
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
         $httpRequest = $requestHandler->getHttpRequest();
         $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::BASE_URI, new Uri('http://neos.test/'));
+        $requestHandler->getComponentContext()->replaceHttpRequest($httpRequest);
+
 
         $this->controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder());
     }
@@ -236,7 +238,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceCanResolveAssetUri()
     {
-        self::assertSame('http://localhost/_Resources/Testing/Persistent/bed9a3e45070e97b921877e2bd9c35ba368beca0/Neos-logo_sRGB_color.pdf', $this->linkingService->resolveAssetUri('asset://1af89e5c-9e23-9a9d-ae15-1d77160cfb57'));
+        self::assertSame('http://neos.test/_Resources/Testing/Persistent/bed9a3e45070e97b921877e2bd9c35ba368beca0/Neos-logo_sRGB_color.pdf', $this->linkingService->resolveAssetUri('asset://1af89e5c-9e23-9a9d-ae15-1d77160cfb57'));
     }
 
     /**
