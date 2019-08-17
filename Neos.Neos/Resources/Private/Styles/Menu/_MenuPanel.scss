@@ -49,6 +49,12 @@
   }
 }
 
+.neos-menu {
+  .neos-menu-button {
+    outline: none;
+  }
+}
+
 .neos-menu-panel {
   display: none;
   position: fixed;
@@ -58,14 +64,17 @@
   width: $menuWidth;
   background-color: $grayDark;
   z-index: 10020;
-  border-top: 1px solid $grayLight;
   border-right: 1px solid $grayLight;
-  padding-top: 1px;
   overflow-x: hidden;
   overflow-y: auto;
   transition-property: left, width;
   transition-duration: 0.2s;
   @include font;
+
+  .neos-menu-wrapper {
+    margin: 0;
+    padding: 0;
+  }
 
   .neos-menu-panel-open & {
     left: 0;
