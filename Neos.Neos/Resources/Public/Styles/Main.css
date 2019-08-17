@@ -54,8 +54,6 @@
 .neos .neos-secondary-inspector .neos-close,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span::before,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span::before,
 .neos .neos-publish-menu.neos-button-group .neos-dropdown-toggle::before,
 .neos #neos-context-bar .chosen-container .chosen-single div:after,
 .neos #neos-context-bar .chosen-container .chosen-single abbr::after,
@@ -171,8 +169,6 @@
 .neos .neos-secondary-inspector .fa-pull-left.neos-close,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-left::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span.fa-pull-left::before,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span.fa-pull-left::before,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span.fa-pull-left::before,
 .neos .neos-publish-menu.neos-button-group .fa-pull-left.neos-dropdown-toggle::before,
 .neos #neos-context-bar .chosen-container .chosen-single div.fa-pull-left:after,
 .neos #neos-context-bar .chosen-container .chosen-single abbr.fa-pull-left::after,
@@ -212,8 +208,6 @@
 .neos .neos-secondary-inspector .fa-pull-right.neos-close,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span.fa-pull-right::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span.fa-pull-right::before,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span.fa-pull-right::before,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span.fa-pull-right::before,
 .neos .neos-publish-menu.neos-button-group .fa-pull-right.neos-dropdown-toggle::before,
 .neos #neos-context-bar .chosen-container .chosen-single div.fa-pull-right:after,
 .neos #neos-context-bar .chosen-container .chosen-single abbr.fa-pull-right::after,
@@ -4485,8 +4479,6 @@ readers do not read off random characters that represent icons */
 .neos .neos-secondary-inspector .neos-close,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span::before,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span::before,
 .neos .neos-publish-menu.neos-button-group .neos-dropdown-toggle::before,
 .neos #neos-context-bar .chosen-container .chosen-single div:after,
 .neos #neos-context-bar .chosen-container .chosen-single abbr::after,
@@ -9172,24 +9164,25 @@ View-port and gutter both get little noise background to give it a real feel.
       display: flex;
       -webkit-flex-flow: row wrap;
       justify-content: space-around; }
-    .neos #neos-top-bar #neos-user-actions,
-    .neos #neos-top-bar #neos-publish-menu {
+    .neos #neos-top-bar #neos-user-actions {
       float: left; }
-      .neos #neos-top-bar #neos-user-actions i,
-      .neos #neos-top-bar #neos-publish-menu i {
+      .neos #neos-top-bar #neos-user-actions i {
         margin-left: 8px;
         margin-right: 8px; }
-      .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu,
-      .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu {
+      .neos #neos-top-bar #neos-user-actions .neos-dropdown-toggle {
+        outline: none; }
+        .neos #neos-top-bar #neos-user-actions .neos-dropdown-toggle:hover {
+          color: #00b5ff; }
+          .neos #neos-top-bar #neos-user-actions .neos-dropdown-toggle:hover i {
+            color: white; }
+      .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu {
         border: 0;
         right: 0;
         background: none;
         padding: 0;
         margin: 0; }
         .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox,
-        .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio,
-        .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox,
-        .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio {
+        .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio {
           position: relative;
           display: inline-block;
           overflow: hidden;
@@ -9199,28 +9192,20 @@ View-port and gutter both get little noise background to give it a real feel.
           vertical-align: middle;
           padding: 0 !important; }
           .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox.neos-inline,
-          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio.neos-inline,
-          .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox.neos-inline,
-          .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio.neos-inline {
+          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio.neos-inline {
             margin-bottom: 8px;
             margin-right: 32px; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox.neos-inline + .neos-inline,
-            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio.neos-inline + .neos-inline,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox.neos-inline + .neos-inline,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio.neos-inline + .neos-inline {
+            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio.neos-inline + .neos-inline {
               margin-left: 0;
               margin-right: 32px; }
           .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input,
-          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input,
-          .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input,
-          .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input {
+          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input {
             position: absolute;
             left: -9999px;
             vertical-align: top; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span,
-            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span {
+            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span {
               width: 22px;
               height: 22px;
               margin-right: 8px;
@@ -9228,9 +9213,7 @@ View-port and gutter both get little noise background to give it a real feel.
               float: left;
               position: relative; }
               .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input + span::before,
-              .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before,
-              .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input + span::before,
-              .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input + span::before {
+              .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input + span::before {
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -9244,28 +9227,20 @@ View-port and gutter both get little noise background to give it a real feel.
                 line-height: 20px;
                 text-align: center; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input:checked + span::before,
-            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input:checked + span::before,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input:checked + span::before,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input:checked + span::before {
+            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input:checked + span::before {
               background-color: #39c6ff;
               border: 1px solid #39c6ff;
               text-align: center;
               color: #fff; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input:checked:hover + span::before,
-            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input:checked:hover + span::before,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input:checked:hover + span::before,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input:checked:hover + span::before {
+            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input:checked:hover + span::before {
               background-color: #3f3f3f; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input[type='radio'] + span::before,
-            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[type='radio'] + span::before,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input[type='radio'] + span::before,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input[type='radio'] + span::before {
+            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[type='radio'] + span::before {
               content: "";
               border-radius: 50%; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input[type='radio'] + span::after,
-            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[type='radio'] + span::after,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input[type='radio'] + span::after,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input[type='radio'] + span::after {
+            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[type='radio'] + span::after {
               content: "";
               position: absolute;
               background: #5b5b5b;
@@ -9275,41 +9250,28 @@ View-port and gutter both get little noise background to give it a real feel.
               left: 7px;
               top: 7px; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input[type='radio']:checked + span::after,
-            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[type='radio']:checked + span::after,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input[type='radio']:checked + span::after,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input[type='radio']:checked + span::after {
+            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[type='radio']:checked + span::after {
               background: #fff; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input:hover + span::before,
-            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input:hover + span::before,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input:hover + span::before,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input:hover + span::before {
+            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input:hover + span::before {
               border-color: #39c6ff; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input[disabled] + span,
-            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[disabled] + span,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input[disabled] + span,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input[disabled] + span {
+            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[disabled] + span {
               opacity: .35;
               cursor: not-allowed; }
               .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox input[disabled] + span::before,
-              .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[disabled] + span::before,
-              .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-checkbox input[disabled] + span::before,
-              .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu .neos-radio input[disabled] + span::before {
+              .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio input[disabled] + span::before {
                 border-color: #adadad; }
-        .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu label.neos-inline + label:not(.neos-inline),
-        .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu label.neos-inline + label:not(.neos-inline) {
+        .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu label.neos-inline + label:not(.neos-inline) {
           margin-top: 12px; }
-        .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li,
-        .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li {
+        .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li {
           height: 40px;
           background: #323232;
           border-top: 1px solid #222; }
-          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li:first-child,
-          .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li:first-child {
+          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li:first-child {
             border-color: #3f3f3f; }
           .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li a,
-          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button,
-          .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li a,
-          .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li button {
+          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button {
             height: 40px;
             color: white;
             font-size: 14px;
@@ -9317,26 +9279,19 @@ View-port and gutter both get little noise background to give it a real feel.
             padding: 0 16px;
             box-sizing: border-box; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li a:hover,
-            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button:hover,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li a:hover,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li button:hover {
+            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button:hover {
               background: #00b5ff; }
-          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button,
-          .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li button {
+          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button {
             width: 100%;
             text-align: left;
             background-color: #323232; }
-            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button:hover,
-            .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li button:hover {
+            .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button:hover {
               background-color: #00b5ff; }
-          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li label,
-          .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li label {
+          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li label {
             padding-top: 9px; }
-          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button i,
-          .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li button i {
+          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button i {
             line-height: 18px; }
-        .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu label,
-        .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu label {
+        .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu label {
           font-size: 14px; }
   .neos .neos-publish-menu.neos-button-group {
     font-family: 'Noto Sans', sans-serif;
@@ -9873,6 +9828,8 @@ View-port and gutter both get little noise background to give it a real feel.
       height: 3px;
       background-color: #fff;
       content: ''; }
+  .neos .neos-menu .neos-menu-button {
+    outline: none; }
   .neos .neos-menu-panel {
     display: none;
     position: fixed;
@@ -9882,15 +9839,16 @@ View-port and gutter both get little noise background to give it a real feel.
     width: 320px;
     background-color: #222;
     z-index: 10020;
-    border-top: 1px solid #3f3f3f;
     border-right: 1px solid #3f3f3f;
-    padding-top: 1px;
     overflow-x: hidden;
     overflow-y: auto;
     transition-property: left, width;
     transition-duration: 0.2s;
     font-family: 'Noto Sans', sans-serif;
     -webkit-font-smoothing: antialiased; }
+    .neos .neos-menu-panel .neos-menu-wrapper {
+      margin: 0;
+      padding: 0; }
     .neos-menu-panel-open .neos .neos-menu-panel {
       left: 0;
       display: block; }
