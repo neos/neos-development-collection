@@ -9919,10 +9919,18 @@ View-port and gutter both get little noise background to give it a real feel.
         position: absolute;
         top: 0;
         right: 0;
-        background-color: transparent; }
+        background-color: transparent;
+        outline: none; }
         .neos .neos-menu-panel .neos-menu-section .neos-menu-section-header .neos-menu-panel-toggle:hover i {
           color: #00b5ff;
           text-decoration: none; }
+      .neos .neos-menu-panel .neos-menu-section .neos-menu-section-content {
+        display: none;
+        opacity: 0; }
+      .neos .neos-menu-panel .neos-menu-section.neos-open .neos-menu-section-content {
+        display: block;
+        opacity: 1;
+        transition: opacity 0.25s ease-in; }
       .neos .neos-menu-panel .neos-menu-section .neos-menu-headline {
         box-sizing: border-box;
         padding-left: 54px;
@@ -9933,32 +9941,6 @@ View-port and gutter both get little noise background to give it a real feel.
         position: relative; }
         .neos-menu-panel-sticky .neos .neos-menu-panel .neos-menu-section .neos-menu-headline {
           padding-left: 0; }
-      .neos .neos-menu-panel .neos-menu-section .neos-menu-collapse {
-        position: absolute;
-        right: 0;
-        top: 0;
-        width: 40px;
-        height: 40px;
-        cursor: pointer; }
-        .neos .neos-menu-panel .neos-menu-section .neos-menu-collapse:hover {
-          background-color: #00b5ff;
-          color: #fff; }
-          .neos-menu-panel-sticky .neos .neos-menu-panel .neos-menu-section .neos-menu-collapse:hover {
-            background-color: transparent; }
-        .neos .neos-menu-panel .neos-menu-section .neos-menu-collapse::before {
-          content: '›';
-          font-size: 26px;
-          font-weight: normal;
-          display: inline-block;
-          position: relative;
-          top: 0;
-          line-height: 40px; }
-        .neos .neos-menu-panel .neos-menu-section .neos-menu-collapse.neos-collapsed::before {
-          rotate: 90deg;
-          left: 19px; }
-        .neos .neos-menu-panel .neos-menu-section .neos-menu-collapse.neos-open::before {
-          rotate: -90deg;
-          left: 13px; }
       .neos .neos-menu-panel .neos-menu-section a,
       .neos .neos-menu-panel .neos-menu-section span.neos-menu-item {
         display: block;
