@@ -18,15 +18,13 @@ export default class DropDownMenu {
 	}
 
 	_changeToogleIcon() {
-		const openIcon = this._root.querySelector(`.fa-caret-down`);
-		const closeIcon = this._root.querySelector(`.fa-caret-up`);
+		const openIcon = this._root.querySelector('.fa-chevron-down');
+		const closeIcon = this._root.querySelector('.fa-chevron-up');
 		if (openIcon) {
-			openIcon.classList.remove('fa-caret-down');
-			openIcon.classList.add('fa-caret-up');
+			openIcon.classList.replace('fa-chevron-down', 'fa-chevron-up');
 		}
 		if (closeIcon) {
-			closeIcon.classList.remove('fa-caret-up');
-			closeIcon.classList.add('fa-caret-down');
+			closeIcon.classList.replace('fa-chevron-up', 'fa-chevron-down');
 		}
 	}
 }
