@@ -62,7 +62,6 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
      */
     public function render(): string
     {
-        $response = $this->initiateSubRequest();
-        return $response->prepareRendering(new Content())->render();
+        return $this->initiateSubRequest();
     }
 }
