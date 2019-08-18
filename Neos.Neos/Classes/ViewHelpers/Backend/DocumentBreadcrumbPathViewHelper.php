@@ -39,12 +39,12 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return array of document nodes
+     * @return string of document nodes
      * @throws \Neos\Eel\Exception
      */
-    public function render(): array
+    public function render(): string
     {
-        $node = $this->arguments['node]'];
+        $node = $this->arguments['node'];
 
         $documentNodes = [];
         $flowQuery = new FlowQuery([$node]);
