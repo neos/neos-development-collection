@@ -9179,8 +9179,10 @@ View-port and gutter both get little noise background to give it a real feel.
         border: 0;
         right: 0;
         background: none;
-        padding: 0;
-        margin: 0; }
+        padding: 2px;
+        margin: -2px 0 0;
+        -webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2); }
         .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-checkbox,
         .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu .neos-radio {
           position: relative;
@@ -9266,10 +9268,8 @@ View-port and gutter both get little noise background to give it a real feel.
           margin-top: 12px; }
         .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li {
           height: 40px;
-          background: #323232;
+          background: #141414;
           border-top: 1px solid #222; }
-          .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li:first-child {
-            border-color: #3f3f3f; }
           .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li a,
           .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button {
             height: 40px;
@@ -9284,7 +9284,7 @@ View-port and gutter both get little noise background to give it a real feel.
           .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button {
             width: 100%;
             text-align: left;
-            background-color: #323232; }
+            background-color: #141414; }
             .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button:hover {
               background-color: #00b5ff; }
           .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li label {
