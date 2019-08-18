@@ -81,15 +81,6 @@
     display: block;
   }
 
-  .neos-menu-panel-sticky & {
-    left: -($menuButtonWidth + 1px);
-    width: $menuButtonWidth - 1px;
-  }
-
-  .neos-menu-panel-open.neos-menu-panel-sticky & {
-    left: 0;
-  }
-
   &.neos-noscript {
     top: 0;
     left: 0;
@@ -154,10 +145,6 @@
       cursor: pointer;
       line-height: $unit;
       position: relative;
-
-      .neos-menu-panel-sticky & {
-        padding-left: 0;
-      }
     }
 
     a,
@@ -206,10 +193,6 @@
         padding-left: $menuButtonWidth;
         position: relative;
         font-weight: normal;
-
-        .neos-menu-panel-sticky & {
-          padding-left: 0;
-        }
       }
     }
   }
