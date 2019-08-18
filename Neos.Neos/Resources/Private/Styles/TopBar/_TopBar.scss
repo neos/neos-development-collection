@@ -61,17 +61,15 @@
       border: 0;
       right: 0;
       background: none;
-      padding: 0;
-      margin: 0;
+      padding: 2px;
+      margin: -2px 0 0;
+      -webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
 
       li {
         height: $unit;
-        background: $grayMedium;
+        background: $grayDarker;
         border-top: 1px solid $grayDark;
-
-        &:first-child {
-          border-color: $grayLight;
-        }
 
         a,
         button {
@@ -90,7 +88,7 @@
         button {
           width: 100%;
           text-align: left;
-          background-color: $grayMedium;
+          background-color: $grayDarker;
 
           &:hover {
             background-color: $blue;
