@@ -68,33 +68,19 @@
 	@import "General";
 	@import "Shared/Ellipsis";
 	@import "Shared/Scrollbar";
-	@import "ContentProperties";
 	@import "StyleWorkInProgress";
-	@import "Inspector/Inspector";
-	@import "Inspector/SecondaryInspector";
 	@import "TopBar/TopBar";
-	@import "TopBar/PublishMenu";
 	@import "TopBar/UserMenu";
-	@import "EditPreview/EditPreviewPanel";
-	@import "ContextBar/ContextBar";
-	@import "ContextBar/ContentDimensionSelector";
 	@import "Menu/MenuPanel";
 	@import "Navigate/NavigatePanel";
-	@import "ContextBar/AlohaMenu";
-	@import "InlineEditing";
 	@import "Modules/Modules";
 	@import "Modules/Widget";
 	@import "ButtonGroups";
-	@import "Content/InsertNodePanel";
-	@import "Content/LoadingIndicator";
 	@import "Notifications";
 	@import "Components/LoginDialog";
 	@import "Components/PositionSelector";
 	@import "Components/HelpMessage";
 	@import "Widget/pagination";
-	@import "ContextBar/AlohaLinkEditor";
-	@import "ContextBar/AlohaAddTable";
 }
 
-@import "Content";
 @import "Global";
