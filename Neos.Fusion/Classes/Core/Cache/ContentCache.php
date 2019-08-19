@@ -185,6 +185,7 @@ class ContentCache
     protected function renderContentCacheEntryIdentifier($fusionPath, array $cacheIdentifierValues)
     {
         ksort($cacheIdentifierValues);
+        unset($cacheIdentifierValues['__stopPrototypeInheritanceChain']);
 
         $identifierSource = '';
         foreach ($cacheIdentifierValues as $key => $value) {
