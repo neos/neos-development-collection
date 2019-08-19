@@ -1,357 +1,178 @@
-ul.neos-dynatree-container {
-	padding: 0;
-	margin: 0;
-	background-color: transparent;
-	border: none;
-	width: 100%;
-	height: 100%;
-	white-space: nowrap;
-	display: table;
+ul.neos-tree-container {
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  height: 100%;
+  white-space: nowrap;
+  display: table;
 
-	&.neos-dynatree-no-connector > li > span {
-		span {
-			display: inline-block;
-			width: 24px;
-			height: 24px;
-			line-height: 20px;
-			vertical-align: middle;
-			text-align: center;
-			cursor: pointer;
-			position: relative;
-		}
-
-		&.neos-dynatree-loading span {
-			vertical-align: middle;
-			background-image: url('../../Public/Images/ajax-preloader-222222.gif');
-			background-repeat: no-repeat;
-			background-position: 5px 3px;
-
-			&:before {
-				display: none;
-			}
-		}
-	}
-
-	.neos-dynatree-node {
-		display: table-cell;
-		min-width: 100%;
-		float: left;
-		position: relative;
-		height: 24px;
-		line-height: 24px;
-		box-sizing: border-box;
-		border-left: 3px solid transparent;
-
-		&.neos-hidden {
-			span + span:after {
-				@extend .fas;
-				content: fa-content($fa-var-times-circle);
-				position: absolute;
-				left: 12px;
-				top: 0px;
-				font-size: 12px;
-				color: $warning;
-				background: #fff;
-				height: 8px;
-				width: 8px;
-				margin-top: 11px;
-				line-height: 9px;
-				border-radius: 10px;
-			}
-		}
-
-		&.neos-timedVisibility {
-			span + span:after {
-				@extend .fas;
-				content: fa-content($fa-var-clock);
-				font-weight: 400;
-				position: absolute;
-				left: 12px;
-				top: 0px;
-				font-size: 12px;
-				color: $blue;
-				background: #fff;
-				height: 8px;
-				width: 10px;
-				margin-top: 11px;
-				line-height: 9px;
-				border-radius: 10px;
-			}
-		}
-
-		&.neos-hiddenInIndex {
-			span + span {
-				opacity: .5;
-			}
-		}
-
-		&.neos-dynatree-focused {
-			background-color: $grayMedium;
-
-			span + span,
-			a {
-				color: $textSubtleLight;
-			}
-		}
-
-		&.neos-dynatree-active {
-			background-color: $grayMedium;
-
-			span + span,
-			a {
-				color: $textOnGray;
-			}
-		}
-
-		&.neos-dynatree-dirty {
-			border-left: 3px solid $orange;
-		}
-
-		.neos-dynatree-empty,
-		.neos-dynatree-vline,
-		.neos-dynatree-connector,
-		.neos-dynatree-expander,
-		.neos-dynatree-icon,
-		.neos-dynatree-checkbox,
-		.neos-dynatree-radio,
-		.neos-dynatree-drag-helper-img,
-		#neos-dynatree-drop-marker {
-			display: inline-block;
-			width: 24px;
-			height: 24px;
-			vertical-align: top;
-			color: $textSubtleLight;
-		}
-
-		&.neos-dynatree-exp-e,
-		&.neos-dynatree-exp-ed,
-		&.neos-dynatree-exp-el,
-		&.neos-dynatree-exp-edl {
-			.neos-dynatree-expander {
-				line-height: 24px;
-				@extend .#{$fa-css-prefix}-caret-right;
-				@extend .fas;
-				-webkit-transform: rotate(90deg);
-				-moz-transform: rotate(90deg);
-				-ms-transform: rotate(90deg);
-				-o-transform: rotate(90deg);
-				transform: rotate(90deg);
-
-				&:before {
-					left: 11px;
-				}
-			}
-		}
-
-		&.neos-dynatree-loading {
-			.neos-dynatree-connector,
-			.neos-dynatree-expander {
-				vertical-align: middle;
-				background-image: url('../../Public/Images/ajax-preloader-222222.gif');
-				background-repeat: no-repeat;
-				background-position: 5px 4px;
-				rotate: 0;
-
-				&:before {
-					display: none;
-				}
-			}
-		}
-
-		.neos-dynatree-expander {
-			line-height: 24px;
-			@extend .#{$fa-css-prefix}-caret-right;
-			@extend .fas;
-			cursor: pointer;
-			font-size: 16px;
-
-			&:before {
-				position: relative;
-				left: 10px;
-			}
-
-			&:hover {
-				color: $blue;
-			}
-		}
-
-		span + span {
-			display: inline-block;
-			width: 24px;
-			height: 24px;
-			line-height: 20px;
-			vertical-align: middle;
-			text-align: center;
-			cursor: pointer;
-			position: relative;
-		}
-
-		&.neos-dynatree-selected {
-			a {
-				color: $blue;
-			}
-		}
-
-		&.dynatree-drag-source {
-			background-color: $grayMedium;
-			opacity: .5;
-		}
-
-		&.dynatree-drop-before,
-		&.dynatree-drop-after {
-			&:after {
-				width: 100%;
-				height: 2px;
-				margin-left: 30px;
-				position: absolute;
-				content: "";
-			}
-		}
-
-		&.dynatree-drop-before:after {
-			top: 0;
-		}
-
-		&.dynatree-drop-after:after {
-			bottom: 0;
-		}
-
-		&.dynatree-drop-accept {
-			&.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) {
-				background-color: $blue;
-
-				span + span,
-				a {
-					color: #fff;
-				}
-			}
-
-			&.dynatree-drop-before:after,
-			&.dynatree-drop-after:after {
-				display: block;
-				background-color: $blue;
-			}
-		}
-
-		&.dynatree-drop-reject {
-			cursor: not-allowed !important;
-
-			.neos-dynatree-expander,
-			span + span,
-			a {
-				cursor: not-allowed !important;
-			}
-
-			&.dynatree-drag-source:hover,
-			&:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) {
-				background-color: $warning;
-
-				span + span,
-				a {
-					color: #fff;
-				}
-			}
-
-			&.dynatree-drop-before:after,
-			&.dynatree-drop-after:after {
-				display: block;
-				background-color: $warning;
-			}
-		}
-
-		a {
-			display: inline-block;
-			color: #fff;
-			vertical-align: top;
-			line-height: 24px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			max-width: $unit * 5.5;
-			padding-right: $relatedMargin;
-			font-size: $generalFontSize;
-			text-shadow: none;
-			&:hover,
-			&:focus {
-				text-decoration: none;
-				outline: none;
-			}
-		}
-	}
-
-	$selector: 'ul';
-	$level: 0;
-  $levels: 20;
-	ul .neos-dynatree-node {
-    padding-left: 0;
-  }
-  ul ul .neos-dynatree-node {
-    padding-left: 9px;
-  }
-  ul ul ul .neos-dynatree-node {
-    padding-left: 21px;
-  }
-  ul ul ul ul .neos-dynatree-node {
+  .neos-tree-node {
+    min-width: 100%;
+    position: relative;
+    height: 24px;
+    line-height: 24px;
+    box-sizing: border-box;
+    border-left: 3px solid transparent;
     padding-left: 33px;
-  }
-  ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 45px;
-  }
-  ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 57px;
-  }
-  ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 69px;
-  }
-  ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 81px;
-  }
-  ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 93px;
-  }
-  ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 105px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 117px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 129px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 141px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 153px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 165px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 177px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 189px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 201px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 213px;
-  }
-  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-    padding-left: 225px;
-  }
-}
 
-.neos-tree-drag-in-progress {
-	ul.neos-dynatree-container .neos-dynatree-node {
-		cursor: move;
+    &.neos-tree-folder {
+      padding-left: 9px;
+    }
 
-		.neos-dynatree-expander,
-		span + span,
-		a {
-			cursor: move;
-		}
-	}
+    &.neos-hidden {
+      span + span:after {
+        @extend .fas;
+        content: fa-content($fa-var-times-circle);
+        position: absolute;
+        left: 12px;
+        top: 0px;
+        font-size: 12px;
+        color: $warning;
+        background: #fff;
+        height: 8px;
+        width: 8px;
+        margin-top: 11px;
+        line-height: 9px;
+        border-radius: 10px;
+      }
+    }
+
+    &.neos-timedVisibility {
+      span + span:after {
+        @extend .fas;
+        content: fa-content($fa-var-clock);
+        font-weight: 400;
+        position: absolute;
+        left: 12px;
+        top: 0px;
+        font-size: 12px;
+        color: $blue;
+        background: #fff;
+        height: 8px;
+        width: 10px;
+        margin-top: 11px;
+        line-height: 9px;
+        border-radius: 10px;
+      }
+    }
+
+    &.neos-hiddenInIndex {
+      span + span {
+        opacity: 0.5;
+      }
+    }
+
+    &.neos-tree-focused {
+      background-color: $grayMedium;
+
+      span + span,
+      a {
+        color: $textSubtleLight;
+      }
+    }
+
+    &.neos-tree-active {
+      background-color: $grayMedium;
+
+      span + span,
+      a {
+        color: $textOnGray;
+      }
+    }
+
+    &.neos-tree-dirty {
+      border-left: 3px solid $orange;
+    }
+
+    .neos-tree-empty,
+    .neos-tree-vline,
+    .neos-tree-connector,
+    .neos-tree-expander,
+    .neos-tree-icon,
+    .neos-tree-checkbox,
+    .neos-tree-radio,
+    .neos-tree-drag-helper-img,
+    #neos-tree-drop-marker {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      vertical-align: top;
+      color: $textSubtleLight;
+    }
+
+    &.neos-tree-exp-e,
+    &.neos-tree-exp-ed,
+    &.neos-tree-exp-el,
+    &.neos-tree-exp-edl {
+      .neos-tree-expander {
+        line-height: 24px;
+        @extend .#{$fa-css-prefix}-caret-right;
+        @extend .fas;
+        rotate: 90deg;
+
+        &:before {
+          left: 11px;
+        }
+      }
+    }
+
+    .neos-tree-expander {
+      line-height: 24px;
+      @extend .#{$fa-css-prefix}-caret-right;
+      @extend .fas;
+      cursor: pointer;
+      font-size: 16px;
+
+      &:before {
+        position: relative;
+        left: 10px;
+      }
+
+      &:hover {
+        color: $blue;
+      }
+    }
+
+    span + span {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      line-height: 20px;
+      vertical-align: middle;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    &.neos-tree-selected {
+      a {
+        color: $blue;
+      }
+    }
+
+    a {
+      display: inline-block;
+      color: #fff;
+      vertical-align: top;
+      line-height: 24px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: $unit * 5.5;
+      padding-right: $relatedMargin;
+      font-size: $generalFontSize;
+      text-shadow: none;
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        outline: none;
+      }
+    }
+  }
+
+  $selector: "ul";
+  $level: 0;
+  $levels: 20;
 }
