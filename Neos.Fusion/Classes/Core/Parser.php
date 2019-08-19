@@ -199,7 +199,7 @@ class Parser implements ParserInterface
      *
      * @var array
      */
-    public static $reservedParseTreeKeys = ['__meta', '__prototypes', '__valueUnAssignments', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
+    public static $reservedParseTreeKeys = ['__meta', '__prototypes', '__stopInheritanceChains', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
 
     /**
      * @Flow\Inject
@@ -518,7 +518,7 @@ class Parser implements ParserInterface
     {
         $objectPathArray = $this->getParsedObjectPath($objectPath);
         $this->setValueInObjectTree($objectPathArray, null);
-        $this->setValueInObjectTree($objectPathArray, ['__valueUnAssignment' => true]);
+        $this->setValueInObjectTree($objectPathArray, ['__stopInheritanceChain' => true]);
     }
 
     /**
