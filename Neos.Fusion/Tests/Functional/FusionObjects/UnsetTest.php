@@ -20,10 +20,10 @@ class UnsetTest extends AbstractFusionObjectTest
     public function unsetExamples()
     {
         return [
-            ['unsets/inheritedPrototypePath', 'Baz'],
-            ['unsets/nestedPrototype', 'FooBar'],
-            ['unsets/simple', 'Bar'],
-            ['unsets/topLevelPrototype', 'BarBazQuux']
+            ['valueUnset/inheritedPrototypePath', 'Baz'],
+            ['valueUnset/nestedPrototype', 'FooBar'],
+            ['valueUnset/simple', 'Bar'],
+            ['valueUnset/topLevelPrototype', 'BarBazQuux']
         ];
     }
 
