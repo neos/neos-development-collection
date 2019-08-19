@@ -160,7 +160,7 @@ class Runtime
         };
 
         $this->shouldOverrideFirstClosure = function ($key, $firstValue, $secondValue): bool {
-            return is_array($secondValue) && isset($secondValue['__valueUnAssignment']);
+            return is_array($secondValue) && isset($secondValue['__stopInheritanceChain']);
         };
     }
 
@@ -654,8 +654,8 @@ class Runtime
             $this->configurationOnPathRuntimeCache[$pathUntilNow]['p'] = $currentPrototypeDefinitions;
         }
 
-        // Remove any leftover internal __valueUnAssignment keys
-        unset($configuration['__valueUnAssignment']);
+        // Remove any leftover internal __stopInheritanceChain keys
+        unset($configuration['__stopInheritanceChain']);
 
         return $configuration;
     }
@@ -984,8 +984,8 @@ class Runtime
                     continue;
                 }
 
-                # If there is only the internal "__valueUnAssignment" path set, skip evaluation
-                if (count($processorConfiguration[$key]) === 1 && isset($processorConfiguration[$key]['__valueUnAssignment'])) {
+                # If there is only the internal "__stopInheritanceChain" path set, skip evaluation
+                if (count($processorConfiguration[$key]) === 1 && isset($processorConfiguration[$key]['__stopInheritanceChain'])) {
                     continue;
                 }
 
