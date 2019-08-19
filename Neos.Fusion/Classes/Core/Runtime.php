@@ -654,9 +654,6 @@ class Runtime
             $this->configurationOnPathRuntimeCache[$pathUntilNow]['p'] = $currentPrototypeDefinitions;
         }
 
-        // Remove any leftover internal __stopInheritanceChain keys
-        unset($configuration['__stopInheritanceChain']);
-
         return $configuration;
     }
 
