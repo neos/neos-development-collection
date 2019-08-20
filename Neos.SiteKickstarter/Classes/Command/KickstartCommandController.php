@@ -13,7 +13,7 @@ namespace Neos\SiteKickstarter\Command;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\SiteKickstarter\Service\GeneratorService;
 
 /**
@@ -22,7 +22,7 @@ use Neos\SiteKickstarter\Service\GeneratorService;
 class KickstartCommandController extends CommandController
 {
     /**
-     * @var PackageManagerInterface
+     * @var PackageManager
      * @Flow\Inject
      */
     protected $packageManager;

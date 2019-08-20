@@ -1,0 +1,5 @@
+prototype(Neos.NodeTypes:Text) < prototype(Neos.Neos:Content) {
+  templatePath = 'resource://Neos.NodeTypes/Private/Templates/NodeTypes/Text.html'
+  text = ${q(node).property("text")}
+  text.@process.convertUris = Neos.Neos:ConvertUris
+}

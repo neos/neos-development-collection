@@ -71,7 +71,7 @@ class NodeConverterTest extends UnitTestCase
      */
     protected $mockPropertyMapper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->nodeConverter = new NodeConverter();
 

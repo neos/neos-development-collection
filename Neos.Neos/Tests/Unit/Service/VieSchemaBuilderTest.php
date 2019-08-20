@@ -102,7 +102,7 @@ class VieSchemaBuilderTest extends UnitTestCase
         ]
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->vieSchemaBuilder = $this->getAccessibleMock(VieSchemaBuilder::class, ['dummy']);
 

@@ -11,6 +11,7 @@ namespace Neos\Media\Tests\Unit\Validator;
  * source code.
  */
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Validator\ImageSizeValidator;
 
@@ -48,11 +49,11 @@ class ImageSizeValidatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidOptionsTestsDataProvider
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
      * @param array $options
      */
     public function invalidOptionsTests(array $options)
     {
+        $this->expectException(InvalidValidationOptionsException::class);
         $validator = new ImageSizeValidator($options);
         $image = $this->createMock(ImageInterface::class);
         $validator->validate($image);

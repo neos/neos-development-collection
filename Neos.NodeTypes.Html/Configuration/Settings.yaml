@@ -1,6 +1,9 @@
 
 Neos:
   Neos:
+    fusion:
+      autoInclude:
+        Neos.NodeTypes.Html: true
     userInterface:
       translation:
         autoInclude:

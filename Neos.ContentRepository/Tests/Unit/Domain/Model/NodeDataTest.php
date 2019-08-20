@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\Security\Context as SecurityContext;
@@ -53,7 +54,7 @@ class NodeDataTest extends UnitTestCase
      */
     protected $nodeData;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
         $this->nodeData = $this->getAccessibleMock(NodeData::class, ['addOrUpdate'], ['/foo/bar', $this->mockWorkspace]);
@@ -83,11 +84,11 @@ class NodeDataTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      * @dataProvider invalidPaths()
      */
     public function setPathThrowsAnExceptionIfAnInvalidPathIsPassed($path)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->nodeData->_call('setPath', $path, false);
     }
 
@@ -199,10 +200,10 @@ class NodeDataTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function aContentObjectMustBeAnObject()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->nodeData->setContentObject('not an object');
     }
 
@@ -270,10 +271,10 @@ class NodeDataTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeException
      */
     public function removePropertyThrowsExceptionIfPropertyDoesNotExist()
     {
+        $this->expectException(NodeException::class);
         $this->nodeData->removeProperty('nada');
     }
 
@@ -336,10 +337,10 @@ class NodeDataTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeException
      */
     public function getPropertyThrowsAnExceptionIfTheSpecifiedPropertyDoesNotExistInTheContentObject()
     {
+        $this->expectException(NodeException::class);
         $className = uniqid('Test');
         eval('
 			class ' .$className . ' {
@@ -424,10 +425,10 @@ class NodeDataTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\NodeException
      */
     public function createNodeThrowsNodeExceptionIfPathAlreadyExists()
     {
+        $this->expectException(NodeException::class);
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 

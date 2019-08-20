@@ -19,20 +19,33 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 class ColorOfStringViewHelper extends AbstractViewHelper
 {
     /**
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('string', 'string', 'This is hashed (MD%) and then used as base for the resulting color, if not given the children are used');
+        $this->registerArgument('minimalBrightness', 'integer', 'Brightness, from 0 to 255', false, '50');
+    }
+
+    /**
      * Outputs a hex color code (#000000) based on $text
      *
-     * @param string $string
-     * @param integer $minimalBrightness
      * @return string
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
-    public function render($string = null, $minimalBrightness = 50)
+    public function render(): string
     {
+        $minimalBrightness = $this->arguments['minimalBrightness'];
+
         if ($minimalBrightness < 0 or $minimalBrightness > 255) {
-            throw new \Exception('Minimal brightness should be between 0 and 255', 1417553921);
+            throw new \InvalidArgumentException('Minimal brightness should be between 0 and 255', 1417553921);
         }
 
-        if ($string === null) {
+        if ($this->hasArgument('string')) {
+            $string = $this->arguments['string'];
+        } else {
             $string = $this->renderChildren();
         }
 

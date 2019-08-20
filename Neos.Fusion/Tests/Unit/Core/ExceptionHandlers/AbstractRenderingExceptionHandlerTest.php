@@ -35,7 +35,7 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
     /**
      * Sets up this test case
      */
-    protected function setUp()
+    public function setUp(): void
     {
         $this->handler = new AbstractRenderingExceptionHandler();
         $runtimeMock = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
@@ -94,11 +94,11 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
     /**
      * StopActionException are rethrown
      *
-     * @expectedException \Neos\Flow\Mvc\Exception\StopActionException
      * @test
      */
     public function neverHandleStopActionException()
     {
+        $this->expectException(StopActionException::class);
         $this->handler->handleRenderingException('path', new StopActionException());
     }
 
@@ -106,11 +106,11 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
     /**
      * SecurityException are rethrown
      *
-     * @expectedException \Neos\Flow\Security\Exception
      * @test
      */
     public function neverHandleSecurityException()
     {
+        $this->expectException(\Neos\Flow\Security\Exception::class);
         $this->handler->handleRenderingException('path', new \Neos\Flow\Security\Exception());
     }
 }

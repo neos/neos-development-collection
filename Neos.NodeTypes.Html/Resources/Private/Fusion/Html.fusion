@@ -1,0 +1,4 @@
+prototype(Neos.NodeTypes.Html:Html) < prototype(Neos.Neos:Content) {
+    templatePath = "resource://Neos.NodeTypes.Html/Private/Templates/NodeTypes/Html.html"
+    source = ${q(node).property('source')}
+}

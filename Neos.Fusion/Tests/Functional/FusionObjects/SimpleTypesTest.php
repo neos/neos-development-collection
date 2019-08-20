@@ -11,6 +11,9 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\Exception\MissingFusionImplementationException;
+use Neos\Fusion\Exception\MissingFusionObjectException;
+
 /**
  * Testcase for the Fusion View
  *
@@ -67,10 +70,10 @@ class SimpleTypesTest extends AbstractFusionObjectTest
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception\MissingFusionImplementationException
      */
     public function renderingObjectWithMissingImplementationThrowsException()
     {
+        $this->expectException(MissingFusionImplementationException::class);
         $view = $this->buildView();
         $view->setFusionPath('simpleTypes/missingImplementation');
         $view->render();
@@ -78,10 +81,10 @@ class SimpleTypesTest extends AbstractFusionObjectTest
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception\MissingFusionObjectException
      */
     public function renderingNonExistingPathThrowsException()
     {
+        $this->expectException(MissingFusionObjectException::class);
         $view = $this->buildView();
         $view->setFusionPath('simpleTypes/nonExistingValue');
         $view->render();

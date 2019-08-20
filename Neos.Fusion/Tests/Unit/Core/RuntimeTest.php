@@ -48,11 +48,11 @@ class RuntimeTest extends UnitTestCase
      *
      * if this handler throws exceptions, they are not handled
      *
-     * @expectedException \Neos\Flow\Exception
      * @test
      */
     public function handleRenderingExceptionThrowsException()
     {
+        $this->expectException(Exception::class);
         $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->setMethods(['isRegistered', 'get'])->getMock();
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
@@ -91,11 +91,11 @@ class RuntimeTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
-     * @expectedExceptionCode 1395922119
      */
     public function evaluateWithCacheModeUncachedAndUnspecifiedContextThrowsException()
     {
+        $this->expectException(\Neos\Fusion\Exception::class);
+        $this->expectExceptionCode(1395922119);
         $mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $runtime = new Runtime([
             'foo' => [
@@ -114,10 +114,10 @@ class RuntimeTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception
      */
     public function renderRethrowsSecurityExceptions()
     {
+        $this->expectException(\Neos\Flow\Security\Exception::class);
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $securityException = new \Neos\Flow\Security\Exception();
         $runtime = $this->getMockBuilder(Runtime::class)->setMethods(['evaluateInternal', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();

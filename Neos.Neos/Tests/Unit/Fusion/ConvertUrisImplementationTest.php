@@ -17,6 +17,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
 use Neos\Neos\Fusion\ConvertUrisImplementation;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -75,7 +76,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
      */
     protected $mockUriBuilder;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->convertUrisImplementation = $this->getAccessibleMock(ConvertUrisImplementation::class, ['fusionValue'], [], '', false);
 
@@ -125,10 +126,10 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Neos\Domain\Exception
      */
     public function evaluateThrowsExceptionIfValueIsNoString()
     {
+        $this->expectException(Exception::class);
         $someObject = new \stdClass();
         $this->addValueExpectation($someObject);
 
@@ -137,10 +138,10 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Neos\Domain\Exception
      */
     public function evaluateThrowsExceptionIfTheCurrentContextArrayDoesNotContainANode()
     {
+        $this->expectException(Exception::class);
         $this->addValueExpectation('some string', new \stdClass());
 
         $this->convertUrisImplementation->evaluate();

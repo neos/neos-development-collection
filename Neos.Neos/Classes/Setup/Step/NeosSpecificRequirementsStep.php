@@ -14,7 +14,7 @@ namespace Neos\Neos\Setup\Step;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Source\YamlSource;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Arrays;
@@ -48,7 +48,7 @@ class NeosSpecificRequirementsStep extends AbstractStep
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -97,7 +97,7 @@ class NeosSpecificRequirementsStep extends AbstractStep
 
         if ($foundImageHandler === false) {
             $formElement = $imageSection->createElement('noImageLibrary', 'Neos.Form:StaticText');
-            $formElement->setProperty('text', 'No suitable PHP extension for image manipulation was found. You can continue the setup but be aware that Neos might not work correctly without one of these extensions.');
+            $formElement->setProperty('text', 'No suitable PHP extension for image manipulation was found. Please install one of the required PHP extensions and restart the php process. Then proceed with the setup.');
             $formElement->setProperty('elementClassAttribute', 'alert alert-error');
         } else {
             $formElement = $imageSection->createElement('configuredImageLibrary', 'Neos.Form:StaticText');

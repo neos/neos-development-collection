@@ -11,7 +11,6 @@ namespace Neos\Neos\Tests\Unit\Routing;
  * source code.
  */
 
-use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Algorithms;
@@ -20,12 +19,14 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Routing\Exception\NoHomepageException;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Test case for the frontend node route part handler
@@ -43,7 +44,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 {
     /**
-     * @var PsrSystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $mockSystemLogger;
 
@@ -78,7 +79,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * @return void
      */
-    protected function setUp()
+    public function setUp(): void
     {
         $this->routePartHandler = new FrontendNodeRoutePartHandler();
         $this->routePartHandler->setName('node');
@@ -104,7 +105,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->mockContextFactory = $mockContextFactory;
         $this->inject($this->routePartHandler, 'contextFactory', $this->mockContextFactory);
 
-        $this->mockSystemLogger = $this->createMock(PsrSystemLoggerInterface::class);
+        $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
         $this->inject($this->routePartHandler, 'systemLogger', $this->mockSystemLogger);
 
         $this->inject($this->routePartHandler, 'securityContext', new SecurityContext());
@@ -166,10 +167,10 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * If convertRequestPathToNode() throws any exception and the request path is '' a "missing homepage" message should appear.
      *
      * @test
-     * @expectedException \Neos\Neos\Routing\Exception\NoHomepageException
      */
     public function matchThrowsAnExceptionIfNoHomepageExists()
     {
+        $this->expectException(NoHomepageException::class);
         $this->buildMockContext(['workspaceName' => 'live']);
         $routePath = '';
         $this->routePartHandler->match($routePath);

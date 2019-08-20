@@ -49,10 +49,10 @@ class RenderingTest extends AbstractNodeTest
     public function debugModeSettingWorks()
     {
         $output = $this->simulateRendering(null, true);
-        $this->assertContains('<!-- Beginning to render TS path', $output);
+        $this->assertStringContainsString('<!-- Beginning to render TS path', $output);
 
         $output = $this->simulateRendering();
-        $this->assertNotContains('<!-- Beginning to render TS path', $output);
+        $this->assertStringNotContainsString('<!-- Beginning to render TS path', $output);
     }
 
     /**
@@ -210,7 +210,7 @@ class RenderingTest extends AbstractNodeTest
      */
     protected function assertTeaserConformsToBasicRendering($output)
     {
-        $this->assertContains('This website is powered by Neos, the Open Source Content Application Platform licensed under the GNU/GPL.', $output);
+        $this->assertStringContainsString('This website is powered by Neos, the Open Source Content Application Platform licensed under the GNU/GPL.', $output);
         $this->assertSelectEquals('h1', 'Home', true, $output);
 
         $this->assertSelectEquals('.teaser > .neos-contentcollection > .acme-demo-headline > div > h1', 'Welcome to this example', true, $output);

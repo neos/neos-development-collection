@@ -61,48 +61,48 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
+
+        $this->registerArgument('property', 'string', 'Name of the property to render. Note: If this tag has child nodes, they overrule this argument!', true);
+        $this->registerArgument('tag', 'string', 'The name of the tag that should be wrapped around the property. By default this is a <div>', false, 'div');
+        $this->registerArgument('node', NodeInterface::class, 'The node of the content element. Optional, will be resolved from the Fusion context by default');
     }
 
     /**
      * In live workspace this just renders a tag; for logged in users with access to the Backend this also adds required
      * attributes for the editing.
      *
-     * @param string $property Name of the property to render. Note: If this tag has child nodes, they overrule this argument!
-     * @param string $tag The name of the tag that should be wrapped around the property. By default this is a <div>
-     * @param NodeInterface $node The node of the content element. Optional, will be resolved from the Fusion context by default.
      * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
      * @throws ViewHelperException
      */
-    public function render($property, $tag = 'div', NodeInterface $node = null)
+    public function render(): string
     {
-        $this->tag->setTagName($tag);
+        $this->tag->setTagName($this->arguments['tag']);
         $this->tag->forceClosingTag(true);
         $content = $this->renderChildren();
 
-        if ($node === null) {
-            $node = $this->getNodeFromFusionContext();
-        }
+        $node = $this->arguments['node'] ?? $this->getNodeFromFusionContext();
 
         if ($node === null) {
             throw new ViewHelperException('A node is required, but one was not supplied and could not be found in the Fusion context.', 1408521638);
         }
 
+        $propertyName = $this->arguments['property'];
         if ($content === null) {
-            if (!$this->templateVariableContainer->exists($property)) {
-                throw new ViewHelperException(sprintf('The property "%1$s" was not set as a template variable. If you use this ViewHelper in a partial, make sure to pass the node property "%1$s" as an argument.', $property), 1384507046);
+            if (!$this->templateVariableContainer->exists($propertyName)) {
+                throw new ViewHelperException(sprintf('The property "%1$s" was not set as a template variable. If you use this ViewHelper in a partial, make sure to pass the node property "%1$s" as an argument.', $propertyName), 1384507046);
             }
-            $content = $this->templateVariableContainer->get($property);
+            $content = $this->templateVariableContainer->get($propertyName);
         }
         $this->tag->setContent($content);
 
-        return $this->contentElementEditableService->wrapContentProperty($node, $property, $this->tag->render());
+        return $this->contentElementEditableService->wrapContentProperty($node, $propertyName, $this->tag->render());
     }
 
     /**
      * @return NodeInterface
      * @throws ViewHelperException
      */
-    protected function getNodeFromFusionContext()
+    protected function getNodeFromFusionContext(): NodeInterface
     {
         $node = $this->getContextVariable('node');
         if ($node === null) {

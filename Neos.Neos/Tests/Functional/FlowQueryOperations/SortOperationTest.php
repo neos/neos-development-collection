@@ -11,6 +11,7 @@ namespace Neos\Neos\Tests\Functional\FlowQueryOperations;
  * source code.
  */
 
+use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Eel\FlowQueryOperations\SortOperation;
 use Neos\ContentRepository\Domain\Model\Workspace;
@@ -43,7 +44,7 @@ class SortOperationTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $workspaceRepository = $this->objectManager->get(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class);
@@ -67,18 +68,18 @@ class SortOperationTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
     /**
-     * @test
-     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
+     * @test+
      */
     public function callWithoutArgumentsCausesException()
     {
+        $this->expectException(FlowQueryException::class);
         $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery([]);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, []);
@@ -86,10 +87,10 @@ class SortOperationTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function invalidSortDirectionCausesException()
     {
+        $this->expectException(FlowQueryException::class);
         $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery([]);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['title', 'FOO']);
