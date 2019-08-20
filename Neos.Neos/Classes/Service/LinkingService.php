@@ -338,14 +338,15 @@ class LinkingService
             throw new NeosException(sprintf('Cannot link to a site "%s" since it has no active domains.', $site->getName()), 1460443524);
         }
         $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
-        $baseUri = $controllerContext->getRequest()->getHttpRequest()->getBaseUri();
+        $baseUri = $controllerContext->getRequest()->getHttpRequest()->getAttribute(ServerRequestAttributes::BASE_URI);
+
         $port = $primaryDomain->getPort() ?: $requestUri->getPort();
         return sprintf(
             '%s://%s%s%s',
             $primaryDomain->getScheme() ?: $requestUri->getScheme(),
             $primaryDomain->getHostname(),
             $port && !in_array($port, [80, 443], true) ? ':' . $port : '',
-            rtrim($baseUri->getPath(), '/') // remove trailing slash, $uri has leading slash already
+            rtrim($baseUri, '/') // remove trailing slash, $uri has leading slash already
         );
     }
 
