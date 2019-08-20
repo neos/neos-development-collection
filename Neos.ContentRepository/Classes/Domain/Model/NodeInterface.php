@@ -17,11 +17,10 @@ use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 
 /**
- * Interface for a Node. This is the central interface for the Neos Content Repository
- * up to version 4.X; it will be REMOVED in version 5.0 and is replaced
+ * Interface for a Node. This is the central interface for the Neos Content Repository.
+ * Will be deprecated with version 5.x, REMOVED in version 6.0 and is replaced
  * by {@see Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface}.
  *
- * @deprecated
  * @api
  */
 interface NodeInterface
