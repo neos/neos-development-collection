@@ -353,14 +353,14 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = [
             'object1' => [
-                '__valueUnAssignment' => true
+                '__stopInheritanceChain' => true
             ],
             'object3' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => [
-                    '__valueUnAssignment' => true
+                    '__stopInheritanceChain' => true
                 ]
             ]
         ];
