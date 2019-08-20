@@ -18,7 +18,6 @@ use Neos\Flow\Security\Context;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Neos\Controller\Backend\MenuHelper;
-use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Exception as NeosException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Party\Domain\Service\PartyService;
