@@ -303,10 +303,10 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      * Create a node for the given NodeData, given that it is a variant of the current node
      *
      * @param NodeData $nodeData
-     * @return NodeInterface
+     * @return NodeInterface|null
      * @throws NodeConfigurationException
      */
-    protected function createNodeForVariant(NodeData $nodeData): NodeInterface
+    protected function createNodeForVariant(NodeData $nodeData): ?NodeInterface
     {
         $contextProperties = $this->context->getProperties();
         $contextProperties['dimensions'] = $nodeData->getDimensionValues();
