@@ -199,7 +199,7 @@ class Parser implements ParserInterface
      *
      * @var array
      */
-    public static $reservedParseTreeKeys = ['__meta', '__prototypes', '__stopInheritanceChains', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
+    public static $reservedParseTreeKeys = ['__meta', '__prototypes', '__stopInheritanceChain', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
 
     /**
      * @Flow\Inject
