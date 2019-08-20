@@ -1,0 +1,55 @@
+prototype(Neos.Fusion:ValueUnset1) < prototype(Neos.Fusion:Value) {
+  value = Neos.Fusion:Join {
+    1 = 'Foo'
+    2 = 'Bar'
+  }
+}
+
+prototype(Neos.Fusion:ValueUnset2) < prototype(Neos.Fusion:ValueUnset1) {
+  value >
+  value = Neos.Fusion:Join {
+    1 = 'Baz'
+  }
+}
+
+prototype(Neos.Fusion:NestedPrototypeUnset) < prototype(Neos.Fusion:Join) {
+  value = Neos.Fusion:Join {
+    k3 = 'Baz'
+    k4 = 'Quux'
+  }
+}
+
+prototype(Neos.Fusion:TopLevelPrototypeUnset) {
+  k1 = 'Foo'
+}
+
+prototype(Neos.Fusion:TopLevelPrototypeUnset) >
+prototype(Neos.Fusion:TopLevelPrototypeUnset) < prototype(Neos.Fusion:Join) {
+  k2 = 'Bar'
+}
+
+prototype(Neos.Fusion:TopLevelPrototypeUnset) {
+  k3 = 'Baz'
+}
+
+prototype(Neos.Fusion:NestedPrototypeUnset2) < prototype(Neos.Fusion:Join) {
+  k1 = 'Foo'
+  k2 = 'Bar'
+}
+
+valueUnset {
+  simple = Neos.Fusion:Join
+  simple.1 = 'Foo'
+  simple.2 = 'Bar'
+  simple.1 >
+
+  inheritedPrototypePath = Neos.Fusion:ValueUnset2
+
+  nestedPrototype = Neos.Fusion:NestedPrototypeUnset
+  nestedPrototype.prototype(Neos.Fusion:NestedPrototypeUnset).value >
+  nestedPrototype.prototype(Neos.Fusion:NestedPrototypeUnset).value = Neos.Fusion:NestedPrototypeUnset2
+
+  topLevelPrototype = Neos.Fusion:TopLevelPrototypeUnset {
+    k4 = 'Quux'
+  }
+}

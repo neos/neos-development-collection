@@ -3,7 +3,6 @@ prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImpleme
 prototype(Neos.Fusion:Testing.Throwing).@class = 'Neos\\Fusion\\Tests\\Functional\\FusionObjects\\Fixtures\\FusionObjects\\ThrowingImplementation'
 
 prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
-prototype(Neos.Fusion:GlobalCacheIdentifiers) >
 prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:RawArray)
 
 contentCache.cachedSegment = Neos.Fusion:Array {

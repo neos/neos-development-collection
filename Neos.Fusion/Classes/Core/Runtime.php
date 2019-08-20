@@ -134,6 +134,12 @@ class Runtime
     protected $simpleTypeToArrayClosure;
 
     /**
+     * @var \Closure
+     */
+    protected $shouldOverrideFirstClosure;
+
+
+    /**
      * Constructor for the Fusion Runtime
      *
      * @param array $fusionConfiguration
@@ -151,6 +157,10 @@ class Runtime
                 '__value' => $simpleType,
                 '__objectType' => null
             ];
+        };
+
+        $this->shouldOverrideFirstClosure = function ($key, $firstValue, $secondValue): bool {
+            return is_array($secondValue) && isset($secondValue['__stopInheritanceChain']);
         };
     }
 
@@ -440,7 +450,7 @@ class Runtime
 
         try {
             if ($this->hasExpressionOrValue($fusionConfiguration)) {
-                return $this->evaluteExpressionOrValueInternal($fusionPath, $fusionConfiguration, $cacheContext, $contextObject);
+                return $this->evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $cacheContext, $contextObject);
             }
             $needToPopApply = $this->prepareApplyValuesForFusionPath($fusionPath, $fusionConfiguration);
             $fusionObject = $this->instantiatefusionObject($fusionPath, $fusionConfiguration);
@@ -510,7 +520,7 @@ class Runtime
      * @param mixed $contextObject
      * @return mixed
      */
-    protected function evaluteExpressionOrValueInternal($fusionPath, $fusionConfiguration, $cacheContext, $contextObject)
+    protected function evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $cacheContext, $contextObject)
     {
         if ($this->evaluateIfCondition($fusionConfiguration, $fusionPath, $contextObject) === false) {
             $this->finalizePathEvaluation($cacheContext);
@@ -670,7 +680,7 @@ class Runtime
         }
 
         if (isset($configuration['__prototypes'])) {
-            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $configuration['__prototypes'], $this->simpleTypeToArrayClosure);
+            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $configuration['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
         }
 
         $currentPathSegmentType = null;
@@ -721,20 +731,19 @@ class Runtime
                         $prototypeName, $currentPathSegmentType), 1427134340);
                 }
 
-                $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $this->simpleTypeToArrayClosure);
+                $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
             }
 
             // We merge the already flattened prototype with the current configuration (in that order),
             // to make sure that the current configuration (not being defined in the prototype) wins.
-            $configuration = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $configuration, $this->simpleTypeToArrayClosure);
+            $configuration = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $configuration, $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
 
             // If context-dependent prototypes are set (such as prototype("foo").prototype("baz")),
             // we update the current prototype definitions.
             if (isset($currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'])) {
-                $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'], $this->simpleTypeToArrayClosure);
+                $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
             }
         }
-
 
         return $configuration;
     }
@@ -971,6 +980,12 @@ class Runtime
                 if ($this->evaluateIfCondition($processorConfiguration[$key], $processorPath, $contextObject) === false) {
                     continue;
                 }
+
+                # If there is only the internal "__stopInheritanceChain" path set, skip evaluation
+                if (count($processorConfiguration[$key]) === 1 && isset($processorConfiguration[$key]['__stopInheritanceChain'])) {
+                    continue;
+                }
+
                 if (isset($processorConfiguration[$key]['expression'])) {
                     $processorPath .= '/expression';
                 }
