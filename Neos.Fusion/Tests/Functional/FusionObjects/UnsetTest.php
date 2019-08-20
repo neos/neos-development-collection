@@ -35,6 +35,6 @@ class UnsetTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath($path);
-        $this->assertEquals($expected, $view->render());
+        self::assertEquals($expected, $view->render());
     }
 }
