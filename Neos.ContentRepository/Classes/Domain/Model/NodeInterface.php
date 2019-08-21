@@ -17,11 +17,10 @@ use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 
 /**
- * Interface for a Node. This is the central interface for the Neos Content Repository
- * up to version 4.X; it will be REMOVED in version 5.0 and is replaced
+ * Interface for a Node. This is the central interface for the Neos Content Repository.
+ * Will be deprecated with version 5.x, REMOVED in version 6.0 and is replaced
  * by {@see Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface}.
  *
- * @deprecated
  * @api
  */
 interface NodeInterface
@@ -172,7 +171,7 @@ interface NodeInterface
      * @param object $contentObject The content object
      * @return void
      * @throws \InvalidArgumentException if the given contentObject is no object.
-     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
+     * @deprecated with version 4.3 - will be removed with 6.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
      */
     public function setContentObject($contentObject);
 
@@ -180,7 +179,7 @@ interface NodeInterface
      * Returns the content object of this node (if any).
      *
      * @return object The content object or NULL if none was set
-     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
+     * @deprecated with version 4.3 - will be removed with 6.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
      */
     public function getContentObject();
 
@@ -188,7 +187,7 @@ interface NodeInterface
      * Unsets the content object of this node.
      *
      * @return void
-     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
+     * @deprecated with version 4.3 - will be removed with 6.0 without replacement. Attaching entities to nodes never really worked. Instead you can reference objects as node properties via their identifier
      */
     public function unsetContentObject();
 
@@ -222,7 +221,7 @@ interface NodeInterface
      * Returns the current state of the hidden flag
      *
      * @return boolean
-     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
+     * @deprecated with version 4.3 - 6.0 will provide a new API with to retrieve visibility restrictions
      */
     public function isHidden();
 
@@ -239,7 +238,7 @@ interface NodeInterface
      * Returns the date and time before which this node will be automatically hidden.
      *
      * @return \DateTimeInterface|null Date before this node will be hidden - or null if no hidden before date is set
-     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
+     * @deprecated with version 4.3 - 6.0 will provide a new API with to retrieve visibility restrictions
      */
     public function getHiddenBeforeDateTime();
 
@@ -256,7 +255,7 @@ interface NodeInterface
      * Returns the date and time after which this node will be automatically hidden.
      *
      * @return \DateTimeInterface|null Date after which this node will be hidden - or null if no hidden after date is set
-     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
+     * @deprecated with version 4.3 - 6.0 will provide a new API with to retrieve visibility restrictions
      */
     public function getHiddenAfterDateTime();
 
@@ -282,7 +281,7 @@ interface NodeInterface
      *
      * @param array $accessRoles
      * @return void
-     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
+     * @deprecated with version 4.3 - will be removed with 6.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function setAccessRoles(array $accessRoles);
 
@@ -290,7 +289,7 @@ interface NodeInterface
      * Returns the names of defined access roles
      *
      * @return array
-     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
+     * @deprecated with version 4.3 - will be removed with 6.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function getAccessRoles();
 
@@ -332,7 +331,7 @@ interface NodeInterface
      *
      * @param Workspace $workspace
      * @return void
-     * @deprecated with version 4.3 - From 5.0 you will be able to use the ContentStream instead
+     * @deprecated with version 4.3 - From 6.0 you will be able to use the ContentStream instead
      */
     public function setWorkspace(Workspace $workspace);
 
@@ -340,7 +339,7 @@ interface NodeInterface
      * Returns the workspace this node is contained in
      *
      * @return Workspace
-     * @deprecated with version 4.3 - From 5.0 you will be able to use the ContentStream instead
+     * @deprecated with version 4.3 - From 6.0 you will be able to use the ContentStream instead
      */
     public function getWorkspace();
 
@@ -367,7 +366,7 @@ interface NodeInterface
      *
      * @param integer $index The new index
      * @return void
-     * @deprecated with version 4.3 - will be removed with 5.0 without replacement
+     * @deprecated with version 4.3 - will be removed with 6.0 without replacement
      */
     public function setIndex($index);
 
@@ -376,7 +375,7 @@ interface NodeInterface
      * with the same parent node.
      *
      * @return integer
-     * @deprecated with version 4.3 - will be removed with 5.0 without replacement
+     * @deprecated with version 4.3 - will be removed with 6.0 without replacement
      */
     public function getIndex();
 
@@ -497,7 +496,7 @@ interface NodeInterface
      * If this node is a removed node.
      *
      * @return boolean
-     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve removed nodes
+     * @deprecated with version 4.3 - 6.0 will provide a new API with to retrieve removed nodes
      */
     public function isRemoved();
 
@@ -507,7 +506,7 @@ interface NodeInterface
      * taken into account.
      *
      * @return boolean
-     * @deprecated with version 4.3 - 5.0 will provide a new API with to retrieve visibility restrictions
+     * @deprecated with version 4.3 - 6.0 will provide a new API with to retrieve visibility restrictions
      */
     public function isVisible();
 
@@ -515,7 +514,7 @@ interface NodeInterface
      * Tells if this node may be accessed according to the current security context.
      *
      * @return boolean
-     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
+     * @deprecated with version 4.3 - will be removed with 6.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function isAccessible();
 
@@ -524,7 +523,7 @@ interface NodeInterface
      * current security context.
      *
      * @return boolean
-     * @deprecated with version 4.3 - will be removed with 5.0 without replacement. Use a Policy to restrict access to nodes
+     * @deprecated with version 4.3 - will be removed with 6.0 without replacement. Use a Policy to restrict access to nodes
      */
     public function hasAccessRestrictions();
 
@@ -533,7 +532,7 @@ interface NodeInterface
      *
      * @param NodeType $nodeType
      * @return boolean true if the passed $nodeType is allowed as child node
-     * @deprecated with version 4.3 - There will be a new utility method with 5.0 (probably part of the NodeType API)
+     * @deprecated with version 4.3 - There will be a new utility method with 6.0 (probably part of the NodeType API)
      */
     public function isNodeTypeAllowedAsChildNode(NodeType $nodeType);
 
@@ -602,7 +601,7 @@ interface NodeInterface
      * Return the NodeData representation of the node.
      *
      * @return NodeData
-     * @deprecated with version 4.3 - will be removed with 5.0 without replacement
+     * @deprecated with version 4.3 - will be removed with 6.0 without replacement
      */
     public function getNodeData();
 
@@ -610,7 +609,7 @@ interface NodeInterface
      * Return the context of the node
      *
      * @return Context
-     * @deprecated with version 4.3 - will be removed with 5.0 without replacement, but you can access the node's subgraph via TraversableNodeInterface::getSubgraph()
+     * @deprecated with version 4.3 - will be removed with 6.0 without replacement, but you can access the node's subgraph via TraversableNodeInterface::getSubgraph()
      */
     public function getContext();
 
@@ -618,7 +617,7 @@ interface NodeInterface
      * Return the assigned content dimensions of the node.
      *
      * @return array An array of dimensions to array of dimension values
-     * @deprecated with version 4.3 - will be replaced in 5.0 by getOriginDimensionSpacePoint() and getDimensionSpacePoint()
+     * @deprecated with version 4.3 - will be replaced in 6.0 by getOriginDimensionSpacePoint() and getDimensionSpacePoint()
      */
     public function getDimensions();
 
@@ -636,7 +635,7 @@ interface NodeInterface
      * should not be deleted.
      *
      * @return boolean true if this node is auto-created by the parent.
-     * @deprecated with version 4.3 - will be removed with 5.0. This information should not be required usually. Otherwise it can be determined via:
+     * @deprecated with version 4.3 - will be removed with 6.0. This information should not be required usually. Otherwise it can be determined via:
      * if (array_key_exists((string)$node->getNodeName(), $parent->getNodeType()->getAutoCreatedChildNodes()))
      */
     public function isAutoCreated();
@@ -648,7 +647,7 @@ interface NodeInterface
      * The resulting node instances might belong to a different context.
      *
      * @return array<NodeInterface> All node variants of this node (excluding the current node)
-     * @deprecated with version 4.3 - will be removed in 5.0 without replacement. But the subGraph can be used to determine other variants of a node
+     * @deprecated with version 4.3 - will be removed in 6.0 without replacement. But the subGraph can be used to determine other variants of a node
      */
     public function getOtherNodeVariants();
 }
