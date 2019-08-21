@@ -80,7 +80,7 @@ In the ``@cache`` meta property the following subproperties are allowed:
   ``'dynamic'`` or ``'uncached'``.
   Only simple string values are supported for this property.
 
-  It defaults to mode ``embed`` which will not create a new cache entry but store the con`tent into the next outer ``cached``
+  It defaults to mode ``embed`` which will not create a new cache entry but store the content into the next outer ``cached``
   entry. With mode ``cached`` a separate cache entry will be created for the path. Mode ``uncached`` can be used to
   always evaluate a path even if is contained inside a cached path. The ``dynamic`` mode evalutes a so called
   "discriminator" on every request and caches results differently depending on it's value. Dynamic cache mode is therefore
