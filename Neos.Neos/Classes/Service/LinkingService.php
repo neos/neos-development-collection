@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Service;
 
 /*
@@ -11,6 +13,7 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -338,6 +341,8 @@ class LinkingService
             throw new NeosException(sprintf('Cannot link to a site "%s" since it has no active domains.', $site->getName()), 1460443524);
         }
         $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
+
+        /** @var Uri $baseUri */
         $baseUri = $controllerContext->getRequest()->getHttpRequest()->getAttribute(ServerRequestAttributes::BASE_URI);
 
         $port = $primaryDomain->getPort() ?: $requestUri->getPort();
@@ -346,7 +351,7 @@ class LinkingService
             $primaryDomain->getScheme() ?: $requestUri->getScheme(),
             $primaryDomain->getHostname(),
             $port && !in_array($port, [80, 443], true) ? ':' . $port : '',
-            rtrim($baseUri, '/') // remove trailing slash, $uri has leading slash already
+            rtrim((string) $baseUri, '/') // remove trailing slash, $uri has leading slash already
         );
     }
 
