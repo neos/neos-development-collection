@@ -785,9 +785,9 @@ Fluid Template
 The Fluid templates of a widget are normal Fluid templates as you know them, but
 have a few ViewHelpers available additionally:
 
-<f:uri.widget>
+<f:widget.uri>
   Generates an URI to another action of the widget.
-<f:link.widget>
+<f:widget.link>
   Generates a link to another action of the widget.
 <f:renderChildren>
   Can be used to render the child nodes of the Widget ViewHelper,
@@ -810,7 +810,7 @@ To make a widget AJAX-aware, you need to do the following:
   triggers the AJAX functionality. There, you will need a URI which returns the
   AJAX response. For that, use the following ViewHelper inside the template::
 
-	<f:uri.widget ajax="TRUE" action="..." arguments="..." />
+	<f:widget.uri ajax="TRUE" action="..." arguments="..." />
 
 * Inside the template of the AJAX request, ``<f:renderChildren>`` is not available,
   because the child nodes of the Widget ViewHelper are not accessible there.
