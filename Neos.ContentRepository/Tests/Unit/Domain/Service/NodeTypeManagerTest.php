@@ -29,7 +29,7 @@ class NodeTypeManagerTest extends UnitTestCase
     protected $nodeTypeManager;
 
     /**
-     * @var ConfigurationManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigurationManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockConfigurationManager;
 
@@ -50,10 +50,10 @@ class NodeTypeManagerTest extends UnitTestCase
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
         $mockCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects($this->any())->method('get')->willReturn(null);
+        $mockCache->expects(self::any())->method('get')->willReturn(null);
         $this->inject($this->nodeTypeManager, 'fullConfigurationCache', $mockCache);
 
-        $this->mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('NodeTypes')->will($this->returnValue($nodeTypesFixtureData));
+        $this->mockConfigurationManager->expects(self::any())->method('getConfiguration')->with('NodeTypes')->will(self::returnValue($nodeTypesFixtureData));
         $this->inject($this->nodeTypeManager, 'configurationManager', $this->mockConfigurationManager);
     }
 

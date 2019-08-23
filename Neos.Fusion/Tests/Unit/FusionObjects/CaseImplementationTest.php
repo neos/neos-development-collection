@@ -29,7 +29,7 @@ class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
         $ignoredProperties = ['nodePath'];
 
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) use ($path, $ignoredProperties) {
+        $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath, $that) use ($path, $ignoredProperties) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {
                 case '__meta/ignoreProperties':
@@ -47,7 +47,7 @@ class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
             'condition' => 'true'
         ];
 
-        $mockRuntime->expects($this->once())->method('render')->with('page/body/content/main/default<Neos.Fusion:Matcher>')->will($this->returnValue('rendered matcher'));
+        $mockRuntime->expects(self::once())->method('render')->with('page/body/content/main/default<Neos.Fusion:Matcher>')->will(self::returnValue('rendered matcher'));
 
         $result = $renderer->evaluate();
 

@@ -121,7 +121,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         ]);
         $this->inject($fusionObject, 'runtime', $this->runtime);
         $mockView = $this->getAccessibleMock(FluidView::class, [], [], '', false);
-        $mockView->expects($this->any())->method('getFusionObject')->willReturn($fusionObject);
+        $mockView->expects(self::any())->method('getFusionObject')->willReturn($fusionObject);
         $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
 

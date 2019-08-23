@@ -97,7 +97,7 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath);
 
-        $this->mockConverterConfiguration->expects($this->any())->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN)->will($this->returnValue(true));
+        $this->mockConverterConfiguration->expects(self::any())->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN)->will(self::returnValue(true));
 
         $result = $this->nodeConverter->convertFrom($contextPath, null, [], $this->mockConverterConfiguration);
         self::assertSame($mockNode, $result);
@@ -129,9 +129,9 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
 
-        $mockNode->getContext()->expects($this->once())->method('getNodeByIdentifier')->with($propertyValue)->will($this->returnValue($convertedPropertyValue));
+        $mockNode->getContext()->expects(self::once())->method('getNodeByIdentifier')->with($propertyValue)->will(self::returnValue($convertedPropertyValue));
 
-        $mockNode->expects($this->once())->method('setProperty')->with('reference', $convertedPropertyValue);
+        $mockNode->expects(self::once())->method('setProperty')->with('reference', $convertedPropertyValue);
 
         $this->nodeConverter->convertFrom($source, null, [], $this->mockConverterConfiguration);
     }
@@ -159,10 +159,10 @@ class NodeConverterTest extends UnitTestCase
         $mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
 
         $mockContext = $mockNode->getContext();
-        $mockContext->expects($this->at(2))->method('getNodeByIdentifier')->with(current($decodedPropertyValue))->will($this->returnValue(current($convertedPropertyValue)));
-        $mockContext->expects($this->at(3))->method('getNodeByIdentifier')->with(end($decodedPropertyValue))->will($this->returnValue(end($convertedPropertyValue)));
+        $mockContext->expects($this->at(2))->method('getNodeByIdentifier')->with(current($decodedPropertyValue))->will(self::returnValue(current($convertedPropertyValue)));
+        $mockContext->expects($this->at(3))->method('getNodeByIdentifier')->with(end($decodedPropertyValue))->will(self::returnValue(end($convertedPropertyValue)));
 
-        $mockNode->expects($this->once())->method('setProperty')->with('references', $convertedPropertyValue);
+        $mockNode->expects(self::once())->method('setProperty')->with('references', $convertedPropertyValue);
 
         $this->nodeConverter->convertFrom($source, null, [], $this->mockConverterConfiguration);
     }
@@ -189,10 +189,10 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
 
-        $this->mockObjectManager->expects($this->any())->method('isRegistered')->with(Asset::class)->will($this->returnValue(true));
+        $this->mockObjectManager->expects(self::any())->method('isRegistered')->with(Asset::class)->will(self::returnValue(true));
 
-        $this->mockPropertyMapper->expects($this->once())->method('convert')->with($decodedPropertyValue, $nodeTypeProperties['assets']['type'])->will($this->returnValue($convertedPropertyValue));
-        $mockNode->expects($this->once())->method('setProperty')->with('assets', $convertedPropertyValue);
+        $this->mockPropertyMapper->expects(self::once())->method('convert')->with($decodedPropertyValue, $nodeTypeProperties['assets']['type'])->will(self::returnValue($convertedPropertyValue));
+        $mockNode->expects(self::once())->method('setProperty')->with('assets', $convertedPropertyValue);
 
         $this->nodeConverter->convertFrom($source, null, [], $this->mockConverterConfiguration);
     }
@@ -217,7 +217,7 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
 
-        $mockNode->expects($this->once())->method('setProperty')->with('quux', $decodedPropertyValue);
+        $mockNode->expects(self::once())->method('setProperty')->with('quux', $decodedPropertyValue);
 
         $this->nodeConverter->convertFrom($source, null, [], $this->mockConverterConfiguration);
     }
@@ -233,18 +233,18 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode = $this->createMock(NodeInterface::class);
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $mockNodeType->expects($this->any())->method('getProperties')->will($this->returnValue($nodeTypeProperties));
-        $mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($mockNodeType));
+        $mockNodeType->expects(self::any())->method('getProperties')->will(self::returnValue($nodeTypeProperties));
+        $mockNode->expects(self::any())->method('getNodeType')->will(self::returnValue($mockNodeType));
 
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockLiveWorkspace));
-        $mockContext->expects($this->any())->method('getNode')->with($nodePath)->will($this->returnValue($mockNode));
+        $mockContext->expects(self::any())->method('getWorkspace')->will(self::returnValue($mockLiveWorkspace));
+        $mockContext->expects(self::any())->method('getNode')->with($nodePath)->will(self::returnValue($mockNode));
 
-        $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
+        $mockNode->expects(self::any())->method('getContext')->will(self::returnValue($mockContext));
 
         // Simulate context properties by returning the same properties that were given to the ContextFactory
-        $this->mockContextFactory->expects($this->any())->method('create')->will($this->returnCallback(function ($contextProperties) use ($mockContext) {
-            $mockContext->expects($this->any())->method('getProperties')->will($this->returnValue($contextProperties));
+        $this->mockContextFactory->expects(self::any())->method('create')->will(self::returnCallback(function ($contextProperties) use ($mockContext) {
+            $mockContext->expects(self::any())->method('getProperties')->will(self::returnValue($contextProperties));
             return $mockContext;
         }));
 

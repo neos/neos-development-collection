@@ -127,9 +127,9 @@ class NodeViewHelperTest extends FunctionalTestCase
             'alternativeDocumentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission')
         ]);
         $this->inject($fusionObject, 'runtime', $this->runtime);
-        /** @var AbstractTemplateView|\PHPUnit_Framework_MockObject_MockObject $mockView */
+        /** @var AbstractTemplateView|\PHPUnit\Framework\MockObject\MockObject $mockView */
         $mockView = $this->getAccessibleMock(FluidView::class, [], [], '', false);
-        $mockView->expects($this->any())->method('getFusionObject')->willReturn($fusionObject);
+        $mockView->expects(self::any())->method('getFusionObject')->willReturn($fusionObject);
         $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
 

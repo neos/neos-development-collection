@@ -54,7 +54,7 @@ class AttributesImplementationTest extends UnitTestCase
     public function evaluateTests($properties, $expectedOutput)
     {
         $path = 'attributes/test';
-        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) use ($path, $properties) {
+        $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath, $that) use ($path, $properties) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             return ObjectAccess::getPropertyPath($properties, str_replace('/', '.', $relativePath));
         }));

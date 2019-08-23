@@ -14,6 +14,7 @@ namespace Neos\Neos\Tests\Unit\ViewHelpers\Link;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Neos\ViewHelpers\Link\ModuleViewHelper;
 use Neos\Neos\ViewHelpers\Uri\ModuleViewHelper as UriModuleViewHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
@@ -22,22 +23,22 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 class ModuleViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ModuleViewHelper
+     * @var MockObject|ModuleViewHelper
      */
     protected $viewHelper;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TagBuilder
+     * @var MockObject|TagBuilder
      */
     protected $tagBuilder;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UriModuleViewHelper
+     * @var MockObject|UriModuleViewHelper
      */
     protected $uriModuleViewHelper;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RenderingContextInterface
+     * @var MockObject|RenderingContextInterface
      */
     protected $dummyRenderingContext;
 
@@ -48,7 +49,7 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(ModuleViewHelper::class, ['renderChildren']);
         $this->tagBuilder = $this->createMock(TagBuilder::class);
-        $this->tagBuilder->expects($this->once())->method('render')->willReturn('renderingResult');
+        $this->tagBuilder->expects(self::once())->method('render')->willReturn('renderingResult');
         $this->uriModuleViewHelper = $this->getMockBuilder(UriModuleViewHelper::class)->setMethods(['setRenderingContext', 'setArguments', 'render'])->getMock();
 
         $this->dummyRenderingContext = $this->createMock(RenderingContextInterface::class);
@@ -63,7 +64,7 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
      */
     public function callingRenderSetsTheRenderingContextOnTheUriViewHelper(): void
     {
-        $this->uriModuleViewHelper->expects($this->once())->method('setRenderingContext')->with($this->dummyRenderingContext);
+        $this->uriModuleViewHelper->expects(self::once())->method('setRenderingContext')->with($this->dummyRenderingContext);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['path' => 'path']);
         $this->viewHelper->render();
     }
@@ -73,7 +74,7 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
      */
     public function callingRenderCallsTheUriModuleViewHelpersSetArgumentsMethodWithTheCorrectArguments(): void
     {
-        $this->uriModuleViewHelper->expects($this->once())->method('setArguments')->with([
+        $this->uriModuleViewHelper->expects(self::once())->method('setArguments')->with([
             'path' => 'path',
             'action' => 'action',
             'arguments' => ['arguments'],
@@ -101,8 +102,8 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
      */
     public function callingRenderAddsUriViewHelpersReturnAsTagHrefAttributeIfItsNotEmpty(): void
     {
-        $this->uriModuleViewHelper->expects($this->once())->method('render')->willReturn('moduleUri');
-        $this->tagBuilder->expects($this->once())->method('addAttribute')->with('href', 'moduleUri');
+        $this->uriModuleViewHelper->expects(self::once())->method('render')->willReturn('moduleUri');
+        $this->tagBuilder->expects(self::once())->method('addAttribute')->with('href', 'moduleUri');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['path' => 'path']);
         $this->viewHelper->render();
     }
@@ -112,8 +113,8 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
      */
     public function callingRenderSetsTheTagBuildersContentWithRenderChildrenResult(): void
     {
-        $this->viewHelper->expects($this->once())->method('renderChildren')->willReturn('renderChildrenResult');
-        $this->tagBuilder->expects($this->once())->method('setContent')->with('renderChildrenResult');
+        $this->viewHelper->expects(self::once())->method('renderChildren')->willReturn('renderChildrenResult');
+        $this->tagBuilder->expects(self::once())->method('setContent')->with('renderChildrenResult');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['path' => 'path']);
         $this->viewHelper->render();
     }
@@ -123,7 +124,7 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
      */
     public function callingRenderSetsForceClosingTagOnTagBuilder(): void
     {
-        $this->tagBuilder->expects($this->once())->method('forceClosingTag')->with(true);
+        $this->tagBuilder->expects(self::once())->method('forceClosingTag')->with(true);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['path' => 'path']);
         $this->viewHelper->render();
     }

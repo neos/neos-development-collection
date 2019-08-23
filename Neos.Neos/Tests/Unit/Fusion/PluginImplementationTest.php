@@ -47,19 +47,19 @@ class PluginImplementationTest extends UnitTestCase
         $this->pluginImplementation = $this->getAccessibleMock(PluginImplementation::class, ['buildPluginRequest'], [], '', false);
 
         $this->mockHttpUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpUri->expects($this->any())->method('getHost')->will($this->returnValue('localhost'));
+        $this->mockHttpUri->expects(self::any())->method('getHost')->will(self::returnValue('localhost'));
 
         $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockHttpUri));
+        $this->mockHttpRequest->expects(self::any())->method('getUri')->will(self::returnValue($this->mockHttpUri));
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
 
         $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->mockActionRequest));
+        $this->mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->mockActionRequest));
 
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $this->mockRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
+        $this->mockRuntime->expects(self::any())->method('getControllerContext')->will(self::returnValue($this->mockControllerContext));
         $this->pluginImplementation->_set('runtime', $this->mockRuntime);
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->getMock();
@@ -99,13 +99,13 @@ class PluginImplementationTest extends UnitTestCase
      */
     public function evaluateSetHeaderIntoParent($message, $input, $expected)
     {
-        $this->pluginImplementation->expects($this->any())->method('buildPluginRequest')->will($this->returnValue($this->mockActionRequest));
+        $this->pluginImplementation->expects(self::any())->method('buildPluginRequest')->will(self::returnValue($this->mockActionRequest));
 
         $parentResponse = new \GuzzleHttp\Psr7\Response();
         $this->_setHeadersIntoResponse($parentResponse, $input['parent']);
-        $this->mockControllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($parentResponse));
+        $this->mockControllerContext->expects(self::any())->method('getResponse')->will(self::returnValue($parentResponse));
 
-        $this->mockDispatcher->expects($this->any())->method('dispatch')->will($this->returnCallback(function ($request, $response) use ($input) {
+        $this->mockDispatcher->expects(self::any())->method('dispatch')->will(self::returnCallback(function ($request, $response) use ($input) {
             $response = $this->_setHeadersIntoResponse($response, $input['plugin']);
         }));
 
