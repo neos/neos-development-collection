@@ -168,7 +168,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
     /**
      * @param array $methods
      * @param array $variantPresetsConfiguration
-     * @return AssetVariantGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @return AssetVariantGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     private function mockAssetVariantGenerator(array $methods, array $variantPresetsConfiguration = [])
     {
@@ -225,7 +225,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @return Image|\PHPUnit_Framework_MockObject_MockObject
+     * @return Image|\PHPUnit\Framework\MockObject\MockObject
      */
     private function mockImage()
     {

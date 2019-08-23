@@ -51,7 +51,7 @@ class ContentCacheTest extends UnitTestCase
     public function flushByTagSanitizesTagsForCacheFrontend($tag, $sanitizedTag)
     {
         $mockCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects($this->once())->method('flushByTag')->with($sanitizedTag);
+        $mockCache->expects(self::once())->method('flushByTag')->with($sanitizedTag);
         $contentCache = new ContentCache();
         $this->inject($contentCache, 'cache', $mockCache);
         $contentCache->flushByTag($tag);
@@ -135,7 +135,7 @@ class ContentCacheTest extends UnitTestCase
 
         $segement = $contentCache->createCacheSegment('My content', '/foo/bar', [42], ['Foo', 'Bar'], 60);
 
-        $mockCache->expects($this->once())->method('set')->with($this->anything(), $this->anything(), $this->anything(),
+        $mockCache->expects(self::once())->method('set')->with($this->anything(), $this->anything(), $this->anything(),
             60);
 
         $contentCache->processCacheSegments($segement);
@@ -181,7 +181,7 @@ class ContentCacheTest extends UnitTestCase
         $contentCache = new ContentCache();
 
         $mockPropertyMapper = $this->createMock(PropertyMapper::class);
-        $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnArgument(0));
+        $mockPropertyMapper->expects(self::any())->method('convert')->will($this->returnArgument(0));
         $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
 
         $mockCache = $this->createMock(FrontendInterface::class);
@@ -208,7 +208,7 @@ class ContentCacheTest extends UnitTestCase
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
 
         $mockPropertyMapper = $this->createMock(PropertyMapper::class);
-        $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnArgument(0));
+        $mockPropertyMapper->expects(self::any())->method('convert')->will($this->returnArgument(0));
         $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
 
         $mockContext = $this->getMockBuilder(EnvironmentConfiguration::class)->disableOriginalConstructor()->getMock();

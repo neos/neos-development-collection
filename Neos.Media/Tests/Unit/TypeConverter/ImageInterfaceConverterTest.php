@@ -32,17 +32,17 @@ class ImageInterfaceConverterTest extends UnitTestCase
     protected $converter;
 
     /**
-     * @var ReflectionService|\PHPUnit_Framework_MockObject_MockObject
+     * @var ReflectionService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockReflectionService;
 
     /**
-     * @var PersistenceManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PersistenceManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPersistenceManager;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockObjectManager;
 
@@ -103,7 +103,7 @@ class ImageInterfaceConverterTest extends UnitTestCase
      */
     public function convertFromReturnsNullIfResourcePropertyIsNotConverted()
     {
-        $this->mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnCallback(function ($objectType) {
+        $this->mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallback(function ($objectType) {
             return $objectType;
         }));
         $configuration = new PropertyMappingConfiguration();

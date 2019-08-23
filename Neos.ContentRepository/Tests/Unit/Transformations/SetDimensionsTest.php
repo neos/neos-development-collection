@@ -95,7 +95,7 @@ class SetDimensionsTest extends UnitTestCase
             }
 
             $mockContentDimensionRepository = $this->getMockBuilder(ContentDimensionRepository::class)->getMock();
-            $mockContentDimensionRepository->expects($this->atLeastOnce())->method('findAll')->will($this->returnValue($configuredDimensionObjects));
+            $mockContentDimensionRepository->expects(self::atLeastOnce())->method('findAll')->will(self::returnValue($configuredDimensionObjects));
             $this->inject($transformation, 'contentDimensionRepository', $mockContentDimensionRepository);
         }
 
@@ -105,7 +105,7 @@ class SetDimensionsTest extends UnitTestCase
         ];
 
         $mockNode = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
-        $mockNode->expects($this->once())->method('setDimensions')->with($this->callback(function (array $dimensions) use ($expected) {
+        $mockNode->expects(self::once())->method('setDimensions')->with($this->callback(function (array $dimensions) use ($expected) {
             if (count($dimensions) === $expected['count']) {
                 $simplifiedDimensions = [];
                 foreach ($dimensions as $dimension) {
