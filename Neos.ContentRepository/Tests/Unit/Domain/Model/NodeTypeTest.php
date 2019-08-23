@@ -219,7 +219,7 @@ class NodeTypeTest extends UnitTestCase
     public function hasConfigurationInitializesTheNodeType()
     {
         $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(['initialize'])->getMock();
-        $nodeType->expects($this->once())->method('initialize');
+        $nodeType->expects(self::once())->method('initialize');
         $nodeType->hasConfiguration('foo');
     }
 
@@ -251,7 +251,7 @@ class NodeTypeTest extends UnitTestCase
     public function getConfigurationInitializesTheNodeType()
     {
         $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(['initialize'])->getMock();
-        $nodeType->expects($this->once())->method('initialize');
+        $nodeType->expects(self::once())->method('initialize');
         $nodeType->getConfiguration('foo');
     }
 
@@ -302,7 +302,7 @@ class NodeTypeTest extends UnitTestCase
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $nodeType = $this->getAccessibleMock(NodeType::class, ['initialize'], [], '', false);
         $nodeType->_set('objectManager', $mockObjectManager);
-        $nodeType->expects($this->atLeastOnce())->method('initialize');
+        $nodeType->expects(self::atLeastOnce())->method('initialize');
         $nodeType->$getter();
     }
 
@@ -456,7 +456,7 @@ class NodeTypeTest extends UnitTestCase
             'childNodes' => ['nodeName' => $childNodeConfiguration]
         ]);
         $mockNodeTypeManager = $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock();
-        $mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnValue($baseType));
+        $mockNodeTypeManager->expects(self::any())->method('getNodeType')->will(self::returnValue($baseType));
         $this->inject($baseType, 'nodeTypeManager', $mockNodeTypeManager);
 
         $autoCreatedChildNodes = $mockNodeTypeManager->getNodeType('Neos.ContentRepository:Base')->getAutoCreatedChildNodes();

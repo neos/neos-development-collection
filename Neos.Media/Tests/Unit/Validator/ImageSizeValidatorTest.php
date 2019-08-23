@@ -104,8 +104,8 @@ class ImageSizeValidatorTest extends UnitTestCase
     {
         $validator = new ImageSizeValidator($options);
         $image = $this->createMock(ImageInterface::class);
-        $image->expects($this->any())->method('getWidth')->will($this->returnValue($imageWidth));
-        $image->expects($this->any())->method('getHeight')->will($this->returnValue($imageHeight));
+        $image->expects(self::any())->method('getWidth')->will(self::returnValue($imageWidth));
+        $image->expects(self::any())->method('getHeight')->will(self::returnValue($imageHeight));
 
         $validationResult = $validator->validate($image);
         if ($isValid) {

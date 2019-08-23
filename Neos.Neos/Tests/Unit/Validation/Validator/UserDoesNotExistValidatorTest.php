@@ -61,10 +61,10 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
         $mockUser = $this->createMock(Account::class);
 
         $mockUserService
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('getUser')
             ->with('j.doe')
-            ->will($this->returnValue($mockUser));
+            ->will(self::returnValue($mockUser));
 
         $result = $validator->validate('j.doe');
 
