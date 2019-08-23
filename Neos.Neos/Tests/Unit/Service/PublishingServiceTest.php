@@ -98,16 +98,16 @@ class PublishingServiceTest extends UnitTestCase
         $this->inject($this->publishingService, 'contextFactory', $this->mockContextFactory);
 
         $this->mockBaseWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $this->mockBaseWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
-        $this->mockBaseWorkspace->expects($this->any())->method('getBaseWorkspace')->will($this->returnValue(null));
+        $this->mockBaseWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
+        $this->mockBaseWorkspace->expects(self::any())->method('getBaseWorkspace')->will(self::returnValue(null));
 
         $this->mockContentDimensionPresetSource = $this->getMockBuilder(ContentDimensionPresetSourceInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockContentDimensionPresetSource->expects($this->any())->method('findPresetsByTargetValues')->will($this->returnArgument(0));
+        $this->mockContentDimensionPresetSource->expects(self::any())->method('findPresetsByTargetValues')->will($this->returnArgument(0));
         $this->inject($this->publishingService, 'contentDimensionPresetSource', $this->mockContentDimensionPresetSource);
 
         $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('workspace-name'));
-        $this->mockWorkspace->expects($this->any())->method('getBaseWorkspace')->will($this->returnValue($this->mockBaseWorkspace));
+        $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('workspace-name'));
+        $this->mockWorkspace->expects(self::any())->method('getBaseWorkspace')->will(self::returnValue($this->mockBaseWorkspace));
     }
 
     /**
@@ -115,7 +115,7 @@ class PublishingServiceTest extends UnitTestCase
      */
     public function getUnpublishedNodesReturnsAnEmptyArrayIfThereAreNoNodesInTheGivenWorkspace()
     {
-        $this->mockNodeDataRepository->expects($this->atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will($this->returnValue([]));
+        $this->mockNodeDataRepository->expects(self::atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will(self::returnValue([]));
 
         $actualResult = $this->publishingService->getUnpublishedNodes($this->mockWorkspace);
         self::assertSame($actualResult, []);
@@ -135,26 +135,26 @@ class PublishingServiceTest extends UnitTestCase
             'removedContentShown' => true,
             'dimensions' => []
         ];
-        $this->mockContextFactory->expects($this->any())->method('create')->with($expectedContextProperties)->will($this->returnValue($mockContext));
+        $this->mockContextFactory->expects(self::any())->method('create')->with($expectedContextProperties)->will(self::returnValue($mockContext));
 
         $mockNodeData1 = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $mockNodeData2 = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
 
-        $mockNodeData1->expects($this->any())->method('getDimensionValues')->will($this->returnValue([]));
-        $mockNodeData2->expects($this->any())->method('getDimensionValues')->will($this->returnValue([]));
+        $mockNodeData1->expects(self::any())->method('getDimensionValues')->will(self::returnValue([]));
+        $mockNodeData2->expects(self::any())->method('getDimensionValues')->will(self::returnValue([]));
 
         $mockNode1 = $this->getMockBuilder(NodeInterface::class)->getMock();
         $mockNode2 = $this->getMockBuilder(NodeInterface::class)->getMock();
 
-        $mockNode1->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData1));
-        $mockNode1->expects($this->any())->method('getPath')->will($this->returnValue('/node1'));
-        $mockNode2->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData2));
-        $mockNode2->expects($this->any())->method('getPath')->will($this->returnValue('/node2'));
+        $mockNode1->expects(self::any())->method('getNodeData')->will(self::returnValue($mockNodeData1));
+        $mockNode1->expects(self::any())->method('getPath')->will(self::returnValue('/node1'));
+        $mockNode2->expects(self::any())->method('getNodeData')->will(self::returnValue($mockNodeData2));
+        $mockNode2->expects(self::any())->method('getPath')->will(self::returnValue('/node2'));
 
-        $this->mockNodeFactory->expects($this->at(0))->method('createFromNodeData')->with($mockNodeData1, $mockContext)->will($this->returnValue($mockNode1));
-        $this->mockNodeFactory->expects($this->at(1))->method('createFromNodeData')->with($mockNodeData2, $mockContext)->will($this->returnValue($mockNode2));
+        $this->mockNodeFactory->expects($this->at(0))->method('createFromNodeData')->with($mockNodeData1, $mockContext)->will(self::returnValue($mockNode1));
+        $this->mockNodeFactory->expects($this->at(1))->method('createFromNodeData')->with($mockNodeData2, $mockContext)->will(self::returnValue($mockNode2));
 
-        $this->mockNodeDataRepository->expects($this->atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will($this->returnValue([$mockNodeData1, $mockNodeData2]));
+        $this->mockNodeDataRepository->expects(self::atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will(self::returnValue([$mockNodeData1, $mockNodeData2]));
 
         $actualResult = $this->publishingService->getUnpublishedNodes($this->mockWorkspace);
         self::assertSame($actualResult, [$mockNode2, $mockNode1]);
@@ -174,23 +174,23 @@ class PublishingServiceTest extends UnitTestCase
             'removedContentShown' => true,
             'dimensions' => []
         ];
-        $this->mockContextFactory->expects($this->any())->method('create')->with($expectedContextProperties)->will($this->returnValue($mockContext));
+        $this->mockContextFactory->expects(self::any())->method('create')->with($expectedContextProperties)->will(self::returnValue($mockContext));
 
         $mockNodeData1 = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $mockNodeData2 = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
 
-        $mockNodeData1->expects($this->any())->method('getDimensionValues')->will($this->returnValue([]));
-        $mockNodeData2->expects($this->any())->method('getDimensionValues')->will($this->returnValue([]));
+        $mockNodeData1->expects(self::any())->method('getDimensionValues')->will(self::returnValue([]));
+        $mockNodeData2->expects(self::any())->method('getDimensionValues')->will(self::returnValue([]));
 
         $mockNode1 = $this->getMockBuilder(NodeInterface::class)->getMock();
 
-        $mockNode1->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData1));
-        $mockNode1->expects($this->any())->method('getPath')->will($this->returnValue('/node1'));
+        $mockNode1->expects(self::any())->method('getNodeData')->will(self::returnValue($mockNodeData1));
+        $mockNode1->expects(self::any())->method('getPath')->will(self::returnValue('/node1'));
 
-        $this->mockNodeFactory->expects($this->at(0))->method('createFromNodeData')->with($mockNodeData1, $mockContext)->will($this->returnValue($mockNode1));
-        $this->mockNodeFactory->expects($this->at(1))->method('createFromNodeData')->with($mockNodeData2, $mockContext)->will($this->returnValue(null));
+        $this->mockNodeFactory->expects($this->at(0))->method('createFromNodeData')->with($mockNodeData1, $mockContext)->will(self::returnValue($mockNode1));
+        $this->mockNodeFactory->expects($this->at(1))->method('createFromNodeData')->with($mockNodeData2, $mockContext)->will(self::returnValue(null));
 
-        $this->mockNodeDataRepository->expects($this->atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will($this->returnValue([$mockNodeData1, $mockNodeData2]));
+        $this->mockNodeDataRepository->expects(self::atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will(self::returnValue([$mockNodeData1, $mockNodeData2]));
 
         $actualResult = $this->publishingService->getUnpublishedNodes($this->mockWorkspace);
         self::assertSame($actualResult, [$mockNode1]);
@@ -201,7 +201,7 @@ class PublishingServiceTest extends UnitTestCase
      */
     public function getUnpublishedNodesCountReturnsTheNumberOfNodesInTheGivenWorkspaceMinusItsRootNode()
     {
-        $this->mockWorkspace->expects($this->atLeastOnce())->method('getNodeCount')->will($this->returnValue(123));
+        $this->mockWorkspace->expects(self::atLeastOnce())->method('getNodeCount')->will(self::returnValue(123));
         $actualResult = $this->publishingService->getUnpublishedNodesCount($this->mockWorkspace);
         $expectedResult = 122;
         self::assertSame($expectedResult, $actualResult);
@@ -215,13 +215,13 @@ class PublishingServiceTest extends UnitTestCase
         $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
 
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
+        $mockNode->expects(self::atLeastOnce())->method('getNodeType')->will(self::returnValue($mockNodeType));
 
-        $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
+        $mockNode->expects(self::atLeastOnce())->method('getWorkspace')->will(self::returnValue($this->mockWorkspace));
 
         $mockTargetWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockWorkspace->expects($this->atLeastOnce())->method('publishNodes')->with([$mockNode], $mockTargetWorkspace);
+        $this->mockWorkspace->expects(self::atLeastOnce())->method('publishNodes')->with([$mockNode], $mockTargetWorkspace);
         $this->publishingService->publishNode($mockNode, $mockTargetWorkspace);
     }
 
@@ -233,11 +233,11 @@ class PublishingServiceTest extends UnitTestCase
         $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
 
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
+        $mockNode->expects(self::atLeastOnce())->method('getNodeType')->will(self::returnValue($mockNodeType));
 
-        $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
+        $mockNode->expects(self::atLeastOnce())->method('getWorkspace')->will(self::returnValue($this->mockWorkspace));
 
-        $this->mockWorkspace->expects($this->atLeastOnce())->method('publishNodes')->with([$mockNode], $this->mockBaseWorkspace);
+        $this->mockWorkspace->expects(self::atLeastOnce())->method('publishNodes')->with([$mockNode], $this->mockBaseWorkspace);
         $this->publishingService->publishNode($mockNode);
     }
 
@@ -248,18 +248,18 @@ class PublishingServiceTest extends UnitTestCase
     {
         $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
         $mockChildNode = $this->getMockBuilder(NodeInterface::class)->getMock();
-        $mockChildNode->expects($this->any())->method('getChildNodes')->with('!Neos.Neos:Document')->will($this->returnValue([]));
+        $mockChildNode->expects(self::any())->method('getChildNodes')->with('!Neos.Neos:Document')->will(self::returnValue([]));
 
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $mockNodeType->expects($this->atLeastOnce())->method('isOfType')->with('Neos.Neos:Document')->will($this->returnValue(true));
-        $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
+        $mockNodeType->expects(self::atLeastOnce())->method('isOfType')->with('Neos.Neos:Document')->will(self::returnValue(true));
+        $mockNode->expects(self::atLeastOnce())->method('getNodeType')->will(self::returnValue($mockNodeType));
 
-        $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
-        $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('!Neos.Neos:Document')->will($this->returnValue([$mockChildNode]));
+        $mockNode->expects(self::atLeastOnce())->method('getWorkspace')->will(self::returnValue($this->mockWorkspace));
+        $mockNode->expects(self::atLeastOnce())->method('getChildNodes')->with('!Neos.Neos:Document')->will(self::returnValue([$mockChildNode]));
 
         $mockTargetWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockWorkspace->expects($this->atLeastOnce())->method('publishNodes')->with([$mockNode, $mockChildNode], $mockTargetWorkspace);
+        $this->mockWorkspace->expects(self::atLeastOnce())->method('publishNodes')->with([$mockNode, $mockChildNode], $mockTargetWorkspace);
         $this->publishingService->publishNode($mockNode, $mockTargetWorkspace);
     }
 
@@ -271,18 +271,18 @@ class PublishingServiceTest extends UnitTestCase
     {
         $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
         $mockChildNode = $this->getMockBuilder(NodeInterface::class)->getMock();
-        $mockChildNode->expects($this->any())->method('getChildNodes')->with('!Neos.Neos:Document')->will($this->returnValue([]));
+        $mockChildNode->expects(self::any())->method('getChildNodes')->with('!Neos.Neos:Document')->will(self::returnValue([]));
 
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(['hasConfiguration', 'isOfType'])->getMock();
-        $mockNodeType->expects($this->atLeastOnce())->method('hasConfiguration')->with('childNodes')->will($this->returnValue(true));
-        $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
+        $mockNodeType->expects(self::atLeastOnce())->method('hasConfiguration')->with('childNodes')->will(self::returnValue(true));
+        $mockNode->expects(self::atLeastOnce())->method('getNodeType')->will(self::returnValue($mockNodeType));
 
-        $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
-        $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('!Neos.Neos:Document')->will($this->returnValue([$mockChildNode]));
+        $mockNode->expects(self::atLeastOnce())->method('getWorkspace')->will(self::returnValue($this->mockWorkspace));
+        $mockNode->expects(self::atLeastOnce())->method('getChildNodes')->with('!Neos.Neos:Document')->will(self::returnValue([$mockChildNode]));
 
         $mockTargetWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockWorkspace->expects($this->atLeastOnce())->method('publishNodes')->with([$mockNode, $mockChildNode], $mockTargetWorkspace);
+        $this->mockWorkspace->expects(self::atLeastOnce())->method('publishNodes')->with([$mockNode, $mockChildNode], $mockTargetWorkspace);
         $this->publishingService->publishNode($mockNode, $mockTargetWorkspace);
     }
 }

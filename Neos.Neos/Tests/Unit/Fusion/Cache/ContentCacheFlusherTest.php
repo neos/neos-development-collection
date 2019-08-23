@@ -29,7 +29,7 @@ class ContentCacheFlusherTest extends UnitTestCase
     public function theWorkspaceChainWillOnlyEvaluatedIfNeeded()
     {
         $contentCacheFlusher = $this->getMockBuilder(ContentCacheFlusher::class)->setMethods(['resolveWorkspaceChain', 'registerChangeOnNodeIdentifier', 'registerChangeOnNodeType'])->disableOriginalConstructor()->getMock();
-        $contentCacheFlusher->expects($this->never())->method('resolveWorkspaceChain');
+        $contentCacheFlusher->expects(self::never())->method('resolveWorkspaceChain');
 
         // Assume 2 calls as we still register all legacy tags as well
         $contentCacheFlusher->expects($this->exactly(2))->method('registerChangeOnNodeIdentifier');
@@ -42,8 +42,8 @@ class ContentCacheFlusherTest extends UnitTestCase
         $nodeType = new NodeType('Some.Node:Type', [], []);
 
         $nodeMock = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $nodeMock->expects($this->any())->method('getWorkspace')->willReturn($workspace);
-        $nodeMock->expects($this->any())->method('getNodeType')->willReturn($nodeType);
+        $nodeMock->expects(self::any())->method('getWorkspace')->willReturn($workspace);
+        $nodeMock->expects(self::any())->method('getNodeType')->willReturn($nodeType);
 
         $contentCacheFlusher->registerNodeChange($nodeMock);
     }

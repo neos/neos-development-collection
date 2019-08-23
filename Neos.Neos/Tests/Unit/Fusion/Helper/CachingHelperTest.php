@@ -96,13 +96,13 @@ class CachingHelperTest extends UnitTestCase
 
         $workspaceName = 'live';
         $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $workspaceMock->expects($this->any())->method('getName')->willReturn($workspaceName);
+        $workspaceMock->expects(self::any())->method('getName')->willReturn($workspaceName);
 
         $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $contextMock->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+        $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
 
         $contextNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $contextNode->expects($this->any())->method('getContext')->willReturn($contextMock);
+        $contextNode->expects(self::any())->method('getContext')->willReturn($contextMock);
 
         $hashedWorkspaceName = $cacheHelper->renderWorkspaceTagForContextNode($workspaceName);
 
@@ -171,20 +171,20 @@ class CachingHelperTest extends UnitTestCase
 
         $workspaceName = 'live';
         $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $workspaceMock->expects($this->any())->method('getName')->willReturn($workspaceName);
+        $workspaceMock->expects(self::any())->method('getName')->willReturn($workspaceName);
 
         $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $contextMock->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+        $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
 
         $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
         $node = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $node->expects($this->any())->method('getContext')->willReturn($contextMock);
-        $node->expects($this->any())->method('getIdentifier')->willReturn($nodeIdentifier);
+        $node->expects(self::any())->method('getContext')->willReturn($contextMock);
+        $node->expects(self::any())->method('getIdentifier')->willReturn($nodeIdentifier);
 
         $anotherNodeIdentifier = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
         $anotherNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $anotherNode->expects($this->any())->method('getContext')->willReturn($contextMock);
-        $anotherNode->expects($this->any())->method('getIdentifier')->willReturn($anotherNodeIdentifier);
+        $anotherNode->expects(self::any())->method('getContext')->willReturn($contextMock);
+        $anotherNode->expects(self::any())->method('getIdentifier')->willReturn($anotherNodeIdentifier);
 
         $hashedWorkspaceName = $cachingHelper->renderWorkspaceTagForContextNode($workspaceName);
 
@@ -221,15 +221,15 @@ class CachingHelperTest extends UnitTestCase
 
         $workspaceName = 'live';
         $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $workspaceMock->expects($this->any())->method('getName')->willReturn($workspaceName);
+        $workspaceMock->expects(self::any())->method('getName')->willReturn($workspaceName);
 
         $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $contextMock->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+        $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
 
         $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
         $node = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $node->expects($this->any())->method('getContext')->willReturn($contextMock);
-        $node->expects($this->any())->method('getIdentifier')->willReturn($nodeIdentifier);
+        $node->expects(self::any())->method('getContext')->willReturn($contextMock);
+        $node->expects(self::any())->method('getIdentifier')->willReturn($nodeIdentifier);
 
         $hashedWorkspaceName = $helper->renderWorkspaceTagForContextNode($workspaceName);
 
@@ -259,20 +259,20 @@ class CachingHelperTest extends UnitTestCase
 
         $workspaceName = 'live';
         $workspaceMock = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
-        $workspaceMock->expects($this->any())->method('getName')->willReturn($workspaceName);
+        $workspaceMock->expects(self::any())->method('getName')->willReturn($workspaceName);
 
         $contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $contextMock->expects($this->any())->method('getWorkspace')->willReturn($workspaceMock);
+        $contextMock->expects(self::any())->method('getWorkspace')->willReturn($workspaceMock);
 
         $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
         $node = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $node->expects($this->any())->method('getContext')->willReturn($contextMock);
-        $node->expects($this->any())->method('getIdentifier')->willReturn($nodeIdentifier);
+        $node->expects(self::any())->method('getContext')->willReturn($contextMock);
+        $node->expects(self::any())->method('getIdentifier')->willReturn($nodeIdentifier);
 
         $anotherNodeIdentifier = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
         $anotherNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $anotherNode->expects($this->any())->method('getContext')->willReturn($contextMock);
-        $anotherNode->expects($this->any())->method('getIdentifier')->willReturn($anotherNodeIdentifier);
+        $anotherNode->expects(self::any())->method('getContext')->willReturn($contextMock);
+        $anotherNode->expects(self::any())->method('getIdentifier')->willReturn($anotherNodeIdentifier);
 
         $hashedWorkspaceName = $cachingHelper->renderWorkspaceTagForContextNode($workspaceName);
 

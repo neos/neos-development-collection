@@ -34,11 +34,11 @@ class ContentContextFactoryTest extends \Neos\Flow\Tests\UnitTestCase
         $mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
 
         $mockDomain = $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock();
-        $mockDomain->expects($this->atLeastOnce())->method('getSite')->will($this->returnValue($mockSite));
-        $mockDomainRepository->expects($this->atLeastOnce())->method('findOneByActiveRequest')->will($this->returnValue($mockDomain));
+        $mockDomain->expects(self::atLeastOnce())->method('getSite')->will(self::returnValue($mockSite));
+        $mockDomainRepository->expects(self::atLeastOnce())->method('findOneByActiveRequest')->will(self::returnValue($mockDomain));
 
         $mockSiteRepository = $this->getMockBuilder(SiteRepository::class)->disableOriginalConstructor()->getMock();
-        $mockSiteRepository->expects($this->any())->method('findFirstOnline')->will($this->returnValue(null));
+        $mockSiteRepository->expects(self::any())->method('findFirstOnline')->will(self::returnValue(null));
 
         $contentContextFactory = $this->getMockBuilder(ContentContextFactory::class)->setMethods([
             'validateContextProperties',
@@ -46,7 +46,7 @@ class ContentContextFactoryTest extends \Neos\Flow\Tests\UnitTestCase
             'mergeTargetDimensionContextProperties',
             'getIdentifier'
         ])->disableOriginalConstructor()->getMock();
-        $contentContextFactory->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('abc'));
+        $contentContextFactory->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('abc'));
 
         $this->inject($contentContextFactory, 'domainRepository', $mockDomainRepository);
         $this->inject($contentContextFactory, 'siteRepository', $mockSiteRepository);
