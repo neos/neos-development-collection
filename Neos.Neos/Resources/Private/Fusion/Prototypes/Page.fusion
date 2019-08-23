@@ -127,17 +127,6 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}
 
-	neosBackendMetaData = Neos.Fusion:Tag {
-		tagName = 'div'
-		@position = 'after neosBackendDocumentNodeData'
-		attributes = Neos.Fusion:Attributes {
-			data-preview-uri = Neos.Neos:NodeUri {
-				node = ${q(documentNode).context({'workspaceName': documentNode.context.workspace.baseWorkspace.name}).get(0)}
-			}
-		}
-		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
-	}
-
 	# Content of the body tag. To be defined by the integrator.
 	body = Neos.Fusion:Template {
 		@position = 'after bodyTag'

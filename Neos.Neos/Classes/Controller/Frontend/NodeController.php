@@ -16,10 +16,12 @@ use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
+use Neos\Neos\Exception as NeosException;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
@@ -77,11 +79,32 @@ class NodeController extends ActionController
      *
      * @param NodeInterface $node
      * @return string View output for the specified node
+     * @throws NodeNotFoundException | UnresolvableShortcutException | NeosException
      * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      * @Flow\IgnoreValidation("node")
-     * @throws NodeNotFoundException
      */
     public function showAction(NodeInterface $node = null)
+    {
+        if ($node === null || !$node->getContext()->isLive()) {
+            throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
+        }
+
+        if ($node->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
+            $this->handleShortcutNode($node);
+        }
+
+        $this->view->assign('value', $node);
+    }
+
+    /**
+     * Previews a node that is not live (i.e. for the Backend Preview & Edit Mode)
+     *
+     * @param NodeInterface $node
+     * @return string View output for the specified node
+     * @throws NeosException | NodeNotFoundException | SessionNotStartedException | UnresolvableShortcutException
+     * @Flow\IgnoreValidation("node")
+     */
+    public function previewAction(NodeInterface $node = null)
     {
         if ($node === null) {
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
