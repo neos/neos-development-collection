@@ -607,7 +607,7 @@
 			<target state="translated">NomDuVendeur.MaCléDuPackage</target></trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
-			<target state="needs-translation">No sites available</target></trans-unit>
+			<target state="translated">Aucun sites disponibles</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target state="translated">Le package &lt;em&gt;Neos Kickstarter&lt;/em&gt; n'est pas installé, Installez le pour lancer un nouveau site en kickstart.</target></trans-unit>
@@ -628,7 +628,7 @@
 			<target state="translated">Données du domaine</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
-			<target state="needs-translation">e.g. www.neos.io</target></trans-unit>
+			<target state="translated">par exemple www.neos.io</target></trans-unit>
       <trans-unit id="domainform.state" xml:space="preserve">
 				<source>State</source>
 			<target state="translated">Etat</target></trans-unit>
@@ -662,10 +662,10 @@ Primary fallbacks are marked blue and always visible, while lower priority fallb
 Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
 				<source>Intra dimensional fallback graph</source>
-			<target state="translated">Graphique de repli intradimensionnel</target></trans-unit>
+			<target state="translated">Graphique de repli interdimensionnel</target><alt-trans><target>Graphique de repli intradimensionnel</target></alt-trans></trans-unit>
       <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
 				<source>Intra dimensional</source>
-			<target state="translated">Intradimensionnel</target></trans-unit>
+			<target state="translated">Interdimensionnel</target><alt-trans><target>Intradimensionnel</target></alt-trans></trans-unit>
       <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
 				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
 			<target state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
