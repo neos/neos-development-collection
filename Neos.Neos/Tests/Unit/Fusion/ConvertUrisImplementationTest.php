@@ -11,8 +11,7 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -25,6 +24,7 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Fusion\Core\Runtime;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the ConvertNodeUris Fusion implementation
@@ -91,8 +91,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->mockHttpUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpUri->expects($this->any())->method('getHost')->will($this->returnValue('localhost'));
 
-        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockHttpUri));
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest->expects($this->any())->method('getUri')->willReturn($this->mockHttpUri);
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
@@ -158,7 +158,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($value, $actualResult);
+        self::assertSame($value, $actualResult);
     }
 
     /**
@@ -172,7 +172,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->addValueExpectation($value);
 
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($value, $actualResult);
+        self::assertSame($value, $actualResult);
     }
 
     /**
@@ -200,7 +200,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $expectedResult = 'This string contains a node URI: http://replaced/uri/01 and two <a href="http://replaced/uri/02">node</a> <a href="http://replaced/uri/01">links</a>.';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -228,7 +228,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $expectedResult = 'This string contains a node URI: http://replaced/uri/01 and two <a href="http://replaced/uri/02">node</a> <a href="http://replaced/uri/01">links</a>.';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
 
@@ -247,7 +247,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $expectedResult = 'This string contains an unresolvable node URI:  and a link.';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -276,7 +276,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a target="' . $externalLinkTarget . '" rel="noopener" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" rel="noopener" href="http://www.example.org">example2</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -304,7 +304,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $expectedResult = 'This string contains two asset links and an external link: one with a target set <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example</a> and one without a target <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example2</a> and an external link <a href="http://www.example.org">example3</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -316,6 +316,6 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->addValueExpectation($value, null, false, '_blank', null, false, false);
         $expectedResult = 'This string contains an external link: <a href="http://www.example.org">example3</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 }

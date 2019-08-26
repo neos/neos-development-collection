@@ -100,11 +100,11 @@ class NodeConverterTest extends UnitTestCase
         $this->mockConverterConfiguration->expects($this->any())->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN)->will($this->returnValue(true));
 
         $result = $this->nodeConverter->convertFrom($contextPath, null, [], $this->mockConverterConfiguration);
-        $this->assertSame($mockNode, $result);
+        self::assertSame($mockNode, $result);
 
         $contextProperties = $mockNode->getContext()->getProperties();
-        $this->assertArrayHasKey('removedContentShown', $contextProperties, 'removedContentShown context property should be set');
-        $this->assertTrue($contextProperties['removedContentShown'], 'removedContentShown context property should be true');
+        self::assertArrayHasKey('removedContentShown', $contextProperties, 'removedContentShown context property should be set');
+        self::assertTrue($contextProperties['removedContentShown'], 'removedContentShown context property should be true');
     }
 
     /**

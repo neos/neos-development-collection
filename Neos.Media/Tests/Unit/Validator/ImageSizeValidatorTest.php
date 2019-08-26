@@ -29,7 +29,7 @@ class ImageSizeValidatorTest extends UnitTestCase
         $validator = new ImageSizeValidator(['minimumWidth' => 123]);
 
         $value = new \stdClass();
-        $this->assertTrue($validator->validate($value)->hasErrors());
+        self::assertTrue($validator->validate($value)->hasErrors());
     }
 
     /**
@@ -109,9 +109,9 @@ class ImageSizeValidatorTest extends UnitTestCase
 
         $validationResult = $validator->validate($image);
         if ($isValid) {
-            $this->assertFalse($validationResult->hasErrors());
+            self::assertFalse($validationResult->hasErrors());
         } else {
-            $this->assertTrue($validationResult->hasErrors());
+            self::assertTrue($validationResult->hasErrors());
         }
     }
 }

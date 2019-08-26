@@ -134,8 +134,8 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->validConfiguration);
         $preset = $source->findPresetByDimensionValues('language', ['de_DE', 'de_ZZ', 'mul_ZZ']);
-        $this->assertArrayHasKey('uriSegment', $preset);
-        $this->assertEquals('deutsch', $preset['uriSegment']);
+        self::assertArrayHasKey('uriSegment', $preset);
+        self::assertEquals('deutsch', $preset['uriSegment']);
     }
 
 
@@ -147,7 +147,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->validConfiguration);
         $presets = $source->getAllPresets();
-        $this->assertEquals(['targetGroups', 'language'], array_keys($presets));
+        self::assertEquals(['targetGroups', 'language'], array_keys($presets));
     }
 
     /**
@@ -158,8 +158,8 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->validConfiguration);
         $presets = $source->getAllPresets();
-        $this->assertArrayHasKey('language', $presets);
-        $this->assertEquals(['de_DE', 'all'], array_keys($presets['language']['presets']));
+        self::assertArrayHasKey('language', $presets);
+        self::assertEquals(['de_DE', 'all'], array_keys($presets['language']['presets']));
     }
 
     /**
@@ -170,8 +170,8 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->validConfiguration);
         $preset = $source->getDefaultPreset('language');
-        $this->assertArrayHasKey('identifier', $preset);
-        $this->assertEquals('all', $preset['identifier']);
+        self::assertArrayHasKey('identifier', $preset);
+        self::assertEquals('all', $preset['identifier']);
     }
 
     /**
@@ -195,7 +195,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->configurationWithThreeDimensionsAndManyValues);
 
-        $this->assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DE']));
+        self::assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DE']));
     }
 
     /**
@@ -206,9 +206,9 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source = new ConfigurationContentDimensionPresetSource();
         $source->setConfiguration($this->configurationWithThreeDimensionsAndManyValues);
 
-        $this->assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'xy', 'country' => 'DE']));
-        $this->assertFalse($source->isPresetCombinationAllowedByConstraints(['languageXX' => 'de', 'country' => 'DE']));
-        $this->assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DEXX']));
+        self::assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'xy', 'country' => 'DE']));
+        self::assertFalse($source->isPresetCombinationAllowedByConstraints(['languageXX' => 'de', 'country' => 'DE']));
+        self::assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DEXX']));
     }
 
     /**
@@ -221,8 +221,8 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $configuration['country']['presets']['US']['constraints']['language']['de'] = false;
         $source->setConfiguration($configuration);
 
-        $this->assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DE']));
-        $this->assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'US']));
+        self::assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DE']));
+        self::assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'US']));
     }
 
     /**
@@ -235,8 +235,8 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $configuration['country']['presets']['US']['constraints']['language']['*'] = false;
         $source->setConfiguration($configuration);
 
-        $this->assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DE']));
-        $this->assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'US']));
+        self::assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DE']));
+        self::assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'US']));
     }
 
     /**
@@ -252,15 +252,15 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $source->setConfiguration($configuration);
 
         # Not affected by wildcard:
-        $this->assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DE']));
+        self::assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'DE']));
 
         # Affected by wildcard but explicitly allowed:
-        $this->assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'US']));
-        $this->assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'en', 'country' => 'US']));
+        self::assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'de', 'country' => 'US']));
+        self::assertTrue($source->isPresetCombinationAllowedByConstraints(['language' => 'en', 'country' => 'US']));
 
         # Affected by wildcard and thus not allowed:
-        $this->assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'it', 'country' => 'US']));
-        $this->assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'fr', 'country' => 'US']));
+        self::assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'it', 'country' => 'US']));
+        self::assertFalse($source->isPresetCombinationAllowedByConstraints(['language' => 'fr', 'country' => 'US']));
     }
 
     /**
@@ -282,21 +282,21 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         $dimensionAndPresets = $source->getAllowedDimensionPresetsAccordingToPreselection('language', ['country' => 'US']);
 
         # Only presets of the specified dimension should be returned:
-        $this->assertTrue(isset($dimensionAndPresets['language']));
-        $this->assertFalse(isset($dimensionAndPresets['country']));
-        $this->assertFalse(isset($dimensionAndPresets['persona']));
+        self::assertTrue(isset($dimensionAndPresets['language']));
+        self::assertFalse(isset($dimensionAndPresets['country']));
+        self::assertFalse(isset($dimensionAndPresets['persona']));
 
         $dimensionAndPresets = $source->getAllowedDimensionPresetsAccordingToPreselection('language', ['country' => 'US']);
 
         # "de" and "en" are explicitly allowed for country "US":
-        $this->assertArrayHasKey('de', $dimensionAndPresets['language']['presets']);
-        $this->assertArrayHasKey('en', $dimensionAndPresets['language']['presets']);
-        $this->assertcount(2, $dimensionAndPresets['language']['presets']);
+        self::assertArrayHasKey('de', $dimensionAndPresets['language']['presets']);
+        self::assertArrayHasKey('en', $dimensionAndPresets['language']['presets']);
+        self::assertCount(2, $dimensionAndPresets['language']['presets']);
 
         $dimensionAndPresets = $source->getAllowedDimensionPresetsAccordingToPreselection('country', ['language' => 'it']);
 
         # only "IT" is allowed as a country when "it" is selected as a language:
-        $this->assertArrayHasKey('IT', $dimensionAndPresets['country']['presets']);
-        $this->assertcount(1, $dimensionAndPresets['country']['presets']);
+        self::assertArrayHasKey('IT', $dimensionAndPresets['country']['presets']);
+        self::assertCount(1, $dimensionAndPresets['country']['presets']);
     }
 }

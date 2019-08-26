@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\ViewHelpers\Widget;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionResponseRenderer\Content;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\ViewHelpers\Widget\Controller\PaginateController;
@@ -76,6 +77,6 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
     public function render(): string
     {
         $response = $this->initiateSubRequest();
-        return $response->getContent();
+        return $response->prepareRendering(new Content())->render();
     }
 }

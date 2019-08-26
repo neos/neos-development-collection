@@ -38,6 +38,6 @@ class ContextFactoryTest extends UnitTestCase
         $context1 = $contextFactory->create([]);
         $context2 = $contextFactory->create(['workspaceName' => 'live']);
 
-        $this->assertSame($context1, $context2, 'Contexts should be re-used');
+        self::assertSame($context1, $context2, 'Contexts should be re-used');
     }
 }

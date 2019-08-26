@@ -26,7 +26,7 @@ class SettingsController extends ActionController
      */
     public function editPreviewAction()
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
         $configuration = new PositionalArraySorter(Arrays::getValueByPath($this->settings, 'userInterface.editPreviewModes'));
         return json_encode($configuration->toArray());
     }

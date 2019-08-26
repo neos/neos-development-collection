@@ -261,7 +261,7 @@
 			<target state="translated">Cargar más</target></trans-unit>
       <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
 				<source>This node has been removed in the meantime</source>
-			<target state="needs-translation">This node has been removed in the meantime</target></trans-unit>
+			<target state="translated">Por los momentos, este nodo ha sido removido.</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>

@@ -13,7 +13,6 @@ namespace Neos\Fusion\Tests\Functional\View;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\View\FusionView;
 
@@ -24,11 +23,6 @@ use Neos\Fusion\View\FusionView;
 class FusionViewTest extends FunctionalTestCase
 {
     /**
-     * @var ViewInterface
-     */
-    protected $mockFallbackView;
-
-    /**
      * @var ControllerContext
      */
     protected $mockControllerContext;
@@ -38,7 +32,6 @@ class FusionViewTest extends FunctionalTestCase
      */
     public function setUp(): void
     {
-        $this->mockFallbackView = $this->createMock(ViewInterface::class);
         $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
     }
 
@@ -48,7 +41,7 @@ class FusionViewTest extends FunctionalTestCase
     public function fusionViewIsUsedForRendering()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
-        $this->assertEquals('X', $view->render());
+        self::assertEquals('X', $view->render());
     }
 
     /**
@@ -58,19 +51,7 @@ class FusionViewTest extends FunctionalTestCase
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->setFusionPath('foo/bar');
-        $this->assertEquals('Xfoobar', $view->render());
-    }
-
-    /**
-     * @test
-     */
-    public function ifNoFusionViewIsFoundThenFallbackViewIsExecuted()
-    {
-        $view = $this->buildView('Foo\Bar\Controller\TestController', 'nonExisting');
-        $this->mockFallbackView->expects($this->once())->method('render')->will($this->returnValue('FallbackView called'));
-        $this->mockFallbackView->expects($this->once())->method('setControllerContext')->with($this->mockControllerContext);
-
-        $this->assertEquals('FallbackView called', $view->render());
+        self::assertEquals('Xfoobar', $view->render());
     }
 
     /**
@@ -80,7 +61,7 @@ class FusionViewTest extends FunctionalTestCase
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->assign('test', 'Hallo Welt');
-        $this->assertEquals('XHallo Welt', $view->render());
+        self::assertEquals('XHallo Welt', $view->render());
     }
 
     /**
@@ -99,7 +80,6 @@ class FusionViewTest extends FunctionalTestCase
 
         $view = new FusionView();
         $view->setControllerContext($this->mockControllerContext);
-        $this->inject($view, 'fallbackView', $this->mockFallbackView);
         $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
 
         return $view;

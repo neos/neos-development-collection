@@ -138,7 +138,7 @@ class XliffServiceTest extends FunctionalTestCase
     {
         $translationResult = json_decode($this->xliffService->getCachedJson(new Locale('de')), true);
 
-        $this->assertArrayHasKey(
+        self::assertArrayHasKey(
             'Included',
             $translationResult['Vendor_BasePackage']
         );
@@ -151,7 +151,7 @@ class XliffServiceTest extends FunctionalTestCase
     {
         $translationResult = json_decode($this->xliffService->getCachedJson(new Locale('de')), true);
 
-        $this->assertArrayNotHasKey(
+        self::assertArrayNotHasKey(
             'NotIncluded',
             $translationResult['Vendor_BasePackage']
         );
@@ -164,7 +164,7 @@ class XliffServiceTest extends FunctionalTestCase
     {
         $translationResult = json_decode($this->xliffService->getCachedJson(new Locale('de')), true);
 
-        $this->assertSame(
+        self::assertSame(
             'Anders übersetzte Zeichenkette',
             $translationResult['Vendor_BasePackage']['Included']['key1']
         );

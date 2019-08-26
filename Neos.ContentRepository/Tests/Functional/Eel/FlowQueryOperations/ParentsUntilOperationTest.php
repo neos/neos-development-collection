@@ -134,7 +134,7 @@ class ParentsUntilOperationTest extends AbstractNodeTest
         $result = $q->parentsUntil($subject)->get();
 
         if ($expectedNodePaths === [] && $unexpectedNodePaths === []) {
-            $this->assertEmpty($result);
+            self::assertEmpty($result);
         } else {
             foreach ($expectedNodePaths as $expectedNodePath) {
                 $expectedNode = $rootNode->getNode($expectedNodePath);

@@ -213,6 +213,12 @@ class AssetController extends ActionController
      */
     public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null, $assetSourceIdentifier = null): void
     {
+        $allCollectionsCount = 0;
+        // Calculating the asset-count of all collections before applying filters.
+        foreach ($this->assetSources as $assetSource) {
+            $allCollectionsCount += $assetSource->getAssetProxyRepository()->countAll();
+        }
+
         // First, apply all options given to indexAction() and save them in the BrowserState object.
         // Note that the order of these apply*() method calls plays a role, because they may depend on previous results:
         $this->applyActiveAssetSourceToBrowserState($assetSourceIdentifier);
@@ -234,7 +240,6 @@ class AssetController extends ActionController
         $tags = [];
         $assetProxies = [];
 
-        $allCollectionsCount = 0;
         $allCount = 0;
         $searchResultCount = 0;
         $untaggedCount = 0;
@@ -261,7 +266,6 @@ class AssetController extends ActionController
                 $assetProxies = $assetProxyRepository->findAll();
             }
 
-            $allCollectionsCount = $assetProxyRepository->countAll();
             $allCount = ($activeAssetCollection ? $this->assetRepository->countByAssetCollection($activeAssetCollection) : $allCollectionsCount);
             $searchResultCount = isset($assetProxies) ? $assetProxies->count() : 0;
             $untaggedCount = ($assetProxyRepository instanceof SupportsTaggingInterface ? $assetProxyRepository->countUntagged() : 0);

@@ -45,7 +45,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $nodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $node = new Node($nodeData, $context);
-        $this->assertSame($nodeData, $node->getNodeData());
+        self::assertSame($nodeData, $node->getNodeData());
     }
 
     /**
@@ -104,18 +104,18 @@ class ContextualizedNodeTest extends UnitTestCase
         $this->inject($contextualizedNode, 'propertyMapper', $propertyMapper);
 
         if ($methodName === 'hasProperty') {
-            $this->assertEquals(true, $contextualizedNode->$methodName($argument1));
+            self::assertEquals(true, $contextualizedNode->$methodName($argument1));
         } else {
-            $this->assertEquals('originalNodeResult', $contextualizedNode->$methodName($argument1));
+            self::assertEquals('originalNodeResult', $contextualizedNode->$methodName($argument1));
         }
 
         $contextualizedNode = new Node($newNode, $context);
         $this->inject($contextualizedNode, 'propertyMapper', $propertyMapper);
 
         if ($methodName === 'hasProperty') {
-            $this->assertEquals(false, $contextualizedNode->$methodName($argument1));
+            self::assertEquals(false, $contextualizedNode->$methodName($argument1));
         } else {
-            $this->assertEquals('newNodeResult', $contextualizedNode->$methodName($argument1));
+            self::assertEquals('newNodeResult', $contextualizedNode->$methodName($argument1));
         }
     }
 
@@ -155,7 +155,7 @@ class ContextualizedNodeTest extends UnitTestCase
 
         $contextualizedNode = new Node($nodeData, $context);
 
-        $this->assertEquals('theidentifier', $contextualizedNode->getIdentifier());
+        self::assertEquals('theidentifier', $contextualizedNode->getIdentifier());
     }
 
     /**
@@ -335,7 +335,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $currentContextualizedNode->_set('nodeDataRepository', $nodeDataRepository);
 
         $actualParentNode = $currentContextualizedNode->getParent();
-        $this->assertSame($expectedContextualizedParentNode, $actualParentNode);
+        self::assertSame($expectedContextualizedParentNode, $actualParentNode);
     }
 
     /**
@@ -365,7 +365,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $currentContextualizedNode->_set('nodeService', $nodeService);
 
         $actualNode = $currentContextualizedNode->getNode('../bar');
-        $this->assertSame($expectedContextualizedNode, $actualNode);
+        self::assertSame($expectedContextualizedNode, $actualNode);
     }
 
     /**

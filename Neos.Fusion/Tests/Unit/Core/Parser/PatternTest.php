@@ -27,12 +27,12 @@ class PatternTest extends UnitTestCase
     public function testSCAN_PATTERN_COMMENT()
     {
         $pattern = Parser::SCAN_PATTERN_COMMENT;
-        $this->assertEquals(preg_match($pattern, '/* This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a block comment start.');
-        $this->assertEquals(preg_match($pattern, '# This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a hash comment start.');
-        $this->assertEquals(preg_match($pattern, '// This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a double slash comment start.');
-        $this->assertEquals(preg_match($pattern, ' # This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a hash comment start with preceeding whitespace.');
-        $this->assertEquals(preg_match($pattern, '/ This is not a comment start ...'), 0, 'The SCAN_PATTERN_COMMENT pattern matched a single slash.');
-        $this->assertEquals(preg_match($pattern, '*/ This is not a comment start ...'), 0, 'The SCAN_PATTERN_COMMENT pattern matched a comment block ending.');
+        self::assertEquals(preg_match($pattern, '/* This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a block comment start.');
+        self::assertEquals(preg_match($pattern, '# This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a hash comment start.');
+        self::assertEquals(preg_match($pattern, '// This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a double slash comment start.');
+        self::assertEquals(preg_match($pattern, ' # This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a hash comment start with preceeding whitespace.');
+        self::assertEquals(preg_match($pattern, '/ This is not a comment start ...'), 0, 'The SCAN_PATTERN_COMMENT pattern matched a single slash.');
+        self::assertEquals(preg_match($pattern, '*/ This is not a comment start ...'), 0, 'The SCAN_PATTERN_COMMENT pattern matched a comment block ending.');
     }
 
     /**
@@ -41,19 +41,19 @@ class PatternTest extends UnitTestCase
     public function testSCAN_PATTERN_OPENINGCONFINEMENT()
     {
         $pattern = Parser::SCAN_PATTERN_OPENINGCONFINEMENT;
-        $this->assertEquals(preg_match($pattern, 'foo.bar.baz {'), 1, 'a confinement was not matched');
-        $this->assertEquals(preg_match($pattern, 'fo-o.bar-la.baz {'), 1, 'a confinement with dashes was not matched');
-        $this->assertEquals(preg_match($pattern, 'fo:o.bar:la.baz {'), 1, 'a confinement with colons was not matched');
-        $this->assertEquals(preg_match($pattern, 'f21oo.b12ar.baz {'), 1, 'a confinement with a number was not matched');
-        $this->assertEquals(preg_match($pattern, '		foo.bar.baz	    {	'), 1, 'a path which contained numerous whitespace was not matched');
-        $this->assertEquals(preg_match($pattern, 'f21oo.b12ar.baz { foo'), 0, 'a confinement with parts after the opening confinement matched');
-        $this->assertEquals(preg_match($pattern, '1foo.bar.baz {'), 1, 'a path which contained a number was matched (1)');
-        $this->assertEquals(preg_match($pattern, 'foo.1bar.baz {'), 1, 'a path which contained a number was matched (2)');
-        $this->assertEquals(preg_match($pattern, 'foo.1bar.\'b@r\' {'), 1, 'a path which contained a single quoted key was matched (1)');
-        $this->assertEquals(preg_match($pattern, 'foo.\'1b@r\'.\'b@r\' {'), 1, 'a path which contained a single quoted key was matched (2)');
-        $this->assertEquals(preg_match($pattern, 'foo.1bar."b@r" {'), 1, 'a path which contained a double quoted key was matched (1)');
-        $this->assertEquals(preg_match($pattern, 'foo."1b@r"."b@r" {'), 1, 'a path which contained a double quoted key was matched (2)');
-        $this->assertEquals(preg_match($pattern, 'foo."1b@r".\'b@r\' {'), 1, 'a path which contained a single & double quoted keys was matched');
+        self::assertEquals(preg_match($pattern, 'foo.bar.baz {'), 1, 'a confinement was not matched');
+        self::assertEquals(preg_match($pattern, 'fo-o.bar-la.baz {'), 1, 'a confinement with dashes was not matched');
+        self::assertEquals(preg_match($pattern, 'fo:o.bar:la.baz {'), 1, 'a confinement with colons was not matched');
+        self::assertEquals(preg_match($pattern, 'f21oo.b12ar.baz {'), 1, 'a confinement with a number was not matched');
+        self::assertEquals(preg_match($pattern, '		foo.bar.baz	    {	'), 1, 'a path which contained numerous whitespace was not matched');
+        self::assertEquals(preg_match($pattern, 'f21oo.b12ar.baz { foo'), 0, 'a confinement with parts after the opening confinement matched');
+        self::assertEquals(preg_match($pattern, '1foo.bar.baz {'), 1, 'a path which contained a number was matched (1)');
+        self::assertEquals(preg_match($pattern, 'foo.1bar.baz {'), 1, 'a path which contained a number was matched (2)');
+        self::assertEquals(preg_match($pattern, 'foo.1bar.\'b@r\' {'), 1, 'a path which contained a single quoted key was matched (1)');
+        self::assertEquals(preg_match($pattern, 'foo.\'1b@r\'.\'b@r\' {'), 1, 'a path which contained a single quoted key was matched (2)');
+        self::assertEquals(preg_match($pattern, 'foo.1bar."b@r" {'), 1, 'a path which contained a double quoted key was matched (1)');
+        self::assertEquals(preg_match($pattern, 'foo."1b@r"."b@r" {'), 1, 'a path which contained a double quoted key was matched (2)');
+        self::assertEquals(preg_match($pattern, 'foo."1b@r".\'b@r\' {'), 1, 'a path which contained a single & double quoted keys was matched');
     }
 
     /**
@@ -62,10 +62,10 @@ class PatternTest extends UnitTestCase
     public function testSCAN_PATTERN_CLOSINGCONFINEMENT()
     {
         $pattern = Parser::SCAN_PATTERN_CLOSINGCONFINEMENT;
-        $this->assertEquals(preg_match($pattern, '}'), 1, 'a closing confinement was not matched');
-        $this->assertEquals(preg_match($pattern, '		  }'), 1, 'a closing confinement with leading whitespace was not matched');
-        $this->assertEquals(preg_match($pattern, '		  }     '), 1, 'a closing confinement with leading and following whitespace was not matched');
-        $this->assertEquals(preg_match($pattern, '		  }    assas '), 0, 'a closing confinement with following text was matched, although it should not.');
+        self::assertEquals(preg_match($pattern, '}'), 1, 'a closing confinement was not matched');
+        self::assertEquals(preg_match($pattern, '		  }'), 1, 'a closing confinement with leading whitespace was not matched');
+        self::assertEquals(preg_match($pattern, '		  }     '), 1, 'a closing confinement with leading and following whitespace was not matched');
+        self::assertEquals(preg_match($pattern, '		  }    assas '), 0, 'a closing confinement with following text was matched, although it should not.');
     }
 
     /**
@@ -76,13 +76,13 @@ class PatternTest extends UnitTestCase
     public function testSCAN_PATTERN_DECLARATION()
     {
         $pattern = Parser::SCAN_PATTERN_DECLARATION;
-        $this->assertEquals(preg_match($pattern, 'include : source = "resource"'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an include declaration.');
-        $this->assertEquals(preg_match($pattern, 'include:source = "resource"'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an include declaration without whitespaces.');
-        $this->assertEquals(preg_match($pattern, 'namespace: cms = Test'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an namespace declaration.');
-        $this->assertEquals(preg_match($pattern, '  namespace: cms = Test'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an namespace declaration whith leading whitespace.');
-        $this->assertEquals(preg_match($pattern, 'ASDF  namespace: cms = Test'), 0, 'The SCAN_PATTERN_DECLARATION pattern did match an namespace declaration whith leading text.');
-        $this->assertEquals(preg_match($pattern, 'ASDF  namespace: Neos.Neos = Foo'), 0, 'The SCAN_PATTERN_DECLARATION pattern did match an namespace declaration whith leading text.');
-        $this->assertEquals(preg_match($pattern, '// This is a comment ...'), 0, 'The SCAN_PATTERN_DECLARATION pattern matched a comment.');
+        self::assertEquals(preg_match($pattern, 'include : source = "resource"'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an include declaration.');
+        self::assertEquals(preg_match($pattern, 'include:source = "resource"'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an include declaration without whitespaces.');
+        self::assertEquals(preg_match($pattern, 'namespace: cms = Test'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an namespace declaration.');
+        self::assertEquals(preg_match($pattern, '  namespace: cms = Test'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an namespace declaration whith leading whitespace.');
+        self::assertEquals(preg_match($pattern, 'ASDF  namespace: cms = Test'), 0, 'The SCAN_PATTERN_DECLARATION pattern did match an namespace declaration whith leading text.');
+        self::assertEquals(preg_match($pattern, 'ASDF  namespace: Neos.Neos = Foo'), 0, 'The SCAN_PATTERN_DECLARATION pattern did match an namespace declaration whith leading text.');
+        self::assertEquals(preg_match($pattern, '// This is a comment ...'), 0, 'The SCAN_PATTERN_DECLARATION pattern matched a comment.');
     }
 
     /**
@@ -93,14 +93,14 @@ class PatternTest extends UnitTestCase
     public function testSCAN_PATTERN_OBJECTDEFINITION()
     {
         $pattern = Parser::SCAN_PATTERN_OBJECTDEFINITION;
-        $this->assertEquals(preg_match($pattern, 'myObject = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment.');
-        $this->assertEquals(preg_match($pattern, '  myObject = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment with leading whitespace.');
-        $this->assertEquals(preg_match($pattern, 'myObject.content = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a literal assignment of a property.');
-        $this->assertEquals(preg_match($pattern, 'my-object.con-tent = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a dasherized path.');
-        $this->assertEquals(preg_match($pattern, 'my:object.con:tent = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a colonrized path.');
-        $this->assertEquals(preg_match($pattern, 'myObject.10 = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment of a content array item.');
-        $this->assertEquals(preg_match($pattern, 'myObject.\'b@r\' = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment of a single quoted key.');
-        $this->assertEquals(preg_match($pattern, 'myObject."b@r" = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment of a double quoted key.');
+        self::assertEquals(preg_match($pattern, 'myObject = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment.');
+        self::assertEquals(preg_match($pattern, '  myObject = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment with leading whitespace.');
+        self::assertEquals(preg_match($pattern, 'myObject.content = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a literal assignment of a property.');
+        self::assertEquals(preg_match($pattern, 'my-object.con-tent = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a dasherized path.');
+        self::assertEquals(preg_match($pattern, 'my:object.con:tent = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a colonrized path.');
+        self::assertEquals(preg_match($pattern, 'myObject.10 = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment of a content array item.');
+        self::assertEquals(preg_match($pattern, 'myObject.\'b@r\' = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment of a single quoted key.');
+        self::assertEquals(preg_match($pattern, 'myObject."b@r" = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment of a double quoted key.');
     }
 
     /**
@@ -109,16 +109,16 @@ class PatternTest extends UnitTestCase
     public function testSCAN_PATTERN_OBJECTPATH()
     {
         $pattern = Parser::SCAN_PATTERN_OBJECTPATH;
-        $this->assertEquals(preg_match($pattern, 'foo.bar'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (1)');
-        $this->assertEquals(preg_match($pattern, 'foo.\'b@r\''), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a object path with a single quoted key');
-        $this->assertEquals(preg_match($pattern, 'foo."b@r"'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a object path with a double quoted key');
-        $this->assertEquals(preg_match($pattern, 'foo.prototype(Neos.Foo).bar'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match an object path with a prototype definition inside (2)');
-        $this->assertEquals(preg_match($pattern, 'prototype(Neos.Foo)'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match an object path which consists only of a prototype definition (3)');
-        $this->assertEquals(preg_match($pattern, 'foo.bar.10.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (4)');
-        $this->assertEquals(preg_match($pattern, 'foo.bar.as10.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (5)');
-        $this->assertEquals(preg_match($pattern, '12foo.bar.as.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did match a simple object path (6)');
-        $this->assertEquals(preg_match($pattern, '12f-o-o.ba-r.as.ba-z'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did match a simple object path with dashes (7)');
-        $this->assertEquals(preg_match($pattern, '12f:o:o.ba:r.as.ba:z'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did match a simple object path with colons (7)');
+        self::assertEquals(preg_match($pattern, 'foo.bar'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (1)');
+        self::assertEquals(preg_match($pattern, 'foo.\'b@r\''), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a object path with a single quoted key');
+        self::assertEquals(preg_match($pattern, 'foo."b@r"'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a object path with a double quoted key');
+        self::assertEquals(preg_match($pattern, 'foo.prototype(Neos.Foo).bar'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match an object path with a prototype definition inside (2)');
+        self::assertEquals(preg_match($pattern, 'prototype(Neos.Foo)'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match an object path which consists only of a prototype definition (3)');
+        self::assertEquals(preg_match($pattern, 'foo.bar.10.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (4)');
+        self::assertEquals(preg_match($pattern, 'foo.bar.as10.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (5)');
+        self::assertEquals(preg_match($pattern, '12foo.bar.as.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did match a simple object path (6)');
+        self::assertEquals(preg_match($pattern, '12f-o-o.ba-r.as.ba-z'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did match a simple object path with dashes (7)');
+        self::assertEquals(preg_match($pattern, '12f:o:o.ba:r.as.ba:z'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did match a simple object path with colons (7)');
     }
 
     /**
@@ -132,20 +132,20 @@ class PatternTest extends UnitTestCase
             0 => 'foo',
             1 => 'bar'
         ];
-        $this->assertSame($expected, preg_split($pattern, 'foo.bar'));
+        self::assertSame($expected, preg_split($pattern, 'foo.bar'));
 
         $expected = [
             0 => 'prototype(Neos.Foo)',
             1 => 'bar'
         ];
-        $this->assertSame($expected, preg_split($pattern, 'prototype(Neos.Foo).bar'));
+        self::assertSame($expected, preg_split($pattern, 'prototype(Neos.Foo).bar'));
 
         $expected = [
             0 => 'asdf',
             1 => 'prototype(Neos.Foo)',
             2 => 'bar'
         ];
-        $this->assertSame($expected, preg_split($pattern, 'asdf.prototype(Neos.Foo).bar'));
+        self::assertSame($expected, preg_split($pattern, 'asdf.prototype(Neos.Foo).bar'));
 
         $expected = [
             0 =>  'blah',
@@ -153,7 +153,7 @@ class PatternTest extends UnitTestCase
             2 => 'prototype(Neos.Foo)',
             3 => 'bar'
         ];
-        $this->assertSame($expected, preg_split($pattern, 'blah.asdf.prototype(Neos.Foo).bar'));
+        self::assertSame($expected, preg_split($pattern, 'blah.asdf.prototype(Neos.Foo).bar'));
 
         $expected = [
             0 =>  'b-lah',
@@ -161,7 +161,7 @@ class PatternTest extends UnitTestCase
             2 => 'prototype(Neos.Foo)',
             3 => 'b-ar'
         ];
-        $this->assertSame($expected, preg_split($pattern, 'b-lah.asdf.prototype(Neos.Foo).b-ar'));
+        self::assertSame($expected, preg_split($pattern, 'b-lah.asdf.prototype(Neos.Foo).b-ar'));
 
         $expected = [
             0 =>  'b:lah',
@@ -169,7 +169,7 @@ class PatternTest extends UnitTestCase
             2 => 'prototype(Neos.Foo)',
             3 => 'b:ar'
         ];
-        $this->assertSame($expected, preg_split($pattern, 'b:lah.asdf.prototype(Neos.Foo).b:ar'));
+        self::assertSame($expected, preg_split($pattern, 'b:lah.asdf.prototype(Neos.Foo).b:ar'));
     }
 
     /**
@@ -245,9 +245,9 @@ class PatternTest extends UnitTestCase
     public function testSCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE()
     {
         $pattern = Parser::SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE;
-        $this->assertEquals(preg_match($pattern, 'prototype(asf.Ds:1)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (1).');
-        $this->assertEquals(preg_match($pattern, 'prototype(Neos.Flow:Test)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (2).');
-        $this->assertEquals(preg_match($pattern, 'message'), 0, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern matched(3).');
+        self::assertEquals(preg_match($pattern, 'prototype(asf.Ds:1)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (1).');
+        self::assertEquals(preg_match($pattern, 'prototype(Neos.Flow:Test)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (2).');
+        self::assertEquals(preg_match($pattern, 'message'), 0, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern matched(3).');
     }
 
     /**
@@ -258,12 +258,12 @@ class PatternTest extends UnitTestCase
     public function testSPLIT_PATTERN_VALUENUMBER()
     {
         $pattern = Parser::SPLIT_PATTERN_VALUENUMBER;
-        $this->assertEquals(preg_match($pattern, ' 1'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match a number with a space in front.');
-        $this->assertEquals(preg_match($pattern, '12221'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match the number 12221.');
-        $this->assertEquals(preg_match($pattern, '-12'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match a negative number.');
-        $this->assertEquals(preg_match($pattern, ' -42'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match a negative number with a space in front.');
-        $this->assertEquals(preg_match($pattern, '-12.5'), 0, 'The SPLIT_PATTERN_VALUENUMBER pattern matched a negative float number.');
-        $this->assertEquals(preg_match($pattern, '42.5'), 0, 'The SPLIT_PATTERN_VALUENUMBER pattern matched a positive float number.');
+        self::assertEquals(preg_match($pattern, ' 1'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match a number with a space in front.');
+        self::assertEquals(preg_match($pattern, '12221'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match the number 12221.');
+        self::assertEquals(preg_match($pattern, '-12'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match a negative number.');
+        self::assertEquals(preg_match($pattern, ' -42'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match a negative number with a space in front.');
+        self::assertEquals(preg_match($pattern, '-12.5'), 0, 'The SPLIT_PATTERN_VALUENUMBER pattern matched a negative float number.');
+        self::assertEquals(preg_match($pattern, '42.5'), 0, 'The SPLIT_PATTERN_VALUENUMBER pattern matched a positive float number.');
     }
 
     /**
@@ -274,7 +274,7 @@ class PatternTest extends UnitTestCase
     public function testSPLIT_PATTERN_VALUEMULTILINELITERAL()
     {
         $pattern = Parser::SPLIT_PATTERN_VALUEMULTILINELITERAL;
-        $this->assertEquals(preg_match($pattern, "\${'col-sm-'+"), 0, 'This should not match; but it does');
+        self::assertEquals(preg_match($pattern, "\${'col-sm-'+"), 0, 'This should not match; but it does');
     }
 
     /**
@@ -284,8 +284,8 @@ class PatternTest extends UnitTestCase
     {
         $pattern = Parser::SCAN_PATTERN_VALUEOBJECTTYPE;
 
-        $this->assertEquals(1, preg_match($pattern, 'Neos.Fusion:Foo'), 'It did not match a simple TS Object Type');
-        $this->assertEquals(1, preg_match($pattern, 'Foo'), 'It matched an unqualified TS Object Type');
+        self::assertEquals(1, preg_match($pattern, 'Neos.Fusion:Foo'), 'It did not match a simple TS Object Type');
+        self::assertEquals(1, preg_match($pattern, 'Foo'), 'It matched an unqualified TS Object Type');
 
         $expected = [
             0 => 'Foo',
@@ -334,7 +334,7 @@ class PatternTest extends UnitTestCase
     {
         $pattern = Parser::SPLIT_PATTERN_COMMENTTYPE;
 
-        $this->assertEquals(1, preg_match($pattern, $tsSnippet), 'It did not match a complex TS comment.');
+        self::assertEquals(1, preg_match($pattern, $tsSnippet), 'It did not match a complex TS comment.');
 
         $expected = [
             0 => $tsSnippet,
@@ -349,14 +349,14 @@ class PatternTest extends UnitTestCase
     public function testSCAN_PATTERN_DSL_EXPRESSION_START()
     {
         $pattern = Parser::SCAN_PATTERN_DSL_EXPRESSION_START;
-        $this->assertEquals(preg_match($pattern, 'dsl`value`'), 1, 'The SCAN_PATTERN_DSL_EXPRESSION_START match a single line dsl-expression.');
-        $this->assertEquals(preg_match($pattern, 'dsl`line 1' . chr(10) . 'line 2' .chr(10) . 'line 3`'), 1, 'The SCAN_PATTERN_DSL_EXPRESSION_START match a multiline dsl-expression.');
-        $this->assertEquals(preg_match($pattern, 'true'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match a boolean assignment.');
-        $this->assertEquals(preg_match($pattern, '1234'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match a integer assignment.');
-        $this->assertEquals(preg_match($pattern, '\'string\''), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match a string assignment.');
-        $this->assertEquals(preg_match($pattern, '${Math.random()}'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match an eel assignment.');
-        $this->assertEquals(preg_match($pattern, 'Neos.Fusion:Value'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match an object assignment.');
-        $this->assertEquals(preg_match($pattern, 'Neos.Fusion:Value {'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match an object assignment.');
+        self::assertEquals(preg_match($pattern, 'dsl`value`'), 1, 'The SCAN_PATTERN_DSL_EXPRESSION_START match a single line dsl-expression.');
+        self::assertEquals(preg_match($pattern, 'dsl`line 1' . chr(10) . 'line 2' .chr(10) . 'line 3`'), 1, 'The SCAN_PATTERN_DSL_EXPRESSION_START match a multiline dsl-expression.');
+        self::assertEquals(preg_match($pattern, 'true'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match a boolean assignment.');
+        self::assertEquals(preg_match($pattern, '1234'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match a integer assignment.');
+        self::assertEquals(preg_match($pattern, '\'string\''), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match a string assignment.');
+        self::assertEquals(preg_match($pattern, '${Math.random()}'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match an eel assignment.');
+        self::assertEquals(preg_match($pattern, 'Neos.Fusion:Value'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match an object assignment.');
+        self::assertEquals(preg_match($pattern, 'Neos.Fusion:Value {'), 0, 'The SCAN_PATTERN_DSL_EXPRESSION_START does not match an object assignment.');
     }
 
     public function SPLIT_PATTERN_DSL_EXPRESSIONdataProvider()
@@ -412,6 +412,6 @@ class PatternTest extends UnitTestCase
         $matches = [];
         preg_match($pattern, $testString, $matches);
 
-        $this->assertSame($expectedMatches, $matches, $explanation);
+        self::assertSame($expectedMatches, $matches, $explanation);
     }
 }

@@ -66,6 +66,6 @@ class TagImplementationTest extends UnitTestCase
         $renderer = new TagImplementation($this->mockRuntime, $path, $fusionObjectName);
 
         $result = $renderer->evaluate();
-        $this->assertEquals($expectedOutput, $result);
+        self::assertEquals($expectedOutput, $result);
     }
 }

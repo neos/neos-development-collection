@@ -113,6 +113,6 @@ class NodePublishingDependencySolverTest extends UnitTestCase
         if ($position1 === false || $position2 === false) {
             $this->fail('Element not found in list');
         }
-        $this->assertLessThan($position2, $position1, 'Element order does not match');
+        self::assertLessThan($position2, $position1, 'Element order does not match');
     }
 }

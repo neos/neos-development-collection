@@ -28,7 +28,7 @@
 			<target state="translated">Légende</target></trans-unit>
       <trans-unit id="field.copyrightnotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target state="needs-translation">Copyright Notice</target></trans-unit>
+			<target state="translated">Droit d'auteur</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve" approved="yes">
 				<source>Last modified</source>
 			<target state="translated">Dernière modification</target></trans-unit>
@@ -70,10 +70,10 @@
 			<target state="translated">Glisser et déposer sur l'étiquette ou la collection</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target state="needs-translation">View</target></trans-unit>
+			<target state="translated">Afficher</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target state="needs-translation">View asset</target></trans-unit>
+			<target state="translated">Afficher la ressource</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target state="translated">Editer la ressource numérique</target><alt-trans><target>Éditer la ressource numérique</target></alt-trans><alt-trans><target>Editer la ressource multimédia</target></alt-trans></trans-unit>
@@ -184,13 +184,13 @@
 			<target state="translated">Vue miniature</target></trans-unit>
       <trans-unit id="connectionError" xml:space="preserve">
 				<source>Connection error</source>
-			<target state="needs-translation">Connection error</target></trans-unit>
+			<target state="translated">Erreur de connexion</target></trans-unit>
       <trans-unit id="mediaSource" xml:space="preserve">
 				<source>Media source</source>
-			<target state="needs-translation">Media source</target></trans-unit>
+			<target state="translated">Source du média</target></trans-unit>
       <trans-unit id="mediaSources" xml:space="preserve">
 				<source>Media sources</source>
-			<target state="needs-translation">Media sources</target></trans-unit>
+			<target state="translated">Sources du media</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
 			<target state="translated">Collections</target></trans-unit>
@@ -298,7 +298,7 @@
 			<target state="translated">Légende</target></trans-unit>
       <trans-unit id="metadata.iptcProperties.CopyrightNotice" xml:space="preserve">
 				<source>Copyright Notice</source>
-			<target state="needs-translation">Copyright Notice</target></trans-unit>
+			<target state="translated">Droit d'auteur</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
 			<target state="translated">Prévisualisation</target><alt-trans><target>Aperçu</target></alt-trans></trans-unit>

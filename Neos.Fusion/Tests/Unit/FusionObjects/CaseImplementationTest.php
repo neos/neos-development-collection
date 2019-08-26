@@ -51,6 +51,6 @@ class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
 
         $result = $renderer->evaluate();
 
-        $this->assertEquals('rendered matcher', $result);
+        self::assertEquals('rendered matcher', $result);
     }
 }

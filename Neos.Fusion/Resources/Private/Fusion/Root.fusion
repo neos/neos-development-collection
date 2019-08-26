@@ -72,6 +72,7 @@ prototype(Neos.Fusion:Http.ResponseHead) {
 #
 #
 prototype(Neos.Fusion:Http.Message) < prototype(Neos.Fusion:Array) {
+    @class = 'Neos\\Fusion\\FusionObjects\\HttpResponseImplementation'
 	httpResponseHead = Neos.Fusion:Http.ResponseHead
 	httpResponseHead.@position = 'start 1000'
 }

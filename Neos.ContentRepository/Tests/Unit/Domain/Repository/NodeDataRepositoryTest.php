@@ -79,7 +79,7 @@ class NodeDataRepositoryTest extends UnitTestCase
 
         $result = $this->nodeDataRepository->findOneByPath('/foo', $liveWorkspace, $dimensions);
 
-        $this->assertSame($nodeData, $result);
+        self::assertSame($nodeData, $result);
     }
 
     /**
@@ -100,7 +100,7 @@ class NodeDataRepositoryTest extends UnitTestCase
 
         $result = $this->nodeDataRepository->findOneByIdentifier('abcd-efgh-ijkl-mnop', $liveWorkspace, $dimensions);
 
-        $this->assertSame($nodeData, $result);
+        self::assertSame($nodeData, $result);
     }
 
     /**
@@ -121,7 +121,7 @@ class NodeDataRepositoryTest extends UnitTestCase
 
         $result = $this->nodeDataRepository->findOneByIdentifier('abcd-efgh-ijkl-mnop', $liveWorkspace, $dimensions);
 
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
     /**
@@ -165,11 +165,11 @@ class NodeDataRepositoryTest extends UnitTestCase
 
         $result = $this->nodeDataRepository->findByParentAndNodeType('/foo', null, $liveWorkspace, $dimensions);
 
-        $this->assertCount(1, $result);
+        self::assertCount(1, $result);
 
         $fetchedNodeData = reset($result);
 
-        $this->assertSame($nodeData, $fetchedNodeData);
+        self::assertSame($nodeData, $fetchedNodeData);
     }
 
     /**
@@ -196,6 +196,6 @@ class NodeDataRepositoryTest extends UnitTestCase
 
         $result = $this->nodeDataRepository->findByParentAndNodeType('/foo', null, $liveWorkspace, $dimensions);
 
-        $this->assertCount(0, $result);
+        self::assertCount(0, $result);
     }
 }

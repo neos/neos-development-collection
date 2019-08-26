@@ -41,8 +41,7 @@ class SchemaController extends ActionController
      */
     public function vieSchemaAction()
     {
-        $this->response->setHeader('Content-Type', 'application/json');
-
+        $this->response->setContentType('application/json');
         return json_encode($this->vieSchemaBuilder->generateVieSchema());
     }
 
@@ -53,8 +52,7 @@ class SchemaController extends ActionController
      */
     public function nodeTypeSchemaAction()
     {
-        $this->response->setHeader('Content-Type', 'application/json');
-
+        $this->response->setContentType('application/json');
         return json_encode($this->nodeTypeSchemaBuilder->generateNodeTypeSchema());
     }
 }

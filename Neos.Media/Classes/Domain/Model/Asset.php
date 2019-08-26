@@ -448,7 +448,9 @@ class Asset implements AssetInterface
     {
         $this->lastModified = new \DateTime();
         foreach ($this->assetCollections as $existingAssetCollection) {
-            $existingAssetCollection->removeAsset($this);
+            if (!$assetCollections->contains($existingAssetCollection)) {
+                $existingAssetCollection->removeAsset($this);
+            }
         }
         foreach ($assetCollections as $newAssetCollection) {
             $newAssetCollection->addAsset($this);
