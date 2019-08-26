@@ -36,7 +36,7 @@ class AssetProxyController extends ActionController
      */
     public function importAction(string $assetSourceIdentifier, string $assetIdentifier): string
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
 
         try {
             $importedAsset = $this->assetSourceService->importAsset($assetSourceIdentifier, $assetIdentifier);
@@ -44,7 +44,7 @@ class AssetProxyController extends ActionController
             $assetProxy->localAssetIdentifier = $importedAsset->getLocalAssetIdentifier();
             return json_encode($assetProxy);
         } catch (AssetSourceServiceException | \Exception $exception) {
-            $this->response->setStatus(500, $exception->getMessage());
+            $this->response->setStatusCode(500);
             return $exception->getMessage();
         }
     }
