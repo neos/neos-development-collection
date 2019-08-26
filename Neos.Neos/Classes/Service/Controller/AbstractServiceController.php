@@ -98,7 +98,6 @@ abstract class AbstractServiceController extends ActionController
                 $response->setStatusCode(500);
             }
             $response->setContent(json_encode(['error' => $exceptionData]));
-
             $this->logger->error($this->throwableStorage->logThrowable($exception), LogEnvironment::fromMethodName(__METHOD__));
         }
     }
