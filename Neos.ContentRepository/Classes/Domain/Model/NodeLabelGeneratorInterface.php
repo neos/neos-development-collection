@@ -25,5 +25,5 @@ interface NodeLabelGeneratorInterface
      * @return string
      * @api
      */
-    public function getLabel(\Neos\ContentRepository\Domain\Projection\Content\NodeInterface $node);
+    public function getLabel(\Neos\ContentRepository\Domain\Projection\Content\NodeInterface $node): string;
 }

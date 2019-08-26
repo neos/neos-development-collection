@@ -93,7 +93,7 @@ interface NodeInterface
      * @return string
      * @api
      */
-    public function getLabel();
+    public function getLabel(): string;
 
     /**
      * Sets the specified property.
