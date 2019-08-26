@@ -13,7 +13,6 @@ namespace Neos\Neos\Service\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
-use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
@@ -92,8 +91,7 @@ abstract class AbstractServiceController extends ActionController
                 throw $exception;
             }
             $exceptionData = $this->convertException($exception);
-            $response->setComponentParameter(SetHeaderComponent::class, 'Content-Type', 'application/json');
-
+            $response->setContentType('application/json');
             if ($exception instanceof FlowException) {
                 $response->setStatusCode($exception->getStatusCode());
             } else {
