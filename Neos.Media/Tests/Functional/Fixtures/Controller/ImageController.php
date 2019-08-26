@@ -44,6 +44,7 @@ class ImageController extends ActionController
     /**
      * @param ViewInterface $view
      * @return void
+     * @throws \Neos\Flow\Mvc\Exception
      */
     protected function initializeView(ViewInterface $view)
     {
