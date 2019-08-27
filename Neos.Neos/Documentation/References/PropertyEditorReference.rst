@@ -111,11 +111,10 @@ It takes all the same configuration options as the inline rich text editor under
     'source':
         type: 'string'
         ui:
-          label: 'Source'
+          label: 'Toggle the editor'
           inspector:
             editor: 'Neos.Neos/Inspector/Editors/CKEditor'
             editorOptions:
-              buttonLabel: i18n
               placeholder: '<p>placeholder</p>'
               autoparagraph: true
               linking:
