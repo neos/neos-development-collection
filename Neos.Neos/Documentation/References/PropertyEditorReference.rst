@@ -113,7 +113,7 @@ It takes all the same configuration options as the inline rich text editor under
         ui:
           label: 'Toggle the editor'
           inspector:
-            editor: 'Neos.Neos/Inspector/Editors/CKEditor'
+            editor: 'Neos.Neos/Inspector/Editors/RichTextEditor'
             editorOptions:
               placeholder: '<p>placeholder</p>'
               autoparagraph: true
