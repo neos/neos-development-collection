@@ -106,7 +106,7 @@ Property Type: string ``RichTextEditor`` -- Full-Screen Rich Text Editor
 
 In case a large block of text has to be edited with support for rich text editing, a ``RichTextEditor`` can be used.
 
-It takes all the same configuration options as the inline rich text editor under ``editorOptions`` (and also ``buttonLabel`` in addition to that)::
+It takes all the same configuration options as the inline rich text editor under ``editorOptions``::
 
     'source':
         type: 'string'
