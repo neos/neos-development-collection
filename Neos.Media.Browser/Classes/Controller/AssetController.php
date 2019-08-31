@@ -556,7 +556,7 @@ class AssetController extends ActionController
         }
 
         $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
-        $this->response->setStatus(201);
+        $this->response->setStatusCode(201);
         return '';
     }
 
