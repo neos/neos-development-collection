@@ -91,7 +91,7 @@ class ImageController extends ActionController
 
         $thumbnail = $image->getThumbnail(100, 100);
 
-        $this->response->setContentType( 'application/json');
+        $this->response->setContentType('application/json');
         return json_encode(
             [
                 '__identity' => $this->persistenceManager->getIdentifierByObject($image),
