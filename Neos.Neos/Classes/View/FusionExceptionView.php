@@ -96,6 +96,7 @@ class FusionExceptionView extends AbstractView implements ViewInterface
      * @throws \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
     public function render()
     {
