@@ -11,6 +11,7 @@ namespace Neos\Neos\Service\Controller;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Log\ThrowableStorageInterface;
