@@ -16,6 +16,8 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
@@ -129,12 +131,13 @@ class ContentController extends ActionController
      * @param NodeInterface $node The node the new asset should be assigned to
      * @param string $propertyName The node property name the new asset should be assigned to
      * @return string
+     * @throws IllegalObjectTypeException
      */
     public function uploadAssetAction(Asset $asset, string $metadata, NodeInterface $node, string $propertyName)
     {
         $this->response->setContentType('application/json');
         if ($metadata !== 'Asset' && $metadata !== 'Image') {
-            $this->response->setStatus(400);
+            $this->response->setStatusCode(400);
             $result = ['error' => 'Invalid "metadata" type: ' . $metadata];
         } else {
             if ($asset instanceof ImageInterface && $metadata === 'Image') {
@@ -154,6 +157,7 @@ class ContentController extends ActionController
      * Configure property mapping for adding a new image variant.
      *
      * @return void
+     * @throws NoSuchArgumentException
      */
     public function initializeCreateImageVariantAction()
     {
@@ -168,6 +172,7 @@ class ContentController extends ActionController
      *
      * @param ImageVariant $asset
      * @return string
+     * @throws IllegalObjectTypeException
      */
     public function createImageVariantAction(ImageVariant $asset)
     {
