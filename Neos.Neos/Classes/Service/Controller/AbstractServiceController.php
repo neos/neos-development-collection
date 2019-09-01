@@ -13,11 +13,12 @@ namespace Neos\Neos\Service\Controller;
 
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Component\SetHeaderComponent;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 
 /**
@@ -33,9 +34,16 @@ abstract class AbstractServiceController extends ActionController
     protected $supportedMediaTypes = ['application/json'];
 
     /**
+     * @Flow\Inject
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
+
+    /**
      * A preliminary error action for handling validation errors
      *
      * @return void
+     * @throws StopActionException
      */
     public function errorAction()
     {
@@ -91,7 +99,8 @@ abstract class AbstractServiceController extends ActionController
                 $response->setStatusCode(500);
             }
             $response->setContent(json_encode(['error' => $exceptionData]));
-            $this->systemLogger->logException($exception);
+
+            $this->logger->error($this->throwableStorage->logThrowable($exception), LogEnvironment::fromMethodName(__METHOD__));
         }
     }
 
