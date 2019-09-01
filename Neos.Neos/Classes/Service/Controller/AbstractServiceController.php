@@ -66,12 +66,13 @@ abstract class AbstractServiceController extends ActionController
      * Catch exceptions while processing an exception and respond to JSON format
      * TODO: This is an explicit exception handling that will be replaced by format-enabled exception handlers.
      *
-     * @param RequestInterface $request The request object
-     * @param ResponseInterface $response The response, modified by this handler
+     * @param ActionRequest $request The request object
+     * @param ActionResponse $response The response, modified by this handler
      * @return void
+     * @throws StopActionException
      * @throws \Exception
      */
-    public function processRequest($request, $response)
+    public function processRequest(ActionRequest $request, ActionResponse $response)
     {
         try {
             parent::processRequest($request, $response);
