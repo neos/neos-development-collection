@@ -12,6 +12,7 @@ namespace Neos\Neos\Service\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Service\UserService;
 
 /**
@@ -30,7 +31,7 @@ class UserPreferenceController extends AbstractServiceController
      */
     public function indexAction()
     {
-        $this->response->setHeader('Content-Type', 'application/json');
+        $this->response->setContentType('application/json');
         return json_encode($this->userService->getCurrentUser()->getPreferences()->getPreferences());
     }
 
@@ -40,6 +41,7 @@ class UserPreferenceController extends AbstractServiceController
      * @param string $key The key of the preference to update/add
      * @param string $value The value of the preference
      * @return void
+     * @throws StopActionException
      */
     public function updateAction($key, $value)
     {
