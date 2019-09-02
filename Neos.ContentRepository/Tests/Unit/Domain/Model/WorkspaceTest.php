@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\WorkspaceException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -32,8 +33,8 @@ class WorkspaceTest extends UnitTestCase
         $baseWorkspace = new Workspace('BaseWorkspace');
 
         $workspace = new Workspace('MyWorkspace', $baseWorkspace);
-        $this->assertSame('MyWorkspace', $workspace->getName());
-        $this->assertSame($baseWorkspace, $workspace->getBaseWorkspace());
+        self::assertSame('MyWorkspace', $workspace->getName());
+        self::assertSame($baseWorkspace, $workspace->getBaseWorkspace());
     }
 
     /**
@@ -44,13 +45,13 @@ class WorkspaceTest extends UnitTestCase
         $workspace = $this->getAccessibleMock(Workspace::class, ['dummy'], [], '', false);
 
         $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['add'])->getMock();
-        $mockNodeDataRepository->expects($this->once())->method('add');
+        $mockNodeDataRepository->expects(self::once())->method('add');
 
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
 
         $workspace->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
-        $this->assertInstanceOf(NodeData::class, $workspace->getRootNodeData());
+        self::assertInstanceOf(NodeData::class, $workspace->getRootNodeData());
     }
 
     /**
@@ -63,9 +64,9 @@ class WorkspaceTest extends UnitTestCase
         $workspace = $this->getAccessibleMock(Workspace::class, ['dummy'], [], '', false);
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
 
-        $mockNodeDataRepository->expects($this->once())->method('countByWorkspace')->with($workspace)->will($this->returnValue(42));
+        $mockNodeDataRepository->expects(self::once())->method('countByWorkspace')->with($workspace)->will(self::returnValue(42));
 
-        $this->assertSame(42, $workspace->getNodeCount());
+        self::assertSame(42, $workspace->getNodeCount());
     }
 
     /**
@@ -76,7 +77,7 @@ class WorkspaceTest extends UnitTestCase
         $targetWorkspace = new Workspace('live');
 
         $currentWorkspace = $this->getAccessibleMock(Workspace::class, ['verifyPublishingTargetWorkspace'], ['live']);
-        $currentWorkspace->expects($this->never())->method('verifyPublishingTargetWorkspace');
+        $currentWorkspace->expects(self::never())->method('verifyPublishingTargetWorkspace');
 
         $mockNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
 
@@ -97,9 +98,9 @@ class WorkspaceTest extends UnitTestCase
         $workspace->setBaseWorkspace($liveWorkspace);
 
         $mockNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $mockNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
+        $mockNode->expects(self::any())->method('getWorkspace')->will(self::returnValue($workspace));
 
-        $workspace->expects($this->never())->method('emitBeforeNodePublishing');
+        $workspace->expects(self::never())->method('emitBeforeNodePublishing');
 
         $workspace->publishNode($mockNode, $workspace);
     }
@@ -115,15 +116,15 @@ class WorkspaceTest extends UnitTestCase
 
         $currentWorkspace->_call('verifyPublishingTargetWorkspace', $reviewWorkspace);
         $currentWorkspace->_call('verifyPublishingTargetWorkspace', $someBaseWorkspace);
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Exception\WorkspaceException
      */
     public function verifyPublishingTargetWorkspaceThrowsAnExceptionIfWorkspaceIsNotBasedOnTheSpecifiedWorkspace()
     {
+        $this->expectException(WorkspaceException::class);
         $someBaseWorkspace = new Workspace('live');
         $currentWorkspace = $this->getAccessibleMock(Workspace::class, ['dummy'], ['user-foo', $someBaseWorkspace]);
         $otherWorkspace = new Workspace('user-bar', $someBaseWorkspace);
@@ -151,7 +152,7 @@ class WorkspaceTest extends UnitTestCase
     public function contextNodePathMatchPatternMatchesNodeContextPaths($contextNodePath)
     {
         preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
-        $this->assertArrayHasKey('WorkspaceName', $matches);
+        self::assertArrayHasKey('WorkspaceName', $matches);
     }
 
     /**
@@ -172,7 +173,7 @@ class WorkspaceTest extends UnitTestCase
     public function contextNodePathMatchPatternDoesNotMatchInvalidNodeContextPaths($contextNodePath)
     {
         preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
-        $this->assertArrayNotHasKey('WorkspaceName', $matches);
+        self::assertArrayNotHasKey('WorkspaceName', $matches);
     }
 
     /**
@@ -187,9 +188,9 @@ class WorkspaceTest extends UnitTestCase
         $this->inject($liveWorkspace, 'nodeDataRepository', $nodeDataRepository);
 
         $node = $this->createMock(NodeInterface::class);
-        $node->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
+        $node->expects(self::any())->method('getWorkspace')->will(self::returnValue($liveWorkspace));
 
-        $nodeDataRepository->expects($this->never())->method('findOneByIdentifier');
+        $nodeDataRepository->expects(self::never())->method('findOneByIdentifier');
 
         $personalWorkspace->publishNode($node, $liveWorkspace);
     }
@@ -202,7 +203,7 @@ class WorkspaceTest extends UnitTestCase
         $liveWorkspace = new Workspace('live');
         $personalWorkspace = new Workspace('user-admin', $liveWorkspace);
 
-        $this->assertFalse($liveWorkspace->isPersonalWorkspace());
-        $this->assertTrue($personalWorkspace->isPersonalWorkspace());
+        self::assertFalse($liveWorkspace->isPersonalWorkspace());
+        self::assertTrue($personalWorkspace->isPersonalWorkspace());
     }
 }

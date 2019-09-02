@@ -34,7 +34,7 @@ class TraversableNodesTest extends UnitTestCase
      */
     private $mockNode3;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mockNode1 = $this->mockNode();
         $this->mockNode2 = $this->mockNode();
@@ -54,19 +54,19 @@ class TraversableNodesTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function fromArrayThrowsAnExceptionIfGetsPassedAString()
     {
+        $this->expectException(\InvalidArgumentException::class);
         TraversableNodes::fromArray(['foo']);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function fromArrayThrowsAnExceptionIfGetsPassedAnInvalidObject()
     {
+        $this->expectException(\InvalidArgumentException::class);
         TraversableNodes::fromArray([new \stdClass()]);
     }
 
@@ -98,7 +98,7 @@ class TraversableNodesTest extends UnitTestCase
         $nodes1 = TraversableNodes::fromArray($nodes1);
         $nodes2 = TraversableNodes::fromArray($nodes2);
         $mergeResult = $nodes1->merge($nodes2);
-        $this->assertSame($expectedResult, $mergeResult->toArray());
+        self::assertSame($expectedResult, $mergeResult->toArray());
     }
 
     /**
@@ -107,7 +107,7 @@ class TraversableNodesTest extends UnitTestCase
     public function isEmptyIsTrueIfTraversableNodesDoesNotContainAnyNodes()
     {
         $nodes = TraversableNodes::fromArray([]);
-        $this->assertTrue($nodes->isEmpty());
+        self::assertTrue($nodes->isEmpty());
     }
 
     /**
@@ -116,7 +116,7 @@ class TraversableNodesTest extends UnitTestCase
     public function isEmptyIsFalseIfTraversableNodesContainNodes()
     {
         $nodes = TraversableNodes::fromArray([$this->mockNode1]);
-        $this->assertFalse($nodes->isEmpty());
+        self::assertFalse($nodes->isEmpty());
     }
 
     /**
@@ -125,7 +125,7 @@ class TraversableNodesTest extends UnitTestCase
     public function countReturnsZeroIfTraversableNodesIsEmpty()
     {
         $nodes = TraversableNodes::fromArray([]);
-        $this->assertSame(0, $nodes->count());
+        self::assertSame(0, $nodes->count());
     }
 
     /**
@@ -134,27 +134,27 @@ class TraversableNodesTest extends UnitTestCase
     public function countReturnsNumberOfNodes()
     {
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2]);
-        $this->assertSame(2, $nodes->count());
+        self::assertSame(2, $nodes->count());
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionCode 1542901216
      */
     public function previousThrowsExceptionIfReferenceNodeIsNotFoundInTheSet()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1542901216);
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2]);
         $nodes->previous($this->mockNode3);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionCode 1542902422
      */
     public function previousThrowsExceptionIfReferenceNodeIsTheFirstNodeInTheSet()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1542902422);
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2, $this->mockNode3]);
         $nodes->previous($this->mockNode1);
     }
@@ -167,16 +167,16 @@ class TraversableNodesTest extends UnitTestCase
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2, $this->mockNode3]);
         $result = $nodes->previous($this->mockNode2);
 
-        $this->assertSame($this->mockNode1, $result);
+        self::assertSame($this->mockNode1, $result);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionCode 1542901216
      */
     public function previousAllThrowsExceptionIfReferenceNodeIsNotFoundInTheSet()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1542901216);
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2]);
         $nodes->previousAll($this->mockNode3);
     }
@@ -206,27 +206,27 @@ class TraversableNodesTest extends UnitTestCase
         $traversableNodes = TraversableNodes::fromArray($nodes);
         $result = $traversableNodes->previousAll($reference);
 
-        $this->assertSame($expectedResult, $result->toArray());
+        self::assertSame($expectedResult, $result->toArray());
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionCode 1542901216
      */
     public function nextThrowsExceptionIfReferenceNodeIsNotFoundInTheSet()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1542901216);
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2]);
         $nodes->next($this->mockNode3);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionCode 1542902858
      */
     public function nextThrowsExceptionIfReferenceNodeIsTheLastNodeInTheSet()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1542902858);
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2, $this->mockNode3]);
         $nodes->next($this->mockNode3);
     }
@@ -239,16 +239,16 @@ class TraversableNodesTest extends UnitTestCase
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2, $this->mockNode3]);
         $result = $nodes->next($this->mockNode2);
 
-        $this->assertSame($this->mockNode3, $result);
+        self::assertSame($this->mockNode3, $result);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionCode 1542901216
      */
     public function nextAllThrowsExceptionIfReferenceNodeIsNotFoundInTheSet()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1542901216);
         $nodes = TraversableNodes::fromArray([$this->mockNode1, $this->mockNode2]);
         $nodes->nextAll($this->mockNode3);
     }
@@ -278,6 +278,6 @@ class TraversableNodesTest extends UnitTestCase
         $traversableNodes = TraversableNodes::fromArray($nodes);
         $result = $traversableNodes->nextAll($reference);
 
-        $this->assertSame($expectedResult, $result->toArray());
+        self::assertSame($expectedResult, $result->toArray());
     }
 }

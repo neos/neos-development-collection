@@ -12,7 +12,6 @@ namespace Neos\Neos\Controller\Backend;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Dispatcher;
@@ -61,7 +60,7 @@ class ModuleController extends ActionController
      */
     public function indexAction(array $module)
     {
-        $moduleRequest = new ActionRequest($this->request);
+        $moduleRequest = $this->request->createSubRequest();
         $moduleRequest->setArgumentNamespace('moduleArguments');
         $moduleRequest->setControllerObjectName($module['controller']);
         $moduleRequest->setControllerActionName($module['action']);
@@ -98,12 +97,12 @@ class ModuleController extends ActionController
 
         $this->dispatcher->dispatch($moduleRequest, $moduleResponse);
 
-        if ($moduleResponse->hasHeader('Location')) {
-            $this->redirectToUri($moduleResponse->getHeader('Location'), 0, $moduleResponse->getStatusCode());
+        if ($moduleResponse->getRedirectUri() !== null) {
+            $this->redirectToUri($moduleResponse->getRedirectUri(), 0, $moduleResponse->getStatusCode());
         } elseif ($moduleRequest->getFormat() !== 'html') {
             $mediaType = MediaTypes::getMediaTypeFromFilename('file.' . $moduleRequest->getFormat());
             if ($mediaType !== 'application/octet-stream') {
-                $this->controllerContext->getResponse()->setHeader('Content-Type', $mediaType);
+                $this->controllerContext->getResponse()->setContentType($mediaType);
             }
             return $moduleResponse->getContent();
         } else {

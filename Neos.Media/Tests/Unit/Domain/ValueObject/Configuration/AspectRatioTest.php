@@ -83,13 +83,13 @@ class AspectRatioTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidStrings
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionCode 1552641724
      * @param string $invalidString
      * @return void
      */
     public function invalidStringIsRejected(string $invalidString): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1552641724);
         AspectRatio::fromString($invalidString);
     }
 

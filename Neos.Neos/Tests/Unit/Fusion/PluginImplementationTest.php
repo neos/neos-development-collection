@@ -12,14 +12,14 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  */
 
 use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Response;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\PluginImplementation;
 use Neos\Fusion\Core\Runtime;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Testcase for the ConvertNodeUris Fusion implementation
@@ -42,24 +42,24 @@ class PluginImplementationTest extends UnitTestCase
     protected $mockControllerContext;
 
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->pluginImplementation = $this->getAccessibleMock(PluginImplementation::class, ['buildPluginRequest'], [], '', false);
 
         $this->mockHttpUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpUri->expects($this->any())->method('getHost')->will($this->returnValue('localhost'));
+        $this->mockHttpUri->expects(self::any())->method('getHost')->will(self::returnValue('localhost'));
 
         $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockHttpUri));
+        $this->mockHttpRequest->expects(self::any())->method('getUri')->will(self::returnValue($this->mockHttpUri));
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
 
         $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->mockActionRequest));
+        $this->mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->mockActionRequest));
 
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $this->mockRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
+        $this->mockRuntime->expects(self::any())->method('getControllerContext')->will(self::returnValue($this->mockControllerContext));
         $this->pluginImplementation->_set('runtime', $this->mockRuntime);
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->getMock();
@@ -99,33 +99,36 @@ class PluginImplementationTest extends UnitTestCase
      */
     public function evaluateSetHeaderIntoParent($message, $input, $expected)
     {
-        $this->pluginImplementation->expects($this->any())->method('buildPluginRequest')->will($this->returnValue($this->mockActionRequest));
+        $this->pluginImplementation->expects(self::any())->method('buildPluginRequest')->will(self::returnValue($this->mockActionRequest));
 
-        $parentResponse = new Response();
+        $parentResponse = new \GuzzleHttp\Psr7\Response();
         $this->_setHeadersIntoResponse($parentResponse, $input['parent']);
-        $this->mockControllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($parentResponse));
+        $this->mockControllerContext->expects(self::any())->method('getResponse')->will(self::returnValue($parentResponse));
 
-        $this->mockDispatcher->expects($this->any())->method('dispatch')->will($this->returnCallback(function ($request, $response) use ($input) {
-            $this->_setHeadersIntoResponse($response, $input['plugin']);
+        $this->mockDispatcher->expects(self::any())->method('dispatch')->will(self::returnCallback(function ($request, $response) use ($input) {
+            $response = $this->_setHeadersIntoResponse($response, $input['plugin']);
         }));
 
         $this->pluginImplementation->evaluate();
 
         foreach ($expected as $expectedKey => $expectedValue) {
-            $this->assertEquals($expectedValue, (string)$parentResponse->getHeaders()->get($expectedKey), $message);
+            self::assertEquals($expectedValue, (string)$parentResponse->getHeaders()->get($expectedKey), $message);
         }
     }
 
     /**
      *  Sets the array based headers into the Response
      *
-     * @param Response $response
+     * @param ResponseInterface $response
      * @param $headers
+     * @return ResponseInterface
      */
-    private function _setHeadersIntoResponse(Response $response, $headers)
+    private function _setHeadersIntoResponse(ResponseInterface $response, $headers): ResponseInterface
     {
         foreach ($headers as $key => $value) {
-            $response->getHeaders()->set($key, $value);
+            $response = $response->withHeader($key, $value);
         }
+
+        return $response;
     }
 }

@@ -35,6 +35,10 @@ a {
 [class^="fa-"], [class*=" fa-"] {
 	@include icon-font($baseIconFontFamily, 14px);
 	text-align: center;
+
+	&.fab {
+		@include icon-font($brandIconFontFamily, 14px);
+	}
 }
 
 .neos-clear {

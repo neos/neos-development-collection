@@ -32,11 +32,11 @@ class AdjustmentTest extends UnitTestCase
     /**
      * @param $identifier
      * @dataProvider invalidIdentifiers()
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function invalidIdentifiersAreRejected($identifier): void
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Adjustment($identifier, '');
     }
 
@@ -50,11 +50,11 @@ class AdjustmentTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @test
      */
     public function missingTypeIsRejected(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
         Adjustment::fromConfiguration('someAdjustment', []);
     }
 

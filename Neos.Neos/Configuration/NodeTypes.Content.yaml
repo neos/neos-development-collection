@@ -1,0 +1,27 @@
+'Neos.Neos:Content':
+  superTypes:
+    'Neos.Neos:Node': true
+    'Neos.Neos:Hidable': true
+    'Neos.Neos:Timable': true
+  abstract: true
+  constraints:
+    nodeTypes:
+      '*': false
+  ui:
+    label: i18n
+    icon: 'icon-square-o'
+    group: 'general'
+    search:
+      searchCategory: 'Content'
+    inspector:
+      groups:
+        type:
+          label: i18n
+          position: 100
+          tab: meta
+  properties:
+    _nodeType:
+      ui:
+        inspector:
+          editorOptions:
+            baseNodeType: 'Neos.Neos:Content'

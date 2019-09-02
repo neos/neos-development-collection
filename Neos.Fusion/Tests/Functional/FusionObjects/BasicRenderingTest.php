@@ -11,6 +11,8 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
+
 /**
  * Testcase for basic Fusion rendering
  *
@@ -24,7 +26,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('basicRendering/test');
-        $this->assertEquals('XHello World', $view->render());
+        self::assertEquals('XHello World', $view->render());
     }
 
     /**
@@ -34,7 +36,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('basicRendering/reuseFusionVariables');
-        $this->assertEquals('XHello World', $view->render());
+        self::assertEquals('XHello World', $view->render());
     }
 
     /**
@@ -46,13 +48,13 @@ class BasicRenderingTest extends AbstractFusionObjectTest
      * TODO: test different exception handlers
      *
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function basicRenderingCrashing()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         $view = $this->buildView();
         $view->setFusionPath('basicRendering/crashing');
-        $this->assertEquals('XHello World', $view->render());
+        self::assertEquals('XHello World', $view->render());
     }
 
     /**
@@ -62,7 +64,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('basicRendering/reuseFusionVariablesWithEel');
-        $this->assertEquals('XHello World', $view->render());
+        self::assertEquals('XHello World', $view->render());
     }
 
     /**
@@ -72,7 +74,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('basicRendering/complexExample/toRender');
-        $this->assertEquals('Static string post', $view->render());
+        self::assertEquals('Static string post', $view->render());
     }
 
     /**
@@ -82,7 +84,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('basicRendering/complexExample2/toRender');
-        $this->assertEquals('Static string post', $view->render());
+        self::assertEquals('Static string post', $view->render());
     }
 
     /**
@@ -116,6 +118,6 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setFusionPath('basicRendering/contentIsNotTrimmed');
-        $this->assertEquals('X I want to have some space after me ', $view->render());
+        self::assertEquals('X I want to have some space after me ', $view->render());
     }
 }

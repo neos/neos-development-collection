@@ -35,7 +35,7 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
     /**
      * Sets up this test case
      */
-    protected function setUp()
+    public function setUp(): void
     {
         $this->handler = new AbstractRenderingExceptionHandler();
         $runtimeMock = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
@@ -52,10 +52,10 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
         $exception = new \Exception();
         $actual = $this->handler->handleRenderingException('path', $exception);
 
-        $this->assertEquals($this->handler->getMessage(), $actual, 'incorrect message received');
-        $this->assertSame($exception, $this->handler->getException(), 'incorrect exception passed to stub');
-        $this->assertEquals(null, $this->handler->getReferenceCode(), 'incorrect reference code passed to stub');
-        $this->assertEquals('path', $this->handler->getFusionPath(), 'incorrect Fusion path passed to stub');
+        self::assertEquals($this->handler->getMessage(), $actual, 'incorrect message received');
+        self::assertSame($exception, $this->handler->getException(), 'incorrect exception passed to stub');
+        self::assertEquals(null, $this->handler->getReferenceCode(), 'incorrect reference code passed to stub');
+        self::assertEquals('path', $this->handler->getFusionPath(), 'incorrect Fusion path passed to stub');
     }
 
     /**
@@ -68,10 +68,10 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
         $exception = new Exception();
         $actual = $this->handler->handleRenderingException('path', $exception);
 
-        $this->assertEquals($this->handler->getMessage(), $actual, 'incorrect message received');
-        $this->assertSame($exception, $this->handler->getException(), 'incorrect exception passed to stub');
-        $this->assertEquals($exception->getReferenceCode(), $this->handler->getReferenceCode(), 'incorrect reference code passed to stub');
-        $this->assertEquals('path', $this->handler->getFusionPath(), 'incorrect Fusion path passed to stub');
+        self::assertEquals($this->handler->getMessage(), $actual, 'incorrect message received');
+        self::assertSame($exception, $this->handler->getException(), 'incorrect exception passed to stub');
+        self::assertEquals($exception->getReferenceCode(), $this->handler->getReferenceCode(), 'incorrect reference code passed to stub');
+        self::assertEquals('path', $this->handler->getFusionPath(), 'incorrect Fusion path passed to stub');
     }
 
     /**
@@ -85,20 +85,20 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
         $exception = new Exception();
         $actual = $this->handler->handleRenderingException('path', new RuntimeException('', 23, $exception, 'path2'));
 
-        $this->assertEquals($this->handler->getMessage(), $actual, 'incorrect message received');
-        $this->assertSame($exception, $this->handler->getException(), 'incorrect exception passed to stub');
-        $this->assertEquals($exception->getReferenceCode(), $this->handler->getReferenceCode(), 'incorrect reference code passed to stub');
-        $this->assertEquals('path2', $this->handler->getFusionPath(), 'incorrect Fusion path passed to stub');
+        self::assertEquals($this->handler->getMessage(), $actual, 'incorrect message received');
+        self::assertSame($exception, $this->handler->getException(), 'incorrect exception passed to stub');
+        self::assertEquals($exception->getReferenceCode(), $this->handler->getReferenceCode(), 'incorrect reference code passed to stub');
+        self::assertEquals('path2', $this->handler->getFusionPath(), 'incorrect Fusion path passed to stub');
     }
 
     /**
      * StopActionException are rethrown
      *
-     * @expectedException \Neos\Flow\Mvc\Exception\StopActionException
      * @test
      */
     public function neverHandleStopActionException()
     {
+        $this->expectException(StopActionException::class);
         $this->handler->handleRenderingException('path', new StopActionException());
     }
 
@@ -106,11 +106,11 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
     /**
      * SecurityException are rethrown
      *
-     * @expectedException \Neos\Flow\Security\Exception
      * @test
      */
     public function neverHandleSecurityException()
     {
+        $this->expectException(\Neos\Flow\Security\Exception::class);
         $this->handler->handleRenderingException('path', new \Neos\Flow\Security\Exception());
     }
 }

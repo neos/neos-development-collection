@@ -32,7 +32,7 @@ class MigrationStatusRepositoryTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->repository = $this->objectManager->get(MigrationStatusRepository::class);
@@ -55,7 +55,7 @@ class MigrationStatusRepositoryTest extends FunctionalTestCase
         /** @var MigrationStatus $status */
         $i = 0;
         foreach ($this->repository->findAll() as $status) {
-            $this->assertEquals($expectedVersionOrder[$i], $status->getVersion());
+            self::assertEquals($expectedVersionOrder[$i], $status->getVersion());
             $i++;
         }
     }

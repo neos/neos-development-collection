@@ -11,26 +11,31 @@ namespace Neos\Neos\Tests\Functional\ViewHelpers\Uri;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 use Neos\FluidAdaptor\View\TemplateView;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\FusionObjects\Helpers\FluidView;
+use Neos\Fusion\FusionObjects\TemplateImplementation;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\ViewHelpers\Uri\NodeViewHelper;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\Fusion\Core\Runtime;
-use Neos\Fusion\FusionObjects\Helpers\FluidView;
-use Neos\Fusion\FusionObjects\TemplateImplementation;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContext;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperInvoker;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 
 /**
  * Functional test for the NodeViewHelper
@@ -45,11 +50,6 @@ class NodeViewHelperTest extends FunctionalTestCase
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
-
-    /**
-     * @var PropertyMapper
-     */
-    protected $propertyMapper;
 
     /**
      * @var NodeViewHelper
@@ -71,7 +71,17 @@ class NodeViewHelperTest extends FunctionalTestCase
      */
     protected $contextFactory;
 
-    public function setUp()
+    /**
+     * @var ViewHelperInvoker
+     */
+    protected $viewHelperInvoker;
+
+    /**
+     * @var RenderingContext
+     */
+    protected $renderingContext;
+
+    public function setUp(): void
     {
         parent::setUp();
         $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
@@ -81,9 +91,8 @@ class NodeViewHelperTest extends FunctionalTestCase
         $contextProperties = [
             'workspaceName' => 'live'
         ];
-        $contentContext = $this->contextFactory->create($contextProperties);
         $siteImportService = $this->objectManager->get(SiteImportService::class);
-        $siteImportService->importFromFile(__DIR__ . '/../../Fixtures/NodeStructure.xml', $contentContext);
+        $siteImportService->importFromFile(__DIR__ . '/../../Fixtures/NodeStructure.xml');
         $this->persistenceManager->persistAll();
 
         $currentDomain = $domainRepository->findOneByActiveRequest();
@@ -93,18 +102,15 @@ class NodeViewHelperTest extends FunctionalTestCase
         } else {
             $contextProperties['currentSite'] = $siteRepository->findFirst();
         }
-        $contentContext = $this->contextFactory->create($contextProperties);
-
-        $this->contentContext = $contentContext;
-
-        $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
+        $this->contentContext = $this->contextFactory->create($contextProperties);
 
         $this->viewHelper = new NodeViewHelper();
+
         /** @var $requestHandler \Neos\Flow\Tests\FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
         $httpRequest = $requestHandler->getHttpRequest();
-        $httpRequest->setBaseUri('http://neos.test/');
-        $controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments([]), new UriBuilder());
+        $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::BASE_URI, new Uri('http://neos.test/'));
+        $controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder());
         $this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
         $fusionObject = $this->getAccessibleMock(TemplateImplementation::class, ['dummy'], [], '', false);
@@ -115,13 +121,16 @@ class NodeViewHelperTest extends FunctionalTestCase
         ]);
         $this->inject($fusionObject, 'runtime', $this->runtime);
         $mockView = $this->getAccessibleMock(FluidView::class, [], [], '', false);
-        $mockView->expects($this->any())->method('getFusionObject')->will($this->returnValue($fusionObject));
+        $mockView->expects(self::any())->method('getFusionObject')->willReturn($fusionObject);
         $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
-        $this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
+
+        $this->viewHelperInvoker = new ViewHelperInvoker();
+        $this->renderingContext = new RenderingContext($mockView);
+        $this->renderingContext->setViewHelperVariableContainer($viewHelperVariableContainer);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -129,47 +138,64 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', []);
     }
 
-    /**
-     * @test
-     */
-    public function viewHelperRendersUriViaGivenNodeObject()
+    private function invoke(array $arguments = []): string
     {
-        $targetNode = $this->propertyMapper->convert('/sites/example/home', Node::class);
-
-        $this->assertOutputLinkValid('home.html', $this->viewHelper->render($targetNode));
+        return $this->viewHelperInvoker->invoke($this->viewHelper, $arguments, $this->renderingContext);
     }
 
     /**
      * @test
      */
-    public function viewHelperRendersUriViaAbsoluteNodePathString()
+    public function viewHelperRendersUriViaGivenNodeObject(): void
     {
-        $this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('/sites/example/home'));
-        $this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us'));
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission'));
+        $propertyMapper = $this->objectManager->get(PropertyMapper::class);
+        $targetNode = $propertyMapper->convert('/sites/example/home', Node::class);
+
+        $result = $this->invoke(['node' => $targetNode]);
+        $this->assertOutputLinkValid('home.html', $result);
     }
 
     /**
      * @test
      */
-    public function viewHelperRendersUriViaStringStartingWithTilde()
+    public function viewHelperRendersUriViaAbsoluteNodePathString(): void
     {
-        $this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('~'));
-        $this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('~/home'));
-        $this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('~/home/about-us'));
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('~/home/about-us/mission'));
+        $result = $this->invoke(['node' => '/sites/example/home']);
+        $this->assertOutputLinkValid('en/home.html', $result);
+        $result = $this->invoke(['node' => '/sites/example/home/about-us']);
+        $this->assertOutputLinkValid('en/home/about-us.html', $result);
+        $result = $this->invoke(['node' => '/sites/example/home/about-us/mission']);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
     }
 
     /**
      * @test
      */
-    public function viewHelperRendersUriViaStringPointingToSubNodes()
+    public function viewHelperRendersUriViaStringStartingWithTilde(): void
+    {
+        $result = $this->invoke(['node' => '~']);
+        $this->assertOutputLinkValid('en/home.html', $result);
+        $result = $this->invoke(['node' => '~/home']);
+        $this->assertOutputLinkValid('en/home.html', $result);
+        $result = $this->invoke(['node' => '~/home/about-us']);
+        $this->assertOutputLinkValid('en/home/about-us.html', $result);
+        $result = $this->invoke(['node' => '~/home/about-us/mission']);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function viewHelperRendersUriViaStringPointingToSubNodes(): void
     {
         $this->runtime->pushContext('documentNode', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission'));
-        $this->assertOutputLinkValid('en/home/about-us/history.html', $this->viewHelper->render('../history'));
+        $result = $this->invoke(['node' => '../history']);
+        $this->assertOutputLinkValid('en/home/about-us/history.html', $result);
         $this->runtime->popContext();
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('about-us/mission'));
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('./about-us/mission'));
+        $result = $this->invoke(['node' => 'about-us/mission']);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
+        $result = $this->invoke(['node' => './about-us/mission']);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
     }
 
     /**
@@ -178,70 +204,89 @@ class NodeViewHelperTest extends FunctionalTestCase
      *
      * @test
      */
-    public function viewHelperRendersUriViaContextNodePathString()
+    public function viewHelperRendersUriViaContextNodePathString(): void
     {
-        $this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('/sites/example/home@live'));
-        $this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us@live'));
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
+        $result = $this->invoke(['node' => '/sites/example/home@live']);
+        $this->assertOutputLinkValid('en/home.html', $result);
+        $result = $this->invoke(['node' => '/sites/example/home/about-us@live']);
+        $this->assertOutputLinkValid('en/home/about-us.html', $result);
+        $result = $this->invoke(['node' => '/sites/example/home/about-us/mission@live']);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
 
         // The tests should also work in a regular fluid view, so we set that and repeat the tests
         $mockView = $this->getAccessibleMock(TemplateView::class, [], [], '', false);
         $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
         $this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
-        $this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('/sites/example/home@live'));
-        $this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us@live'));
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
+        $result = $this->invoke(['node' => '/sites/example/home@live']);
+        $this->assertOutputLinkValid('en/home.html', $result);
+        $result = $this->invoke(['node' => '/sites/example/home/about-us@live']);
+        $this->assertOutputLinkValid('en/home/about-us.html', $result);
+        $result = $this->invoke(['node' => '/sites/example/home/about-us/mission@live']);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
     }
 
     /**
      * @test
      */
-    public function viewHelperRendersUriViaNodeUriPathString()
+    public function viewHelperRendersUriViaNodeUriPathString(): void
     {
-        $this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('node://3239baee-3e7f-785c-0853-f4302ef32570'));
-        $this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('node://30e893c1-caef-0ca5-b53d-e5699bb8e506'));
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('node://63b28f4d-8831-ecb0-f9a6-466d97ffe2c2'));
+        $result = $this->invoke(['node' => 'node://3239baee-3e7f-785c-0853-f4302ef32570']);
+        $this->assertOutputLinkValid('en/home.html', $result);
+        $result = $this->invoke(['node' => 'node://30e893c1-caef-0ca5-b53d-e5699bb8e506']);
+        $this->assertOutputLinkValid('en/home/about-us.html', $result);
+        $result = $this->invoke(['node' => 'node://63b28f4d-8831-ecb0-f9a6-466d97ffe2c2']);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
     }
 
     /**
      * @test
      */
-    public function viewHelperRespectsAbsoluteParameter()
+    public function viewHelperRespectsAbsoluteParameter(): void
     {
-        $this->assertOutputLinkValid('http://neos.test/en/home.html', $this->viewHelper->render(null, null, true));
+        $result = $this->invoke(['absolute' => true]);
+        $this->assertOutputLinkValid('http://neos.test/en/home.html', $result);
     }
 
     /**
      * @test
      */
-    public function viewHelperRespectsBaseNodeNameParameter()
+    public function viewHelperRespectsBaseNodeNameParameter(): void
     {
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render(null, null, false, [], '', false, [], 'alternativeDocumentNode'));
+        $result = $this->invoke(['baseNodeName' => 'alternativeDocumentNode']);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
     }
 
     /**
      * @test
      */
-    public function viewHelperRespectsArgumentsParameter()
+    public function viewHelperRespectsArgumentsParameter(): void
     {
-        $this->assertOutputLinkValid('en/home.html?foo=bar', $this->viewHelper->render('/sites/example/home@live', null, false, ['foo' => 'bar']));
+        $result = $this->invoke([
+            'node' => '/sites/example/home@live',
+            'arguments' => ['foo' => 'bar']
+        ]);
+        $this->assertOutputLinkValid('en/home.html?foo=bar', $result);
     }
 
     /**
      * @test
      */
-    public function viewHelperCatchesExceptionIfTargetNodeDoesNotExist()
+    public function viewHelperCatchesExceptionAndReturnsEmptyStringIfTargetNodeDoesNotExist(): void
     {
-        $this->assertSame('', $this->viewHelper->render('/sites/example/non-existing-node'));
+        $result = $this->invoke(['node' => '/sites/example/non-existing-node']);
+        self::assertSame('', $result);
     }
 
     /**
      * A wrapper function for the appropriate assertion for the Link- and its Uri-ViewHelper derivate.
      * Is overridden in the FunctionalTest for the LinkViewHelper.
+     *
+     * @param string $expected
+     * @param string $actual
      */
-    protected function assertOutputLinkValid($expected, $actual)
+    protected function assertOutputLinkValid(string $expected, string $actual): void
     {
-        $this->assertStringEndsWith($expected, $actual);
+        self::assertStringEndsWith($expected, $actual);
     }
 }

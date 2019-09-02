@@ -45,6 +45,7 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
      * Constructor
      *
      * @param PersistentResource $resource
+     * @throws \Exception
      */
     public function __construct(PersistentResource $resource)
     {
@@ -66,6 +67,7 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
         if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
             $this->calculateDimensionsFromResource($this->resource);
         }
+
         parent::initializeObject($initializationCause);
     }
 

@@ -30,7 +30,7 @@ class DataStructureImplementationTest extends UnitTestCase
         $fusionObjectName = 'Neos.Fusion:DataStructure';
         $renderer = new DataStructureImplementation($mockRuntime, $path, $fusionObjectName);
         $result = $renderer->evaluate();
-        $this->assertSame($result, []);
+        self::assertSame($result, []);
     }
 
     /**
@@ -119,7 +119,7 @@ class DataStructureImplementationTest extends UnitTestCase
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
-        $mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($path) use (&$renderedPaths) {
+        $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($path) use (&$renderedPaths) {
             $renderedPaths[] = $path;
         }));
 
@@ -131,6 +131,6 @@ class DataStructureImplementationTest extends UnitTestCase
         }
         $renderer->evaluate();
 
-        $this->assertSame($expectedKeyOrder, $renderedPaths, $message);
+        self::assertSame($expectedKeyOrder, $renderedPaths, $message);
     }
 }

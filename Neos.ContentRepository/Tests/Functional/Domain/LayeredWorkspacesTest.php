@@ -82,7 +82,7 @@ class LayeredWorkspacesTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->currentUserWorkspace = uniqid('user-', true);
@@ -94,7 +94,7 @@ class LayeredWorkspacesTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->saveNodesAndTearDownRootNodeAndRepository();
         parent::tearDown();
@@ -159,9 +159,9 @@ class LayeredWorkspacesTest extends FunctionalTestCase
 
         $fooNodeInGroupWorkspace = $groupContextWithRemovedContent->getRootNode()->getNode('foo');
 
-        $this->assertInstanceOf(NodeInterface::class, $fooNodeInGroupWorkspace);
-        $this->assertSame($this->currentGroupWorkspace, $fooNodeInGroupWorkspace->getNodeData()->getWorkspace()->getName());
-        $this->assertTrue($fooNodeInGroupWorkspace->isRemoved());
+        self::assertInstanceOf(NodeInterface::class, $fooNodeInGroupWorkspace);
+        self::assertSame($this->currentGroupWorkspace, $fooNodeInGroupWorkspace->getNodeData()->getWorkspace()->getName());
+        self::assertTrue($fooNodeInGroupWorkspace->isRemoved());
     }
 
     /**
@@ -190,9 +190,9 @@ class LayeredWorkspacesTest extends FunctionalTestCase
 
         $fooNodeInGroupWorkspace = $groupContextWithRemovedContent->getRootNode()->getNode('foo');
 
-        $this->assertInstanceOf(NodeInterface::class, $fooNodeInGroupWorkspace);
-        $this->assertSame($this->currentGroupWorkspace, $fooNodeInGroupWorkspace->getNodeData()->getWorkspace()->getName());
-        $this->assertTrue($fooNodeInGroupWorkspace->isRemoved());
+        self::assertInstanceOf(NodeInterface::class, $fooNodeInGroupWorkspace);
+        self::assertSame($this->currentGroupWorkspace, $fooNodeInGroupWorkspace->getNodeData()->getWorkspace()->getName());
+        self::assertTrue($fooNodeInGroupWorkspace->isRemoved());
     }
 
     /**
@@ -213,10 +213,10 @@ class LayeredWorkspacesTest extends FunctionalTestCase
         $groupContext = $this->contextFactory->create(['workspaceName' => $this->currentGroupWorkspace]);
 
         $movedBazNode = $groupContext->getRootNode()->getNode('foo')->getNode('baz');
-        $this->assertInstanceOf(NodeInterface::class, $movedBazNode);
+        self::assertInstanceOf(NodeInterface::class, $movedBazNode);
 
         $oldBazNode = $groupContext->getRootNode()->getNode('foo/bar/baz');
-        $this->assertNull($oldBazNode);
+        self::assertNull($oldBazNode);
     }
 
     /**
@@ -237,11 +237,11 @@ class LayeredWorkspacesTest extends FunctionalTestCase
         $groupContext = $this->contextFactory->create(['workspaceName' => $this->currentGroupWorkspace]);
 
         $movedBazNode = $groupContext->getRootNode()->getNode('foo')->getNode('baz');
-        $this->assertInstanceOf(NodeInterface::class, $movedBazNode);
+        self::assertInstanceOf(NodeInterface::class, $movedBazNode);
 
         $shadowNode = $this->nodeDataRepository->findShadowNodeByPath('/foo/bar/baz', $this->groupWorkspace, $groupContext->getDimensions());
-        $this->assertInstanceOf(NodeData::class, $shadowNode);
-        $this->assertNotNull($shadowNode->getMovedTo());
-        $this->assertTrue($shadowNode->isRemoved());
+        self::assertInstanceOf(NodeData::class, $shadowNode);
+        self::assertNotNull($shadowNode->getMovedTo());
+        self::assertTrue($shadowNode->isRemoved());
     }
 }

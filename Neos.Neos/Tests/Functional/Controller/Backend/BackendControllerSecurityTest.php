@@ -46,7 +46,7 @@ class BackendControllerSecurityTest extends FunctionalTestCase
         $this->browser->request('http://localhost/neos/login');
 
         // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     /**
@@ -55,6 +55,6 @@ class BackendControllerSecurityTest extends FunctionalTestCase
     public function indexActionIsDeniedForEverybody()
     {
         $this->browser->request('http://localhost/neos/');
-        $this->assertSame(403, $this->browser->getLastResponse()->getStatusCode());
+        self::assertSame(403, $this->browser->getLastResponse()->getStatusCode());
     }
 }

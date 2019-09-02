@@ -17,7 +17,6 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Fusion\Core\Cache\FileMonitorListener;
 
 /**
@@ -41,7 +40,7 @@ class Package extends BasePackage
                 if ($step->getIdentifier() === 'neos.flow:systemfilemonitor') {
                     $fusionFileMonitor = FileMonitor::createFileMonitorAtBoot('Fusion_Files', $bootstrap);
                     /** @var PackageManager $packageManager */
-                    $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
+                    $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
                     foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;

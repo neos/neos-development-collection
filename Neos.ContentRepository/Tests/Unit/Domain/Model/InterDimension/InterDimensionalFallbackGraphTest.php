@@ -30,7 +30,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
 
         $contentSubgraph = $graph->createContentSubgraph(['test' => new IntraDimension\ContentDimensionValue('a')]);
 
-        $this->assertSame($contentSubgraph, $graph->getSubgraph($contentSubgraph->getIdentityHash()));
+        self::assertSame($contentSubgraph, $graph->getSubgraph($contentSubgraph->getIdentityHash()));
     }
 
     /**
@@ -48,7 +48,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
 
         $graph->connectSubgraphs($variant, $fallback);
 
-        $this->assertContains($fallback, $variant->getFallback());
+        self::assertContains($fallback, $variant->getFallback());
     }
 
     /**
@@ -66,7 +66,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
 
         $graph->connectSubgraphs($variant, $fallback);
 
-        $this->assertContains($variant, $fallback->getVariants());
+        self::assertContains($variant, $fallback->getVariants());
     }
 
     /**
@@ -108,7 +108,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
         });
         $fallbackContentSubgraph = new InterDimension\ContentSubgraph($fallbackDimensionCombination);
 
-        $this->assertSame($expectedWeight, $interGraph->calculateFallbackWeight($variantContentSubgraph, $fallbackContentSubgraph));
+        self::assertSame($expectedWeight, $interGraph->calculateFallbackWeight($variantContentSubgraph, $fallbackContentSubgraph));
     }
 
     public function dimensionValueCombinationProvider()
@@ -146,7 +146,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
         ObjectAccess::setProperty($secondDimension, 'depth', $secondDepth, true);
 
         $graph = new InterDimension\InterDimensionalFallbackGraph([$firstDimension, $secondDimension]);
-        $this->assertSame(max($firstDepth, $secondDepth) + 1, $graph->determineWeightNormalizationBase());
+        self::assertSame(max($firstDepth, $secondDepth) + 1, $graph->determineWeightNormalizationBase());
     }
 
 
@@ -172,7 +172,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
         $fallback = new InterDimension\ContentSubgraph([]);
         $variationEdge = new InterDimension\VariationEdge($variant, $fallback, $weight);
 
-        $this->assertSame($expectedNormalizedWeight, $graph->normalizeWeight($variationEdge->getWeight()));
+        self::assertSame($expectedNormalizedWeight, $graph->normalizeWeight($variationEdge->getWeight()));
     }
 
     public function variationEdgeWeightNormalizationProvider()
@@ -224,7 +224,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
         new InterDimension\VariationEdge($variant, $primaryFallback, $primaryFallbackWeight);
         new InterDimension\VariationEdge($variant, $secondaryFallback, $secondaryFallbackWeight);
 
-        $this->assertSame($primaryFallback, $graph->getPrimaryFallback($variant));
+        self::assertSame($primaryFallback, $graph->getPrimaryFallback($variant));
     }
 
     public function fallbackPrioritizationProvider()

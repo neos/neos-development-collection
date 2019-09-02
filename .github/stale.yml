@@ -1,0 +1,13 @@
+daysUntilStale: 90
+daysUntilClose: 14
+exemptLabels: []
+staleLabel: stale
+only: pulls
+markComment: >
+  This issue has been automatically marked as stale because it has not had
+  recent activity. It will be closed if no further activity occurs.
+  Thank you for your contributions!
+closeComment: >
+  This issue has been automatically closed because it has not had activity for some time.
+  But that does not need to be final. If you find the time to work on it, feel free to open it again.
+  Thanks again for your contributions!

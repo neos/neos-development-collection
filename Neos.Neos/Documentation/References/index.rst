@@ -7,6 +7,7 @@ all Packages that are in a default (Demo Package) setup.
 .. toctree::
    :maxdepth: 2
 
+   NodeTypeDefinition
    PropertyEditorReference
    ViewHelpers/index
    NeosFusionReference

@@ -27,7 +27,7 @@ class ContentDimensionValueTest extends UnitTestCase
     {
         $value = new IntraDimension\ContentDimensionValue('test');
 
-        $this->assertSame(0, $value->getDepth());
+        self::assertSame(0, $value->getDepth());
     }
 
     /**
@@ -40,7 +40,7 @@ class ContentDimensionValueTest extends UnitTestCase
         ObjectAccess::setProperty($fallbackValue, 'depth', $testDepth, true);
         $value = new IntraDimension\ContentDimensionValue('test', $fallbackValue);
 
-        $this->assertSame($testDepth + 1, $value->getDepth());
+        self::assertSame($testDepth + 1, $value->getDepth());
     }
 
     /**
@@ -50,7 +50,7 @@ class ContentDimensionValueTest extends UnitTestCase
     {
         $value = new IntraDimension\ContentDimensionValue('fallback');
 
-        $this->assertSame(0, $value->calculateFallbackDepth($value));
+        self::assertSame(0, $value->calculateFallbackDepth($value));
     }
 
     /**
@@ -70,15 +70,15 @@ class ContentDimensionValueTest extends UnitTestCase
             $previousFallback = $currentFallback;
         }
 
-        $this->assertSame($testLevel, $currentFallback->calculateFallbackDepth($rootFallback));
+        self::assertSame($testLevel, $currentFallback->calculateFallbackDepth($rootFallback));
     }
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Domain\Model\IntraDimension\Exception\InvalidFallbackException
      */
     public function calculateFallbackDepthThrowsExceptionForDisconnectedValue()
     {
+        $this->expectException(IntraDimension\Exception\InvalidFallbackException::class);
         $testValue = new IntraDimension\ContentDimensionValue('test');
         $disconnectedValue = new IntraDimension\ContentDimensionValue('test2');
 
@@ -87,10 +87,10 @@ class ContentDimensionValueTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Domain\Model\IntraDimension\Exception\InvalidFallbackException
      */
     public function calculateFallbackDepthThrowsExceptionForVariant()
     {
+        $this->expectException(IntraDimension\Exception\InvalidFallbackException::class);
         $fallback = new IntraDimension\ContentDimensionValue('fallback');
         $variant = new IntraDimension\ContentDimensionValue('variant', $fallback);
 
@@ -99,10 +99,10 @@ class ContentDimensionValueTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Domain\Model\IntraDimension\Exception\InvalidFallbackException
      */
     public function calculateFallbackDepthThrowsExceptionForConnectedButUnreachableValue()
     {
+        $this->expectException(IntraDimension\Exception\InvalidFallbackException::class);
         $fallback = new IntraDimension\ContentDimensionValue('fallback');
         $variant1 = new IntraDimension\ContentDimensionValue('variant1', $fallback);
         $variant2 = new IntraDimension\ContentDimensionValue('variant2', $fallback);

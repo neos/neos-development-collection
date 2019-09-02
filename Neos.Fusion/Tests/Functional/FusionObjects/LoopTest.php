@@ -25,7 +25,7 @@ class LoopTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2']);
         $view->setFusionPath('loop/basicLoop');
-        $this->assertEquals('Xelement1Xelement2', $view->render());
+        self::assertEquals('Xelement1Xelement2', $view->render());
     }
 
     /**
@@ -36,7 +36,7 @@ class LoopTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2']);
         $view->setFusionPath('loop/basicLoopWithGlue');
-        $this->assertEquals('Xelement1, Xelement2', $view->render());
+        self::assertEquals('Xelement1, Xelement2', $view->render());
     }
 
     /**
@@ -48,7 +48,7 @@ class LoopTest extends AbstractFusionObjectTest
         $view->assign('items', ['element1', 'element2']);
         $view->assign('other', 'var');
         $view->setFusionPath('loop/basicLoopOtherContextVariables');
-        $this->assertEquals('Xelement1varXelement2var', $view->render());
+        self::assertEquals('Xelement1varXelement2var', $view->render());
     }
 
     /**
@@ -59,7 +59,7 @@ class LoopTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('items', null);
         $view->setFusionPath('loop/basicLoop');
-        $this->assertEquals('', $view->render());
+        self::assertEquals('', $view->render());
     }
 
     /**
@@ -70,6 +70,6 @@ class LoopTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('items', ['element1', 'element2', 'element3', 'element4']);
         $view->setFusionPath('loop/iteration');
-        $this->assertEquals('Xelement1-0-1-1--1-Xelement2-1-2----1Xelement3-2-3---1-Xelement4-3-4--1--1', $view->render());
+        self::assertEquals('Xelement1-0-1-1--1-Xelement2-1-2----1Xelement3-2-3---1-Xelement4-3-4--1--1', $view->render());
     }
 }

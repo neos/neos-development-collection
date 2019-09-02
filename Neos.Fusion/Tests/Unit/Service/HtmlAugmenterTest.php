@@ -13,6 +13,7 @@ namespace Neos\Fusion\Tests\Unit\Service;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Service\HtmlAugmenter;
+use Neos\Neos\Exception;
 
 /**
  * Testcase for the HTML Augmenter
@@ -25,7 +26,7 @@ class HtmlAugmenterTest extends UnitTestCase
      */
     protected $htmlAugmenter;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->htmlAugmenter = new HtmlAugmenter();
     }
@@ -36,7 +37,7 @@ class HtmlAugmenterTest extends UnitTestCase
     public function addAttributesDoesNotAlterHtmlIfAttributesArrayIsEmpty()
     {
         $html = '<p>This is some html</p><p>Without a unique root element</p>';
-        $this->assertSame($html, $this->htmlAugmenter->addAttributes($html, []));
+        self::assertSame($html, $this->htmlAugmenter->addAttributes($html, []));
     }
 
     public function addAttributesDataProvider()
@@ -260,7 +261,7 @@ class HtmlAugmenterTest extends UnitTestCase
             $fallbackTagName = 'div';
         }
         $actualResult = $this->htmlAugmenter->addAttributes($html, $attributes, $fallbackTagName, $exclusiveAttributes);
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -270,10 +271,10 @@ class HtmlAugmenterTest extends UnitTestCase
      * @param array $exclusiveAttributes
      * @test
      * @dataProvider invalidAttributesDataProvider
-     * @expectedException \Neos\Neos\Exception
      */
     public function invalidAttributesTests($html, array $attributes, $fallbackTagName, $exclusiveAttributes)
     {
+        $this->expectException(Exception::class);
         $this->addAttributesTests($html, $attributes, $fallbackTagName, $exclusiveAttributes, null);
     }
 }

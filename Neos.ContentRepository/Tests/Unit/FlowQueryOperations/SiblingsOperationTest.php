@@ -52,24 +52,24 @@ class SiblingsOperationTest extends AbstractQueryOperationsTest
      * @throws \ReflectionException
      * @throws \Exception
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->siteNode = $this->mockNode('site');
         $this->firstNodeInLevel = $this->mockNode('first-node');
         $this->secondNodeInLevel = $this->mockNode('second-node');
         $this->thirdNodeInLevel = $this->mockNode('third-node');
 
-        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(TraversableNodes::fromArray([
+        $this->siteNode->expects(self::any())->method('findChildNodes')->will(self::returnValue(TraversableNodes::fromArray([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
         ])));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->siteNode->expects($this->any())->method('findParentNode')->will($this->throwException(new NodeException('No parent')));
-        $this->firstNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
+        $this->siteNode->expects(self::any())->method('findParentNode')->will(self::throwException(new NodeException('No parent')));
+        $this->firstNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
+        $this->secondNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
+        $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
     }
 
     /**
@@ -84,7 +84,7 @@ class SiblingsOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([], $output);
+        self::assertEquals([], $output);
     }
 
     /**
@@ -99,7 +99,7 @@ class SiblingsOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([$this->firstNodeInLevel, $this->thirdNodeInLevel], $output);
+        self::assertEquals([$this->firstNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 
     /**
@@ -114,7 +114,7 @@ class SiblingsOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([$this->firstNodeInLevel], $output);
+        self::assertEquals([$this->firstNodeInLevel], $output);
     }
 
     /**
@@ -129,6 +129,6 @@ class SiblingsOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([], $output);
+        self::assertEquals([], $output);
     }
 }

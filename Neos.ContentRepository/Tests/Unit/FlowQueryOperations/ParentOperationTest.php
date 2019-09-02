@@ -43,21 +43,21 @@ class ParentOperationTest extends AbstractQueryOperationsTest
      */
     protected $secondLevelNode;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->siteNode = $this->mockNode('site-identifier-uuid');
         $this->firstLevelNode = $this->mockNode('node1');
         $this->secondLevelNode = $this->mockNode('node2');
 
-        $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site')));
-        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue([$this->firstLevelNode]));
+        $this->siteNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site')));
+        $this->siteNode->expects(self::any())->method('findChildNodes')->will(self::returnValue([$this->firstLevelNode]));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->siteNode->expects($this->any())->method('findParentNode')->will($this->throwException(new NodeException('No parent')));
-        $this->firstLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->firstLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/first')));
-        $this->secondLevelNode->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->secondLevelNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/first/second')));
+        $this->siteNode->expects(self::any())->method('findParentNode')->will(self::throwException(new NodeException('No parent')));
+        $this->firstLevelNode->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
+        $this->firstLevelNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site/first')));
+        $this->secondLevelNode->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
+        $this->secondLevelNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site/first/second')));
     }
 
     /**
@@ -72,7 +72,7 @@ class ParentOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([], $output);
+        self::assertEquals([], $output);
     }
 
     /**
@@ -87,6 +87,6 @@ class ParentOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([$this->firstLevelNode], $output);
+        self::assertEquals([$this->firstLevelNode], $output);
     }
 }

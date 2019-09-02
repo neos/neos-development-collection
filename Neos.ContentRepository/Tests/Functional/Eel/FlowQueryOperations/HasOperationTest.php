@@ -117,7 +117,7 @@ class HasOperationTest extends AbstractNodeTest
         $result = $q->has($subject)->get();
 
         if ($expectedNodePaths === []) {
-            $this->assertEmpty($result);
+            self::assertEmpty($result);
         } else {
             foreach ($expectedNodePaths as $expectedNodePath) {
                 $expectedNode = $rootNode->getNode($expectedNodePath);

@@ -19,21 +19,21 @@ use Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService;
 class NodeImportServiceTest extends UnitTestCase
 {
     /**
-     * @var PropertyMapper|\PHPUnit_Framework_MockObject_MockObject
+     * @var PropertyMapper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPropertyMapper;
 
     /**
-     * @var Context|\PHPUnit_Framework_MockObject_MockObject
+     * @var Context|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockSecurityContext;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->getMock();
 
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $this->mockSecurityContext->expects($this->any())->method('withoutAuthorizationChecks')->will($this->returnCallback(function ($callback) {
+        $this->mockSecurityContext->expects(self::any())->method('withoutAuthorizationChecks')->will(self::returnCallback(function ($callback) {
             return $callback->__invoke();
         }));
     }
@@ -46,7 +46,7 @@ class NodeImportServiceTest extends UnitTestCase
         $xmlReader = new \XMLReader();
         $result = $xmlReader->open(__DIR__ . '/Fixtures/SingleNode.xml');
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
 
         /** @var NodeImportService $nodeImportService */
         $nodeImportService = $this->getMockBuilder(NodeImportService::class)->setMethods(['persistNodeData'])->getMock();
@@ -82,27 +82,27 @@ class NodeImportServiceTest extends UnitTestCase
                 ]
             ]
         ];
-        $nodeImportService->expects($this->once())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeData) {
+        $nodeImportService->expects(self::once())->method('persistNodeData')->will(self::returnCallback(function ($nodeData) use (&$actualNodeData) {
             unset($nodeData['Persistence_Object_Identifier']);
             $actualNodeData = $nodeData;
             return true;
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source, $targetType) {
+        $this->mockPropertyMapper->expects(self::any())->method('convert')->will(self::returnCallback(function ($source, $targetType) {
             if ($targetType === 'DateTime') {
                 return new \DateTime($source);
             }
             throw new \Exception('Target type ' . $targetType . ' not supported in property mapper mock');
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Error\Messages\Result());
+        $this->mockPropertyMapper->expects(self::any())->method('getMessages')->willReturn(new \Neos\Error\Messages\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
-        $this->assertInstanceOf('DateTimeInterface', $actualNodeData['creationDateTime']);
-        $this->assertInstanceOf('DateTimeInterface', $actualNodeData['lastModificationDateTime']);
+        self::assertInstanceOf('DateTimeInterface', $actualNodeData['creationDateTime']);
+        self::assertInstanceOf('DateTimeInterface', $actualNodeData['lastModificationDateTime']);
         unset($actualNodeData['creationDateTime']);
         unset($actualNodeData['lastModificationDateTime']);
 
-        $this->assertEquals($expectedNodeData, $actualNodeData);
+        self::assertEquals($expectedNodeData, $actualNodeData);
     }
 
     /**
@@ -113,7 +113,7 @@ class NodeImportServiceTest extends UnitTestCase
         $xmlReader = new \XMLReader();
         $result = $xmlReader->open(__DIR__ . '/Fixtures/SingleNodeWithoutIdentifier.xml');
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
 
         /** @var NodeImportService $nodeImportService */
         $nodeImportService = $this->getMockBuilder(NodeImportService::class)->setMethods(['persistNodeData'])->getMock();
@@ -139,7 +139,7 @@ class NodeImportServiceTest extends UnitTestCase
             ]
         ];
         $actualIdentifier = null;
-        $nodeImportService->expects($this->once())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeData, &$actualIdentifier) {
+        $nodeImportService->expects(self::once())->method('persistNodeData')->will(self::returnCallback(function ($nodeData) use (&$actualNodeData, &$actualIdentifier) {
             unset($nodeData['Persistence_Object_Identifier']);
             $actualIdentifier = $nodeData['identifier'];
             unset($nodeData['identifier']);
@@ -149,13 +149,13 @@ class NodeImportServiceTest extends UnitTestCase
 
         $nodeImportService->import($xmlReader, '/');
 
-        $this->assertInstanceOf('DateTimeInterface', $actualNodeData['creationDateTime']);
-        $this->assertInstanceOf('DateTimeInterface', $actualNodeData['lastModificationDateTime']);
+        self::assertInstanceOf('DateTimeInterface', $actualNodeData['creationDateTime']);
+        self::assertInstanceOf('DateTimeInterface', $actualNodeData['lastModificationDateTime']);
         unset($actualNodeData['creationDateTime']);
         unset($actualNodeData['lastModificationDateTime']);
-        $this->assertTrue(strlen($actualIdentifier) > 0, 'The identifier was not autogenerated properly.');
+        self::assertTrue(strlen($actualIdentifier) > 0, 'The identifier was not autogenerated properly.');
 
-        $this->assertEquals($expectedNodeData, $actualNodeData);
+        self::assertEquals($expectedNodeData, $actualNodeData);
     }
 
     /**
@@ -166,7 +166,7 @@ class NodeImportServiceTest extends UnitTestCase
         $xmlReader = new \XMLReader();
         $result = $xmlReader->open(__DIR__ . '/Fixtures/NodesWithEmptyProperty.xml', null, LIBXML_PARSEHUGE);
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
 
         /** @var NodeImportService $nodeImportService */
         $nodeImportService = $this->getMockBuilder(NodeImportService::class)->setMethods(['persistNodeData'])->getMock();
@@ -299,31 +299,31 @@ class NodeImportServiceTest extends UnitTestCase
                 ]
             ]
         ];
-        $nodeImportService->expects($this->atLeastOnce())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeDatas) {
+        $nodeImportService->expects(self::atLeastOnce())->method('persistNodeData')->will(self::returnCallback(function ($nodeData) use (&$actualNodeDatas) {
             unset($nodeData['Persistence_Object_Identifier']);
             $actualNodeDatas[] = $nodeData;
             return true;
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source, $targetType) {
+        $this->mockPropertyMapper->expects(self::any())->method('convert')->will(self::returnCallback(function ($source, $targetType) {
             return [
                 'targetType' => $targetType,
                 'source' => $source
             ];
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Error\Messages\Result());
+        $this->mockPropertyMapper->expects(self::any())->method('getMessages')->willReturn(new \Neos\Error\Messages\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
-        $this->assertInstanceOf('DateTimeInterface', $actualNodeDatas[0]['creationDateTime']);
-        $this->assertInstanceOf('DateTimeInterface', $actualNodeDatas[0]['lastModificationDateTime']);
+        self::assertInstanceOf('DateTimeInterface', $actualNodeDatas[0]['creationDateTime']);
+        self::assertInstanceOf('DateTimeInterface', $actualNodeDatas[0]['lastModificationDateTime']);
         unset($actualNodeDatas[0]['creationDateTime']);
         unset($actualNodeDatas[0]['lastModificationDateTime']);
-        $this->assertInstanceOf('DateTimeInterface', $actualNodeDatas[1]['creationDateTime']);
-        $this->assertInstanceOf('DateTimeInterface', $actualNodeDatas[1]['lastModificationDateTime']);
+        self::assertInstanceOf('DateTimeInterface', $actualNodeDatas[1]['creationDateTime']);
+        self::assertInstanceOf('DateTimeInterface', $actualNodeDatas[1]['lastModificationDateTime']);
         unset($actualNodeDatas[1]['creationDateTime']);
         unset($actualNodeDatas[1]['lastModificationDateTime']);
 
-        $this->assertEquals($expectedNodeDatas, $actualNodeDatas);
+        self::assertEquals($expectedNodeDatas, $actualNodeDatas);
     }
 
     /**
@@ -334,7 +334,7 @@ class NodeImportServiceTest extends UnitTestCase
         $xmlReader = new \XMLReader();
         $result = $xmlReader->open(__DIR__ . '/Fixtures/NodesWithArrayProperties.xml', null, LIBXML_PARSEHUGE);
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
 
         /** @var NodeImportService $nodeImportService */
         $nodeImportService = $this->getMockBuilder(NodeImportService::class)->setMethods(['persistNodeData'])->getMock();
@@ -370,12 +370,12 @@ class NodeImportServiceTest extends UnitTestCase
                 ]
             ]
         ];
-        $nodeImportService->expects($this->atLeastOnce())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeDatas) {
+        $nodeImportService->expects(self::atLeastOnce())->method('persistNodeData')->will(self::returnCallback(function ($nodeData) use (&$actualNodeDatas) {
             unset($nodeData['Persistence_Object_Identifier']);
             $actualNodeDatas[] = $nodeData;
             return true;
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source, $targetType) {
+        $this->mockPropertyMapper->expects(self::any())->method('convert')->will(self::returnCallback(function ($source, $targetType) {
             return [
                 'targetType' => $targetType,
                 'source' => $source
@@ -384,12 +384,12 @@ class NodeImportServiceTest extends UnitTestCase
 
         $nodeImportService->import($xmlReader, '/');
 
-        $this->assertInstanceOf('DateTimeInterface', $actualNodeDatas[0]['creationDateTime']);
-        $this->assertInstanceOf('DateTimeInterface', $actualNodeDatas[0]['lastModificationDateTime']);
+        self::assertInstanceOf('DateTimeInterface', $actualNodeDatas[0]['creationDateTime']);
+        self::assertInstanceOf('DateTimeInterface', $actualNodeDatas[0]['lastModificationDateTime']);
         unset($actualNodeDatas[0]['creationDateTime']);
         unset($actualNodeDatas[0]['lastModificationDateTime']);
 
-        $this->assertEquals($expectedNodeDatas, $actualNodeDatas);
+        self::assertEquals($expectedNodeDatas, $actualNodeDatas);
     }
 
     /**
@@ -400,7 +400,7 @@ class NodeImportServiceTest extends UnitTestCase
         $xmlReader = new \XMLReader();
         $result = $xmlReader->open(__DIR__ . '/Fixtures/SingleNodeWithLinebreaks.xml', null, LIBXML_PARSEHUGE);
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
 
         /** @var \Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService $nodeImportService */
         $nodeImportService = $this->getMockBuilder(\Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService::class)->setMethods(['persistNodeData'])->getMock();
@@ -414,23 +414,23 @@ class NodeImportServiceTest extends UnitTestCase
                 ]
             ]
         ];
-        $nodeImportService->expects($this->atLeastOnce())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeDatas) {
+        $nodeImportService->expects(self::atLeastOnce())->method('persistNodeData')->will(self::returnCallback(function ($nodeData) use (&$actualNodeDatas) {
             unset($nodeData['Persistence_Object_Identifier']);
             $actualNodeDatas[] = $nodeData;
             return true;
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source, $targetType) {
+        $this->mockPropertyMapper->expects(self::any())->method('convert')->will(self::returnCallback(function ($source, $targetType) {
             return [
                 'targetType' => $targetType,
                 'source' => $source
             ];
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Error\Messages\Result());
+        $this->mockPropertyMapper->expects(self::any())->method('getMessages')->willReturn(new \Neos\Error\Messages\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
-        $this->assertCount(1, $actualNodeDatas);
+        self::assertCount(1, $actualNodeDatas);
 
-        $this->assertArraySubset($expectedNodeDatas[0]['creationDateTime'], $actualNodeDatas[0]['creationDateTime'], true);
+        self::assertEquals($expectedNodeDatas[0]['creationDateTime']['source'], $actualNodeDatas[0]['creationDateTime']['source']);
     }
 }

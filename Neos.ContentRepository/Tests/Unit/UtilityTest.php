@@ -51,6 +51,6 @@ class UtilityTest extends UnitTestCase
      */
     public function renderValidNodeNameWorks($source, $expectedNodeName)
     {
-        $this->assertEquals($expectedNodeName, Utility::renderValidNodeName($source));
+        self::assertEquals($expectedNodeName, Utility::renderValidNodeName($source));
     }
 }

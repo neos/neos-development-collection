@@ -20,6 +20,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Cache\ContentCache;
+use Neos\Fusion\Exception\CacheException;
 
 /**
  * Test case for the ContentCache
@@ -50,7 +51,7 @@ class ContentCacheTest extends UnitTestCase
     public function flushByTagSanitizesTagsForCacheFrontend($tag, $sanitizedTag)
     {
         $mockCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects($this->once())->method('flushByTag')->with($sanitizedTag);
+        $mockCache->expects(self::once())->method('flushByTag')->with($sanitizedTag);
         $contentCache = new ContentCache();
         $this->inject($contentCache, 'cache', $mockCache);
         $contentCache->flushByTag($tag);
@@ -69,11 +70,11 @@ class ContentCacheTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidEntryIdentifierValues
-     * @expectedException \Neos\Fusion\Exception\CacheException
-     * @expectedExceptionCode 1395846615
      */
     public function createCacheSegmentWithInvalidEntryIdentifierValueThrowsException($entryIdentifierValues)
     {
+        $this->expectException(CacheException::class);
+        $this->expectExceptionCode(1395846615);
         $contentCache = new ContentCache();
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
@@ -105,7 +106,7 @@ class ContentCacheTest extends UnitTestCase
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $segement = $contentCache->createCacheSegment('My content', '/foo/bar', $entryIdentifierValues);
-        $this->assertNotEmpty($segement);
+        self::assertNotEmpty($segement);
     }
 
     /**
@@ -116,8 +117,8 @@ class ContentCacheTest extends UnitTestCase
         $contentCache = new ContentCache();
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
-        $segement = $contentCache->createCacheSegment('My content', '/foo/bar', [42], ['Foo', 'Bar'], 60);
-        $this->assertContains('Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segement);
+        $segment = $contentCache->createCacheSegment('My content', '/foo/bar', [42], ['Foo', 'Bar'], 60);
+        self::assertStringContainsString('Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segment);
     }
 
     /**
@@ -134,7 +135,7 @@ class ContentCacheTest extends UnitTestCase
 
         $segement = $contentCache->createCacheSegment('My content', '/foo/bar', [42], ['Foo', 'Bar'], 60);
 
-        $mockCache->expects($this->once())->method('set')->with($this->anything(), $this->anything(), $this->anything(),
+        $mockCache->expects(self::once())->method('set')->with($this->anything(), $this->anything(), $this->anything(),
             60);
 
         $contentCache->processCacheSegments($segement);
@@ -169,7 +170,7 @@ class ContentCacheTest extends UnitTestCase
 
         $output = $contentCache->processCacheSegments($content);
 
-        $this->assertSame($invalidContent . $validContent, $output);
+        self::assertSame($invalidContent . $validContent, $output);
     }
 
     /**
@@ -180,7 +181,7 @@ class ContentCacheTest extends UnitTestCase
         $contentCache = new ContentCache();
 
         $mockPropertyMapper = $this->createMock(PropertyMapper::class);
-        $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnArgument(0));
+        $mockPropertyMapper->expects(self::any())->method('convert')->will($this->returnArgument(0));
         $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
 
         $mockCache = $this->createMock(FrontendInterface::class);
@@ -193,7 +194,7 @@ class ContentCacheTest extends UnitTestCase
 
         $output = $contentCache->processCacheSegments($content);
 
-        $this->assertSame($invalidContent, $output);
+        self::assertSame($invalidContent, $output);
     }
 
     /**
@@ -207,7 +208,7 @@ class ContentCacheTest extends UnitTestCase
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
 
         $mockPropertyMapper = $this->createMock(PropertyMapper::class);
-        $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnArgument(0));
+        $mockPropertyMapper->expects(self::any())->method('convert')->will($this->returnArgument(0));
         $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
 
         $mockContext = $this->getMockBuilder(EnvironmentConfiguration::class)->disableOriginalConstructor()->getMock();
@@ -237,7 +238,7 @@ class ContentCacheTest extends UnitTestCase
 
         $expectedOutput = $outerContentStart . $invalidContent . $outerContentMiddle . $uncachedCommandOutput . $outerContentEnd;
 
-        $this->assertSame($expectedOutput, $output);
+        self::assertSame($expectedOutput, $output);
 
         $cachedContent = $contentCache->getCachedSegment(function ($command) use ($uncachedCommandOutput) {
             if ($command === 'eval=some.fusionh.path.innerUncached') {
@@ -247,6 +248,6 @@ class ContentCacheTest extends UnitTestCase
             }
         }, 'some.fusionh.path', ['node' => 'bar']);
 
-        $this->assertSame($expectedOutput, $cachedContent);
+        self::assertSame($expectedOutput, $cachedContent);
     }
 }
