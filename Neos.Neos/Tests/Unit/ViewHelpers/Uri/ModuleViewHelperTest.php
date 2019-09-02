@@ -45,20 +45,20 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
      */
     public function callingRenderAssignsVariablesCorrectlyToUriBuilder()
     {
-        $this->uriBuilder->expects($this->once())->method('setSection')->with('section')->will($this->returnSelf());
-        $this->uriBuilder->expects($this->once())->method('setArguments')->with(['additionalParams'])->will($this->returnSelf());
-        $this->uriBuilder->expects($this->once())->method('setArgumentsToBeExcludedFromQueryString')->with(['argumentsToBeExcludedFromQueryString'])->will($this->returnSelf());
-        $this->uriBuilder->expects($this->once())->method('setFormat')->with('format')->will($this->returnSelf());
+        $this->uriBuilder->expects(self::once())->method('setSection')->with('section')->will(self::returnSelf());
+        $this->uriBuilder->expects(self::once())->method('setArguments')->with(['additionalParams'])->will(self::returnSelf());
+        $this->uriBuilder->expects(self::once())->method('setArgumentsToBeExcludedFromQueryString')->with(['argumentsToBeExcludedFromQueryString'])->will(self::returnSelf());
+        $this->uriBuilder->expects(self::once())->method('setFormat')->with('format')->will(self::returnSelf());
 
         $expectedModifiedArguments = [
             'module' => 'the/path',
             'moduleArguments' => ['arguments', '@action' => 'action']
         ];
 
-        $this->uriBuilder->expects($this->once())->method('uriFor')->with('index', $expectedModifiedArguments)->willReturn('expectedUri');
+        $this->uriBuilder->expects(self::once())->method('uriFor')->with('index', $expectedModifiedArguments)->willReturn('expectedUri');
 
         // fallback for the method chaining of the URI builder
-        $this->uriBuilder->expects($this->any())->method($this->anything())->willReturn($this->uriBuilder);
+        $this->uriBuilder->expects(self::any())->method($this->anything())->willReturn($this->uriBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => 'the/path',

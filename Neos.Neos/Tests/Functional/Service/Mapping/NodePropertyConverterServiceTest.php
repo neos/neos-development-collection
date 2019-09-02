@@ -37,7 +37,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $nodeType
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getPropertyType')
             ->willReturn('array');
 
@@ -47,11 +47,11 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $node
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getProperty')
             ->willReturn($propertyValue);
         $node
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getNodeType')
             ->willReturn($nodeType);
 
@@ -80,7 +80,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $nodeType
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getPropertyType')
             ->willReturn('array');
 
@@ -90,11 +90,11 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $node
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getProperty')
             ->willReturn($propertyValue);
         $node
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getNodeType')
             ->willReturn($nodeType);
 
@@ -118,7 +118,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $nodeType
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getPropertyType')
             ->willReturn('array<string>');
 
@@ -128,11 +128,11 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $node
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getProperty')
             ->willReturn($propertyValue);
         $node
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getNodeType')
             ->willReturn($nodeType);
 
@@ -160,7 +160,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $nodeType
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getPropertyType')
             ->willReturn(ImageInterface::class);
 
@@ -170,11 +170,11 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $node
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getProperty')
             ->willReturn($propertyValue);
         $node
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getNodeType')
             ->willReturn($nodeType);
 
