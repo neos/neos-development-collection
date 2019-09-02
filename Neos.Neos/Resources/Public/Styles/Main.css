@@ -7316,6 +7316,46 @@ readers do not read off random characters that represent icons */
         .neos ul.neos-dynatree-container .neos-dynatree-node a:hover, .neos ul.neos-dynatree-container .neos-dynatree-node a:focus {
           text-decoration: none;
           outline: none; }
+    .neos ul.neos-dynatree-container ul .neos-dynatree-node {
+      padding-left: 0; }
+    .neos ul.neos-dynatree-container ul ul .neos-dynatree-node {
+      padding-left: 9px; }
+    .neos ul.neos-dynatree-container ul ul ul .neos-dynatree-node {
+      padding-left: 21px; }
+    .neos ul.neos-dynatree-container ul ul ul ul .neos-dynatree-node {
+      padding-left: 33px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 45px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 57px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 69px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 81px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 93px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 105px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 117px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 129px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 141px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 153px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 165px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 177px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 189px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 201px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 213px; }
+    .neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+      padding-left: 225px; }
   .neos .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node {
     cursor: move; }
     .neos .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
@@ -9015,7 +9055,7 @@ readers do not read off random characters that represent icons */
     padding-top: 8px;
     font-family: 'Noto Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
-    translate: -50%, 0; }
+    transform: translate(-50%, 0); }
     .neos #neos-notification-container.neos-notification-top > .neos-notification {
       color: white;
       font-size: 14px;

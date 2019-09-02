@@ -7,7 +7,7 @@
 	width: 512px;
 	padding-top: 8px;
 	@include font;
-	translate: -50%, 0;
+	transform: translate(-50%, 0);
 
 	> .neos-notification {
 		color: white;
