@@ -322,7 +322,7 @@
     <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'Libraries/jquery-ui/js/jquery-ui-1.10.3.custom.js')}"></script>
     <f:if condition="!{activeAssetSource.readOnly}">
     <script type="text/javascript">
-        var uploadUrl = '<f:uri.action action="upload" additionalParams="{__csrfToken: \"{f:security.csrfToken()}\"}" absolute="true" />';
+        var uploadUrl = "{f:uri.action(action: 'upload', additionalParams: {__csrfToken: '{f:security.csrfToken()}'}, absolute: true) -> f:format.raw()}";
         var maximumFileUploadSize = {maximumFileUploadSize};
 
         if (window.parent !== window && window.parent.NeosMediaBrowserCallbacks && window.parent.NeosMediaBrowserCallbacks.refreshThumbnail) {
