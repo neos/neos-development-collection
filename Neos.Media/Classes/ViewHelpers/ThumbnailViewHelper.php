@@ -12,12 +12,15 @@ namespace Neos\Media\ViewHelpers;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\ThumbnailService;
+use Neos\Media\Exception\AssetServiceException;
+use Neos\Media\Exception\ThumbnailServiceException;
 
 /**
  * Renders an <img> HTML tag from a given Neos.Media's asset instance
@@ -97,37 +100,42 @@ class ThumbnailViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function initializeArguments()
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
         $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an asset', true);
+
+        $this->registerArgument('asset', AssetInterface::class, 'The asset to be rendered as a thumbnail', true);
+        $this->registerArgument('width', 'integer', 'Desired width of the thumbnail');
+        $this->registerArgument('maximumWidth', 'integer', 'Desired maximum width of the thumbnail');
+        $this->registerArgument('height', 'integer', 'Desired height of the thumbnail');
+        $this->registerArgument('maximumHeight', 'integer', 'Desired maximum height of the thumbnail');
+        $this->registerArgument('allowCropping', 'boolean', 'Whether the thumbnail should be cropped if the given sizes would hurt the aspect ratio', false, false);
+        $this->registerArgument('allowUpScaling', 'boolean', 'Whether the resulting thumbnail size might exceed the size of the original asset', false, false);
+        $this->registerArgument('async', 'boolean', 'Return asynchronous image URI in case the requested image does not exist already', false, false);
+        $this->registerArgument('preset', 'string', 'Preset used to determine image configuration');
+        $this->registerArgument('quality', 'integer', 'Quality of the image, from 0 to 100');
     }
 
     /**
      * Renders an HTML img tag with a thumbnail image, created from a given asset.
      *
-     * @param AssetInterface $asset The asset to be rendered as a thumbnail
-     * @param integer $width Desired width of the thumbnail
-     * @param integer $maximumWidth Desired maximum width of the thumbnail
-     * @param integer $height Desired height of the thumbnail
-     * @param integer $maximumHeight Desired maximum height of the thumbnail
-     * @param boolean $allowCropping Whether the thumbnail should be cropped if the given sizes would hurt the aspect ratio
-     * @param boolean $allowUpScaling Whether the resulting thumbnail size might exceed the size of the original asset
-     * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
-     * @param string $preset Preset used to determine image configuration
-     * @param integer $quality Quality of the image
      * @return string an <img...> html tag
+     * @throws AssetServiceException
+     * @throws MissingActionNameException
+     * @throws ThumbnailServiceException
      */
-    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null, $quality = null)
+    public function render(): string
     {
-        if ($preset) {
-            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
+        if ($this->arguments['preset'] !== null) {
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($this->arguments['preset'], $this->arguments['async']);
         } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async, $quality);
+            $thumbnailConfiguration = new ThumbnailConfiguration($this->arguments['width'], $this->arguments['maximumWidth'], $this->arguments['height'], $this->arguments['maximumHeight'], $this->arguments['allowCropping'], $this->arguments['allowUpScaling'], $this->arguments['async'], $this->arguments['quality']);
         }
-        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $this->controllerContext->getRequest());
+        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($this->arguments['asset'], $thumbnailConfiguration, $this->controllerContext->getRequest());
 
         if ($thumbnailData === null) {
             return '';

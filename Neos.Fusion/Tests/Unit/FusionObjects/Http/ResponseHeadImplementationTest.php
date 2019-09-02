@@ -11,9 +11,12 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects\Http;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\Http\ResponseHeadImplementation;
+use Psr\Http\Message\ResponseFactoryInterface;
+use function GuzzleHttp\Psr7\str;
 
 /**
  * Testcase for the Fusion ResponseHead object
@@ -25,7 +28,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
      */
     protected $mockRuntime;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
@@ -48,7 +51,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
     {
         $path = 'responseHead/test';
 
-        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath) use ($path, $httpVersion, $statusCode, $headers) {
+        $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath) use ($path, $httpVersion, $statusCode, $headers) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'httpVersion':
@@ -63,8 +66,14 @@ class ResponseHeadImplementationTest extends UnitTestCase
 
         $fusionObjectName = 'Neos.Fusion:Http.ResponseHead';
         $renderer = new ResponseHeadImplementation($this->mockRuntime, $path, $fusionObjectName);
+        $mockResponseFactory = $this->createMock(ResponseFactoryInterface::class);
+        $mockResponseFactory->expects(self::any())->method('createResponse')->willReturnCallback(function (int $code) {
+            return new Response($code);
+        });
+        $this->inject($renderer, 'responseFactory', $mockResponseFactory);
 
         $result = $renderer->evaluate();
-        $this->assertEquals($expectedOutput, $result);
+
+        self::assertEquals($expectedOutput, str($result));
     }
 }

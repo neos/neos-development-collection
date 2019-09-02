@@ -17,6 +17,7 @@ use Neos\Flow\Annotations as Flow;
  * Generate a Fusion prototype definition based on Neos.Neos:Content
  *
  * @Flow\Scope("singleton")
+ * @deprecated will be removed with Neos 6
  * @api
  */
 class DefaultContentPrototypeGenerator extends DefaultPrototypeGenerator

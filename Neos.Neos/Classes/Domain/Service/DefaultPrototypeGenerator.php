@@ -18,6 +18,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
  * Generate a Fusion prototype definition based on Neos.Fusion:Template and pass all node properties to it
  *
  * @Flow\Scope("singleton")
+ * @deprecated will be removed with Neos 6
  */
 class DefaultPrototypeGenerator implements DefaultPrototypeGeneratorInterface
 {

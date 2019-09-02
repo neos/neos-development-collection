@@ -1,0 +1,13 @@
+# The fallback node is used if you have remainings of a nodeType that doesn't exist anymore so you can at least delete it
+'Neos.Neos:FallbackNode':
+  superTypes:
+    'Neos.Neos:Node': true
+  ui:
+    label: i18n
+    icon: 'icon-remove-sign'
+  properties:
+    _nodeType:
+      ui:
+        inspector:
+          editorOptions:
+            baseNodeType: 'Neos.Neos:Content'

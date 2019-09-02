@@ -79,6 +79,6 @@ class ImageController extends AssetController
             parent::editAction($asset->getAssetSourceIdentifier(), $importedAsset ? $importedAsset->getRemoteAssetIdentifier() : $asset->getIdentifier());
             return;
         }
-        $this->response->setStatus(400, 'Invalid arguments');
+        $this->response->setStatusCode(400);
     }
 }

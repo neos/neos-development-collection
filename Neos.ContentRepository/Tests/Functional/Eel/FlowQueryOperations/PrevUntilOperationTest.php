@@ -113,7 +113,7 @@ class PrevUntilOperationTest extends AbstractNodeTest
         $result = $q->prevUntil($subject)->get();
 
         if ($expectedNodePaths === [] && $unexpectedNodePaths === []) {
-            $this->assertEmpty($result);
+            self::assertEmpty($result);
         } else {
             foreach ($expectedNodePaths as $expectedNodePath) {
                 $expectedNode = $rootNode->getNode($expectedNodePath);

@@ -12,6 +12,7 @@ namespace Neos\Neos\ViewHelpers\Uri;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -39,39 +40,50 @@ class ModuleViewHelper extends AbstractViewHelper
     protected $uriBuilder;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('path', 'string', 'Target module path', true);
+        $this->registerArgument('action', 'string', 'Target module action');
+        $this->registerArgument('arguments', 'string', 'Arguments', false, []);
+        $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
+        $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
+        $this->registerArgument('additionalParams', 'string', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, []);
+        $this->registerArgument('addQueryString', 'string', 'If set, the current query parameters will be kept in the URI', false, false);
+        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'string', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
+    }
+
+    /**
      * Render a link to a specific module
      *
-     * @param string $path Target module path
-     * @param string $action Target module action
-     * @param array $arguments Arguments
-     * @param string $section The anchor to be added to the URI
-     * @param string $format The requested format, e.g. ".html"
-     * @param array $additionalParams additional query parameters that won't be prefixed like $arguments (overrule $arguments)
-     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
      * @return string The rendered link
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render($path, $action = null, $arguments = [], $section = '', $format = '', array $additionalParams = [], $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [])
+    public function render(): string
     {
         $this->setMainRequestToUriBuilder();
-        $modifiedArguments = ['module' => $path];
-        if ($arguments !== []) {
-            $modifiedArguments['moduleArguments'] = $arguments;
+        $modifiedArguments = ['module' => $this->arguments['path']];
+        if ($this->arguments['arguments'] !== []) {
+            $modifiedArguments['moduleArguments'] = $this->arguments['arguments'];
         }
-        if ($action !== null) {
-            $modifiedArguments['moduleArguments']['@action'] = $action;
+        if ($this->arguments['action'] !== null) {
+            $modifiedArguments['moduleArguments']['@action'] = $this->arguments['action'];
         }
 
         try {
             return $this->uriBuilder
                 ->reset()
-                ->setSection($section)
+                ->setSection($this->arguments['section'])
                 ->setCreateAbsoluteUri(true)
-                ->setArguments($additionalParams)
-                ->setAddQueryString($addQueryString)
-                ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-                ->setFormat($format)
+                ->setArguments($this->arguments['additionalParams'])
+                ->setAddQueryString($this->arguments['addQueryString'])
+                ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString'])
+                ->setFormat($this->arguments['format'])
                 ->uriFor('index', $modifiedArguments, 'Backend\Module', 'Neos.Neos');
         } catch (\Neos\Flow\Exception $exception) {
             throw new \Neos\FluidAdaptor\Core\ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
@@ -83,8 +95,9 @@ class ModuleViewHelper extends AbstractViewHelper
      *
      * @return void
      */
-    protected function setMainRequestToUriBuilder()
+    protected function setMainRequestToUriBuilder(): void
     {
+        /** @var ActionRequest $mainRequest */
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
         $this->uriBuilder->setRequest($mainRequest);
     }

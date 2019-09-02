@@ -30,7 +30,7 @@ class ArrayImplementationTest extends UnitTestCase
         $fusionObjectName = 'Neos.Fusion:Array';
         $renderer = new ArrayImplementation($mockRuntime, $path, $fusionObjectName);
         $result = $renderer->evaluate();
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
     /**
@@ -119,7 +119,7 @@ class ArrayImplementationTest extends UnitTestCase
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
-        $mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($path) use (&$renderedPaths) {
+        $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($path) use (&$renderedPaths) {
             $renderedPaths[] = $path;
         }));
 
@@ -131,6 +131,6 @@ class ArrayImplementationTest extends UnitTestCase
         }
         $renderer->evaluate();
 
-        $this->assertSame($expectedKeyOrder, $renderedPaths, $message);
+        self::assertSame($expectedKeyOrder, $renderedPaths, $message);
     }
 }

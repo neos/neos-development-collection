@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Tests\Functional;
  * source code.
  */
 
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Domain\Service\SiteImportService;
@@ -83,7 +83,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
         $this->fixtureFileName = __DIR__ . '/Fixtures/NodeStructure.xml';
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->markSkippedIfNodeTypesPackageIsNotInstalled();
@@ -119,11 +119,11 @@ abstract class AbstractNodeTest extends FunctionalTestCase
         /* @var $propertyMapper PropertyMapper */
         $propertyMapper = $this->objectManager->get(PropertyMapper::class);
         $node = $propertyMapper->convert($contextPath, Node::class);
-        $this->assertFalse($propertyMapper->getMessages()->hasErrors(), 'There were errors converting ' . $contextPath);
+        self::assertFalse($propertyMapper->getMessages()->hasErrors(), 'There were errors converting ' . $contextPath);
         return $node;
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -132,7 +132,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
 
     protected function markSkippedIfNodeTypesPackageIsNotInstalled()
     {
-        $packageManager = $this->objectManager->get(PackageManagerInterface::class);
+        $packageManager = $this->objectManager->get(PackageManager::class);
         if (!$packageManager->isPackageAvailable('Neos.NodeTypes')) {
             $this->markTestSkipped('This test needs the Neos.NodeTypes package.');
         }

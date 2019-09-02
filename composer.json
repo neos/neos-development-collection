@@ -6,7 +6,8 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "~5.3.0 || 5.3.x-dev",
+        "neos/flow-development-collection": "dev-master",
+        "neos/neos-setup": "^1.0",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -26,10 +27,9 @@
         "imagine/imagine": "*",
         "doctrine/dbal": "^2.8",
         "neos/party": "*",
-        "neos/setup": "*",
         "neos/twitter-bootstrap": "*",
         "neos/form": "*",
-        "neos/kickstarter": "~5.3.0"
+        "neos/kickstarter": "*"
     },
     "replace": {
         "typo3/typo3cr": "self.version",

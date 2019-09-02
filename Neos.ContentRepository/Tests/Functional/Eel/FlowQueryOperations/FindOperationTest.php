@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
+use Neos\Eel\FlowQuery\FlowQueryException;
 
 /**
  * Functional test case which tests FlowQuery FindOperation
@@ -22,10 +23,10 @@ class FindOperationTest extends AbstractNodeTest
 {
     /**
      * @test
-     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function findByNodeIdentifierThrowsExceptionOnInvalidIdentifier()
     {
+        $this->expectException(FlowQueryException::class);
         $q = new FlowQuery([$this->node]);
         $q->find('#_test')->get(0);
     }
@@ -56,7 +57,7 @@ class FindOperationTest extends AbstractNodeTest
         $foundNodePaths = array_map(function (NodeInterface $node) {
             return $node->getPath();
         }, $foundNodes);
-        $this->assertSame($expectedNodePaths, $foundNodePaths);
+        self::assertSame($expectedNodePaths, $foundNodePaths);
     }
 
     /**
@@ -87,7 +88,7 @@ class FindOperationTest extends AbstractNodeTest
         $foundNodePaths = array_map(function (NodeInterface $node) {
             return $node->getPath();
         }, $foundNodes);
-        $this->assertSame($expectedNodePaths, $foundNodePaths);
+        self::assertSame($expectedNodePaths, $foundNodePaths);
     }
 
     /**
@@ -126,10 +127,10 @@ class FindOperationTest extends AbstractNodeTest
 
     /**
      * @test
-     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function findWithNonInstanceofAttributeFilterAsFirstPartThrowsException()
     {
+        $this->expectException(FlowQueryException::class);
         $q = new FlowQuery([$this->node]);
         $q->find('[title *= "Welcome"][instanceof Neos.ContentRepository.Testing:Headline]')->get(0);
     }
@@ -148,7 +149,7 @@ class FindOperationTest extends AbstractNodeTest
         $foundNodePaths = array_map(function (NodeInterface $node) {
             return $node->getPath();
         }, $foundNodes);
-        $this->assertSame($expectedNodePaths, $foundNodePaths);
+        self::assertSame($expectedNodePaths, $foundNodePaths);
     }
 
     /**
@@ -159,16 +160,16 @@ class FindOperationTest extends AbstractNodeTest
         $this->authenticateRoles(['Neos.ContentRepository:TestingAdministrator']);
         $q = new FlowQuery([$this->node]);
         $foundNode = $q->find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')->get(0);
-        $this->assertSame($this->node->getNode('about-us'), $foundNode);
+        self::assertSame($this->node->getNode('about-us'), $foundNode);
 
         $testContext = $this->contextFactory->create(['workspaceName' => 'test']);
 
         $testNode = $testContext->getNode('/sites/example/home');
         $testQ = new FlowQuery([$testNode]);
         $testFoundNode = $testQ->find('#30e893c1-caef-0ca5-b53d-e5699bb8e506')->get(0);
-        $this->assertSame($testNode->getNode('about-us'), $testFoundNode);
+        self::assertSame($testNode->getNode('about-us'), $testFoundNode);
 
-        $this->assertNotSame($foundNode, $testFoundNode);
+        self::assertNotSame($foundNode, $testFoundNode);
     }
 
     /**
@@ -180,7 +181,7 @@ class FindOperationTest extends AbstractNodeTest
         $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:Text]')->get();
         $this->assertGreaterThan(0, count($foundNodes));
         foreach ($foundNodes as $foundNode) {
-            $this->assertSame($foundNode->getNodeType()->getName(), 'Neos.ContentRepository.Testing:Text');
+            self::assertSame($foundNode->getNodeType()->getName(), 'Neos.ContentRepository.Testing:Text');
         }
     }
 
@@ -194,7 +195,7 @@ class FindOperationTest extends AbstractNodeTest
         $foundNodeTypeNames = array_map(function (NodeInterface $node) {
             return $node->getNodeType()->getName();
         }, $foundNodes);
-        $this->assertNotContains('Neos.ContentRepository.Testing:ThreeColumn', $foundNodeTypeNames);
+        self::assertNotContains('Neos.ContentRepository.Testing:ThreeColumn', $foundNodeTypeNames);
     }
 
     /**
@@ -213,7 +214,7 @@ class FindOperationTest extends AbstractNodeTest
             }
         }
         sort($foundNodeTypes);
-        $this->assertSame($foundNodeTypes, ['Neos.ContentRepository.Testing:Page', 'Neos.ContentRepository.Testing:Text']);
+        self::assertSame($foundNodeTypes, ['Neos.ContentRepository.Testing:Page', 'Neos.ContentRepository.Testing:Text']);
     }
 
     /**
@@ -223,9 +224,9 @@ class FindOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('/sites/example/home/main/dummy42a')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNode = $foundNodes[0];
-        $this->assertSame('b1e0e78d-04f3-8fc3-e3d1-e2399f831312', $foundNode->getIdentifier());
+        self::assertSame('b1e0e78d-04f3-8fc3-e3d1-e2399f831312', $foundNode->getIdentifier());
     }
 
     /**
@@ -235,7 +236,7 @@ class FindOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('/sites/example/home/main/limbo')->get();
-        $this->assertEmpty($foundNodes);
+        self::assertEmpty($foundNodes);
     }
 
     /**
@@ -245,15 +246,15 @@ class FindOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([]);
         $foundNodes = $q->find('/sites/example/home/main/limbo')->get();
-        $this->assertEmpty($foundNodes);
+        self::assertEmpty($foundNodes);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function findOperationThrowsExceptionOnAtLeastOneInvalidContext()
     {
+        $this->expectException(FlowQueryException::class);
         $q = new FlowQuery([$this->node, '1']);
         $q->find('/sites/example/home/main/limbo')->get();
     }
@@ -265,9 +266,9 @@ class FindOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('main')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNode = $foundNodes[0];
-        $this->assertSame('f66b3871-515f-7f54-fb1d-1c108040b2c0', $foundNode->getIdentifier());
+        self::assertSame('f66b3871-515f-7f54-fb1d-1c108040b2c0', $foundNode->getIdentifier());
     }
 
     /**
@@ -277,9 +278,9 @@ class FindOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('main/dummy42a')->get();
-        $this->assertEquals(1, count($foundNodes));
+        self::assertEquals(1, count($foundNodes));
         $foundNode = $foundNodes[0];
-        $this->assertSame('b1e0e78d-04f3-8fc3-e3d1-e2399f831312', $foundNode->getIdentifier());
+        self::assertSame('b1e0e78d-04f3-8fc3-e3d1-e2399f831312', $foundNode->getIdentifier());
     }
 
     /**
@@ -306,8 +307,8 @@ class FindOperationTest extends AbstractNodeTest
             }
         }
 
-        $this->assertTrue($foundChildrenOfA);
-        $this->assertTrue($foundChildrenOfB);
+        self::assertTrue($foundChildrenOfA);
+        self::assertTrue($foundChildrenOfB);
     }
 
     /**
@@ -317,6 +318,6 @@ class FindOperationTest extends AbstractNodeTest
     {
         $q = new FlowQuery([$this->node]);
         $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:Text][text*="Twitter"]')->get();
-        $this->assertCount(1, $foundNodes);
+        self::assertCount(1, $foundNodes);
     }
 }

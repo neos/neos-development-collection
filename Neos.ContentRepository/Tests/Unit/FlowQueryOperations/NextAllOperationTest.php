@@ -48,27 +48,27 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
      */
     protected $thirdNodeInLevel;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->siteNode = $this->mockNode('site');
         $this->firstNodeInLevel = $this->mockNode('node1');
         $this->secondNodeInLevel = $this->mockNode('node2');
         $this->thirdNodeInLevel = $this->mockNode('node3');
 
-        $this->siteNode->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site')));
-        $this->siteNode->expects($this->any())->method('findChildNodes')->will($this->returnValue(TraversableNodes::fromArray([
+        $this->siteNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site')));
+        $this->siteNode->expects(self::any())->method('findChildNodes')->will(self::returnValue(TraversableNodes::fromArray([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
         ])));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->firstNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->firstNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/first')));
-        $this->secondNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/second')));
-        $this->thirdNodeInLevel->expects($this->any())->method('findParentNode')->will($this->returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects($this->any())->method('findNodePath')->will($this->returnValue(NodePath::fromString('/site/third')));
+        $this->firstNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
+        $this->firstNodeInLevel->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site/first')));
+        $this->secondNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
+        $this->secondNodeInLevel->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site/second')));
+        $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
+        $this->thirdNodeInLevel->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site/third')));
     }
 
     /**
@@ -83,7 +83,7 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([], $output);
+        self::assertEquals([], $output);
     }
 
     /**
@@ -98,7 +98,7 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
+        self::assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 
     /**
@@ -113,7 +113,7 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([$this->thirdNodeInLevel], $output);
+        self::assertEquals([$this->thirdNodeInLevel], $output);
     }
 
     /**
@@ -128,6 +128,6 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
         $operation->evaluate($q, []);
 
         $output = $q->getContext();
-        $this->assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
+        self::assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 }

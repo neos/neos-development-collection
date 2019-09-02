@@ -20,6 +20,13 @@ Neos:
     debugMode: false
     enableContentCache: true
 
+    # if set to true, Fusion is cached for each set of fusionPathPatterns.
+    # Depending on the size of your Fusion, will improve rendering times 20-100+ ms.
+    # HOWEVER, the cache is NOT FLUSHED automatically (yet), so that's why we suggest that
+    # you enable this setting only if you are sure not to change Fusion in this context.
+    # This is case if you use automatic deployment and is also assumed in Production context
+    enableObjectTreeCache: false
+
     # Default context objects that are available in Eel expressions
     #
     # New variables should be added with a package key prefix. Example:
@@ -39,3 +46,4 @@ Neos:
       Type: 'Neos\Eel\Helper\TypeHelper'
       I18n: 'Neos\Flow\I18n\EelHelper\TranslationHelper'
       File: 'Neos\Eel\Helper\FileHelper'
+      q: 'Neos\Eel\FlowQuery\FlowQuery::q'

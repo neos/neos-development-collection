@@ -1,0 +1,17 @@
+# Base class for all "Plugins"; that are PHP controllers being called during the rendering.
+'Neos.Neos:Plugin':
+  superTypes:
+    'Neos.Neos:Content': true
+  abstract: true
+  ui:
+    label: i18n
+    group: 'plugins'
+    icon: 'icon-puzzle-piece'
+    inspector:
+      groups:
+        pluginSettings:
+          label: i18n
+          icon: 'icon-sliders'
+  postprocessors:
+    'PluginPostprocessor':
+      postprocessor: 'Neos\Neos\NodeTypePostprocessor\PluginNodeTypePostprocessor'

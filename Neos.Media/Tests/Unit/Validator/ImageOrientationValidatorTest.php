@@ -12,6 +12,7 @@ namespace Neos\Media\Tests\Unit\Validator;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Validator\ImageOrientationValidator;
 
@@ -29,7 +30,7 @@ class ImageOrientationValidatorTest extends UnitTestCase
         $validator = new ImageOrientationValidator(['allowedOrientations' => [ImageInterface::ORIENTATION_LANDSCAPE]]);
 
         $value = new \stdClass();
-        $this->assertTrue($validator->validate($value)->hasErrors());
+        self::assertTrue($validator->validate($value)->hasErrors());
     }
 
     /**
@@ -49,11 +50,11 @@ class ImageOrientationValidatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidOptionsTestsDataProvider
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
      * @param array $options
      */
     public function invalidOptionsTests(array $options)
     {
+        $this->expectException(InvalidValidationOptionsException::class);
         $validator = new ImageOrientationValidator($options);
         $image = $this->createMock(ImageInterface::class);
         $validator->validate($image);
@@ -84,13 +85,13 @@ class ImageOrientationValidatorTest extends UnitTestCase
     {
         $validator = new ImageOrientationValidator($options);
         $image = $this->createMock(ImageInterface::class);
-        $image->expects($this->any())->method('getOrientation')->will($this->returnValue($imageOrientation));
+        $image->expects(self::any())->method('getOrientation')->will(self::returnValue($imageOrientation));
 
         $validationResult = $validator->validate($image);
         if ($isValid) {
-            $this->assertFalse($validationResult->hasErrors());
+            self::assertFalse($validationResult->hasErrors());
         } else {
-            $this->assertTrue($validationResult->hasErrors());
+            self::assertTrue($validationResult->hasErrors());
         }
     }
 }

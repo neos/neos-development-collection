@@ -32,24 +32,24 @@ class ImageInterfaceConverterTest extends UnitTestCase
     protected $converter;
 
     /**
-     * @var ReflectionService|\PHPUnit_Framework_MockObject_MockObject
+     * @var ReflectionService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockReflectionService;
 
     /**
-     * @var PersistenceManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PersistenceManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPersistenceManager;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockObjectManager;
 
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->converter = new ImageInterfaceConverter();
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
@@ -67,9 +67,9 @@ class ImageInterfaceConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['string', 'array'], $this->converter->getSupportedSourceTypes());
-        $this->assertEquals(ImageInterface::class, $this->converter->getSupportedTargetType());
-        $this->assertEquals(2, $this->converter->getPriority());
+        self::assertEquals(['string', 'array'], $this->converter->getSupportedSourceTypes());
+        self::assertEquals(ImageInterface::class, $this->converter->getSupportedTargetType());
+        self::assertEquals(2, $this->converter->getPriority());
     }
 
     /**
@@ -95,7 +95,7 @@ class ImageInterfaceConverterTest extends UnitTestCase
      */
     public function canConvertFromTests($source, $targetType, $expected)
     {
-        $this->assertEquals($expected, $this->converter->canConvertFrom($source, $targetType));
+        self::assertEquals($expected, $this->converter->canConvertFrom($source, $targetType));
     }
 
     /**
@@ -103,12 +103,12 @@ class ImageInterfaceConverterTest extends UnitTestCase
      */
     public function convertFromReturnsNullIfResourcePropertyIsNotConverted()
     {
-        $this->mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnCallback(function ($objectType) {
+        $this->mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallback(function ($objectType) {
             return $objectType;
         }));
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption(ImageInterfaceConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
 
-        $this->assertNull($this->converter->convertFrom([], Image::class, [], $configuration));
+        self::assertNull($this->converter->convertFrom([], Image::class, [], $configuration));
     }
 }

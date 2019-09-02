@@ -12,8 +12,7 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Uri;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -30,6 +29,7 @@ use Neos\Neos\Exception as NeosException;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Psr\Log\LoggerInterface;
 
 /**
  * A service for creating URIs pointing to nodes and assets.
@@ -98,7 +98,7 @@ class LinkingService
 
     /**
      * @Flow\Inject
-     * @var PsrSystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 
@@ -305,19 +305,20 @@ class LinkingService
             $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         }
 
+        $baseUri = $request->getHttpRequest()->getAttribute(ServerRequestAttributes::BASE_URI);
         if ($site->hasActiveDomains()) {
-            $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
+            $requestUriHost = $baseUri->getHost();
             $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
                 return $domain->getHostname();
             })->toArray();
             if (!in_array($requestUriHost, $activeHostPatterns, true)) {
                 $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
             } elseif ($absolute === true) {
-                $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+                $uri = $baseUri. ltrim($uri, '/');
             }
         } elseif ($absolute === true) {
             if (substr($uri, 0, 7) !== 'http://' && substr($uri, 0, 8) !== 'https://') {
-                $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+                $uri = $baseUri . ltrim($uri, '/');
             }
         }
 

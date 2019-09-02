@@ -134,12 +134,12 @@ class NodeFilter
     protected function resolveFilterClass($name)
     {
         $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($name);
-        if ($resolvedObjectName !== false) {
+        if ($resolvedObjectName !== null) {
             return $resolvedObjectName;
         }
 
         $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('Neos\ContentRepository\Migration\Filters\\' . $name);
-        if ($resolvedObjectName !== false) {
+        if ($resolvedObjectName !== null) {
             return $resolvedObjectName;
         }
 

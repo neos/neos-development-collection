@@ -36,7 +36,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         $adjustment->setWidth(110);
         $adjustment->setHeight(110);
 
-        $this->assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
+        self::assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
     }
 
 
@@ -55,7 +55,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         $adjustment->setHeight(110);
         $adjustment->setRatioMode(ImageInterface::RATIOMODE_OUTBOUND);
 
-        $this->assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
+        self::assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
     }
 
     /**
@@ -71,7 +71,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
 
         $adjustment->setWidth(110);
 
-        $this->assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
+        self::assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
     }
 
     /**
@@ -87,7 +87,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
 
         $adjustment->setHeight(95);
 
-        $this->assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
+        self::assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
     }
 
     /**
@@ -107,7 +107,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         $originalDimensions = new Box(2000, 2);
         $expectedDimensions = new Box(250, 1);
 
-        $this->assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
+        self::assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
     }
 
     /**
@@ -127,7 +127,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         $originalDimensions = new Box(2, 2000);
         $expectedDimensions = new Box(1, 250);
 
-        $this->assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
+        self::assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
     }
 
     /**
@@ -173,6 +173,6 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box($expectedWidth, $expectedHeight);
 
-        $this->assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
+        self::assertEquals($expectedDimensions, $adjustment->_call('calculateDimensions', $originalDimensions));
     }
 }

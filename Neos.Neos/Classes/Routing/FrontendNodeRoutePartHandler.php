@@ -12,7 +12,6 @@ namespace Neos\Neos\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Security\Context;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -26,6 +25,7 @@ use Neos\Neos\Routing\Exception\InvalidRequestPathException;
 use Neos\Neos\Routing\Exception\NoSuchDimensionValueException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Psr\Log\LoggerInterface;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
@@ -35,7 +35,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
     /**
      * @Flow\Inject
-     * @var PsrSystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Tests\Functional\Domain\Model;
 
 /*
@@ -48,7 +50,7 @@ class AssetTest extends AbstractTest
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -114,11 +116,11 @@ class AssetTest extends AbstractTest
 
         $expectedTagLabels = $tagLabels;
         foreach ($tags as $tag) {
-            $this->assertArrayHasKey($tag->getLabel(), $expectedTagLabels);
+            self::assertArrayHasKey($tag->getLabel(), $expectedTagLabels);
             unset($expectedTagLabels[$tag->getLabel()]);
         }
 
-        $this->assertCount(0, $expectedTagLabels);
+        self::assertCount(0, $expectedTagLabels);
     }
 
     /**
@@ -128,7 +130,7 @@ class AssetTest extends AbstractTest
     {
         $asset = $this->buildAssetObject();
         $asset->setAssetSourceIdentifier('non-existing-asset-source');
-        $this->assertNull($asset->getAssetProxy());
+        self::assertNull($asset->getAssetProxy());
     }
 
     /**
@@ -140,8 +142,8 @@ class AssetTest extends AbstractTest
         $mockImportedAssetRepository = $this->getMockBuilder(Repository::class)->disableOriginalConstructor()->setMethods(['findOneByLocalAssetIdentifier'])->getMock();
         $this->inject($asset, 'importedAssetRepository', $mockImportedAssetRepository);
 
-        $mockImportedAssetRepository->expects($this->atLeastOnce())->method('findOneByLocalAssetIdentifier')->with($asset->getIdentifier())->willReturn(null);
-        $this->assertNull($asset->getAssetProxy());
+        $mockImportedAssetRepository->expects(self::atLeastOnce())->method('findOneByLocalAssetIdentifier')->with($asset->getIdentifier())->willReturn(null);
+        self::assertNull($asset->getAssetProxy());
     }
 
     /**

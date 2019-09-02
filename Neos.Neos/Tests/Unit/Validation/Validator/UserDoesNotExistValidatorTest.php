@@ -13,6 +13,7 @@ namespace Neos\Neos\Tests\Unit\Validation\Validator;
 
 use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Validation\Exception\InvalidSubjectException;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Validation\Validator\UserDoesNotExistValidator;
 
@@ -24,10 +25,10 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Validation\Exception\InvalidSubjectException
      */
     public function validateThrowsExceptionForNonStringValue()
     {
+        $this->expectException(InvalidSubjectException::class);
         $validator = new UserDoesNotExistValidator();
         $validator->validate(false);
     }
@@ -44,7 +45,7 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
 
         $result = $validator->validate('j.doe');
 
-        $this->assertFalse($result->hasErrors());
+        self::assertFalse($result->hasErrors());
     }
 
     /**
@@ -60,13 +61,13 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
         $mockUser = $this->createMock(Account::class);
 
         $mockUserService
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('getUser')
             ->with('j.doe')
-            ->will($this->returnValue($mockUser));
+            ->will(self::returnValue($mockUser));
 
         $result = $validator->validate('j.doe');
 
-        $this->assertTrue($result->hasErrors());
+        self::assertTrue($result->hasErrors());
     }
 }

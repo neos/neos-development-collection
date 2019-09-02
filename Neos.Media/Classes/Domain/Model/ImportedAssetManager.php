@@ -12,11 +12,11 @@ namespace Neos\Media\Domain\Model;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
 use Neos\Media\Domain\Repository\ImportedAssetRepository;
+use Psr\Log\LoggerInterface;
 
 class ImportedAssetManager
 {
@@ -34,7 +34,7 @@ class ImportedAssetManager
 
     /**
      * @Flow\Inject
-     * @var PsrSystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 

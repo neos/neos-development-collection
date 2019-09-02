@@ -300,9 +300,9 @@ class CropImageAdjustmentTest extends UnitTestCase
 
         $cropImageAdjustment->refit($image);
 
-        $this->assertEquals($expectedX, $cropImageAdjustment->getX());
-        $this->assertEquals($expectedY, $cropImageAdjustment->getY());
-        $this->assertEquals($expectedWidth, $cropImageAdjustment->getWidth());
-        $this->assertEquals($expectedHeight, $cropImageAdjustment->getHeight());
+        self::assertEquals($expectedX, $cropImageAdjustment->getX());
+        self::assertEquals($expectedY, $cropImageAdjustment->getY());
+        self::assertEquals($expectedWidth, $cropImageAdjustment->getWidth());
+        self::assertEquals($expectedHeight, $cropImageAdjustment->getHeight());
     }
 }

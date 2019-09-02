@@ -13,7 +13,6 @@ namespace Neos\Neos\Service\View;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -21,6 +20,7 @@ use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Utility\Arrays;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
+use Psr\Log\LoggerInterface;
 
 /**
  * An View specialized on single or multiple Nodes in a tree structure
@@ -45,7 +45,7 @@ class NodeView extends JsonView
 
     /**
      * @Flow\Inject
-     * @var PsrSystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $systemLogger;
 

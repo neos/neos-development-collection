@@ -26,14 +26,24 @@ class AuthenticationProviderLabelViewHelper extends AbstractViewHelper
     protected $authenticationProviderSettings;
 
     /**
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('identifier', 'string', 'The identifier to render the label for', true);
+    }
+
+    /**
      * Outputs a human friendly label for the authentication provider specified by $identifier
      *
-     * @param string $identifier
      * @return string
      * @throws \Exception
      */
-    public function render($identifier)
+    public function render(): string
     {
-        return (isset($this->authenticationProviderSettings[$identifier]['label']) ? $this->authenticationProviderSettings[$identifier]['label'] : $identifier);
+        $identifier = $this->arguments['identifier'];
+        return ($this->authenticationProviderSettings[$identifier]['label'] ?? $identifier);
     }
 }

@@ -39,10 +39,10 @@ class NodeTest extends UnitTestCase
         $mockFirstLevelNodeCache = $this->createMock(FirstLevelNodeCache::class);
         $newNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
+        $context->expects(self::any())->method('getFirstLevelNodeCache')->will(self::returnValue($mockFirstLevelNodeCache));
         $nodeTemplate = new NodeTemplate();
 
-        $context->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
+        $context->expects(self::any())->method('getWorkspace')->will(self::returnValue($workspace));
 
         $nodeFactory = $this->createMock(NodeFactory::class);
 
@@ -50,8 +50,8 @@ class NodeTest extends UnitTestCase
 
         $this->inject($parentNode, 'nodeFactory', $nodeFactory);
 
-        $parentNodeData->expects($this->atLeastOnce())->method('createNodeDataFromTemplate')->with($nodeTemplate, 'bar', $workspace)->will($this->returnValue($newNodeData));
-        $nodeFactory->expects($this->atLeastOnce())->method('createFromNodeData')->with($newNodeData, $context)->will($this->returnValue($newNode));
+        $parentNodeData->expects(self::atLeastOnce())->method('createNodeDataFromTemplate')->with($nodeTemplate, 'bar', $workspace)->will(self::returnValue($newNodeData));
+        $nodeFactory->expects(self::atLeastOnce())->method('createFromNodeData')->with($newNodeData, $context)->will(self::returnValue($newNode));
 
         $parentNode->createNodeFromTemplate($nodeTemplate, 'bar');
     }
@@ -63,7 +63,7 @@ class NodeTest extends UnitTestCase
     public function getPrimaryChildNodeReturnsTheFirstChildNode()
     {
         $mockNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
-        $mockNodeData->expects($this->any())->method('getPath')->will($this->returnValue('/foo/bar'));
+        $mockNodeData->expects(self::any())->method('getPath')->will(self::returnValue('/foo/bar'));
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
 
@@ -73,11 +73,11 @@ class NodeTest extends UnitTestCase
         $this->inject($node, 'nodeDataRepository', $mockNodeDataRepository);
 
         $expectedNode = $this->createMock(NodeInterface::class);
-        $mockNodeDataRepository->expects($this->once())->method('findFirstByParentAndNodeTypeInContext')->with('/foo/bar', null, $mockContext)->will($this->returnValue($expectedNode));
+        $mockNodeDataRepository->expects(self::once())->method('findFirstByParentAndNodeTypeInContext')->with('/foo/bar', null, $mockContext)->will(self::returnValue($expectedNode));
 
         $primaryChildNode = $node->getPrimaryChildNode();
 
-        $this->assertSame($expectedNode, $primaryChildNode);
+        self::assertSame($expectedNode, $primaryChildNode);
     }
 
     /**
@@ -155,7 +155,7 @@ class NodeTest extends UnitTestCase
         $matches = [];
         preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
 
-        $this->assertSame($expected, $matches);
+        self::assertSame($expected, $matches);
     }
 
     /**
@@ -180,7 +180,7 @@ class NodeTest extends UnitTestCase
     public function contextPathPatternShouldNotMatchOnInvalidPaths($path)
     {
         $result = preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
-        $this->assertEquals(0, $result, 'The invalid context path yielded matches: ' . print_r($matches, true));
+        self::assertEquals(0, $result, 'The invalid context path yielded matches: ' . print_r($matches, true));
     }
 
     /**
@@ -189,27 +189,27 @@ class NodeTest extends UnitTestCase
     public function createNodeWithAutoCreatedChildNodesAndNoIdentifierUsesGeneratedIdentifierOfNodeForChildNodes()
     {
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $mockContext->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(['language' => 'mul_ZZ']));
+        $mockContext->expects(self::any())->method('getTargetDimensions')->will(self::returnValue(['language' => 'mul_ZZ']));
         $mockFirstLevelNodeCache = $this->createMock(FirstLevelNodeCache::class);
-        $mockContext->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
+        $mockContext->expects(self::any())->method('getFirstLevelNodeCache')->will(self::returnValue($mockFirstLevelNodeCache));
 
         $mockNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
         $mockSubNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
 
-        $mockNodeType->expects($this->any())->method('getDefaultValuesForProperties')->will($this->returnValue([]));
-        $mockNodeType->expects($this->any())->method('getAutoCreatedChildNodes')->will($this->returnValue([
+        $mockNodeType->expects(self::any())->method('getDefaultValuesForProperties')->will(self::returnValue([]));
+        $mockNodeType->expects(self::any())->method('getAutoCreatedChildNodes')->will(self::returnValue([
             'subnode1' => $mockSubNodeType
         ]));
 
         $i = 0;
         $generatedIdentifiers = [];
         $node = $this->getMockBuilder(Node::class)->setMethods(['createSingleNode'])->setConstructorArgs([$mockNodeData, $mockContext])->getMock();
-        $node->expects($this->any())->method('createSingleNode')->will($this->returnCallback(function () use (&$i, &$generatedIdentifiers, $mockSubNodeType) {
+        $node->expects(self::any())->method('createSingleNode')->will(self::returnCallback(function () use (&$i, &$generatedIdentifiers, $mockSubNodeType) {
             $newNode = $this->createMock(NodeInterface::class);
-            $newNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-' . $i++));
+            $newNode->expects(self::any())->method('getIdentifier')->will(self::returnValue('node-' . $i++));
 
-            $newNode->expects($this->once())->method('createNode')->with('subnode1', $mockSubNodeType, $this->callback(function ($identifier) use (&$generatedIdentifiers, $i) {
+            $newNode->expects(self::once())->method('createNode')->with('subnode1', $mockSubNodeType, $this->callback(function ($identifier) use (&$generatedIdentifiers, $i) {
                 $generatedIdentifiers[$i] = $identifier;
                 return true;
             }));
@@ -220,6 +220,6 @@ class NodeTest extends UnitTestCase
         $node->createNode('foo', $mockNodeType);
         $node->createNode('bar', $mockNodeType);
 
-        $this->assertNotSame($generatedIdentifiers[1], $generatedIdentifiers[2], 'Child nodes should have distinct identifiers');
+        self::assertNotSame($generatedIdentifiers[1], $generatedIdentifiers[2], 'Child nodes should have distinct identifiers');
     }
 }
