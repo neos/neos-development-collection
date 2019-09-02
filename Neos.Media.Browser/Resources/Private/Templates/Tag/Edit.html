@@ -5,7 +5,7 @@
 <f:section name="Title">Edit tag</f:section>
 
 <f:section name="Content">
-    <f:form method="post" action="updateTag" object="{tag}" objectName="tag">
+    <f:form method="post" action="updateTag" controller="Asset" object="{tag}" objectName="tag">
         <legend>{neos:backend.translate(id: 'editTag', package: 'Neos.Media.Browser')}</legend>
         <div class="neos-row-fluid">
             <div class="neos-span6 neos-image-inputs">

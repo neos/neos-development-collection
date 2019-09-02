@@ -5,7 +5,7 @@
 <f:section name="Title">Edit asset collection</f:section>
 
 <f:section name="Content">
-    <f:form method="post" action="updateAssetCollection" object="{assetCollection}" objectName="assetCollection">
+    <f:form method="post" action="updateAssetCollection" controller="Asset" object="{assetCollection}" objectName="assetCollection">
         <legend>{neos:backend.translate(id: 'editCollection', package: 'Neos.Media.Browser')}</legend>
         <div class="neos-row-fluid">
             <div class="neos-span6 neos-image-inputs">
