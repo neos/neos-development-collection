@@ -7232,7 +7232,11 @@ readers do not read off random characters that represent icons */
         color: #adadad; }
       .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander {
         line-height: 24px;
-        rotate: 90deg; }
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        transform: rotate(90deg); }
         .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before {
           left: 11px; }
       .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-connector,
@@ -7396,6 +7400,24 @@ readers do not read off random characters that represent icons */
     text-align: center; }
     .neos [class^="fa-"]:before, .neos [class^="fa-"]:after, .neos [class*=" fa-"]:before, .neos [class*=" fa-"]:after {
       font-family: inherit; }
+    .neos [class^="fa-"].fab, .neos [class*=" fa-"].fab {
+      font-family: "FontAwesome Brand";
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      line-height: 14px;
+      font-size: 14px;
+      vertical-align: baseline;
+      *margin-right: .3em;
+      margin: 1px 0 0 0;
+      background-image: none;
+      -webkit-font-smoothing: antialiased;
+      -moz-font-smoothing: antialiased;
+      -ms-font-smoothing: antialiased;
+      -o-font-smoothing: antialiased;
+      font-smoothing: antialiased; }
+      .neos [class^="fa-"].fab:before, .neos [class^="fa-"].fab:after, .neos [class*=" fa-"].fab:before, .neos [class*=" fa-"].fab:after {
+        font-family: inherit; }
   .neos .neos-clear {
     clear: both; }
   .neos .neos-pageloader-wrapper {
@@ -8442,6 +8464,10 @@ readers do not read off random characters that represent icons */
       margin: 0; }
     .neos.neos-module.neos-module-user-usersettings .neos-content i.fa-user, .neos.neos-module.neos-module-administration-users .neos-content i.fa-user {
       margin-right: 11px; }
+    .neos.neos-module.neos-module-user-usersettings .neos-search-bar button.neos-button, .neos.neos-module.neos-module-administration-users .neos-search-bar button.neos-button {
+      border-right: 1px solid #222; }
+    .neos.neos-module.neos-module-user-usersettings .neos-search-bar a.neos-button, .neos.neos-module.neos-module-administration-users .neos-search-bar a.neos-button {
+      border-left: 1px solid #222; }
     .neos.neos-module .neos-breadcrumb {
       border-radius: 0;
       background-color: transparent;
