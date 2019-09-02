@@ -21,6 +21,11 @@
 			<script src="{f:uri.resource(path: additionalResource)}"></script>
 		</f:for>
 	</f:if>
+
+	<script type="text/javascript">
+		// TODO: Get rid of those global variables
+		{neos:backend.javascriptConfiguration()}
+	</script>
 </f:section>
 
 <f:section name="body">
@@ -56,7 +61,9 @@
 				<f:render partial="Backend/Menu" arguments="{sites: sites, modules: modules, modulePath: moduleConfiguration.path}" />
 			</div>
 		</div>
+		<script src="{f:uri.resource(path: 'Library/requirejs/src/require.js', package: 'Neos.Neos')}"></script>
 		<script src="{f:uri.resource(path: 'JavaScript/Main.min.js', package: 'Neos.Neos')}"></script>
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Neos.Twitter.Bootstrap')}"></script>
+		<script src="{f:uri.resource(path: 'JavaScript/LegacyUiBootstrap-built.js', package: 'Neos.Neos')}"></script>
 	</body>
 </f:section>
