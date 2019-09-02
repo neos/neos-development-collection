@@ -277,8 +277,67 @@ ul.neos-dynatree-container {
 
 	$selector: 'ul';
 	$level: 0;
-	$levels: 20;
-	
+  $levels: 20;
+	ul .neos-dynatree-node {
+    padding-left: 0;
+  }
+  ul ul .neos-dynatree-node {
+    padding-left: 9px;
+  }
+  ul ul ul .neos-dynatree-node {
+    padding-left: 21px;
+  }
+  ul ul ul ul .neos-dynatree-node {
+    padding-left: 33px;
+  }
+  ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 45px;
+  }
+  ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 57px;
+  }
+  ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 69px;
+  }
+  ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 81px;
+  }
+  ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 93px;
+  }
+  ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 105px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 117px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 129px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 141px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 153px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 165px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 177px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 189px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 201px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 213px;
+  }
+  ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+    padding-left: 225px;
+  }
 }
 
 .neos-tree-drag-in-progress {

@@ -14,7 +14,7 @@ export default class DropDownMenu {
 
 	_toggle(_event) {
 		this._changeToogleIcon();
-		this._root.classList.toggle('neos-open');
+		this._root.classList.toggle('neos-dropdown-open');
 	}
 
 	_changeToogleIcon() {
