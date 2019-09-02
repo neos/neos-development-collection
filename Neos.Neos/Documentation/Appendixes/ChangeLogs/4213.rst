@@ -1,0 +1,106 @@
+`4.2.13 (2019-09-02) <https://github.com/neos/neos-development-collection/releases/tag/4.2.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Prevent deleting or rebasing the live workspace <https://github.com/neos/neos-development-collection/pull/2632>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Doing so would completely break Neos when resolving
+the content of a workspace that is based on live.
+
+Resolves: #2631
+
+* Packages: ``Neos``
+
+`TASK: Add more doc for Eel Translation.translate <https://github.com/neos/neos-development-collection/pull/2640>`_
+-------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Add more information for Eel Translation helper:
+- existence of I18n alias
+- add more doc for Translation.translate's source argument
+- add an example
+
+**How to verify it**
+
+Check that the doc is accurate
+
+* Packages: ``Neos``
+
+`TASK: Fix option name for NodeName filter <https://github.com/neos/neos-development-collection/pull/2641>`_
+------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Fix option name for NodeName filter in the documentation
+
+**How to verify it**
+
+Check that the doc is accurate with the source code of the Filter
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix broken JS require implementation in Backend Modules <https://github.com/neos/neos-development-collection/pull/2639>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+With resolution of #2479 javascript blocks were put into CDATA
+sections in order to prevent them to break the Fluid parser.
+
+This introduced a regression that prevents Backend Modules to
+work properly when `loadMinifiedJavascript` is disabled.
+
+Background:
+
+The string `resource://...` is replaced by the `ResourceInterceptor`
+but that behavior is skipped for CDATA sections.
+
+Related: #2479
+
+* Packages: ``Neos``
+
+`BUGFIX: Don't render exception message in Production Context <https://github.com/neos/neos-development-collection/pull/2603>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Synchronizes the behavior of the Fusion rendering exception handing with the one
+from Flow to only render the exception *message* in `Development` Context.
+
+Fixes: #2602
+
+* Packages: ``AssetList`` ``BaseMixins`` ``Browser`` ``ColumnLayouts`` ``ContentReferences`` ``Form`` ``Fusion`` ``Navigation`` ``Neos`` ``NodeTypes``
+
+`TASK: Safelist branches for travis builds <https://github.com/neos/neos-development-collection/pull/2600>`_
+------------------------------------------------------------------------------------------------------------
+
+This prevents builds from running doubly on branches created on this repository for PRs, e.g. through the StyleCI bot or by github inline PRs.
+
+See https://docs.travis-ci.com/user/customizing-the-build/#safelisting-or-blocklisting-branches
+See also https://github.com/neos/flow-development-collection/pull/1660
+
+Retargeted replacement for #2593 
+
+`BUGFIX: Skip nodes if they cannot be resolved in ContentCacheFlusher <https://github.com/neos/neos-development-collection/pull/2595>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+If a node cannot be resolved in the content cache flusher
+skip this node instead of throwing an exception.
+
+Resolves: #2594
+
+* Packages: ``Browser`` ``Neos``
+
+`Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/2587>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/zDEWyy).
+
+* Packages: ``Browser`` ``ContentRepository`` ``Media`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.2.12...4.2.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
