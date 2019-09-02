@@ -1,5 +1,5 @@
 window.T3 = {
-	isContentModule: location.pathname.match(/@user-/)
+	isContentModule: false
 } || window.T3;
 
 requirePaths = window.T3Configuration.requirejs.paths || {};
@@ -22,9 +22,7 @@ require(
 	[
 		'Library/jquery-with-dependencies',
 		'emberjs',
-		'Content/ContentModule',
 		'Content/ApplicationView',
-		'Content/Components/PublishMenu',
 		'Shared/ResourceCache',
 		'Shared/Notification',
 		'Shared/Configuration',
@@ -38,9 +36,7 @@ require(
 	function(
 		$,
 		Ember,
-		ContentModule,
 		ApplicationView,
-		PublishMenu,
 		ResourceCache,
 		Notification,
 		Configuration,
@@ -66,22 +62,6 @@ require(
 				}
 				resolve();
 			});
-		}).then(function () {
-			// Bootstrap the content module
-			Ember.$(document).ready(function () {
-				ContentModule.bootstrap();
-				ContentModule.advanceReadiness();
-
-				// Wait until the NodeTypeService is usable by resolving the promise
-				ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function () {
-					ApplicationView.create().appendTo('#neos-application');
-					if (window.T3.isContentModule) {
-						PublishMenu.create().appendTo('#neos-top-bar-right');
-					}
-				});
-			});
-		}, function (reason) {
-			console.error('Neos failed to initialize', reason);
 		});
 
 		// Export external Neos API
