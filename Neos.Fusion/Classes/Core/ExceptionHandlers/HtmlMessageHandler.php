@@ -50,9 +50,9 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
-        $messageBody = sprintf('<p class="neos-message-content">%s</p>', htmlspecialchars($exception->getMessage()));
-
+        $messageBody = '';
         if ($this->renderTechnicalDetails) {
+            $messageBody .= sprintf('<p class="neos-message-content">%s</p>', htmlspecialchars($exception->getMessage()));
             $messageBody .= sprintf('<p class="neos-message-stacktrace"><code>%s</code></p>', $this->formatFusionPath($fusionPath));
         }
 

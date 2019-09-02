@@ -244,6 +244,11 @@ class WorkspaceCommandController extends CommandController
             $this->quit(1);
         }
 
+        if ($workspace->getName() === 'live') {
+            $this->outputLine('Did not delete workspace "live" because it is required for Neos CMS to work properly.');
+            $this->quit(2);
+        }
+
         if ($workspace->isPersonalWorkspace()) {
             $this->outputLine('Did not delete workspace "%s" because it is a personal workspace. Personal workspaces cannot be deleted manually.', [$workspaceName]);
             $this->quit(2);
@@ -301,6 +306,11 @@ class WorkspaceCommandController extends CommandController
         if (!$workspace instanceof Workspace) {
             $this->outputLine('Workspace "%s" does not exist', [$workspaceName]);
             $this->quit(1);
+        }
+
+        if ($workspace->getName() === 'live') {
+            $this->outputLine('The workspace "live" cannot be rebased as it is the global base workspace.');
+            $this->quit(2);
         }
 
         $baseWorkspaceName = $baseWorkspace;
