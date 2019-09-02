@@ -22,7 +22,6 @@ require(
 	[
 		'Library/jquery-with-dependencies',
 		'emberjs',
-		'Content/ApplicationView',
 		'Shared/ResourceCache',
 		'Shared/Notification',
 		'Shared/Configuration',
@@ -36,7 +35,6 @@ require(
 	function(
 		$,
 		Ember,
-		ApplicationView,
 		ResourceCache,
 		Notification,
 		Configuration,
