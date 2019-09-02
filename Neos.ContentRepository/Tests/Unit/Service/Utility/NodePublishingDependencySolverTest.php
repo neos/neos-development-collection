@@ -87,13 +87,13 @@ class NodePublishingDependencySolverTest extends UnitTestCase
     protected function buildNodeMock($path, $movedTo = null)
     {
         $mockNodeData = $this->getMockBuilder(NodeData::class)->setConstructorArgs([$path, $this->mockWorkspace])->getMock();
-        $mockNodeData->expects($this->any())->method('getMovedTo')->will($this->returnValue($movedTo));
-        $mockNodeData->expects($this->any())->method('getPath')->will($this->returnValue($path));
+        $mockNodeData->expects(self::any())->method('getMovedTo')->will(self::returnValue($movedTo));
+        $mockNodeData->expects(self::any())->method('getPath')->will(self::returnValue($path));
         $mockNode = $this->getMockBuilder(Node::class)->setConstructorArgs([$mockNodeData, $this->mockContext])->getMock();
-        $mockNode->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData));
-        $mockNode->expects($this->any())->method('getPath')->will($this->returnValue($path));
+        $mockNode->expects(self::any())->method('getNodeData')->will(self::returnValue($mockNodeData));
+        $mockNode->expects(self::any())->method('getPath')->will(self::returnValue($path));
         $parentPath = substr($path, 0, strrpos($path, '/'));
-        $mockNode->expects($this->any())->method('getParentPath')->will($this->returnValue($parentPath));
+        $mockNode->expects(self::any())->method('getParentPath')->will(self::returnValue($parentPath));
 
         return $mockNode;
     }

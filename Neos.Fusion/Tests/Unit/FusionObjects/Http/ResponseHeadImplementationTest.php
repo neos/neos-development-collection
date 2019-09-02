@@ -51,7 +51,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
     {
         $path = 'responseHead/test';
 
-        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath) use ($path, $httpVersion, $statusCode, $headers) {
+        $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath) use ($path, $httpVersion, $statusCode, $headers) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'httpVersion':

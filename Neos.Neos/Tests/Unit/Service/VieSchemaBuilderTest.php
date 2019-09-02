@@ -107,13 +107,13 @@ class VieSchemaBuilderTest extends UnitTestCase
         $this->vieSchemaBuilder = $this->getAccessibleMock(VieSchemaBuilder::class, ['dummy']);
 
         $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
-        $mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('NodeTypes')->will($this->returnValue($this->nodeTypesFixture));
+        $mockConfigurationManager->expects(self::any())->method('getConfiguration')->with('NodeTypes')->will(self::returnValue($this->nodeTypesFixture));
 
         $this->nodeTypeManager = $this->getAccessibleMock(NodeTypeManager::class, ['dummy']);
         $this->nodeTypeManager->_set('configurationManager', $mockConfigurationManager);
 
         $mockCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects($this->any())->method('get')->willReturn(null);
+        $mockCache->expects(self::any())->method('get')->willReturn(null);
         $this->nodeTypeManager->_set('fullConfigurationCache', $mockCache);
 
         $this->vieSchemaBuilder->_set('nodeTypeManager', $this->nodeTypeManager);
