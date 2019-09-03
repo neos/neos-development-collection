@@ -118,6 +118,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
+            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_restrictionrelation');
         });
         $this->processedEventsCache->flush();
     }
