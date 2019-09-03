@@ -5,7 +5,7 @@
 <f:section name="Title">Edit asset collection</f:section>
 
 <f:section name="Content">
-    <f:form method="post" action="updateAssetCollection" object="{assetCollection}" objectName="assetCollection">
+    <f:form method="post" action="updateAssetCollection" controller="Asset" object="{assetCollection}" objectName="assetCollection">
         <legend>{neos:backend.translate(id: 'editCollection', package: 'Neos.Media.Browser')}</legend>
         <div class="neos-row-fluid">
             <div class="neos-span6 neos-image-inputs">
@@ -46,7 +46,7 @@
                         </div>
                         <div class="neos-modal-footer">
                             <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
-                            <button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteAssetCollection', arguments: {assetCollection: assetCollection})}" class="neos-button neos-button-mini neos-button-danger">
+                            <button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteAssetCollection', controller: 'Asset', arguments: {assetCollection: assetCollection})}" class="neos-button neos-button-mini neos-button-danger">
                                 {neos:backend.translate(id: 'message.confirmDeleteCollection', package: 'Neos.Media.Browser')}
                             </button>
                         </div>
