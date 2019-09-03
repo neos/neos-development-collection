@@ -1,85 +1,112 @@
 #neos-top-bar {
-	position: fixed;
-	left: 0;
-	right: 0;
-	top: 0;
-	z-index: 10021;
-	background-color: $grayDark;
-	height: $unit;
-	border-bottom: 1px solid $grayLight;
-	display: none;
-	@include font;
-	font-size: 0;
+  position: fixed;
+  display: none;
+  -webkit-flex-flow: row wrap;
+  justify-content: space-between;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 10021;
+  background-color: $grayDark;
+  height: $unit;
+  border-bottom: 1px solid $grayLight;
+  @include font;
+  font-size: 0;
 
-	@include transition-property(top);
-	@include transition-duration(0.2s);
+  transition-property: top;
+  transition-duration: 0.2s;
 
-	#neos-top-bar-right {
-		float: right;
-	}
+  .neos-top-bar-left {
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    justify-content: space-around;
 
-	#neos-user-actions,
-	#neos-publish-menu {
-		float: left;
+    .neos-branding {
+      padding: $relatedMargin 1px;
 
-		i {
-			margin-left: $relatedMargin;
-			margin-right: $relatedMargin;
-		}
+      svg {
+        height: $unit * 0.6;
+        width: auto;
+      }
+    }
+  }
 
-		.neos-dropdown-menu {
-			@import "../Shared/Checkboxes";
-			border: 0;
-			right: 0;
-			background: none;
-			padding: 0;
-			margin: 0;
+  .neos-top-bar-right {
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    justify-content: space-around;
+  }
 
-			li {
-				height: $unit;
-				background: $grayMedium;
-				border-top: 1px solid $grayDark;
+  #neos-user-actions {
+    float: left;
 
-				&:first-child {
-					border-color: $grayLight;
-				}
+    i {
+      margin-left: $relatedMargin;
+      margin-right: $relatedMargin;
+    }
 
-				a,
-				button {
-					height: $unit;
-					color: white;
-					font-size: $generalFontSize;
-					line-height: $unit;
-					padding: 0 $defaultMargin;
-					@include box-sizing(border-box);
+    .neos-dropdown-toggle {
+      outline: none;
 
-					&:hover {
-						background: $blue;
-					}
-				}
+      &:hover {
+        color: $blue;
+        i {
+          color: white;
+        }
+      }
+    }
 
-				button {
-					width: 100%;
-					text-align: left;
-					background-color: $grayMedium;
+    .neos-dropdown-menu {
+      @import '../Shared/Checkboxes';
+      border: 0;
+      right: 0;
+      background: none;
+      padding: 2px;
+      margin: -2px 0 0;
+      -webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
 
-					&:hover {
-						background-color: $blue;
-					}
-				}
+      li {
+        height: $unit;
+        background: $grayDarker;
+        border-top: 1px solid $grayDark;
 
-				label {
-					padding-top: 9px;
-				}
+        a,
+        button {
+          height: $unit;
+          color: white;
+          font-size: $generalFontSize;
+          line-height: $unit;
+          padding: 0 $defaultMargin;
+          box-sizing: border-box;
 
-				button i {
-					line-height: 18px;
-				}
-			}
+          &:hover {
+            background: $blue;
+          }
+        }
 
-			label {
-				font-size: $generalFontSize;
-			}
-		}
-	}
+        button {
+          width: 100%;
+          text-align: left;
+          background-color: $grayDarker;
+
+          &:hover {
+            background-color: $blue;
+          }
+        }
+
+        label {
+          padding-top: 9px;
+        }
+
+        button i {
+          line-height: 18px;
+        }
+      }
+
+      label {
+        font-size: $generalFontSize;
+      }
+    }
+  }
 }

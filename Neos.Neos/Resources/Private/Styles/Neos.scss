@@ -1,14 +1,13 @@
 // Core variables and mixins
-@import "compass";
 @import "Foundation/variables"; // Modify this for custom colors, font-sizes, etc
 @import "Foundation/mixins";
 @import "Constants";
 @import "Mixins";
 @import "Fonts";
-@import "../../Public/Library/fontawesome/scss/fontawesome.scss";
-@import "../../Public/Library/fontawesome/scss/brands.scss";
-@import "../../Public/Library/fontawesome/scss/regular.scss";
-@import "../../Public/Library/fontawesome/scss/solid.scss";
+@import "FontAwesome/fontawesome.scss";
+@import "FontAwesome/brands.scss";
+@import "FontAwesome/regular.scss";
+@import "FontAwesome/solid.scss";
 @import "Icons";
 
 .neos {
@@ -69,33 +68,19 @@
 	@import "General";
 	@import "Shared/Ellipsis";
 	@import "Shared/Scrollbar";
-	@import "ContentProperties";
 	@import "StyleWorkInProgress";
-	@import "Inspector/Inspector";
-	@import "Inspector/SecondaryInspector";
 	@import "TopBar/TopBar";
-	@import "TopBar/PublishMenu";
 	@import "TopBar/UserMenu";
-	@import "EditPreview/EditPreviewPanel";
-	@import "ContextBar/ContextBar";
-	@import "ContextBar/ContentDimensionSelector";
 	@import "Menu/MenuPanel";
 	@import "Navigate/NavigatePanel";
-	@import "ContextBar/AlohaMenu";
-	@import "InlineEditing";
 	@import "Modules/Modules";
 	@import "Modules/Widget";
 	@import "ButtonGroups";
-	@import "Content/InsertNodePanel";
-	@import "Content/LoadingIndicator";
 	@import "Notifications";
 	@import "Components/LoginDialog";
 	@import "Components/PositionSelector";
 	@import "Components/HelpMessage";
 	@import "Widget/pagination";
-	@import "ContextBar/AlohaLinkEditor";
-	@import "ContextBar/AlohaAddTable";
 }
 
-@import "Content";
 @import "Global";

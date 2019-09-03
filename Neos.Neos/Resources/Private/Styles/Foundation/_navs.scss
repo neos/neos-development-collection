@@ -123,7 +123,7 @@
   padding-bottom: 8px;
   line-height: $baseLineHeight;
   border: 1px solid transparent;
-  @include border-radius(4px 4px 0 0);
+  border-radius: 4px 4px 0 0;
   &:hover,
   &:focus {
     border-color: $grayLighter $grayLighter #ddd;
@@ -150,7 +150,7 @@
   padding-bottom: 8px;
   margin-top: 2px;
   margin-bottom: 2px;
-  @include border-radius(5px);
+  border-radius: 5px;
 }
 
 // Active state
@@ -180,13 +180,13 @@
 }
 .neos-nav-tabs.neos-nav-stacked > li > a {
   border: 1px solid #ddd;
-  @include border-radius(0);
+  border-radius: 0;
 }
 .neos-nav-tabs.neos-nav-stacked > li:first-child > a {
-  @include border-top-radius(4px);
+  border-top-radius: 4px;
 }
 .neos-nav-tabs.neos-nav-stacked > li:last-child > a {
-  @include border-bottom-radius(4px);
+  border-bottom-radius: 4px;
 }
 .neos-nav-tabs.neos-nav-stacked > li > a:hover,
 .neos-nav-tabs.neos-nav-stacked > li > a:focus {
@@ -208,10 +208,10 @@
 // ---------
 
 .neos-nav-tabs .neos-dropdown-menu {
-  @include border-radius(0 0 6px 6px); // remove the top rounded corners here since there is a hard edge above the menu
+  border-radius: 0 0 6px 6px; // remove the top rounded corners here since there is a hard edge above the menu
 }
 .neos-nav-pills .neos-dropdown-menu {
-  @include border-radius(6px); // make rounded corners match the pills
+  border-radius: 6px; // make rounded corners match the pills
 }
 
 // Default dropdown links
@@ -266,7 +266,7 @@
 .neos-nav li.neos-dropdown.neos-open a:focus .neos-caret {
   border-top-color: $white;
   border-bottom-color: $white;
-  @include opacity(1);
+  opacity: 1;
 }
 
 // Dropdowns in stacked tabs
@@ -321,7 +321,7 @@
   margin-bottom: 0;
 }
 .neos-tabs-below > .neos-nav-tabs > li > a {
-  @include border-radius(0 0 4px 4px);
+  border-radius: 0 0 4px 4px;
   &:hover,
   &:focus {
     border-bottom-color: transparent;
@@ -357,7 +357,7 @@
 }
 .neos-tabs-left > .neos-nav-tabs > li > a {
   margin-right: -1px;
-  @include border-radius(4px 0 0 4px);
+  border-radius: 4px 0 0 4px;
 }
 .neos-tabs-left > .neos-nav-tabs > li > a:hover,
 .neos-tabs-left > .neos-nav-tabs > li > a:focus {
@@ -378,7 +378,7 @@
 }
 .neos-tabs-right > .neos-nav-tabs > li > a {
   margin-left: -1px;
-  @include border-radius(0 4px 4px 0);
+  border-radius: 0 4px 4px 0;
 }
 .neos-tabs-right > .neos-nav-tabs > li > a:hover,
 .neos-tabs-right > .neos-nav-tabs > li > a:focus {

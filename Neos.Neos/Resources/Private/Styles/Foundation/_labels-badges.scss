@@ -21,7 +21,7 @@
 .neos-badge {
   padding-left: 4px;
   padding-right: 4px;
-  @include border-radius(3px);
+  border-radius: 3px;
 }
 
 // Empty labels/badges collapse

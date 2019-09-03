@@ -1,6 +1,0 @@
-{
-	"name": "neos-dependencies",
-	"dependencies": {
-		"qunit": "1.15.0"
-	}
-}

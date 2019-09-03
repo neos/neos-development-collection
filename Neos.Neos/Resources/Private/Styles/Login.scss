@@ -1,11 +1,10 @@
 // Core variables and mixins
-@import "compass";
 @import "Foundation/variables"; // Modify this for custom colors, font-sizes, etc
 @import "Foundation/mixins";
 @import "Constants";
 @import "Mixins";
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic');
-@import "../../Public/Library/fontawesome/scss/fontawesome.scss";
+@import "FontAwesome/fontawesome.scss";
 
 $loginBoxWidth: $unit * 8;
 
@@ -66,7 +65,7 @@ html,
 					-o-filter: blur(10px);
 					-ms-filter: blur(10px);
 					filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='10');
-					filter: url('../Images/blur.svg#blur'); /* Older FF and others - http://jordanhollinger.com/media/blur.svg */
+					filter: url('../../Public/Images/blur.svg#blur'); /* Older FF and others - http://jordanhollinger.com/media/blur.svg */
 					filter: blur(10px); /* Firefox 35+, eventually all */
 					padding: $unit;
 				}
@@ -92,7 +91,7 @@ html,
 			&:focus,
 			&:invalid:focus {
 				background-color: rgba(#fff, .9);
-				@include box-shadow(none);
+				box-shadow: none;
 			}
 
 			&:-webkit-autofill {
@@ -130,17 +129,17 @@ html,
 		font-size: 14px;
 		padding: 0 ($defaultMargin - 2px);
 		margin: 0;
-		@include border-radius(0);
-		@include box-sizing(border-box);
-		@include box-shadow(none);
-		@include transition(none);
+		border-radius: 0;
+		box-sizing: border-box;
+		box-shadow: none;
+		transition: none;
 		@include font;
 
 		&:focus,
 		&:invalid:focus {
 			background-color: #fff;
 			color: $textOnWhite;
-			@include box-shadow(none);
+			box-shadow: none;
 		}
 
 		&:-webkit-autofill {
@@ -176,8 +175,8 @@ html,
 		width: $loginBoxWidth;
 		z-index: 10;
 
-		@include box-shadow(none);
-		@include border-radius(none);
+		box-shadow: none;
+		border-radius: none;
 
 		svg {
 			margin: 0 auto;
@@ -212,9 +211,9 @@ html,
 				border: none;
 				background-image: none;
 				font-size: 14px;
-				@include text-shadow(none);
-				@include box-shadow(none);
-				@include box-sizing(border-box);
+				text-shadow: none;
+				box-shadow: none;
+				box-sizing: border-box;
 				@include font;
 
 				&:focus {
@@ -232,7 +231,7 @@ html,
 
 				&.neos-disabled {
 					cursor: not-allowed;
-					@include opacity(.65);
+					opacity: .65;
 				}
 			}
 		}
@@ -257,7 +256,7 @@ html,
 			}
 
 			&.neos-in {
-				@include opacity(1);
+				opacity: 1;
 			}
 
 			.neos-tooltip-arrow {
@@ -269,8 +268,8 @@ html,
 				max-width: $loginBoxWidth;
 				font-size: 13px;
 				color: #fff;
-				@include border-radius(0);
-				@include box-sizing(border-box);
+				border-radius: 0;
+				box-sizing: border-box;
 			}
 		}
 
@@ -299,7 +298,7 @@ html,
 		width: 50%;
 		padding: $unit /2;
 		@include font;
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 
 		p {
 			font-size: 12px;
