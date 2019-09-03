@@ -25,10 +25,10 @@ button,
 	background-image: none;
 	border: none;
 	border-radius: 0;
-	@include text-shadow(none);
-	@include box-shadow(none);
-	@include box-sizing(border-box);
-	@include transition(all 0 ease 0);
+	text-shadow: none;
+	box-shadow: none;
+	box-sizing: border-box;
+	transition: all 0 ease 0;
 
 	&.neos-button-small {
 		height: $defaultMargin + $relatedMargin;
@@ -61,7 +61,7 @@ button,
 	&.neos-disabled,
 	&[disabled] {
 		cursor: not-allowed;
-		@include opacity(.65);
+		opacity: .65;
 	}
 
 	&[class^="fa-"],

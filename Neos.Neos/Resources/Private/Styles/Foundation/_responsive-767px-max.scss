@@ -59,12 +59,12 @@
     display: block;
     width: 100%;
     margin-left: 0;
-    @include box-sizing(border-box);
+    box-sizing: border-box;
   }
   neos-span12,
   .neos-row-fluid neos-span12 {
     width: 100%;
-    @include box-sizing(border-box);
+    box-sizing: border-box;
   }
   .neos-row-fluid [class*="neos-offset"]:first-child {
     margin-left: 0;

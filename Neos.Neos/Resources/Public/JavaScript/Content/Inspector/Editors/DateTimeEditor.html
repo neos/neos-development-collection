@@ -1,9 +1,0 @@
-<div class="neos-inspector-datetime-editor">
-	<span class="neos-add-on" {{action "toggle" target="view"}}><i {{bindAttr class="view._timeOnly:far fa-clock:far fa-calendar-alt"}}></i></span>
-	<span>
-		{{view view.inputField classNames="neos-editor-datetimepicker-hrvalue" placeholderBinding="view._placeholder" valueBinding="view.hrValue"}}
-	</span>
-	<a href="#" class="neos-add-on" {{action "reset" target="view"}}><i class="fas fa-remove"></i></a>
-	{{view Ember.TextField valueBinding="view.value" type="hidden"}}
-</div>
-<div class="neos-editor-datetimepicker"></div>

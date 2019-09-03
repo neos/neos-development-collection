@@ -15,7 +15,7 @@
 					height: auto;
 
 					&.neos-dynatree-folder .neos-dynatree-title {
-						@include user-select(none);
+						user-select: none;
 					}
 
 					.neos-dynatree-icon {

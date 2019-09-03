@@ -16,17 +16,17 @@
 		font-size: 14px;
 		padding: 0 ($defaultMargin - 2px);
 		margin: 0 0 15px 0;
-		@include border-radius(0);
-		@include box-sizing(border-box);
-		@include box-shadow(none);
-		@include transition(none);
+		border-radius: 0;
+		box-sizing: border-box;
+		box-shadow: none;
+		transition: none;
 		@include font;
 
 		&:focus {
 			background-color: #fff;
 			border: 2px solid #fff;
 			color: $textOnWhite;
-			@include box-shadow(none);
+			box-shadow: none;
 		}
 
 		&:-webkit-autofill {
@@ -63,7 +63,7 @@
 		}
 
 		&.neos-in {
-			@include opacity(1);
+			opacity: 1;
 		}
 
 		.neos-tooltip-arrow {
@@ -77,8 +77,8 @@
 			background-color: $warning;
 			font-size: 13px;
 			color: #fff;
-			@include border-radius(0);
-			@include box-sizing(border-box);
+			border-radius: 0;
+			box-sizing: border-box;
 		}
 	}
 }

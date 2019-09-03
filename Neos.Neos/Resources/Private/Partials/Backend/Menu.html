@@ -1,71 +1,108 @@
 {namespace neos=Neos\Neos\ViewHelpers}
-<noscript>
-	<div id="neos-menu-panel" class="neos-noscript">
-		<div class="neos-menu-section">
-			<f:link.action package="Neos.Neos" controller="Backend\Backend" action="index" title="{neos:backend.translate(id: 'contentView', value: 'Content View')}" class="neos-menu-headline">
-				<i class="fas fa-file"></i> {neos:backend.translate(id: 'content', value: 'Content')}
-			</f:link.action>
-			<f:if condition="{sites}">
-				<div class="neos-menu-list">
-					<f:for each="{sites}" as="site">
-						<f:if condition="{site.uri}">
-							<f:then>
-								<f:if condition="{modulePath}">
-									<f:then>
-										<a href="{site.uri}" title="{site.nodeName}">
-											<i class="fas fa-globe"></i> {site.name}
-										</a>
-									</f:then>
-									<f:else>
-										<a href="{site.uri}" title="{site.nodeName}" class="{f:if(condition: site.active, then: 'neos-active')}{f:if(condition: '{sites -> f:count()} === 1', then: ' neos-active')}">
-											<i class="fas fa-globe"></i> {site.name}
-										</a>
-									</f:else>
-								</f:if>
-							</f:then>
-							<f:else>
-								<span title="{site.nodeName}" class="neos-menu-item neos-disabled">
-									<i class="fas fa-globe"></i> {site.name}
-								</span>
-							</f:else>
-						</f:if>
-					</f:for>
-				</div>
-			</f:if>
-		</div>
-		<f:for each="{modules}" as="module">
-			<f:if condition="{module.hideInMenu}">
-				<f:else>
-					<f:render section="moduleMenu" arguments="{_all}" />
-				</f:else>
-			</f:if>
-		</f:for>
-	</div>
-</noscript>
+<div class="neos-menu">
+  <button
+    class="neos-menu-button neos-button"
+    title="{neos:backend.translate(id: 'toggleMenu', value: 'Toggle menu')}"
+  ></button>
+  <div class="neos-menu-panel">
+    <div class="neos-menu-wrapper">
+      <div class="neos-menu-section" data-key="content">
+        <div class="neos-menu-section-header" aria-expanded="false">
+          <h2>
+            <f:link.action
+              package="Neos.Neos"
+              controller="Backend\Backend"
+              action="index"
+              title="{neos:backend.translate(id: 'contentView', value: 'Content View')}"
+              class="neos-menu-headline"
+            >
+              <i class="fas fa-file"></i> {neos:backend.translate(id: 'content',
+              value: 'Content')}
+            </f:link.action>
+          </h2>
+          <button type="button" class="neos-menu-panel-toggle" role="button">
+            <i class="fas fa-chevron-circle-down"></i>
+          </button>
+        </div>
+        <f:if condition="{sites}">
+          <div class="neos-menu-section-content">
+            <div class="neos-menu-list">
+              <f:for each="{sites}" as="site">
+                <f:if condition="{site.uri}">
+                  <f:then>
+                    <a href="{site.uri}" title="{site.nodeName}">
+                      <i class="fas fa-globe"></i> {site.name}
+                    </a>
+                  </f:then>
+                  <f:else>
+                    <span
+                      title="{site.nodeName}"
+                      class="neos-menu-item neos-disabled"
+                    >
+                      <i class="fas fa-globe"></i> {site.name}
+                    </span>
+                  </f:else>
+                </f:if>
+              </f:for>
+            </div>
+          </div>
+        </f:if>
+      </div>
+      <f:for each="{modules}" as="module">
+        <f:if condition="{module.hideInMenu}">
+          <f:else>
+            <f:render section="moduleMenu" arguments="{_all}" />
+          </f:else>
+        </f:if>
+      </f:for>
+    </div>
+  </div>
+</div>
 
 <f:section name="moduleMenu">
-	<div class="neos-menu-section">
-		<neos:link.module path="{module.modulePath}" class="neos-menu-headline{f:if(condition: '{module.modulePath} === {modulePath}', then: ' neos-active')}">
-			<i class="{f:if(condition: module.icon, then: module.icon, else: 'fas fa-puzzle-piece')}"></i>
-			{neos:backend.translate(id: module.label, source: 'Modules', value: module.label)}
-		</neos:link.module>
-		<f:if condition="{module.submodules}">
-			<div class="neos-menu-list">
-				<f:for each="{module.submodules}" as="submodule">
-					<f:if condition="{submodule.hideInMenu}">
-						<f:else>
-							<f:render section="submoduleMenu" arguments="{_all}" />
-						</f:else>
-					</f:if>
-				</f:for>
-			</div>
-		</f:if>
-	</div>
+  <div class="neos-menu-section" data-key="{module.modulePath}">
+    <div class="neos-menu-section-header" aria-expanded="false">
+      <h2>
+        <neos:link.module
+          path="{module.modulePath}"
+          class="neos-menu-headline"
+        >
+          <i
+            class="{f:if(condition: module.icon, then: module.icon, else: 'fas fa-puzzle-piece')}"
+          ></i>
+          {neos:backend.translate(id: module.label, source: 'Modules', value:
+          module.label)}
+        </neos:link.module>
+      </h2>
+      <button type="button" class="neos-menu-panel-toggle" role="button">
+        <i class="fas fa-chevron-circle-down"></i>
+      </button>
+    </div>
+    <f:if condition="{module.submodules}">
+      <div class="neos-menu-section-content">
+        <div class="neos-menu-list">
+          <f:for each="{module.submodules}" as="submodule">
+            <f:if condition="{submodule.hideInMenu}">
+              <f:else>
+                <f:render section="submoduleMenu" arguments="{_all}" />
+              </f:else>
+            </f:if>
+          </f:for>
+        </div>
+      </div>
+    </f:if>
+  </div>
 </f:section>
 
 <f:section name="submoduleMenu">
-	<neos:link.module path="{submodule.modulePath}" class="{f:if(condition: '{submodule.modulePath} === {modulePath}', then: ' neos-active')}">
-		<i class="{f:if(condition: submodule.icon, then: submodule.icon, else: 'fas fa-puzzle-piece')}"></i>
-		{neos:backend.translate(id: submodule.label, source: 'Modules', value: submodule.label)}
-	</neos:link.module>
+  <neos:link.module
+    path="{submodule.modulePath}"
+    class="{f:if(condition: '{submodule.modulePath} === {modulePath}', then: ' neos-active')}"
+  >
+    <i
+      class="{f:if(condition: submodule.icon, then: submodule.icon, else: 'fas fa-puzzle-piece')}"
+    ></i>
+    {neos:backend.translate(id: submodule.label, source: 'Modules', value:
+    submodule.label)}
+  </neos:link.module>
 </f:section>

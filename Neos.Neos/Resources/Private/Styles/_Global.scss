@@ -1,8 +1,8 @@
 body {
 	// States
 	&.neos-backend {
-		@include transition-property(margin);
-		@include transition-duration(0.2s);
+		transition-property: margin;
+		transition-duration: 0.2s;
 	}
 
 	&.neos-controls {
@@ -10,7 +10,7 @@ body {
 		margin-left: 0;
 
 		#neos-top-bar {
-			display: block;
+			display: flex;
 		}
 	}
 
@@ -75,7 +75,7 @@ body {
 				overflow: hidden;
 			}
 
-			#neos-menu-panel,
+			.neos-menu-panel,
 			#neos-navigate-panel {
 				left: -($navigatePanelWidth + 1) !important;
 			}
@@ -86,7 +86,7 @@ body {
 			position: fixed;
 			top: $defaultMargin;
 			right: $defaultMargin;
-			@include box-shadow(0 0 $relatedMargin rgba(0, 0, 0, .25));
+			box-shadow: 0 0 $relatedMargin rgba(0, 0, 0, .25);
 			z-index: 9999;
 
 			.neos-button {
@@ -194,5 +194,5 @@ body {
 }
 
 // Include other global style files
-@import "ContextBar/AlohaInlineTable";
-@import "Shared/Select2";
+// @import "ContextBar/AlohaInlineTable";
+// @import "Shared/Select2";
