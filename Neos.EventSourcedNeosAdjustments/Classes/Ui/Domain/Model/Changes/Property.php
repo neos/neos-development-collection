@@ -14,15 +14,18 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
@@ -203,53 +206,86 @@ class Property extends AbstractChange
         if ($this->canApply()) {
             $node = $this->getSubject();
             $propertyName = $this->getPropertyName();
-            $value = $this->nodePropertyConversionService->convert(
-                $node->getNodeType(),
-                $propertyName,
-                $this->getValue()
-            );
 
-            // TODO: Make changing the node type a separated, specific/defined change operation.
-            if ($propertyName{0} !== '_' || $propertyName === '_hiddenInIndex') {
-                $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
-                $command = new SetNodeProperties(
+            $propertyType = $node->getNodeType()->getPropertyType($propertyName);
+
+            // Use extra commands for reference handling
+            if ($propertyType === 'reference' || $propertyType === 'references') {
+                $value = $this->getValue();
+                $destinationNodeAggregateIdentifiers = [];
+                if ($propertyType === 'reference') {
+                    if (!empty($value)) {
+                        $destinationNodeAggregateIdentifiers[] = NodeAggregateIdentifier::fromString($value);
+                    }
+                }
+
+                if ($propertyType === 'references') {
+                    /** @var array $values */
+                    $values = $value;
+                    if (is_array($values)) {
+                        foreach ($values as $singleNodeAggregateIdentifier) {
+                            $destinationNodeAggregateIdentifiers[] = NodeAggregateIdentifier::fromString($singleNodeAggregateIdentifier);
+                        }
+                    }
+                }
+
+                $command = new SetNodeReferences(
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
-                    PropertyValues::fromArray(
-                        [
-                            $propertyName => new PropertyValue($value, $propertyType)
-                        ]
-                    )
+                    $destinationNodeAggregateIdentifiers,
+                    PropertyName::fromString($propertyName)
                 );
-                $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
+                $this->nodeAggregateCommandHandler->handleSetNodeReferences($command)->blockUntilProjectionsAreUpToDate();
             } else {
-                // property starts with "_"
-                if ($propertyName === '_nodeType') {
-                    throw new \Exception("TODO FIX");
-                    $nodeType = $this->nodeTypeManager->getNodeType($value);
-                    $node = $this->changeNodeType($node, $nodeType);
-                } elseif ($propertyName === '_hidden') {
-                    if ($value === true) {
-                        $command = new DisableNodeAggregate(
-                            $node->getContentStreamIdentifier(),
-                            $node->getNodeAggregateIdentifier(),
-                            $node->getOriginDimensionSpacePoint(),
-                            NodeVariantSelectionStrategyIdentifier::allSpecializations()
-                        );
-                        $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
-                    } else {
-                        // unhide
-                        $command = new EnableNodeAggregate(
-                            $node->getContentStreamIdentifier(),
-                            $node->getNodeAggregateIdentifier(),
-                            $node->getOriginDimensionSpacePoint(),
-                            NodeVariantSelectionStrategyIdentifier::allSpecializations()
-                        );
-                        $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
-                    }
+                $value = $this->nodePropertyConversionService->convert(
+                    $node->getNodeType(),
+                    $propertyName,
+                    $this->getValue()
+                );
+
+                // TODO: Make changing the node type a separated, specific/defined change operation.
+                if ($propertyName{0} !== '_' || $propertyName === '_hiddenInIndex') {
+                    $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
+                    $command = new SetNodeProperties(
+                        $node->getContentStreamIdentifier(),
+                        $node->getNodeAggregateIdentifier(),
+                        $node->getOriginDimensionSpacePoint(),
+                        PropertyValues::fromArray(
+                            [
+                                $propertyName => new PropertyValue($value, $propertyType)
+                            ]
+                        )
+                    );
+                    $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
                 } else {
-                    throw new \Exception("TODO FIX");
+                    // property starts with "_"
+                    if ($propertyName === '_nodeType') {
+                        throw new \Exception("TODO FIX");
+                        $nodeType = $this->nodeTypeManager->getNodeType($value);
+                        $node = $this->changeNodeType($node, $nodeType);
+                    } elseif ($propertyName === '_hidden') {
+                        if ($value === true) {
+                            $command = new DisableNodeAggregate(
+                                $node->getContentStreamIdentifier(),
+                                $node->getNodeAggregateIdentifier(),
+                                $node->getOriginDimensionSpacePoint(),
+                                NodeVariantSelectionStrategyIdentifier::allSpecializations()
+                            );
+                            $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+                        } else {
+                            // unhide
+                            $command = new EnableNodeAggregate(
+                                $node->getContentStreamIdentifier(),
+                                $node->getNodeAggregateIdentifier(),
+                                $node->getOriginDimensionSpacePoint(),
+                                NodeVariantSelectionStrategyIdentifier::allSpecializations()
+                            );
+                            $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+                        }
+                    } else {
+                        throw new \Exception("TODO FIX");
+                    }
                 }
             }
 

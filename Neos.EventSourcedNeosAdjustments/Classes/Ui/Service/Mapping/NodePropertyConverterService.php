@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
 
 /*
@@ -13,7 +14,9 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -80,15 +83,31 @@ class NodePropertyConverterService
         if ($propertyName === '_hidden') {
             return $this->nodeHiddenStateFinder->findHiddenState($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier())->isHidden();
         }
-        if ($propertyName[0] === '_' && $propertyName !== '_hiddenInIndex') {
+
+        $propertyType = $node->getNodeType()->getPropertyType($propertyName);
+
+        // We handle "reference" and "references" differently than other properties; because we need to use another API for querying these references.
+        if ($propertyType === 'reference') {
+            $references = $node->findNamedReferencedNodes(PropertyName::fromString($propertyName));
+            if ($references->isEmpty()) {
+                return null;
+            } else {
+                $nodeIdentifierStrings = $this->toNodeIdentifierStrings($references);
+                return reset($nodeIdentifierStrings);
+            }
+        } elseif ($propertyType === 'references') {
+            $references = $node->findNamedReferencedNodes(PropertyName::fromString($propertyName));
+
+            return $this->toNodeIdentifierStrings($references);
+        // Here, the normal property access logic starts.
+        } elseif ($propertyName[0] === '_' && $propertyName !== '_hiddenInIndex') {
             $propertyValue = ObjectAccess::getProperty($node, ltrim($propertyName, '_'));
         } else {
             $propertyValue = $node->getProperty($propertyName);
         }
 
-        $dataType = $node->getNodeType()->getPropertyType($propertyName);
         try {
-            $convertedValue = $this->convertValue($propertyValue, $dataType);
+            $convertedValue = $this->convertValue($propertyValue, $propertyType);
         } catch (PropertyException $exception) {
             $this->systemLogger->logException($exception);
             $convertedValue = null;
@@ -98,7 +117,7 @@ class NodePropertyConverterService
             $convertedValue = $this->getDefaultValueForProperty($node->getNodeType(), $propertyName);
             if ($convertedValue !== null) {
                 try {
-                    $convertedValue = $this->convertValue($convertedValue, $dataType);
+                    $convertedValue = $this->convertValue($convertedValue, $propertyType);
                 } catch (PropertyException $exception) {
                     $this->systemLogger->logException($exception);
                     $convertedValue = null;
@@ -107,6 +126,15 @@ class NodePropertyConverterService
         }
 
         return $convertedValue;
+    }
+
+    private function toNodeIdentifierStrings(TraversableNodes $nodes)
+    {
+        $identifiers = [];
+        foreach ($nodes as $node) {
+            $identifiers[] = $node->getNodeAggregateIdentifier()->jsonSerialize();
+        }
+        return $identifiers;
     }
 
     /**
