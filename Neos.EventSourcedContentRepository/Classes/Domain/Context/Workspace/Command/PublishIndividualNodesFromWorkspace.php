@@ -17,7 +17,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
 /**
  * Publish a set of nodes in a workspace
@@ -37,7 +37,7 @@ final class PublishIndividualNodesFromWorkspace
     /**
      * PublishIndividualNodesInWorkspace constructor.
      * @param WorkspaceName $workspaceName
-     * @param NodeAddress[] $nodeAddresses
+     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress[] $nodeAddresses
      */
     public function __construct(WorkspaceName $workspaceName, array $nodeAddresses)
     {
@@ -54,7 +54,7 @@ final class PublishIndividualNodesFromWorkspace
     }
 
     /**
-     * @return NodeAddress[]
+     * @return \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress[]
      */
     public function getNodeAddresses(): array
     {

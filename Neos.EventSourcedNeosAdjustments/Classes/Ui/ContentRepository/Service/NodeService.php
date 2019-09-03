@@ -18,7 +18,7 @@ use Neos\Error\Messages\Error;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -28,7 +28,7 @@ class NodeService
 {
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
      */
     protected $nodeAddressFactory;
 

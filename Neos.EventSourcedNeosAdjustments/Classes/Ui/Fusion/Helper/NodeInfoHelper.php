@@ -17,9 +17,9 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateFinder;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping\NodePropertyConverterService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -61,7 +61,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
@@ -268,7 +268,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      * @param TraversableNodeInterface $node
      * @param string $nodeTypeFilterString
      * @return array
-     * @throws NodeAddressCannotBeSerializedException
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
      */
     protected function renderChildrenInformation(TraversableNodeInterface $node, string $nodeTypeFilterString): array
     {

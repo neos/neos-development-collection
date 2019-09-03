@@ -14,7 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
 
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Workspace;
@@ -53,7 +53,7 @@ class WorkspaceService
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
      */
     protected $nodeAddressFactory;
 

@@ -18,7 +18,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeTreeTravers
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\Neos\Domain\Exception;
 
 /**

@@ -53,7 +53,7 @@ use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCach
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
 use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
@@ -560,7 +560,7 @@ final class WorkspaceCommandHandler
 
     /**
      * @param object $command
-     * @param NodeAddress[] $nodeAddresses
+     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress[] $nodeAddresses
      * @return bool
      * @throws \Exception
      */

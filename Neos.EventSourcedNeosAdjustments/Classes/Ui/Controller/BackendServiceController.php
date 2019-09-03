@@ -18,8 +18,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommand
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
@@ -430,7 +430,7 @@ class BackendServiceController extends ActionController
     public function getPolicyInformationAction(array $nodes)
     {
         $result = [];
-        /** @var NodeAddress $nodeAddress */
+        /** @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $nodeAddress */
         foreach ($nodes as $nodeAddress) {
             $subgraph = $this->contentGraph
                 ->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
