@@ -26,9 +26,6 @@
       <trans-unit id="field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target state="translated">Legenda</target></trans-unit>
-      <trans-unit id="field.copyrightnotice" xml:space="preserve">
-				<source>Copyright Notice</source>
-			<target state="translated">Aviso de Direitos Autorais</target></trans-unit>
       <trans-unit id="field.lastModified" xml:space="preserve">
 				<source>Last modified</source>
 			<target state="translated">Último alterado</target></trans-unit>
