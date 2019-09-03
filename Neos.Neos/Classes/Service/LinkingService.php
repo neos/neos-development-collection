@@ -13,7 +13,8 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -30,8 +31,7 @@ use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -118,7 +118,7 @@ class LinkingService
     protected $siteRepository;
 
     /**
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @return boolean
      */
     public function hasSupportedScheme($uri): bool
@@ -127,12 +127,12 @@ class LinkingService
     }
 
     /**
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @return string
      */
     public function getScheme($uri): string
     {
-        if ($uri instanceof Uri) {
+        if ($uri instanceof UriInterface) {
             return $uri->getScheme();
         }
 
@@ -146,7 +146,7 @@ class LinkingService
     /**
      * Resolves a given node:// URI to a "normal" HTTP(S) URI for the addressed node.
      *
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @param NodeInterface $contextNode
      * @param ControllerContext $controllerContext
      * @param bool $absolute
@@ -156,7 +156,7 @@ class LinkingService
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function resolveNodeUri(string $uri, NodeInterface $contextNode, ControllerContext $controllerContext, bool $absolute = false): ?string
+    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext, bool $absolute = false): ?string
     {
         $targetObject = $this->convertUriToObject($uri, $contextNode);
         if ($targetObject === null) {
@@ -169,10 +169,10 @@ class LinkingService
     /**
      * Resolves a given asset:// URI to a "normal" HTTP(S) URI for the addressed asset's resource.
      *
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @return string|null If the URI cannot be resolved, null is returned
      */
-    public function resolveAssetUri(string $uri): ?string
+    public function resolveAssetUri($uri): ?string
     {
         $targetObject = $this->convertUriToObject($uri);
         if ($targetObject === null) {
@@ -185,13 +185,13 @@ class LinkingService
     /**
      * Return the object the URI addresses or NULL.
      *
-     * @param string|Uri $uri
+     * @param string|UriInterface $uri
      * @param NodeInterface $contextNode
      * @return NodeInterface|AssetInterface|NULL
      */
     public function convertUriToObject($uri, NodeInterface $contextNode = null)
     {
-        if ($uri instanceof Uri) {
+        if ($uri instanceof UriInterface) {
             $uri = (string)$uri;
         }
 
@@ -230,7 +230,7 @@ class LinkingService
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true): string
+    public function createNodeUri(ControllerContext $controllerContext, ?NodeInterface $node = null, ?NodeInterface $baseNode = null, ?string $format = null, bool $absolute = false, array $arguments = [], string $section = '', bool $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], bool $resolveShortcuts = true): string
     {
         $this->lastLinkedNode = null;
         if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
@@ -339,7 +339,7 @@ class LinkingService
         }
         $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
 
-        /** @var Uri $baseUri */
+        /** @var UriInterface $baseUri */
         $baseUri = $controllerContext->getRequest()->getHttpRequest()->getAttribute(ServerRequestAttributes::BASE_URI);
 
         $port = $primaryDomain->getPort() ?: $requestUri->getPort();

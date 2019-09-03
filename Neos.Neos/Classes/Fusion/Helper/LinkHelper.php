@@ -53,6 +53,10 @@ class LinkHelper implements ProtectedContextAwareInterface
      * @param NodeInterface $contextNode
      * @param ControllerContext $controllerContext
      * @return string
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     * @throws \Neos\Neos\Exception
      */
     public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext)
     {
