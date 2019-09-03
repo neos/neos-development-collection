@@ -406,6 +406,8 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
      */
     public function createRedirectToNode(ControllerContext $controllerContext, TraversableNodeInterface $node = null)
     {
+
+
         if ($node === null) {
             return '';
         }

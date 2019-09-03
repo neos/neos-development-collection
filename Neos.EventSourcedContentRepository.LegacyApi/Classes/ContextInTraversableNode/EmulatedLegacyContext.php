@@ -28,7 +28,7 @@ class EmulatedLegacyContext
 
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
+     * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
@@ -84,6 +84,13 @@ class EmulatedLegacyContext
             return $workspaceName->getName();
         }
         return null;
+    }
+
+    public function getWorkspace(): EmulatedLegacyWorkspace
+    {
+        $this->legacyLogger->info('context.workspace called', LogEnvironment::fromMethodName(__METHOD__));
+
+        return new EmulatedLegacyWorkspace($this->getNodeAddressOfContextNode());
     }
 
     public function __call($methodName, $args)

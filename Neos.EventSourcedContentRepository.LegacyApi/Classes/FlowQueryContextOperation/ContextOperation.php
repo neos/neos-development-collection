@@ -10,6 +10,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -42,11 +44,17 @@ class ContextOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
+
+    /**
+     * @Flow\Inject
      * @var LegacyLoggerInterface
      */
     protected $legacyLogger;
 
-    private const SUPPORTED_ADJUSTMENTS = ['invisibleContentShown'];
+    private const SUPPORTED_ADJUSTMENTS = ['invisibleContentShown', 'workspaceName'];
 
     public function canEvaluate($context)
     {
@@ -71,16 +79,24 @@ class ContextOperation extends AbstractOperation
 
         $output = [];
         foreach ($flowQuery->getContext() as $contextNode) {
+            /** @var TraversableNode $contextNode */
 
             // we start modifying the subgraph step-by-step.
             $subgraph = self::getSubgraphFromNode($contextNode);
 
-            /** @var TraversableNode $contextNode */
+            $visibilityConstraints = VisibilityConstraints::frontend();
             if (array_key_exists('invisibleContentShown', $targetContext)) {
                 $invisibleContentShown = boolval($targetContext['invisibleContentShown']);
 
                 $visibilityConstraints = ($invisibleContentShown ? VisibilityConstraints::withoutRestrictions() : VisibilityConstraints::frontend());
                 $subgraph = $this->contentGraph->getSubgraphByIdentifier($subgraph->getContentStreamIdentifier(), $subgraph->getDimensionSpacePoint(), $visibilityConstraints);
+            }
+
+            if (array_key_exists('workspaceName', $targetContext)) {
+                $workspaceName = new WorkspaceName($targetContext['workspaceName']);
+                $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+
+                $subgraph = $this->contentGraph->getSubgraphByIdentifier($workspace->getCurrentContentStreamIdentifier(), $subgraph->getDimensionSpacePoint(), $visibilityConstraints);
             }
 
             $nodeInModifiedSubgraph = $subgraph->findNodeByNodeAggregateIdentifier($contextNode->getNodeAggregateIdentifier());
