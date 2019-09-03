@@ -60,9 +60,9 @@ before_install:
 install:
   - composer self-update -q
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
-  - composer update --no-progress --no-interaction
+  - COMPOSER_MEMORY_LIMIT=-1 composer update --no-progress --no-interaction
   - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
-  - composer update --no-progress --no-interaction
+  - COMPOSER_MEMORY_LIMIT=-1 composer update --no-progress --no-interaction
 before_script:
   - echo 'date.timezone = "Africa/Tunis"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.fast_shutdown = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
