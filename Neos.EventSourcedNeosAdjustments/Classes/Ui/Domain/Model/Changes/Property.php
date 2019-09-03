@@ -28,6 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantS
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
@@ -94,6 +95,12 @@ class Property extends AbstractChange
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var ContentCacheFlusher
+     */
+    protected $contentCacheFlusher;
 
     /**
      * Set the property name
@@ -205,6 +212,8 @@ class Property extends AbstractChange
     {
         if ($this->canApply()) {
             $node = $this->getSubject();
+            $this->contentCacheFlusher->registerNodeChange($node);
+
             $propertyName = $this->getPropertyName();
 
             $propertyType = $node->getNodeType()->getPropertyType($propertyName);

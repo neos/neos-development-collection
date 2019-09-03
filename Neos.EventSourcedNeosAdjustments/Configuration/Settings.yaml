@@ -28,6 +28,7 @@ Neos:
       # TODO: maybe this helper must be exposed as Neos.Node
       Neos.EventSourcedNeosAdjustments.Node: Neos\EventSourcedNeosAdjustments\Fusion\Helper\NodeHelper
       Neos.Link: Neos\EventSourcedNeosAdjustments\Fusion\Helper\LinkHelper
+      Neos.Caching: Neos\EventSourcedNeosAdjustments\Fusion\Helper\CachingHelper
       Neos.EventSourcedNeosAdjustments.Ui.NodeInfo: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper
       Neos.EventSourcedNeosAdjustments.Ui.ContentDimensions: Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\ContentDimensionsHelper
   Neos:

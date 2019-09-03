@@ -77,6 +77,7 @@ class MoveAfter extends AbstractMove
                 RelationDistributionStrategy::gatherAll()
             );
 
+            $this->contentCacheFlusher->registerNodeChange($subject);
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
 
             $updateParentNodeInfo = new UpdateNodeInfo();

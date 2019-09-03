@@ -68,6 +68,7 @@ class MoveBefore extends AbstractMove
                 RelationDistributionStrategy::gatherAll()
             );
 
+            $this->contentCacheFlusher->registerNodeChange($subject);
             $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
 
             $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
