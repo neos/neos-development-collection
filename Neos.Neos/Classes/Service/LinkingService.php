@@ -123,10 +123,7 @@ class LinkingService
      */
     public function hasSupportedScheme($uri): bool
     {
-        if ($uri instanceof Uri) {
-            $uri = (string)$uri;
-        }
-        return preg_match(self::PATTERN_SUPPORTED_URIS, $uri) === 1;
+        return preg_match(self::PATTERN_SUPPORTED_URIS, (string)$uri) === 1;
     }
 
     /**
@@ -317,7 +314,7 @@ class LinkingService
             if (!in_array($requestUriHost, $activeHostPatterns, true)) {
                 $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
             } elseif ($absolute === true) {
-                $uri = $baseUri. ltrim($uri, '/');
+                $uri = $baseUri . ltrim($uri, '/');
             }
         } elseif ($absolute === true) {
             if (substr($uri, 0, 7) !== 'http://' && substr($uri, 0, 8) !== 'https://') {
@@ -351,7 +348,7 @@ class LinkingService
             $primaryDomain->getScheme() ?: $requestUri->getScheme(),
             $primaryDomain->getHostname(),
             $port && !in_array($port, [80, 443], true) ? ':' . $port : '',
-            rtrim((string) $baseUri, '/') // remove trailing slash, $uri has leading slash already
+            rtrim((string)$baseUri, '/') // remove trailing slash, $uri has leading slash already
         );
     }
 
