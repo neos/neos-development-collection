@@ -69,7 +69,7 @@ class HtmlAugmenter
         $domDocument = new \DOMDocument('1.0', 'UTF-8');
         // ignore parsing errors
         $useInternalErrorsBackup = libxml_use_internal_errors(true);
-        $domDocument->loadHTML($html);
+        $domDocument->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
         $xPath = new \DOMXPath($domDocument);
         $rootElement = $xPath->query('//html/body/*');
         if ($useInternalErrorsBackup !== true) {
