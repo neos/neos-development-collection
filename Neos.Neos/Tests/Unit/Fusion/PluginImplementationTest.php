@@ -69,19 +69,19 @@ class PluginImplementationTest extends UnitTestCase
         $this->pluginImplementation = $this->getAccessibleMock(PluginImplementation::class, ['buildPluginRequest'], [], '', false);
 
         $this->mockHttpUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpUri->expects(self::any())->method('getHost')->willReturn('localhost');
+        $this->mockHttpUri->method('getHost')->willReturn('localhost');
 
         $this->mockHttpRequest = $this->getMockBuilder(HttpRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequest->expects(self::any())->method('getUri')->willReturn($this->mockHttpUri);
+        $this->mockHttpRequest->method('getUri')->willReturn($this->mockHttpUri);
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockActionRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
 
         $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext->expects(self::any())->method('getRequest')->willReturn($this->mockActionRequest);
+        $this->mockControllerContext->method('getRequest')->willReturn($this->mockActionRequest);
 
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $this->mockRuntime->expects(self::any())->method('getControllerContext')->willReturn($this->mockControllerContext);
+        $this->mockRuntime->method('getControllerContext')->willReturn($this->mockControllerContext);
         $this->pluginImplementation->_set('runtime', $this->mockRuntime);
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->getMock();
@@ -120,13 +120,13 @@ class PluginImplementationTest extends UnitTestCase
      */
     public function evaluateSetHeaderIntoParent(string $message, array $input, array $expected): void
     {
-        $this->pluginImplementation->expects(self::any())->method('buildPluginRequest')->willReturn($this->mockActionRequest);
+        $this->pluginImplementation->method('buildPluginRequest')->willReturn($this->mockActionRequest);
 
         $parentResponse = new ActionResponse();
         $this->_setHeadersIntoResponse($parentResponse, $input['parent']);
-        $this->mockControllerContext->expects(self::any())->method('getResponse')->willReturn($parentResponse);
+        $this->mockControllerContext->method('getResponse')->willReturn($parentResponse);
 
-        $this->mockDispatcher->expects(self::any())->method('dispatch')->willReturnCallback(function (ActionRequest $request, ActionResponse $response) use ($input) {
+        $this->mockDispatcher->method('dispatch')->willReturnCallback(function (ActionRequest $request, ActionResponse $response) use ($input) {
             $this->_setHeadersIntoResponse($response, $input['plugin']);
         });
 
