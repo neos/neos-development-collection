@@ -215,7 +215,7 @@ class LinkingService
      * Renders the URI to a given node instance or -path.
      *
      * @param ControllerContext $controllerContext
-     * @param mixed $node A node object or a string node path, if a relative path is provided the baseNode argument is required
+     * @param NodeInterface|string|null $node A node object or a string node path, if a relative path is provided the baseNode argument is required
      * @param NodeInterface $baseNode
      * @param string $format Format to use for the URL, for example "html" or "json"
      * @param boolean $absolute If set, an absolute URI is rendered
@@ -230,7 +230,7 @@ class LinkingService
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function createNodeUri(ControllerContext $controllerContext, ?NodeInterface $node = null, ?NodeInterface $baseNode = null, ?string $format = null, bool $absolute = false, array $arguments = [], string $section = '', bool $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], bool $resolveShortcuts = true): string
+    public function createNodeUri(ControllerContext $controllerContext, $node = null, ?NodeInterface $baseNode = null, ?string $format = null, bool $absolute = false, array $arguments = [], string $section = '', bool $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], bool $resolveShortcuts = true): string
     {
         $this->lastLinkedNode = null;
         if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
