@@ -6,26 +6,24 @@
       defaultValue: ''
       ui:
         inlineEditable: true
-        aloha:
-          placeholder: i18n
-          autoparagraph: true
-          'format':
-            'strong': true
-            'em': true
-            'u': false
-            'sub': false
-            'sup': false
-            'del': false
-            'p': true
-            'h1': true
-            'h2': true
-            'h3': true
-            'pre': true
-            'removeFormat': true
-          'table':
-            'table': true
-          'list':
-            'ol': true
-            'ul': true
-          'link':
-            'a': true
+        inline:
+          editorOptions:
+            formatting:
+              strong: true
+              em: true
+              sub: false
+              sup: false
+              p: true
+              h1: true
+              h2: true
+              h3: true
+              pre: true
+              removeFormat: true
+              table: true
+              a: true
+              ol: true
+              ul: true
+              underline: false
+              strikethrough: false
+            autoparagraph: true
+            placeholder: i18n
