@@ -348,7 +348,7 @@ class LinkingService
             $primaryDomain->getScheme() ?: $requestUri->getScheme(),
             $primaryDomain->getHostname(),
             $port && !in_array($port, [80, 443], true) ? ':' . $port : '',
-            rtrim((string)$baseUri, '/') // remove trailing slash, $uri has leading slash already
+            rtrim((string)$baseUri->getPath(), '/') // remove trailing slash, $uri has leading slash already
         );
     }
 
