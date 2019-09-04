@@ -1,5 +1,6 @@
 <?php
 namespace Neos\Neos\ViewHelpers\Backend;
+
 /*
  * This file is part of the Neos.Neos package.
  *
@@ -12,6 +13,7 @@ namespace Neos\Neos\ViewHelpers\Backend;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Service\XliffService;
+
 /**
  * ViewHelper for rendering the current version identifier for the
  * xliff cache.
