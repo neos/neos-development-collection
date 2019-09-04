@@ -128,6 +128,19 @@ class XliffService
     }
 
     /**
+     * @return integer The current cache version identifier
+     */
+    public function getCacheVersion()
+    {
+        $version = $this->xliffToJsonTranslationsCache->get('ConfigurationVersion');
+        if ($version === false) {
+            $version = time();
+            $this->xliffToJsonTranslationsCache->set('ConfigurationVersion', (string)$version);
+        }
+        return $version;
+    }
+
+    /**
      * Collect all sources found in the given package as array (key = source, value = true)
      * If sourcesToBeIncluded is an array, only those sources are returned what match the wildcard-patterns in the
      * array-values
