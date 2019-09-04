@@ -5,7 +5,7 @@ const getCollectionValueByPath = (collection, path) => {
 		return null;
 	}
 
-	return path.split('.').reduce(function(value, index) {
+	return path.split('.').reduce((value, index) => {
 		return value[index];
 	}, collection);
 };
