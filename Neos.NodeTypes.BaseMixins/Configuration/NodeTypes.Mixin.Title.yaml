@@ -6,12 +6,12 @@
       defaultValue: '<h1>Enter headline here</h1>'
       ui:
         inlineEditable: true
-        aloha:
-          'format':
-            'p': false
-            'h1': true
-            'h2': true
-            'h3': true
-            'removeFormat': true
-          'link':
-            'a': true
+        inline:
+          editorOptions:
+            formatting:
+              p: false
+              h1: true
+              h2: true
+              h3: true
+              removeFormat: true
+              a: true
