@@ -1,13 +1,14 @@
 import Expandable from './Expandable';
-import { isNil, getItemByKeyValue } from '../../Helper';
+import { isNil, getCollectionValueByPath } from '../../Helper';
 
-const SESSION_KEY = 'Neos.Neos.menuSectionStates';
+const STORAGE_KEY = 'persistedState';
+const VALUE_PATH = 'ui.drawer.collapsedMenuGroups';
 export default class MenuPanel {
 	constructor(_root) {
 		this._root = _root;
 		this._button = this._root.querySelectorAll('.neos-menu-button');
 		this._panel = this._root.querySelectorAll('.neos-menu-panel');
-		this._menuSectionStates = this._loadSessionData();
+		this._menuSectionStates = this._loadMenuSectionStates();
 		this._setupEventListeners();
 
 		if (this._panel) {
@@ -18,16 +19,15 @@ export default class MenuPanel {
 	_initializeMenuSections() {
 		this._panel.forEach(_panel => {
 			const menuSectionElements = _panel.querySelectorAll('.neos-menu-section');
-			const { sections } = this._menuSectionStates;
+			const sections = this._menuSectionStates;
 			menuSectionElements.forEach(menuSectionElement => {
 				const sectionName = menuSectionElement.getAttribute('data-key');
-				const sectionState = getItemByKeyValue(sections, 'name', sectionName);
-				const initalState = !isNil(sectionState) ? sectionState.open : false;
+				const sectionState = !sections.includes(sectionName);
 				new Expandable(
 					menuSectionElement,
 					'.neos-menu-panel-toggle',
 					this._onMenuSectionStateChange.bind(this),
-					initalState
+					sectionState
 				);
 			});
 		});
@@ -39,37 +39,48 @@ export default class MenuPanel {
 		});
 	}
 
-	_loadSessionData() {
-		const sessionData = sessionStorage.getItem(SESSION_KEY);
-		if (isNil(sessionData)) {
-			const initialSessionData = { sections: [] };
-			sessionStorage.setItem(SESSION_KEY, JSON.stringify(initialSessionData));
-			return initialSessionData;
+	_loadStorageData() {
+		const storageData = localStorage.getItem(STORAGE_KEY);
+		if (isNil(storageData)) {
+			const initialStorageData = {
+				ui: {
+					drawer: {
+						collapsedMenuGroups: []
+					}
+				}
+			};
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(initialStorageData));
+			return initialStorageData;
 		}
 
-		return JSON.parse(sessionData);
+		return JSON.parse(storageData);
+	}
+
+	_loadMenuSectionStates() {
+		const storageData = this._loadStorageData();
+		return getCollectionValueByPath(storageData, VALUE_PATH);
+	}
+
+	_saveMenuSectionStates() {
+		const storageData = this._loadStorageData();
+		if (!isNil(storageData) && Array.isArray(this._menuSectionStates)) {
+			storageData.ui.drawer.collapsedMenuGroups = this._menuSectionStates;
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(storageData));
+		}
 	}
 
 	_onMenuSectionStateChange(sectionName, newValue) {
-		const { sections } = this._menuSectionStates;
-		const sectionState = getItemByKeyValue(sections, 'name', sectionName);
-		if (isNil(sections)) {
-			this._menuSectionStates.sections = [];
+		if (this._menuSectionStates.includes(sectionName) && newValue === true) {
+			this._menuSectionStates = this._menuSectionStates.filter(
+				item => item !== sectionName
+			);
 		}
 
-		if (isNil(sectionState)) {
-			this._menuSectionStates.sections.push({
-				name: sectionName,
-				open: newValue
-			});
-		} else {
-			sectionState.open = newValue;
+		if (!this._menuSectionStates.includes(sectionName) && newValue === false) {
+			this._menuSectionStates.push(sectionName);
 		}
 
-		sessionStorage.setItem(
-			SESSION_KEY,
-			JSON.stringify(this._menuSectionStates)
-		);
+		this._saveMenuSectionStates();
 	}
 
 	_toggle(_event) {
