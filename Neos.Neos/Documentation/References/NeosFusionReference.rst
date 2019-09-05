@@ -837,7 +837,7 @@ arbitrary logic.
 :controller: (array) The controller name (e.g. 'Registration')
 :action: (string) The action name, defaults to `'index'`
 :argumentNamespace: (string) Namespace for action arguments, will be resolved from node type by default
-:[key]: (mixed) Pass an internal argument to the controller action (access with argument name ``_key``)
+:[key]: (mixed) Pass an internal argument to the controller action (access with argument name ``__key``)
 
 Example::
 
@@ -845,6 +845,23 @@ Example::
 		package = 'My.Site'
 		controller = 'Registration'
 	}
+  
+Example with argument passed to controller action::
+
+  prototype(My.Site:Registration) < prototype(Neos.Neos:Plugin) {
+    package = 'My.Site'
+    controller = 'Registration'
+    action = 'register'
+    additionalArgument = 'foo'
+  }
+  
+Get argument in controller action::
+
+  public function registerAction()
+  {
+    $additionalArgument = $this->request->getInternalArgument('__additionalArgument');
+    [...]
+  }
 
 .. _Neos_Neos__Menu:
 
