@@ -55,7 +55,7 @@ class NodeImportServiceTest extends UnitTestCase
 
         $expectedNodeData = [
             'identifier' => '995c9174-ddd6-4d5c-cfc0-1ffc82184677',
-            'nodeType' => 'Neos.NodeTypes:Page',
+            'nodeType' => 'Acme.Com:Page',
             'workspace' => 'live',
             'sortingIndex' => '100',
             'version' => '14',
@@ -121,7 +121,7 @@ class NodeImportServiceTest extends UnitTestCase
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
         $expectedNodeData = [
-            'nodeType' => 'Neos.NodeTypes:Page',
+            'nodeType' => 'Acme.Com:Page',
             'workspace' => 'live',
             'sortingIndex' => '100',
             'version' => '14',
@@ -176,7 +176,7 @@ class NodeImportServiceTest extends UnitTestCase
         $expectedNodeDatas = [
             [
                 'identifier' => '995c9174-ddd6-4d5c-cfc0-1ffc82184677',
-                'nodeType' => 'Neos.NodeTypes:Page',
+                'nodeType' => 'Acme.Com:Page',
                 'workspace' => 'live',
                 'sortingIndex' => '100',
                 'version' => '14',
@@ -251,7 +251,7 @@ class NodeImportServiceTest extends UnitTestCase
             ],
             [
                 'identifier' => 'e45e3b2c-3f14-2c14-6230-687fa4696504',
-                'nodeType' => 'Neos.NodeTypes:AssetList',
+                'nodeType' => 'Acme.Com:AssetList',
                 'workspace' => 'live',
                 'sortingIndex' => '300',
                 'version' => '3',
@@ -344,7 +344,7 @@ class NodeImportServiceTest extends UnitTestCase
         $expectedNodeDatas = [
             [
                 'identifier' => 'e45e3b2c-3f14-2c14-6230-687fa4696504',
-                'nodeType' => 'Neos.NodeTypes:Page',
+                'nodeType' => 'Acme.Com:Page',
                 'workspace' => 'live',
                 'sortingIndex' => '300',
                 'version' => '3',
