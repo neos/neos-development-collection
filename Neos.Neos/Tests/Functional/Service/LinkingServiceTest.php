@@ -12,7 +12,6 @@ namespace Neos\Neos\Tests\Functional\Service;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
