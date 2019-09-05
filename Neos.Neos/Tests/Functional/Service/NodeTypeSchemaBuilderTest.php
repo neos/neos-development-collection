@@ -58,16 +58,19 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
      */
     public function nodeTypesContainCorrectSuperTypes()
     {
-        self::assertTrue(array_key_exists('Neos.Neos.BackendSchemaControllerTest:AlohaNodeType', $this->schema['nodeTypes']), 'AlohaNodeType');
+        self::assertTrue(array_key_exists('Neos.Neos.BackendSchemaControllerTest:SimpleNodeType', $this->schema['nodeTypes']), 'AlohaNodeType');
 
-        $expectedSuperTypes = ['Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType' => true];
+        $expectedSuperTypes = ['Neos.Neos.BackendSchemaControllerTest:ParentSimpleNodeType' => true];
         $expectedPropertyConfiguration = [
-            'alignment' => ['left', 'center', 'right'],
-            'format' => ['h3', 'sup']
+            'type' => 'integer',
+            'ui' => [
+                'label' => 'suddenly 0'
+            ],
+            'defaultValue' => 0
         ];
 
-        self::assertEquals($expectedSuperTypes, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['superTypes']);
-        self::assertEquals($expectedPropertyConfiguration, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['properties']['text']['ui']['aloha']);
+        self::assertEquals($expectedSuperTypes, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:SimpleNodeType']['superTypes']);
+        self::assertEquals($expectedPropertyConfiguration, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:SimpleNodeType']['properties']['text']);
     }
 
     /**
