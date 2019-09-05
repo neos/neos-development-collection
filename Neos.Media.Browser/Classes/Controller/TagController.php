@@ -28,6 +28,8 @@ use Neos\Media\Domain\Repository\TagRepository;
  */
 class TagController extends ActionController
 {
+    use AddFlashMessageTrait;
+
     /**
      * @Flow\Inject
      * @var AssetCollectionRepository
