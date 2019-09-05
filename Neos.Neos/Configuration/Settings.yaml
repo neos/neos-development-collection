@@ -71,7 +71,7 @@ Neos:
 
       # The number of seconds to wait before giving up on loading a script.
       # The default in requireJs is 7 seconds but on slow clients with slow internetconnections
-      # in combination with big Document Nodes it can happen that the Inspector Editors and Aloha
+      # in combination with big Document Nodes it can happen that the inspector and inline Editors
       # can not be loaded. http://requirejs.org/docs/api.html#config-waitSeconds
       requireJsWaitSeconds: 30
 
