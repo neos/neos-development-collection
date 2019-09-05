@@ -36,7 +36,7 @@ class ContentCacheTest extends UnitTestCase
         return [
             ['Everything', 'Everything'],
             ['Node_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef', 'Node_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef'],
-            ['NodeType_Neos.NodeTypes:Page', 'NodeType_Neos_NodeTypes-Page'],
+            ['NodeType_Acme.Com:Page', 'NodeType_Acme_Com-Page'],
             [
                 'DescendentOf_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef',
                 'DescendentOf_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef'
