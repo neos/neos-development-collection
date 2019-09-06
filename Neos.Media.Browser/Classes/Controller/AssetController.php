@@ -17,7 +17,6 @@ use Doctrine\ORM\EntityNotFoundException;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
@@ -72,6 +71,7 @@ class AssetController extends ActionController
 {
     use CreateContentContextTrait;
     use BackendUserTranslationTrait;
+    use AddFlashMessageTrait;
 
     protected const TAG_GIVEN = 0;
     protected const TAG_ALL = 1;
@@ -135,12 +135,6 @@ class AssetController extends ActionController
      * @var AssetService
      */
     protected $assetService;
-
-    /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
 
     /**
      * @Flow\Inject
@@ -812,26 +806,6 @@ class AssetController extends ActionController
         }
 
         return new Error($errorMessage, null, [get_class($this), $this->actionMethodName]);
-    }
-
-    /**
-     * Add a translated flashMessage.
-     *
-     * @param string $messageBody The translation id for the message body.
-     * @param string $messageTitle The translation id for the message title.
-     * @param string $severity
-     * @param array $messageArguments
-     * @param integer $messageCode
-     * @return void
-     */
-    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null): void
-    {
-        if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'Neos.Media.Browser') ?: $messageBody;
-        }
-
-        $messageTitle = (string)$this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'Neos.Media.Browser');
-        parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 
     /**
