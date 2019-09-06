@@ -15,7 +15,6 @@ use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
@@ -115,8 +114,9 @@ class NodeViewHelperTest extends FunctionalTestCase
 
         /** @var $requestHandler FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $httpRequest = $requestHandler->getHttpRequest();
-        $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::BASE_URI, new Uri('http://neos.test/'));
+        $httpRequest = $requestHandler->getComponentContext()->getHttpRequest();
+        $httpRequest = $httpRequest->withUri(new Uri('http://neos.test/'));
+        $requestHandler->getComponentContext()->replaceHttpRequest($httpRequest);
         $controllerContext = new ControllerContext(ActionRequest::fromHttpRequest($httpRequest), new ActionResponse(), new Arguments([]), new UriBuilder());
         $this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
