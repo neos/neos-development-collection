@@ -132,7 +132,7 @@
       type: 'Neos.Neos:ContentCollection'
       constraints:
         nodeTypes:
-          'Neos.Neos.BackendSchemaControllerTest:AlohaNodeType': true
+          'Neos.Neos.BackendSchemaControllerTest:SimpleNodeType': true
     column1:
       type: 'Neos.Neos:ContentCollection'
       constraints:
