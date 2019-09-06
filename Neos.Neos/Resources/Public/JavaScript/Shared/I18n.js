@@ -81,6 +81,12 @@ define(
 		 * @returns {string}
 		 */
 		translate: function(id, fallback, packageKey, source, parameters, context) {
+			// Prevent caching missing keys when used too early
+			if (this.get('initialized') === false) {
+				console.error('Labels not initialized when trying to translate "' + id + '"');
+				return;
+			}
+
 			var translatedValue, translationParts;
 			fallback = fallback || id;
 			packageKey = packageKey || this.defaultPackage;
