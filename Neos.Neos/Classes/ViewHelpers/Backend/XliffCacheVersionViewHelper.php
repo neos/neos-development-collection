@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
@@ -28,7 +30,7 @@ class XliffCacheVersionViewHelper extends AbstractViewHelper
     /**
      * @return string The current cache version identifier
      */
-    public function render()
+    public function render(): string
     {
         return $this->xliffService->getCacheVersion();
     }
