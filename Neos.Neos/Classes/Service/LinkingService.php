@@ -332,7 +332,7 @@ class LinkingService
                 $uri = $baseUri . ltrim($uri, '/');
             }
         } elseif ($absolute === true) {
-            if (strpos($uri, 'http://') !== 0 && strpos($uri, 'https://') !== 0) {
+            if (strncmp($uri, 'http://', 7) !== 0 && strncmp($uri, 'https://', 8) !== 0) {
                 $uri = $baseUri . ltrim($uri, '/');
             }
         }
