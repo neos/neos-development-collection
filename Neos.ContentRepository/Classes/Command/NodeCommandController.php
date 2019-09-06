@@ -68,7 +68,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      *
      * ./flow node:repair
      *
-     * ./flow node:repair --node-type Neos.NodeTypes:Page
+     * ./flow node:repair --node-type Acme.Com:Page
      *
      * ./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions
      *

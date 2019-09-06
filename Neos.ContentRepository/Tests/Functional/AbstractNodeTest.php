@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Tests\Functional;
  * source code.
  */
 
-use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Domain\Service\SiteImportService;
@@ -72,21 +71,10 @@ abstract class AbstractNodeTest extends FunctionalTestCase
      */
     protected $liveWorkspace;
 
-    /**
-     * @param string $name
-     * @param array $data
-     * @param string $dataName
-     */
-    public function __construct($name = null, array $data = [], $dataName = '')
-    {
-        parent::__construct($name, $data, $dataName);
-        $this->fixtureFileName = __DIR__ . '/Fixtures/NodeStructure.xml';
-    }
-
     public function setUp(): void
     {
+        $this->fixtureFileName = __DIR__ . '/Fixtures/NodeStructure.xml';
         parent::setUp();
-        $this->markSkippedIfNodeTypesPackageIsNotInstalled();
 
         if ($this->liveWorkspace === null) {
             $this->liveWorkspace = new Workspace('live');
@@ -111,10 +99,10 @@ abstract class AbstractNodeTest extends FunctionalTestCase
     /**
      * Retrieve a node through the property mapper
      *
-     * @param $contextPath
+     * @param string $contextPath
      * @return NodeInterface
      */
-    protected function getNodeWithContextPath($contextPath)
+    protected function getNodeWithContextPath(string $contextPath): NodeInterface
     {
         /* @var $propertyMapper PropertyMapper */
         $propertyMapper = $this->objectManager->get(PropertyMapper::class);
@@ -128,13 +116,5 @@ abstract class AbstractNodeTest extends FunctionalTestCase
         parent::tearDown();
 
         $this->inject($this->contextFactory, 'contextInstances', []);
-    }
-
-    protected function markSkippedIfNodeTypesPackageIsNotInstalled()
-    {
-        $packageManager = $this->objectManager->get(PackageManager::class);
-        if (!$packageManager->isPackageAvailable('Neos.NodeTypes')) {
-            $this->markTestSkipped('This test needs the Neos.NodeTypes package.');
-        }
     }
 }

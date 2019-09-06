@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <nodes formatVersion="2.0">
 	<node identifier="995c9174-ddd6-4d5c-cfc0-1ffc82184677" nodeName="neosdemotypo3org">
-		<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="14" removed="" hidden="" hiddenInIndex="">
+		<variant sortingIndex="100" workspace="live" nodeType="Acme.Com:Page" version="14" removed="" hidden="" hiddenInIndex="">
 			<dimensions>
 				<language>en_US</language>
 				<language>en_UK</language>
