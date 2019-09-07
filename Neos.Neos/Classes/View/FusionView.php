@@ -86,7 +86,8 @@ class FusionView extends AbstractView
         if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
             $currentLocale = new Locale($dimensions['language'][0]);
             $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => false, 'order' => array_reverse($dimensions['language'])]);
+            array_shift($dimensions['language']);
+            $this->i18nService->getConfiguration()->setFallbackRule(['strict' => true, 'order' => $dimensions['language']]);
         }
 
         $fusionRuntime->pushContextArray([
