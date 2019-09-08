@@ -29,7 +29,7 @@
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
         "neos/form": "*",
-        "neos/kickstarter": "*"
+        "neos/kickstarter": "~6.0.0"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
