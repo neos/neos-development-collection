@@ -1,8 +1,9 @@
 <?php
 namespace Neos\Fusion\Afx\Tests\Functional;
 
-use PHPUnit\Framework\TestCase;
+use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Parser;
+use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
@@ -10,7 +11,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseEmptyCode()
+    public function shouldParseEmptyCode(): void
     {
         $parser = new Parser('');
 
@@ -23,7 +24,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseBlankCode()
+    public function shouldParseBlankCode(): void
     {
         $parser = new Parser('    ');
 
@@ -41,7 +42,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseSingleTag()
+    public function shouldParseSingleTag(): void
     {
         $parser = new Parser('<div></div>');
 
@@ -61,12 +62,10 @@ class ParserTest extends TestCase
         );
     }
 
-
-
     /**
      * @test
      */
-    public function shouldParseSingleSelfClosingTag()
+    public function shouldParseSingleSelfClosingTag(): void
     {
         $parser = new Parser('<div/>');
 
@@ -89,7 +88,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseSingleSelfClosingTagWithWhitespaces()
+    public function shouldParseSingleSelfClosingTagWithWhitespaces(): void
     {
         $parser = new Parser('<div   />');
 
@@ -112,7 +111,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseSingleTagWithWhitespaces()
+    public function shouldParseSingleTagWithWhitespaces(): void
     {
         $parser = new Parser('<div   ></div>');
 
@@ -135,7 +134,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseSingleSelfClosingTagWithSingleAttribute()
+    public function shouldParseSingleSelfClosingTagWithSingleAttribute(): void
     {
         $parser = new Parser('<div prop="value"/>');
 
@@ -167,7 +166,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseSingleSelfClosingTagWithMultipleAttributes()
+    public function shouldParseSingleSelfClosingTagWithMultipleAttributes(): void
     {
         $parser = new Parser('<div prop="value" anotherProp="Another Value"/>');
 
@@ -207,7 +206,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseSingleSelfClosingTagWithMultipleAttributesWrappedByMultipleWhitespaces()
+    public function shouldParseSingleSelfClosingTagWithMultipleAttributesWrappedByMultipleWhitespaces(): void
     {
         $parser = new Parser('<div   prop="value"    anotherProp="Another Value"  />');
 
@@ -247,7 +246,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseSpreads()
+    public function shouldParseSpreads(): void
     {
         $parser = new Parser('<div {...item} />');
 
@@ -278,7 +277,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseSpreadsAndPropsInOrder()
+    public function shouldParseSpreadsAndPropsInOrder(): void
     {
         $parser = new Parser('<div foo="string" {...item} bar={expression} />');
 
@@ -325,7 +324,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseListOfTags()
+    public function shouldParseListOfTags(): void
     {
         $parser = new Parser('<div></div><span></span><h1></h1>');
 
@@ -366,7 +365,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseListOfTagsAndTextsWithTextOutside()
+    public function shouldParseListOfTagsAndTextsWithTextOutside(): void
     {
         $parser = new Parser('foo<div></div>bar');
 
@@ -397,7 +396,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseListOfTagsAndTextsWithTagsOutside()
+    public function shouldParseListOfTagsAndTextsWithTagsOutside(): void
     {
         $parser = new Parser('<div></div>foobar<span></span>');
 
@@ -433,7 +432,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseListOfTagsAndTextsWithWhitepaceOutside()
+    public function shouldParseListOfTagsAndTextsWithWhitepaceOutside(): void
     {
         $parser = new Parser('    <div></div>    ');
 
@@ -464,7 +463,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function propsCanHaveDashesInTheirName()
+    public function propsCanHaveDashesInTheirName(): void
     {
         $parser = new Parser('<div prop-1="value" prop-2="Another Value"/>');
 
@@ -504,7 +503,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseSingleTagWithSeparateClosingTag()
+    public function shouldParseSingleTagWithSeparateClosingTag(): void
     {
         $parser = new Parser('<div></div>');
 
@@ -527,7 +526,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseSingleTagWithSeparateClosingTagAndOneChild()
+    public function shouldParseSingleTagWithSeparateClosingTagAndOneChild(): void
     {
         $parser = new Parser('<div>Hello World!</div>');
 
@@ -555,7 +554,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseNestedSelfClosingTag()
+    public function shouldParseNestedSelfClosingTag(): void
     {
         $parser = new Parser('<div><input/></div>');
 
@@ -588,7 +587,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseNestedTags()
+    public function shouldParseNestedTags(): void
     {
         $parser = new Parser('<article><header><div>Header</div></header><div>Content</div><footer><div>Footer</div></footer></article>');
 
@@ -674,7 +673,7 @@ class ParserTest extends TestCase
     /**
      * @test
      */
-    public function shouldHandleWhitespace()
+    public function shouldHandleWhitespace(): void
     {
         $parser = new Parser('   <div>
 							<input/>
@@ -750,60 +749,60 @@ class ParserTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
-    public function shouldThrowExceptionForUnclosedTag()
+    public function shouldThrowExceptionForUnclosedTag(): void
     {
+        $this->expectException(AfxParserException::class);
         $parser = new Parser('<div');
         $parser->parse();
     }
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
-    public function shouldThrowExceptionForUnclosedTagWithContent()
+    public function shouldThrowExceptionForUnclosedTagWithContent(): void
     {
+        $this->expectException(AfxParserException::class);
         $parser = new Parser('<div>foo');
         $parser->parse();
     }
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
-    public function shouldThrowExceptionForUnclosedStringAttribute()
+    public function shouldThrowExceptionForUnclosedStringAttribute(): void
     {
+        $this->expectException(AfxParserException::class);
         $parser = new Parser('<div foo="bar />');
         $parser->parse();
     }
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
-    public function shouldThrowExceptionForUnclosedAttributeExpression()
+    public function shouldThrowExceptionForUnclosedAttributeExpression(): void
     {
+        $this->expectException(AfxParserException::class);
         $parser = new Parser('<div foo={bar() />');
         $parser->parse();
     }
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
-    public function shouldThrowExceptionForUnclosedContentExpression()
+    public function shouldThrowExceptionForUnclosedContentExpression(): void
     {
+        $this->expectException(AfxParserException::class);
         $parser = new Parser('<div>{bar()</div>');
         $parser->parse();
     }
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Afx\Parser\AfxParserException
      */
-    public function shouldThrowExceptionForUnclosedSpreadExpression()
+    public function shouldThrowExceptionForUnclosedSpreadExpression(): void
     {
+        $this->expectException(AfxParserException::class);
         $parser = new Parser('<div {...bar() />');
         $parser->parse();
     }
