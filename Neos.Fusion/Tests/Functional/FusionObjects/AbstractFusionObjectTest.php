@@ -11,8 +11,6 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
