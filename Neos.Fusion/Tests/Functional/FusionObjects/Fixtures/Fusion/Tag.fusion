@@ -32,6 +32,13 @@ tag.arrayAttributes = Tag {
 	}
 }
 
+tag.dataStructureAttributes = Tag {
+  attributes = Neos.Fusion:DataStructure {
+    key = 'value'
+    list = ${['foo', 'bar']}
+  }
+}
+
 tag.plainContent = Tag {
 	tagName = 'span'
 	content = 'test'
