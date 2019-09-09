@@ -77,6 +77,42 @@ class TagImplementation extends AbstractFusionObject
         if (!$omitClosingTag && !$selfClosingTag) {
             $content = $this->fusionValue('content');
         }
-        return '<' . $tagName . $this->fusionValue('attributes') . ($selfClosingTag ? ' /' : '') . '>' . (!$omitClosingTag && !$selfClosingTag ? $content . '</' . $tagName . '>' : '');
+        $attributes = $this->fusionValue('attributes');
+        if (is_array($attributes)) {
+            $renderedAttributes = self::renderAttributes($attributes, true);
+        } else {
+            $renderedAttributes = (string)$attributes;
+        }
+        return '<' . $tagName . $renderedAttributes . ($selfClosingTag ? ' /' : '') . '>' . (!$omitClosingTag && !$selfClosingTag ? $content . '</' . $tagName . '>' : '');
+    }
+
+    /**
+     * @param array $attributes
+     * @param bool $allowEmpty
+     */
+    public static function renderAttributes(array $attributes, $allowEmpty = true): string
+    {
+        $renderedAttributes = '';
+        foreach ($attributes as $attributeName => $attributeValue) {
+            $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', false);
+            if ($attributeValue === null || $attributeValue === false) {
+                // No op
+            } elseif ($attributeValue === true || $attributeValue === '') {
+                $renderedAttributes .= ' ' . $encodedAttributeName . ($allowEmpty ? '' : '=""');
+            } else {
+                if (is_array($attributeValue)) {
+                    $joinedAttributeValue = '';
+                    foreach ($attributeValue as $attributeValuePart) {
+                        if ((string)$attributeValuePart !== '') {
+                            $joinedAttributeValue .= ' ' . trim($attributeValuePart);
+                        }
+                    }
+                    $attributeValue = trim($joinedAttributeValue);
+                }
+                $encodedAttributeValue = htmlspecialchars($attributeValue, ENT_COMPAT, 'UTF-8', false);
+                $renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
+            }
+        }
+        return $renderedAttributes;
     }
 }
