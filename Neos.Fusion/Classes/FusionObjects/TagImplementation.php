@@ -94,10 +94,11 @@ class TagImplementation extends AbstractFusionObject
     {
         $renderedAttributes = '';
         foreach ($attributes as $attributeName => $attributeValue) {
-            $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', false);
             if ($attributeValue === null || $attributeValue === false) {
-                // No op
-            } elseif ($attributeValue === true || $attributeValue === '') {
+                continue;
+            }
+            $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', false);
+            if ($attributeValue === true || $attributeValue === '') {
                 $renderedAttributes .= ' ' . $encodedAttributeName . ($allowEmpty ? '' : '=""');
             } else {
                 if (is_array($attributeValue)) {
