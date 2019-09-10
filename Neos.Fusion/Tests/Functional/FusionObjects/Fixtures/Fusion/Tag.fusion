@@ -1,4 +1,5 @@
 prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
 prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:Tag) {
 	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
@@ -30,6 +31,13 @@ tag.arrayAttributes = Tag {
 		class.a = 'a'
 		class.b = 'b'
 	}
+}
+
+tag.fusionAttributes = Tag {
+  attributes = Neos.Fusion:Attributes {
+    key = 'value'
+    list = ${['foo', 'bar']}
+  }
 }
 
 tag.dataStructureAttributes = Tag {
