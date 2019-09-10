@@ -63,6 +63,43 @@ class TagImplementation extends AbstractFusionObject
         return in_array($tagName, self::$SELF_CLOSING_TAGS, true) || (boolean)$this->fusionValue('selfClosingTag');
     }
 
+
+    /**
+     * The tag content
+     *
+     * @return string
+     */
+    protected function getContent()
+    {
+        return $this->fusionValue('content');
+    }
+
+    /**
+     * The tag attributes dataStructure
+     * If anything but an array is returned the value is casted to string
+     *
+     * @return array|string
+     */
+    protected function getAttributes()
+    {
+        return $this->fusionValue('attributes');
+    }
+
+    /**
+     * Whether empty attributes (HTML5 syntax) should be allowed
+     *
+     * @return boolean
+     */
+    protected function getAllowEmptyAttributes()
+    {
+        $allowEmpty = $this->fusionValue('allowEmptyAttributes');
+        if ($allowEmpty === null) {
+            return true;
+        } else {
+            return (boolean)$allowEmpty;
+        }
+    }
+
     /**
      * Return a tag
      *
@@ -75,11 +112,12 @@ class TagImplementation extends AbstractFusionObject
         $selfClosingTag = $this->isSelfClosingTag($tagName);
         $content = '';
         if (!$omitClosingTag && !$selfClosingTag) {
-            $content = $this->fusionValue('content');
+            $content = $this->getContent();
         }
-        $attributes = $this->fusionValue('attributes');
-        if (is_array($attributes)) {
-            $renderedAttributes = self::renderAttributes($attributes, true);
+        $attributes = $this->getAttributes();
+        $allowEmptyAttributes = $this->getAllowEmptyAttributes();
+        if (is_iterable($attributes)) {
+            $renderedAttributes = self::renderAttributes($attributes, $allowEmptyAttributes);
         } else {
             $renderedAttributes = (string)$attributes;
         }
@@ -87,10 +125,13 @@ class TagImplementation extends AbstractFusionObject
     }
 
     /**
-     * @param array $attributes
+     * Render the tag attributes for the given key->values as atring,
+     * if an value is an iterable it will be concatenated with spaces as seperator
+     *
+     * @param iterable $attributes
      * @param bool $allowEmpty
      */
-    public static function renderAttributes(array $attributes, $allowEmpty = true): string
+    protected function renderAttributes(iterable $attributes, $allowEmpty = true): string
     {
         $renderedAttributes = '';
         foreach ($attributes as $attributeName => $attributeValue) {

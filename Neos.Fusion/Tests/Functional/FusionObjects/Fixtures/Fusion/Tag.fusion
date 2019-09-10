@@ -1,8 +1,8 @@
 prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
-prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
+prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:Tag) {
 	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
-	attributes = Attributes
+	attributes = Neos.Fusion:DataStructure
 	omitClosingTag = false
 	selfClosingTag = false
 }
@@ -36,6 +36,32 @@ tag.dataStructureAttributes = Tag {
   attributes = Neos.Fusion:DataStructure {
     key = 'value'
     list = ${['foo', 'bar']}
+  }
+}
+
+tag.booleanAttributes = Tag {
+  attributes = Neos.Fusion:DataStructure {
+    foo = true
+    bar = false
+    baz = null
+  }
+}
+
+tag.booleanAttributesAndForbiddenEmptyAttributes = Tag {
+  allowEmptyAttributes = false
+  attributes = Neos.Fusion:DataStructure {
+    foo = true
+    bar = false
+    baz = null
+  }
+}
+
+tag.booleanAttributesAndAllowEmptyAttributes = Tag {
+  allowEmptyAttributes = true
+  attributes = Neos.Fusion:DataStructure {
+    foo = true
+    bar = false
+    baz = null
   }
 }
 
