@@ -24,6 +24,7 @@ namespace Neos\Fusion\FusionObjects;
  * attributes.id = 'my-id'
  *
  * will result in the string: class="class1 class2" id="my-id"
+ * @deprecated since Neos 5.0 in favor of TagImplementation or JoinImplementation
  */
 class AttributesImplementation extends AbstractArrayFusionObject
 {
