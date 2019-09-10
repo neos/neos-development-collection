@@ -78,7 +78,7 @@ class TagImplementation extends AbstractFusionObject
      * The tag attributes dataStructure
      * If anything but an iterable is returned the value is casted to string
      *
-     * @return array|string
+     * @return iterable|string
      */
     protected function getAttributes()
     {
