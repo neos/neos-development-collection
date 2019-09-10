@@ -33,14 +33,34 @@ class AttributesImplementation extends AbstractArrayFusionObject
     public function evaluate()
     {
         $allowEmpty = $this->getAllowEmpty();
-        $attributes = [];
+
+        $renderedAttributes = '';
         foreach (array_keys($this->properties) as $attributeName) {
             if ($attributeName === '__meta' || in_array($attributeName, $this->ignoreProperties)) {
                 continue;
             }
-            $attributes[$attributeName] = $this->fusionValue($attributeName);
+
+            $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', false);
+            $attributeValue = $this->fusionValue($attributeName);
+            if ($attributeValue === null || $attributeValue === false) {
+                // No op
+            } elseif ($attributeValue === true || $attributeValue === '') {
+                $renderedAttributes .= ' ' . $encodedAttributeName . ($allowEmpty ? '' : '=""');
+            } else {
+                if (is_array($attributeValue)) {
+                    $joinedAttributeValue = '';
+                    foreach ($attributeValue as $attributeValuePart) {
+                        if ((string)$attributeValuePart !== '') {
+                            $joinedAttributeValue .= ' ' . trim($attributeValuePart);
+                        }
+                    }
+                    $attributeValue = trim($joinedAttributeValue);
+                }
+                $encodedAttributeValue = htmlspecialchars($attributeValue, ENT_COMPAT, 'UTF-8', false);
+                $renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
+            }
         }
-        return TagImplementation::renderAttributes($attributes, $allowEmpty);
+        return $renderedAttributes;
     }
 
     /**
