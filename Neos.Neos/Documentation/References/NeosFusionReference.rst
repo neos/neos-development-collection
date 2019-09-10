@@ -501,9 +501,9 @@ render the attributes of a tag. But it's also useful standalone to render extens
 :[key]: (string) A single attribute, array values are joined with whitespace. Boolean values will be rendered as an empty or absent attribute.
 :@allowEmpty: (boolean) Whether empty attributes (HTML5 syntax) should be used for empty, false or null attribute values
 
-.. note:: The ``Neos.Fusion:Attributes`` object is DEPRECATED in favor of a solution inside Neos.Fusion:Tag which takey attributes
+.. note:: The ``Neos.Fusion:Attributes`` object is DEPRECATED in favor of a solution inside Neos.Fusion:Tag which takes attributes
    as ``Neos.Fusion:DataStructure`` now. If you have to render attributes as string without a tag you can use
-   ``Neos.Fusion:Join`` with ``@glue`.
+   ``Neos.Fusion:Join`` with ``@glue` but you will have to concatenate array attributes yourself.
 
 Example:
 ^^^^^^^^
