@@ -104,7 +104,7 @@ prototype(Neos.Fusion:Attributes) {
 #
 prototype(Neos.Fusion:Tag) {
 	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
-	attributes = Neos.Fusion:Attributes
+	attributes = Neos.Fusion:DataStructure
 	omitClosingTag = false
 	selfClosingTag = false
 }
