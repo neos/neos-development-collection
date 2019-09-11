@@ -358,8 +358,8 @@ class SequenceMatcher
             return $this->matchingBlocks;
         }
 
-        $aLength = count($this->a);
-        $bLength = count($this->b);
+        $aLength = $this->a === null ? 0 : count($this->a);
+        $bLength = $this->b === null ? 0 : count($this->b);
 
         $queue = array(
             array(
