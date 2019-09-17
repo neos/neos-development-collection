@@ -20,10 +20,10 @@
 			<target state="translated">Aplicar cambios</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target state="translated">Cancelar</target></trans-unit>
+			<target state="final">Cancelar</target></trans-unit>
       <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
-			<target state="translated">Atrás</target></trans-unit>
+			<target state="final">Atrás</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			<target state="translated">Elegir</target></trans-unit>
@@ -134,7 +134,7 @@
 			<target state="translated">Contraseña</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve" approved="yes">
 				<source>Preview</source>
-			<target state="translated">Vista previa</target></trans-unit>
+			<target state="final">Vista previa</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
 			<target state="translated">Publicar</target></trans-unit>
@@ -173,7 +173,7 @@
 			<target state="translated">Actualizar</target></trans-unit>
       <trans-unit id="save" xml:space="preserve" approved="yes">
 				<source>Save</source>
-			<target state="translated">Guardar</target></trans-unit>
+			<target state="final">Guardar</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
 			<target state="translated">Guardando...</target></trans-unit>
@@ -182,7 +182,7 @@
 			<target state="translated">Guardado</target></trans-unit>
       <trans-unit id="search" xml:space="preserve" approved="yes">
 				<source>Search</source>
-			<target state="translated">Buscar</target></trans-unit>
+			<target state="final">Buscar</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
 			<target state="translated">Alternar inspector</target></trans-unit>
@@ -227,7 +227,7 @@
 			<target state="translated">Última publicación</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve" approved="yes">
 				<source>Identifier</source>
-			<target state="translated">Identificador</target></trans-unit>
+			<target state="final">Identificador</target></trans-unit>
       <trans-unit id="name" xml:space="preserve">
 				<source>Name</source>
 			<target state="translated">Nombre</target></trans-unit>
@@ -287,52 +287,52 @@
 			<target state="translated">Primario</target></trans-unit>
       <trans-unit id="package" xml:space="preserve" approved="yes">
 				<source>Package</source>
-			<target state="translated">Paquete</target></trans-unit>
+			<target state="final">Paquete</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target state="translated">Desactivado</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve" approved="yes">
 				<source>Unavailable</source>
-			<target state="translated">No disponible</target></trans-unit>
+			<target state="final">No disponible</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve" approved="yes">
 				<source>Inactive</source>
-			<target state="translated">Inactivo</target></trans-unit>
+			<target state="final">Inactivo</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
 				<source>Click to edit</source>
-			<target state="translated">Haga clic para editar</target></trans-unit>
+			<target state="final">Haga clic para editar</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve" approved="yes">
 				<source>Click to deactivate</source>
-			<target state="translated">Haz click para desactivar</target></trans-unit>
+			<target state="final">Haz click para desactivar</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve" approved="yes">
 				<source>Click to activate</source>
-			<target state="translated">Haz click para activar</target></trans-unit>
+			<target state="final">Haz click para activar</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
 				<source>Click to delete</source>
-			<target state="translated">Haga clic para borrar</target></trans-unit>
+			<target state="final">Haga clic para borrar</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve" approved="yes">
 				<source>Click to create new</source>
-			<target state="translated">Haz click para crear nuevo</target></trans-unit>
+			<target state="final">Haz click para crear nuevo</target></trans-unit>
       <trans-unit id="state" xml:space="preserve" approved="yes">
 				<source>Status</source>
-			<target state="translated">Estado</target></trans-unit>
+			<target state="final">Estado</target></trans-unit>
       <trans-unit id="active" xml:space="preserve" approved="yes">
 				<source>Active</source>
-			<target state="translated">Activo</target></trans-unit>
+			<target state="final">Activo</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve" approved="yes">
 				<source>Domains</source>
-			<target state="translated">Dominios</target></trans-unit>
+			<target state="final">Dominios</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve" approved="yes">
 				<source>Domain</source>
-			<target state="translated">Dominio</target></trans-unit>
+			<target state="final">Dominio</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve" approved="yes">
 				<source>Yes, delete it!</source>
-			<target state="translated">Si, ¡Eliminalo!</target></trans-unit>
+			<target state="final">Si, ¡Eliminalo!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target state="translated">Clave de paquete</target></trans-unit>
       <trans-unit id="description" xml:space="preserve" approved="yes">
 				<source>Description</source>
-			<target state="translated">Descripción</target></trans-unit>
+			<target state="final">Descripción</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
 			<target state="needs-translation">Toggle content tree</target></trans-unit>
@@ -393,7 +393,7 @@
 			<target state="translated">Descartar todo</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target state="translated">Descartar todos los cambios</target></trans-unit>
+			<target state="final">Descartar todos los cambios</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target state="translated">¿Está seguro de que desea descartar todos los cambios en este espacio de trabajo?</target></trans-unit>
@@ -405,7 +405,7 @@
 			<target state="translated">Publicar todo</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
-			<target state="translated">Publicar todos los cambios</target></trans-unit>
+			<target state="final">Publicar todos los cambios</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
 			<target state="translated">¿Seguro que quiere publicar todos los cambios?</target><alt-trans><target>¿Seguro que quieres publicar todos los cambios?</target></alt-trans></trans-unit>
@@ -603,7 +603,7 @@
 			<target state="translated">Esta acción se puede deshacer en el gestor de espacios de trabajo.</target><alt-trans><target>Esta acción se puede deshacer en el gestor de áreas de trabajo.</target></alt-trans></trans-unit>
       <trans-unit id="media" xml:space="preserve" approved="yes">
 				<source>Media</source>
-			<target state="translated">Media</target></trans-unit>
+			<target state="final">Media</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
 			<target state="translated">Recortar</target></trans-unit>
@@ -618,7 +618,7 @@
 			<target state="translated">Espacio de Trabajo</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target state="translated">Espacios de Trabajo</target></trans-unit>
+			<target state="final">Espacios de Trabajo</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
 			<target state="translated">Se produjo un error mientras se guardaba</target></trans-unit>
@@ -739,82 +739,82 @@
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve" approved="yes">
 				<source>Copy {source} to {target}</source>
-			<target state="translated">Copiar {source} a {target}</target></trans-unit>
+			<target state="final">Copiar {source} a {target}</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve" approved="yes">
 				<source>Move {source} to {target}</source>
-			<target state="translated">Mover {source} a {target}</target></trans-unit>
+			<target state="final">Mover {source} a {target}</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve" approved="yes">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target state="translated">Por favor, seleccione la posición en la que desea que {source} se encuentre insertado en relación con {target}.</target><alt-trans><target>Por favor, seleccione la posición en que desea {source} insertado en relación con {target}.</target></alt-trans></trans-unit>
+			<target state="final">Por favor, seleccione la posición en la que desea que {source} se encuentre insertado en relación con {target}.</target><alt-trans><target>Por favor, seleccione la posición en que desea {source} insertado en relación con {target}.</target></alt-trans></trans-unit>
       <trans-unit id="insert" xml:space="preserve" approved="yes">
 				<source>Insert</source>
-			<target state="translated">Insertar</target></trans-unit>
+			<target state="final">Insertar</target></trans-unit>
       <trans-unit id="insertMode" xml:space="preserve" approved="yes">
 				<source>Insert mode</source>
-			<target state="translated">Insertar modo</target></trans-unit>
+			<target state="final">Insertar modo</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve" approved="yes">
 				<source>Choose an Aspect Ratio</source>
-			<target state="translated">Elija una proporción</target></trans-unit>
+			<target state="final">Elija una proporción</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve" approved="yes">
 				<source>Bold</source>
-			<target state="translated">Negrita</target></trans-unit>
+			<target state="final">Negrita</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve" approved="yes">
 				<source>Italic</source>
-			<target state="translated">Cursiva</target><alt-trans><target>Italica</target></alt-trans></trans-unit>
+			<target state="final">Cursiva</target><alt-trans><target>Italica</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve" approved="yes">
 				<source>Underline</source>
-			<target state="translated">Subrayada</target><alt-trans><target>Subrayar</target></alt-trans></trans-unit>
+			<target state="final">Subrayada</target><alt-trans><target>Subrayar</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve" approved="yes">
 				<source>Subscript</source>
-			<target state="translated">Subíndice</target><alt-trans><target>Subscript</target></alt-trans></trans-unit>
+			<target state="final">Subíndice</target><alt-trans><target>Subscript</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve" approved="yes">
 				<source>Superscript</source>
-			<target state="translated">Superscript</target></trans-unit>
+			<target state="final">Superscript</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve" approved="yes">
 				<source>Strikethrough</source>
-			<target state="translated">Tachado</target></trans-unit>
+			<target state="final">Tachado</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
 			<target state="translated">Enlace</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve" approved="yes">
 				<source>Ordered list</source>
-			<target state="translated">Lista ordenada</target></trans-unit>
+			<target state="final">Lista ordenada</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve" approved="yes">
 				<source>Unordered list</source>
-			<target state="translated">Lista no ordenada</target><alt-trans><target>Lista desordenada</target></alt-trans></trans-unit>
+			<target state="final">Lista no ordenada</target><alt-trans><target>Lista desordenada</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve" approved="yes">
 				<source>Align left</source>
-			<target state="translated">Alinear a la izquierda</target><alt-trans><target>Alinear a la izq.</target></alt-trans><alt-trans><target>Alinear a la izq</target></alt-trans></trans-unit>
+			<target state="final">Alinear a la izquierda</target><alt-trans><target>Alinear a la izq.</target></alt-trans><alt-trans><target>Alinear a la izq</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve" approved="yes">
 				<source>Align right</source>
-			<target state="translated">Alinear a la derecha</target><alt-trans><target>Alinear a la der.</target></alt-trans></trans-unit>
+			<target state="final">Alinear a la derecha</target><alt-trans><target>Alinear a la der.</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve" approved="yes">
 				<source>Align center</source>
-			<target state="translated">Alinear al centro</target><alt-trans><target>Centrar</target></alt-trans></trans-unit>
+			<target state="final">Alinear al centro</target><alt-trans><target>Centrar</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve" approved="yes">
 				<source>Align justify</source>
-			<target state="translated">Justificado</target><alt-trans><target>Justificar</target></alt-trans></trans-unit>
+			<target state="final">Justificado</target><alt-trans><target>Justificar</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve" approved="yes">
 				<source>Table</source>
-			<target state="translated">Tabla</target></trans-unit>
+			<target state="final">Tabla</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve" approved="yes">
 				<source>Remove format</source>
-			<target state="translated">Eliminar formato</target></trans-unit>
+			<target state="final">Eliminar formato</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve" approved="yes">
 				<source>Outdent</source>
-			<target state="translated">Anular indentación</target><alt-trans><target>Anular sangría</target></alt-trans></trans-unit>
+			<target state="final">Anular indentación</target><alt-trans><target>Anular sangría</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve" approved="yes">
 				<source>Indent</source>
-			<target state="translated">Indentado</target><alt-trans><target>Sangría</target></alt-trans></trans-unit>
+			<target state="final">Indentado</target><alt-trans><target>Sangría</target></alt-trans></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target state="translated">Crear nuevo</target><alt-trans><target>Crear nueva</target></alt-trans></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve" approved="yes">
 				<source>No matches found</source>
-			<target state="translated">No se encuentran coincidencias</target></trans-unit>
+			<target state="final">No se encuentran coincidencias</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve" approved="yes">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target state="translated">Por favor introduzca ###CHARACTERS### caràcteres más</target><alt-trans><target>Introduzca ###CHARACTERS### caràcteres más</target></alt-trans></trans-unit>
+			<target state="final">Por favor introduzca ###CHARACTERS### caràcteres más</target><alt-trans><target>Introduzca ###CHARACTERS### caràcteres más</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
