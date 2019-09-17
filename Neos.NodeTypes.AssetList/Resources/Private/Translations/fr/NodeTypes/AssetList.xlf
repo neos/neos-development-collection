@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Asset list</source>
-			<target state="translated">Liste des ressources numériques</target></trans-unit>
+			<target state="final">Liste des ressources numériques</target></trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve" approved="yes">
 				<source>Resources</source>
-			<target state="translated">Ressources</target></trans-unit>
+			<target state="final">Ressources</target></trans-unit>
       <trans-unit id="properties.assets" xml:space="preserve" approved="yes">
 				<source>Assets</source>
-			<target state="translated">Ressources numériques</target></trans-unit>
+			<target state="final">Ressources numériques</target></trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve">
 				<source>Empty asset list</source>
 			<target state="translated">Liste d'actifs vides</target><alt-trans><target>Liste de ressource vide</target></alt-trans></trans-unit>
