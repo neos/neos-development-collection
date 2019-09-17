@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Plugin View</source>
-			<target state="translated">Laajennusnkäymä</target></trans-unit>
+			<target state="final">Laajennusnkäymä</target></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve" approved="yes">
 				<source>Plugin Views</source>
-			<target state="translated">Liitäinnäisnäkymät</target></trans-unit>
+			<target state="final">Liitäinnäisnäkymät</target></trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve" approved="yes">
 				<source>Master View</source>
-			<target state="translated">Päänäkymä</target></trans-unit>
+			<target state="final">Päänäkymä</target></trans-unit>
       <trans-unit id="properties.view" xml:space="preserve" approved="yes">
 				<source>Plugin View</source>
-			<target state="translated">Laajennusnkäymä</target></trans-unit>
+			<target state="final">Laajennusnkäymä</target></trans-unit>
     </body>
   </file>
 </xliff>
