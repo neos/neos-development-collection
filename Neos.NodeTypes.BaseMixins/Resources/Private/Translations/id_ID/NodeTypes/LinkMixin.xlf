@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties.link" xml:space="preserve" approved="yes">
 				<source>Link</source>
-			<target state="translated">Link / tautan</target><alt-trans><target>Tautan</target></alt-trans></trans-unit>
+			<target state="final">Link / tautan</target><alt-trans><target>Tautan</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

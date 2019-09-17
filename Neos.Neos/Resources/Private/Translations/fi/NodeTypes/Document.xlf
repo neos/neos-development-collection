@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Document</source>
-			<target state="translated">Dokumentti</target></trans-unit>
+			<target state="final">Dokumentti</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target state="translated">Otsikko</target></trans-unit>
+			<target state="final">Otsikko</target></trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve" approved="yes">
 				<source>URL path segment</source>
-			<target state="translated">URL-polun osa</target></trans-unit>
+			<target state="final">URL-polun osa</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve" approved="yes">
 				<source>Hide in menus</source>
-			<target state="translated">Piilota valikoissa</target></trans-unit>
+			<target state="final">Piilota valikoissa</target></trans-unit>
       <trans-unit id="creationDialog.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target state="translated">Otsikko</target></trans-unit>
+			<target state="final">Otsikko</target></trans-unit>
     </body>
   </file>
 </xliff>
