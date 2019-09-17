@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="next" xml:space="preserve" approved="yes">
 				<source>next</source>
-			<target state="translated">បន្ទាប់</target></trans-unit>
+			<target state="final">បន្ទាប់</target></trans-unit>
       <trans-unit id="previous" xml:space="preserve" approved="yes">
 				<source>previous</source>
-			<target state="translated">ពីមុន</target><alt-trans><target>កាលពីមុន</target></alt-trans><alt-trans><target>កាលពីលើកមុន</target></alt-trans><alt-trans><target>មុន</target></alt-trans></trans-unit>
+			<target state="final">ពីមុន</target><alt-trans><target>កាលពីមុន</target></alt-trans><alt-trans><target>កាលពីលើកមុន</target></alt-trans><alt-trans><target>មុន</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

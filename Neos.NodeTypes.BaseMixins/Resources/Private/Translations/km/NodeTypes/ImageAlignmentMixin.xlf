@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve" approved="yes">
 				<source>Alignment</source>
-			<target state="translated">ការតម្រឹម</target></trans-unit>
+			<target state="final">ការតម្រឹម</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Default</source>
-			<target state="translated">លំនាំដើម</target></trans-unit>
+			<target state="final">លំនាំដើម</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve" approved="yes">
 				<source>Center</source>
-			<target state="translated">កណ្ដាល</target></trans-unit>
+			<target state="final">កណ្ដាល</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve" approved="yes">
 				<source>Left</source>
-			<target state="translated">ខាងឆ្វេង</target></trans-unit>
+			<target state="final">ខាងឆ្វេង</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve" approved="yes">
 				<source>Right</source>
-			<target state="translated">ស្ដាំ</target></trans-unit>
+			<target state="final">ស្ដាំ</target></trans-unit>
     </body>
   </file>
 </xliff>
