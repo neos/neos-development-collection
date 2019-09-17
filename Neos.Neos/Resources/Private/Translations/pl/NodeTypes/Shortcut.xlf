@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Shortcut</source>
-			<target state="translated">Skrót</target></trans-unit>
+			<target state="final">Skrót</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="translated">Opcje skrótu</target><alt-trans><target>Opcje</target></alt-trans></trans-unit>
+			<target state="final">Opcje skrótu</target><alt-trans><target>Opcje</target></alt-trans></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="translated">Opcje skrótu</target><alt-trans><target>Opcje</target></alt-trans></trans-unit>
+			<target state="final">Opcje skrótu</target><alt-trans><target>Opcje</target></alt-trans></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
-			<target state="translated">Przekieruj na</target></trans-unit>
+			<target state="final">Przekieruj na</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve" approved="yes">
 				<source>Target</source>
-			<target state="translated">Cel</target><alt-trans><target>Wybierz cel</target></alt-trans></trans-unit>
+			<target state="final">Cel</target><alt-trans><target>Wybierz cel</target></alt-trans></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve" approved="yes">
 				<source>First child node</source>
-			<target state="translated">Pierwszy węzeł podrzędny</target></trans-unit>
+			<target state="final">Pierwszy węzeł podrzędny</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve" approved="yes">
 				<source>Parent node</source>
-			<target state="translated">Węzeł nadrzędny</target><alt-trans><target>Kod nadrzędny</target></alt-trans></trans-unit>
+			<target state="final">Węzeł nadrzędny</target><alt-trans><target>Kod nadrzędny</target></alt-trans></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve" approved="yes">
 				<source>Selected target</source>
-			<target state="translated">Wybrany cel</target></trans-unit>
+			<target state="final">Wybrany cel</target></trans-unit>
     </body>
   </file>
 </xliff>
