@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Shortcut</source>
-			<target state="translated">តំណរខ្លី</target><alt-trans><target>ផ្លូវកាត់</target></alt-trans></trans-unit>
+			<target state="final">តំណរខ្លី</target><alt-trans><target>ផ្លូវកាត់</target></alt-trans></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="translated">ជំរើសតំណខ្លី</target></trans-unit>
+			<target state="final">ជំរើសតំណខ្លី</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="translated">ជំរើសតំណខ្លី</target></trans-unit>
+			<target state="final">ជំរើសតំណខ្លី</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
-			<target state="translated">ជ្រើសម៉ូត</target><alt-trans><target>ជ្រើសវិធី</target></alt-trans></trans-unit>
+			<target state="final">ជ្រើសម៉ូត</target><alt-trans><target>ជ្រើសវិធី</target></alt-trans></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve" approved="yes">
 				<source>Target</source>
-			<target state="translated">គោលដៅ</target></trans-unit>
+			<target state="final">គោលដៅ</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve" approved="yes">
 				<source>First child node</source>
-			<target state="translated">កូនណូត</target></trans-unit>
+			<target state="final">កូនណូត</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve" approved="yes">
 				<source>Parent node</source>
-			<target state="translated">មេណូត</target></trans-unit>
+			<target state="final">មេណូត</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve" approved="yes">
 				<source>Selected target</source>
-			<target state="translated">គោល​ដៅ​ដែល​បាន​រើស</target></trans-unit>
+			<target state="final">គោល​ដៅ​ដែល​បាន​រើស</target></trans-unit>
     </body>
   </file>
 </xliff>
