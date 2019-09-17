@@ -38,7 +38,7 @@ class Version20190917101945 extends AbstractMigration
             'Neos.NodeTypes:TwoColumn' => 'Neos.NodeTypes.ColumnLayouts:TwoColumn',
             'Neos.NodeTypes:ThreeColumn' => 'Neos.NodeTypes.ColumnLayouts:ThreeColumn',
             'Neos.NodeTypes:FourColumn' => 'Neos.NodeTypes.ColumnLayouts:FourColumn',
-            'Neos.NodeTypes:Records' => 'Neos.NodeTypes:ContentReferences'
+            'Neos.NodeTypes:Records' => 'Neos.NodeTypes.ContentReferences:ContentReferences'
         ];
 
         foreach ($nodetypeUpgradeMap as $search => $replace) {

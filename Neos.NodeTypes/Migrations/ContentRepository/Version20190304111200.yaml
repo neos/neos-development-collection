@@ -110,7 +110,7 @@ up:
         -
           type: 'ChangeNodeType'
           settings:
-            newType: 'Neos.NodeTypes:ContentReferences'
+            newType: 'Neos.NodeTypes.ContentReferences:ContentReferences'
 
 down:
   comments: 'Convert NodeTypes from subpackages of Neos.NodeTypes back to the NodeTypes package'
