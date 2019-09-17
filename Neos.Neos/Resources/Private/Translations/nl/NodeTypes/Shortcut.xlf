@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Shortcut</source>
-			<target state="translated">Snelkoppeling</target></trans-unit>
+			<target state="final">Snelkoppeling</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="translated">Snelkoppeling opties</target></trans-unit>
+			<target state="final">Snelkoppeling opties</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="translated">Snelkoppeling opties</target></trans-unit>
+			<target state="final">Snelkoppeling opties</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
-			<target state="translated">Doelmodus</target></trans-unit>
+			<target state="final">Doelmodus</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve" approved="yes">
 				<source>Target</source>
-			<target state="translated">Doel</target></trans-unit>
+			<target state="final">Doel</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve" approved="yes">
 				<source>First child node</source>
-			<target state="translated">Eerst onderliggende node</target></trans-unit>
+			<target state="final">Eerst onderliggende node</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve" approved="yes">
 				<source>Parent node</source>
-			<target state="translated">Bovenliggende node</target></trans-unit>
+			<target state="final">Bovenliggende node</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve" approved="yes">
 				<source>Selected target</source>
-			<target state="translated">Geselecteerd doel</target></trans-unit>
+			<target state="final">Geselecteerd doel</target></trans-unit>
     </body>
   </file>
 </xliff>
