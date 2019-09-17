@@ -13,7 +13,7 @@
 			<target state="translated">Texto alternativo</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target state="translated">Título</target></trans-unit>
+			<target state="final">Título</target></trans-unit>
     </body>
   </file>
 </xliff>
