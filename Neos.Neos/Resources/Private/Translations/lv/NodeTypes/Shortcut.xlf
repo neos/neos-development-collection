@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Shortcut</source>
-			<target state="translated">Īsceļš</target></trans-unit>
+			<target state="final">Īsceļš</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="translated">Īsceļa uzstādījumi</target><alt-trans><target>Īsceļa iespējas</target></alt-trans></trans-unit>
+			<target state="final">Īsceļa uzstādījumi</target><alt-trans><target>Īsceļa iespējas</target></alt-trans></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target state="translated">Īsceļa uzstādījumi</target><alt-trans><target>Īsceļa iespējas</target></alt-trans></trans-unit>
+			<target state="final">Īsceļa uzstādījumi</target><alt-trans><target>Īsceļa iespējas</target></alt-trans></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
-			<target state="translated">Mērķa režīms</target></trans-unit>
+			<target state="final">Mērķa režīms</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve" approved="yes">
 				<source>Target</source>
-			<target state="translated">Mērķis</target></trans-unit>
+			<target state="final">Mērķis</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve" approved="yes">
 				<source>First child node</source>
-			<target state="translated">Pakārtotais savienojums</target></trans-unit>
+			<target state="final">Pakārtotais savienojums</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve" approved="yes">
 				<source>Parent node</source>
-			<target state="translated">Galvenais savienojums</target></trans-unit>
+			<target state="final">Galvenais savienojums</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve" approved="yes">
 				<source>Selected target</source>
-			<target state="translated">Izvēlētais mērķis</target></trans-unit>
+			<target state="final">Izvēlētais mērķis</target></trans-unit>
     </body>
   </file>
 </xliff>

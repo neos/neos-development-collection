@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Plugin</source>
-			<target state="translated">កម្មវិធីជំនួយ</target></trans-unit>
+			<target state="final">កម្មវិធីជំនួយ</target></trans-unit>
     </body>
   </file>
 </xliff>

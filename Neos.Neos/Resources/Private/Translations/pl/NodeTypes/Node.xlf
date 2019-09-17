@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="tabs.default" xml:space="preserve" approved="yes">
 				<source>General</source>
-			<target state="translated">Ogólny</target><alt-trans><target>ogólny</target></alt-trans></trans-unit>
+			<target state="final">Ogólny</target><alt-trans><target>ogólny</target></alt-trans></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="translated">Metadane</target><alt-trans><target>Informacje o dokumencie</target></alt-trans></trans-unit>
+			<target state="final">Metadane</target><alt-trans><target>Informacje o dokumencie</target></alt-trans></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="translated">Metadane</target><alt-trans><target>Informacje o dokumencie</target></alt-trans></trans-unit>
+			<target state="final">Metadane</target><alt-trans><target>Informacje o dokumencie</target></alt-trans></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
-			<target state="translated">Dodatkowe Informacje</target></trans-unit>
+			<target state="final">Dodatkowe Informacje</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target state="translated">Zmień typ</target></trans-unit>
+			<target state="final">Zmień typ</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target state="translated">Typ</target></trans-unit>
+			<target state="final">Typ</target></trans-unit>
     </body>
   </file>
 </xliff>

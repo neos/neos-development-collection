@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
 				<source>Four column content</source>
-			<target state="translated">Četru kolonnu saturs</target><alt-trans><target>Četru sleju saturs</target></alt-trans></trans-unit>
+			<target state="final">Četru kolonnu saturs</target><alt-trans><target>Četru sleju saturs</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
