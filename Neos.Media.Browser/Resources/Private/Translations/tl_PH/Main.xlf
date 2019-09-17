@@ -157,13 +157,13 @@
 			<target state="translated">Mga imahe</target></trans-unit>
       <trans-unit id="filter.documents" xml:space="preserve" approved="yes">
 				<source>Documents</source>
-			<target state="translated">Mga dokyumento</target></trans-unit>
+			<target state="final">Mga dokyumento</target></trans-unit>
       <trans-unit id="filter.video" xml:space="preserve" approved="yes">
 				<source>Video</source>
-			<target state="translated">Video</target></trans-unit>
+			<target state="final">Video</target></trans-unit>
       <trans-unit id="filter.audio" xml:space="preserve" approved="yes">
 				<source>Audio</source>
-			<target state="translated">Audio</target></trans-unit>
+			<target state="final">Audio</target></trans-unit>
       <trans-unit id="tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
 			<target state="needs-translation">Sort options</target></trans-unit>
@@ -175,7 +175,7 @@
 			<target state="needs-translation">Thumbnail view</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
-			<target state="translated">Mga koleksiyon</target></trans-unit>
+			<target state="final">Mga koleksiyon</target></trans-unit>
       <trans-unit id="editCollections" xml:space="preserve">
 				<source>Edit collections</source>
 			<target state="needs-translation">Edit collections</target></trans-unit>
