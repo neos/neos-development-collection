@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="tabs.default" xml:space="preserve" approved="yes">
 				<source>General</source>
-			<target state="translated">ជាទូទៅ</target></trans-unit>
+			<target state="final">ជាទូទៅ</target></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="translated">ទិន្នន័យមេតា</target></trans-unit>
+			<target state="final">ទិន្នន័យមេតា</target></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="translated">ទិន្នន័យមេតា</target></trans-unit>
+			<target state="final">ទិន្នន័យមេតា</target></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
-			<target state="translated">ព័ត៌មានបន្ថែម</target></trans-unit>
+			<target state="final">ព័ត៌មានបន្ថែម</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target state="translated">ផ្លាស់ប្តូរប្រភេទ</target></trans-unit>
+			<target state="final">ផ្លាស់ប្តូរប្រភេទ</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target state="translated">ប្រភេទ</target></trans-unit>
+			<target state="final">ប្រភេទ</target></trans-unit>
     </body>
   </file>
 </xliff>

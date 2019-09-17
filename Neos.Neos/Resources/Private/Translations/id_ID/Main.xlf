@@ -775,7 +775,7 @@
 			<target state="translated">Coret</target><alt-trans><target>Dicoret</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve" approved="yes">
 				<source>Link</source>
-			<target state="translated">Link / tautan</target><alt-trans><target>Tautan</target></alt-trans></trans-unit>
+			<target state="final">Link / tautan</target><alt-trans><target>Tautan</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
 			<target state="translated">Daftar Setelah Diurutkan</target><alt-trans><target>Daftar pesanan</target></alt-trans></trans-unit>
