@@ -468,7 +468,8 @@ Render an HTML tag with attributes and optional body
 :omitClosingTag: (boolean) Whether to render the element ``content`` and the closing tag, defaults to ``FALSE``
 :selfClosingTag: (boolean) Whether the tag is a self-closing tag with no closing tag. Will be resolved from ``tagName`` by default, so default HTML tags are treated correctly.
 :content: (string) The inner content of the element, will only be rendered if the tag is not self-closing and the closing tag is not omitted
-:attributes: (:ref:`Neos_Fusion__Attributes`) Tag attributes
+:attributes: (iterable) Tag attributes as key-value pairs. Default is ``Neos.Fusion:DataStructure``. If a non iterable is returned the value is casted to string.
+:allowEmptyAttributes: (boolean) Whether empty attributes (HTML5 syntax) should be used for empty, false or null attribute values. By default this is ``true``
 
 Example:
 ^^^^^^^^
@@ -499,6 +500,10 @@ render the attributes of a tag. But it's also useful standalone to render extens
 
 :[key]: (string) A single attribute, array values are joined with whitespace. Boolean values will be rendered as an empty or absent attribute.
 :@allowEmpty: (boolean) Whether empty attributes (HTML5 syntax) should be used for empty, false or null attribute values
+
+.. note:: The ``Neos.Fusion:Attributes`` object is DEPRECATED in favor of a solution inside Neos.Fusion:Tag which takes attributes
+   as ``Neos.Fusion:DataStructure`` now. If you have to render attributes as string without a tag you can use
+   ``Neos.Fusion:Join`` with ``@glue` but you will have to concatenate array attributes yourself.
 
 Example:
 ^^^^^^^^
