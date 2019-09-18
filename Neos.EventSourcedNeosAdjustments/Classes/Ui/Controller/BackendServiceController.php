@@ -25,6 +25,7 @@ use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
+use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeClipboard;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePolicyService;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeCollection;
@@ -126,6 +127,12 @@ class BackendServiceController extends ActionController
      * @var WorkspaceCommandHandler
      */
     protected $workspaceCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var NodeClipboard
+     */
+    protected $clipboard;
 
     /**
      * Set the controller context on the feedback collection after the controller
@@ -352,6 +359,41 @@ class BackendServiceController extends ActionController
         }
 
         $this->view->assign('value', $this->feedbackCollection);
+    }
+
+
+    /**
+     * Persists the clipboard node on copy
+     *
+     * @param NodeAddress $node
+     * @return void
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     */
+    public function copyNodeAction(NodeAddress $node)
+    {
+        $this->clipboard->copyNode($node);
+    }
+
+    /**
+     * Clears the clipboard state
+     *
+     * @return void
+     */
+    public function clearClipboardAction()
+    {
+        $this->clipboard->clear();
+    }
+
+    /**
+     * Persists the clipboard node on cut
+     *
+     * @param NodeAddress $node
+     * @return void
+     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\Exception\NodeAddressCannotBeSerializedException
+     */
+    public function cutNodeAction(NodeAddress $node)
+    {
+        $this->clipboard->cutNode($node);
     }
 
     public function getWorkspaceInfoAction()
