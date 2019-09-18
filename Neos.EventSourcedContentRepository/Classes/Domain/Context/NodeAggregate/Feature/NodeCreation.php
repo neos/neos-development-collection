@@ -158,6 +158,10 @@ trait NodeCreation
             );
         }
         $descendantNodeAggregateIdentifiers = $this->populateNodeAggregateIdentifiers($nodeType, $command->getTetheredDescendantNodeAggregateIdentifiers());
+        // Write the auto-created descendant node aggregate identifiers back to the command; so that when rebasing the command, it stays
+        // fully deterministic.
+        $command = $command->withTetheredDescendantNodeAggregateIdentifiers($descendantNodeAggregateIdentifiers);
+
         foreach ($descendantNodeAggregateIdentifiers as $rawNodePath => $descendantNodeAggregateIdentifier) {
             $this->requireProjectedNodeAggregateToNotExist($command->getContentStreamIdentifier(), $descendantNodeAggregateIdentifier);
         }
@@ -349,6 +353,7 @@ trait NodeCreation
      */
     private function populateNodeAggregateIdentifiers(NodeType $nodeType, NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers, NodePath $childPath = null): NodeAggregateIdentifiersByNodePaths
     {
+        // TODO: handle Multiple levels of autocreated child nodes
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawChildName => $childNodeType) {
             $childName = NodeName::fromString($rawChildName);
             $childPath = $childPath ? $childPath->appendPathSegment($childName) : NodePath::fromString((string) $childName);

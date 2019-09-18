@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
 
 /*
@@ -284,7 +285,7 @@ class BackendServiceController extends ActionController
     /**
      * Change base workspace of current user workspace
      *
-     * @param string $targetWorkspaceName,
+     * @param string $targetWorkspaceName ,
      * @param NodeInterface $documentNode
      * @return void
      * @throws \Exception
@@ -394,18 +395,26 @@ class BackendServiceController extends ActionController
     public function getAdditionalNodeMetadataAction(array $nodes)
     {
         $result = [];
-        // TODO implement lateron
-        /** @var NodeInterface $node */
-        /*foreach ($nodes as $node) {
-            $otherNodeVariants = array_values(array_filter(array_map(function ($node) {
+        /** @var NodeAddress $nodeAddress */
+        foreach ($nodes as $nodeAddress) {
+
+            $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+                $nodeAddress->getContentStreamIdentifier(),
+                $nodeAddress->getDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
+            $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
+
+            // TODO finish implementation
+            /*$otherNodeVariants = array_values(array_filter(array_map(function ($node) {
                 return $this->getCurrentDimensionPresetIdentifiersForNode($node);
-            }, $node->getOtherNodeVariants())));
-            $result[$node->getContextPath()] = [
+            }, $node->getOtherNodeVariants())));*/
+            $result[$nodeAddress->serializeForUri()] = [
                 'policy' => $this->nodePolicyService->getNodePolicyInformation($node),
-                'dimensions' => $this->getCurrentDimensionPresetIdentifiersForNode($node),
-                'otherNodeVariants' => $otherNodeVariants
+                //'dimensions' => $this->getCurrentDimensionPresetIdentifiersForNode($node),
+                //'otherNodeVariants' => $otherNodeVariants
             ];
-        }*/
+        }
 
         $this->view->assign('value', $result);
     }

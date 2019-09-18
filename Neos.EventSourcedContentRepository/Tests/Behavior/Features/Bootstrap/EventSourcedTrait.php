@@ -195,6 +195,10 @@ trait EventSourcedTrait
         $this->contentStreamIdentifier = null;
     }
 
+    public function currentNodeAggregateIdentifier() {
+        return $this->currentNode->getNodeAggregateIdentifier();
+    }
+
     /**
      * @Given /^the event RootWorkspaceWasCreated was published with payload:$/
      * @param TableNode $payloadTable
@@ -414,8 +418,14 @@ trait EventSourcedTrait
         foreach ($payloadTable->getHash() as $line) {
             if (strpos($line['Value'], '$this->') === 0) {
                 // Special case: Referencing stuff from the context here
-                $propertyName = substr($line['Value'], strlen('$this->'));
-                $value = (string) $this->$propertyName;
+                $propertyOrMethodName = substr($line['Value'], strlen('$this->'));
+                if (method_exists($this, $propertyOrMethodName)) {
+                    // is method
+                    $value = (string) $this->$propertyOrMethodName();
+                } else {
+                    // is property
+                    $value = (string) $this->$propertyOrMethodName;
+                }
             } else {
                 // default case
                 $value = json_decode($line['Value'], true);

@@ -11,6 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -29,6 +30,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
  * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
  * `dimensionSpacePoint`.
+ *
+ * @Flow\Proxy(false)
  */
 final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
@@ -209,6 +212,29 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
     public function getTetheredDescendantNodeAggregateIdentifiers(): ?NodeAggregateIdentifiersByNodePaths
     {
         return $this->tetheredDescendantNodeAggregateIdentifiers;
+    }
+
+    /**
+     * Create a new CreateNodeAggregateWithNode command with all original values, except the tetheredDescendantNodeAggregateIdentifiers (where
+     * the passed in arguments are used).
+     *
+     * Is needed to make this command fully deterministic before storing it at the events
+     * - we need this
+     */
+    public function withTetheredDescendantNodeAggregateIdentifiers(NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers): self
+    {
+        return new self(
+            $this->contentStreamIdentifier,
+            $this->nodeAggregateIdentifier,
+            $this->nodeTypeName,
+            $this->originDimensionSpacePoint,
+            $this->initiatingUserIdentifier,
+            $this->parentNodeAggregateIdentifier,
+            $this->succeedingSiblingNodeAggregateIdentifier,
+            $this->nodeName,
+            $this->initialPropertyValues,
+            $tetheredDescendantNodeAggregateIdentifiers
+        );
     }
 
     public function jsonSerialize(): array

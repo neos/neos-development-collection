@@ -14,6 +14,9 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
+use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedNeosAdjustments\View\FusionView;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Fusion\Core\Cache\ContentCache;
@@ -21,7 +24,6 @@ use Neos\Fusion\Exception as FusionException;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
-use Neos\Neos\View\FusionView as FusionView;
 
 class ReloadContentOutOfBand extends AbstractFeedback
 {
@@ -49,6 +51,12 @@ class ReloadContentOutOfBand extends AbstractFeedback
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
+
+    /**
+     * @Flow\Inject
+     * @var ContentGraphInterface
+     */
+    protected $contentGraph;
 
     /**
      * Set the node
@@ -109,7 +117,7 @@ class ReloadContentOutOfBand extends AbstractFeedback
      */
     public function getDescription()
     {
-        return sprintf('Rendering of node "%s" required.', $this->getNode()->getPath());
+        return sprintf('Rendering of node "%s" required.', $this->getNode()->getNodeAggregateIdentifier());
     }
 
     /**
@@ -163,6 +171,11 @@ class ReloadContentOutOfBand extends AbstractFeedback
         $fusionView->setControllerContext($controllerContext);
 
         $fusionView->assign('value', $this->getNode());
+        $fusionView->assign('subgraph', $this->contentGraph->getSubgraphByIdentifier(
+            $this->getNode()->getContentStreamIdentifier(),
+            $this->getNode()->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        ));
         $fusionView->setFusionPath($nodeDomAddress->getFusionPath());
 
         return $fusionView->render();
