@@ -275,11 +275,13 @@ class CropImageAdjustment extends AbstractImageAdjustment
 
         $ratio = $this->getWidth() / $image->getWidth();
         $this->setWidth($image->getWidth());
-        $this->setHeight($this->getHeight() / $ratio);
+        $roundedHeight = (int)round($this->getHeight() / $ratio, 0);
+        $this->setHeight($roundedHeight);
 
         if ($this->getHeight() > $image->getHeight()) {
             $ratio = $this->getHeight() / $image->getHeight();
-            $this->setWidth($this->getWidth() / $ratio);
+            $roundedWidth = (int)round($this->getWidth() / $ratio, 0);
+            $this->setWidth($roundedWidth);
             $this->setHeight($image->getHeight());
         }
     }
