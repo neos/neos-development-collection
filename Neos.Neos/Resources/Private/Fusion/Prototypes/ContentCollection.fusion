@@ -31,7 +31,7 @@ prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Collectio
 prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
 	tagName = 'div'
 
-	attributes = Neos.Fusion:Attributes
+	attributes = Neos.Fusion:DataStructure
 
 	# The following is used to automatically append class attribute with "neos-contentcollection" needed for editing.
 	# You can disable the following line with:
