@@ -44,6 +44,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceW
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceCannotBeRebased;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
@@ -362,14 +363,38 @@ final class WorkspaceCommandHandler
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
 
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
-        foreach ($originalCommands as $originalCommand) {
+        foreach ($originalCommands as $i => $originalCommand) {
             if (!($originalCommand instanceof CopyableAcrossContentStreamsInterface)) {
                 throw new \RuntimeException('ERROR: The command ' . get_class($originalCommand) . ' does not implement CopyableAcrossContentStreamsInterface; but it should!');
             }
 
             // try to apply the command on the rebased content stream
             $commandToRebase = $originalCommand->createCopyForContentStream($rebasedContentStream);
-            $this->applyCommand($commandToRebase)->blockUntilProjectionsAreUpToDate();
+            try {
+                $this->applyCommand($commandToRebase)->blockUntilProjectionsAreUpToDate();
+            } catch (\Exception $e) {
+                $fullCommandListSoFar = '';
+                for ($a = 0; $a <= $i; $a++) {
+                   $fullCommandListSoFar .= "\n - " . get_class($originalCommands[$a]);
+
+                   if ($originalCommands[$a] instanceof \JsonSerializable) {
+                       $fullCommandListSoFar .= ' ' . json_encode($originalCommands[$a]);
+                   }
+                }
+                throw new WorkspaceCannotBeRebased(
+                    sprintf(
+                        "The content stream %s cannot be rebased. Error with command %d (%s) - see nested exception for details.\n\n The base workspace %s is at content stream %s.\n The full list of commands applied so far is: %s",
+                        $workspaceContentStreamName,
+                        $i,
+                        get_class($commandToRebase),
+                        $baseWorkspace->getWorkspaceName(),
+                        $baseWorkspace->getCurrentContentStreamIdentifier(),
+                        $fullCommandListSoFar
+                    ),
+                    1568827894,
+                    $e
+                );
+            }
         }
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
