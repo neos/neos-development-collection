@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2019-09-02
+This reference was automatically generated from code on 2019-09-19
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -167,19 +167,6 @@ neos:backend.interfaceLanguage
 ViewHelper for rendering the current backend users interface language.
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Backend\\InterfaceLanguageViewHelper
-
-
-
-
-
-.. _`Neos ViewHelper Reference: neos:backend.javascriptBuiltVersion`:
-
-neos:backend.javascriptBuiltVersion
------------------------------------
-
-Returns a shortened md5 of the built JavaScript file
-
-:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\JavascriptBuiltVersionViewHelper
 
 
 
