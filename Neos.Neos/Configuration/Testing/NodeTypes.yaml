@@ -155,7 +155,7 @@
     'Neos.Neos.BackendSchemaControllerTest:ParentSimpleNodeType': true
   properties:
     text:
-      type: integer
-      defaultValue: 0
+      type: string
+      defaultValue: '0'
       ui:
         label: 'suddenly 0'
