@@ -661,9 +661,15 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target state="translated">Jūsu sesija ir beigusies. Lūdzu, pieslēdzieties vēlreiz.</target></trans-unit>
       <!-- Error handlers -->
+      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
+				<source>Welcome to Neos</source>
+			<target state="translated">Esi sveicināts Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
 			<target state="final">Iet uz sākuma uzstādījumiem</target></trans-unit>
+      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
+				<source>Technical Information</source>
+			<target state="translated">Tehniskā informācija</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
 			<target state="final">Trūkst mājas lapas</target></trans-unit>
@@ -677,10 +683,10 @@
 				<source>Database Error</source>
 			<target state="final">Datubāzes kļūda</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
-				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
+				<source>There is no database connection yet or the Neos database schema has not been created.</source>
 			<target state="translated">Nav datu bāzes savienojuma vai Neos datubāzes shēma nav izveidota.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>You might want to configure or check your database configuration in the setup.</source>
+				<source>Run the setup to configure your database.</source>
 			<target state="translated">Palaidiet uzstādīšanas programmu, lai konfigurētu datu bāzi.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
