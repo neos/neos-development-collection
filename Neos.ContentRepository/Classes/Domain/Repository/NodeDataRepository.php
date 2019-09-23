@@ -1539,7 +1539,7 @@ class NodeDataRepository extends Repository
         $queryBuilder->select('n')
             ->from(NodeData::class, 'n')
             ->where('n.workspace IN (:workspaces)')
-            ->setParameter('workspaces', $workspaceNames);
+            ->setParameter('workspaces', $workspacesNames);
 
         return $queryBuilder;
     }
