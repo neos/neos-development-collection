@@ -661,15 +661,9 @@
 				<source>Your login has expired. Please log in again.</source>
 			<target state="final">Votre connexion a expiré. S'il vous plaît vous connecter à nouveau.</target><alt-trans><target>Votre session a expiré. Veuillez vous reconnecter.</target></alt-trans></trans-unit>
       <!-- Error handlers -->
-      <trans-unit id="error.exception.welcomeToNeos" xml:space="preserve">
-				<source>Welcome to Neos</source>
-			<target state="needs-translation">Welcome to Neos</target></trans-unit>
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>
 			<target state="final">Allez dans l'assistant de configuration</target></trans-unit>
-      <trans-unit id="error.exception.technicalInformation" xml:space="preserve">
-				<source>Technical Information</source>
-			<target state="needs-translation">Technical Information</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
 				<source>Missing Homepage</source>
 			<target state="final">Page d'accueil manquante</target></trans-unit>
@@ -683,10 +677,10 @@
 				<source>Database Error</source>
 			<target state="final">Erreur de la base de données</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
-				<source>There is no database connection yet or the Neos database schema has not been created.</source>
+				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
 			<target state="translated">Il n'y a pas encore de connexion à la base de données ou le schéma de base de données Neos n'a pas encore été créé.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>Run the setup to configure your database.</source>
+				<source>You might want to configure or check your database configuration in the setup.</source>
 			<target state="translated">Lancez l'installation pour configurer votre base de données.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
 				<source>Page Not Found</source>
