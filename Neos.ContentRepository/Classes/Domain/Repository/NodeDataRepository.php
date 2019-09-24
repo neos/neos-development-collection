@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Domain\Repository;
  * source code.
  */
 
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query;
@@ -1531,13 +1530,17 @@ class NodeDataRepository extends Repository
      */
     protected function createQueryBuilder(array $workspaces)
     {
+        $workspacesNames = array_map(static function (Workspace $workspace) {
+            return $workspace->getName();
+        }, $workspaces);
+
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
         $queryBuilder->select('n')
             ->from(NodeData::class, 'n')
             ->where('n.workspace IN (:workspaces)')
-            ->setParameter('workspaces', $workspaces, Connection::PARAM_STR_ARRAY);
+            ->setParameter('workspaces', $workspacesNames);
 
         return $queryBuilder;
     }
