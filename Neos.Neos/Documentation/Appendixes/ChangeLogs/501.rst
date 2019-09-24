@@ -1,0 +1,17 @@
+`5.0.1 (2019-09-24) <https://github.com/neos/neos-development-collection/releases/tag/5.0.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Remove Connection::PARAM_STR_ARRAY hint <https://github.com/neos/neos-development-collection/pull/2709>`_
+------------------------------------------------------------------------------------------------------------------
+
+This "fixes" https://github.com/doctrine/orm/issues/7827, by
+actually passing the correct type as parameter. And the "type
+hint" can be removed, as well.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/5.0.0...5.0.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
