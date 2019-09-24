@@ -1,0 +1,67 @@
+`4.2.14 (2019-09-24) <https://github.com/neos/neos-development-collection/releases/tag/4.2.14>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Remove Connection::PARAM_STR_ARRAY hint <https://github.com/neos/neos-development-collection/pull/2709>`_
+------------------------------------------------------------------------------------------------------------------
+
+This "fixes" https://github.com/doctrine/orm/issues/7827, by
+actually passing the correct type as parameter. And the "type
+hint" can be removed, as well.
+
+* Packages: ``Browser`` ``ContentRepository`` ``Neos``
+
+`BUGFIX: CropIimageAdjustment::refit only produces int sizes <https://github.com/neos/neos-development-collection/pull/2702>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+This is not a direct problem for Neos 3.3 but it becomes a problem
+as soon as PHP type hints come into play. The ratio divided widths
+and heights can easily be floats and that is unexpected. Therefore
+rounding and casting to int makes sense to prevent problems.
+
+In versions of Neos that include type hints this is an actual major
+bug that prevents refitting to work.
+
+* Packages: ``Media``
+
+`BUGFIX: Avoid count() call on null <https://github.com/neos/neos-development-collection/pull/2700>`_
+-----------------------------------------------------------------------------------------------------
+
+Fixes #2699
+
+* Packages: ``Diff``
+
+`BUGFIX: Translate labels when modifying tag and collections <https://github.com/neos/neos-development-collection/pull/2691>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Allow all media browser controllers to use the modified `addFlashMessage` method.
+
+**How I did it**
+
+Use a trait for adding the method to all related controllers.
+
+**How to verify it**
+
+Add or delete a tag or collection in the media browser.
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: HTML augmenter preserves multibyte characters in attributes <https://github.com/neos/neos-development-collection/pull/2675>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+The html augmenter uses the `loadHml` method of php which assumes the html content being iso encoded. This caused attributes with umlauts being broken once on the outermost tag. The previous declaration of the `UTF-8` charset has no effect on the `loadHtml` behavior.
+
+The change applies the mb_convert_encoding method to the html which allows to properly read unicode characters as suggested on  https://www.php.net/manual/en/domdocument.loadhtml.php
+
+In addition this change adds a duck-emoji to the neos test codebase which is an important improvement.
+
+Fixes: #2677
+
+* Packages: ``Fusion`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/4.2.13...4.2.14>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
