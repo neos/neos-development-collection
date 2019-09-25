@@ -41,12 +41,12 @@ use Neos\ContentRepository\Exception\NodeException;
 class NodeConverter extends AbstractTypeConverter
 {
     /**
-     * @var boolean
+     * @var int
      */
     const REMOVED_CONTENT_SHOWN = 1;
 
     /**
-     * @var boolean
+     * @var int
      */
     const INVISIBLE_CONTENT_SHOWN = 2;
 
