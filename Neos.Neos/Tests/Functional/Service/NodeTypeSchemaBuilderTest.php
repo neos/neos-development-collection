@@ -62,11 +62,11 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
 
         $expectedSuperTypes = ['Neos.Neos.BackendSchemaControllerTest:ParentSimpleNodeType' => true];
         $expectedPropertyConfiguration = [
-            'type' => 'integer',
+            'type' => 'string',
             'ui' => [
                 'label' => 'suddenly 0'
             ],
-            'defaultValue' => 0
+            'defaultValue' => '0'
         ];
 
         self::assertEquals($expectedSuperTypes, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:SimpleNodeType']['superTypes']);
