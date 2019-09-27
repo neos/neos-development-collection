@@ -27,6 +27,17 @@ The following example shows the structure of these settings:
                 type: 'Neos\Media\Domain\Model\Adjustment\CropImageAdjustment'
                 options:
                   aspectRatio: '1:1'
+          'verySmallWithOffset':
+            label: 'Small with offset'
+            description: ''
+            adjustments:
+              crop:
+                type: 'Neos\Media\Domain\Model\Adjustment\CropImageAdjustment'
+                options:
+                  width: 50
+                  height: 75
+                  x: 100
+                  y: 200
 ```
 
 The adjustment `type` can be any implementation of `Neos\Media\Domain\Model\Adjustment\AdjustmentInterface`,
