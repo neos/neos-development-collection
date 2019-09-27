@@ -31,11 +31,6 @@ final class Adjustment
     private $options = [];
 
     /**
-     * @var array
-     */
-    private $editableOptions = [];
-
-    /**
      * @param string $identifier
      * @param string $type
      */
