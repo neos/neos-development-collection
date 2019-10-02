@@ -18,9 +18,11 @@ use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Flow\Persistence\Doctrine\Query;
+use Neos\Flow\Reflection\ReflectionService;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Service\AssetService;
 
@@ -50,6 +52,12 @@ class AssetRepository extends Repository
      * @var AssetService
      */
     protected $assetService;
+
+    /**
+     * @Flow\Inject
+     * @var ReflectionService
+     */
+    protected $reflectionService;
 
     /**
      * Find assets by title or given tags
@@ -138,7 +146,14 @@ class AssetRepository extends Repository
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
 
-        $queryString = "SELECT count(persistence_object_identifier) c FROM neos_media_domain_model_asset WHERE dtype != 'neos_media_imagevariant'";
+        if ($this->entityClassName === Asset::class) {
+            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a WHERE ' . $this->getAssetVariantFilterClauseForDql('a');
+        } else {
+            $queryString = sprintf(
+                "SELECT count(persistence_object_identifier) c FROM neos_media_domain_model_asset WHERE dtype = '%s'",
+                strtolower(str_replace('Domain_Model_', '', str_replace('\\', '_', $this->entityClassName)))
+            );
+        }
 
         $query = $this->entityManager->createNativeQuery($queryString, $rsm);
         return $query->getSingleScalarResult();
@@ -333,5 +348,30 @@ class AssetRepository extends Repository
     {
         parent::update($object);
         $this->assetService->emitAssetUpdated($object);
+    }
+
+    /**
+     * Returns a DQL clause filtering any implementation of AssetVariantInterface
+     *
+     * @return string
+     * @var string $alias
+     */
+    protected function getAssetVariantFilterClauseForDql(string $alias): string
+    {
+        $variantClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetVariantInterface::class);
+        $discriminatorTypes = array_map(
+            static function (string $variantClassName): string {
+                return strtolower(str_replace('Domain_Model_', '', str_replace('\\', '_', $variantClassName)));
+            },
+            $variantClassNames
+        );
+
+        $clauseAsDql = sprintf(
+            "%s.dtype NOT IN('%s')",
+            $alias,
+            implode("','", $discriminatorTypes)
+        );
+
+        return $clauseAsDql;
     }
 }
