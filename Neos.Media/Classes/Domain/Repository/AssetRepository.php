@@ -47,6 +47,12 @@ class AssetRepository extends Repository
     protected $entityManager;
 
     /**
+     * @Flow\Inject
+     * @var ReflectionService
+     */
+    protected $reflectionService;
+
+    /**
      * @var array
      */
     protected $defaultOrderings = ['lastModified' => QueryInterface::ORDER_DESCENDING];
@@ -56,12 +62,6 @@ class AssetRepository extends Repository
      * @var AssetService
      */
     protected $assetService;
-
-    /**
-     * @Flow\Inject
-     * @var ReflectionService
-     */
-    protected $reflectionService;
 
     /**
      * Find assets by title or given tags
@@ -85,7 +85,7 @@ class AssetRepository extends Repository
             $constraints[] = $query->contains('tags', $tag);
         }
         $query->matching($query->logicalOr($constraints));
-        $this->addImageVariantFilterClause($query);
+        $this->addAssetVariantFilterClause($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
@@ -102,7 +102,7 @@ class AssetRepository extends Repository
     {
         $query = $this->createQuery();
         $query->matching($query->contains('tags', $tag));
-        $this->addImageVariantFilterClause($query);
+        $this->addAssetVariantFilterClause($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
@@ -120,9 +120,9 @@ class AssetRepository extends Repository
         $rsm->addScalarResult('c', 'c');
 
         if ($assetCollection === null) {
-            $queryString = "SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a LEFT JOIN neos_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset WHERE tagmm.media_tag = ? AND a.dtype != 'neos_media_imagevariant'";
+            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a LEFT JOIN neos_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset WHERE tagmm.media_tag = ? AND ' . $this->getAssetVariantFilterClauseForDql('a');
         } else {
-            $queryString = "SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a LEFT JOIN neos_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset LEFT JOIN neos_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE tagmm.media_tag = ? AND collectionmm.media_assetcollection = ? AND a.dtype != 'neos_media_imagevariant'";
+            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a LEFT JOIN neos_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset LEFT JOIN neos_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE tagmm.media_tag = ? AND collectionmm.media_assetcollection = ? AND ' . $this->getAssetVariantFilterClauseForDql('a');
         }
 
         $query = $this->entityManager->createNativeQuery($queryString, $rsm);
@@ -144,7 +144,7 @@ class AssetRepository extends Repository
     public function findAll(AssetCollection $assetCollection = null)
     {
         $query = $this->createQuery();
-        $this->addImageVariantFilterClause($query);
+        $this->addAssetVariantFilterClause($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
@@ -182,7 +182,7 @@ class AssetRepository extends Repository
     {
         $query = $this->createQuery();
         $query->matching($query->isEmpty('tags'));
-        $this->addImageVariantFilterClause($query);
+        $this->addAssetVariantFilterClause($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
@@ -200,9 +200,9 @@ class AssetRepository extends Repository
         $rsm->addScalarResult('c', 'c');
 
         if ($assetCollection === null) {
-            $queryString = "SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a LEFT JOIN neos_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset WHERE tagmm.media_asset IS NULL AND a.dtype != 'neos_media_imagevariant'";
+            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a LEFT JOIN neos_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset WHERE tagmm.media_asset IS NULL AND ' . $this->getAssetVariantFilterClauseForDql('a');
         } else {
-            $queryString = "SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a LEFT JOIN neos_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset LEFT JOIN neos_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE tagmm.media_asset IS NULL AND collectionmm.media_assetcollection = ? AND a.dtype != 'neos_media_imagevariant'";
+            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a LEFT JOIN neos_media_domain_model_asset_tags_join tagmm ON a.persistence_object_identifier = tagmm.media_asset LEFT JOIN neos_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE tagmm.media_asset IS NULL AND collectionmm.media_assetcollection = ? AND ' . $this->getAssetVariantFilterClauseForDql('a');
         }
 
         $query = $this->entityManager->createNativeQuery($queryString, $rsm);
@@ -220,7 +220,7 @@ class AssetRepository extends Repository
     public function findByAssetCollection(AssetCollection $assetCollection)
     {
         $query = $this->createQuery();
-        $this->addImageVariantFilterClause($query);
+        $this->addAssetVariantFilterClause($query);
         $this->addAssetCollectionToQueryConstraints($query, $assetCollection);
         return $query->execute();
     }
@@ -236,7 +236,7 @@ class AssetRepository extends Repository
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
 
-        $queryString = "SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a LEFT JOIN neos_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE collectionmm.media_assetcollection = ? AND a.dtype != 'neos_media_imagevariant'";
+        $queryString = 'SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a LEFT JOIN neos_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE collectionmm.media_assetcollection = ? AND ' . $this->getAssetVariantFilterClauseForDql('a');
 
         $query = $this->entityManager->createNativeQuery($queryString, $rsm);
         $query->setParameter(1, $assetCollection);
@@ -264,14 +264,40 @@ class AssetRepository extends Repository
     }
 
     /**
-     * @var Query $query
-     * @return QueryInterface
+     * Adds conditions filtering any implementation of AssetVariantInterface
+     *
+     * @param Query $query
+     * @return void
      */
-    protected function addImageVariantFilterClause(Query $query)
+    protected function addAssetVariantFilterClause(Query $query): void
     {
         $queryBuilder = $query->getQueryBuilder();
-        $queryBuilder->andWhere('e NOT INSTANCE OF Neos\Media\Domain\Model\ImageVariant');
-        return $query;
+
+        $variantClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetVariantInterface::class);
+        foreach ($variantClassNames as $variantClassName) {
+            $queryBuilder->andWhere('e NOT INSTANCE OF ' . $variantClassName);
+        }
+    }
+
+    /**
+     * Returns a DQL clause filtering any implementation of AssetVariantInterface
+     *
+     * @return string
+     * @var string $alias
+     */
+    protected function getAssetVariantFilterClauseForDql(string $alias): string
+    {
+        $variantClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetVariantInterface::class);
+        $discriminatorTypes = array_map(
+            [FlowAnnotationDriver::class, 'inferDiscriminatorTypeFromClassName'],
+            $variantClassNames
+        );
+
+        return sprintf(
+            "%s.dtype NOT IN('%s')",
+            $alias,
+            implode("','", $discriminatorTypes)
+        );
     }
 
     /**
@@ -315,13 +341,11 @@ class AssetRepository extends Repository
      */
     public function findAllIterator()
     {
-        /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-        return $queryBuilder
-            ->select('a')
-            ->from($this->getEntityClassName(), 'a')
-            ->where('a NOT INSTANCE OF Neos\Media\Domain\Model\ImageVariant')
-            ->getQuery()->iterate();
+        /** @var Query $query */
+        $query = $this->createQuery();
+        $query = $this->addAssetVariantFilterClause($query);
+
+        return $query->getQueryBuilder()->getQuery()->iterate();
     }
 
     /**
@@ -373,28 +397,5 @@ class AssetRepository extends Repository
     {
         parent::update($object);
         $this->assetService->emitAssetUpdated($object);
-    }
-
-    /**
-     * Returns a DQL clause filtering any implementation of AssetVariantInterface
-     *
-     * @return string
-     * @var string $alias
-     */
-    protected function getAssetVariantFilterClauseForDql(string $alias): string
-    {
-        $variantClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetVariantInterface::class);
-        $discriminatorTypes = array_map(
-            [FlowAnnotationDriver::class, 'inferDiscriminatorTypeFromClassName'],
-            $variantClassNames
-        );
-
-        $clauseAsDql = sprintf(
-            "%s.dtype NOT IN('%s')",
-            $alias,
-            implode("','", $discriminatorTypes)
-        );
-
-        return $clauseAsDql;
     }
 }
