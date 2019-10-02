@@ -18,12 +18,16 @@ use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
 use Neos\Media\Domain\Model\Tag;
+use Neos\Media\Domain\Model\VariantSupportInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
+use Neos\Media\Domain\Service\AssetVariantGenerator;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
 use Neos\Utility\Arrays;
@@ -81,6 +85,18 @@ class MediaCommandController extends CommandController
      * @var AssetModelMappingStrategyInterface
      */
     protected $mappingStrategy;
+
+    /**
+     * @Flow\Inject
+     * @var ReflectionService
+     */
+    protected $reflectionService;
+
+    /**
+     * @Flow\Inject
+     * @var AssetVariantGenerator
+     */
+    protected $assetVariantGenerator;
 
     /**
      * Import resources to asset management
@@ -332,6 +348,78 @@ class MediaCommandController extends CommandController
                 break;
             }
         }
+    }
+
+    /**
+     * Render asset variants
+     *
+     * Loops over missing configured asset variants and renders them. Optional ``limit`` parameter to
+     * limit the amount of variants to be rendered to avoid memory exhaustion.
+     *
+     * If the re-render parameter is given, any existing variants will be rendered again, too.
+     *
+     * @param integer $limit Limit the amount of variants to be rendered to avoid memory exhaustion
+     * @param bool $quiet If set, only errors will be displayed.
+     * @return void
+     * @throws AssetVariantGeneratorException
+     * @throws IllegalObjectTypeException
+     */
+    public function renderVariantsCommand($limit = null, bool $quiet = false)
+    {
+        $resultMessage = null;
+        $generatedVariants = 0;
+        $configuredVariantsCount = 0;
+        $configuredPresets = $this->assetVariantGenerator->getVariantPresets();
+        foreach ($configuredPresets as $configuredPreset) {
+            $configuredVariantsCount += count($configuredPreset->variants());
+        }
+
+        $classNames = $this->reflectionService->getAllImplementationClassNamesForInterface(VariantSupportInterface::class);
+        foreach ($classNames as $className) {
+            /** @var AssetRepository $repository */
+            $repositoryClassName = $this->reflectionService->getClassSchema($className)->getRepositoryClassName();
+            $repository = $this->objectManager->get($repositoryClassName);
+
+            if (!method_exists($repository, 'findAssetIdentifiersWithVariants')) {
+                !$quiet && $this->outputLine('Repository %s does not provide findAssetIdentifiersWithVariants(), skipping…', [$repositoryClassName]);
+                continue;
+            }
+
+            $assetCount = $repository->countAll();
+            $variantCount = $configuredVariantsCount * $assetCount;
+
+            !$quiet && $this->outputLine('Checking up to %u variants for %s for existence…', [$variantCount, $className]);
+            !$quiet && $this->output->progressStart($variantCount);
+
+            $currentAsset = null;
+            /** @var AssetInterface $currentAsset */
+            foreach ($repository->findAssetIdentifiersWithVariants() as $assetIdentifier => $assetVariants) {
+                foreach ($configuredPresets as $presetIdentifier => $preset) {
+                    foreach ($preset->variants() as $presetVariantName => $presetVariant) {
+                        if (!isset($assetVariants[$presetIdentifier][$presetVariantName])) {
+                            $currentAsset = $repository->findByIdentifier($assetIdentifier);
+                            $createdVariant = $this->assetVariantGenerator->createVariant($currentAsset, $presetIdentifier, $presetVariantName);
+                            if ($createdVariant !== null) {
+                                $repository->update($currentAsset);
+                                if (++$generatedVariants % 10 === 0) {
+                                    $this->persistenceManager->persistAll();
+                                }
+                                if ($generatedVariants === $limit) {
+                                    $resultMessage = sprintf('Generated %u variants, exiting after reaching limit', $limit);
+                                    !$quiet && $this->output->progressFinish();
+                                    break 3;
+                                }
+                            }
+                        }
+                        !$quiet && $this->output->progressAdvance(1);
+                    }
+                }
+            }
+            !$quiet && $this->output->progressFinish();
+        }
+
+        !$quiet && $this->outputLine();
+        !$quiet && $this->outputLine($resultMessage ?? sprintf('Generated %u variants', $generatedVariants));
     }
 
     /**
