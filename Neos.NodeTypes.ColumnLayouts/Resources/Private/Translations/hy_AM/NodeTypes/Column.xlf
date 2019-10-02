@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes.ColumnLayouts" source-language="en" datatype="plaintext" target-language="hy-AM">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve">
+                <source>Column</source>
+            <target state="needs-translation">Column</target></trans-unit>
+      <trans-unit id="groups.column" xml:space="preserve">
+                <source>Columns</source>
+            <target state="needs-translation">Columns</target></trans-unit>
+      <trans-unit id="properties.layout" xml:space="preserve">
+                <source>Layout</source>
+            <target state="needs-translation">Layout</target></trans-unit>
+    </body>
+  </file>
+</xliff>
