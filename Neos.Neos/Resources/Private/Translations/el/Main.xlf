@@ -347,7 +347,7 @@
 			<target state="needs-translation">Deactivate Fullscreen edit mode</target></trans-unit>
       <trans-unit id="showPreview" xml:space="preserve">
 				<source>Show preview</source>
-			<target state="needs-translation">Show preview</target></trans-unit>
+			<target state="translated">Εμφάνιση προεπισκόπησης</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
