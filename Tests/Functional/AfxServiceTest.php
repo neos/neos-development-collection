@@ -716,6 +716,87 @@ EOF;
     /**
      * @test
      */
+    public function commentsAreIgnored(): void
+    {
+        $afxCode = <<<'EOF'
+<!-- comment before -->
+<h1>Example<!-- comment inside -->Content</h1>
+<!-- comment after -->
+EOF;
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = Neos.Fusion:Array {
+        item_1 = 'Example'
+        item_2 = 'Content'
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function standaloneCommentsAreIgnored(): void
+    {
+        $afxCode = <<<'EOF'
+<!-- comment -->
+EOF;
+
+        $expectedFusion = <<<'EOF'
+''
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function standaloneCommentsChildrenAreIgnored(): void
+    {
+        $afxCode = <<<'EOF'
+<h1><!-- comment --></h1>
+EOF;
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = ''
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function multilineCommentsAreIgnored(): void
+    {
+        $afxCode = <<<'EOF'
+<h1>
+<!-- 
+    comment 
+    with
+    multiple 
+    lines 
+-->
+</h1>
+EOF;
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = ''
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
     public function slashesInStringNodesArePreserved()
     {
         $afxCode = <<<'EOF'
