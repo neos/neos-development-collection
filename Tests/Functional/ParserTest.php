@@ -750,6 +750,119 @@ class ParserTest extends TestCase
     /**
      * @test
      */
+    public function shouldParseComments(): void
+    {
+        $parser = new Parser('<!-- lorem ipsum -->');
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'comment',
+                    'payload' => ' lorem ipsum '
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldIgnoreTagsAndExpressionsInComments(): void
+    {
+        $parser = new Parser('<!-- <foo>{bar}</foo> -->');
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'comment',
+                    'payload' => ' <foo>{bar}</foo> '
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldParseCommentsBeforeContent(): void
+    {
+        $parser = new Parser('<!--lorem ipsum--><div />');
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'comment',
+                    'payload' => 'lorem ipsum'
+                ],
+                [
+                    'type' => 'node',
+                    'payload' => [
+                        'identifier' => 'div',
+                        'attributes' => [],
+                        'selfClosing' => true,
+                        'children' => []
+                    ]
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldParseCommentsAfterContent(): void
+    {
+        $parser = new Parser('<div/><!--lorem ipsum-->');
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'node',
+                    'payload' => [
+                        'identifier' => 'div',
+                        'attributes' => [],
+                        'selfClosing' => true,
+                        'children' => []
+                    ]
+                ],
+                [
+                    'type' => 'comment',
+                    'payload' => 'lorem ipsum'
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldParseCommentsInsideContent(): void
+    {
+        $parser = new Parser('<div><!--lorem ipsum--></div>');
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'node',
+                    'payload' => [
+                        'identifier' => 'div',
+                        'attributes' => [],
+                        'selfClosing' => false,
+                        'children' => [
+                            [
+                                'type' => 'comment',
+                                'payload' => 'lorem ipsum'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    /**
+     * @test
+     */
     public function shouldThrowExceptionForUnclosedTag(): void
     {
         $this->expectException(AfxParserException::class);
@@ -804,6 +917,26 @@ class ParserTest extends TestCase
     {
         $this->expectException(AfxParserException::class);
         $parser = new Parser('<div {...bar() />');
+        $parser->parse();
+    }
+
+    /**
+     * @test
+     */
+    public function shouldThrowExceptionForWronglyStartedComment()
+    {
+        $this->expectException(AfxParserException::class);
+        $parser = new Parser('<div><! foo --></div>');
+        $parser->parse();
+    }
+
+    /**
+     * @test
+     */
+    public function shouldThrowExceptionForCommentWithoutProperEnd()
+    {
+        $this->expectException(AfxParserException::class);
+        $parser = new Parser('<div><!-- foo </div>');
         $parser->parse();
     }
 }
