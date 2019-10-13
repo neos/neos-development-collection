@@ -343,6 +343,25 @@ Example::
 		}
 	}
 
+.. _Neos_Fusion__Fragment:
+
+Neos.Fusion:Fragment
+--------------------
+
+A fragment is a component that renders the given `content` without additional markup.
+That way conditions can be defined for bigger chunks of afx instead of single tags.
+
+:content: (string) The value which gets rendered
+
+Example::
+
+	renderer = afx`
+		<Neos.Fusion:Fragment @if.isEnabled={props.enable}>
+			<h1>Example</h1>
+			<h2>Content</h2>
+		</Neos.Fusion:Fragment>
+	`
+
 .. _Neos_Fusion__Augmenter:
 
 Neos.Fusion:Augmenter
@@ -850,7 +869,7 @@ Example::
 		package = 'My.Site'
 		controller = 'Registration'
 	}
-  
+
 Example with argument passed to controller action::
 
   prototype(My.Site:Registration) < prototype(Neos.Neos:Plugin) {
@@ -859,7 +878,7 @@ Example with argument passed to controller action::
     action = 'register'
     additionalArgument = 'foo'
   }
-  
+
 Get argument in controller action::
 
   public function registerAction()
