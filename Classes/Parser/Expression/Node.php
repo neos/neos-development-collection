@@ -43,6 +43,7 @@ class Node
                 while ($lexer->isWhitespace()) {
                     $lexer->consume();
                 }
+
                 while (!$lexer->isForwardSlash() && !$lexer->isClosingBracket()) {
                     if ($lexer->isOpeningBrace()) {
                         $attributes[] = [

@@ -34,25 +34,25 @@ class NodeList
         while (!$lexer->isEnd()) {
             if ($lexer->isOpeningBracket()) {
                 $lexer->consume();
-
+                if ($currentText) {
+                    $contents[] = [
+                        'type' => 'text',
+                        'payload' => $currentText
+                    ];
+                }
                 if ($lexer->isForwardSlash()) {
                     $lexer->rewind();
-                    if ($currentText) {
-                        $contents[] = [
-                            'type' => 'text',
-                            'payload' => $currentText
-                        ];
-                    }
                     return $contents;
+                } elseif ($lexer->isExclamationMark()) {
+                    $lexer->rewind();
+                    $contents[] = [
+                        'type' => 'comment',
+                        'payload' => Comment::parse($lexer)
+                    ];
+                    $currentText = '';
+                    continue;
                 } else {
                     $lexer->rewind();
-
-                    if ($currentText) {
-                        $contents[] = [
-                            'type' => 'text',
-                            'payload' => $currentText
-                        ];
-                    }
                     $contents[] = [
                         'type' => 'node',
                         'payload' => Node::parse($lexer)
