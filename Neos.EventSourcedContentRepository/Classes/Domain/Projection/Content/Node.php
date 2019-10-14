@@ -15,12 +15,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
@@ -38,7 +38,7 @@ class Node implements NodeInterface
     protected $nodeAggregateIdentifier;
 
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     protected $originDimensionSpacePoint;
 
@@ -70,7 +70,7 @@ class Node implements NodeInterface
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $originDimensionSpacePoint,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeTypeName $nodeTypeName,
         NodeType $nodeType,
         ?NodeName $nodeName,
@@ -124,9 +124,9 @@ class Node implements NodeInterface
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      */
-    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->originDimensionSpacePoint;
     }

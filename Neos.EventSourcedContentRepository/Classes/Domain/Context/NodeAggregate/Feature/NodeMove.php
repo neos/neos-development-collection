@@ -145,7 +145,7 @@ trait NodeMove
         ?DimensionSpacePointSet $affectedDimensionSpacePoints
     ): NodeMoveMappings {
         $nodeMoveMappings = [];
-        foreach ($nodeAggregate->getOccupiedDimensionSpacePoints()->getIntersection($affectedDimensionSpacePoints) as $occupiedAffectedDimensionSpacePoint) {
+        foreach ($nodeAggregate->getOccupiedDimensionSpacePoints()->getIntersection(OriginDimensionSpacePointSet::fromDimensionSpacePointSet($affectedDimensionSpacePoints)) as $occupiedAffectedDimensionSpacePoint) {
             $nodeMoveMappings[] = new NodeMoveMapping(
                 $occupiedAffectedDimensionSpacePoint,
                 $newParentNodeAggregate

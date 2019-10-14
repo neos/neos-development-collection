@@ -20,7 +20,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 
 /**
  * This class is purely for code organization of TraversableNode.
@@ -65,7 +65,7 @@ trait NodeInterfaceProxy
         return $this->node->getNodeName();
     }
 
-    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->node->getOriginDimensionSpacePoint();
     }

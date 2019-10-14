@@ -43,6 +43,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Crea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsNotYetOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
@@ -447,6 +449,16 @@ trait EventSourcedTrait
         }
 
         return new DimensionSpacePointSet($dimensionSpacePoints);
+    }
+
+    protected function unserializeOriginDimensionSpacePointSet(string $serializedDimensionSpacePoints): OriginDimensionSpacePointSet
+    {
+        $dimensionSpacePoints = [];
+        foreach (json_decode($serializedDimensionSpacePoints, true) as $coordinates) {
+            $dimensionSpacePoints[] = new OriginDimensionSpacePoint($coordinates);
+        }
+
+        return new OriginDimensionSpacePointSet($dimensionSpacePoints);
     }
 
     /**
@@ -1112,7 +1124,7 @@ trait EventSourcedTrait
     public function iExpectThisNodeAggregateToOccupyDimensionSpacePoints(string $rawDimensionSpacePoints): void
     {
         Assert::assertEquals(
-            $this->unserializeDimensionSpacePointSet($rawDimensionSpacePoints),
+            $this->unserializeOriginDimensionSpacePointSet($rawDimensionSpacePoints),
             $this->currentNodeAggregate->getOccupiedDimensionSpacePoints()
         );
     }

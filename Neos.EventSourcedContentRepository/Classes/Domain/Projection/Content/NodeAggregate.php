@@ -19,6 +19,8 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -50,7 +52,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     private $nodeName;
 
     /**
-     * @var DimensionSpacePointSet
+     * @var OriginDimensionSpacePointSet
      */
     private $occupiedDimensionSpacePoints;
 
@@ -94,7 +96,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
      * @param NodeAggregateClassification $classification
      * @param NodeTypeName $nodeTypeName
      * @param NodeName|null $nodeName
-     * @param DimensionSpacePointSet $occupiedDimensionSpacePoints
+     * @param OriginDimensionSpacePointSet $occupiedDimensionSpacePoints
      * @param array|NodeInterface[] $nodesByOccupiedDimensionSpacePoint
      * @param array|DimensionSpacePointSet[] $coverageByOccupant
      * @param DimensionSpacePointSet $coveredDimensionSpacePoints
@@ -107,7 +109,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         NodeAggregateClassification $classification,
         NodeTypeName $nodeTypeName,
         ?NodeName $nodeName,
-        DimensionSpacePointSet $occupiedDimensionSpacePoints,
+        OriginDimensionSpacePointSet $occupiedDimensionSpacePoints,
         array $nodesByOccupiedDimensionSpacePoint,
         array $coverageByOccupant,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
@@ -152,14 +154,14 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         return $this->nodeName;
     }
 
-    public function getOccupiedDimensionSpacePoints(): DimensionSpacePointSet
+    public function getOccupiedDimensionSpacePoints(): OriginDimensionSpacePointSet
     {
         return $this->occupiedDimensionSpacePoints;
     }
 
     public function occupiesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
     {
-        return $this->occupiedDimensionSpacePoints->contains($dimensionSpacePoint);
+        return $this->occupiedDimensionSpacePoints->contains(OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint));
     }
 
     public function getNodesByOccupiedDimensionSpacePoint(): array
@@ -167,7 +169,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         return $this->nodesByOccupiedDimensionSpacePoint;
     }
 
-    public function getNodeByOccupiedDimensionSpacePoint(DimensionSpacePoint $occupiedDimensionSpacePoint): NodeInterface
+    public function getNodeByOccupiedDimensionSpacePoint(OriginDimensionSpacePoint $occupiedDimensionSpacePoint): NodeInterface
     {
         if (!isset($this->occupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->getHash()])) {
             throw new NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint('Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint, 1554902613);
@@ -209,7 +211,7 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         return $this->coveredDimensionSpacePoints[$coveredDimensionSpacePoint->getHash()];
     }
 
-    public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): DimensionSpacePoint
+    public function getOccupationByCovered(DimensionSpacePoint $coveredDimensionSpacePoint): OriginDimensionSpacePoint
     {
         if (!isset($this->occupationByCovered[$coveredDimensionSpacePoint->getHash()])) {
             throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint('Node aggregate "' . $this->nodeAggregateIdentifier . '" does currently not cover dimension space point ' . $coveredDimensionSpacePoint, 1554902892);
