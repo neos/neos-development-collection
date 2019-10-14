@@ -86,3 +86,15 @@ dataStructure.advancedStartEndOrdering = Neos.Fusion:DataStructure {
 dataStructure.ignoreProperties < dataStructure.positionalOrdering {
 	@ignoreProperties = ${['f']}
 }
+
+dataStructure.nestingWithAndWithoutObjectName = Neos.Fusion:DataStructure {
+  keyWithoutType {
+    bar {
+      baz = 123
+    }
+  }
+  keyWithType = Neos.Fusion:Value {
+    value = 456
+  }
+  keyWithValue = 789
+}

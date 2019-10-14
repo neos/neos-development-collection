@@ -70,4 +70,14 @@ class DataStructureTest extends AbstractFusionObjectTest
         $view->setFusionPath('dataStructure/ignoreProperties');
         self::assertEquals(['c' => 'Xbefore', 'a' => 'Xafter'], $view->render());
     }
+
+    /**
+     * @test
+     */
+    public function nestedKeysWithoutObjectTypesRenderAsDataStructure(): void
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('dataStructure/nestingWithAndWithoutObjectName');
+        self::assertEquals(['keyWithoutType' => ['bar' => ['baz' => 123 ]], 'keyWithType' => 456, 'keyWithValue' => 789], $view->render());
+    }
 }
