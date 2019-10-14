@@ -93,6 +93,13 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
         return sha1(json_encode($this));
     }
 
+    public function equals(NodeDiscriminator $other): bool
+    {
+        return $this->contentStreamIdentifier->equals($other->getContentStreamIdentifier())
+            && $this->getNodeAggregateIdentifier()->equals($other->getNodeAggregateIdentifier())
+            && $this->getOriginDimensionSpacePoint()->equals($other->getOriginDimensionSpacePoint());
+    }
+
     public function jsonSerialize(): array
     {
         return [
