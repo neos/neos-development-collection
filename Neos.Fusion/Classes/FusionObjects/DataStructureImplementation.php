@@ -37,7 +37,17 @@ class DataStructureImplementation extends AbstractArrayFusionObject
         $result = [];
         foreach ($sortedChildFusionKeys as $key) {
             try {
-                $value = $this->fusionValue($key);
+                if (is_array($this->properties[$key])
+                    && !array_key_exists('__objectType', $this->properties[$key])
+                    && !array_key_exists('__eelExpression', $this->properties[$key])
+                    && !array_key_exists('__value', $this->properties[$key])
+                    && !array_key_exists('__stopInheritanceChain', $this->properties[$key])
+                ) {
+                    $fullPath = $this->path . '/' . $key;
+                    $value = $this->runtime->evaluate($fullPath . '<Neos.Fusion:DataStructure>', $this);
+                } else {
+                    $value = $this->fusionValue($key);
+                }
             } catch (\Exception $e) {
                 $value = $this->runtime->handleRenderingException($this->path . '/' . $key, $e);
             }
