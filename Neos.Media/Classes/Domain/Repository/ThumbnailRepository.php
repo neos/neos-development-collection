@@ -115,7 +115,7 @@ class ThumbnailRepository extends Repository
      * @return Thumbnail The thumbnail or NULL
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOneByAssetAndThumbnailConfiguration(AssetInterface $asset, ThumbnailConfiguration $configuration): Thumbnail
+    public function findOneByAssetAndThumbnailConfiguration(AssetInterface $asset, ThumbnailConfiguration $configuration): ?Thumbnail
     {
         $query = $this->entityManager->createQuery('SELECT t FROM Neos\Media\Domain\Model\Thumbnail t WHERE t.originalAsset = :originalAsset AND t.configurationHash = :configurationHash');
         $query->setParameter('originalAsset', $this->persistenceManager->getIdentifierByObject($asset));
