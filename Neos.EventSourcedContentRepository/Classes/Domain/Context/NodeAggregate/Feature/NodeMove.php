@@ -108,6 +108,13 @@ trait NodeMove
                 $this->requireNodeAggregateToNotBeDescendant($command->getContentStreamIdentifier(), $newParentNodeAggregate, $nodeAggregate);
             }
 
+            $newPrecedingSiblingNodeAggregate = null;
+            if ($command->getNewPrecedingSiblingNodeAggregateIdentifier()) {
+                $newPrecedingSiblingNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNewPrecedingSiblingNodeAggregateIdentifier());
+                if (!$command->getNewParentNodeAggregateIdentifier()) {
+                    $this->requireNodeAggregateToBeSibling($command->getContentStreamIdentifier(), $newPrecedingSiblingNodeAggregate, $nodeAggregate);
+                }
+            }
             $newSucceedingSiblingNodeAggregate = null;
             if ($command->getNewSucceedingSiblingNodeAggregateIdentifier()) {
                 $newSucceedingSiblingNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNewSucceedingSiblingNodeAggregateIdentifier());

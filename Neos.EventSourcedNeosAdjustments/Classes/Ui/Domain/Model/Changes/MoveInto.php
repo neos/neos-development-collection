@@ -99,6 +99,7 @@ class MoveInto extends AbstractMove
                 $subject->getNodeAggregateIdentifier(),
                 $hasEqualParentNode ? null : $this->getParentNode()->getNodeAggregateIdentifier(),
                 null,
+                null,
                 RelationDistributionStrategy::gatherAll()
             );
 

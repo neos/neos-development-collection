@@ -56,12 +56,12 @@ class MoveAfter extends AbstractMove
         if ($this->canApply()) {
             // "subject" is the to-be-moved node
             $subject = $this->getSubject();
-            $previousSibling = $this->getSiblingNode();
-            $parentNodeOfPreviousSibling = $previousSibling->findParentNode();
+            $precedingSibling = $this->getSiblingNode();
+            $parentNodeOfPreviousSibling = $precedingSibling->findParentNode();
 
             $succeedingSibling = null;
             try {
-                $succeedingSibling = $parentNodeOfPreviousSibling->findChildNodes()->next($previousSibling);
+                $succeedingSibling = $parentNodeOfPreviousSibling->findChildNodes()->next($precedingSibling);
             } catch (\InvalidArgumentException $e) {
                 // do nothing; $succeedingSibling is null.
             }
@@ -73,6 +73,7 @@ class MoveAfter extends AbstractMove
                 $subject->getDimensionSpacePoint(),
                 $subject->getNodeAggregateIdentifier(),
                 $hasEqualParentNode ? null : $parentNodeOfPreviousSibling->getNodeAggregateIdentifier(),
+                $precedingSibling ? $precedingSibling->getNodeAggregateIdentifier() : null,
                 $succeedingSibling ? $succeedingSibling->getNodeAggregateIdentifier() : null,
                 RelationDistributionStrategy::gatherAll()
             );
