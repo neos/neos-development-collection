@@ -64,6 +64,16 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                |
       | nodeName                      | "tethered"                                                                                                                              |
       | nodeAggregateClassification   | "tethered"                                                                                                                              |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
+      | Key                           | Value                                                                                                                                   |
+      | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
+      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                                                                                                |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                          |
+      | originDimensionSpacePoint     | {"market":"DE", "language":"de"}                                                                                                        |
+      | coveredDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                |
+      | nodeName                      | "esquire"                                                                                                                              |
+      | nodeAggregateClassification   | "regular"                                                                                                                               |
     And the graph projection is fully up to date
 
   Scenario: Try to move a node in a non-existing content stream:
