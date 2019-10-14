@@ -891,14 +891,15 @@ insert ignore into neos_contentgraph_restrictionrelation
                     $moveNodeMapping->getMovedNodeOrigin()
                 );
 
-                $newSucceedingSibling = null;
-                if ($event->getNewSucceedingSiblingNodeAggregateIdentifier()) {
-                    // @todo this might differ from DSP to DSP and has to be moved to the mapping as sibling aggregate identifier
-                    $newSucceedingSibling = $this->projectionContentGraph->findNodeByIdentifiers(
-                        $event->getContentStreamIdentifier(),
-                        $event->getNewSucceedingSiblingNodeAggregateIdentifier(),
-                        $moveNodeMapping->getNewSucceedingSiblingOrigin()
-                    );
+                $newSucceedingSiblings = [];
+                if (!$moveNodeMapping->getNewSucceedingSiblingAssignments()->isEmpty()) {
+                    foreach ($moveNodeMapping->getNewSucceedingSiblingAssignments() as $coveredDimensionSpacePointHash => $newSucceedingSiblingAssignment) {
+                        $newSucceedingSiblings[$coveredDimensionSpacePointHash] = $this->projectionContentGraph->findNodeByIdentifiers(
+                            $event->getContentStreamIdentifier(),
+                            $newSucceedingSiblingAssignment->getNodeAggregateIdentifier(),
+                            $newSucceedingSiblingAssignment->getOriginDimensionSpacePoint()
+                        );
+                    }
                 }
 
                 $ingoingHierarchyRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode($nodeToBeMoved->relationAnchorPoint, $event->getContentStreamIdentifier());
@@ -910,6 +911,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                     );
 
                     foreach ($moveNodeMapping->getRelationDimensionSpacePoints() as $relationDimensionSpacePoint) {
+                        $newSucceedingSibling = $newSucceedingSiblings[$relationDimensionSpacePoint->getHash()] ?? null;
                         $newPosition = $this->getRelationPosition(
                             $newParentNode->relationAnchorPoint,
                             null,
@@ -929,6 +931,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                     );
                 } else {
                     foreach ($ingoingHierarchyRelations as $ingoingHierarchyRelation) {
+                        $newSucceedingSibling = $newSucceedingSiblings[$ingoingHierarchyRelation->dimensionSpacePointHash] ?? null;
                         $newPosition = $this->getRelationPosition(
                             null,
                             $nodeToBeMoved->relationAnchorPoint,
