@@ -14,10 +14,11 @@ namespace Neos\Media\Domain\Repository;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
+use Neos\Flow\Persistence\Doctrine\Query;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
-use Neos\Flow\Persistence\Doctrine\Query;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
@@ -151,7 +152,7 @@ class AssetRepository extends Repository
         } else {
             $queryString = sprintf(
                 "SELECT count(persistence_object_identifier) c FROM neos_media_domain_model_asset WHERE dtype = '%s'",
-                strtolower(str_replace('Domain_Model_', '', str_replace('\\', '_', $this->entityClassName)))
+                FlowAnnotationDriver::inferDiscriminatorTypeFromClassName($this->entityClassName)
             );
         }
 
@@ -360,9 +361,7 @@ class AssetRepository extends Repository
     {
         $variantClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetVariantInterface::class);
         $discriminatorTypes = array_map(
-            static function (string $variantClassName): string {
-                return strtolower(str_replace('Domain_Model_', '', str_replace('\\', '_', $variantClassName)));
-            },
+            [FlowAnnotationDriver::class, 'inferDiscriminatorTypeFromClassName'],
             $variantClassNames
         );
 
