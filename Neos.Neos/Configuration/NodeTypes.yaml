@@ -301,6 +301,9 @@
   options:
     fusion:
       prototypeGenerator: Neos\Neos\Domain\Service\DefaultContentPrototypeGenerator
+    nodeCreationHandlers:
+      contentTitle:
+        nodeCreationHandler: 'Neos\Neos\Ui\NodeCreationHandler\ContentTitleNodeCreationHandler'
   ui:
     label: i18n
     icon: 'icon-square-o'
