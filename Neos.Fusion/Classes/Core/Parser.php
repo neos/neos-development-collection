@@ -199,7 +199,7 @@ class Parser implements ParserInterface
      *
      * @var array
      */
-    public static $reservedParseTreeKeys = ['__meta', '__prototypes', '__stopInheritanceChain', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
+    public static $reservedParseTreeKeys = ['__meta', '__prototypes', '__stopInheritanceChain', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression', '__sourceMap'];
 
     /**
      * @Flow\Inject
@@ -251,6 +251,12 @@ class Parser implements ParserInterface
     protected $contextPathAndFilename = null;
 
     /**
+     * The source of the fusion file as hint for debugging of runtime errors
+     * @var string
+     */
+    protected $source = null;
+
+    /**
      * Namespaces used for resolution of Fusion object names. These namespaces
      * are a mapping from a user defined key (alias) to a package key (the namespace).
      * By convention, the namespace should be a package key, but other strings would
@@ -272,11 +278,12 @@ class Parser implements ParserInterface
      * @param string $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
      * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
      * @param boolean $buildPrototypeHierarchy Merge prototype configurations or not. Will be false for includes to only do that once at the end.
+     * @param string $source source of the given fusion.
      * @return array A Fusion object tree, generated from the source code
      * @throws Fusion\Exception
      * @api
      */
-    public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = [], $buildPrototypeHierarchy = true)
+    public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = [], $buildPrototypeHierarchy = true, $source = null)
     {
         if (!is_string($sourceCode)) {
             throw new Fusion\Exception('Cannot parse Fusion - $sourceCode must be of type string!', 1180203775);
@@ -284,6 +291,7 @@ class Parser implements ParserInterface
         $this->initialize();
         $this->objectTree = $objectTreeUntilNow;
         $this->contextPathAndFilename = $contextPathAndFilename;
+        $this->source = $source ?: $this->contextPathAndFilename;
         $sourceCode = str_replace("\r\n", "\n", $sourceCode);
         $this->currentSourceCodeLines = explode(chr(10), $sourceCode);
         while (($fusionLine = $this->getNextfusionLine()) !== false) {
@@ -771,13 +779,14 @@ class Parser implements ParserInterface
             // Trying to match multiline dsl-expressions
             elseif (preg_match(self::SCAN_PATTERN_DSL_EXPRESSION_START, $unparsedValue)) {
                 $dslExpressionSoFar = $unparsedValue;
+                $dslExpressionStartLine = $this->currentLineNumber;
                 // potential start of multiline dsl-expression; trying to consume next lines...
                 while (true) {
                     if (substr($dslExpressionSoFar, -1) === '`') {
                         // potential end-of-dsl-expression marker
                         $matches = [];
                         if (preg_match(self::SPLIT_PATTERN_DSL_EXPRESSION, $dslExpressionSoFar, $matches) === 1) {
-                            $processedValue = $this->invokeAndParseDsl($matches['identifier'], $matches['code']);
+                            $processedValue = $this->invokeAndParseDsl($matches['identifier'], $matches['code'], $dslExpressionStartLine);
                             break;
                         }
                     }
@@ -792,17 +801,22 @@ class Parser implements ParserInterface
                 throw new Fusion\Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
             }
         }
+
+        if (is_array($processedValue) && !array_key_exists('__source', $processedValue)) {
+            $processedValue['__sourceMap'] = $this->source . ':' . $this->currentLineNumber;
+        }
         return $processedValue;
     }
 
     /**
      * @param string $identifier
-     * @param $code
+     * @param sring $code
+     * @param integer $lineNumber
      * @return mixed
      * @throws Exception
      * @throws Fusion
      */
-    protected function invokeAndParseDsl($identifier, $code)
+    protected function invokeAndParseDsl($identifier, $code, $lineNumber)
     {
         $dslObject = $this->dslFactory->create($identifier);
         $transpiledFusion = $dslObject->transpile($code);
@@ -812,7 +826,7 @@ class Parser implements ParserInterface
         foreach ($this->objectTypeNamespaces as $key => $objectTypeNamespace) {
             $parser->setObjectTypeNamespace($key, $objectTypeNamespace);
         }
-        $temporaryAst = $parser->parse('value = ' . $transpiledFusion);
+        $temporaryAst = $parser->parse('value = ' . $transpiledFusion, $this->contextPathAndFilename, [], false, $this->source . '[' . $lineNumber . ':' . $identifier . ']');
         $processedValue = $temporaryAst['value'];
         return $processedValue;
     }

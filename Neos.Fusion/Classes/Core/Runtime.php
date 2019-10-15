@@ -372,6 +372,9 @@ class Runtime
         if (array_key_exists('__objectType', $fusionConfiguration)) {
             $fusionPath .= sprintf('<%s>', $fusionConfiguration['__objectType']);
         }
+        if (array_key_exists('__sourceMap', $fusionConfiguration)) {
+            $fusionPath .= sprintf(' %s', $fusionConfiguration['__sourceMap']);
+        }
         $output = $exceptionHandler->handleRenderingException($fusionPath, $exception);
 
         return $output;
