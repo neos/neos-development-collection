@@ -112,7 +112,10 @@ trait NodeMove
 
                 $newParentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNewParentNodeAggregateIdentifier());
 
-                // @todo new parent must cover all affected DSPs
+                $this->requireNodeAggregateToCoverDimensionSpacePoints(
+                    $newParentNodeAggregate,
+                    $affectedDimensionSpacePoints
+                );
 
                 $this->requireNodeAggregateToNotBeDescendant($command->getContentStreamIdentifier(), $newParentNodeAggregate, $nodeAggregate);
             }
@@ -283,13 +286,11 @@ trait NodeMove
         ?DimensionSpacePointSet $affectedDimensionSpacePoints
     ): NodeMoveMappings {
         $nodeMoveMappings = [];
-        foreach ($nodeAggregate->getOccupiedDimensionSpacePoints()->getIntersection(OriginDimensionSpacePointSet::fromDimensionSpacePointSet($affectedDimensionSpacePoints)) as $occupiedAffectedDimensionSpacePoint) {
+        foreach ($nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($affectedDimensionSpacePoints) as $coveredAffectedDimensionSpacePoint) {
+            $occupiedAffectedDimensionSpacePoint = $nodeAggregate->getOccupationByCovered($coveredAffectedDimensionSpacePoint);
             $succeedingSiblingAssignmentsForDimensionSpacePoint = $succeedingSiblingAssignments[$occupiedAffectedDimensionSpacePoint->getHash()];
             $nodeMoveMappings[] = new NodeMoveMapping(
                 $occupiedAffectedDimensionSpacePoint,
-                $newParentNodeAggregate
-                    ? $newParentNodeAggregate->getOccupationByCovered($occupiedAffectedDimensionSpacePoint)
-                    : null,
                 $succeedingSiblingAssignmentsForDimensionSpacePoint,
                 $newParentNodeAggregate
                     ? $newParentNodeAggregate->getCoverageByOccupant($newParentNodeAggregate->getOccupationByCovered($occupiedAffectedDimensionSpacePoint))->getIntersection($affectedDimensionSpacePoints)

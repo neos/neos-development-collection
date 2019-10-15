@@ -315,14 +315,14 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
             // add yet missing parent relations
 
             foreach ($missingParentRelations as $dimensionSpacePoint) {
-                $parentNode = $this->projectionContentGraph->getNodeInAggregate(
+                $parentNode = $this->projectionContentGraph->findNodeInAggregate(
                     $contentStreamIdentifier,
                     $parentNodeAggregateIdentifier,
                     $dimensionSpacePoint
                 );
 
                 $succeedingSibling = $succeedingSiblingNodeAggregateIdentifier
-                    ? $this->projectionContentGraph->getNodeInAggregate(
+                    ? $this->projectionContentGraph->findNodeInAggregate(
                         $contentStreamIdentifier,
                         $succeedingSiblingNodeAggregateIdentifier,
                         $dimensionSpacePoint
@@ -734,7 +734,7 @@ insert ignore into neos_contentgraph_restrictionrelation
     public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
-            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
+            $sourceNode = $this->projectionContentGraph->findNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
 
             $specializedNode = $this->copyNodeToDimensionSpacePoint($sourceNode, $event->getSpecializationOrigin());
 
@@ -763,7 +763,7 @@ insert ignore into neos_contentgraph_restrictionrelation
     public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
-            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
+            $sourceNode = $this->projectionContentGraph->findNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
             $sourceParentNode = $this->projectionContentGraph->findParentNode(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
@@ -798,7 +798,7 @@ insert ignore into neos_contentgraph_restrictionrelation
                 // the null case is caught by the NodeAggregate or its command handler
                 foreach ($unassignedIngoingDimensionSpacePoints as $unassignedDimensionSpacePoint) {
                     // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
-                    $generalizationParentNode = $this->projectionContentGraph->getNodeInAggregate(
+                    $generalizationParentNode = $this->projectionContentGraph->findNodeInAggregate(
                         $event->getContentStreamIdentifier(),
                         $sourceParentNode->nodeAggregateIdentifier,
                         $unassignedDimensionSpacePoint
@@ -823,7 +823,7 @@ insert ignore into neos_contentgraph_restrictionrelation
     public function whenNodePeerVariantWasCreated(Event\NodePeerVariantWasCreated $event)
     {
         $this->transactional(function () use ($event) {
-            $sourceNode = $this->projectionContentGraph->getNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
+            $sourceNode = $this->projectionContentGraph->findNodeInAggregate($event->getContentStreamIdentifier(), $event->getNodeAggregateIdentifier(), $event->getSourceOrigin());
             $sourceParentNode = $this->projectionContentGraph->findParentNode(
                 $event->getContentStreamIdentifier(),
                 $event->getNodeAggregateIdentifier(),
@@ -851,7 +851,7 @@ insert ignore into neos_contentgraph_restrictionrelation
 
             foreach ($unassignedIngoingDimensionSpacePoints as $coveredDimensionSpacePoint) {
                 // The parent node aggregate might be varied as well, so we need to find a parent node for each covered dimension space point
-                $peerParentNode = $this->projectionContentGraph->getNodeInAggregate(
+                $peerParentNode = $this->projectionContentGraph->findNodeInAggregate(
                     $event->getContentStreamIdentifier(),
                     $sourceParentNode->nodeAggregateIdentifier,
                     $coveredDimensionSpacePoint
@@ -904,13 +904,13 @@ insert ignore into neos_contentgraph_restrictionrelation
 
                 $ingoingHierarchyRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode($nodeToBeMoved->relationAnchorPoint, $event->getContentStreamIdentifier());
                 if ($event->getNewParentNodeAggregateIdentifier()) {
-                    $newParentNode = $this->projectionContentGraph->findNodeByIdentifiers(
-                        $event->getContentStreamIdentifier(),
-                        $event->getNewParentNodeAggregateIdentifier(),
-                        $moveNodeMapping->getNewParentNodeOrigin()
-                    );
-
                     foreach ($moveNodeMapping->getRelationDimensionSpacePoints() as $relationDimensionSpacePoint) {
+                        $newParentNode = $this->projectionContentGraph->findNodeInAggregate(
+                            $event->getContentStreamIdentifier(),
+                            $event->getNewParentNodeAggregateIdentifier(),
+                            $relationDimensionSpacePoint
+                        );
+
                         $newSucceedingSibling = $newSucceedingSiblings[$relationDimensionSpacePoint->getHash()] ?? null;
                         $newPosition = $this->getRelationPosition(
                             $newParentNode->relationAnchorPoint,

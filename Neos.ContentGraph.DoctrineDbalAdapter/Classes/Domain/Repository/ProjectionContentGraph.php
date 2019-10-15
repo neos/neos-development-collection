@@ -98,8 +98,11 @@ class ProjectionContentGraph
      * @throws DBALException
      * @throws \Exception
      */
-    public function getNodeInAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $dimensionSpacePoint): ?NodeRecord
-    {
+    public function findNodeInAggregate(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): ?NodeRecord {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.*, h.name FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint

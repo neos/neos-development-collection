@@ -31,6 +31,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateIsDescendant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateIsNoSibling;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateIsRoot;
@@ -240,6 +241,24 @@ trait ConstraintChecks
     ): void {
         if (!$nodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" does currently not cover dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1541678877);
+        }
+    }
+
+    /**
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @param DimensionSpacePointSet $dimensionSpacePointSet
+     * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet
+     */
+    protected function requireNodeAggregateToCoverDimensionSpacePoints(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        DimensionSpacePointSet $dimensionSpacePointSet
+    ): void {
+        if (!$nodeAggregate->getCoveredDimensionSpacePoints()->getPointHashes() === $dimensionSpacePointSet->getPointHashes()) {
+            throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet::butWasSupposedTo(
+                $nodeAggregate->getIdentifier(),
+                $dimensionSpacePointSet,
+                $nodeAggregate->getCoveredDimensionSpacePoints()
+            );
         }
     }
 

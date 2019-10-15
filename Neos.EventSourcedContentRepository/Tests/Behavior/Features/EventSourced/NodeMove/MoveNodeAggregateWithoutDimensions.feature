@@ -153,7 +153,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateIdentifier              | "sir-david-nodenborough"                                                                                                   |
       | newParentNodeAggregateIdentifier     | "sir-nodeward-nodington-iii"                                                                                               |
       | newSucceedingNodeAggregateIdentifier | null                                                                                                                       |
-      | nodeMoveMappings                     | [{"movedNodeOrigin":[], "newParentNodeOrigin":[], "newSucceedingSiblingAssignments":[], "relationDimensionSpacePoints":[[]]}] |
+      | nodeMoveMappings                     | [{"movedNodeOrigin":[], "newSucceedingSiblingAssignments":[], "relationDimensionSpacePoints":[[]]}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 5 nodes
@@ -198,7 +198,7 @@ Feature: Move a node without content dimensions
       | nodeAggregateIdentifier                     | "nody-mc-nodeface"                                                                                                       |
       | newParentNodeAggregateIdentifier            | "lady-eleonode-rootford"                                                                                                 |
       | newSucceedingSiblingNodeAggregateIdentifier | "sir-nodeward-nodington-iii"                                                                                             |
-      | nodeMoveMappings                            | [{"movedNodeOrigin":[], "newParentNodeOrigin":[], "newSucceedingSiblingAssignments":{"d751713988987e9331980363e24189ce":{"nodeAggregateIdentifier":"sir-nodeward-nodington-iii","originDimensionSpacePoint":[]}}, "relationDimensionSpacePoints":[[]]}] |
+      | nodeMoveMappings                            | [{"movedNodeOrigin":[], "newSucceedingSiblingAssignments":{"d751713988987e9331980363e24189ce":{"nodeAggregateIdentifier":"sir-nodeward-nodington-iii","originDimensionSpacePoint":[]}}, "relationDimensionSpacePoints":[[]]}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
