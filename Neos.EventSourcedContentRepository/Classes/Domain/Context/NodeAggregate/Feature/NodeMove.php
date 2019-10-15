@@ -28,7 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantAssignment;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantAssignments;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
@@ -179,7 +179,7 @@ trait NodeMove
      * @param ReadableNodeAggregateInterface $nodeAggregate The node aggregate to be moved
      * @param NodeAggregateIdentifier|null $precedingSiblingIdentifier The planned preceding sibling's node aggregate identifier
      * @param NodeAggregateIdentifier|null $succeedingSiblingIdentifier The planned succeeding sibling's node aggregate identifier
-     * @param DimensionSpace\DimensionSpacePoint $originDimensionSpacePoint A dimension space point occupied by the node aggregate to be moved
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint A dimension space point occupied by the node aggregate to be moved
      * @param DimensionSpacePointSet $affectedDimensionSpacePoints The dimension space points affected by the move operation
      * @return NodeVariantAssignments
      * @todo move to content graph for more efficient calculation, if possible
@@ -189,7 +189,7 @@ trait NodeMove
         ReadableNodeAggregateInterface $nodeAggregate,
         ?NodeAggregateIdentifier $precedingSiblingIdentifier,
         ?NodeAggregateIdentifier $succeedingSiblingIdentifier,
-        DimensionSpace\DimensionSpacePoint $originDimensionSpacePoint,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): NodeVariantAssignments {
         $succeedingSiblings = NodeVariantAssignments::create();

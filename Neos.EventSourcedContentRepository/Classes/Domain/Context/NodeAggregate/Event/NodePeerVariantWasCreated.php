@@ -13,10 +13,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -36,12 +36,12 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
     private $nodeAggregateIdentifier;
 
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $sourceOrigin;
 
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $peerOrigin;
 
@@ -53,8 +53,8 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $sourceOrigin,
-        DimensionSpacePoint $peerOrigin,
+        OriginDimensionSpacePoint $sourceOrigin,
+        OriginDimensionSpacePoint $peerOrigin,
         DimensionSpacePointSet $peerCoverage
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -81,17 +81,17 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      */
-    public function getSourceOrigin(): DimensionSpacePoint
+    public function getSourceOrigin(): OriginDimensionSpacePoint
     {
         return $this->sourceOrigin;
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      */
-    public function getPeerOrigin(): DimensionSpacePoint
+    public function getPeerOrigin(): OriginDimensionSpacePoint
     {
         return $this->peerOrigin;
     }

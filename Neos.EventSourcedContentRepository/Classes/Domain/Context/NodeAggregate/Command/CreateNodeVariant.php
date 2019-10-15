@@ -12,9 +12,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 
 /**
  * Create a variant of a node in a content stream
@@ -34,20 +34,20 @@ final class CreateNodeVariant implements \JsonSerializable
     private $nodeAggregateIdentifier;
 
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $sourceOrigin;
 
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $targetOrigin;
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $sourceOrigin,
-        DimensionSpacePoint $targetOrigin
+        OriginDimensionSpacePoint $sourceOrigin,
+        OriginDimensionSpacePoint $targetOrigin
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -60,8 +60,8 @@ final class CreateNodeVariant implements \JsonSerializable
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new DimensionSpacePoint($array['sourceOrigin']),
-            new DimensionSpacePoint($array['targetOrigin'])
+            new OriginDimensionSpacePoint($array['sourceOrigin']),
+            new OriginDimensionSpacePoint($array['targetOrigin'])
         );
     }
 
@@ -82,17 +82,17 @@ final class CreateNodeVariant implements \JsonSerializable
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      */
-    public function getSourceOrigin(): DimensionSpacePoint
+    public function getSourceOrigin(): OriginDimensionSpacePoint
     {
         return $this->sourceOrigin;
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      */
-    public function getTargetOrigin(): DimensionSpacePoint
+    public function getTargetOrigin(): OriginDimensionSpacePoint
     {
         return $this->targetOrigin;
     }

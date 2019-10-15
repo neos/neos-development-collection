@@ -18,6 +18,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -57,7 +58,7 @@ class ProjectionContentGraph
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
-     * @param DimensionSpacePoint $originDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @return NodeRecord|null
      * @throws DBALException
      * @throws \Exception
@@ -65,7 +66,7 @@ class ProjectionContentGraph
     public function findParentNode(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $childNodeAggregateIdentifier,
-        DimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeRecord {
         $params = [
             'contentStreamIdentifier' => (string)$contentStreamIdentifier,
@@ -118,14 +119,14 @@ class ProjectionContentGraph
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $originDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @return NodeRecord|null
      * @throws \Exception
      */
     public function findNodeByIdentifiers(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeRecord {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.*, h.name FROM neos_contentgraph_node n
@@ -146,13 +147,16 @@ class ProjectionContentGraph
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $originDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @return NodeRelationAnchorPoint|null
      * @throws DBALException
      */
-    public function getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, ContentStreamIdentifier $contentStreamIdentifier): ?NodeRelationAnchorPoint
-    {
+    public function getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+        ContentStreamIdentifier $contentStreamIdentifier
+    ): ?NodeRelationAnchorPoint {
         $rows = $this->getDatabaseConnection()->executeQuery(
             'SELECT DISTINCT n.relationanchorpoint FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint

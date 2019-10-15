@@ -6,6 +6,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantAssignments;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -21,7 +22,7 @@ use Neos\Flow\Annotations as Flow;
 final class NodeMoveMapping
 {
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $movedNodeOrigin;
 
@@ -41,8 +42,8 @@ final class NodeMoveMapping
     private $relationDimensionSpacePoints;
 
     public function __construct(
-        DimensionSpacePoint $movedNodeOrigin,
         ?DimensionSpacePoint $newParentNodeOrigin,
+        OriginDimensionSpacePoint $movedNodeOrigin,
         ?NodeVariantAssignments $newSucceedingSiblingAssignments,
         ?DimensionSpacePointSet $relationDimensionSpacePoints
     ) {
@@ -64,14 +65,14 @@ final class NodeMoveMapping
     public static function fromArray(array $array): NodeMoveMapping
     {
         return new static(
-            new DimensionSpacePoint($array['movedNodeOrigin']),
             isset($array['newParentNodeOrigin']) ? new DimensionSpacePoint($array['newParentNodeOrigin']) : null,
+            new OriginDimensionSpacePoint($array['movedNodeOrigin']),
             NodeVariantAssignments::createFromArray($array['newSucceedingSiblingAssignments']),
             isset($array['relationDimensionSpacePoints']) ? new DimensionSpacePointSet($array['relationDimensionSpacePoints']) : null
         );
     }
 
-    public function getMovedNodeOrigin(): DimensionSpacePoint
+    public function getMovedNodeOrigin(): OriginDimensionSpacePoint
     {
         return $this->movedNodeOrigin;
     }
