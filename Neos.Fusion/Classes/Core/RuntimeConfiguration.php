@@ -52,7 +52,7 @@ final class RuntimeConfiguration
     }
 
     /**
-     * Get the expanded Fusion configuration for the given Fusion path
+     * Get the expanded Fusion configuration for the given path
      *
      * @param string $fusionPath
      * @return array
@@ -60,19 +60,37 @@ final class RuntimeConfiguration
      */
     public function forPath(string $fusionPath): array
     {
+        // Fast path if complete Fusion path is in configuration cache
         if (isset($this->pathCache[$fusionPath])) {
             return $this->pathCache[$fusionPath]['c'];
         }
 
-        $pathParts = explode('/', $fusionPath);
-        $configuration = $this->fusionConfiguration;
-
+        // Find longest prefix of path that already is in path cache
         $pathUntilNow = '';
-        $currentPrototypeDefinitions = [];
-        if (isset($configuration['__prototypes'])) {
-            $currentPrototypeDefinitions = $configuration['__prototypes'];
+        $fusionPathLength = strlen($fusionPath);
+        $offset = $fusionPathLength;
+        while (($offset = strrpos($fusionPath, '/', -($fusionPathLength - $offset + 1))) != false) {
+          $pathPrefix = substr($fusionPath, 0, $offset);
+          if (isset($this->pathCache[$pathPrefix])) {
+            $pathUntilNow = $pathPrefix;
+            $configuration = $this->pathCache[$pathPrefix]['c'];
+            $currentPrototypeDefinitions = $this->pathCache[$pathUntilNow]['p'];
+            break;
+          }
         }
 
+        // No prefix was found, build configuration for path from the root
+        if ($pathUntilNow === '') {
+          $configuration = $this->fusionConfiguration;
+          $currentPrototypeDefinitions = [];
+          if (isset($configuration['__prototypes'])) {
+              $currentPrototypeDefinitions = $configuration['__prototypes'];
+          }
+        }
+
+        // Build configuration for the remaining path parts
+        $remainingPath = substr($fusionPath, $pathUntilNow === '' ? 0 : strlen($pathUntilNow) + 1);
+        $pathParts = explode('/', $remainingPath);
         foreach ($pathParts as $pathPart) {
             if ($pathUntilNow === '') {
                 $pathUntilNow = $pathPart;
@@ -102,7 +120,7 @@ final class RuntimeConfiguration
      * @return array
      * @throws Exception
      */
-    protected function matchCurrentPathPart($pathPart, $previousConfiguration, &$currentPrototypeDefinitions)
+    private function matchCurrentPathPart($pathPart, $previousConfiguration, &$currentPrototypeDefinitions)
     {
         if (preg_match('#^([^<]*)(<(.*?)>)?$#', $pathPart, $matches) !== 1) {
             throw new Exception('Path Part ' . $pathPart . ' not well-formed', 1332494645);
@@ -147,7 +165,7 @@ final class RuntimeConfiguration
      * @return array
      * @throws Exception
      */
-    protected function mergePrototypesWithConfigurationForPathSegment($configuration, &$currentPrototypeDefinitions)
+    private function mergePrototypesWithConfigurationForPathSegment($configuration, &$currentPrototypeDefinitions)
     {
         $currentPathSegmentType = $configuration['__objectType'];
 

@@ -59,6 +59,8 @@ class RuntimeConfigurationTest extends UnitTestCase
             '__objectType' => 'MyComponent1'
         ], $configuration);
 
-        $this->assertTrue($runtimeConfiguration->isPathCached('root/item1/renderer'));
+        $this->assertTrue($runtimeConfiguration->isPathCached('root/item1/renderer'), 'Path "root/item1/renderer" should be cached');
+        $this->assertTrue($runtimeConfiguration->isPathCached('root/item1'), 'Path "root/item1" should be cached');
+        $this->assertTrue($runtimeConfiguration->isPathCached('root'), 'Path "root" should be cached');
     }
 }
