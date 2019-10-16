@@ -15,7 +15,6 @@ namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector;
-use Neos\EventSourcing\EventListener\AppliedEventsLogRepository;
 use Neos\EventSourcing\EventListener\EventListenerInvoker;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\Flow\Annotations as Flow;
@@ -36,12 +35,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class ImportProjectionPerformanceService
 {
-
-    /**
-     * @Flow\Inject
-     * @var AppliedEventsLogRepository
-     */
-    protected $appliedEventsLogRepository;
 
     /**
      * @Flow\Inject
@@ -69,8 +62,6 @@ class ImportProjectionPerformanceService
 
     public function configureGraphAndWorkspaceProjectionsToRunSynchronously()
     {
-        $this->appliedEventsLogRepository->ensureHighestAppliedSequenceNumbersAreInitialized();
-
         $this->disableJobQueueForProjectionUpdateAndEnsureProjectorsAreRunSynchronously();
 
         $this->graphProjector->assumeProjectorRunsSynchronously();
