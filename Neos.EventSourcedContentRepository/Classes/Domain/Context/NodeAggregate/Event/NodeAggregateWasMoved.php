@@ -31,14 +31,21 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
      */
     private $nodeMoveMappings;
 
+    /**
+     * @var bool
+     */
+    private $repositionNodesWithoutAssignments;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ?NodeMoveMappings $nodeMoveMappings
+        ?NodeMoveMappings $nodeMoveMappings,
+        bool $repositionNodesWithoutAssignments
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeMoveMappings = $nodeMoveMappings;
+        $this->repositionNodesWithoutAssignments = $repositionNodesWithoutAssignments;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -56,12 +63,18 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
         return $this->nodeMoveMappings;
     }
 
+    public function getRepositionNodesWithoutAssignments(): bool
+    {
+        return $this->repositionNodesWithoutAssignments;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeAggregateWasMoved
     {
         return new NodeAggregateWasMoved(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
-            $this->nodeMoveMappings
+            $this->nodeMoveMappings,
+            $this->repositionNodesWithoutAssignments
         );
     }
 }

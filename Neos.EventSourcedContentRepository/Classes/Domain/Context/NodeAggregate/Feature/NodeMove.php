@@ -12,7 +12,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -150,7 +149,8 @@ trait NodeMove
                     new NodeAggregateWasMoved(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
-                        $nodeMoveMappings
+                        $nodeMoveMappings,
+                        !$command->getNewParentNodeAggregateIdentifier() && !$command->getNewSucceedingSiblingNodeAggregateIdentifier() && !$command->getNewPrecedingSiblingNodeAggregateIdentifier()
                     )
                 )
             );

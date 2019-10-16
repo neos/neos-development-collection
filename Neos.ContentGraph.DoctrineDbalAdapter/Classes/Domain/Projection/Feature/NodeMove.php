@@ -98,7 +98,16 @@ trait NodeMove
                         $newPosition = $this->getRelationPosition(
                             null,
                             $nodeToBeMoved->relationAnchorPoint,
-                            $newSucceedingSibling ? $newSucceedingSibling->relationAnchorPoint : null,
+                            $newSucceedingSibling,
+                            $event->getContentStreamIdentifier(),
+                            $coveredDimensionSpacePoint
+                        );
+                        $ingoingHierarchyRelation->assignNewPosition($newPosition, $this->getDatabaseConnection());
+                    } elseif ($event->getRepositionNodesWithoutAssignments()) {
+                        $newPosition = $this->getRelationPosition(
+                            null,
+                            $nodeToBeMoved->relationAnchorPoint,
+                            null,
                             $event->getContentStreamIdentifier(),
                             $coveredDimensionSpacePoint
                         );
