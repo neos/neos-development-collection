@@ -197,6 +197,12 @@ trait NodeMove
         }
 
         $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
+        $originSubgraph = $this->getContentGraph()->getSubgraphByIdentifier(
+            $contentStreamIdentifier,
+            $originDimensionSpacePoint,
+            $visibilityConstraints
+        );
+        $originParent = $originSubgraph->findParentNode($nodeAggregate->getIdentifier());
         foreach ($succeedingSiblingAssignments as $coveredDimensionSpacePointHash => $succeedingSiblingAssignment) {
             $contentSubgraph = $this->getContentGraph()->getSubgraphByIdentifier(
                 $contentStreamIdentifier,
@@ -205,14 +211,15 @@ trait NodeMove
             );
 
             $parentNode = $contentSubgraph->findParentNode($succeedingSiblingAssignment->getNodeAggregateIdentifier());
-
-            $parents = $parents->add(
-                new NodeVariantAssignment(
-                    $parentNode->getNodeAggregateIdentifier(),
-                    $parentNode->getOriginDimensionSpacePoint()
-                ),
-                $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash]
-            );
+            if (!$parentNode->getNodeAggregateIdentifier()->equals($originParent->getNodeAggregateIdentifier())) {
+                $parents = $parents->add(
+                    new NodeVariantAssignment(
+                        $parentNode->getNodeAggregateIdentifier(),
+                        $parentNode->getOriginDimensionSpacePoint()
+                    ),
+                    $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash]
+                );
+            }
         }
 
         return $parents;

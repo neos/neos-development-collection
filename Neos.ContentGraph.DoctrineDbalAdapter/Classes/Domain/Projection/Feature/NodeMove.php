@@ -98,7 +98,7 @@ trait NodeMove
                         $newPosition = $this->getRelationPosition(
                             null,
                             $nodeToBeMoved->relationAnchorPoint,
-                            $newSucceedingSibling,
+                            $newSucceedingSibling->relationAnchorPoint,
                             $event->getContentStreamIdentifier(),
                             $coveredDimensionSpacePoint
                         );
