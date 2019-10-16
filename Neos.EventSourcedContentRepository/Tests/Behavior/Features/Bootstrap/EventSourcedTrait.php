@@ -69,17 +69,19 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
-use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\EventStore\EventEnvelope;
 use Neos\EventSourcing\EventStore\EventNormalizer;
-use Neos\EventSourcing\EventStore\EventStoreManager;
+use Neos\EventSourcing\EventStore\EventStore;
+use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Features context
@@ -92,9 +94,9 @@ trait EventSourcedTrait
     private $eventTypeResolver;
 
     /**
-     * @var EventStoreManager
+     * @var EventStore
      */
-    private $eventStoreManager;
+    private $eventStore;
 
     /**
      * @var ContentGraphInterface
@@ -171,7 +173,9 @@ trait EventSourcedTrait
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
         $this->nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
         $this->eventTypeResolver = $this->getObjectManager()->get(EventTypeResolver::class);
-        $this->eventStoreManager = $this->getObjectManager()->get(EventStoreManager::class);
+        /* @var $eventStoreFactory EventStoreFactory */
+        $eventStoreFactory = $this->getObjectManager()->get(EventStoreFactory::class);
+        $this->eventStore = $eventStoreFactory->create('ContentRepository');
         $this->contentGraph = $this->getObjectManager()->get(ContentGraphInterface::class);
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
@@ -400,10 +404,9 @@ trait EventSourcedTrait
     protected function publishEvent($eventType, StreamName $streamName, $eventPayload)
     {
         $event = $this->eventNormalizer->denormalize($eventPayload, $eventType);
-        $event = EventWithIdentifier::create($event);
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $event = DecoratedEvent::addIdentifier($event, Uuid::uuid4()->toString());
         $events = DomainEvents::withSingleEvent($event);
-        $eventStore->commit($streamName, $events);
+        $this->eventStore->commit($streamName, $events);
         $this->lastCommandOrEventResult = CommandResult::fromPublishedEvents($events);
     }
 
@@ -962,8 +965,7 @@ trait EventSourcedTrait
     public function iExpectExactlyEventToBePublishedOnStream(int $numberOfEvents, string $streamName)
     {
         $streamName = StreamName::fromString($streamName);
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $stream = $eventStore->load($streamName);
+        $stream = $this->eventStore->load($streamName);
         $this->currentEventStreamAsArray = iterator_to_array($stream, false);
         Assert::assertEquals($numberOfEvents, count($this->currentEventStreamAsArray), 'Number of events did not match');
     }
@@ -977,8 +979,7 @@ trait EventSourcedTrait
     {
         $streamName = StreamName::forCategory($streamName);
 
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $stream = $eventStore->load($streamName);
+        $stream = $this->eventStore->load($streamName);
         $this->currentEventStreamAsArray = iterator_to_array($stream, false);
         Assert::assertEquals($numberOfEvents, count($this->currentEventStreamAsArray), 'Number of events did not match');
     }
