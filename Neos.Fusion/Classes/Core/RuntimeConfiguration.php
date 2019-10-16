@@ -74,7 +74,11 @@ final class RuntimeConfiguration
         }
 
         foreach ($pathParts as $pathPart) {
-            $pathUntilNow .= '/' . $pathPart;
+            if ($pathUntilNow === '') {
+                $pathUntilNow = $pathPart;
+            } else {
+                $pathUntilNow .= '/' . $pathPart;
+            }
             if (isset($this->pathCache[$pathUntilNow])) {
                 $configuration = $this->pathCache[$pathUntilNow]['c'];
                 $currentPrototypeDefinitions = $this->pathCache[$pathUntilNow]['p'];
