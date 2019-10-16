@@ -70,22 +70,22 @@ final class RuntimeConfiguration
         $fusionPathLength = strlen($fusionPath);
         $offset = $fusionPathLength;
         while (($offset = strrpos($fusionPath, '/', -($fusionPathLength - $offset + 1))) != false) {
-          $pathPrefix = substr($fusionPath, 0, $offset);
-          if (isset($this->pathCache[$pathPrefix])) {
-            $pathUntilNow = $pathPrefix;
-            $configuration = $this->pathCache[$pathPrefix]['c'];
-            $currentPrototypeDefinitions = $this->pathCache[$pathUntilNow]['p'];
-            break;
-          }
+            $pathPrefix = substr($fusionPath, 0, $offset);
+            if (isset($this->pathCache[$pathPrefix])) {
+                $pathUntilNow = $pathPrefix;
+                $configuration = $this->pathCache[$pathPrefix]['c'];
+                $currentPrototypeDefinitions = $this->pathCache[$pathUntilNow]['p'];
+                break;
+            }
         }
 
         // No prefix was found, build configuration for path from the root
         if ($pathUntilNow === '') {
-          $configuration = $this->fusionConfiguration;
-          $currentPrototypeDefinitions = [];
-          if (isset($configuration['__prototypes'])) {
-              $currentPrototypeDefinitions = $configuration['__prototypes'];
-          }
+            $configuration = $this->fusionConfiguration;
+            $currentPrototypeDefinitions = [];
+            if (isset($configuration['__prototypes'])) {
+                $currentPrototypeDefinitions = $configuration['__prototypes'];
+            }
         }
 
         // Build configuration for the remaining path parts
@@ -134,7 +134,8 @@ final class RuntimeConfiguration
         }
 
         if (isset($configuration['__prototypes'])) {
-            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $configuration['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
+            $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions,
+                $configuration['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
         }
 
         $currentPathSegmentType = null;
@@ -147,7 +148,8 @@ final class RuntimeConfiguration
 
         if ($currentPathSegmentType !== null) {
             $configuration['__objectType'] = $currentPathSegmentType;
-            $configuration = $this->mergePrototypesWithConfigurationForPathSegment($configuration, $currentPrototypeDefinitions);
+            $configuration = $this->mergePrototypesWithConfigurationForPathSegment($configuration,
+                $currentPrototypeDefinitions);
         }
 
         if (is_array($configuration) && !isset($configuration['__value']) && !isset($configuration['__eelExpression']) && !isset($configuration['__meta']['class']) && !isset($configuration['__objectType']) && isset($configuration['__meta']['process'])) {
@@ -172,7 +174,10 @@ final class RuntimeConfiguration
         if (isset($currentPrototypeDefinitions[$currentPathSegmentType])) {
             $prototypeMergingOrder = [$currentPathSegmentType];
             if (isset($currentPrototypeDefinitions[$currentPathSegmentType]['__prototypeChain'])) {
-                $prototypeMergingOrder = array_merge($currentPrototypeDefinitions[$currentPathSegmentType]['__prototypeChain'], $prototypeMergingOrder);
+                $prototypeMergingOrder = array_merge(
+                    $currentPrototypeDefinitions[$currentPathSegmentType]['__prototypeChain'],
+                    $prototypeMergingOrder
+                );
             }
 
             $currentPrototypeWithInheritanceTakenIntoAccount = [];
@@ -184,17 +189,32 @@ final class RuntimeConfiguration
                         $prototypeName, $currentPathSegmentType), 1427134340);
                 }
 
-                $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName], $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
+                $currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverruleWithCallback(
+                    $currentPrototypeWithInheritanceTakenIntoAccount,
+                    $currentPrototypeDefinitions[$prototypeName],
+                    $this->simpleTypeToArrayClosure,
+                    $this->shouldOverrideFirstClosure
+                );
             }
 
             // We merge the already flattened prototype with the current configuration (in that order),
             // to make sure that the current configuration (not being defined in the prototype) wins.
-            $configuration = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeWithInheritanceTakenIntoAccount, $configuration, $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
+            $configuration = Arrays::arrayMergeRecursiveOverruleWithCallback(
+                $currentPrototypeWithInheritanceTakenIntoAccount,
+                $configuration,
+                $this->simpleTypeToArrayClosure,
+                $this->shouldOverrideFirstClosure
+            );
 
             // If context-dependent prototypes are set (such as prototype("foo").prototype("baz")),
             // we update the current prototype definitions.
             if (isset($currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'])) {
-                $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'], $this->simpleTypeToArrayClosure, $this->shouldOverrideFirstClosure);
+                $currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverruleWithCallback(
+                    $currentPrototypeDefinitions,
+                    $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'],
+                    $this->simpleTypeToArrayClosure,
+                    $this->shouldOverrideFirstClosure
+                );
             }
         }
 
