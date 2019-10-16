@@ -16,7 +16,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeVariantAssignmentCollectionIsInvalid;
 
 /**
- * An immutable collection of node variant assignments, indexed by (affected, not origin) dimension space point
+ * An immutable collection of node variant assignments, indexed by (covered, not origin) dimension space point
  *
  * @Flow\Proxy(false)
  */

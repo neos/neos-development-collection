@@ -305,29 +305,6 @@ trait ConstraintChecks
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @param ReadableNodeAggregateInterface $referenceNodeAggregate
-     * @throws NodeAggregateIsDescendant
-     */
-    protected function requireNodeAggregateToBeSibling(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        ReadableNodeAggregateInterface $nodeAggregate,
-        ReadableNodeAggregateInterface $referenceNodeAggregate
-    ) {
-        $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        foreach ($nodeAggregate->getCoveredDimensionSpacePoints() as $coveredDimensionSpacePoint) {
-            $subgraph = $this->getContentGraph()->getSubgraphByIdentifier($contentStreamIdentifier, $coveredDimensionSpacePoint, $visibilityConstraints);
-            $parentNodeAggregateIdentifier = $subgraph->findParentNode($nodeAggregate->getIdentifier())->getNodeAggregateIdentifier();
-            $referenceParentNodeAggregateIdentifier = $subgraph->findParentNode($referenceNodeAggregate->getIdentifier())->getNodeAggregateIdentifier();
-
-            if (!$parentNodeAggregateIdentifier->equals($referenceParentNodeAggregateIdentifier)) {
-                throw NodeAggregateIsNoSibling::butWasSupposedToBe($nodeAggregate->getIdentifier(), $referenceNodeAggregate->getIdentifier());
-            }
-        }
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeName $nodeName
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param OriginDimensionSpacePoint $parentOriginDimensionSpacePoint

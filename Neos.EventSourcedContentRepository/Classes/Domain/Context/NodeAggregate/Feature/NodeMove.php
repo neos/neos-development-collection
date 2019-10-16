@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -80,19 +81,11 @@ trait NodeMove
 
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
-            switch ($command->getRelationDistributionStrategy()->getStrategy()) {
-                case RelationDistributionStrategy::STRATEGY_SCATTER:
-                    $affectedDimensionSpacePoints = new DimensionSpacePointSet([$command->getDimensionSpacePoint()]);
-                    break;
-                case RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS:
-                    $affectedDimensionSpacePoints = $nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection(
-                        $this->getInterDimensionalVariationGraph()->getSpecializationSet($command->getDimensionSpacePoint())
-                    );
-                    break;
-                case RelationDistributionStrategy::STRATEGY_GATHER_ALL:
-                default:
-                    $affectedDimensionSpacePoints = $nodeAggregate->getCoveredDimensionSpacePoints();
-            }
+            $affectedDimensionSpacePoints = $this->resolveAffectedDimensionSpacePointSet(
+                $nodeAggregate,
+                $command->getRelationDistributionStrategy(),
+                $command->getDimensionSpacePoint()
+            );
 
             $newParentNodeAggregate = null;
             if ($command->getNewParentNodeAggregateIdentifier()) {
@@ -120,44 +113,44 @@ trait NodeMove
                 $this->requireNodeAggregateToNotBeDescendant($command->getContentStreamIdentifier(), $newParentNodeAggregate, $nodeAggregate);
             }
 
-            $newPrecedingSiblingNodeAggregate = null;
             if ($command->getNewPrecedingSiblingNodeAggregateIdentifier()) {
-                $newPrecedingSiblingNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNewPrecedingSiblingNodeAggregateIdentifier());
-                if (!$command->getNewParentNodeAggregateIdentifier()) {
-                    $this->requireNodeAggregateToBeSibling($command->getContentStreamIdentifier(), $newPrecedingSiblingNodeAggregate, $nodeAggregate);
-                }
+                $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNewPrecedingSiblingNodeAggregateIdentifier());
             }
-            $newSucceedingSiblingNodeAggregate = null;
             if ($command->getNewSucceedingSiblingNodeAggregateIdentifier()) {
-                $newSucceedingSiblingNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNewSucceedingSiblingNodeAggregateIdentifier());
-                if (!$command->getNewParentNodeAggregateIdentifier()) {
-                    $this->requireNodeAggregateToBeSibling($command->getContentStreamIdentifier(), $newSucceedingSiblingNodeAggregate, $nodeAggregate);
-                }
+                $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNewSucceedingSiblingNodeAggregateIdentifier());
             }
 
+            /** @var NodeVariantAssignments[] $succeedingSiblingAssignments */
             $succeedingSiblingAssignments = [];
+            $parentAssignments = [];
             foreach ($nodeAggregate->getOccupiedDimensionSpacePoints() as $occupiedDimensionSpacePoint) {
                 $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->getHash()] = $this->resolveNewSucceedingSiblingsAssignments(
                     $command->getContentStreamIdentifier(),
                     $nodeAggregate,
+                    $command->getNewParentNodeAggregateIdentifier(),
                     $command->getNewPrecedingSiblingNodeAggregateIdentifier(),
                     $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
                     $occupiedDimensionSpacePoint,
                     $affectedDimensionSpacePoints
                 );
+                $parentAssignments[$occupiedDimensionSpacePoint->getHash()] = $this->resolveNewParentAssignments(
+                    $command->getContentStreamIdentifier(),
+                    $nodeAggregate,
+                    $command->getNewParentNodeAggregateIdentifier(),
+                    $succeedingSiblingAssignments[$occupiedDimensionSpacePoint->getHash()],
+                    $occupiedDimensionSpacePoint,
+                    $affectedDimensionSpacePoints
+                );
             }
 
-            $nodeMoveMappings = $this->getNodeMoveMappings($nodeAggregate, $newParentNodeAggregate, $succeedingSiblingAssignments, $affectedDimensionSpacePoints);
+            $nodeMoveMappings = $this->getNodeMoveMappings($nodeAggregate, $parentAssignments, $succeedingSiblingAssignments, $affectedDimensionSpacePoints);
 
             $events = DomainEvents::withSingleEvent(
                 EventWithIdentifier::create(
                     new NodeAggregateWasMoved(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
-                        $command->getNewParentNodeAggregateIdentifier(),
-                        $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
-                        $nodeMoveMappings,
-                        $affectedDimensionSpacePoints
+                        $nodeMoveMappings
                     )
                 )
             );
@@ -173,6 +166,79 @@ trait NodeMove
     }
 
     /**
+     * Resolves the new parents on a per-dimension-space-point basis
+     *
+     * If no parent node aggregate is defined, it will be resolved from the already evaluated new succeeding siblings.
+     *
+     * @param ContentStreamIdentifier $contentStreamIdentifier The content stream the move operation is performed in
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @param NodeAggregateIdentifier|null $parentIdentifier The parent node aggregate's identifier if defined
+     * @param NodeVariantAssignments $succeedingSiblingAssignments The already determined new succeeding siblings
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint A dimension space point occupied by the node aggregate to be moved
+     * @param DimensionSpacePointSet $affectedDimensionSpacePoints
+     * @return NodeVariantAssignments
+     * @todo move to content graph for more efficient calculation, if possible
+     */
+    private function resolveNewParentAssignments(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        ReadableNodeAggregateInterface $nodeAggregate,
+        ?NodeAggregateIdentifier $parentIdentifier,
+        NodeVariantAssignments $succeedingSiblingAssignments,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+        DimensionSpacePointSet $affectedDimensionSpacePoints
+    ): NodeVariantAssignments {
+        $parents = NodeVariantAssignments::create();
+        if ($parentIdentifier) {
+            // if a parent node aggregate identifier is explicitly given, then all variants are assigned to it as children
+            foreach ($nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)->getIntersection($affectedDimensionSpacePoints) as $coveredDimensionSpacePoint) {
+                $parents = $parents->add(new NodeVariantAssignment($parentIdentifier, $originDimensionSpacePoint), $coveredDimensionSpacePoint);
+            }
+            return $parents;
+        }
+
+        $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
+        foreach ($succeedingSiblingAssignments as $coveredDimensionSpacePointHash => $succeedingSiblingAssignment) {
+            $contentSubgraph = $this->getContentGraph()->getSubgraphByIdentifier(
+                $contentStreamIdentifier,
+                $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash],
+                $visibilityConstraints
+            );
+
+            $parentNode = $contentSubgraph->findParentNode($succeedingSiblingAssignment->getNodeAggregateIdentifier());
+
+            $parents = $parents->add(
+                new NodeVariantAssignment(
+                    $parentNode->getNodeAggregateIdentifier(),
+                    $parentNode->getOriginDimensionSpacePoint()
+                ),
+                $affectedDimensionSpacePoints[$coveredDimensionSpacePointHash]
+            );
+        }
+
+        return $parents;
+    }
+
+    private function resolveAffectedDimensionSpacePointSet(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        RelationDistributionStrategy $relationDistributionStrategy,
+        DimensionSpace\DimensionSpacePoint $referenceDimensionSpacePoint
+    ): DimensionSpacePointSet {
+        switch ($relationDistributionStrategy->getStrategy()) {
+            case RelationDistributionStrategy::STRATEGY_SCATTER:
+                return new DimensionSpacePointSet([$referenceDimensionSpacePoint]);
+                break;
+            case RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS:
+                return $nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection(
+                    $this->getInterDimensionalVariationGraph()->getSpecializationSet($referenceDimensionSpacePoint)
+                );
+                break;
+            case RelationDistributionStrategy::STRATEGY_GATHER_ALL:
+            default:
+                return $nodeAggregate->getCoveredDimensionSpacePoints();
+        }
+    }
+
+    /**
      * Resolves the new succeeding sibling on a per-dimension-space-point basis
      *
      * If the planned succeeding sibling does not exist in an affected dimension space point,
@@ -180,6 +246,7 @@ trait NodeMove
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier The content stream the move operation is performed in
      * @param ReadableNodeAggregateInterface $nodeAggregate The node aggregate to be moved
+     * @param NodeAggregateIdentifier|null $parentIdentifier The parent node aggregate identifier, has precedence over siblings when in doubt
      * @param NodeAggregateIdentifier|null $precedingSiblingIdentifier The planned preceding sibling's node aggregate identifier
      * @param NodeAggregateIdentifier|null $succeedingSiblingIdentifier The planned succeeding sibling's node aggregate identifier
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint A dimension space point occupied by the node aggregate to be moved
@@ -190,6 +257,7 @@ trait NodeMove
     private function resolveNewSucceedingSiblingsAssignments(
         ContentStreamIdentifier $contentStreamIdentifier,
         ReadableNodeAggregateInterface $nodeAggregate,
+        ?NodeAggregateIdentifier $parentIdentifier,
         ?NodeAggregateIdentifier $precedingSiblingIdentifier,
         ?NodeAggregateIdentifier $succeedingSiblingIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
@@ -205,16 +273,16 @@ trait NodeMove
         foreach ($nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint)->getIntersection($affectedDimensionSpacePoints) as $dimensionSpacePoint) {
             $contentSubgraph = $this->getContentGraph()->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint, $visibilityConstraints);
 
-            $succeedingSibling = $succeedingSiblingIdentifier ? $contentSubgraph->findNodeByNodeAggregateIdentifier($succeedingSiblingIdentifier) : null;
+            $succeedingSibling = $succeedingSiblingIdentifier ? $this->findSibling($contentSubgraph, $parentIdentifier, $succeedingSiblingIdentifier) : null;
             if (!$succeedingSibling) {
-                $precedingSibling = $precedingSiblingIdentifier ? $contentSubgraph->findNodeByNodeAggregateIdentifier($precedingSiblingIdentifier) : null;
+                $precedingSibling = $precedingSiblingIdentifier ? $this->findSibling($contentSubgraph, $parentIdentifier, $precedingSiblingIdentifier) : null;
                 if ($precedingSibling) {
                     $alternateSucceedingSiblings = $contentSubgraph->findSucceedingSiblings($precedingSiblingIdentifier, null, 1);
                     if (count($alternateSucceedingSiblings) > 0) {
                         $succeedingSibling = reset($alternateSucceedingSiblings);
                     }
                 } else {
-                    $succeedingSibling = $this->resolveSucceedingSiblingFromOriginSiblings($nodeAggregate->getIdentifier(), $precedingSiblingIdentifier, $succeedingSiblingIdentifier, $contentSubgraph, $originContentSubgraph);
+                    $succeedingSibling = $this->resolveSucceedingSiblingFromOriginSiblings($nodeAggregate->getIdentifier(), $parentIdentifier, $precedingSiblingIdentifier, $succeedingSiblingIdentifier, $contentSubgraph, $originContentSubgraph);
                 }
             }
 
@@ -232,8 +300,25 @@ trait NodeMove
         return $succeedingSiblings;
     }
 
+    private function findSibling(ContentSubgraphInterface $contentSubgraph, ?NodeAggregateIdentifier $parentIdentifier, NodeAggregateIdentifier $siblingIdentifier): ?NodeInterface
+    {
+        $siblingCandidate = $contentSubgraph->findNodeByNodeAggregateIdentifier($siblingIdentifier);
+        if ($parentIdentifier && $siblingCandidate) {
+            // If a parent node aggregate is explicitly given, all siblings must have this parent
+            $parent = $contentSubgraph->findParentNode($siblingIdentifier);
+            if ($parent->getNodeAggregateIdentifier()->equals($parentIdentifier)) {
+                return $siblingCandidate;
+            }
+        } else {
+            return $siblingCandidate;
+        }
+
+        return null;
+    }
+
     private function resolveSucceedingSiblingFromOriginSiblings(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ?NodeAggregateIdentifier $parentIdentifier,
         ?NodeAggregateIdentifier $precedingSiblingIdentifier,
         ?NodeAggregateIdentifier $succeedingSiblingIdentifier,
         ContentSubgraphInterface $currentContentSubgraph,
@@ -249,7 +334,7 @@ trait NodeMove
                 if ($succeedingSiblingCandidates[$i]->getNodeAggregateIdentifier()->equals($nodeAggregateIdentifier)) {
                     \array_splice($succeedingSiblingCandidates, $i, 1);
                 }
-                $succeedingSibling = $currentContentSubgraph->findNodeByNodeAggregateIdentifier($succeedingSiblingCandidates[$i]->getNodeAggregateIdentifier());
+                $succeedingSibling = $this->findSibling($currentContentSubgraph, $parentIdentifier, $succeedingSiblingCandidates[$i]->getNodeAggregateIdentifier());
                 if ($succeedingSibling) {
                     break;
                 }
@@ -258,7 +343,7 @@ trait NodeMove
                 if ($precedingSiblingCandidates[$i]->getNodeAggregateIdentifier()->equals($nodeAggregateIdentifier)) {
                     \array_splice($precedingSiblingCandidates, $i, 1);
                 }
-                $precedingSibling = $currentContentSubgraph->findNodeByNodeAggregateIdentifier($precedingSiblingCandidates[$i]->getNodeAggregateIdentifier());
+                $precedingSibling = $this->findSibling($currentContentSubgraph, $parentIdentifier, $precedingSiblingCandidates[$i]->getNodeAggregateIdentifier());
                 if ($precedingSibling) {
                     $alternateSucceedingSiblings = $currentContentSubgraph->findSucceedingSiblings($precedingSiblingIdentifier, null, 1);
                     if (count($alternateSucceedingSiblings) > 0) {
@@ -274,27 +359,26 @@ trait NodeMove
 
     /**
      * @param ReadableNodeAggregateInterface $nodeAggregate
-     * @param ReadableNodeAggregateInterface|null $newParentNodeAggregate
+     * @param array|NodeVariantAssignments[] $parentAssignments
      * @param array|NodeVariantAssignments[] $succeedingSiblingAssignments
      * @param DimensionSpacePointSet|null $affectedDimensionSpacePoints
      * @return NodeMoveMappings
      */
     protected function getNodeMoveMappings(
         ReadableNodeAggregateInterface $nodeAggregate,
-        ?ReadableNodeAggregateInterface $newParentNodeAggregate,
+        array $parentAssignments,
         array $succeedingSiblingAssignments,
         ?DimensionSpacePointSet $affectedDimensionSpacePoints
     ): NodeMoveMappings {
         $nodeMoveMappings = [];
         foreach ($nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($affectedDimensionSpacePoints) as $coveredAffectedDimensionSpacePoint) {
             $occupiedAffectedDimensionSpacePoint = $nodeAggregate->getOccupationByCovered($coveredAffectedDimensionSpacePoint);
+            $parentAssignmentsForDimensionSpacePoint = $parentAssignments[$occupiedAffectedDimensionSpacePoint->getHash()];
             $succeedingSiblingAssignmentsForDimensionSpacePoint = $succeedingSiblingAssignments[$occupiedAffectedDimensionSpacePoint->getHash()];
-            $nodeMoveMappings[] = new NodeMoveMapping(
+            $nodeMoveMappings[$occupiedAffectedDimensionSpacePoint->getHash()] = new NodeMoveMapping(
                 $occupiedAffectedDimensionSpacePoint,
-                $succeedingSiblingAssignmentsForDimensionSpacePoint,
-                $newParentNodeAggregate
-                    ? $newParentNodeAggregate->getCoverageByOccupant($newParentNodeAggregate->getOccupationByCovered($occupiedAffectedDimensionSpacePoint))->getIntersection($affectedDimensionSpacePoints)
-                    : null
+                $parentAssignmentsForDimensionSpacePoint,
+                $succeedingSiblingAssignmentsForDimensionSpacePoint
             );
         }
 

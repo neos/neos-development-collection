@@ -9,12 +9,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A node move mapping
+ * A move mapping for a single node
  *
  * It declares:
- * * The moved node's origin dimension space point
- * * The new succeeding siblings' assignments if given
- * * The dimension space points covered by the hierarchy relations if and only if a new parent was assigned
+ * * The moved node's origin dimension space point. With this the node can be uniquely identified
+ * * The new parent assignments if given - the node might be assigned to different parents, depending on covered dimension space point
+ * * The new succeeding siblings' assignments if given - the node might be assigned to different succeeding siblings, depending on covered dimension space point
  * @Flow\Proxy(false)
  */
 final class NodeMoveMapping
@@ -25,31 +25,31 @@ final class NodeMoveMapping
     private $movedNodeOrigin;
 
     /**
-     * @var NodeVariantAssignments|null
+     * @var NodeVariantAssignments
+     */
+    private $newParentAssignments;
+
+    /**
+     * @var NodeVariantAssignments
      */
     private $newSucceedingSiblingAssignments;
 
-    /**
-     * @var DimensionSpacePointSet
-     */
-    private $relationDimensionSpacePoints;
-
     public function __construct(
         OriginDimensionSpacePoint $movedNodeOrigin,
-        ?NodeVariantAssignments $newSucceedingSiblingAssignments,
-        ?DimensionSpacePointSet $relationDimensionSpacePoints
+        NodeVariantAssignments $newParentAssignments,
+        NodeVariantAssignments $newSucceedingSiblingAssignments
     ) {
         $this->movedNodeOrigin = $movedNodeOrigin;
+        $this->newParentAssignments = $newParentAssignments;
         $this->newSucceedingSiblingAssignments = $newSucceedingSiblingAssignments;
-        $this->relationDimensionSpacePoints = $relationDimensionSpacePoints;
     }
 
     public static function fromArray(array $array): NodeMoveMapping
     {
         return new static(
             new OriginDimensionSpacePoint($array['movedNodeOrigin']),
-            NodeVariantAssignments::createFromArray($array['newSucceedingSiblingAssignments']),
-            isset($array['relationDimensionSpacePoints']) ? new DimensionSpacePointSet($array['relationDimensionSpacePoints']) : null
+            NodeVariantAssignments::createFromArray($array['newParentAssignments']),
+            NodeVariantAssignments::createFromArray($array['newSucceedingSiblingAssignments'])
         );
     }
 
@@ -58,13 +58,13 @@ final class NodeMoveMapping
         return $this->movedNodeOrigin;
     }
 
+    public function getNewParentAssignments(): NodeVariantAssignments
+    {
+        return $this->newParentAssignments;
+    }
+
     public function getNewSucceedingSiblingAssignments(): NodeVariantAssignments
     {
         return $this->newSucceedingSiblingAssignments;
-    }
-
-    public function getRelationDimensionSpacePoints(): ?DimensionSpacePointSet
-    {
-        return $this->relationDimensionSpacePoints;
     }
 }

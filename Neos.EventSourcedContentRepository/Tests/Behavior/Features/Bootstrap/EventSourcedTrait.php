@@ -382,6 +382,20 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the event NodeAggregateWasMoved was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theEventNodeAggregateWasMovedWasPublishedWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
+        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
+
+        $this->publishEvent('Neos.EventSourcedContentRepository:NodeAggregateWasMoved', $streamName->getEventStreamName(), $eventPayload);
+    }
+
+    /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
      * @param $eventType
      * @param $streamName

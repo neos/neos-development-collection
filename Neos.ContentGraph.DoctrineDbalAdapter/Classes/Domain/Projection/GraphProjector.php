@@ -15,6 +15,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\RestrictionRelations;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
@@ -31,7 +32,6 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationVariantWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasMoved;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -54,6 +54,7 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
 {
     use RestrictionRelations;
     use NodeRemoval;
+    use NodeMove;
 
     const RELATION_DEFAULT_OFFSET = 128;
 
@@ -725,7 +726,6 @@ insert ignore into neos_contentgraph_restrictionrelation
         });
     }
 
-
     /**
      * @param NodeSpecializationVariantWasCreated $event
      * @throws \Exception
@@ -865,84 +865,6 @@ insert ignore into neos_contentgraph_restrictionrelation
                     null, // @todo fetch appropriate sibling
                     $sourceNode->nodeName
                 );
-            }
-        });
-    }
-
-    /**
-     * @param NodeAggregateWasMoved $event
-     * @throws \Throwable
-     */
-    public function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event)
-    {
-        $this->transactional(function () use ($event) {
-            if ($event->getNewParentNodeAggregateIdentifier()) {
-                $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
-                    $event->getContentStreamIdentifier(),
-                    $event->getNodeAggregateIdentifier(),
-                    $event->getAffectedDimensionSpacePoints()
-                );
-            }
-
-            foreach ($event->getNodeMoveMappings() as $moveNodeMapping) {
-                $nodeToBeMoved = $this->projectionContentGraph->findNodeByIdentifiers(
-                    $event->getContentStreamIdentifier(),
-                    $event->getNodeAggregateIdentifier(),
-                    $moveNodeMapping->getMovedNodeOrigin()
-                );
-
-                $newSucceedingSiblings = [];
-                if (!$moveNodeMapping->getNewSucceedingSiblingAssignments()->isEmpty()) {
-                    foreach ($moveNodeMapping->getNewSucceedingSiblingAssignments() as $coveredDimensionSpacePointHash => $newSucceedingSiblingAssignment) {
-                        $newSucceedingSiblings[$coveredDimensionSpacePointHash] = $this->projectionContentGraph->findNodeByIdentifiers(
-                            $event->getContentStreamIdentifier(),
-                            $newSucceedingSiblingAssignment->getNodeAggregateIdentifier(),
-                            $newSucceedingSiblingAssignment->getOriginDimensionSpacePoint()
-                        );
-                    }
-                }
-
-                $ingoingHierarchyRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode($nodeToBeMoved->relationAnchorPoint, $event->getContentStreamIdentifier());
-                if ($event->getNewParentNodeAggregateIdentifier()) {
-                    foreach ($moveNodeMapping->getRelationDimensionSpacePoints() as $relationDimensionSpacePoint) {
-                        $newParentNode = $this->projectionContentGraph->findNodeInAggregate(
-                            $event->getContentStreamIdentifier(),
-                            $event->getNewParentNodeAggregateIdentifier(),
-                            $relationDimensionSpacePoint
-                        );
-
-                        $newSucceedingSibling = $newSucceedingSiblings[$relationDimensionSpacePoint->getHash()] ?? null;
-                        $newPosition = $this->getRelationPosition(
-                            $newParentNode->relationAnchorPoint,
-                            null,
-                            $newSucceedingSibling ? $newSucceedingSibling->relationAnchorPoint : null,
-                            $event->getContentStreamIdentifier(),
-                            $relationDimensionSpacePoint
-                        );
-
-                        $ingoingHierarchyRelations[$relationDimensionSpacePoint->getHash()]->assignNewParentNode($newParentNode->relationAnchorPoint, $newPosition, $this->getDatabaseConnection());
-                    }
-
-                    $this->cascadeRestrictionRelations(
-                        $event->getContentStreamIdentifier(),
-                        $event->getNewParentNodeAggregateIdentifier(),
-                        $event->getNodeAggregateIdentifier(),
-                        $moveNodeMapping->getRelationDimensionSpacePoints()
-                    );
-                } else {
-                    foreach ($ingoingHierarchyRelations as $ingoingHierarchyRelation) {
-                        $newSucceedingSibling = $newSucceedingSiblings[$ingoingHierarchyRelation->dimensionSpacePointHash] ?? null;
-                        $newPosition = $this->getRelationPosition(
-                            null,
-                            $nodeToBeMoved->relationAnchorPoint,
-                            $newSucceedingSibling ? $newSucceedingSibling->relationAnchorPoint : null,
-                            $event->getContentStreamIdentifier(),
-                            $ingoingHierarchyRelation->dimensionSpacePoint
-                        );
-
-                        $ingoingHierarchyRelation->assignNewPosition($newPosition, $this->getDatabaseConnection());
-                    }
-                }
             }
         });
     }

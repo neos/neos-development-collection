@@ -215,16 +215,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | relationDistributionStrategy                | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
-  Scenario: Try to move existing node to a sibling which has a different parent without providing said parent
-    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
-      | Key                                         | Value                              |
-      | contentStreamIdentifier                     | "cs-identifier"                    |
-      | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier                     | "sir-nodeward-nodington-iii"                 |
-      | newSucceedingSiblingNodeAggregateIdentifier | "sir-david-nodenborough"           |
-      | relationDistributionStrategy                | "scatter"                          |
-    Then the last command should have thrown an exception of type "NodeAggregateIsNoSibling"
-
   Scenario: Try to move a node to one of its children
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                              | Value                              |
