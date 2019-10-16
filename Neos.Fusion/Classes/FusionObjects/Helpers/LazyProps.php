@@ -57,27 +57,12 @@ final class LazyProps implements \ArrayAccess
         $this->effectiveContext = $effectiveContext;
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($path)
     {
-        return isset($this->keys[$offset]);
+        return isset($this->keys[$path]);
     }
 
-    public function offsetGet($offset)
-    {
-        return $this->fusionValue($offset);
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        // NOOP
-    }
-
-    public function offsetUnset($offset)
-    {
-        // NOOP
-    }
-
-    protected function fusionValue(string $path)
+    public function offsetGet($path)
     {
         if (!isset($this->valueCache[$path])) {
             $this->runtime->pushContextArray($this->effectiveContext);
@@ -88,5 +73,15 @@ final class LazyProps implements \ArrayAccess
             }
         }
         return $this->valueCache[$path];
+    }
+
+    public function offsetSet($path, $value)
+    {
+        // NOOP
+    }
+
+    public function offsetUnset($path)
+    {
+        // NOOP
     }
 }
