@@ -82,3 +82,6 @@ Neos:
           'Neos.Neos.Ui:MoveInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveInto
           'Neos.Neos.Ui:MoveAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveAfter
           'Neos.Neos.Ui:MoveBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\MoveBefore
+          'Neos.Neos.Ui:CopyInto': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyInto
+          'Neos.Neos.Ui:CopyAfter': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyAfter
+          'Neos.Neos.Ui:CopyBefore': Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes\CopyBefore

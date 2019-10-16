@@ -12,17 +12,16 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
  */
-final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
+final class NodeReference
 {
     /**
-     * @var array|PropertyValue[]
+     * @var array|NodeReference[]
      */
     private $values = [];
 
@@ -67,15 +66,9 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
         return new static($values);
     }
 
-    public static function fromNode(NodeInterface $node): self
+    public static function fromPropertyCollection(PropertyCollectionInterface $properties): self
     {
-        $values = [];
-
-        foreach ($node->getProperties() as $propertyName => $propertyValue) {
-            $values[$propertyName] = new PropertyValue($propertyValue, $node->getNodeType()->getPropertyType($propertyName));
-        }
-
-        return new static($values);
+        return self::fromArray(iterator_to_array($properties));
     }
 
     /**

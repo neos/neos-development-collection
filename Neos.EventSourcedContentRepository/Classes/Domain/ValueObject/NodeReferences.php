@@ -12,17 +12,16 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
  */
-final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
+final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array|PropertyValue[]
+     * @var array|NodeReference[]
      */
     private $values = [];
 
@@ -60,22 +59,16 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
             } elseif ($propertyValue instanceof PropertyValue) {
                 $values[$propertyName] = $propertyValue;
             } else {
-                throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', PropertyValue::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
+                throw new \InvalidArgumentException(sprintf('Invalid nodeReferences value. Expected instance of %s, got: %s', NodeReference::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
             }
         }
 
         return new static($values);
     }
 
-    public static function fromNode(NodeInterface $node): self
+    public static function fromPropertyCollection(PropertyCollectionInterface $properties): self
     {
-        $values = [];
-
-        foreach ($node->getProperties() as $propertyName => $propertyValue) {
-            $values[$propertyName] = new PropertyValue($propertyValue, $node->getNodeType()->getPropertyType($propertyName));
-        }
-
-        return new static($values);
+        return self::fromArray(iterator_to_array($properties));
     }
 
     /**
@@ -91,7 +84,7 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
         return count($this->values);
     }
 
-    public function getPlainValues(): array
+    /*public function getPlainValues(): array
     {
         $values = [];
         foreach ($this->values as $propertyName => $propertyValue) {
@@ -99,7 +92,7 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
         }
 
         return $values;
-    }
+    }*/
 
     public function jsonSerialize(): array
     {

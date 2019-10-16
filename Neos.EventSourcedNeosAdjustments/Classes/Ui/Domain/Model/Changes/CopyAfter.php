@@ -13,8 +13,22 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeToInsert;
+use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
+use Neos\Flow\Annotations as Flow;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\NodeDuplicationCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+
 class CopyAfter extends AbstractStructuralChange
 {
+
+    /**
+     * @Flow\Inject
+     * @var NodeDuplicationCommandHandler
+     */
+    protected $nodeDuplicationCommandHandler;
 
     /**
      * "Subject" is the to-be-copied node; the "sibling" node is the node after which the "Subject" should be copied.
@@ -24,8 +38,7 @@ class CopyAfter extends AbstractStructuralChange
     public function canApply()
     {
         $nodeType = $this->getSubject()->getNodeType();
-
-        return $this->getSiblingNode()->getParent()->isNodeTypeAllowedAsChildNode($nodeType);
+        return NodeInfoHelper::isNodeTypeAllowedAsChildNode($this->getSiblingNode()->findParentNode(), $nodeType);
     }
 
     public function getMode()
@@ -41,8 +54,33 @@ class CopyAfter extends AbstractStructuralChange
     public function apply()
     {
         if ($this->canApply()) {
-            $node = $this->getSubject()->copyAfter($this->getSiblingNode(), $nodeName);
-            $this->finish($node);
+            $subject = $this->getSubject();
+
+            $previousSibling = $this->getSiblingNode();
+            $parentNodeOfPreviousSibling = $previousSibling->findParentNode();
+            $succeedingSibling = null;
+            try {
+                $succeedingSibling = $parentNodeOfPreviousSibling->findChildNodes()->next($previousSibling);
+            } catch (\InvalidArgumentException $e) {
+                // do nothing; $succeedingSibling is null.
+            }
+
+            $command = new CopyNodesRecursively(
+                $subject->getContentStreamIdentifier(),
+                NodeToInsert::fromTraversableNode($subject)->withNodeName(NodeName::fromString(uniqid('node-'))),
+                $subject->getDimensionSpacePoint(),
+                UserIdentifier::forSystemUser(), // TODO
+                $parentNodeOfPreviousSibling->getNodeAggregateIdentifier(),
+                $succeedingSibling ? $succeedingSibling->getNodeAggregateIdentifier() : null
+            );
+
+            $this->contentCacheFlusher->registerNodeChange($subject);
+
+            // NOTE: the following line internally *always blocks*; I still dislike that this API is somehow "different" than the
+            // others.
+            $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command);
+
+            $this->finish($parentNodeOfPreviousSibling);
         }
     }
 }

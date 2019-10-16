@@ -13,6 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -59,6 +60,19 @@ final class NodeAggregateClassification implements \JsonSerializable
         }
 
         return new static($value);
+    }
+
+    public static function fromNode(NodeInterface $node): self
+    {
+        if ($node->isRoot()) {
+            return self::root();
+        }
+
+        if ($node->isTethered()) {
+            return self::tethered();
+        }
+
+        return self::regular();
     }
 
     public static function root(): self

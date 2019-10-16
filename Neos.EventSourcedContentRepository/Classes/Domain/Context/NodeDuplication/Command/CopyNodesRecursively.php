@@ -19,6 +19,8 @@ use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeToInsert;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
@@ -30,7 +32,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
  * `dimensionSpacePoint`.
  */
-final class CopyNodesRecursively
+final class CopyNodesRecursively implements \JsonSerializable
 {
     /**
      * The identifier of the content stream this command is to be handled in
@@ -40,20 +42,18 @@ final class CopyNodesRecursively
     private $contentStreamIdentifier;
 
     /**
-     * The new node's node aggregate identifier
+     * The to be copied node's node aggregate identifier
      *
-     * @var NodeAggregateIdentifier
+     * @var NodeToInsert
      */
-    private $nodeAggregateIdentifier;
+    private $nodeToInsert;
 
     /**
-     * Origin of the new node in the dimension space.
-     * Will also be used to calculate a set of dimension points where the new node will cover
-     * from the configured specializations.
+     * the dimension space point where the node will be copied from; and which is also the target of the copy.
      *
      * @var DimensionSpacePoint
      */
-    private $originDimensionSpacePoint;
+    private $dimensionSpacePoint;
 
     /**
      * The initiating user's identifier
@@ -63,114 +63,133 @@ final class CopyNodesRecursively
     private $initiatingUserIdentifier;
 
     /**
-     * The node's optional name. Set if there is a meaningful relation to its parent that should be named.
-     *
-     * @var NodeName
-     */
-    private $nodeName;
-
-    /**
-     * Node aggregate identifier of the node's parent (optional)
+     * Node aggregate identifier of the target node's parent (optional)
      *
      * If not given, the node will be added as a root node
      *
      * @var NodeAggregateIdentifier
      */
-    private $parentNodeAggregateIdentifier;
+    private $targetParentNodeAggregateIdentifier;
 
     /**
-     * Node aggregate identifier of the node's succeeding sibling (optional)
+     * Node aggregate identifier of the target node's succeeding sibling (optional)
      *
      * If not given, the node will be added as the parent's first child
      *
      * @var NodeAggregateIdentifier
      */
-    private $succeedingSiblingNodeAggregateIdentifier;
+    private $targetSucceedingSiblingNodeAggregateIdentifier;
 
     /**
-     * The node's initial property values. Will be merged over the node type's default property values
-     *
-     * @var PropertyValues
+     * CopyNodesRecursively constructor.
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeToInsert $nodeToInsert
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param UserIdentifier $initiatingUserIdentifier
+     * @param NodeAggregateIdentifier $targetParentNodeAggregateIdentifier
+     * @param NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier
      */
-    private $initialPropertyValues;
-
-    /**
-     * NodeAggregateIdentifiers for tethered descendants (optional).
-     *
-     * If the given node type declares tethered child nodes, you may predefine their node aggregate identifiers
-     * using this assignment registry.
-     * Since tethered child nodes may have tethered child nodes themselves,
-     * this registry is indexed using relative node paths to the node to create in the first place.
-     *
-     * @var NodeAggregateIdentifiersByNodePaths
-     */
-    private $tetheredDescendantNodeAggregateIdentifiers;
-
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $originDimensionSpacePoint,
-        UserIdentifier $initiatingUserIdentifier,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
-        ?NodeName $nodeName = null,
-        ?PropertyValues $initialPropertyValues = null,
-        ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers = null
-    ) {
+    private function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeToInsert $nodeToInsert, DimensionSpacePoint $dimensionSpacePoint, UserIdentifier $initiatingUserIdentifier, NodeAggregateIdentifier $targetParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
+        $this->nodeToInsert = $nodeToInsert;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->parentNodeAggregateIdentifier = $parentNodeAggregateIdentifier;
-        $this->succeedingSiblingNodeAggregateIdentifier = $succeedingSiblingNodeAggregateIdentifier;
-        $this->nodeName = $nodeName;
-        $this->initialPropertyValues = $initialPropertyValues ?: PropertyValues::fromArray([]);
-        $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers ?: new NodeAggregateIdentifiersByNodePaths([]);
+        $this->targetParentNodeAggregateIdentifier = $targetParentNodeAggregateIdentifier;
+        $this->targetSucceedingSiblingNodeAggregateIdentifier = $targetSucceedingSiblingNodeAggregateIdentifier;
     }
 
+    public function create(TraversableNode $sourceNode, DimensionSpacePoint $dimensionSpacePoint, UserIdentifier $initiatingUserIdentifier, NodeAggregateIdentifier $targetParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier)
+    {
+        return new static(
+            $sourceNode->getContentStreamIdentifier(),
+            NodeToInsert::fromTraversableNode($sourceNode)->withNodeName(NodeName::fromString(uniqid('node-'))),
+            $dimensionSpacePoint,
+            $initiatingUserIdentifier,
+            $targetParentNodeAggregateIdentifier,
+            $targetSucceedingSiblingNodeAggregateIdentifier
+        );
+    }
+
+
+    public static function fromArray(array $array): self
+    {
+        return new static(
+            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            NodeToInsert::fromArray($array['nodeToInsert']),
+            new DimensionSpacePoint($array['dimensionSpacePoint']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier']),
+            NodeAggregateIdentifier::fromString($array['targetParentNodeAggregateIdentifier']),
+            isset($array['targetSucceedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['targetSucceedingSiblingNodeAggregateIdentifier']) : null
+        );
+    }
+
+
+    /**
+     * @return ContentStreamIdentifier
+     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
     }
 
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    /**
+     * @return NodeToInsert
+     */
+    public function getNodeToInsert(): NodeToInsert
     {
-        return $this->nodeAggregateIdentifier;
+        return $this->nodeToInsert;
     }
 
-    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    /**
+     * @return DimensionSpacePoint
+     */
+    public function getDimensionSpacePoint(): DimensionSpacePoint
     {
-        return $this->originDimensionSpacePoint;
+        return $this->dimensionSpacePoint;
     }
 
+    /**
+     * @return UserIdentifier
+     */
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
     }
 
-    public function getParentNodeAggregateIdentifier(): NodeAggregateIdentifier
+    /**
+     * @return NodeAggregateIdentifier
+     */
+    public function getTargetParentNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->parentNodeAggregateIdentifier;
+        return $this->targetParentNodeAggregateIdentifier;
     }
 
-    public function getSucceedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
+    /**
+     * @return NodeAggregateIdentifier
+     */
+    public function getTargetSucceedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
     {
-        return $this->succeedingSiblingNodeAggregateIdentifier;
+        return $this->targetSucceedingSiblingNodeAggregateIdentifier;
     }
 
-    public function getNodeName(): ?NodeName
-    {
-        return $this->nodeName;
-    }
 
-    public function getInitialPropertyValues(): PropertyValues
+    /**
+     * Specify data which should be serialized to JSON
+     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize(): array
     {
-        return $this->initialPropertyValues;
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeToInsert' => $this->nodeToInsert,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'targetParentNodeAggregateIdentifier' => $this->targetParentNodeAggregateIdentifier,
+            'targetSucceedingSiblingNodeAggregateIdentifier' => $this->targetSucceedingSiblingNodeAggregateIdentifier,
+        ];
     }
-
-    public function getTetheredDescendantNodeAggregateIdentifiers(): ?NodeAggregateIdentifiersByNodePaths
-    {
-        return $this->tetheredDescendantNodeAggregateIdentifiers;
-    }
-
 }

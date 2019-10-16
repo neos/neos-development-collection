@@ -45,6 +45,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\Di
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeToInsert;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\NodeDuplicationCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
@@ -54,6 +57,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
@@ -807,6 +811,21 @@ trait EventSourcedTrait
         $this->lastCommandOrEventResult = $this->getContentStreamCommandHandler()
             ->handleForkContentStream($command);
     }
+
+    /**
+     * @When /^the command CopyNodesRecursively is executed, copying the current node aggregate with payload:$/
+     */
+    public function theCommandCopynodesrecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
+        $currentTraversableNode = new TraversableNode($this->currentNode, $subgraph);
+        $commandArguments['nodeToInsert'] = json_decode(json_encode(NodeToInsert::fromTraversableNode($currentTraversableNode)), true);
+        $command = CopyNodesRecursively::fromArray($commandArguments);
+        $this->lastCommandOrEventResult = $this->getNodeDuplicationCommandHandler()
+            ->handleCopyNodesRecursively($command);
+    }
+
 
     /**
      * @When /^the command "([^"]*)" is executed with payload:$/
@@ -1736,6 +1755,14 @@ trait EventSourcedTrait
     {
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
+
+        return $commandHandler;
+    }
+
+    protected function getNodeDuplicationCommandHandler(): NodeDuplicationCommandHandler
+    {
+        /** @var NodeDuplicationCommandHandler $commandHandler */
+        $commandHandler = $this->getObjectManager()->get(NodeDuplicationCommandHandler::class);
 
         return $commandHandler;
     }
