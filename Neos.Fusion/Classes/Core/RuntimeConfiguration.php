@@ -22,7 +22,7 @@ final class RuntimeConfiguration
     /**
      * @var array
      */
-    private $configurationOnPathRuntimeCache = [];
+    private $pathCache = [];
 
     /**
      * @var \Closure
@@ -60,8 +60,8 @@ final class RuntimeConfiguration
      */
     public function forPath(string $fusionPath): array
     {
-        if (isset($this->configurationOnPathRuntimeCache[$fusionPath])) {
-            return $this->configurationOnPathRuntimeCache[$fusionPath]['c'];
+        if (isset($this->pathCache[$fusionPath])) {
+            return $this->pathCache[$fusionPath]['c'];
         }
 
         $pathParts = explode('/', $fusionPath);
@@ -75,15 +75,15 @@ final class RuntimeConfiguration
 
         foreach ($pathParts as $pathPart) {
             $pathUntilNow .= '/' . $pathPart;
-            if (isset($this->configurationOnPathRuntimeCache[$pathUntilNow])) {
-                $configuration = $this->configurationOnPathRuntimeCache[$pathUntilNow]['c'];
-                $currentPrototypeDefinitions = $this->configurationOnPathRuntimeCache[$pathUntilNow]['p'];
+            if (isset($this->pathCache[$pathUntilNow])) {
+                $configuration = $this->pathCache[$pathUntilNow]['c'];
+                $currentPrototypeDefinitions = $this->pathCache[$pathUntilNow]['p'];
                 continue;
             }
 
             $configuration = $this->matchCurrentPathPart($pathPart, $configuration, $currentPrototypeDefinitions);
-            $this->configurationOnPathRuntimeCache[$pathUntilNow]['c'] = $configuration;
-            $this->configurationOnPathRuntimeCache[$pathUntilNow]['p'] = $currentPrototypeDefinitions;
+            $this->pathCache[$pathUntilNow]['c'] = $configuration;
+            $this->pathCache[$pathUntilNow]['p'] = $currentPrototypeDefinitions;
         }
 
         return $configuration;
@@ -177,5 +177,17 @@ final class RuntimeConfiguration
         }
 
         return $configuration;
+    }
+
+    /**
+     * No API, internal use for testing
+     *
+     * @param string $fusionPath
+     * @return bool
+     * @internal
+     */
+    public function isPathCached(string $fusionPath): bool
+    {
+        return isset($this->pathCache[$fusionPath]);
     }
 }
