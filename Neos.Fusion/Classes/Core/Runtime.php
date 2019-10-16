@@ -302,7 +302,10 @@ class Runtime
      * @param \Exception $exception
      * @param boolean $useInnerExceptionHandler
      * @return string
+     * @throws Exception
      * @throws InvalidConfigurationException
+     * @throws SecurityException
+     * @throws StopActionException
      */
     public function handleRenderingException($fusionPath, \Exception $exception, $useInnerExceptionHandler = false)
     {
@@ -395,6 +398,7 @@ class Runtime
      * @throws SecurityException
      * @throws Exception
      * @throws RuntimeException
+     * @throws InvalidConfigurationException
      */
     protected function evaluateInternal($fusionPath, $behaviorIfPathNotFound, $contextObject = null)
     {
