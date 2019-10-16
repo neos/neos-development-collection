@@ -39,9 +39,52 @@ Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjecto
 Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler:
   arguments:
     2:
-      factoryMethodName: getEventStore
-      factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
-      arguments:
-        1:
-          value: 'ContentRepository'
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+
+Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+
+Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcing\EventStore\EventStoreFactory
+        arguments:
+          1:
+            value: 'ContentRepository'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -62,44 +62,58 @@ use Ramsey\Uuid\Uuid;
 
 /**
  * WorkspaceCommandHandler
+ * @Flow\Scope("singleton")
  */
 final class WorkspaceCommandHandler
 {
     /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAggregateCommandHandler
-     */
-    protected $nodeAggregateCommandHandler;
-
-    /**
-     * @Flow\Inject
-     * @var ContentStreamCommandHandler
-     */
-    protected $contentStreamCommandHandler;
-
-    /**
-     * @Flow\Inject
      * @var EventStore
      */
     protected $eventStore;
 
     /**
-     * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
+
+    /**
+     * @var NodeAggregateCommandHandler
+     */
+    protected $nodeAggregateCommandHandler;
+
+    /**
+     * @var ContentStreamCommandHandler
+     */
+    protected $contentStreamCommandHandler;
+
+    /**
      * @var ReadSideMemoryCacheManager
      */
     protected $readSideMemoryCacheManager;
 
     /**
-     * @Flow\Inject
      * @var ContentGraphInterface
      */
     protected $contentGraph;
+
+    /**
+     * WorkspaceCommandHandler constructor.
+     * @param EventStore $eventStore
+     * @param WorkspaceFinder $workspaceFinder
+     * @param NodeAggregateCommandHandler $nodeAggregateCommandHandler
+     * @param ContentStreamCommandHandler $contentStreamCommandHandler
+     * @param ReadSideMemoryCacheManager $readSideMemoryCacheManager
+     * @param ContentGraphInterface $contentGraph
+     */
+    public function __construct(EventStore $eventStore, WorkspaceFinder $workspaceFinder, NodeAggregateCommandHandler $nodeAggregateCommandHandler, ContentStreamCommandHandler $contentStreamCommandHandler, ReadSideMemoryCacheManager $readSideMemoryCacheManager, ContentGraphInterface $contentGraph)
+    {
+        $this->eventStore = $eventStore;
+        $this->workspaceFinder = $workspaceFinder;
+        $this->nodeAggregateCommandHandler = $nodeAggregateCommandHandler;
+        $this->contentStreamCommandHandler = $contentStreamCommandHandler;
+        $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
+        $this->contentGraph = $contentGraph;
+    }
 
     /**
      * @param CreateWorkspace $command

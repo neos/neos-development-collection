@@ -32,7 +32,6 @@ use Neos\Flow\Annotations as Flow;
 final class NodeAggregateEventPublisher
 {
     /**
-     * @Flow\Inject
      * @var EventStore
      */
     protected $eventStore;
@@ -47,6 +46,11 @@ final class NodeAggregateEventPublisher
      * @var \JsonSerializable
      */
     private $command;
+
+    public function __construct(EventStore $eventStore)
+    {
+        $this->eventStore = $eventStore;
+    }
 
     /**
      * @param $command
