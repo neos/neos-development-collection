@@ -26,8 +26,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
+use Ramsey\Uuid\Uuid;
 
 trait NodeDisabling
 {
@@ -65,12 +66,13 @@ trait NodeDisabling
             );
 
             $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
+                DecoratedEvent::addIdentifier(
                     new NodeAggregateWasDisabled(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $affectedDimensionSpacePoints
-                    )
+                    ),
+                    Uuid::uuid4()->toString()
                 )
             );
 
@@ -112,12 +114,13 @@ trait NodeDisabling
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
+                DecoratedEvent::addIdentifier(
                     new NodeAggregateWasEnabled(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $affectedDimensionSpacePoints
-                    )
+                    ),
+                    Uuid::uuid4()->toString()
                 )
             );
 

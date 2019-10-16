@@ -16,11 +16,13 @@ use Neos\Flow\Http\Client\InternalRequestEngine;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Flow\Http;
+use Psr\Http\Message\ResponseInterface;
 use Neos\Flow\Http\Component\ComponentContext;
+use Psr\Http\Message\ServerRequestInterface;
 
 class CustomizedInternalRequestEngine extends InternalRequestEngine
 {
-    public function sendRequest(Http\Request $httpRequest)
+    public function sendRequest(ServerRequestInterface $httpRequest): ResponseInterface
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if (!$requestHandler instanceof FunctionalTestRequestHandler) {
@@ -29,23 +31,19 @@ class CustomizedInternalRequestEngine extends InternalRequestEngine
 
         // TODO: THE FOLLOWING LINE THIS IS THE ONLY CHANGE NEEDED!!!
         //$this->securityContext->clearContext();
-
         $this->validatorResolver->reset();
 
-        $response = new Http\Response();
+        $response = $this->responseFactory->createResponse();
         $componentContext = new ComponentContext($httpRequest, $response);
         $requestHandler->setComponentContext($componentContext);
 
         $objectManager = $this->bootstrap->getObjectManager();
-        $baseComponentChain = $objectManager->get(\Neos\Flow\Http\Component\ComponentChain::class);
-        $componentContext = new ComponentContext($httpRequest, $response);
+        $baseComponentChain = $objectManager->get(ComponentChain::class);
 
         try {
             $baseComponentChain->handle($componentContext);
         } catch (\Throwable $throwable) {
-            $this->prepareErrorResponse($throwable, $componentContext->getHttpResponse());
-        } catch (\Exception $exception) {
-            $this->prepareErrorResponse($exception, $componentContext->getHttpResponse());
+            $componentContext->replaceHttpResponse($this->prepareErrorResponse($throwable, $componentContext->getHttpResponse()));
         }
         $session = $this->bootstrap->getObjectManager()->get(SessionInterface::class);
         if ($session->isStarted()) {

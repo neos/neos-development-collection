@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\Decorator\EventDecoratorUtilities;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -108,7 +109,9 @@ final class CommandResult
         $eventClassNames = $this->eventListenerLocator->getEventClassNamesByListenerClassName($listenerClassName);
 
         return $this->publishedEvents->filter(function (DomainEventInterface $event) use ($eventClassNames) {
-            $event = EventDecoratorUtilities::extractUndecoratedEvent($event);
+            if ($event instanceof DecoratedEvent) {
+                $event = $event->getWrappedEvent();
+            }
             return in_array(get_class($event), $eventClassNames);
         });
     }

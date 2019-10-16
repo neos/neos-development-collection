@@ -28,6 +28,8 @@ use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePolicyService;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeCollection;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Neos\Ui\Fusion\Helper\WorkspaceHelper;
 use Neos\Flow\Annotations as Flow;
@@ -135,7 +137,7 @@ class BackendServiceController extends ActionController
      * @param ResponseInterface $response
      * @return void
      */
-    public function initializeController(RequestInterface $request, ResponseInterface $response)
+    protected function initializeController(ActionRequest $request, ActionResponse $response)
     {
         parent::initializeController($request, $response);
         $this->feedbackCollection->setControllerContext($this->getControllerContext());

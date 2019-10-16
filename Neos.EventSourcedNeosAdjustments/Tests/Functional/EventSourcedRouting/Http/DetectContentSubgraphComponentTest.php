@@ -25,7 +25,7 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgr
 
 class DetectContentSubgraphComponentTest extends FunctionalTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

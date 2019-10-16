@@ -30,3 +30,12 @@ Neos:
 #              dbType: 'json_array'
 #              className: 'Some\Type\Implementation'
 
+
+    EventListener:
+      listeners:
+        'Neos\EventSourcedContentRepository\Domain\Projection\NodeHiddenState\NodeHiddenStateProjector':
+          eventStore: 'ContentRepository'
+        'Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector':
+          eventStore: 'ContentRepository'
+        'Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeProjector':
+          eventStore: 'ContentRepository'

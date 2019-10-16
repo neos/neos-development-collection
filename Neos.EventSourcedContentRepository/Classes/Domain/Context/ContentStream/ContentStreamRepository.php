@@ -50,7 +50,7 @@ final class ContentStreamRepository
             try {
                 $eventStream = $this->eventStore->load($eventStreamName);
                 $eventStream->rewind();
-                if (!$eventStream->current()) {
+                if (!$eventStream->valid()) {
                     // a content stream without events in its event stream does not exist yet
                     return null;
                 }

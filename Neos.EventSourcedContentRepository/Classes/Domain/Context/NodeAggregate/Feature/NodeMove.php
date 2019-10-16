@@ -31,8 +31,9 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMapping;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
+use Ramsey\Uuid\Uuid;
 
 trait NodeMove
 {
@@ -116,7 +117,7 @@ trait NodeMove
             $nodeMoveMappings = $this->getNodeMoveMappings($nodeAggregate, $newParentNodeAggregate, $newSucceedingSiblingNodeAggregate, $affectedDimensionSpacePoints);
 
             $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
+                DecoratedEvent::addIdentifier(
                     new NodeAggregateWasMoved(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
@@ -124,7 +125,8 @@ trait NodeMove
                         $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
                         $nodeMoveMappings,
                         $affectedDimensionSpacePoints
-                    )
+                    ),
+                    Uuid::uuid4()->toString()
                 )
             );
 

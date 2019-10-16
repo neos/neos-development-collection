@@ -15,6 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service;
 
 use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -56,7 +57,6 @@ use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Neos\Utility\TypeHandling;
 use Ramsey\Uuid\Uuid;
 
@@ -147,15 +147,11 @@ class ContentRepositoryExportService
     private $commandResult;
 
 
-    public function injectEntityManager(DoctrineObjectManager $entityManager)
+    public function injectEntityManager(EntityManagerInterface $entityManager): void
     {
-        if (!$entityManager instanceof DoctrineEntityManager) {
-            throw new \RuntimeException('Invalid EntityManager configured');
-        }
         $this->dbal = $entityManager->getConnection();
         $this->entityManager = $entityManager;
     }
-
 
     public function reset()
     {

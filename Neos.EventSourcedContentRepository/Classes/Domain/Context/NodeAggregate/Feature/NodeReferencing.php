@@ -18,8 +18,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeRe
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
+use Ramsey\Uuid\Uuid;
 
 trait NodeReferencing
 {
@@ -38,14 +39,15 @@ trait NodeReferencing
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
             $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
+                DecoratedEvent::addIdentifier(
                     new NodeReferencesWereSet(
                         $command->getContentStreamIdentifier(),
                         $command->getSourceNodeAggregateIdentifier(),
                         $command->getSourceOriginDimensionSpacePoint(),
                         $command->getDestinationNodeAggregateIdentifiers(),
                         $command->getReferenceName()
-                    )
+                    ),
+                    Uuid::uuid4()->toString()
                 )
             );
             $this->getNodeAggregateEventPublisher()->publishMany(
