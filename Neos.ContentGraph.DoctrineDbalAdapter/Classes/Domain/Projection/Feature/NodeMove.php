@@ -103,7 +103,7 @@ trait NodeMove
                             $coveredDimensionSpacePoint
                         );
                         $ingoingHierarchyRelation->assignNewPosition($newPosition, $this->getDatabaseConnection());
-                    } elseif ($event->getRepositionNodesWithoutAssignments()) {
+                    } elseif ($event->getRepositionNodesWithoutAssignments()->contains($coveredDimensionSpacePoint)) {
                         $newPosition = $this->getRelationPosition(
                             null,
                             $nodeToBeMoved->relationAnchorPoint,

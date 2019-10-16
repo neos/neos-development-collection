@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
@@ -32,7 +33,7 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
     private $nodeMoveMappings;
 
     /**
-     * @var bool
+     * @var DimensionSpacePointSet
      */
     private $repositionNodesWithoutAssignments;
 
@@ -40,7 +41,7 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ?NodeMoveMappings $nodeMoveMappings,
-        bool $repositionNodesWithoutAssignments
+        DimensionSpacePointSet $repositionNodesWithoutAssignments
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -63,7 +64,7 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
         return $this->nodeMoveMappings;
     }
 
-    public function getRepositionNodesWithoutAssignments(): bool
+    public function getRepositionNodesWithoutAssignments(): DimensionSpacePointSet
     {
         return $this->repositionNodesWithoutAssignments;
     }

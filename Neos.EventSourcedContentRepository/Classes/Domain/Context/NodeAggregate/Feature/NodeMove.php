@@ -150,7 +150,7 @@ trait NodeMove
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $nodeMoveMappings,
-                        !$command->getNewParentNodeAggregateIdentifier() && !$command->getNewSucceedingSiblingNodeAggregateIdentifier() && !$command->getNewPrecedingSiblingNodeAggregateIdentifier()
+                        !$command->getNewParentNodeAggregateIdentifier() && !$command->getNewSucceedingSiblingNodeAggregateIdentifier() && !$command->getNewPrecedingSiblingNodeAggregateIdentifier() ? $affectedDimensionSpacePoints : new DimensionSpacePointSet([])
                     )
                 )
             );
