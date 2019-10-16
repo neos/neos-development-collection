@@ -22,7 +22,14 @@ class Version20150224171107 extends AbstractMigration
         $this->addSql("UPDATE typo3_neos_eventlog_domain_model_event e, (SELECT DISTINCT uid, persistence_object_identifier FROM typo3_neos_eventlog_domain_model_event) p SET e.parentevent = p.uid WHERE parentevent IS NOT NULL AND p.persistence_object_identifier = e.parentevent");
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP persistence_object_identifier, CHANGE parentevent parentevent INT UNSIGNED DEFAULT NULL, CHANGE uid uid INT UNSIGNED AUTO_INCREMENT NOT NULL");
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event ADD CONSTRAINT FK_30AB3A75B684C08 FOREIGN KEY (parentevent) REFERENCES typo3_neos_eventlog_domain_model_event (uid)");
+        $indexes = $this->sm->listTableIndexes('typo3_neos_eventlog_domain_model_event');
+        if (array_key_exists('uid', $indexes)) {
+            $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP INDEX uid, ADD INDEX olduid (uid)");
+        }
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event ADD PRIMARY KEY (uid)");
+        if (array_key_exists('uid', $indexes)) {
+            $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event DROP INDEX olduid");
+        }
     }
 
     /**
