@@ -28,7 +28,7 @@ use Neos\Utility\Arrays;
  *
  * @Flow\Proxy(false)
  */
-final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, ProtectedContextAwareInterface
+class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, ProtectedContextAwareInterface
 {
     /**
      * @var array
@@ -65,23 +65,23 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
      * @param string $jsonString A JSON string representation, see jsonSerialize
      * @return DimensionSpacePoint
      */
-    public static function fromJsonString(string $jsonString): DimensionSpacePoint
+    final public static function fromJsonString(string $jsonString): self
     {
-        return new DimensionSpacePoint(json_decode($jsonString, true));
+        return new static(json_decode($jsonString, true));
     }
 
     /**
      * @param array $legacyDimensionValues Array from dimension name to dimension values
      * @return static
      */
-    public static function fromLegacyDimensionArray(array $legacyDimensionValues): DimensionSpacePoint
+    final public static function fromLegacyDimensionArray(array $legacyDimensionValues): self
     {
         $coordinates = [];
         foreach ($legacyDimensionValues as $dimensionName => $rawDimensionValues) {
             $coordinates[$dimensionName] = reset($rawDimensionValues);
         }
 
-        return new DimensionSpacePoint($coordinates);
+        return new static($coordinates);
     }
 
     /**
@@ -89,12 +89,12 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
      * @param string $value
      * @return static
      */
-    public function vary(Dimension\ContentDimensionIdentifier $dimensionIdentifier, string $value): DimensionSpacePoint
+    final public function vary(Dimension\ContentDimensionIdentifier $dimensionIdentifier, string $value): self
     {
         $variedCoordinates = $this->coordinates;
         $variedCoordinates[(string)$dimensionIdentifier] = $value;
 
-        return new DimensionSpacePoint($variedCoordinates);
+        return new static($variedCoordinates);
     }
 
     /**
@@ -106,7 +106,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
      * @param Dimension\ContentDimensionIdentifier $contentDimensionIdentifier
      * @return bool
      */
-    public function isDirectVariantInDimension(DimensionSpacePoint $otherDimensionSpacePoint, Dimension\ContentDimensionIdentifier $contentDimensionIdentifier): bool
+    final public function isDirectVariantInDimension(DimensionSpacePoint $otherDimensionSpacePoint, Dimension\ContentDimensionIdentifier $contentDimensionIdentifier): bool
     {
         if (!$this->hasCoordinate($contentDimensionIdentifier) || !$otherDimensionSpacePoint->hasCoordinate($contentDimensionIdentifier)) {
             return false;
@@ -126,7 +126,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     /**
      * @return array
      */
-    public function getCoordinates(): array
+    final public function getCoordinates(): array
     {
         return $this->coordinates;
     }
@@ -135,7 +135,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
      * @param Dimension\ContentDimensionIdentifier $dimensionIdentifier
      * @return bool
      */
-    public function hasCoordinate(Dimension\ContentDimensionIdentifier $dimensionIdentifier): bool
+    final public function hasCoordinate(Dimension\ContentDimensionIdentifier $dimensionIdentifier): bool
     {
         return isset($this->coordinates[(string)$dimensionIdentifier]);
     }
@@ -144,7 +144,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
      * @param Dimension\ContentDimensionIdentifier $dimensionIdentifier
      * @return null|string
      */
-    public function getCoordinate(Dimension\ContentDimensionIdentifier $dimensionIdentifier): ?string
+    final public function getCoordinate(Dimension\ContentDimensionIdentifier $dimensionIdentifier): ?string
     {
         return $this->coordinates[(string)$dimensionIdentifier] ?? null;
     }
@@ -153,7 +153,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
      * @param DimensionSpacePoint $otherDimensionSpacePoint
      * @return bool
      */
-    public function equals(DimensionSpacePoint $otherDimensionSpacePoint): bool
+    final public function equals(DimensionSpacePoint $otherDimensionSpacePoint): bool
     {
         return $this->coordinates === $otherDimensionSpacePoint->getCoordinates();
     }
@@ -161,7 +161,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     /**
      * @return string
      */
-    public function getHash(): string
+    final public function getHash(): string
     {
         return $this->hash;
     }
@@ -169,7 +169,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     /**
      * @return array
      */
-    public function toLegacyDimensionArray(): array
+    final public function toLegacyDimensionArray(): array
     {
         $legacyDimensions = [];
         foreach ($this->coordinates as $dimensionName => $dimensionValue) {
@@ -182,7 +182,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     /**
      * @return array
      */
-    public function jsonSerialize(): array
+    final public function jsonSerialize(): array
     {
         return $this->coordinates;
     }
@@ -192,7 +192,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
      *
      * @return string
      */
-    public function serializeForUri(): string
+    final public function serializeForUri(): string
     {
         return base64_encode(json_encode($this->coordinates));
     }
@@ -201,15 +201,15 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
      * @param string $encoded
      * @return DimensionSpacePoint
      */
-    public static function fromUriRepresentation(string $encoded): DimensionSpacePoint
+    final public static function fromUriRepresentation(string $encoded): self
     {
-        return new DimensionSpacePoint(json_decode(base64_decode($encoded), true));
+        return new static(json_decode(base64_decode($encoded), true));
     }
 
     /**
      * @return string
      */
-    public function __toString(): string
+    final public function __toString(): string
     {
         return json_encode($this);
     }
@@ -217,7 +217,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     /**
      * @return string
      */
-    public function getCacheEntryIdentifier(): string
+    final public function getCacheEntryIdentifier(): string
     {
         return $this->getHash();
     }
@@ -226,7 +226,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    final public function allowsCallOfMethod($methodName)
     {
         return true;
     }

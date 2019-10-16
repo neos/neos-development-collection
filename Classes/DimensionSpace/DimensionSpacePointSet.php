@@ -87,6 +87,9 @@ final class DimensionSpacePointSet implements \JsonSerializable, \IteratorAggreg
         return count($this->points);
     }
 
+    /**
+     * @return \ArrayIterator|DimensionSpacePoint[]
+     */
     public function getIterator(): \ArrayIterator
     {
         return $this->iterator;
