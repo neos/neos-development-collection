@@ -54,7 +54,6 @@ use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCach
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
 use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
@@ -375,11 +374,11 @@ final class WorkspaceCommandHandler
             } catch (\Exception $e) {
                 $fullCommandListSoFar = '';
                 for ($a = 0; $a <= $i; $a++) {
-                   $fullCommandListSoFar .= "\n - " . get_class($originalCommands[$a]);
+                    $fullCommandListSoFar .= "\n - " . get_class($originalCommands[$a]);
 
-                   if ($originalCommands[$a] instanceof \JsonSerializable) {
-                       $fullCommandListSoFar .= ' ' . json_encode($originalCommands[$a]);
-                   }
+                    if ($originalCommands[$a] instanceof \JsonSerializable) {
+                        $fullCommandListSoFar .= ' ' . json_encode($originalCommands[$a]);
+                    }
                 }
                 throw new WorkspaceCannotBeRebased(
                     sprintf(
