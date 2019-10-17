@@ -199,7 +199,8 @@ trait EventSourcedTrait
         $this->contentStreamIdentifier = null;
     }
 
-    public function currentNodeAggregateIdentifier() {
+    public function currentNodeAggregateIdentifier()
+    {
         return $this->currentNode->getNodeAggregateIdentifier();
     }
 

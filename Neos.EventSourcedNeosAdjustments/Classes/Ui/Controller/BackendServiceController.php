@@ -399,7 +399,6 @@ class BackendServiceController extends ActionController
         $result = [];
         /** @var NodeAddress $nodeAddress */
         foreach ($nodes as $nodeAddress) {
-
             $subgraph = $this->contentGraph->getSubgraphByIdentifier(
                 $nodeAddress->getContentStreamIdentifier(),
                 $nodeAddress->getDimensionSpacePoint(),

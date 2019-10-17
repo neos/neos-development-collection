@@ -387,11 +387,11 @@ final class WorkspaceCommandHandler
             } catch (\Exception $e) {
                 $fullCommandListSoFar = '';
                 for ($a = 0; $a <= $i; $a++) {
-                   $fullCommandListSoFar .= "\n - " . get_class($originalCommands[$a]);
+                    $fullCommandListSoFar .= "\n - " . get_class($originalCommands[$a]);
 
-                   if ($originalCommands[$a] instanceof \JsonSerializable) {
-                       $fullCommandListSoFar .= ' ' . json_encode($originalCommands[$a]);
-                   }
+                    if ($originalCommands[$a] instanceof \JsonSerializable) {
+                        $fullCommandListSoFar .= ' ' . json_encode($originalCommands[$a]);
+                    }
                 }
                 throw new WorkspaceCannotBeRebased(
                     sprintf(

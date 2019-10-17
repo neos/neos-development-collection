@@ -16,7 +16,6 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector;
 use Neos\EventSourcing\Event\DecoratedEvent;
-use Neos\EventSourcing\Event\Decorator\EventDecoratorUtilities;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\EventListenerLocator;
