@@ -12,6 +12,9 @@ namespace Neos\EventSourcedNeosAdjustments\Tests\Functional\EventSourcedRouting\
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -127,9 +130,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithAllDimensionValuesGivenLiveWorkspaceAndDefaultDelimiter()
     {
-        $uri = new Http\Uri('https://de.domain.com/sellerA_channelA/home.html');
-        $request = Http\Request::create($uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
+        $uri = new Uri('https://de.domain.com/sellerA_channelA/home.html');
+        $request = new ServerRequest('GET', $uri);
+        $componentContext = new Http\Component\ComponentContext($request, new Response());
 
         $detectSubgraphComponent = new DetectContentSubgraphComponent();
         $detectSubgraphComponent->handle($componentContext);
@@ -156,9 +159,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithAllDimensionValuesGivenLiveWorkspaceAndModifiedDelimiter()
     {
-        $uri = new Http\Uri('https://de.domain.com/sellerA-channelA/home.html');
-        $request = Http\Request::create($uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
+        $uri = new Uri('https://de.domain.com/sellerA-channelA/home.html');
+        $request = new ServerRequest('GET', $uri);
+        $componentContext = new Http\Component\ComponentContext($request, new Response());
 
         $detectSubgraphComponent = new DetectContentSubgraphComponent();
         $this->inject($detectSubgraphComponent, 'uriPathSegmentDelimiter', '-');
@@ -187,9 +190,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithMinimalDimensionValuesGivenLiveWorkspaceAndModifiedDelimiter()
     {
-        $uri = new Http\Uri('https://domain.com/home.html');
-        $request = Http\Request::create($uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
+        $uri = new Uri('https://domain.com/home.html');
+        $request = new ServerRequest('GET', $uri);
+        $componentContext = new Http\Component\ComponentContext($request, new Response());
 
         $detectSubgraphComponent = new DetectContentSubgraphComponent();
         $detectSubgraphComponent->handle($componentContext);
@@ -217,9 +220,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithDimensionValuesGivenButOverriddenViaContextPath()
     {
-        $uri = new Http\Uri('https://de.domain.com/sellerA_channelA/home@user-me;language=en&market=GB&seller=default&channel=default.html');
-        $request = Http\Request::create($uri);
-        $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
+        $uri = new Uri('https://de.domain.com/sellerA_channelA/home@user-me;language=en&market=GB&seller=default&channel=default.html');
+        $request = new ServerRequest('GET', $uri);
+        $componentContext = new Http\Component\ComponentContext($request, new Response());
 
         $detectSubgraphComponent = new DetectContentSubgraphComponent();
         $detectSubgraphComponent->handle($componentContext);

@@ -1,8 +1,6 @@
-#Neos:
-#  EventSourcedContentRepository:
-#    contentDimensions: {}
-
 Neos:
+  EventSourcedContentRepository:
+    contentDimensions: {}
   EventSourcing:
     EventStore:
       stores:
