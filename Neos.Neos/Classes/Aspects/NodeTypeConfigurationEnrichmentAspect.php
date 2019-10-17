@@ -56,17 +56,34 @@ class NodeTypeConfigurationEnrichmentAspect
     protected $iconNameMappingService;
 
     /**
-     * @Flow\Around("method(Neos\ContentRepository\Domain\Model\NodeType->__construct())")
+     * @Flow\Around("method(Neos\ContentRepository\Domain\Model\NodeType->setFullConfiguration())")
+     * @param JoinPointInterface $joinPoint
      * @return void
+     * @throws Exception
      */
     public function enrichNodeTypeConfiguration(JoinPointInterface $joinPoint)
+    {
+        $configuration = $joinPoint->getMethodArgument('fullConfiguration');
+        $nodeTypeName = $joinPoint->getProxy()->getName();
+
+        $this->addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, $configuration);
+        $this->mapIconNames($configuration);
+
+        $joinPoint->setMethodArgument('fullConfiguration', $configuration);
+        $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
+
+    /**
+     * @Flow\Around("method(Neos\ContentRepository\Domain\Model\NodeType->__construct())")
+     * @param JoinPointInterface $joinPoint
+     * @return void
+     */
+    public function enrichNodeTypeLabelsConfiguration(JoinPointInterface $joinPoint)
     {
         $configuration = $joinPoint->getMethodArgument('configuration');
         $nodeTypeName = $joinPoint->getMethodArgument('name');
 
-        $this->addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, $configuration);
         $this->addLabelsToNodeTypeConfiguration($nodeTypeName, $configuration);
-        $this->mapIconNames($configuration);
 
         $joinPoint->setMethodArgument('configuration', $configuration);
         $joinPoint->getAdviceChain()->proceed($joinPoint);
@@ -125,6 +142,7 @@ class NodeTypeConfigurationEnrichmentAspect
                 if (!isset($propertyConfiguration['type'])) {
                     continue;
                 }
+
                 $type = $propertyConfiguration['type'];
 
                 if (!isset($this->dataTypesDefaultConfiguration[$type])) {
