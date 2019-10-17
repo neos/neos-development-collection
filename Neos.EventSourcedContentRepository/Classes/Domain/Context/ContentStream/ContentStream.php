@@ -35,22 +35,16 @@ final class ContentStream
     private $streamName;
 
     /**
-     * @var NodeAggregateEventPublisher
-     */
-    private $nodeEventPublisher;
-
-    /**
      * @var EventStore
      */
     private $eventStore;
 
 
-    public function __construct(ContentStreamIdentifier $identifier, EventStore $eventStore, NodeAggregateEventPublisher $nodeEventPublisher)
+    public function __construct(ContentStreamIdentifier $identifier, EventStore $eventStore)
     {
         $this->identifier = $identifier;
         $this->streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($identifier)->getEventStreamName();
         $this->eventStore = $eventStore;
-        $this->nodeEventPublisher = $nodeEventPublisher;
     }
 
     public function getVersion(): int

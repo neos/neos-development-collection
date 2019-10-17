@@ -9,7 +9,7 @@ default:
   suites:
     cr:
       paths:
-        - "%paths.base%/Features/EventSourced"
+        - "%paths.base%/Features/EventSourced/"
       contexts:
         - FeatureContext:
 

@@ -39,11 +39,6 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use EventSourcedTrait;
 
     /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
-    /**
      * @var string
      */
     protected $behatTestHelperObjectName = \Neos\EventSourcedContentRepository\Tests\Functional\Command\BehatTestHelper::class;

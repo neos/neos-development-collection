@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
@@ -23,6 +24,7 @@ use Neos\EventSourcing\EventStore\EventStore;
 use Ramsey\Uuid\Uuid;
 
 /**
+ * @Flow\Scope("singleton")
  * ContentStreamCommandHandler
  */
 final class ContentStreamCommandHandler

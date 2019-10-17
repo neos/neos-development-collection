@@ -52,6 +52,8 @@ trait NodeCreation
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
+    abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
+
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
 
     /**
