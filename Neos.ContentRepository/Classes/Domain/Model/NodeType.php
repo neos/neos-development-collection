@@ -220,7 +220,7 @@ class NodeType
             $postprocessor->process($this, $fullConfiguration, $postprocessorOptions);
         }
 
-         return $fullConfiguration;
+        return $fullConfiguration;
     }
 
     /**
