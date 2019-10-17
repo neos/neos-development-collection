@@ -15,7 +15,7 @@ before_install:
   - cd neos-development-distribution
   - cat composer.json
 install:
-  - composer update --no-progress --no-interaction
+  - COMPOSER_MEMORY_LIMIT=-1 composer update --no-progress --no-interaction
   - cd ..
   - rm -rf neos-development-distribution/Packages/CR
   - mv contentrepository-development-collection neos-development-distribution/Packages/CR
