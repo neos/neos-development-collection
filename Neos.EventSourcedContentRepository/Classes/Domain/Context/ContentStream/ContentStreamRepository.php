@@ -12,35 +12,39 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\EventSourcing\EventStore\EventStoreManager;
-use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
+use Neos\EventSourcing\EventStore\EventStore;
 
 /**
  * A content stream to write events into
  *
  * Content streams contain an arbitrary amount of node aggregates that can be retrieved by identifier
+ *
+ * @Flow\Scope("singleton")
  */
 final class ContentStreamRepository
 {
     /**
-     * @var EventStoreManager
+     * @var EventStore
      */
-    private $eventStoreManager;
+    private $eventStore;
 
     /**
      * The content stream registry
      *
      * Serves as a means to preserve object identity.
      *
+     * NOTE: This must be PROTECTED; so that we can reset it from within the testcases.
+     *
      * @var array|ContentStream[]
      */
-    private $contentStreams;
+    protected $contentStreams;
 
 
-    public function __construct(EventStoreManager $eventStoreManager)
+    public function __construct(EventStore $eventStore)
     {
-        $this->eventStoreManager = $eventStoreManager;
+        $this->eventStore = $eventStore;
     }
 
 
@@ -48,19 +52,14 @@ final class ContentStreamRepository
     {
         if (!isset($this->contentStreams[(string)$contentStreamIdentifier])) {
             $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName();
-            $eventStore = $this->eventStoreManager->getEventStoreForStreamName($eventStreamName);
-            try {
-                $eventStream = $eventStore->load($eventStreamName);
-                $eventStream->rewind();
-                if (!$eventStream->current()) {
-                    // a content stream without events in its event stream does not exist yet
-                    return null;
-                }
-            } catch (EventStreamNotFoundException $eventStreamNotFound) {
+            $eventStream = $this->eventStore->load($eventStreamName);
+            $eventStream->rewind();
+            if (!$eventStream->valid()) {
+                // a content stream without events in its event stream does not exist yet
                 return null;
             }
 
-            $this->contentStreams[(string)$contentStreamIdentifier] = new ContentStream($contentStreamIdentifier, $this->eventStoreManager);
+            $this->contentStreams[(string)$contentStreamIdentifier] = new ContentStream($contentStreamIdentifier, $this->eventStore);
         }
 
         return $this->contentStreams[(string)$contentStreamIdentifier];

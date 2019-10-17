@@ -3,7 +3,6 @@
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInTraversableNode;
 
-
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;

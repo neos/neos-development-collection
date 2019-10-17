@@ -15,6 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service;
 
 use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -48,16 +49,16 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\Helpers\NodeAggregateIdentifierAndNodeTypeForLegacyImport;
-use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\EventStoreManager;
+use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\PsrSystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Neos\Utility\TypeHandling;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @Flow\Scope("singleton")
@@ -114,9 +115,9 @@ class ContentRepositoryExportService
 
     /**
      * @Flow\Inject
-     * @var EventStoreManager
+     * @var EventStore
      */
-    protected $eventStoreManager;
+    protected $eventStore;
 
     /**
      * @Flow\Inject
@@ -146,15 +147,11 @@ class ContentRepositoryExportService
     private $commandResult;
 
 
-    public function injectEntityManager(DoctrineObjectManager $entityManager)
+    public function injectEntityManager(EntityManagerInterface $entityManager): void
     {
-        if (!$entityManager instanceof DoctrineEntityManager) {
-            throw new \RuntimeException('Invalid EntityManager configured');
-        }
         $this->dbal = $entityManager->getConnection();
         $this->entityManager = $entityManager;
     }
-
 
     public function reset()
     {
@@ -558,10 +555,9 @@ class ContentRepositoryExportService
 
     private function commitEvent(StreamName $streamName, DomainEventInterface $event): void
     {
-        $event = EventWithIdentifier::create($event);
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $event = DecoratedEvent::addIdentifier($event, Uuid::uuid4()->toString());
         $publishedEvents = DomainEvents::withSingleEvent($event);
-        $eventStore->commit($streamName, $publishedEvents);
+        $this->eventStore->commit($streamName, $publishedEvents);
 
         CommandResult::fromPublishedEvents(
             $publishedEvents
