@@ -56,7 +56,7 @@ class FusionView extends \Neos\Neos\View\FusionView
         ]);
         try {
             $output = $fusionRuntime->render($this->fusionPath);
-            $output = $this->mergeHttpResponseFromOutput($output, $fusionRuntime);
+            $output = $this->parsePotentialRawHttpResponse($output);
         } catch (RuntimeException $exception) {
             throw $exception->getPrevious();
         }

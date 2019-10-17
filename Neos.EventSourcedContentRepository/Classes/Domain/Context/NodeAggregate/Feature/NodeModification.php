@@ -39,6 +39,7 @@ trait NodeModification
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
+            // TODO: add assertions like "does the node exist, does the content stream eixst, ..."
 
             // Check if node exists
             // @todo: this must also work when creating a copy on write
