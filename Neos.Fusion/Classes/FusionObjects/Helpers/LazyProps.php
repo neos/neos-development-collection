@@ -8,7 +8,7 @@ use Neos\Fusion\Core\Runtime;
 /**
  * @Flow\Proxy(false)
  */
-final class LazyProps implements \ArrayAccess
+final class LazyProps implements \ArrayAccess, \Iterator
 {
 
     /**
@@ -67,7 +67,8 @@ final class LazyProps implements \ArrayAccess
         if (!isset($this->valueCache[$path])) {
             $this->runtime->pushContextArray($this->effectiveContext);
             try {
-                $this->valueCache[$path] = $this->runtime->evaluate($this->parentPath . '/' . $path, $this->fusionObject);
+                $this->valueCache[$path] = $this->runtime->evaluate($this->parentPath . '/' . $path,
+                    $this->fusionObject);
             } finally {
                 $this->runtime->popContext();
             }
@@ -83,5 +84,34 @@ final class LazyProps implements \ArrayAccess
     public function offsetUnset($path)
     {
         // NOOP
+    }
+
+    public function current()
+    {
+        $path = key($this->keys);
+        if ($path === null) {
+            return null;
+        }
+        return $this->offsetGet($path);
+    }
+
+    public function next()
+    {
+        next($this->keys);
+    }
+
+    public function key()
+    {
+        return key($this->keys);
+    }
+
+    public function valid()
+    {
+        return current($this->keys) !== false;
+    }
+
+    public function rewind()
+    {
+        reset($this->keys);
     }
 }
