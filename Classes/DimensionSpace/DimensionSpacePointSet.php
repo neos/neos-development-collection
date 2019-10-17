@@ -54,6 +54,11 @@ final class DimensionSpacePointSet implements \JsonSerializable, \IteratorAggreg
         $this->iterator = new \ArrayIterator($this->points);
     }
 
+    public static function fromArray(array $data): self
+    {
+        return new self($data);
+    }
+
     /**
      * @return array|DimensionSpacePoint[]
      */

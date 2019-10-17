@@ -61,6 +61,11 @@ class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, Pro
         $this->hash = md5(json_encode($identityComponents));
     }
 
+    public static function fromArray(array $data): self
+    {
+        return new self($data);
+    }
+
     /**
      * @param string $jsonString A JSON string representation, see jsonSerialize
      * @return DimensionSpacePoint
