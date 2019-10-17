@@ -132,16 +132,19 @@ The resulting `composer.json` file should look something like this:
         }
     ],
     "require": {
-        "neos/neos-development-collection": "4.3.x-dev",
-        "neos/flow-development-collection": "5.3.x-dev",
-        "neos/demo": "@dev",
-
+        "neos/neos-development-collection": "@dev",
+        "neos/flow-development-collection": "@dev",
+        
         "neos/contentrepository-development-collection": "dev-master",
         "neos/content-repository-dimensionspace": "dev-master",
         "neos/event-sourcing": "dev-master",
+        "flowpack/jobqueue-common": "dev-master",
+        
+        "neos/demo": "@dev",
+        
         "neos/neos-ui": "dev-event-sourced-patch as dev-master",
         "neos/neos-ui-compiled": "@dev",
-
+        
         "neos/party": "@dev",
         "neos/seo": "@dev",
         "neos/imagine": "@dev",
@@ -153,7 +156,7 @@ The resulting `composer.json` file should look something like this:
         "mikey179/vfsstream": "~1.6",
         "phpunit/phpunit": "~7.1.0",
         "symfony/css-selector": "~2.0",
-        "neos/behat": "~5.0.0"
+        "neos/behat": "dev-master"
     },
     "scripts": {
         "post-update-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
