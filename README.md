@@ -55,8 +55,8 @@ This is the package bundle you can install alongside a plain Neos to play around
 | Support Dimension Constraints    |   ✅     |               |
 | Publish Workspace              |   ✅     |   ✅         |
 | Publish Current Page           |   ✅     |   ✅          |
-| Discard all                    |   ✅     |               |
-| Discard Current Page           |   ✅     |               |
+| Discard all                    |   ✅     |   ✅          |
+| Discard Current Page           |   ✅     |   ✅          |
 
 
 ## Requirements

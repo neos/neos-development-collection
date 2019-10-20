@@ -14,6 +14,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -216,8 +217,6 @@ class BackendServiceController extends ActionController
             $updateWorkspaceInfo = new UpdateWorkspaceInfo($workspaceName);
             $this->feedbackCollection->add($success);
             $this->feedbackCollection->add($updateWorkspaceInfo);
-
-            $this->persistenceManager->persistAll();
         } catch (\Exception $e) {
             $error = new Error();
             $error->setMessage($e->getMessage());
@@ -237,43 +236,24 @@ class BackendServiceController extends ActionController
     public function discardAction(array $nodeContextPaths)
     {
         try {
+            $workspaceName = new WorkspaceName($this->userService->getPersonalWorkspaceName());
+
+            $nodeAddresses = [];
             foreach ($nodeContextPaths as $contextPath) {
-                $node = $this->nodeService->getNodeFromContextPath($contextPath, null, null, true);
-                if ($node->isRemoved() === true) {
-                    // When discarding node removal we should re-create it
-                    $updateNodeInfo = new UpdateNodeInfo();
-                    $updateNodeInfo->setNode($node);
-                    $updateNodeInfo->recursive();
-
-                    $updateParentNodeInfo = new UpdateNodeInfo();
-                    $updateParentNodeInfo->setNode($node->getParent());
-
-                    $this->feedbackCollection->add($updateNodeInfo);
-                    $this->feedbackCollection->add($updateParentNodeInfo);
-
-                    // Reload document for content node changes
-                    // (as we can't RenderContentOutOfBand from here, we don't know dom addresses)
-                    if (!$this->nodeService->isDocument($node)) {
-                        $reloadDocument = new ReloadDocument();
-                        $this->feedbackCollection->add($reloadDocument);
-                    }
-                } elseif (!$this->nodeService->nodeExistsInWorkspace($node, $node->getWorkSpace()->getBaseWorkspace())) {
-                    // If the node doesn't exist in the target workspace, tell the UI to remove it
-                    $removeNode = new RemoveNode();
-                    $removeNode->setNode($node);
-                    $this->feedbackCollection->add($removeNode);
-                }
-
-                $this->publishingService->discardNode($node);
+                $nodeAddresses[] = $this->nodeAddressFactory->createFromUriString($contextPath);
             }
+            $command = new DiscardIndividualNodesFromWorkspace(
+                $workspaceName,
+                $nodeAddresses
+            );
+            $this->workspaceCommandHandler->handleDiscardIndividualNodesFromWorkspace($command)->blockUntilProjectionsAreUpToDate();
 
             $success = new Success();
             $success->setMessage(sprintf('Discarded %d node(s).', count($nodeContextPaths)));
 
-            $this->updateWorkspaceInfo($nodeContextPaths[0]);
+            $updateWorkspaceInfo = new UpdateWorkspaceInfo($workspaceName);
             $this->feedbackCollection->add($success);
-
-            $this->persistenceManager->persistAll();
+            $this->feedbackCollection->add($updateWorkspaceInfo);
         } catch (\Exception $e) {
             $error = new Error();
             $error->setMessage($e->getMessage());
