@@ -47,6 +47,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNode
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishIndividualNodesFromWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
@@ -761,6 +762,26 @@ trait EventSourcedTrait
 
         $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
             ->handlePublishIndividualNodesFromWorkspace($command);
+    }
+
+    /**
+     * @Given /^the command DiscardIndividualNodesFromWorkspace is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws ContentStreamDoesNotExistYet
+     * @throws NodeException
+     * @throws ContentStreamAlreadyExists
+     * @throws BaseWorkspaceDoesNotExist
+     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
+     * @throws WorkspaceDoesNotExist
+     * @throws Exception
+     */
+    public function theCommandDiscardIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $command = DiscardIndividualNodesFromWorkspace::fromArray($commandArguments);
+
+        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
+            ->handleDiscardIndividualNodesFromWorkspace($command);
     }
 
     /**
