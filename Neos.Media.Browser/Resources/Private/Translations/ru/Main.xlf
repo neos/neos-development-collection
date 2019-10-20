@@ -316,7 +316,7 @@
 			<target state="final">Не удается загрузить файл</target></trans-unit>
       <trans-unit id="noFileSelected" xml:space="preserve" approved="yes">
 				<source>No file selected</source>
-			<target state="final">Файл не выбран</target></trans-unit>
+			<target state="final">Файл не выбран</target><alt-trans><target>Не выбран файл</target></alt-trans></trans-unit>
       <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target state="final">Размер файла {0} превышает допустимый предел в {1}</target></trans-unit>
