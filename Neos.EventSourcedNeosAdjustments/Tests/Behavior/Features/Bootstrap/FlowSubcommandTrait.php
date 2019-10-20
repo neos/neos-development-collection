@@ -49,9 +49,7 @@ trait FlowSubcommandTrait
         }
         self::$onlyOnceRanStepsWhichShouldBeSkipped['CLEAN_DATABASE'] = true;
 
-        /* @var $flow \Neos\Behat\Tests\Behat\FlowContext */
-        $flow = $this->getSubcontext('flow');
-        $flow->resetTestFixtures(null);
+        $this->resetTestFixtures(null);
     }
 
     protected function getConfigurationManager(): \Neos\Flow\Configuration\ConfigurationManager

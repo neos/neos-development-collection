@@ -13,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\Testing;
  */
 
 use Neos\Flow\Http\Client\InternalRequestEngine;
+use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Flow\Http;
