@@ -636,7 +636,6 @@ final class WorkspaceCommandHandler
 
         // TODO: "Rebased" is not the correct wording here!
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
-        $eventStore = $this->eventStore->getEventStoreForStreamName($streamName);
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
                 new WorkspaceWasRebased(
