@@ -66,5 +66,4 @@ class ImportedAssetRepositoryTest extends AbstractTest
         $this->assertInstanceOf(ImportedAsset::class, $importedAssetResult);
         $this->assertEquals($originalAssetIdentifier, $importedAssetResult->getLocalAssetIdentifier());
     }
-
 }
