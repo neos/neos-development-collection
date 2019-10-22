@@ -970,11 +970,11 @@ class Runtime
                                 'value' => $value
                             ];
                         }
-                    } else if ($singleApplyValues instanceof LazyProps) {
+                    } elseif ($singleApplyValues instanceof LazyProps) {
                         for ($singleApplyValues->rewind(); ($key = $singleApplyValues->key()) !== null; $singleApplyValues->next()) {
                             $combinedApplyValues[$fusionPath . '/' . $key] = [
                                 'key' => $key,
-                                'value' => function() use ($singleApplyValues, $key) {
+                                'value' => function () use ($singleApplyValues, $key) {
                                     return $singleApplyValues[$key];
                                 },
                                 'lazy' => true
