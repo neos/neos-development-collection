@@ -16,6 +16,7 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Fusion\FusionObjects\Helpers\LazyProps;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\PositionalArraySorter;
@@ -438,7 +439,11 @@ class Runtime
             if ($this->evaluateIfCondition($fusionConfiguration, $fusionPath, $contextObject) === false) {
                 return null;
             }
-            return $this->evaluateProcessors($currentProperties[$fusionPath]['value'], $fusionConfiguration, $fusionPath, $contextObject);
+            $value = $currentProperties[$fusionPath]['value'];
+            if (isset($currentProperties[$fusionPath]['lazy'])) {
+                $value = $value();
+            }
+            return $this->evaluateProcessors($value, $fusionConfiguration, $fusionPath, $contextObject);
         }
 
         if (!$this->canRenderWithConfiguration($fusionConfiguration)) {
@@ -830,11 +835,21 @@ class Runtime
         if (is_array($currentProperties)) {
             foreach ($currentProperties as $path => $property) {
                 $key = $property['key'];
-                $valueAst = [
-                    '__eelExpression' => null,
-                    '__objectType' => null,
-                    '__value' => $property['value']
-                ];
+                if (isset($property['lazy'])) {
+                    $valueAst = [
+                        '__eelExpression' => null,
+                        // Mark this property as not having a simple value in the AST -
+                        // the object implementation has to evaluate the key through the Runtime
+                        '__objectType' => 'Neos.Fusion:Lazy',
+                        '__value' => null
+                    ];
+                } else {
+                    $valueAst = [
+                        '__eelExpression' => null,
+                        '__objectType' => null,
+                        '__value' => $property['value']
+                    ];
+                }
 
                 // merge existing meta-configuration to valueAst
                 // to preserve @if, @process and @position informations
@@ -941,17 +956,30 @@ class Runtime
                     $singleApplyPath .= '/expression';
                 }
                 $singleApplyValues = $this->evaluateInternal($singleApplyPath, self::BEHAVIOR_EXCEPTION);
-                if ($this->getLastEvaluationStatus() !== static::EVALUATION_SKIPPED && is_array($singleApplyValues)) {
-                    foreach ($singleApplyValues as $key => $value) {
-                        // skip keys which start with __, as they are purely internal.
-                        if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
-                            continue;
-                        }
+                if ($this->getLastEvaluationStatus() !== static::EVALUATION_SKIPPED) {
+                    if (is_array($singleApplyValues)) {
+                        foreach ($singleApplyValues as $key => $value) {
+                            // skip keys which start with __, as they are purely internal.
+                            if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys,
+                                    true)) {
+                                continue;
+                            }
 
-                        $combinedApplyValues[$fusionPath . '/' . $key] = [
-                            'key' => $key,
-                            'value' => $value
-                        ];
+                            $combinedApplyValues[$fusionPath . '/' . $key] = [
+                                'key' => $key,
+                                'value' => $value
+                            ];
+                        }
+                    } else if ($singleApplyValues instanceof LazyProps) {
+                        for ($singleApplyValues->rewind(); ($key = $singleApplyValues->key()) !== null; $singleApplyValues->next()) {
+                            $combinedApplyValues[$fusionPath . '/' . $key] = [
+                                'key' => $key,
+                                'value' => function() use ($singleApplyValues, $key) {
+                                    return $singleApplyValues[$key];
+                                },
+                                'lazy' => true
+                            ];
+                        }
                     }
                 }
             }
