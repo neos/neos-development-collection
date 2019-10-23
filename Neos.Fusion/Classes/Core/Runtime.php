@@ -16,7 +16,6 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Fusion\FusionObjects\Helpers\LazyProps;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\PositionalArraySorter;
@@ -957,7 +956,9 @@ class Runtime
                 }
                 $singleApplyValues = $this->evaluateInternal($singleApplyPath, self::BEHAVIOR_EXCEPTION);
                 if ($this->getLastEvaluationStatus() !== static::EVALUATION_SKIPPED) {
-                    if (is_array($singleApplyValues)) {
+                    if ($singleApplyValues === null) {
+                        continue;
+                    } elseif (is_array($singleApplyValues)) {
                         foreach ($singleApplyValues as $key => $value) {
                             // skip keys which start with __, as they are purely internal.
                             if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys,
@@ -970,7 +971,7 @@ class Runtime
                                 'value' => $value
                             ];
                         }
-                    } elseif ($singleApplyValues instanceof LazyProps) {
+                    } elseif ($singleApplyValues instanceof \Traversable && $singleApplyValues instanceof \ArrayAccess) {
                         for ($singleApplyValues->rewind(); ($key = $singleApplyValues->key()) !== null; $singleApplyValues->next()) {
                             $combinedApplyValues[$fusionPath . '/' . $key] = [
                                 'key' => $key,
