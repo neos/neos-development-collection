@@ -10,7 +10,8 @@
 				<th>{neos:backend.translate(id: 'workspaces.workspace.title', source: 'Modules', package: 'Neos.Neos')}</th>
 				<th>{neos:backend.translate(id: 'workspaces.workspace.baseWorkspace', source: 'Modules', package: 'Neos.Neos')}</th>
 				<th>{neos:backend.translate(id: 'workspaces.workspace.owner', source: 'Modules', package: 'Neos.Neos')}</th>
-				<th class="neos-changes">{neos:backend.translate(id: 'workspaces.workspace.changes', source: 'Modules', package: 'Neos.Neos')}</th>
+        <th>{neos:backend.translate(id: 'workspaces.workspace.roles', source: 'Modules', package: 'Neos.Neos')}</th>
+        <th class="neos-changes">{neos:backend.translate(id: 'workspaces.workspace.changes', source: 'Modules', package: 'Neos.Neos')}</th>
 				<th>&nbsp;</th>
 			</tr>
 			</thead>
@@ -61,6 +62,11 @@
 									{workspace.owner.label}
 								</f:else>
 							</f:security.ifAccess>
+						</td>
+						<td>
+							<f:for each="{workspace.roleIdentifiers}" as="roleIdentifier">
+								{roleIdentifier}
+							</f:for>
 						</td>
 						<td class="neos-changes">
 							<f:if condition="{workspace.baseWorkspace}">

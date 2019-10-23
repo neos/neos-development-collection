@@ -65,6 +65,9 @@
 			<trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
 			</trans-unit>
+			<trans-unit id="workspaces.workspace.roles" xml:space="preserve">
+				<source>Roles</source>
+			</trans-unit>
 			<trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			</trans-unit>

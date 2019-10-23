@@ -18,6 +18,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
@@ -53,6 +54,12 @@ class WorkspacesController extends AbstractModuleController
      * @var PublishingService
      */
     protected $publishingService;
+
+    /**
+     * @Flow\Inject
+     * @var PolicyService
+     */
+    protected $policyService;
 
     /**
      * @Flow\Inject
@@ -182,6 +189,7 @@ class WorkspacesController extends AbstractModuleController
     public function newAction()
     {
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions());
+        $this->view->assign('availableRoles', $this->policyService->getRoles());
     }
 
     /**
@@ -192,9 +200,10 @@ class WorkspacesController extends AbstractModuleController
      * @param Workspace $baseWorkspace Workspace the new workspace should be based on
      * @param string $visibility Visibility of the new workspace, must be either "internal" or "shared"
      * @param string $description A description explaining the purpose of the new workspace
+     * @param array $roleIdentifiers The roles that are allowed to edit this workspace
      * @return void
      */
-    public function createAction($title, Workspace $baseWorkspace, $visibility, $description = '')
+    public function createAction($title, Workspace $baseWorkspace, $visibility, $description = '', $roleIdentifiers = [])
     {
         $workspace = $this->workspaceRepository->findOneByTitle($title);
         if ($workspace instanceof Workspace) {
@@ -216,6 +225,7 @@ class WorkspacesController extends AbstractModuleController
         $workspace = new Workspace($workspaceName, $baseWorkspace, $owner);
         $workspace->setTitle($title);
         $workspace->setDescription($description);
+        $workspace->setRoleIdentifiers($roleIdentifiers);
 
         $this->workspaceRepository->add($workspace);
         $this->redirect('index');
@@ -234,6 +244,7 @@ class WorkspacesController extends AbstractModuleController
         $this->view->assign('disableBaseWorkspaceSelector', $this->publishingService->getUnpublishedNodesCount($workspace) > 0);
         $this->view->assign('showOwnerSelector', $this->userService->currentUserCanTransferOwnershipOfWorkspace($workspace));
         $this->view->assign('ownerOptions', $this->prepareOwnerOptions());
+        $this->view->assign('availableRoles', $this->policyService->getRoles());
     }
 
     /**

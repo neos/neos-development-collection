@@ -76,6 +76,13 @@ class Workspace
     protected $owner;
 
     /**
+     * The role-identifier that have access to this workspace
+     * @var array of strings
+     * @ORM\Column(type="simple_array", nullable=true)
+     */
+    protected $roleIdentifiers = [];
+
+    /**
      * Workspace (if any) this workspace is based on.
      *
      * Content from the base workspace will shine through in this workspace
@@ -264,6 +271,23 @@ class Workspace
         }
         $this->owner = $this->persistenceManager->getIdentifierByObject($user);
     }
+
+    /**
+     * @return array
+     */
+    public function getRoleIdentifiers(): array
+    {
+        return $this->roleIdentifiers;
+    }
+
+    /**
+     * @param array $roleIdentifiers
+     */
+    public function setRoleIdentifiers(array $roleIdentifiers): void
+    {
+        $this->roleIdentifiers = $roleIdentifiers;
+    }
+
 
     /**
      * Checks if this workspace is a user's personal workspace
