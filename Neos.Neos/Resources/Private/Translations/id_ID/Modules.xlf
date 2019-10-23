@@ -615,13 +615,13 @@
 			<target state="translated">NamaPenyediaLayanan.KodeKunciPaketSaya</target><alt-trans><target>VendorName.MyPackageKey</target></alt-trans><alt-trans><target>VendorNama.MyPackageKey</target></alt-trans></trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
-			<target state="needs-translation">No sites available</target></trans-unit>
+			<target state="translated">Tidak ada situs tersedia</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target state="translated">Paket &lt;em&gt;Neos Kickstarter&lt;/em&gt; belum terpasang, silakan memasangnya ke situs baru kickstart.</target><alt-trans><target>Paket&lt;em&gt;Neos Kickstarter&lt;/em&gt;tidak terpasang, instal ke situs baru kickstart.</target></alt-trans></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
-			<target state="needs-translation">New site</target></trans-unit>
+			<target state="translated">Situs baru</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target state="translated">Apakah Anda benar-benar ingin menghapus "{0}"? ini tidak dapat dipulihkan.</target><alt-trans><target>Apakah Anda benar-benar ingin menghapus "{0}"? Tindakan ini tidak bisa dibatalkan.</target></alt-trans></trans-unit>
@@ -633,16 +633,16 @@
 			<target state="translated">Edit domain</target><alt-trans><target>Sunting Domain</target></alt-trans></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
-			<target state="needs-translation">Domain data</target></trans-unit>
+			<target state="translated">Data domain</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
-			<target state="needs-translation">e.g. www.neos.io</target></trans-unit>
+			<target state="translated">Cth. www.neos.io</target></trans-unit>
       <trans-unit id="domainform.state" xml:space="preserve">
 				<source>State</source>
-			<target state="needs-translation">State</target></trans-unit>
+			<target state="translated">Negara</target></trans-unit>
       <trans-unit id="domainform.create" xml:space="preserve">
 				<source>Create</source>
-			<target state="needs-translation">Create</target></trans-unit>
+			<target state="translated">Buat</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target state="translated">Konfigurasi</target></trans-unit>

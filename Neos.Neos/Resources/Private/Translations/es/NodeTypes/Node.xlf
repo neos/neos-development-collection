@@ -7,10 +7,10 @@
 			<target state="translated">General</target></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="translated">Metadatos</target></trans-unit>
+			<target state="final">Metadatos</target></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="translated">Metadatos</target></trans-unit>
+			<target state="final">Metadatos</target></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
 			<target state="translated">Información adicional</target></trans-unit>
@@ -19,7 +19,7 @@
 			<target state="translated">Cambiar tipo</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target state="translated">Tipo</target></trans-unit>
+			<target state="final">Tipo</target></trans-unit>
     </body>
   </file>
 </xliff>

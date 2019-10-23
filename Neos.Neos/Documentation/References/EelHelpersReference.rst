@@ -1757,6 +1757,8 @@ Translation helpers for Eel contexts
 
 Implemented in: ``Neos\Flow\I18n\EelHelper\TranslationHelper``
 
+.. note:: ``I18n`` and ``Translation`` helpers are aliases, both point to ``Neos\Flow\I18n\EelHelper\TranslationHelper``.
+
 Translation.id(id)
 ^^^^^^^^^^^^^^^^^^
 
@@ -1782,10 +1784,14 @@ translated label.
 * ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
 * ``originalLabel`` (string, *optional*) The original translation value (the untranslated source string).
 * ``arguments`` (array, *optional*) Numerically indexed array of values to be inserted into placeholders
-* ``source`` (string, *optional*) Name of file with translations
+* ``source`` (string, *optional*) Name of file with translations (with directory separator: ``/``), will default to ``Main``.
 * ``package`` (string, *optional*) Target package key. If not set, the current package key will be used
 * ``quantity`` (mixed, *optional*) A number to find plural form for (float or int), NULL to not use plural forms
 * ``locale`` (string, *optional*) An identifier of locale to use (NULL for use the default locale)
+
+Examples:
+
+     {Translation.translate('header.username', 'User: {0}', [username], 'NodeTypes/Component/Header', 'Acme.Site')}
 
 **Return** (string) Translated label or source label / ID key
 
