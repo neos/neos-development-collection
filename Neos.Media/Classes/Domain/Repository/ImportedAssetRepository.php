@@ -30,7 +30,8 @@ final class ImportedAssetRepository extends Repository
         $query->matching(
             $query->logicalAnd(
                 $query->equals('assetSourceIdentifier', $assetSourceIdentifier),
-                $query->equals('remoteAssetIdentifier', $remoteAssetIdentifier)
+                $query->equals('remoteAssetIdentifier', $remoteAssetIdentifier),
+                $query->equals('localOriginalAssetIdentifier', null)
             )
         );
         return $query->execute()->getFirst();
