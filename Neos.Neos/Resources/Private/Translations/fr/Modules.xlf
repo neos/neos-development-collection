@@ -4,228 +4,228 @@
     <body>
       <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
-			<target state="translated">Retour</target></trans-unit>
+			<target state="final">Retour</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
-			<target state="translated">Annuler</target></trans-unit>
+			<target state="final">Annuler</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve" approved="yes">
 				<source>Management</source>
-			<target state="translated">Gestion</target></trans-unit>
+			<target state="final">Gestion</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to management of content</source>
-			<target state="translated">Contient plusieurs modules liés à la gestion de contenu</target></trans-unit>
+			<target state="final">Contient plusieurs modules liés à la gestion de contenu</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve" approved="yes">
 				<source>Workspaces</source>
-			<target state="translated">Espaces de travail</target></trans-unit>
+			<target state="final">Espaces de travail</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve" approved="yes">
 				<source>Details for "{0}"</source>
-			<target state="translated">Détails pour «{0} »</target></trans-unit>
+			<target state="final">Détails pour «{0} »</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve" approved="yes">
 				<source>Create new workspace</source>
-			<target state="translated">Créer un nouvel espace de travail</target></trans-unit>
+			<target state="final">Créer un nouvel espace de travail</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve" approved="yes">
 				<source>Create workspace</source>
-			<target state="translated">Créer l'espace de travail</target></trans-unit>
+			<target state="final">Créer l'espace de travail</target></trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve" approved="yes">
 				<source>Delete workspace</source>
-			<target state="translated">Supprimer l'espace de travail</target></trans-unit>
+			<target state="final">Supprimer l'espace de travail</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
 				<source>Edit workspace</source>
-			<target state="translated">Modifier l'espace de travail</target></trans-unit>
+			<target state="final">Modifier l'espace de travail</target></trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve" approved="yes">
 				<source>Yes, delete the workspace</source>
-			<target state="translated">Oui, supprimer l'espace de travail</target></trans-unit>
+			<target state="final">Oui, supprimer l'espace de travail</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve" approved="yes">
 				<source>Edit workspace "{0}"</source>
-			<target state="translated">Modifier l'espace de travail</target></trans-unit>
+			<target state="final">Modifier l'espace de travail</target></trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve" approved="yes">
 				<source>Personal workspace</source>
-			<target state="translated">Espace de travail personnel</target></trans-unit>
+			<target state="final">Espace de travail personnel</target></trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve" approved="yes">
 				<source>Private workspace</source>
-			<target state="translated">Espace de travail privé</target></trans-unit>
+			<target state="final">Espace de travail privé</target></trans-unit>
       <trans-unit id="workspaces.internalWorkspace" xml:space="preserve" approved="yes">
 				<source>Internal workspace</source>
-			<target state="translated">Espace de travail interne</target></trans-unit>
+			<target state="final">Espace de travail interne</target></trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
 				<source>Read-only workspace</source>
-			<target state="translated">Espace de travail en lecture seule</target></trans-unit>
+			<target state="final">Espace de travail en lecture seule</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target state="translated">Titre</target></trans-unit>
+			<target state="final">Titre</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve" approved="yes">
 				<source>Description</source>
-			<target state="translated">Description</target></trans-unit>
+			<target state="final">Description</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve" approved="yes">
 				<source>Base workspace</source>
-			<target state="translated">Espace de travail de base</target></trans-unit>
+			<target state="final">Espace de travail de base</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve" approved="yes">
 				<source>Owner</source>
-			<target state="translated">Propriétaire</target></trans-unit>
+			<target state="final">Propriétaire</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
-			<target state="translated">Visibilité</target></trans-unit>
+			<target state="final">Visibilité</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve" approved="yes">
 				<source>Private</source>
-			<target state="translated">Privé</target></trans-unit>
+			<target state="final">Privé</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target state="translated">Seulement les relecteurs et les administrateurs peuvent accéder et modifier cet espace de travail</target></trans-unit>
+			<target state="final">Seulement les relecteurs et les administrateurs peuvent accéder et modifier cet espace de travail</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve" approved="yes">
 				<source>Internal</source>
-			<target state="translated">Interne</target></trans-unit>
+			<target state="final">Interne</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve" approved="yes">
 				<source>Any logged in editor can see and modify this workspace.</source>
-			<target state="translated">N'importe quel éditeur connecté peut voir et modifier cet espace de travail.</target></trans-unit>
+			<target state="final">N'importe quel éditeur connecté peut voir et modifier cet espace de travail.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve" approved="yes">
 				<source>Changes</source>
-			<target state="translated">Changements</target></trans-unit>
+			<target state="final">Changements</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve" approved="yes">
 				<source>Open page in "{0}" workspace</source>
-			<target state="translated">Ouvrir la page dans l'espace de travail "{0}"</target></trans-unit>
+			<target state="final">Ouvrir la page dans l'espace de travail "{0}"</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve" approved="yes">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target state="translated">Il s'agit de votre espace de travail personnel que vous ne pouvez pas supprimer.</target></trans-unit>
+			<target state="final">Il s'agit de votre espace de travail personnel que vous ne pouvez pas supprimer.</target></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
-			<target state="translated">L'espace de travail contient des modifications. Pour supprimer, ignorer tout d'abord les modifications.</target></trans-unit>
+			<target state="final">L'espace de travail contient des modifications. Pour supprimer, ignorer tout d'abord les modifications.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve" approved="yes">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target state="translated">Espace de travail ne peut pas être redéfinie sur un espace de travail différent, car il contient encore des changements.</target></trans-unit>
+			<target state="final">Espace de travail ne peut pas être redéfinie sur un espace de travail différent, car il contient encore des changements.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve" approved="yes">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
-			<target state="translated">L'espace de travail ne peut pas être supprimé car d'autres espaces de travail en dépendent.</target></trans-unit>
+			<target state="final">L'espace de travail ne peut pas être supprimé car d'autres espaces de travail en dépendent.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve" approved="yes">
 				<source>You don't have the permissions for deleting this workspace.</source>
-			<target state="translated">Vous n'avez pas les autorisations pour la suppression de cet espace de travail.</target></trans-unit>
+			<target state="final">Vous n'avez pas les autorisations pour la suppression de cet espace de travail.</target></trans-unit>
       <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the workspace "{0}"?</source>
-			<target state="translated">Voulez-vous vraiment supprimer l'espace de travail « {0} » ?</target></trans-unit>
+			<target state="final">Voulez-vous vraiment supprimer l'espace de travail « {0} » ?</target></trans-unit>
       <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve" approved="yes">
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
-			<target state="translated">Cela va supprimer l'espace de travail y compris les contenus non publiés. Cette opération ne peut pas être annulée.</target></trans-unit>
+			<target state="final">Cela va supprimer l'espace de travail y compris les contenus non publiés. Cette opération ne peut pas être annulée.</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve" approved="yes">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target state="translated">Ce module contient une vue d'ensemble de tous les éléments dans l'espace de travail actuel et vous permet de poursuivre le travail de révision et de publication.</target></trans-unit>
+			<target state="final">Ce module contient une vue d'ensemble de tous les éléments dans l'espace de travail actuel et vous permet de poursuivre le travail de révision et de publication.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve" approved="yes">
 				<source>Unpublished changes in workspace "{0}"</source>
-			<target state="translated">Modifications non publiées</target></trans-unit>
+			<target state="final">Modifications non publiées</target></trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
-			<target state="translated">ajouts: {new}, changements: {changed}, suppressions: {removed}</target></trans-unit>
+			<target state="final">ajouts: {new}, changements: {changed}, suppressions: {removed}</target></trans-unit>
       <trans-unit id="workspaces.review" xml:space="preserve" approved="yes">
 				<source>Review</source>
-			<target state="translated">Relire</target></trans-unit>
+			<target state="final">Relire</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Discard selected changes</source>
-			<target state="translated">Ignorer les modifications sélectionnées</target></trans-unit>
+			<target state="final">Ignorer les modifications sélectionnées</target></trans-unit>
       <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve" approved="yes">
 				<source>Publish selected changes</source>
-			<target state="translated">Publier les modifications sélectionnées</target></trans-unit>
+			<target state="final">Publier les modifications sélectionnées</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
-			<target state="translated">Ignorer toutes les modifications</target></trans-unit>
+			<target state="final">Ignorer toutes les modifications</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve" approved="yes">
 				<source>Publish all changes</source>
-			<target state="translated">Publier toutes les modifications</target></trans-unit>
+			<target state="final">Publier toutes les modifications</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve" approved="yes">
 				<source>Publish all changes to {0}</source>
-			<target state="translated">Publier toutes les modifications vers {0}</target></trans-unit>
+			<target state="final">Publier toutes les modifications vers {0}</target></trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve" approved="yes">
 				<source>Changed Content</source>
-			<target state="translated">Contenu modifié</target></trans-unit>
+			<target state="final">Contenu modifié</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve" approved="yes">
 				<source>deleted</source>
-			<target state="translated">supprimé</target></trans-unit>
+			<target state="final">supprimé</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve" approved="yes">
 				<source>created</source>
-			<target state="translated">créé</target></trans-unit>
+			<target state="final">créé</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve" approved="yes">
 				<source>moved</source>
-			<target state="translated">déplacé</target></trans-unit>
+			<target state="final">déplacé</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve" approved="yes">
 				<source>hidden</source>
-			<target state="translated">caché</target></trans-unit>
+			<target state="final">caché</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve" approved="yes">
 				<source>edited</source>
-			<target state="translated">édité</target></trans-unit>
+			<target state="final">édité</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve" approved="yes">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target state="translated">Il n'y a aucun changement non publié dans cet espace de travail.</target></trans-unit>
+			<target state="final">Il n'y a aucun changement non publié dans cet espace de travail.</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-			<target state="translated">Souhaitez-vous réellement annuler tous les changements dans l'espace de travail "{0}", vous ne pourrez pas annuler cette opération?</target><alt-trans><target>Voulez-vous réellement annuler tous les changements dans l'espace de travail "{0}", vous ne pourrez pas annuler cette opération?</target></alt-trans></trans-unit>
+			<target state="final">Souhaitez-vous réellement annuler tous les changements dans l'espace de travail "{0}", vous ne pourrez pas annuler cette opération?</target><alt-trans><target>Voulez-vous réellement annuler tous les changements dans l'espace de travail "{0}", vous ne pourrez pas annuler cette opération?</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
         <source>A workspace with this title already exists.</source>
-        <target state="translated">Un espace de travail avec ce titre existe déjà.</target>
+        <target state="final">Un espace de travail avec ce titre existe déjà.</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceHasBeenUpdated" approved="yes">
         <source>The workspace "{0}" has been updated.</source>
-        <target state="translated">L'espace de travail «{0} » a été mis à jour.</target>
+        <target state="final">L'espace de travail «{0} » a été mis à jour.</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies" approved="yes">
         <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
-        <target state="translated">L'espace de travail « {0} » ne peut être supprimé parce que les espaces de travail suivants sont basés sur lui: {1}</target>
+        <target state="final">L'espace de travail « {0} » ne peut être supprimé parce que les espaces de travail suivants sont basés sur lui: {1}</target>
       </trans-unit>
       <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes" approved="yes">
         <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
-        <target state="translated">Une erreur s'est produite lors de la lecteur des contenus non publiées de l'espace de travail « {0} », rien n'a été supprimé.</target>
+        <target state="final">Une erreur s'est produite lors de la lecteur des contenus non publiées de l'espace de travail « {0} », rien n'a été supprimé.</target>
       </trans-unit>
       <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges" approved="yes">
         <source>Your personal workspace contains changes, please publish or discard them first.</source>
-        <target state="translated">Votre espace de travail personnel contient des modifications, s'il vous plaît publier ou jetez-les tout d'abord.</target>
+        <target state="final">Votre espace de travail personnel contient des modifications, s'il vous plaît publier ou jetez-les tout d'abord.</target>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target state="translated">Impossible de supprimer l'espace de travail « {0} » parce qu'elle contient actuellement le {1} nœud.</target>
+          <target state="translated">Impossible de supprimer l'espace de travail « {0} » parce qu'il contient {1} nœud.</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="translated">Impossible de supprimer l'espace de travail « {0} » parce qu'elle contient actuellement le {1} nœud.</target>
+          <target state="translated">Impossible de supprimer l'espace de travail « {0} » parce qu'il contient {1} nœuds.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
         <source>The workspace "{0}" has been removed.</source>
-        <target state="translated">L'espace de travail « {0} » a été supprimé.</target>
+        <target state="final">L'espace de travail « {0} » a été supprimé.</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangeHasBeenPublished" approved="yes">
         <source>The selected change has been published.</source>
-        <target state="translated">Le changement sélectionné a été publié.</target>
+        <target state="final">Le changement sélectionné a été publié.</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangeHasBeenDiscarded" approved="yes">
         <source>The selected change has been discarded.</source>
-        <target state="translated">Le changement sélectionné a été écarté.</target>
+        <target state="final">Le changement sélectionné a été écarté.</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenPublished" approved="yes">
         <source>The selected changes have been published.</source>
-        <target state="translated">Les modifications sélectionnées ont été publiées.</target>
+        <target state="final">Les modifications sélectionnées ont été publiées.</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded" approved="yes">
         <source>The selected changes have been discarded.</source>
-        <target state="translated">Les modifications sélectionnées ont été annulées.</target>
+        <target state="final">Les modifications sélectionnées ont été annulées.</target>
       </trans-unit>
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished" approved="yes">
         <source>All changes from workspace "{0}" have been published to {1}.</source>
-        <target state="translated">Toutes les modifications d'espace de travail « {0} » ont été publiées vers {1}.</target>
+        <target state="final">Toutes les modifications d'espace de travail « {0} » ont été publiées vers {1}.</target>
       </trans-unit>
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded" approved="yes">
         <source>All changes from workspace "{0}" have been discarded.</source>
-        <target state="translated">Toutes les modifications d'espace de travail « {0} » ont été ignorées.</target>
+        <target state="final">Toutes les modifications d'espace de travail « {0} » ont été ignorées.</target>
       </trans-unit>
       <trans-unit id="history.label" xml:space="preserve" approved="yes">
 				<source>History</source>
-			<target state="translated">Historique</target></trans-unit>
+			<target state="final">Historique</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve" approved="yes">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-			<target state="translated">Ce module donne un aperçu de tous les événements pertinents qui touchent votre site.</target></trans-unit>
+			<target state="final">Ce module donne un aperçu de tous les événements pertinents qui touchent votre site.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
 				<source>Here's what happened recently in Neos</source>
-			<target state="translated">Voici ce qui s'est passé récemment dans Neos:</target></trans-unit>
+			<target state="final">Voici ce qui s'est passé récemment dans Neos:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target state="translated">Aucun événement n'a été enregistré qui peut être affiché dans le module d'historique.</target></trans-unit>
+			<target state="final">Aucun événement n'a été enregistré qui peut être affiché dans le module d'historique.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} "{2}".</source>
 			<target state="translated">{0} a créé le {1} "{2}".</target></trans-unit>
@@ -252,299 +252,299 @@
 			<target state="translated">{0} a modifié le contenu de {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve" approved="yes">
 				<source>{0} created a new user "{1}" for {2}.</source>
-			<target state="translated">{0} a créé un nouvel utilisateur "{1}" pour {2}.</target></trans-unit>
+			<target state="final">{0} a créé un nouvel utilisateur "{1}" pour {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve" approved="yes">
 				<source>{0} deleted the account "{1}" of {2}.</source>
-			<target state="translated">{0} a supprimé un utilisateur "{1}" de {2}.</target><alt-trans><target>{0} a supprimé le compte "{1}" de {2}.</target></alt-trans></trans-unit>
+			<target state="final">{0} a supprimé un utilisateur "{1}" de {2}.</target><alt-trans><target>{0} a supprimé le compte "{1}" de {2}.</target></alt-trans></trans-unit>
       <trans-unit id="history.loadMore.label" xml:space="preserve" approved="yes">
 				<source>Load More</source>
-			<target state="translated">Plus de résultats</target></trans-unit>
+			<target state="final">Plus de résultats</target></trans-unit>
       <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve" approved="yes">
 				<source>This node has been removed in the meantime</source>
-			<target state="translated">Ce nœud a été supprimé dans l'intervalle</target></trans-unit>
+			<target state="final">Ce nœud a été supprimé dans l'intervalle</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve" approved="yes">
 				<source>Administration</source>
-			<target state="translated">Administration</target></trans-unit>
+			<target state="final">Administration</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve" approved="yes">
 				<source>Contains multiple modules related to administration</source>
-			<target state="translated">Contient plusieurs modules associés à l'administration</target></trans-unit>
+			<target state="final">Contient plusieurs modules associés à l'administration</target></trans-unit>
       <trans-unit id="users.label" xml:space="preserve" approved="yes">
 				<source>User Management</source>
-			<target state="translated">Gestion des utilisateurs</target></trans-unit>
+			<target state="final">Gestion des utilisateurs</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve" approved="yes">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target state="translated">Le module de gestion des utilisateurs vous donne un aperçu de tous les utilisateurs backend. Vous pouvez les regrouper par leurs propriétés, afin de pouvoir avoir une vue d'ensemble sur leurs autorisations, points de montage de fichiers, appartenance aux groupes etc... Ce module est un outil indispensable afin de s'assurer que les utilisateurs sont correctement configurés.</target></trans-unit>
+			<target state="final">Le module de gestion des utilisateurs vous donne un aperçu de tous les utilisateurs backend. Vous pouvez les regrouper par leurs propriétés, afin de pouvoir avoir une vue d'ensemble sur leurs autorisations, points de montage de fichiers, appartenance aux groupes etc... Ce module est un outil indispensable afin de s'assurer que les utilisateurs sont correctement configurés.</target></trans-unit>
       <trans-unit id="users.action.index" xml:space="preserve" approved="yes">
 				<source>Overview</source>
-			<target state="translated">Apercu</target><alt-trans><target>Aperçu</target></alt-trans></trans-unit>
+			<target state="final">Apercu</target><alt-trans><target>Aperçu</target></alt-trans></trans-unit>
       <trans-unit id="users.action.show" xml:space="preserve" approved="yes">
 				<source>Show</source>
-			<target state="translated">Afficher</target></trans-unit>
+			<target state="final">Afficher</target></trans-unit>
       <trans-unit id="users.action.new" xml:space="preserve" approved="yes">
 				<source>New</source>
-			<target state="translated">Nouveau</target></trans-unit>
+			<target state="final">Nouveau</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="translated">Edition</target></trans-unit>
+			<target state="final">Edition</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target state="translated">Edité le profile</target><alt-trans><target>Éditer le compte</target></alt-trans><alt-trans><target>Editer le profil</target></alt-trans></trans-unit>
+			<target state="final">Edité le profile</target><alt-trans><target>Éditer le compte</target></alt-trans><alt-trans><target>Editer le profil</target></alt-trans></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target state="translated">Nouvelle adresse électronique</target></trans-unit>
+			<target state="final">Nouvelle adresse électronique</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
-			<target state="translated">Utiliser les paramètres par défaut</target></trans-unit>
+			<target state="final">Utiliser les paramètres par défaut</target></trans-unit>
       <trans-unit id="users.actions.new.label" xml:space="preserve" approved="yes">
 				<source>Create user</source>
-			<target state="translated">Créer un utilisateur</target></trans-unit>
+			<target state="final">Créer un utilisateur</target></trans-unit>
       <trans-unit id="users.actions.new.title" xml:space="preserve" approved="yes">
 				<source>Create a new user</source>
-			<target state="translated">Créer un nouvel utilisateur</target></trans-unit>
+			<target state="final">Créer un nouvel utilisateur</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
-			<target state="translated">Données utilisateur</target></trans-unit>
+			<target state="final">Données utilisateur</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target state="translated">Nom d'utilisateur</target></trans-unit>
+			<target state="final">Nom d'utilisateur</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target state="translated">Mot de passe</target></trans-unit>
+			<target state="final">Mot de passe</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve" approved="yes">
 				<source>Repeat password</source>
-			<target state="translated">Répéter votre mot de passe</target></trans-unit>
+			<target state="final">Répéter votre mot de passe</target></trans-unit>
       <trans-unit id="users.new.userData.roles" xml:space="preserve" approved="yes">
 				<source>Role(s)</source>
-			<target state="translated">Rôle(s)</target></trans-unit>
+			<target state="final">Rôle(s)</target></trans-unit>
       <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve" approved="yes">
 				<source>Authentication Provider</source>
-			<target state="translated">Fournisseur d'authentification</target></trans-unit>
+			<target state="final">Fournisseur d'authentification</target></trans-unit>
       <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
-			<target state="translated">Utiliser les paramètres par défaut</target></trans-unit>
+			<target state="final">Utiliser les paramètres par défaut</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
-			<target state="translated">Données personnelles</target></trans-unit>
+			<target state="final">Données personnelles</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve" approved="yes">
 				<source>First Name</source>
-			<target state="translated">Prénom</target></trans-unit>
+			<target state="final">Prénom</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve" approved="yes">
 				<source>Last Name</source>
-			<target state="translated">Nom</target></trans-unit>
+			<target state="final">Nom</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve" approved="yes">
 				<source>User Preferences</source>
-			<target state="translated">Préférences utilisateur</target></trans-unit>
+			<target state="final">Préférences utilisateur</target></trans-unit>
       <trans-unit id="users.new.userPreferences.interfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Interface Language</source>
-			<target state="translated">Langue de l'interface</target></trans-unit>
+			<target state="final">Langue de l'interface</target></trans-unit>
       <trans-unit id="users.new.createButton" xml:space="preserve" approved="yes">
 				<source>Create user</source>
-			<target state="translated">Créer un utilisateur</target></trans-unit>
+			<target state="final">Créer un utilisateur</target></trans-unit>
       <trans-unit id="users.show.subtitle" xml:space="preserve" approved="yes">
 				<source>Details for user</source>
-			<target state="translated">Détails de l'utilisateur</target></trans-unit>
+			<target state="final">Détails de l'utilisateur</target></trans-unit>
       <trans-unit id="users.show.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
-			<target state="translated">Données personnelles</target></trans-unit>
+			<target state="final">Données personnelles</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target state="translated">Titre</target></trans-unit>
+			<target state="final">Titre</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve" approved="yes">
 				<source>First Name</source>
-			<target state="translated">Prénom</target></trans-unit>
+			<target state="final">Prénom</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve" approved="yes">
 				<source>Middle Name</source>
-			<target state="translated">Deuxième prénom</target></trans-unit>
+			<target state="final">Deuxième prénom</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve" approved="yes">
 				<source>Last Name</source>
-			<target state="translated">Nom</target></trans-unit>
+			<target state="final">Nom</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve" approved="yes">
 				<source>Other Name</source>
-			<target state="translated">Autre nom</target></trans-unit>
+			<target state="final">Autre nom</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve" approved="yes">
 				<source>Accounts</source>
-			<target state="translated">Comptes</target></trans-unit>
+			<target state="final">Comptes</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target state="translated">Nom d'utilisateur</target></trans-unit>
+			<target state="final">Nom d'utilisateur</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve" approved="yes">
 				<source>Roles</source>
-			<target state="translated">Rôles</target></trans-unit>
+			<target state="final">Rôles</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses" xml:space="preserve" approved="yes">
 				<source>Electronic Addresses</source>
-			<target state="translated">Adresses électroniques</target></trans-unit>
+			<target state="final">Adresses électroniques</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
-			<target state="translated">Principal</target></trans-unit>
+			<target state="final">Principal</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve" approved="yes">
 				<source>N/A</source>
-			<target state="translated">Non disponible</target></trans-unit>
+			<target state="final">Non disponible</target></trans-unit>
       <trans-unit id="users.show.deleteUser" xml:space="preserve" approved="yes">
 				<source>Delete User</source>
-			<target state="translated">Supprimer l'utilisateur</target></trans-unit>
+			<target state="final">Supprimer l'utilisateur</target></trans-unit>
       <trans-unit id="users.show.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
-			<target state="translated">Editer l'utilisateur</target><alt-trans><target>Éditer l'utilisateur</target></alt-trans></trans-unit>
+			<target state="final">Editer l'utilisateur</target><alt-trans><target>Éditer l'utilisateur</target></alt-trans></trans-unit>
       <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target state="translated">Vous êtes connecté en tant que cet utilisateur et vous ne pouvez pas supprimer vous-même.</target></trans-unit>
+			<target state="final">Vous êtes connecté en tant que cet utilisateur et vous ne pouvez pas supprimer vous-même.</target></trans-unit>
       <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve" approved="yes">
 				<source>Click here to delete this user</source>
-			<target state="translated">Cliquez ici pour supprimer cet utilisateur</target></trans-unit>
+			<target state="final">Cliquez ici pour supprimer cet utilisateur</target></trans-unit>
       <trans-unit id="users.show.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
-			<target state="translated">Voulez-vous réellement supprimer le Job "{0}"?</target><alt-trans><target>Voulez-vous réellement supprimer l'utilisateur "{0}"?</target></alt-trans></trans-unit>
+			<target state="final">Voulez-vous réellement supprimer le Job "{0}"?</target><alt-trans><target>Voulez-vous réellement supprimer l'utilisateur "{0}"?</target></alt-trans></trans-unit>
       <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve" approved="yes">
 				<source>Yes, delete the user</source>
-			<target state="translated">Oui, supprimer l'utilisateur</target></trans-unit>
+			<target state="final">Oui, supprimer l'utilisateur</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target state="translated">Ceci supprimera l'utilisateur, les comptes connexes et son espace de travail personnel, y compris les contenus non publiés.</target></trans-unit>
+			<target state="final">Ceci supprimera l'utilisateur, les comptes connexes et son espace de travail personnel, y compris les contenus non publiés.</target></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone</source>
-			<target state="translated">Cette opération ne peut ptre annulée</target><alt-trans><target>Cette opération ne peut pas être annulée</target></alt-trans></trans-unit>
+			<target state="final">Cette opération ne peut ptre annulée</target><alt-trans><target>Cette opération ne peut pas être annulée</target></alt-trans></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve" approved="yes">
 				<source>Edit account "{accountIdentifier}"</source>
-			<target state="translated">Modifier le compte «{accountIdentifier} »</target><alt-trans><target>Éditer le compte "{accountIdentifier}"</target></alt-trans></trans-unit>
+			<target state="final">Modifier le compte «{accountIdentifier} »</target><alt-trans><target>Éditer le compte "{accountIdentifier}"</target></alt-trans></trans-unit>
       <trans-unit id="users.account" xml:space="preserve" approved="yes">
 				<source>Account</source>
-			<target state="translated">Compte</target></trans-unit>
+			<target state="final">Compte</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target state="translated">Nom d'utilisateur</target></trans-unit>
+			<target state="final">Nom d'utilisateur</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve" approved="yes">
 				<source>The username can't be changed via the user interface</source>
-			<target state="translated">Le nom d'utilisateur n'est pas modifiable par l'intermédiaire de l'interface utilisateur</target></trans-unit>
+			<target state="final">Le nom d'utilisateur n'est pas modifiable par l'intermédiaire de l'interface utilisateur</target></trans-unit>
       <trans-unit id="users.saveAccount" xml:space="preserve" approved="yes">
 				<source>Save account</source>
-			<target state="translated">Enregistrer un compte</target></trans-unit>
+			<target state="final">Enregistrer un compte</target></trans-unit>
       <trans-unit id="users.repeatPassword" xml:space="preserve" approved="yes">
 				<source>Repeat password</source>
-			<target state="translated">Répéter votre mot de passe</target></trans-unit>
+			<target state="final">Répéter votre mot de passe</target></trans-unit>
       <trans-unit id="users.roles" xml:space="preserve" approved="yes">
 				<source>Roles</source>
-			<target state="translated">Rôles</target></trans-unit>
+			<target state="final">Rôles</target></trans-unit>
       <trans-unit id="users.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
-			<target state="translated">Nom</target></trans-unit>
+			<target state="final">Nom</target></trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve" approved="yes">
 				<source>Accounts and Roles</source>
-			<target state="translated">Comptes et Rôles</target></trans-unit>
+			<target state="final">Comptes et Rôles</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve" approved="yes">
 				<source>View user</source>
-			<target state="translated">Voir le profil</target></trans-unit>
+			<target state="final">Voir le profil</target></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve" approved="yes">
 				<source>Edit user</source>
-			<target state="translated">Éditer cet utilisateur</target></trans-unit>
+			<target state="final">Éditer cet utilisateur</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve" approved="yes">
 				<source>Delete user</source>
-			<target state="translated">Supprimer cet utilisateur</target></trans-unit>
+			<target state="final">Supprimer cet utilisateur</target></trans-unit>
       <trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve" approved="yes">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target state="translated">Vous êtes connecté en tant que cet utilisateur et vous ne pouvez pas supprimer vous-même.</target></trans-unit>
+			<target state="final">Vous êtes connecté en tant que cet utilisateur et vous ne pouvez pas supprimer vous-même.</target></trans-unit>
       <trans-unit id="users.message.reallyDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the user "{0}"?</source>
-			<target state="translated">Voulez-vous réellement supprimer le Job "{0}"?</target><alt-trans><target>Voulez-vous réellement supprimer l'utilisateur "{0}"?</target></alt-trans></trans-unit>
+			<target state="final">Voulez-vous réellement supprimer le Job "{0}"?</target><alt-trans><target>Voulez-vous réellement supprimer l'utilisateur "{0}"?</target></alt-trans></trans-unit>
       <trans-unit id="users.message.willBeDeleted" xml:space="preserve" approved="yes">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target state="translated">Ceci supprimera l'utilisateur, les comptes connexes et son espace de travail personnel, y compris les contenus non publiés.</target></trans-unit>
+			<target state="final">Ceci supprimera l'utilisateur, les comptes connexes et son espace de travail personnel, y compris les contenus non publiés.</target></trans-unit>
       <trans-unit id="users.message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the user</source>
-			<target state="translated">Oui, supprimer l'utilisateur</target></trans-unit>
+			<target state="final">Oui, supprimer l'utilisateur</target></trans-unit>
       <trans-unit id="users.editUser" xml:space="preserve" approved="yes">
 				<source>Edit user "{0}"</source>
-			<target state="translated">Editer utilisateur « {0} »</target></trans-unit>
+			<target state="final">Editer utilisateur « {0} »</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve" approved="yes">
 				<source>Home</source>
-			<target state="translated">Accueil</target></trans-unit>
+			<target state="final">Accueil</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve" approved="yes">
 				<source>Work</source>
-			<target state="translated">Travail</target></trans-unit>
+			<target state="final">Travail</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve" approved="yes">
 				<source>Package Management</source>
-			<target state="translated">Gestion des paquets</target></trans-unit>
+			<target state="final">Gestion des paquets</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve" approved="yes">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target state="translated">Le module "Gestion des paquets" vous donne un aperçu de tous les paquets. Vous pouvez activer ou désactiver chaque paquet, importer de nouveaux paquets et supprimer des paquets existants. Le module vous donne également la possibilité de mettre en pause ou activer des paquets, ....</target><alt-trans><target>Le module "Gestion des paquets" vous donne un aperçu de tous les paquets. Vous pouvez activer ou désactiver chaque paquet, importer de nouveaux paquets et supprimer des paquets existants. Le module vous donne également la possibilité de mettre en pause ou activer des paquets dans le contexte du développement.</target></alt-trans></trans-unit>
+			<target state="final">Le module "Gestion des paquets" vous donne un aperçu de tous les paquets. Vous pouvez activer ou désactiver chaque paquet, importer de nouveaux paquets et supprimer des paquets existants. Le module vous donne également la possibilité de mettre en pause ou activer des paquets, ....</target><alt-trans><target>Le module "Gestion des paquets" vous donne un aperçu de tous les paquets. Vous pouvez activer ou désactiver chaque paquet, importer de nouveaux paquets et supprimer des paquets existants. Le module vous donne également la possibilité de mettre en pause ou activer des paquets dans le contexte du développement.</target></alt-trans></trans-unit>
       <trans-unit id="packages.index.legend" xml:space="preserve" approved="yes">
 				<source>Available packages</source>
-			<target state="translated">Packages disponibles</target></trans-unit>
+			<target state="final">Packages disponibles</target></trans-unit>
       <trans-unit id="packages.name" xml:space="preserve" approved="yes">
 				<source>Package Name</source>
-			<target state="translated">Nom du package</target></trans-unit>
+			<target state="final">Nom du package</target></trans-unit>
       <trans-unit id="packages.key" xml:space="preserve" approved="yes">
 				<source>Package Key</source>
-			<target state="translated">Clé de package</target></trans-unit>
+			<target state="final">Clé de package</target></trans-unit>
       <trans-unit id="packages.type" xml:space="preserve" approved="yes">
 				<source>Package Type</source>
-			<target state="translated">Type de package</target></trans-unit>
+			<target state="final">Type de package</target></trans-unit>
       <trans-unit id="packages.deactivated" xml:space="preserve" approved="yes">
 				<source>Deactivated</source>
-			<target state="translated">Désactivée</target></trans-unit>
+			<target state="final">Désactivée</target></trans-unit>
       <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve" approved="yes">
 				<source>This package is currently frozen. Click to unfreeze it.</source>
-			<target state="translated">Ce paquet est actuellement gelé. Cliquez pour le dégeler.</target></trans-unit>
+			<target state="final">Ce paquet est actuellement gelé. Cliquez pour le dégeler.</target></trans-unit>
       <trans-unit id="packages.tooltip.freeze" xml:space="preserve" approved="yes">
 				<source>Freeze the package in order to speed up your website.</source>
-			<target state="translated">Geler le paquet afin d'accélérer votre site Web.</target></trans-unit>
+			<target state="final">Geler le paquet afin d'accélérer votre site Web.</target></trans-unit>
       <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve" approved="yes">
 				<source>This package is protected and cannot be deactivated.</source>
-			<target state="translated">Ce paquet est protégé et ne peut pas être désactivé.</target></trans-unit>
+			<target state="final">Ce paquet est protégé et ne peut pas être désactivé.</target></trans-unit>
       <trans-unit id="packages.tooltip.deactivate" xml:space="preserve" approved="yes">
 				<source>Deactivate Package</source>
-			<target state="translated">Désactiver le paquet</target></trans-unit>
+			<target state="final">Désactiver le paquet</target></trans-unit>
       <trans-unit id="packages.tooltip.activate" xml:space="preserve" approved="yes">
 				<source>Activate Package</source>
-			<target state="translated">Activer le package</target></trans-unit>
+			<target state="final">Activer le package</target></trans-unit>
       <trans-unit id="packages.tooltip.noDelete" xml:space="preserve" approved="yes">
 				<source>This package is protected and cannot be deleted.</source>
-			<target state="translated">Ce paquet est protégé et ne peut pas être supprimé.</target></trans-unit>
+			<target state="final">Ce paquet est protégé et ne peut pas être supprimé.</target></trans-unit>
       <trans-unit id="packages.tooltip.delete" xml:space="preserve" approved="yes">
 				<source>Delete Package</source>
-			<target state="translated">Supprimer ce package</target></trans-unit>
+			<target state="final">Supprimer ce package</target></trans-unit>
       <trans-unit id="packages.message.reallyDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"?</source>
-			<target state="translated">Voulez-vous vraiment supprimer "{0}" ?</target></trans-unit>
+			<target state="final">Voulez-vous vraiment supprimer "{0}" ?</target></trans-unit>
       <trans-unit id="packages.message.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the package</source>
-			<target state="translated">Oui, supprimer le package</target></trans-unit>
+			<target state="final">Oui, supprimer le package</target></trans-unit>
       <trans-unit id="packages.message.confirmDeletes" xml:space="preserve" approved="yes">
 				<source>Yes, delete the packages</source>
-			<target state="translated">Oui, supprimer les packages</target></trans-unit>
+			<target state="final">Oui, supprimer les packages</target></trans-unit>
       <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete the selected packages?</source>
-			<target state="translated">Voulez-vous vraiment supprimer les packages sélectionnés ?</target></trans-unit>
+			<target state="final">Voulez-vous vraiment supprimer les packages sélectionnés ?</target></trans-unit>
       <trans-unit id="packages.selected.freeze" xml:space="preserve" approved="yes">
 				<source>Freeze selected packages</source>
-			<target state="translated">Geler les packages sélectionnés</target></trans-unit>
+			<target state="final">Geler les packages sélectionnés</target></trans-unit>
       <trans-unit id="packages.selected.unfreeze" xml:space="preserve" approved="yes">
 				<source>Unfreeze selected packages</source>
-			<target state="translated">Dégeler les packages sélectionnés</target></trans-unit>
+			<target state="final">Dégeler les packages sélectionnés</target></trans-unit>
       <trans-unit id="packages.selected.delete" xml:space="preserve" approved="yes">
 				<source>Delete selected packages</source>
-			<target state="translated">Supprimer les packages sélectionnées</target></trans-unit>
+			<target state="final">Supprimer les packages sélectionnées</target></trans-unit>
       <trans-unit id="packages.selected.deactivate" xml:space="preserve" approved="yes">
 				<source>Deactivate selected packages</source>
-			<target state="translated">Désactiver les packages sélectionnés</target></trans-unit>
+			<target state="final">Désactiver les packages sélectionnés</target></trans-unit>
       <trans-unit id="packages.selected.activate" xml:space="preserve" approved="yes">
 				<source>Activate selected packages</source>
-			<target state="translated">Activer les paquets sélectionnés</target></trans-unit>
+			<target state="final">Activer les paquets sélectionnés</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
 				<source>Sites Management</source>
-			<target state="translated">Gestion des sites</target></trans-unit>
+			<target state="final">Gestion des sites</target></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
-			<target state="translated">Le module "Gestion des sites" vous donne un aperçu de tous vos sites. Vous pouvez éditer, ajouter et supprimer des informations sur vos site, tel que l'ajout d'un nouveau domaine.</target></trans-unit>
+			<target state="final">Le module "Gestion des sites" vous donne un aperçu de tous vos sites. Vous pouvez éditer, ajouter et supprimer des informations sur vos site, tel que l'ajout d'un nouveau domaine.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
 			<target state="translated">Ajouter un site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
-			<target state="translated">Créer un site</target></trans-unit>
+			<target state="final">Créer un site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve" approved="yes">
 				<source>Create a new site</source>
-			<target state="translated">Créer un nouveau site</target></trans-unit>
+			<target state="final">Créer un nouveau site</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve">
 				<source>Root node name</source>
 			<target state="translated">Nom du dossier racine</target></trans-unit>
@@ -553,10 +553,10 @@
 			<target state="translated">Domaines</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve" approved="yes">
 				<source>Site</source>
-			<target state="translated">Site</target></trans-unit>
+			<target state="final">Site</target></trans-unit>
       <trans-unit id="site.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
-			<target state="translated">Nom</target></trans-unit>
+			<target state="final">Nom</target></trans-unit>
       <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
 				<source>Default asset collection</source>
 			<target state="translated">Collection de contenu par défaut</target></trans-unit>
@@ -607,13 +607,13 @@
 			<target state="translated">NomDuVendeur.MaCléDuPackage</target></trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
-			<target state="needs-translation">No sites available</target></trans-unit>
+			<target state="translated">Aucun sites disponibles</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target state="translated">Le package &lt;em&gt;Neos Kickstarter&lt;/em&gt; n'est pas installé, Installez le pour lancer un nouveau site en kickstart.</target></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
-			<target state="needs-translation">New site</target></trans-unit>
+			<target state="translated">Nouveau site</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target state="translated">Êtes-vous sûr de vouloir supprimer "{0}"? Cette action est irréversible.</target></trans-unit>
@@ -625,34 +625,34 @@
 			<target state="translated">Modifier le domaine</target></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
-			<target state="needs-translation">Domain data</target></trans-unit>
+			<target state="translated">Données du domaine</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
-			<target state="needs-translation">e.g. www.neos.io</target></trans-unit>
+			<target state="translated">par exemple www.neos.io</target></trans-unit>
       <trans-unit id="domainform.state" xml:space="preserve">
 				<source>State</source>
-			<target state="needs-translation">State</target></trans-unit>
+			<target state="translated">Etat</target></trans-unit>
       <trans-unit id="domainform.create" xml:space="preserve">
 				<source>Create</source>
-			<target state="needs-translation">Create</target></trans-unit>
+			<target state="translated">Créer</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
-			<target state="translated">Configuration</target></trans-unit>
+			<target state="final">Configuration</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve" approved="yes">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
-			<target state="translated">Le module de Configuration vous donne un aperçu de tous les types de configuration.</target></trans-unit>
+			<target state="final">Le module de Configuration vous donne un aperçu de tous les types de configuration.</target></trans-unit>
       <trans-unit id="dimensions.label" xml:space="preserve" approved="yes">
 				<source>Dimensions</source>
-			<target state="translated">Dimensions</target></trans-unit>
+			<target state="final">Dimensions</target></trans-unit>
       <trans-unit id="dimensions.description" xml:space="preserve">
 				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
-			<target state="needs-translation">Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</target></trans-unit>
+			<target state="translated">Donne une vue d'ensemble graphique sur les options de replis configurée dans le contenu de chaque dimension et à travers les dimensions du contenu.</target></trans-unit>
       <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
 				<source>Inter dimensional fallback graph</source>
-			<target state="needs-translation">Inter dimensional fallback graph</target></trans-unit>
+			<target state="translated">Graphique de repli interdimensionnel</target></trans-unit>
       <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
 				<source>Inter dimensional</source>
-			<target state="needs-translation">Inter dimensional</target></trans-unit>
+			<target state="translated">Interdimensionnel</target></trans-unit>
       <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
 				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
 Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
@@ -662,86 +662,86 @@ Primary fallbacks are marked blue and always visible, while lower priority fallb
 Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
 				<source>Intra dimensional fallback graph</source>
-			<target state="needs-translation">Intra dimensional fallback graph</target></trans-unit>
+			<target state="translated">Graphique de repli interdimensionnel</target><alt-trans><target>Graphique de repli intradimensionnel</target></alt-trans></trans-unit>
       <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
 				<source>Intra dimensional</source>
-			<target state="needs-translation">Intra dimensional</target></trans-unit>
+			<target state="translated">Interdimensionnel</target><alt-trans><target>Intradimensionnel</target></alt-trans></trans-unit>
       <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
 				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
 			<target state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve" approved="yes">
 				<source>User</source>
-			<target state="translated">Utilisateur</target></trans-unit>
+			<target state="final">Utilisateur</target></trans-unit>
       <trans-unit id="userSettings.label" xml:space="preserve" approved="yes">
 				<source>User Settings</source>
-			<target state="translated">Paramètres utilisateur</target></trans-unit>
+			<target state="final">Paramètres utilisateur</target></trans-unit>
       <trans-unit id="userSettings.description" xml:space="preserve" approved="yes">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target state="translated">Ce module vous permet de personnaliser l'interface d'administration. Vous pouvez choisir votre langue, nom et adresse électronique. Vous pouvez aussi configurer d'autres paramètres généraux de l'interface.</target></trans-unit>
+			<target state="final">Ce module vous permet de personnaliser l'interface d'administration. Vous pouvez choisir votre langue, nom et adresse électronique. Vous pouvez aussi configurer d'autres paramètres généraux de l'interface.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="translated">Edition</target></trans-unit>
+			<target state="final">Edition</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
-			<target state="translated">Edition</target></trans-unit>
+			<target state="final">Edition</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
-			<target state="translated">Nouvelle adresse électronique</target></trans-unit>
+			<target state="final">Nouvelle adresse électronique</target></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target state="translated">Edité le profile</target><alt-trans><target>Éditer le compte</target></alt-trans><alt-trans><target>Editer le profil</target></alt-trans></trans-unit>
+			<target state="final">Edité le profile</target><alt-trans><target>Éditer le compte</target></alt-trans><alt-trans><target>Editer le profil</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
-			<target state="translated">Données personnelles</target></trans-unit>
+			<target state="final">Données personnelles</target></trans-unit>
       <trans-unit id="userSettings.userData" xml:space="preserve" approved="yes">
 				<source>User Data</source>
-			<target state="translated">Données utilisateur</target></trans-unit>
+			<target state="final">Données utilisateur</target></trans-unit>
       <trans-unit id="userSettings.usermenu" xml:space="preserve" approved="yes">
 				<source>User Menu</source>
-			<target state="translated">Menu utilisateur</target></trans-unit>
+			<target state="final">Menu utilisateur</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve" approved="yes">
 				<source>User Preferences</source>
-			<target state="translated">Préférences utilisateur</target></trans-unit>
+			<target state="final">Préférences utilisateur</target></trans-unit>
       <trans-unit id="userSettings.preferences.interfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Interface Language</source>
-			<target state="translated">Langue de l'interface</target></trans-unit>
+			<target state="final">Langue de l'interface</target></trans-unit>
       <trans-unit id="userSettings.preferences.useDefaultInterfaceLanguage" xml:space="preserve" approved="yes">
 				<source>Use system default</source>
-			<target state="translated">Utiliser les paramètres par défaut</target></trans-unit>
+			<target state="final">Utiliser les paramètres par défaut</target></trans-unit>
       <trans-unit id="userSettings.accounts" xml:space="preserve" approved="yes">
 				<source>Accounts</source>
-			<target state="translated">Comptes</target></trans-unit>
+			<target state="final">Comptes</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target state="translated">Nom d'utilisateur</target></trans-unit>
+			<target state="final">Nom d'utilisateur</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve" approved="yes">
 				<source>Roles</source>
-			<target state="translated">Rôles</target></trans-unit>
+			<target state="final">Rôles</target></trans-unit>
       <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve" approved="yes">
 				<source>Authentication Provider</source>
-			<target state="translated">Fournisseur d'authentification</target></trans-unit>
+			<target state="final">Fournisseur d'authentification</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses" xml:space="preserve" approved="yes">
 				<source>Electronic addresses</source>
-			<target state="translated">Adresses électroniques</target></trans-unit>
+			<target state="final">Adresses électroniques</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete</source>
-			<target state="translated">Confirmez-vous la suppression</target><alt-trans><target>Souhaitez-vous réellement supprimer</target></alt-trans></trans-unit>
+			<target state="final">Confirmez-vous la suppression</target><alt-trans><target>Souhaitez-vous réellement supprimer</target></alt-trans></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve" approved="yes">
 				<source>Yes, delete electronic address</source>
-			<target state="translated">Oui, supprimer l'adresse électronique</target></trans-unit>
+			<target state="final">Oui, supprimer l'adresse électronique</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Click to add a new Electronic address</source>
-			<target state="translated">Cliquez ici pour ajouter une nouvelle adresse électronique</target></trans-unit>
+			<target state="final">Cliquez ici pour ajouter une nouvelle adresse électronique</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve" approved="yes">
 				<source>Add electronic address</source>
-			<target state="translated">Ajouter une adresse électronique</target></trans-unit>
+			<target state="final">Ajouter une adresse électronique</target></trans-unit>
       <trans-unit id="userSettings.saveUser" xml:space="preserve" approved="yes">
 				<source>Save User</source>
-			<target state="translated">Sauvegarder l'utilisateur</target></trans-unit>
+			<target state="final">Sauvegarder l'utilisateur</target></trans-unit>
       <trans-unit id="userSettings.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
-			<target state="translated">Editer l'utilisateur</target><alt-trans><target>Éditer l'utilisateur</target></alt-trans></trans-unit>
+			<target state="final">Editer l'utilisateur</target><alt-trans><target>Éditer l'utilisateur</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
