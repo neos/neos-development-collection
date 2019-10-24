@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Command;
 
 /*
@@ -13,10 +15,12 @@ namespace Neos\Media\Command;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -30,6 +34,9 @@ use Neos\Media\Domain\Repository\ThumbnailRepository;
 use Neos\Media\Domain\Service\AssetVariantGenerator;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
+use Neos\Media\Exception\AssetServiceException;
+use Neos\Media\Exception\AssetVariantGeneratorException;
+use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 
@@ -74,7 +81,6 @@ class MediaCommandController extends CommandController
     protected $thumbnailService;
 
     /**
-     * If enabled
      * @Flow\InjectConfiguration("asyncThumbnails")
      * @var boolean
      */
@@ -107,6 +113,8 @@ class MediaCommandController extends CommandController
      *
      * @param boolean $simulate If set, this command will only tell what it would do instead of doing it right away
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws DBALException
      */
     public function importResourcesCommand($simulate = false)
     {
@@ -167,6 +175,8 @@ class MediaCommandController extends CommandController
      * @param string $onlyTags Comma-separated list of asset tags, that should be taken into account
      * @param int $limit Limit the result of unused assets displayed and removed for this run.
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws AssetServiceException
      */
     public function removeUnusedCommand(string $assetSource = '', bool $quiet = false, bool $assumeYes = false, string $onlyTags = '', int $limit = null)
     {
@@ -274,10 +284,11 @@ class MediaCommandController extends CommandController
      * @param string $preset Preset name, if not provided thumbnails are created for all presets
      * @param boolean $async Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
      * @return void
+     * @throws ThumbnailServiceException
      */
     public function createThumbnailsCommand($preset = null, $async = null)
     {
-        $async = $async !== null ? $async : $this->asyncThumbnails;
+        $async = $async ?? $this->asyncThumbnails;
         $presets = $preset !== null ? [$preset] : array_keys($this->thumbnailService->getPresets());
         $presetThumbnailConfigurations = [];
         foreach ($presets as $preset) {
@@ -293,6 +304,7 @@ class MediaCommandController extends CommandController
                 $this->output->progressAdvance(1);
             }
         }
+        $this->output->progressFinish();
     }
 
     /**
@@ -303,6 +315,8 @@ class MediaCommandController extends CommandController
      *
      * @param string $preset Preset name, if provided only thumbnails matching that preset are cleared
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws ThumbnailServiceException
      */
     public function clearThumbnailsCommand($preset = null)
     {
@@ -320,6 +334,7 @@ class MediaCommandController extends CommandController
             $this->thumbnailRepository->remove($thumbnail);
             $this->output->progressAdvance(1);
         }
+        $this->output->progressFinish();
     }
 
     /**
@@ -427,7 +442,7 @@ class MediaCommandController extends CommandController
      *
      * @return void
      */
-    protected function initializeConnection()
+    protected function initializeConnection(): void
     {
         if (!$this->entityManager instanceof EntityManager) {
             $this->outputLine('This command only supports database connections provided by the Doctrine ORM Entity Manager.
