@@ -224,7 +224,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
                 }
             }
 
-            if(isset($convertedChildProperties['resource']) && $convertedChildProperties['resource'] instanceof PersistentResource) {
+            if (isset($convertedChildProperties['resource']) && $convertedChildProperties['resource'] instanceof PersistentResource) {
                 $object = parent::convertFrom($source, $targetType, $convertedChildProperties, $configuration);
             }
         }
