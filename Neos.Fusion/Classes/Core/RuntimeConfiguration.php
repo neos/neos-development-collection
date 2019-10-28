@@ -120,7 +120,7 @@ final class RuntimeConfiguration
      * @return array
      * @throws Exception
      */
-    private function matchCurrentPathPart(string $pathPart, array $previousConfiguration, arrax &$currentPrototypeDefinitions): array
+    private function matchCurrentPathPart(string $pathPart, array $previousConfiguration, array &$currentPrototypeDefinitions): array
     {
         if (preg_match('#^([^<]*)(<(.*?)>)?$#', $pathPart, $matches) !== 1) {
             throw new Exception('Path Part ' . $pathPart . ' not well-formed', 1332494645);
