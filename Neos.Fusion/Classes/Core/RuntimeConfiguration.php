@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace Neos\Fusion\Core;
 
 use Neos\Fusion\Exception;
@@ -120,7 +120,7 @@ final class RuntimeConfiguration
      * @return array
      * @throws Exception
      */
-    private function matchCurrentPathPart($pathPart, $previousConfiguration, &$currentPrototypeDefinitions)
+    private function matchCurrentPathPart(string $pathPart, array $previousConfiguration, arrax &$currentPrototypeDefinitions): array
     {
         if (preg_match('#^([^<]*)(<(.*?)>)?$#', $pathPart, $matches) !== 1) {
             throw new Exception('Path Part ' . $pathPart . ' not well-formed', 1332494645);
@@ -167,7 +167,7 @@ final class RuntimeConfiguration
      * @return array
      * @throws Exception
      */
-    private function mergePrototypesWithConfigurationForPathSegment($configuration, &$currentPrototypeDefinitions)
+    private function mergePrototypesWithConfigurationForPathSegment(array $configuration, array &$currentPrototypeDefinitions): array
     {
         $currentPathSegmentType = $configuration['__objectType'];
 
