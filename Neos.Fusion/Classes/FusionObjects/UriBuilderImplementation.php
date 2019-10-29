@@ -79,7 +79,8 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function getArguments()
     {
-        return $this->fusionValue('arguments');
+        $arguments = $this->fusionValue('arguments');
+        return is_array($arguments) ? $arguments: [];
     }
 
     /**
