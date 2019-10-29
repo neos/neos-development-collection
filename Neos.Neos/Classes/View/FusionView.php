@@ -72,7 +72,7 @@ class FusionView extends AbstractView
     /**
      * Renders the view
      *
-     * @return string The rendered view
+     * @return string|ResponseInterface The rendered view
      * @throws \Exception if no node is given
      * @api
      */
@@ -109,7 +109,7 @@ class FusionView extends AbstractView
 
     /**
      * @param string $output
-     * @return mixed If output is a string with a HTTP preamble a ResponseInterface otherwise the original output.
+     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface otherwise the original output.
      */
     protected function parsePotentialRawHttpResponse($output)
     {
