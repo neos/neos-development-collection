@@ -379,7 +379,7 @@ class MediaCommandController extends CommandController
      * @throws AssetVariantGeneratorException
      * @throws IllegalObjectTypeException
      */
-    public function renderVariantsCommand($limit = null, bool $quiet = false)
+    public function renderVariantsCommand($limit = null, bool $quiet = false): void
     {
         $resultMessage = null;
         $generatedVariants = 0;
