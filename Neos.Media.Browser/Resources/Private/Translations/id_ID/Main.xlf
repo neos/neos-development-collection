@@ -67,10 +67,10 @@
 			<target state="translated">Drag dan drop pada tag atau koleksi</target></trans-unit>
       <trans-unit id="view" xml:space="preserve">
 				<source>View</source>
-			<target state="needs-translation">View</target></trans-unit>
+			<target state="translated">Lihat</target></trans-unit>
       <trans-unit id="viewAsset" xml:space="preserve">
 				<source>View asset</source>
-			<target state="needs-translation">View asset</target></trans-unit>
+			<target state="translated">Tampilkan aset</target></trans-unit>
       <trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target state="translated">Mengedit aset</target></trans-unit>

@@ -607,13 +607,13 @@
 			<target state="final">VendorName.MyPackageKey</target><alt-trans><target>ProveerNombre.MiPaqueteClave</target></alt-trans></trans-unit>
       <trans-unit id="sites.noSitesAvailable" xml:space="preserve">
 				<source>No sites available</source>
-			<target state="needs-translation">No sites available</target></trans-unit>
+			<target state="translated">No hay sitios disponibles</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="yes">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
 			<target state="final">El paquete&lt;em&gt;Kickstarter de Neos&lt;/em&gt; no está instalado, instálelo para iniciar los nuevos sitios.</target><alt-trans><target>El paquete&lt;em&gt;Kickstarter de Neos&lt;/em&gt; no se ha instalado, ponlo en los nuevos sitios de kickstart.</target></alt-trans></trans-unit>
       <trans-unit id="sites.new" xml:space="preserve">
 				<source>New site</source>
-			<target state="needs-translation">New site</target></trans-unit>
+			<target state="translated">Nuevo sitio</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target state="final">¿Seguro que quieres eliminar "{0}"? Esta acción no se puede deshacer.</target><alt-trans><target>¿Seguro que quieres eliminar "{0}"? Esta acción no se podrá deshacer.</target></alt-trans></trans-unit>
@@ -625,16 +625,16 @@
 			<target state="final">Editar dominio</target></trans-unit>
       <trans-unit id="domainform.domainData" xml:space="preserve">
 				<source>Domain data</source>
-			<target state="needs-translation">Domain data</target></trans-unit>
+			<target state="translated">Datos del dominio</target></trans-unit>
       <trans-unit id="domainform.hostPlaceholder" xml:space="preserve">
 				<source>e.g. www.neos.io</source>
-			<target state="needs-translation">e.g. www.neos.io</target></trans-unit>
+			<target state="translated">Por ejemplo, www.neos.io</target></trans-unit>
       <trans-unit id="domainform.state" xml:space="preserve">
 				<source>State</source>
-			<target state="needs-translation">State</target></trans-unit>
+			<target state="translated">Estado</target></trans-unit>
       <trans-unit id="domainform.create" xml:space="preserve">
 				<source>Create</source>
-			<target state="needs-translation">Create</target></trans-unit>
+			<target state="translated">Crear</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target state="translated">Configuración</target></trans-unit>
