@@ -41,9 +41,14 @@ use Neos\ContentRepository\Exception\NodeException;
 class NodeConverter extends AbstractTypeConverter
 {
     /**
-     * @var boolean
+     * @var int
      */
     const REMOVED_CONTENT_SHOWN = 1;
+
+    /**
+     * @var int
+     */
+    const INVISIBLE_CONTENT_SHOWN = 2;
 
     /**
      * @var array
@@ -282,9 +287,12 @@ class NodeConverter extends AbstractTypeConverter
             'invisibleContentShown' => false,
             'removedContentShown' => false
         );
+        if ($configuration !== null && $configuration->getConfigurationValue(NodeConverter::class, self::INVISIBLE_CONTENT_SHOWN) === true) {
+            $contextProperties['invisibleContentShown'] = true;
+        }
         if ($workspaceName !== 'live') {
             $contextProperties['invisibleContentShown'] = true;
-            if ($configuration !== null && $configuration->getConfigurationValue(\Neos\ContentRepository\TypeConverter\NodeConverter::class, self::REMOVED_CONTENT_SHOWN) === true) {
+            if ($configuration !== null && $configuration->getConfigurationValue(NodeConverter::class, self::REMOVED_CONTENT_SHOWN) === true) {
                 $contextProperties['removedContentShown'] = true;
             }
         }

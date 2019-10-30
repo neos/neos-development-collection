@@ -97,7 +97,8 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath);
 
-        $this->mockConverterConfiguration->expects($this->any())->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN)->will($this->returnValue(true));
+        $this->mockConverterConfiguration->expects($this->at(0))->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN)->will($this->returnValue(true));
+        $this->mockConverterConfiguration->expects($this->at(1))->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN)->will($this->returnValue(true));
 
         $result = $this->nodeConverter->convertFrom($contextPath, null, array(), $this->mockConverterConfiguration);
         $this->assertSame($mockNode, $result);

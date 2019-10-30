@@ -579,7 +579,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     {
         $contextProperties = [
             'workspaceName' => $workspaceName,
-            'invisibleContentShown' => ($workspaceName !== 'live'),
+            'invisibleContentShown' => true,
             'inaccessibleContentShown' => ($workspaceName !== 'live'),
             'dimensions' => $dimensionsAndDimensionValues
         ];
