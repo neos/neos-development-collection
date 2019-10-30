@@ -11,8 +11,8 @@ namespace Neos\Media\Domain\Repository;
  * source code.
  */
 
-use Neos\Flow\Persistence\Repository;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Repository;
 
 /**
  * @Flow\Scope("singleton")
@@ -28,11 +28,11 @@ final class ImportedAssetRepository extends Repository
     {
         $query = $this->createQuery();
         $query->matching(
-            $query->logicalAnd(
+            $query->logicalAnd([
                 $query->equals('assetSourceIdentifier', $assetSourceIdentifier),
                 $query->equals('remoteAssetIdentifier', $remoteAssetIdentifier),
                 $query->equals('localOriginalAssetIdentifier', null)
-            )
+            ])
         );
         return $query->execute()->getFirst();
     }
