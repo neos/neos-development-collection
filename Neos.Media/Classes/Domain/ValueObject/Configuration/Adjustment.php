@@ -31,11 +31,6 @@ final class Adjustment
     private $options = [];
 
     /**
-     * @var array
-     */
-    private $editableOptions = [];
-
-    /**
      * @param string $identifier
      * @param string $type
      */
@@ -70,7 +65,7 @@ final class Adjustment
      */
     private function setIdentifier(string $identifier): void
     {
-        if (preg_match('/^[a-zA-Z]+$/', $identifier) !== 1) {
+        if (preg_match('/^[a-zA-Z0-9-]+$/', $identifier) !== 1) {
             throw new \InvalidArgumentException(sprintf('Invalid adjustment identifier "%s".', $identifier), 1548066064);
         }
         $this->identifier = $identifier;
