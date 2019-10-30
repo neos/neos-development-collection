@@ -13,6 +13,7 @@ namespace Neos\Media\Domain\Repository;
 
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query as DoctrineQuery;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
@@ -138,6 +139,7 @@ class AssetRepository extends Repository
     }
 
     /**
+     * @param AssetCollection|null $assetCollection
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
@@ -178,7 +180,7 @@ class AssetRepository extends Repository
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
-    public function findUntagged(AssetCollection $assetCollection = null)
+    public function findUntagged(AssetCollection $assetCollection = null): QueryResultInterface
     {
         $query = $this->createQuery();
         $query->matching($query->isEmpty('tags'));
@@ -194,7 +196,7 @@ class AssetRepository extends Repository
      * @return integer
      * @throws NonUniqueResultException
      */
-    public function countUntagged(AssetCollection $assetCollection = null)
+    public function countUntagged(AssetCollection $assetCollection = null): int
     {
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
@@ -217,7 +219,7 @@ class AssetRepository extends Repository
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
-    public function findByAssetCollection(AssetCollection $assetCollection)
+    public function findByAssetCollection(AssetCollection $assetCollection): QueryResultInterface
     {
         $query = $this->createQuery();
         $this->addImageVariantFilterClause($query);
@@ -231,7 +233,7 @@ class AssetRepository extends Repository
      * @param AssetCollection $assetCollection
      * @return integer
      */
-    public function countByAssetCollection(AssetCollection $assetCollection)
+    public function countByAssetCollection(AssetCollection $assetCollection): int
     {
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
@@ -248,24 +250,24 @@ class AssetRepository extends Repository
     }
 
     /**
-     * @param Query $query
+     * @param QueryInterface $query
      * @param AssetCollection $assetCollection
      * @return void
      * @throws InvalidQueryException
      */
-    protected function addAssetCollectionToQueryConstraints(Query $query, AssetCollection $assetCollection = null)
+    protected function addAssetCollectionToQueryConstraints(QueryInterface $query, AssetCollection $assetCollection = null): void
     {
         if ($assetCollection === null) {
             return;
         }
 
         $constraints = $query->getConstraint();
-        $query->matching($query->logicalAnd($constraints, $query->contains('assetCollections', $assetCollection)));
+        $query->matching($query->logicalAnd([$constraints, $query->contains('assetCollections', $assetCollection)]));
     }
 
     /**
-     * @var Query $query
-     * @return QueryInterface
+     * @return QueryInterface|DoctrineQuery
+     * @var QueryInterface|DoctrineQuery $query
      */
     protected function addImageVariantFilterClause(Query $query)
     {
@@ -302,7 +304,7 @@ class AssetRepository extends Repository
             $object = current($object);
             yield $object;
             if ($callback !== null) {
-                call_user_func($callback, $iteration, $object);
+                $callback($iteration, $object);
             }
             $iteration++;
         }
@@ -313,9 +315,8 @@ class AssetRepository extends Repository
      *
      * @return IterableResult
      */
-    public function findAllIterator()
+    public function findAllIterator(): IterableResult
     {
-        /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
         return $queryBuilder
             ->select('a')
@@ -349,7 +350,7 @@ class AssetRepository extends Repository
      * @return void
      * @throws IllegalObjectTypeException
      */
-    public function removeWithoutUsageChecks($object)
+    public function removeWithoutUsageChecks($object): void
     {
         parent::remove($object);
         $this->assetService->emitAssetRemoved($object);
