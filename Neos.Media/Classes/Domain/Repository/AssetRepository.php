@@ -48,12 +48,6 @@ class AssetRepository extends Repository
     protected $entityManager;
 
     /**
-     * @Flow\Inject
-     * @var ReflectionService
-     */
-    protected $reflectionService;
-
-    /**
      * @var array
      */
     protected $defaultOrderings = ['lastModified' => QueryInterface::ORDER_DESCENDING];
@@ -63,6 +57,12 @@ class AssetRepository extends Repository
      * @var AssetService
      */
     protected $assetService;
+
+    /**
+     * @Flow\Inject
+     * @var ReflectionService
+     */
+    protected $reflectionService;
 
     /**
      * Find assets by title or given tags
@@ -256,19 +256,19 @@ class AssetRepository extends Repository
     }
 
     /**
-     * @param Query $query
+     * @param QueryInterface $query
      * @param AssetCollection $assetCollection
      * @return void
      * @throws InvalidQueryException
      */
-    protected function addAssetCollectionToQueryConstraints(Query $query, AssetCollection $assetCollection = null): void
+    protected function addAssetCollectionToQueryConstraints(QueryInterface $query, AssetCollection $assetCollection = null): void
     {
         if ($assetCollection === null) {
             return;
         }
 
         $constraints = $query->getConstraint();
-        $query->matching($query->logicalAnd($constraints, $query->contains('assetCollections', $assetCollection)));
+        $query->matching($query->logicalAnd([$constraints, $query->contains('assetCollections', $assetCollection)]));
     }
 
     /**

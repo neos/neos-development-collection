@@ -82,7 +82,7 @@ class MediaCommandController extends CommandController
 
     /**
      * @Flow\InjectConfiguration("asyncThumbnails")
-     * @var boolean
+     * @var bool
      */
     protected $asyncThumbnails;
 
@@ -111,12 +111,13 @@ class MediaCommandController extends CommandController
      * in the asset management. The type of the imported asset is determined by the file extension provided by the
      * PersistentResource.
      *
-     * @param boolean $simulate If set, this command will only tell what it would do instead of doing it right away
+     * @param bool $simulate If set, this command will only tell what it would do instead of doing it right away
+     * @param bool $quiet
      * @return void
      * @throws IllegalObjectTypeException
      * @throws DBALException
      */
-    public function importResourcesCommand($simulate = false)
+    public function importResourcesCommand(bool $simulate = false, bool $quiet = false)
     {
         $this->initializeConnection();
 
@@ -135,7 +136,7 @@ class MediaCommandController extends CommandController
         $resourceInfos = $statement->fetchAll();
 
         if ($resourceInfos === []) {
-            $this->outputLine('Found no resources which need to be imported.');
+            !$quiet || $this->outputLine('Found no resources which need to be imported.');
             $this->quit();
         }
 
@@ -143,11 +144,11 @@ class MediaCommandController extends CommandController
             $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], PersistentResource::class);
 
             if ($resource === null) {
-                $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
+                !$quiet || $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
                 continue;
             }
             if (!$resource->getStream()) {
-                $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
+                !$quiet || $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
                 continue;
             }
 
@@ -158,7 +159,7 @@ class MediaCommandController extends CommandController
                 $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
             } else {
                 $this->assetRepository->add($resourceObj);
-                $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
+                !$quiet || $this->outputLine('Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
             }
         }
     }
@@ -282,11 +283,12 @@ class MediaCommandController extends CommandController
      * Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
      *
      * @param string $preset Preset name, if not provided thumbnails are created for all presets
-     * @param boolean $async Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
+     * @param bool $async Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
+     * @param bool $quiet If set, only errors will be displayed.
      * @return void
      * @throws ThumbnailServiceException
      */
-    public function createThumbnailsCommand($preset = null, $async = null)
+    public function createThumbnailsCommand(string $preset = null, bool $async = null, bool $quiet = false)
     {
         $async = $async ?? $this->asyncThumbnails;
         $presets = $preset !== null ? [$preset] : array_keys($this->thumbnailService->getPresets());
@@ -296,15 +298,15 @@ class MediaCommandController extends CommandController
         }
         $iterator = $this->assetRepository->findAllIterator();
         $imageCount = $this->assetRepository->countAll();
-        $this->output->progressStart($imageCount * count($presetThumbnailConfigurations));
+        !$quiet && $this->output->progressStart($imageCount * count($presetThumbnailConfigurations));
         foreach ($this->assetRepository->iterate($iterator) as $image) {
             foreach ($presetThumbnailConfigurations as $presetThumbnailConfiguration) {
                 $this->thumbnailService->getThumbnail($image, $presetThumbnailConfiguration);
                 $this->persistenceManager->persistAll();
-                $this->output->progressAdvance(1);
+                !$quiet && $this->output->progressAdvance(1);
             }
         }
-        $this->output->progressFinish();
+        !$quiet && $this->output->progressFinish();
     }
 
     /**
@@ -314,11 +316,12 @@ class MediaCommandController extends CommandController
      * matching a specific thumbnail preset configuration.
      *
      * @param string $preset Preset name, if provided only thumbnails matching that preset are cleared
+     * @param bool $quiet If set, only errors will be displayed.
      * @return void
      * @throws IllegalObjectTypeException
      * @throws ThumbnailServiceException
      */
-    public function clearThumbnailsCommand($preset = null)
+    public function clearThumbnailsCommand(string $preset = null, bool $quiet = false)
     {
         if ($preset !== null) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
@@ -329,12 +332,13 @@ class MediaCommandController extends CommandController
             $thumbnailCount = $this->thumbnailRepository->countAll();
             $iterator = $this->thumbnailRepository->findAllIterator();
         }
-        $this->output->progressStart($thumbnailCount);
+
+        !$quiet && $this->output->progressStart($thumbnailCount);
         foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
             $this->thumbnailRepository->remove($thumbnail);
-            $this->output->progressAdvance(1);
+            !$quiet && $this->output->progressAdvance(1);
         }
-        $this->output->progressFinish();
+        !$quiet && $this->output->progressFinish();
     }
 
     /**
@@ -344,22 +348,22 @@ class MediaCommandController extends CommandController
      * thumbnails to be rendered to avoid memory exhaustion.
      *
      * @param integer $limit Limit the amount of thumbnails to be rendered to avoid memory exhaustion
+     * @param bool $quiet If set, only errors will be displayed.
      * @return void
      */
-    public function renderThumbnailsCommand($limit = null)
+    public function renderThumbnailsCommand(int $limit = null, bool $quiet = false)
     {
         $thumbnailCount = $this->thumbnailRepository->countUngenerated();
         $iterator = $this->thumbnailRepository->findUngeneratedIterator();
-        $this->output->progressStart($limit !== null && $thumbnailCount > $limit ? $limit : $thumbnailCount);
+        !$quiet && $this->output->progressStart($limit !== null && $thumbnailCount > $limit ? $limit : $thumbnailCount);
         $iteration = 0;
         foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
             if ($thumbnail->getResource() === null) {
                 $this->thumbnailService->refreshThumbnail($thumbnail);
                 $this->persistenceManager->persistAll();
             }
-            $this->output->progressAdvance(1);
-            $iteration++;
-            if ($iteration === $limit) {
+            !$quiet && $this->output->progressAdvance(1);
+            if (++$iteration === $limit) {
                 break;
             }
         }
