@@ -33,9 +33,9 @@ class RuntimeTest extends UnitTestCase
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
-        $runtime = $this->getMockBuilder(Runtime::class)->setMethods(['evaluateInternal', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
+        $runtime = $this->getMockBuilder(Runtime::class)->setMethods(['evaluate', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
         $runtime->injectSettings(['rendering' => ['exceptionHandler' => ThrowingHandler::class]]);
-        $runtime->expects(self::any())->method('evaluateInternal')->will(self::throwException($runtimeException));
+        $runtime->expects(self::any())->method('evaluate')->will(self::throwException($runtimeException));
         $runtime->expects(self::once())->method('handleRenderingException')->with('/foo/bar', $runtimeException)->will(self::returnValue('Exception Message'));
 
         $output = $runtime->render('/foo/bar');
@@ -120,8 +120,8 @@ class RuntimeTest extends UnitTestCase
         $this->expectException(\Neos\Flow\Security\Exception::class);
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $securityException = new \Neos\Flow\Security\Exception();
-        $runtime = $this->getMockBuilder(Runtime::class)->setMethods(['evaluateInternal', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
-        $runtime->expects(self::any())->method('evaluateInternal')->will(self::throwException($securityException));
+        $runtime = $this->getMockBuilder(Runtime::class)->setMethods(['evaluate', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
+        $runtime->expects(self::any())->method('evaluate')->will(self::throwException($securityException));
 
         $runtime->render('/foo/bar');
     }
