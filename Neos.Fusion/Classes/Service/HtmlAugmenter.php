@@ -71,7 +71,7 @@ class HtmlAugmenter
         $useInternalErrorsBackup = libxml_use_internal_errors(true);
         $domDocument->loadHTML((substr($html, 0, 5) === '<?xml') ? $html : '<?xml encoding="UTF-8"?>' . $html);
         $xPath = new \DOMXPath($domDocument);
-        $rootElement = $xPath->query('//html/body|head/*');
+        $rootElement = $xPath->query('//html/body/*|//html/head/*');
         if ($useInternalErrorsBackup !== true) {
             libxml_use_internal_errors($useInternalErrorsBackup);
         }
