@@ -1,0 +1,15 @@
+`3.3.27 (2019-11-06) <https://github.com/neos/neos-development-collection/releases/tag/3.3.27>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK : Remove composer requirement for the BaseMixins package itself <https://github.com/neos/neos-development-collection/pull/2760>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+The BaseMixin package lists itself as a dependency. This obviously doesn't make any sense (unless there is a very specific reason for this that I'm not aware of).
+
+* Packages: ``BaseMixins`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.3.26...3.3.27>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
