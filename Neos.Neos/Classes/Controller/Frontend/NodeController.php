@@ -79,7 +79,8 @@ class NodeController extends ActionController
     protected function initializeShowAction()
     {
         if ($this->arguments->hasArgument('node')
-            && (bool)$this->request->getHttpRequest()->getArgument('showInvisible')
+            && $this->request->hasArgument('showInvisible')
+            && (bool)$this->request->getArgument('showInvisible')
             && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
         ) {
             $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN, true);
