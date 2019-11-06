@@ -25,16 +25,20 @@ use Neos\Flow\Annotations as Flow;
 class ReadSideMemoryCacheManager
 {
     /**
-     * @Flow\Inject
      * @var ContentGraphInterface
      */
     protected $contentGraph;
 
     /**
-     * @Flow\Inject
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
+
+    public function __construct(ContentGraphInterface $contentGraph, WorkspaceFinder $workspaceFinder)
+    {
+        $this->contentGraph = $contentGraph;
+        $this->workspaceFinder = $workspaceFinder;
+    }
 
     public function enableCache(): void
     {

@@ -16,17 +16,17 @@ This is the package bundle you can install alongside a plain Neos to play around
 | --------------------------- |:----------:|:----------------:|
 | **Basics**                  |            |                  |
 | Create/ Edit / Delete Nodes |     ✅     |        ✅        |
-| Shortcut Handling            |    ✅     |        ⏩        |
+| Shortcut Handling           |     ✅     |        ⏩        |
 | Query Nodes                 |     ✅     |        ✅        |
-| Cut / Copy / Paste          |     ✅     |                  |
-| Move Nodes                  |     ✅     |        ⏩        |
+| Cut / Copy / Paste          |     ✅     |        ⏩        |
+| Move Nodes                  |     ✅     |        ✅⏩      |
 | Hide Nodes                  |     ✅     |        ✅        |
-| History                     |     (✅)    |                 |
+| History                     |    (✅)    |                  |
 | Basic Workspaces            |     ✅     |        ✅        |
-| Workspace Module            |     ✅    |         ⏩        |
-| Nested Workspaces           |     ✅     |                 |
+| Workspace Module            |     ✅     |         ⏩       |
+| Nested Workspaces           |     ✅     |                  |
 | Undo / Redo                 |     🚫     |                  |
-| Setting Start / End time    |     ✅     |                  |
+| Setting Start / End time    |     ✅     |        EASY      |
 | Resolving Referencing Nodes |     🚫     |        ✅        |
 | Menu Rendering              |    ✅      |       ✅         |
 | Dimension Menu Rendering    |    ✅      |       ✅         |
@@ -37,8 +37,8 @@ This is the package bundle you can install alongside a plain Neos to play around
 | Multiple Sites              |     ✅     |        ✅        |
 | Permissions / Policy        |     ✅     |                  |
 | **Maintenance**             |            |                  |
-| Export / Import             |     ✅     |                  |
-| Node Migrations             |     ✅     |        ⏩        |
+| Export / Import             |     ✅     |        EASY      |
+| Node Migrations             |     ✅     |        ⏩ (MEDIUM)|
 | Node Repair                 |     ✅     |        ⏩        |
 | **API**                     |            |                  |
 | Separate Read and Write API |     🚫     |        ✅        |
@@ -53,6 +53,10 @@ This is the package bundle you can install alongside a plain Neos to play around
 | **User Interface**         |            |                  |
 | Ensure node deletion can be published in UI    |   ✅     |                |
 | Support Dimension Constraints    |   ✅     |               |
+| Publish Workspace              |   ✅     |   ✅         |
+| Publish Current Page           |   ✅     |   ✅          |
+| Discard all                    |   ✅     |   ✅          |
+| Discard Current Page           |   ✅     |   ✅          |
 
 
 ## Requirements
@@ -132,16 +136,19 @@ The resulting `composer.json` file should look something like this:
         }
     ],
     "require": {
-        "neos/neos-development-collection": "4.3.x-dev",
-        "neos/flow-development-collection": "5.3.x-dev",
-        "neos/demo": "@dev",
-
+        "neos/neos-development-collection": "@dev",
+        "neos/flow-development-collection": "@dev",
+        
         "neos/contentrepository-development-collection": "dev-master",
         "neos/content-repository-dimensionspace": "dev-master",
         "neos/event-sourcing": "dev-master",
+        "flowpack/jobqueue-common": "dev-master",
+        
+        "neos/demo": "@dev",
+        
         "neos/neos-ui": "dev-event-sourced-patch as dev-master",
         "neos/neos-ui-compiled": "@dev",
-
+        
         "neos/party": "@dev",
         "neos/seo": "@dev",
         "neos/imagine": "@dev",
@@ -153,7 +160,7 @@ The resulting `composer.json` file should look something like this:
         "mikey179/vfsstream": "~1.6",
         "phpunit/phpunit": "~7.1.0",
         "symfony/css-selector": "~2.0",
-        "neos/behat": "~5.0.0"
+        "neos/behat": "dev-master"
     },
     "scripts": {
         "post-update-cmd": "Neos\\Flow\\Composer\\InstallerScripts::postUpdateAndInstall",
@@ -271,36 +278,37 @@ Neos:
     ```
 
 
-## Road to first running alpha
+## Road to first running beta
 
 - [x] create standalone package collection instead of branches
 - [x] command to import from NodeData to events
 - [x] make it work with Neos.ContentRepository.DimensionSpace package
 - [x] ensure Behavioral Tests run again
+- [x] Update CR for Neos 5
+- [ ] Update EventSourcedNeosAdjustments for Neos 5
 - [ ] Content Cache (#103)
-- [ ] ensure Functional Tests run again
+- [x] ensure Functional Tests run again
 - [x] figure out how/if to use event sourced Site/Domain (!possibly difficult!) -> fixed; won't use event sourced site/domain
 - [x] change RoutePart Handler when using event-sourced mode
 - [x] adjust NodeController when using event-sourced mode
 - [x] add switch to use event-sourced read model in Fusion rendering (!possibly difficult due to method signatures!)
 - [x] allow to open User Interface based on Event-Sourced read model
-- [ ] implement Show/Hide of nodes (recursively)
-- [ ] ?? implement new NodeTreeAggregate?
+- [x] implement Show/Hide of nodes (recursively)
 - [ ] create Commands in response to UI interaction
   - [x] SetProperty command
-  - [ ] CreateNode
-  - [ ] MoveNode
-  - [ ] ShowNode
-  - [ ] DisableNode
+  - [x] CreateNode
+  - [x] MoveNode
+  - [x] ShowNode
+  - [x] DisableNode
 - [x] create feature list in this README, detailing what is supported and what not yet.
 - [x] support empty content dimension values in URL; e.g. "/de/..." for german, and "/..." for english
-- [ ] absolute node referencing for ContentCollection (e.g. shared footer in Demo Site)
+- [x] absolute node referencing for ContentCollection (e.g. shared footer in Demo Site)
 - [ ] fix Policy handling to configure permissions for various UI parts
 - [x] fix structure tree
 - [ ] show correct workspace state after reload (top publish button)
-- [ ] fix inline linking
-- [ ] fix node tree search
-- [ ] fix node tree filter
+- [?] fix inline linking
+- [x] fix node tree search
+- [?] fix node tree filter
 - [ ] Implement Node Repair
 - [ ] (further TODOs here; this list is not complete yet)
 

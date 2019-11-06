@@ -24,8 +24,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
-use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
+use Ramsey\Uuid\Uuid;
 
 trait NodeRemoval
 {
@@ -56,7 +57,7 @@ trait NodeRemoval
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, $nodeAggregate, &$events) {
             $events = DomainEvents::withSingleEvent(
-                EventWithIdentifier::create(
+                DecoratedEvent::addIdentifier(
                     new NodeAggregateWasRemoved(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
@@ -72,7 +73,8 @@ trait NodeRemoval
                             $command->getCoveredDimensionSpacePoint(),
                             $this->getInterDimensionalVariationGraph()
                         )
-                    )
+                    ),
+                    Uuid::uuid4()->toString()
                 )
             );
 

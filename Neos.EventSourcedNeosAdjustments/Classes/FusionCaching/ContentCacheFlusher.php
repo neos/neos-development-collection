@@ -118,7 +118,6 @@ class ContentCacheFlusher
 
 
         while ($node = self::fetchParentIfExistsForNode($node)) {
-
             $tagName = 'DescendantOf_%' . $node->getContentStreamIdentifier() . '%_' . $node->getNodeAggregateIdentifier();
             $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $node->getNodeAggregateIdentifier());
 

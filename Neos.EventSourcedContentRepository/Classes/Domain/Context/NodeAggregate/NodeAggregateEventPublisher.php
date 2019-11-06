@@ -12,11 +12,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
-use Neos\EventSourcing\Event\Decorator\EventDecoratorUtilities;
-use Neos\EventSourcing\Event\Decorator\EventWithMetadata;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\EventSourcing\Event\DomainEvents;
-use Neos\EventSourcing\EventStore\EventStoreManager;
+use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\Annotations as Flow;
@@ -33,10 +32,9 @@ use Neos\Flow\Annotations as Flow;
 final class NodeAggregateEventPublisher
 {
     /**
-     * @Flow\Inject
-     * @var EventStoreManager
+     * @var EventStore
      */
-    protected $eventStoreManager;
+    protected $eventStore;
 
     /**
      * safeguard that the "withCommand()" method is never called recursively.
@@ -48,6 +46,11 @@ final class NodeAggregateEventPublisher
      * @var \JsonSerializable
      */
     private $command;
+
+    public function __construct(EventStore $eventStore)
+    {
+        $this->eventStore = $eventStore;
+    }
 
     /**
      * @param $command
@@ -109,10 +112,15 @@ final class NodeAggregateEventPublisher
         }
         $processedEvents = DomainEvents::createEmpty();
         foreach ($events as $event) {
-            $undecoratedEvent = EventDecoratorUtilities::extractUndecoratedEvent($event);
-            if (!$undecoratedEvent instanceof CopyableAcrossContentStreamsInterface) {
-                throw new \RuntimeException(sprintf('TODO: Event %s has to implement CopyableAcrossContentStreamsInterface', get_class($event)));
+            if ($event instanceof DecoratedEvent) {
+                $undecoratedEvent = $event->getWrappedEvent();
+                if (!$undecoratedEvent instanceof CopyableAcrossContentStreamsInterface) {
+                    throw new \RuntimeException(sprintf('TODO: Event %s has to implement CopyableAcrossContentStreamsInterface', get_class($event)));
+                }
+            } else {
+                throw new \RuntimeException(sprintf('TODO: You need to use DecoratedEvent', get_class($event)));
             }
+
 
             if ($this->command) {
                 $commandPayload = $this->command->jsonSerialize();
@@ -124,13 +132,12 @@ final class NodeAggregateEventPublisher
                     'commandClass' => get_class($this->command),
                     'commandPayload' => $commandPayload
                 ];
-                $event = new EventWithMetadata($event, $metadata);
+                $event = DecoratedEvent::addMetadata($event, $metadata);
                 $this->command = null;
             }
             $processedEvents = $processedEvents->appendEvent($event);
         }
 
-        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
-        $eventStore->commit($streamName, $processedEvents, $expectedVersion);
+        $this->eventStore->commit($streamName, $processedEvents, $expectedVersion);
     }
 }

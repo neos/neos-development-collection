@@ -15,7 +15,7 @@ before_install:
   - cd neos-development-distribution
   - cat composer.json
 install:
-  - composer update --no-progress --no-interaction
+  - COMPOSER_MEMORY_LIMIT=-1 composer update --no-progress --no-interaction
   - cd ..
   - rm -rf neos-development-distribution/Packages/CR
   - mv contentrepository-development-collection neos-development-distribution/Packages/CR
@@ -30,5 +30,5 @@ before_script:
 script:
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedContentRepository/Tests/Functional
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Functional
-  - bin/behat --ansi -f progress -c Packages/CR/Neos.EventSourcedContentRepository/Tests/Behavior/behat.yml.dist
-  - Packages/CR/.run-e2e-test.sh
+  - bin/behat -f progress -c Packages/CR/Neos.EventSourcedContentRepository/Tests/Behavior/behat.yml.dist
+#  - Packages/CR/.run-e2e-test.sh
