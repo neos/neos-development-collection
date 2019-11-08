@@ -13,16 +13,21 @@ namespace Neos\Media\Domain\Repository;
 
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query as DoctrineQuery;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
 use Neos\Flow\Persistence\Doctrine\Query;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
-use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Media\Domain\Model\Asset;
+use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Exception\AssetServiceException;
@@ -52,6 +57,12 @@ class AssetRepository extends Repository
      * @var AssetService
      */
     protected $assetService;
+
+    /**
+     * @Flow\Inject
+     * @var ReflectionService
+     */
+    protected $reflectionService;
 
     /**
      * Find assets by title or given tags
@@ -128,6 +139,7 @@ class AssetRepository extends Repository
     }
 
     /**
+     * @param AssetCollection|null $assetCollection
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
@@ -148,7 +160,14 @@ class AssetRepository extends Repository
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
 
-        $queryString = "SELECT count(persistence_object_identifier) c FROM neos_media_domain_model_asset WHERE dtype != 'neos_media_imagevariant'";
+        if ($this->entityClassName === Asset::class) {
+            $queryString = 'SELECT count(a.persistence_object_identifier) c FROM neos_media_domain_model_asset a WHERE ' . $this->getAssetVariantFilterClauseForDql('a');
+        } else {
+            $queryString = sprintf(
+                "SELECT count(persistence_object_identifier) c FROM neos_media_domain_model_asset WHERE dtype = '%s'",
+                FlowAnnotationDriver::inferDiscriminatorTypeFromClassName($this->entityClassName)
+            );
+        }
 
         $query = $this->entityManager->createNativeQuery($queryString, $rsm);
         return $query->getSingleScalarResult();
@@ -161,7 +180,7 @@ class AssetRepository extends Repository
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
-    public function findUntagged(AssetCollection $assetCollection = null)
+    public function findUntagged(AssetCollection $assetCollection = null): QueryResultInterface
     {
         $query = $this->createQuery();
         $query->matching($query->isEmpty('tags'));
@@ -177,7 +196,7 @@ class AssetRepository extends Repository
      * @return integer
      * @throws NonUniqueResultException
      */
-    public function countUntagged(AssetCollection $assetCollection = null)
+    public function countUntagged(AssetCollection $assetCollection = null): int
     {
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
@@ -200,7 +219,7 @@ class AssetRepository extends Repository
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
-    public function findByAssetCollection(AssetCollection $assetCollection)
+    public function findByAssetCollection(AssetCollection $assetCollection): QueryResultInterface
     {
         $query = $this->createQuery();
         $this->addImageVariantFilterClause($query);
@@ -214,7 +233,7 @@ class AssetRepository extends Repository
      * @param AssetCollection $assetCollection
      * @return integer
      */
-    public function countByAssetCollection(AssetCollection $assetCollection)
+    public function countByAssetCollection(AssetCollection $assetCollection): int
     {
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
@@ -231,24 +250,24 @@ class AssetRepository extends Repository
     }
 
     /**
-     * @param Query $query
+     * @param QueryInterface $query
      * @param AssetCollection $assetCollection
      * @return void
      * @throws InvalidQueryException
      */
-    protected function addAssetCollectionToQueryConstraints(Query $query, AssetCollection $assetCollection = null)
+    protected function addAssetCollectionToQueryConstraints(QueryInterface $query, AssetCollection $assetCollection = null): void
     {
         if ($assetCollection === null) {
             return;
         }
 
         $constraints = $query->getConstraint();
-        $query->matching($query->logicalAnd($constraints, $query->contains('assetCollections', $assetCollection)));
+        $query->matching($query->logicalAnd([$constraints, $query->contains('assetCollections', $assetCollection)]));
     }
 
     /**
-     * @var Query $query
-     * @return QueryInterface
+     * @return QueryInterface|DoctrineQuery
+     * @var QueryInterface|DoctrineQuery $query
      */
     protected function addImageVariantFilterClause(Query $query)
     {
@@ -285,7 +304,7 @@ class AssetRepository extends Repository
             $object = current($object);
             yield $object;
             if ($callback !== null) {
-                call_user_func($callback, $iteration, $object);
+                $callback($iteration, $object);
             }
             $iteration++;
         }
@@ -296,9 +315,8 @@ class AssetRepository extends Repository
      *
      * @return IterableResult
      */
-    public function findAllIterator()
+    public function findAllIterator(): IterableResult
     {
-        /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
         return $queryBuilder
             ->select('a')
@@ -332,7 +350,7 @@ class AssetRepository extends Repository
      * @return void
      * @throws IllegalObjectTypeException
      */
-    public function removeWithoutUsageChecks($object)
+    public function removeWithoutUsageChecks($object): void
     {
         parent::remove($object);
         $this->assetService->emitAssetRemoved($object);
@@ -356,5 +374,28 @@ class AssetRepository extends Repository
     {
         parent::update($object);
         $this->assetService->emitAssetUpdated($object);
+    }
+
+    /**
+     * Returns a DQL clause filtering any implementation of AssetVariantInterface
+     *
+     * @return string
+     * @var string $alias
+     */
+    protected function getAssetVariantFilterClauseForDql(string $alias): string
+    {
+        $variantClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetVariantInterface::class);
+        $discriminatorTypes = array_map(
+            [FlowAnnotationDriver::class, 'inferDiscriminatorTypeFromClassName'],
+            $variantClassNames
+        );
+
+        $clauseAsDql = sprintf(
+            "%s.dtype NOT IN('%s')",
+            $alias,
+            implode("','", $discriminatorTypes)
+        );
+
+        return $clauseAsDql;
     }
 }
