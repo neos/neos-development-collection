@@ -17,6 +17,7 @@ use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Utility\Files;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
 
 /**
@@ -64,6 +65,12 @@ class FusionView extends AbstractView
      * @var string
      */
     protected $fusionPath = null;
+
+    /**
+     * @Flow\Inject
+     * @var RuntimeFactory
+     */
+    protected $runtimeFactory;
 
     /**
      * The Fusion Runtime
@@ -150,7 +157,7 @@ class FusionView extends AbstractView
     {
         if ($this->fusionRuntime === null) {
             $this->loadFusion();
-            $this->fusionRuntime = new Runtime($this->parsedFusion, $this->controllerContext);
+            $this->fusionRuntime = $this->runtimeFactory->create($this->parsedFusion, $this->controllerContext);
         }
         if (isset($this->options['debugMode'])) {
             $this->fusionRuntime->setDebugMode($this->options['debugMode']);
