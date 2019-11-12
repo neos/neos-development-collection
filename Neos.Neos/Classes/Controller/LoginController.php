@@ -139,11 +139,11 @@ class LoginController extends AbstractAuthenticationController
         $this->loginTokenCache->remove($token);
 
         if ($newSessionId === false) {
-            $this->logger->log(LOG_WARNING, sprintf('Token-based login failed, non-existing or expired token %s', $token));
+            $this->logger->warning(sprintf('Token-based login failed, non-existing or expired token %s', $token));
             $this->redirect('index');
         }
 
-        $this->logger(LOG_DEBUG, sprintf('Token-based login succeeded, token %s', $token));
+        $this->logger->debug(sprintf('Token-based login succeeded, token %s', $token));
 
         $newSession = $this->sessionManager->getSession($newSessionId);
         if ($newSession->canBeResumed()) {
@@ -152,7 +152,7 @@ class LoginController extends AbstractAuthenticationController
         if ($newSession->isStarted()) {
             $newSession->putData('lastVisitedNode', null);
         } else {
-            $this->logger->log(LOG_ERR, sprintf('Failed resuming or starting session %s which was referred to in the login token %s.', $newSessionId, $token));
+            $this->logger->error(sprintf('Failed resuming or starting session %s which was referred to in the login token %s.', $newSessionId, $token));
         }
 
         $this->replaceSessionCookie($newSessionId);
