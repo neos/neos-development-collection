@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "~6.0.0",
+        "neos/flow-development-collection": "dev-master",
         "neos/neos-setup": "^1.0",
         "neos/flow": "*",
         "neos/cache": "*",
@@ -29,7 +29,7 @@
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
         "neos/form": "*",
-        "neos/kickstarter": "~6.0.0"
+        "neos/kickstarter": "*"
     },
     "replace": {
         "typo3/typo3cr": "self.version",

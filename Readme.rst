@@ -1,6 +1,6 @@
 |Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Issues| |Translate| |Twitter| |Pull Reminders|
 
-.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=5.0
+.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
    :target: https://travis-ci.org/neos/neos-development-collection
 .. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/neos-development-collection
@@ -10,10 +10,10 @@
    :target: https://packagist.org/packages/neos/neos-development-collection
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
    :target: https://raw.githubusercontent.com/neos/neos-development-collection/4.3/LICENSE
-.. |Docs| image:: https://img.shields.io/badge/documentation-5.0-blue.svg
+.. |Docs| image:: https://img.shields.io/badge/documentation-master-blue.svg
    :target: https://neos.readthedocs.org/en/4.3/
    :alt: Documentation
-.. |API| image:: https://img.shields.io/badge/API%20docs-5.0-blue.svg
+.. |API| image:: https://img.shields.io/badge/API%20docs-master-blue.svg
    :target: http://neos.github.io/neos/4.3/
    :alt: API Docs
 .. |Slack| image:: http://slack.neos.io/badge.svg
