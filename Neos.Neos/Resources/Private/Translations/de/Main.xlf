@@ -335,7 +335,7 @@
 			<target state="final">Beschreibung</target></trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve" approved="yes">
 				<source>Toggle content tree</source>
-			<target state="final">Inhaltsbaum umschalten</target></trans-unit>
+			<target state="final">Inhaltsbaum umschalten</target><alt-trans><target>Inhaltsbaum ein-/ausblenden</target></alt-trans></trans-unit>
       <trans-unit id="showPublishOptions" xml:space="preserve" approved="yes">
 				<source>Show publish options</source>
 			<target state="final">Veröffentlichungsoptionen anzeigen</target></trans-unit>
