@@ -2,7 +2,7 @@
 namespace Neos\Media\Fusion;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,6 +11,7 @@ namespace Neos\Media\Fusion;
  * source code.
  */
 
+use Exception;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\FusionObjects\DataStructureImplementation;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -150,10 +151,10 @@ class ImageImplementation extends DataStructureImplementation
     }
 
     /**
-     * Returns a processed image path
+     * Returns a processed image data array
      *
-     * @return string
-     * @throws \Exception
+     * @return array
+     * @throws Exception
      */
     public function evaluate()
     {
@@ -161,7 +162,7 @@ class ImageImplementation extends DataStructureImplementation
         $preset = $this->getPreset();
 
         if (!$asset instanceof AssetInterface) {
-            throw new \Exception('No asset given for rendering.', 1415184217);
+            throw new Exception('No asset given for rendering.', 1415184217);
         }
         if (!empty($preset)) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
@@ -171,7 +172,7 @@ class ImageImplementation extends DataStructureImplementation
         $request = $this->getRuntime()->getControllerContext()->getRequest();
         $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $request);
         if ($thumbnailData === null) {
-            return '';
+            return [];
         }
         return $thumbnailData;
     }
