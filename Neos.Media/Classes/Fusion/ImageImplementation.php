@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Neos\Fusion;
+namespace Neos\Media\Fusion;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,11 +11,12 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Exception;
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\FusionObjects\DataStructureImplementation;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Service\AssetService;
-use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Media\Domain\Service\ThumbnailService;
 
 /**
@@ -23,7 +24,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
  * asset, width, maximumWidth, height, maximumHeight, allowCropping, allowUpScaling.
  *
  */
-class ImageUriImplementation extends AbstractFusionObject
+class ImageImplementation extends DataStructureImplementation
 {
     /**
      * Resource publisher
@@ -150,10 +151,10 @@ class ImageUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * Returns a processed image path
+     * Returns a processed image data array
      *
-     * @return string
-     * @throws \Exception
+     * @return array
+     * @throws Exception
      */
     public function evaluate()
     {
@@ -161,7 +162,7 @@ class ImageUriImplementation extends AbstractFusionObject
         $preset = $this->getPreset();
 
         if (!$asset instanceof AssetInterface) {
-            throw new \Exception('No asset given for rendering.', 1415184217);
+            throw new Exception('No asset given for rendering.', 1415184217);
         }
         if (!empty($preset)) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
@@ -171,8 +172,8 @@ class ImageUriImplementation extends AbstractFusionObject
         $request = $this->getRuntime()->getControllerContext()->getRequest();
         $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $request);
         if ($thumbnailData === null) {
-            return '';
+            return [];
         }
-        return $thumbnailData['src'];
+        return $thumbnailData;
     }
 }
