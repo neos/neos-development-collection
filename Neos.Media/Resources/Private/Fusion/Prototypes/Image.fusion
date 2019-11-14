@@ -1,0 +1,14 @@
+prototype(Neos.Media:Image) {
+  @class = 'Neos\\Media\\Fusion\\ImageImplementation'
+  maximumWidth = 2560
+  width = NULL
+  maximumHeight = 2560
+  height = NULL
+  allowCropping = false
+  allowUpScaling = false
+  async = false
+  quality = NULL
+  format = NULL
+  preset = NULL
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
+}
