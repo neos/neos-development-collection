@@ -24,7 +24,7 @@ prototype(Neos.Media:ImageTag) < prototype(Neos.Fusion:Component) {
     }
 
     renderer = afx`
-        <img src={props.imageUri} />
+        <img @if.hasImageUri={props.imageUri} src={props.imageUri} />
     `
   }
 }

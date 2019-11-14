@@ -24,6 +24,6 @@ prototype(Neos.Media:ImageUri) < prototype(Neos.Fusion:Component) {
       preset = ${props.preset}
     }
 
-    renderer = ${props.image.src}
+    renderer = ${props.image.src ? props.image.src : ''}
   }
 }
