@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Fusion;
 
 /*
@@ -43,9 +45,9 @@ class ImageImplementation extends DataStructureImplementation
     /**
      * Asset
      *
-     * @return AssetInterface
+     * @return AssetInterface|null
      */
-    public function getAsset()
+    public function getAsset(): ?AssetInterface
     {
         return $this->fusionValue('asset');
     }
@@ -55,7 +57,7 @@ class ImageImplementation extends DataStructureImplementation
      *
      * @return integer
      */
-    public function getWidth()
+    public function getWidth(): int
     {
         return $this->fusionValue('width');
     }
@@ -65,7 +67,7 @@ class ImageImplementation extends DataStructureImplementation
      *
      * @return integer
      */
-    public function getMaximumWidth()
+    public function getMaximumWidth(): int
     {
         return $this->fusionValue('maximumWidth');
     }
@@ -75,7 +77,7 @@ class ImageImplementation extends DataStructureImplementation
      *
      * @return integer
      */
-    public function getHeight()
+    public function getHeight(): int
     {
         return $this->fusionValue('height');
     }
@@ -85,7 +87,7 @@ class ImageImplementation extends DataStructureImplementation
      *
      * @return integer
      */
-    public function getMaximumHeight()
+    public function getMaximumHeight(): int
     {
         return $this->fusionValue('maximumHeight');
     }
@@ -95,7 +97,7 @@ class ImageImplementation extends DataStructureImplementation
      *
      * @return boolean
      */
-    public function getAllowCropping()
+    public function getAllowCropping(): bool
     {
         return $this->fusionValue('allowCropping');
     }
@@ -105,7 +107,7 @@ class ImageImplementation extends DataStructureImplementation
      *
      * @return boolean
      */
-    public function getAllowUpScaling()
+    public function getAllowUpScaling(): bool
     {
         return $this->fusionValue('allowUpScaling');
     }
@@ -115,7 +117,7 @@ class ImageImplementation extends DataStructureImplementation
      *
      * @return integer
      */
-    public function getQuality()
+    public function getQuality(): int
     {
         return $this->fusionValue('quality');
     }
@@ -125,7 +127,7 @@ class ImageImplementation extends DataStructureImplementation
      *
      * @return boolean
      */
-    public function getAsync()
+    public function getAsync(): bool
     {
         return $this->fusionValue('async');
     }
@@ -145,7 +147,7 @@ class ImageImplementation extends DataStructureImplementation
      *
      * @return string
      */
-    public function getPreset()
+    public function getPreset(): string
     {
         return $this->fusionValue('preset');
     }
@@ -156,7 +158,7 @@ class ImageImplementation extends DataStructureImplementation
      * @return array
      * @throws Exception
      */
-    public function evaluate()
+    public function evaluate(): array
     {
         $asset = $this->getAsset();
         $preset = $this->getPreset();
