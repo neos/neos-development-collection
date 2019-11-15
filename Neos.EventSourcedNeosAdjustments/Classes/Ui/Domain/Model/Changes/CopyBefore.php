@@ -14,7 +14,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  */
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeToInsert;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
@@ -58,23 +57,25 @@ class CopyBefore extends AbstractStructuralChange
             $subject = $this->getSubject();
 
             $succeedingSibling = $this->getSiblingNode();
+            $parentNodeOfSucceedingSibling = $succeedingSibling->findParentNode();
 
-            $command = new CopyNodesRecursively(
-                $subject->getContentStreamIdentifier(),
-                NodeToInsert::fromTraversableNode($subject)->withNodeName(NodeName::fromString(uniqid('node-'))),
+            $command = CopyNodesRecursively::create(
+                $subject,
                 $subject->getDimensionSpacePoint(),
                 UserIdentifier::forSystemUser(), // TODO
-                $succeedingSibling->findParentNode()->getNodeAggregateIdentifier(),
-                $succeedingSibling->getNodeAggregateIdentifier()
+                $parentNodeOfSucceedingSibling->getNodeAggregateIdentifier(),
+                $succeedingSibling->getNodeAggregateIdentifier(),
+                NodeName::fromString(uniqid('node-'))
             );
 
             $this->contentCacheFlusher->registerNodeChange($subject);
 
-            // NOTE: the following line internally *always blocks*; I still dislike that this API is somehow "different" than the
-            // others.
-            $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command);
+            $this->nodeDuplicationCommandHandler->handleCopyNodesRecursively($command)->blockUntilProjectionsAreUpToDate();
 
-            $this->finish($succeedingSibling);
+            $newlyCreatedNode = $parentNodeOfSucceedingSibling->findNamedChildNode($command->getTargetNodeName());
+            $this->finish($newlyCreatedNode);
+            // NOTE: we need to run "finish" before "addNodeCreatedFeedback" to ensure the new node already exists when the last feedback is processed
+            $this->addNodeCreatedFeedback($newlyCreatedNode);
         }
     }
 }

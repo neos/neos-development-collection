@@ -46,7 +46,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\Di
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeToInsert;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeSubtreeSnapshot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\NodeDuplicationCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
@@ -866,7 +866,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
         $currentTraversableNode = new TraversableNode($this->currentNode, $subgraph);
-        $commandArguments['nodeToInsert'] = json_decode(json_encode(NodeToInsert::fromTraversableNode($currentTraversableNode)), true);
+        $commandArguments['nodeToInsert'] = json_decode(json_encode(NodeSubtreeSnapshot::fromTraversableNode($currentTraversableNode)), true);
         $command = CopyNodesRecursively::fromArray($commandArguments);
         $this->lastCommandOrEventResult = $this->getNodeDuplicationCommandHandler()
             ->handleCopyNodesRecursively($command);

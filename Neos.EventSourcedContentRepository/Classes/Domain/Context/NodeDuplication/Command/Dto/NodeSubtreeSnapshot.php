@@ -2,58 +2,41 @@
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeReferences;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 
 /**
  * @Flow\Proxy(false)
  */
-final class NodeToInsert implements \JsonSerializable
+final class NodeSubtreeSnapshot implements \JsonSerializable
 {
 
     /**
-     * The to-be-inserted NodeAggregateIdentifier
-     *
      * @var NodeAggregateIdentifier
      */
     private $nodeAggregateIdentifier;
 
     /**
-     * Name of the new node's type
-     *
      * @var NodeTypeName
      */
     private $nodeTypeName;
 
     /**
-     * The node's optional name. Set if there is a meaningful relation to its parent that should be named.
-     *
      * @var NodeName
      */
     private $nodeName;
 
     /**
-     * The node aggregate's classification
-     *
      * @var NodeAggregateClassification
      */
     private $nodeAggregateClassification;
 
     /**
-     * The node's initial property values. Will be merged over the node type's default property values
-     *
      * @var PropertyValues
      */
     private $propertyValues;
@@ -64,23 +47,19 @@ final class NodeToInsert implements \JsonSerializable
     private $nodeReferences;
 
     /**
-     * @var array|NodeToInsert[]
+     * @var array|NodeSubtreeSnapshot[]
      */
-    private $childNodesToInsert;
+    private $childNodes;
 
     public static function fromTraversableNode(TraversableNodeInterface $sourceNode): self
     {
-        // Here, we create *new* NodeAggregateIdentifiers! -- and for top level we need to create NEW NodeNames.
-        // TODO: WHERE??
-        $newNodeAggregateIdentifier = NodeAggregateIdentifier::create();
-
         $childNodes = [];
         foreach ($sourceNode->findChildNodes() as $sourceChildNode) {
-            $childNodes[] = self::fromTraversableNodeWithNodeName($sourceChildNode, $sourceChildNode->getNodeName());
+            $childNodes[] = self::fromTraversableNode($sourceChildNode);
         }
 
         return new self(
-            $newNodeAggregateIdentifier,
+            $sourceNode->getNodeAggregateIdentifier(),
             $sourceNode->getNodeTypeName(),
             $sourceNode->getNodeName(),
             NodeAggregateClassification::fromNode($sourceNode),
@@ -88,11 +67,6 @@ final class NodeToInsert implements \JsonSerializable
             NodeReferences::fromArray([]), // TODO
             $childNodes
         );
-    }
-
-    private static function fromTraversableNodeWithNodeName(TraversableNodeInterface $sourceNode, ?NodeName $nodeName): self
-    {
-
     }
 
     /**
@@ -103,13 +77,13 @@ final class NodeToInsert implements \JsonSerializable
      * @param NodeAggregateClassification $nodeAggregateClassification
      * @param PropertyValues $propertyValues
      * @param NodeReferences $nodeReferences
-     * @param array|NodeToInsert[] $childNodesToInsert
+     * @param array|NodeSubtreeSnapshot[] $childNodes
      */
-    private function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, ?NodeName $nodeName, NodeAggregateClassification $nodeAggregateClassification, PropertyValues $propertyValues, NodeReferences $nodeReferences, array $childNodesToInsert)
+    private function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, ?NodeName $nodeName, NodeAggregateClassification $nodeAggregateClassification, PropertyValues $propertyValues, NodeReferences $nodeReferences, array $childNodes)
     {
-        foreach ($childNodesToInsert as $childNodeToInsert) {
-            if (!$childNodeToInsert instanceof NodeToInsert) {
-                throw new \InvalidArgumentException('an element in $childNodesToInsert was not of type NodeToInsert, but ' . get_class($childNodeToInsert));
+        foreach ($childNodes as $childNode) {
+            if (!$childNode instanceof NodeSubtreeSnapshot) {
+                throw new \InvalidArgumentException('an element in $childNodes was not of type NodeSubtreeSnapshot, but ' . get_class($childNode));
             }
         }
 
@@ -119,7 +93,7 @@ final class NodeToInsert implements \JsonSerializable
         $this->nodeAggregateClassification = $nodeAggregateClassification;
         $this->propertyValues = $propertyValues;
         $this->nodeReferences = $nodeReferences;
-        $this->childNodesToInsert = $childNodesToInsert;
+        $this->childNodes = $childNodes;
     }
 
     /**
@@ -171,18 +145,11 @@ final class NodeToInsert implements \JsonSerializable
     }
 
     /**
-     * @return array|NodeToInsert[]
+     * @return array|NodeSubtreeSnapshot[]
      */
     public function getChildNodesToInsert()
     {
-        return $this->childNodesToInsert;
-    }
-
-    public function withNodeName(?NodeName $nodeName): self
-    {
-        $copy = clone $this;
-        $copy->nodeName = null;
-        return $copy;
+        return $this->childNodes;
     }
 
     /**
@@ -201,15 +168,23 @@ final class NodeToInsert implements \JsonSerializable
             'nodeAggregateClassification' => $this->nodeAggregateClassification,
             'propertyValues' => $this->propertyValues,
             'nodeReferences' => $this->nodeReferences,
-            'childNodesToInsert' => $this->childNodesToInsert,
+            'childNodes' => $this->childNodes,
         ];
+    }
+
+    public function walk(\Closure $forEachElementFn): void
+    {
+        $forEachElementFn($this);
+        foreach ($this->childNodes as $childNode) {
+            $childNode->walk($forEachElementFn);
+        }
     }
 
     public static function fromArray(array $array): self
     {
-        $childNodesToInsert = [];
-        foreach ($array['childNodesToInsert'] as $arrayChildNodeToInsert) {
-            $childNodesToInsert[] = self::fromArray($arrayChildNodeToInsert);
+        $childNodes = [];
+        foreach ($array['childNodes'] as $childNode) {
+            $childNodes[] = self::fromArray($childNode);
         }
 
         return new static(
@@ -219,7 +194,7 @@ final class NodeToInsert implements \JsonSerializable
             NodeAggregateClassification::fromString($array['nodeAggregateClassification']),
             PropertyValues::fromArray($array['propertyValues']),
             NodeReferences::fromArray($array['nodeReferences']),
-            $childNodesToInsert
+            $childNodes
         );
     }
 }
