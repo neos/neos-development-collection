@@ -19,7 +19,6 @@ require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests
 require_once(__DIR__ . '/BrowserTrait.php');
 require_once(__DIR__ . '/FlowSubcommandTrait.php');
 require_once(__DIR__ . '/FlowQueryTrait.php');
-use Neos\Behat\Tests\Behat\FlowContext;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;

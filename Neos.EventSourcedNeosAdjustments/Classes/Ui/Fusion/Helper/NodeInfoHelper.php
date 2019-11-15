@@ -227,7 +227,7 @@ class NodeInfoHelper implements ProtectedContextAwareInterface
     {
         return [
             'contextPath' => $this->nodeAddressFactory->createFromTraversableNode($node)->serializeForUri(),
-            'name' => $node->getNodeName()->jsonSerialize(),
+            'name' => $node->getNodeName() ? $node->getNodeName()->jsonSerialize() : null,
             'identifier' => $node->getNodeAggregateIdentifier()->jsonSerialize(),
             'nodeType' => $node->getNodeType()->getName(),
             'label' => $node->getLabel(),

@@ -271,11 +271,13 @@ class EventSourcedNodeController extends ActionController
         $nodePathCache = $inMemoryCache->getNodePathCache();
 
         $node = $subtree->getNode();
-        $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
+        if ($node->getNodeName() !== null) {
+            $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
+            $nodePathCache->add($node->getNodeAggregateIdentifier(), $nodePath);
+            $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeAggregateIdentifier(), $node->getNodeName(), $node);
+        }
 
         $parentNodeIdentifierByChildNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $parentNode->getNodeAggregateIdentifier());
-        $namedChildNodeByNodeIdentifierCache->add($parentNode->getNodeAggregateIdentifier(), $node->getNodeName(), $node);
-        $nodePathCache->add($node->getNodeAggregateIdentifier(), $nodePath);
 
         $allChildNodes = [];
         foreach ($subtree->getChildren() as $childSubtree) {

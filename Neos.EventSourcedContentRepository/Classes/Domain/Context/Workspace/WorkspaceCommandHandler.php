@@ -554,6 +554,10 @@ final class WorkspaceCommandHandler
         )->blockUntilProjectionsAreUpToDate();
 
         foreach ($matchingCommands as $matchingCommand) {
+            if (!($matchingCommand instanceof CopyableAcrossContentStreamsInterface)) {
+                throw new \RuntimeException('ERROR: The command ' . get_class($matchingCommand) . ' does not implement CopyableAcrossContentStreamsInterface; but it should!');
+            }
+
             $this->applyCommand($matchingCommand->createCopyForContentStream($matchingContentStream))->blockUntilProjectionsAreUpToDate();
         }
 

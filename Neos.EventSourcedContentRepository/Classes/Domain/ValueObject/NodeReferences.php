@@ -12,16 +12,16 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
  */
-final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
+final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array|PropertyValue[]
+     * @var array|NodeReference[]
      */
     private $values = [];
 
@@ -36,9 +36,9 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
         $this->iterator = new \ArrayIterator($this->values);
     }
 
-    public function merge(PropertyValues $other): PropertyValues
+    public function merge(NodeReferences $other): NodeReferences
     {
-        return new PropertyValues(array_merge($this->values, $other->getValues()));
+        return new self(array_merge($this->values, $other->getValues()));
     }
 
     /**
@@ -50,31 +50,25 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
         return $this->values;
     }
 
-    public static function fromArray(array $propertyValues): self
+    public static function fromArray(array $nodeReferences): self
     {
         $values = [];
-        foreach ($propertyValues as $propertyName => $propertyValue) {
-            if (is_array($propertyValue)) {
-                $values[$propertyName] = PropertyValue::fromArray($propertyValue);
-            } elseif ($propertyValue instanceof PropertyValue) {
-                $values[$propertyName] = $propertyValue;
+        foreach ($nodeReferences as $nodeReferenceName => $nodeReferenceValue) {
+            if (is_array($nodeReferenceValue)) {
+                $values[$nodeReferenceName] = NodeReference::fromArray($nodeReferenceValue);
+            } elseif ($nodeReferenceValue instanceof NodeReference) {
+                $values[$nodeReferenceName] = $nodeReferenceValue;
             } else {
-                throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', PropertyValue::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
+                throw new \InvalidArgumentException(sprintf('Invalid nodeReferences value. Expected instance of %s, got: %s', NodeReference::class, is_object($nodeReferenceValue) ? get_class($nodeReferenceValue) : gettype($nodeReferenceValue)), 1546524480);
             }
         }
 
         return new static($values);
     }
 
-    public static function fromNode(NodeInterface $node): self
+    public static function fromPropertyCollection(PropertyCollectionInterface $properties): self
     {
-        $values = [];
-
-        foreach ($node->getProperties() as $propertyName => $propertyValue) {
-            $values[$propertyName] = new PropertyValue($propertyValue, $node->getNodeType()->getPropertyType($propertyName));
-        }
-
-        return new static($values);
+        return self::fromArray(iterator_to_array($properties));
     }
 
     /**
@@ -90,7 +84,7 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
         return count($this->values);
     }
 
-    public function getPlainValues(): array
+    /*public function getPlainValues(): array
     {
         $values = [];
         foreach ($this->values as $propertyName => $propertyValue) {
@@ -98,7 +92,7 @@ final class PropertyValues implements \IteratorAggregate, \Countable, \JsonSeria
         }
 
         return $values;
-    }
+    }*/
 
     public function jsonSerialize(): array
     {
