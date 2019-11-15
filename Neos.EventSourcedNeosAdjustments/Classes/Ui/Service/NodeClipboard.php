@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
 
-
 /*
  * This file is part of the Neos.Neos.Ui package.
  *
@@ -13,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 

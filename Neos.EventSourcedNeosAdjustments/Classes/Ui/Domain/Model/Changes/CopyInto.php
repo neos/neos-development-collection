@@ -3,7 +3,6 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 
-
 /*
  * This file is part of the Neos.Neos.Ui package.
  *
@@ -88,7 +87,6 @@ class CopyInto extends AbstractStructuralChange
     public function apply()
     {
         if ($this->canApply()) {
-
             $subject = $this->getSubject();
 
             $command = CopyNodesRecursively::create(

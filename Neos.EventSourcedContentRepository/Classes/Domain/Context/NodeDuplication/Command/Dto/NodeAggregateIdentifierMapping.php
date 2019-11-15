@@ -54,7 +54,7 @@ final class NodeAggregateIdentifierMapping implements \JsonSerializable
     public static function generateForNodeSubtreeSnapshot(NodeSubtreeSnapshot $nodeSubtreeSnapshot): self
     {
         $nodeAggregateIdentifierMapping = [];
-        $nodeSubtreeSnapshot->walk(function(NodeSubtreeSnapshot $nodeSubtreeSnapshot) use (&$nodeAggregateIdentifierMapping) {
+        $nodeSubtreeSnapshot->walk(function (NodeSubtreeSnapshot $nodeSubtreeSnapshot) use (&$nodeAggregateIdentifierMapping) {
             // here, we create new random NodeAggregateIdentifiers.
             $nodeAggregateIdentifierMapping[(string)$nodeSubtreeSnapshot->getNodeAggregateIdentifier()] = NodeAggregateIdentifier::create();
         });

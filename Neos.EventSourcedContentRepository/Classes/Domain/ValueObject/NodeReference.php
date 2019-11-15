@@ -20,6 +20,9 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodeReference
 {
+    // TODO: actually working??
+
+
     /**
      * @var array|NodeReference[]
      */
@@ -36,11 +39,6 @@ final class NodeReference
         $this->iterator = new \ArrayIterator($this->values);
     }
 
-    public function merge(PropertyValues $other): PropertyValues
-    {
-        return new PropertyValues(array_merge($this->values, $other->getValues()));
-    }
-
     /**
      * @return array|PropertyValue[]
      * @param PropertyValue[] values
@@ -48,27 +46,6 @@ final class NodeReference
     public function getValues(): array
     {
         return $this->values;
-    }
-
-    public static function fromArray(array $propertyValues): self
-    {
-        $values = [];
-        foreach ($propertyValues as $propertyName => $propertyValue) {
-            if (is_array($propertyValue)) {
-                $values[$propertyName] = PropertyValue::fromArray($propertyValue);
-            } elseif ($propertyValue instanceof PropertyValue) {
-                $values[$propertyName] = $propertyValue;
-            } else {
-                throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', PropertyValue::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
-            }
-        }
-
-        return new static($values);
-    }
-
-    public static function fromPropertyCollection(PropertyCollectionInterface $properties): self
-    {
-        return self::fromArray(iterator_to_array($properties));
     }
 
     /**
@@ -82,16 +59,6 @@ final class NodeReference
     public function count(): int
     {
         return count($this->values);
-    }
-
-    public function getPlainValues(): array
-    {
-        $values = [];
-        foreach ($this->values as $propertyName => $propertyValue) {
-            $values[$propertyName] = $propertyValue->getValue();
-        }
-
-        return $values;
     }
 
     public function jsonSerialize(): array

@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 
-
 /*
  * This file is part of the Neos.Neos.Ui package.
  *

@@ -38,7 +38,6 @@ use Ramsey\Uuid\Uuid;
 
 final class NodeDuplicationCommandHandler
 {
-
     use ConstraintChecks;
 
     /**
@@ -175,7 +174,6 @@ final class NodeDuplicationCommandHandler
         // Now, we can start creating the recursive structure.
         $events = DomainEvents::createEmpty();
         $this->nodeAggregateEventPublisher->withCommand($command, function () use ($command, $nodeType, $parentNodeAggregate, $coveredDimensionSpacePoints, &$events) {
-
             $this->createEventsForNodeToInsert(
                 $command->getContentStreamIdentifier(),
                 $command->getTargetDimensionSpacePoint(),
@@ -239,5 +237,4 @@ final class NodeDuplicationCommandHandler
             );
         }
     }
-
 }

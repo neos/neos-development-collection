@@ -36,9 +36,9 @@ final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSeria
         $this->iterator = new \ArrayIterator($this->values);
     }
 
-    public function merge(PropertyValues $other): PropertyValues
+    public function merge(NodeReferences $other): NodeReferences
     {
-        return new PropertyValues(array_merge($this->values, $other->getValues()));
+        return new self(array_merge($this->values, $other->getValues()));
     }
 
     /**
@@ -50,16 +50,16 @@ final class NodeReferences implements \IteratorAggregate, \Countable, \JsonSeria
         return $this->values;
     }
 
-    public static function fromArray(array $propertyValues): self
+    public static function fromArray(array $nodeReferences): self
     {
         $values = [];
-        foreach ($propertyValues as $propertyName => $propertyValue) {
-            if (is_array($propertyValue)) {
-                $values[$propertyName] = PropertyValue::fromArray($propertyValue);
-            } elseif ($propertyValue instanceof PropertyValue) {
-                $values[$propertyName] = $propertyValue;
+        foreach ($nodeReferences as $nodeReferenceName => $nodeReferenceValue) {
+            if (is_array($nodeReferenceValue)) {
+                $values[$nodeReferenceName] = NodeReference::fromArray($nodeReferenceValue);
+            } elseif ($nodeReferenceValue instanceof NodeReference) {
+                $values[$nodeReferenceName] = $nodeReferenceValue;
             } else {
-                throw new \InvalidArgumentException(sprintf('Invalid nodeReferences value. Expected instance of %s, got: %s', NodeReference::class, is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)), 1546524480);
+                throw new \InvalidArgumentException(sprintf('Invalid nodeReferences value. Expected instance of %s, got: %s', NodeReference::class, is_object($nodeReferenceValue) ? get_class($nodeReferenceValue) : gettype($nodeReferenceValue)), 1546524480);
             }
         }
 
