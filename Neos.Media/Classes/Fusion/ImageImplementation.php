@@ -158,7 +158,7 @@ class ImageImplementation extends DataStructureImplementation
      * @return array
      * @throws Exception
      */
-    public function evaluate(): array
+    public function evaluate()
     {
         $asset = $this->getAsset();
         $preset = $this->getPreset();
