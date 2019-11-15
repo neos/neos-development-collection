@@ -15,7 +15,6 @@ use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Request;
 use PHPUnit\Framework\Assert;
 
 /**
