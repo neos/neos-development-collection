@@ -1,10 +1,15 @@
 # This is a helper Fusion object which is used to render all of the child elements
 # of a current node.
-prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Collection) {
+prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Loop) {
 	@context.nodeAvailable = ${node && String.length(node.context.workspace.name)}
 	# Set context removedContentShown to get removed nodes too.
 	# Needed for publish function to be able to publish removed nodes.
-	collection = ${nodeAvailable ? q(node).children() : []}
+	items = ${nodeAvailable ? q(node).children() : []}
+	# To ensure backwards compatibility override items if collection is set
+	items.@processor.collectionLegacy {
+		expression = ${this.collection}
+		@if.1 = ${this.collection != null && Array.length(this.collection) > 0}
+	}
 	# Render every item by its own Fusion object
 	itemRenderer = Neos.Neos:ContentCase
 	itemName = 'node'
@@ -14,8 +19,8 @@ prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Collectio
 	@process.appendRemovedContentForBackend = Neos.Fusion:Array {
 		visibleContent = ${value}
 
-		removedContent = Neos.Fusion:Collection {
-			collection = ${nodeAvailable ? q(node).context({'removedContentShown': true}).children('[_removed = true]') : []}
+		removedContent = Neos.Fusion:Loop {
+			items = ${nodeAvailable ? q(node).context({'removedContentShown': true}).children('[_removed = true]') : []}
 			# Render every item by its own Fusion object
 			itemRenderer = Neos.Neos:ContentElementWrapping
 			itemName = 'node'
