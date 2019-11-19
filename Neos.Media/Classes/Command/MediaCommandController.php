@@ -379,11 +379,12 @@ class MediaCommandController extends CommandController
      *
      * @param integer $limit Limit the amount of variants to be rendered to avoid memory exhaustion
      * @param bool $quiet If set, only errors will be displayed.
+     * @param bool $recreate
      * @return void
      * @throws AssetVariantGeneratorException
      * @throws IllegalObjectTypeException
      */
-    public function renderVariantsCommand($limit = null, bool $quiet = false): void
+    public function renderVariantsCommand($limit = null, bool $quiet = false, bool $recreate = false): void
     {
         $resultMessage = null;
         $generatedVariants = 0;
@@ -415,9 +416,9 @@ class MediaCommandController extends CommandController
             foreach ($repository->findAssetIdentifiersWithVariants() as $assetIdentifier => $assetVariants) {
                 foreach ($configuredPresets as $presetIdentifier => $preset) {
                     foreach ($preset->variants() as $presetVariantName => $presetVariant) {
-                        if (!isset($assetVariants[$presetIdentifier][$presetVariantName])) {
+                        if ($recreate || !isset($assetVariants[$presetIdentifier][$presetVariantName])) {
                             $currentAsset = $repository->findByIdentifier($assetIdentifier);
-                            $createdVariant = $this->assetVariantGenerator->createVariant($currentAsset, $presetIdentifier, $presetVariantName);
+                            $createdVariant = $recreate ? $this->assetVariantGenerator->recreateVariant($currentAsset, $presetIdentifier, $presetVariantName) : $this->assetVariantGenerator->createVariant($currentAsset, $presetIdentifier, $presetVariantName);
                             if ($createdVariant !== null) {
                                 $repository->update($currentAsset);
                                 if (++$generatedVariants % 10 === 0) {

@@ -86,6 +86,31 @@ class AssetVariantGenerator
 
     /**
      * @param AssetInterface $asset
+     * @return AssetVariantInterface[] The created variants (if any), with the preset identifier as array key
+     * @throws AssetVariantGeneratorException
+     */
+    public function recreateVariants(AssetInterface $asset): array
+    {
+        // Currently only Image Variants are supported. Other asset classes can be supported, as soon as there is a common
+        // interface for creating and adding variants.
+        if (!$asset instanceof Image) {
+            return [];
+        }
+
+        $createdVariants = [];
+        foreach ($this->getVariantPresets() as $presetIdentifier => $preset) {
+            if ($preset->matchesMediaType($asset->getMediaType())) {
+                foreach ($preset->variants() as $variantIdentifier => $variantConfiguration) {
+                    $createdVariants[$presetIdentifier . ':' . $variantIdentifier] = $this->recreateVariant($asset, $presetIdentifier, $variantIdentifier);
+                }
+            }
+        }
+
+        return $createdVariants;
+    }
+
+    /**
+     * @param AssetInterface $asset
      * @param string $presetIdentifier
      * @param string $variantIdentifier
      * @return AssetVariantInterface The created variant (if any)
@@ -109,6 +134,37 @@ class AssetVariantGenerator
                 // for the time being only ImageVariant is possible
                 assert($createdVariant instanceof ImageVariant);
                 $asset->addVariant($createdVariant);
+            }
+        }
+
+        return $createdVariant;
+    }
+
+    /**
+     * @param AssetInterface $asset
+     * @param string $presetIdentifier
+     * @param string $variantIdentifier
+     * @return AssetVariantInterface The created variant (if any)
+     * @throws AssetVariantGeneratorException
+     */
+    public function recreateVariant(AssetInterface $asset, string $presetIdentifier, string $variantIdentifier): ?AssetVariantInterface
+    {
+        // Currently only Image Variants are supported. Other asset classes can be supported, as soon as there is a common
+        // interface for creating and adding variants.
+        if (!$asset instanceof Image) {
+            return null;
+        }
+
+        $createdVariant = null;
+        $preset = $this->getVariantPresets()[$presetIdentifier] ?? null;
+        if ($preset instanceof VariantPreset && $preset->matchesMediaType($asset->getMediaType())) {
+            $variantConfiguration = $preset->variants()[$variantIdentifier] ?? null;
+
+            if ($variantConfiguration instanceof Configuration\Variant) {
+                $createdVariant = $this->renderVariant($asset, $presetIdentifier, $variantConfiguration);
+                // for the time being only ImageVariant is possible
+                assert($createdVariant instanceof ImageVariant);
+                $asset->replaceVariant($createdVariant);
             }
         }
 
