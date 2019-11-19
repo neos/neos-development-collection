@@ -13,6 +13,7 @@ namespace Neos\Media\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -31,9 +32,11 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Media\Exception\AssetServiceException;
+use Neos\Media\Exception\AssetVariantGeneratorException;
 use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use Neos\Utility\Arrays;
+use Psr\Log\LoggerInterface;
 
 /**
  * An asset service that handles for example commands on assets, retrieves information
@@ -86,9 +89,15 @@ class AssetService
 
     /**
      * @Flow\Inject
-     * @var ImageService
+     * @var LoggerInterface
      */
-    protected $imageService;
+    protected $logger;
+
+    /**
+     * @Flow\Inject
+     * @var AssetVariantGenerator
+     */
+    protected $assetVariantGenerator;
 
     /**
      * Returns the repository for an asset
@@ -272,23 +281,29 @@ class AssetService
             /** @var AssetVariantInterface $variant */
             foreach ($variants as $variant) {
                 $originalVariantResource = $variant->getResource();
-                $variant->refresh();
-
-                if (method_exists($variant, 'getAdjustments')) {
-                    foreach ($variant->getAdjustments() as $adjustment) {
-                        if (method_exists($adjustment, 'refit') && $this->imageService->getImageSize($originalAssetResource) !== $this->imageService->getImageSize($resource)) {
-                            $adjustment->refit($asset);
-                        }
+                try {
+                    $presetIdentifier = $variant->getPresetIdentifier();
+                    $variantName = $variant->getPresetVariantName();
+                    $variant = $this->assetVariantGenerator->recreateVariant($asset, $presetIdentifier, $variantName);
+                    if ($variant === null) {
+                        $this->logger->debug(
+                            sprintf('No variant returned when recreating asset variant %s::%s for %s', $presetIdentifier, $variantName, $asset->getTitle()),
+                            LogEnvironment::fromMethodName(__METHOD__)
+                        );
+                        continue;
                     }
-                }
 
-                if ($redirectHandlerEnabled) {
-                    $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
-                    $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
-                    $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
+                    if ($redirectHandlerEnabled) {
+                        $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
+                        $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
+                        $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
+                    }
+                } catch (AssetVariantGeneratorException $exception) {
+                    $this->logger->error(
+                        sprintf('Error when recreating asset variant: %s', $exception->getMessage()),
+                        LogEnvironment::fromMethodName(__METHOD__)
+                    );
                 }
-
-                $this->getRepository($variant)->update($variant);
             }
         }
 
