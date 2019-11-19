@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Media\Domain\Service;
 
 /*
@@ -11,8 +13,9 @@ namespace Neos\Media\Domain\Service;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
@@ -106,7 +109,7 @@ class AssetService
      * @return RepositoryInterface
      * @api
      */
-    public function getRepository(AssetInterface $asset)
+    public function getRepository(AssetInterface $asset): RepositoryInterface
     {
         $assetRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', get_class($asset)) . 'Repository';
 
@@ -128,8 +131,9 @@ class AssetService
      * @throws AssetServiceException
      * @throws ThumbnailServiceException
      * @throws MissingActionNameException
+     * @throws HttpException
      */
-    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, ActionRequest $request = null)
+    public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, ActionRequest $request = null): ?array
     {
         $thumbnailImage = $this->thumbnailService->getThumbnail($asset, $configuration);
         if (!$thumbnailImage instanceof ImageInterface) {
@@ -138,7 +142,7 @@ class AssetService
         $resource = $thumbnailImage->getResource();
         if ($thumbnailImage instanceof Thumbnail) {
             $staticResource = $thumbnailImage->getStaticResource();
-            if ($configuration->isAsync() === true && $resource === null && $staticResource === null) {
+            if ($resource === null && $staticResource === null && $configuration->isAsync() === true) {
                 if ($request === null) {
                     throw new AssetServiceException('Request argument must be provided for async thumbnails.', 1447660835);
                 }
@@ -165,9 +169,8 @@ class AssetService
      * Returns all registered asset usage strategies
      *
      * @return array<\Neos\Media\Domain\Strategy\AssetUsageStrategyInterface>
-     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      */
-    protected function getUsageStrategies()
+    protected function getUsageStrategies(): array
     {
         if (is_array($this->usageStrategies)) {
             return $this->usageStrategies;
@@ -188,7 +191,7 @@ class AssetService
      * @param AssetInterface $asset
      * @return array<\Neos\Media\Domain\Model\Dto\UsageReference>
      */
-    public function getUsageReferences(AssetInterface $asset)
+    public function getUsageReferences(AssetInterface $asset): array
     {
         $usages = [];
         /** @var AssetUsageStrategyInterface $strategy */
@@ -205,7 +208,7 @@ class AssetService
      * @param AssetInterface $asset
      * @return integer
      */
-    public function getUsageCount(AssetInterface $asset)
+    public function getUsageCount(AssetInterface $asset): int
     {
         $usageCount = 0;
         /** @var AssetUsageStrategyInterface $strategy */
@@ -222,7 +225,7 @@ class AssetService
      * @param AssetInterface $asset
      * @return boolean
      */
-    public function isInUse(AssetInterface $asset)
+    public function isInUse(AssetInterface $asset): bool
     {
         /** @var AssetUsageStrategyInterface $strategy */
         foreach ($this->getUsageStrategies() as $strategy) {
@@ -238,10 +241,10 @@ class AssetService
      * Validates if the asset can be removed
      *
      * @param AssetInterface $asset
-     * @throws AssetServiceException Thrown if the asset can not be removed
      * @return void
+     * @throws AssetServiceException Thrown if the asset can not be removed
      */
-    public function validateRemoval(AssetInterface $asset)
+    public function validateRemoval(AssetInterface $asset): void
     {
         if ($asset instanceof ImageVariant) {
             return;
@@ -259,7 +262,7 @@ class AssetService
      * @param array $options
      * @return void
      */
-    public function replaceAssetResource(AssetInterface $asset, PersistentResource $resource, array $options = [])
+    public function replaceAssetResource(AssetInterface $asset, PersistentResource $resource, array $options = []): void
     {
         $originalAssetResource = $asset->getResource();
         $asset->setResource($resource);
@@ -312,7 +315,7 @@ class AssetService
             $redirectStorage = $this->objectManager->get(RedirectStorageInterface::class);
             foreach ($uriMapping as $originalUri => $newUri) {
                 $existingRedirect = $redirectStorage->getOneBySourceUriPathAndHost($originalUri);
-                if ($existingRedirect === null) {
+                if ($existingRedirect === null && $originalUri !== $newUri) {
                     $redirectStorage->addRedirect($originalUri, $newUri, 301);
                 }
             }
@@ -329,7 +332,7 @@ class AssetService
      * @param AssetInterface $asset
      * @return void
      */
-    public function emitAssetCreated(AssetInterface $asset)
+    public function emitAssetCreated(AssetInterface $asset): void
     {
     }
 
@@ -340,7 +343,7 @@ class AssetService
      * @param AssetInterface $asset
      * @return void
      */
-    public function emitAssetRemoved(AssetInterface $asset)
+    public function emitAssetRemoved(AssetInterface $asset): void
     {
     }
 
@@ -351,7 +354,7 @@ class AssetService
      * @param AssetInterface $asset
      * @return void
      */
-    public function emitAssetUpdated(AssetInterface $asset)
+    public function emitAssetUpdated(AssetInterface $asset): void
     {
     }
 
@@ -362,7 +365,7 @@ class AssetService
      * @return void
      * @Flow\Signal
      */
-    public function emitAssetResourceReplaced(AssetInterface $asset)
+    public function emitAssetResourceReplaced(AssetInterface $asset): void
     {
     }
 }
