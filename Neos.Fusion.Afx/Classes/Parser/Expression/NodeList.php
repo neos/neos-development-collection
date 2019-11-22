@@ -43,7 +43,8 @@ class NodeList
                 if ($lexer->isForwardSlash()) {
                     $lexer->rewind();
                     return $contents;
-                } elseif ($lexer->isExclamationMark()) {
+                }
+                if ($lexer->isExclamationMark()) {
                     $lexer->rewind();
                     $contents[] = [
                         'type' => 'comment',
