@@ -313,11 +313,11 @@ class AfxService
         $payload = array_filter($payload, function ($astNode) {
             if ($astNode['type'] === 'text' && $astNode['payload'] == '') {
                 return false;
-            } elseif ($astNode['type'] === 'comment') {
-                return false;
-            } else {
-                return true;
             }
+            if ($astNode['type'] === 'comment') {
+                return false;
+            }
+            return true;
         });
 
         if (count($payload) === 0) {
