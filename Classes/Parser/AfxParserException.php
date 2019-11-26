@@ -1,5 +1,7 @@
 <?php
-namespace Neos\Fusion\Afx\Exception;
+declare(strict_types=1);
+
+namespace Neos\Fusion\Afx\Parser;
 
 /*
  * This file is part of the Neos.Fusion.Afx package.
@@ -12,9 +14,9 @@ namespace Neos\Fusion\Afx\Exception;
  */
 
 /**
- * Class AfxException
- * @package Neos\Fusion\Afx\Exception
+ * Class AfxParserException
+ * @package Neos\Fusion\Afx\Parser
  */
-class AfxException extends \Exception
+class AfxParserException extends \Exception
 {
 }
