@@ -224,6 +224,16 @@ class Lexer
     }
 
     /**
+     * Checks if the current character is an exclamation mark
+     *
+     * @return boolean
+     */
+    public function isExclamationMark(): bool
+    {
+        return $this->currentCharacter === '!';
+    }
+
+    /**
      * Checks if the iteration has ended
      *
      * @return boolean
