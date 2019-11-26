@@ -841,11 +841,11 @@ class Runtime
                         '__value' => null
                     ];
                 } else {
-                $valueAst = [
-                    '__eelExpression' => null,
-                    '__objectType' => null,
-                    '__value' => $property['value']
-                ];
+                    $valueAst = [
+                        '__eelExpression' => null,
+                        '__objectType' => null,
+                        '__value' => $property['value']
+                    ];
                 }
 
                 // merge existing meta-configuration to valueAst
