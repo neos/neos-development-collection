@@ -309,13 +309,15 @@ class AfxService
             return $astNode;
         }, $payload);
 
-        // filter empty text nodes
+        // filter empty text nodes and comments
         $payload = array_filter($payload, function ($astNode) {
             if ($astNode['type'] === 'text' && $astNode['payload'] == '') {
                 return false;
-            } else {
-                return true;
             }
+            if ($astNode['type'] === 'comment') {
+                return false;
+            }
+            return true;
         });
 
         if (count($payload) === 0) {
