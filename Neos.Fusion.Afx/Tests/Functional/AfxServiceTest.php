@@ -753,7 +753,6 @@ EOF;
 
     /**
      * @test
-     * @expectedException \PackageFactory\Afx\Exception
      */
     public function unclosedTagsRaisesException(): void
     {
