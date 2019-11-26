@@ -1,6 +1,16 @@
 <?php
 namespace Neos\Fusion\Afx\Dsl;
 
+/*
+ * This file is part of the Neos.Fusion.Afx package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
 use Neos\Fusion\Core\DslInterface;
@@ -27,7 +37,7 @@ class AfxDslImplementation implements DslInterface
         try {
             return AfxService::convertAfxToFusion($code);
         } catch (AfxException $afxException) {
-            throw new FusionException(sprintf('Error during AFX-parsing: %s', $afxException->getMessage()));
+            throw new Fusion\Exception(sprintf('Error during AFX-parsing: %s', $afxException->getMessage()));
         }
     }
 }

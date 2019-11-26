@@ -1,9 +1,19 @@
 <?php
 namespace Neos\Fusion\Afx\Service;
 
+/*
+ * This file is part of the Neos.Fusion.Afx package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
-use PackageFactory\Afx\Parser as AfxParser;
+use Neos\Fusion\Afx\Parser\Parser as AfxParser;
 use Neos\Fusion\Afx\Exception\AfxException;
 
 /**
