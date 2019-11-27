@@ -29,6 +29,7 @@ use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\FluidAdaptor\View\TemplateView;
+use Neos\Media\Browser\Domain\Dto\BrowserConstraints;
 use Neos\Media\Browser\Domain\ImageMapper;
 use Neos\Media\Browser\Domain\Session\BrowserState;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
@@ -154,10 +155,16 @@ class AssetController extends ActionController
     protected $imageProfilesConfiguration;
 
     /**
+     * @var BrowserConstraints
+     */
+    private $browserConstraints;
+
+    /**
      * @return void
      */
     public function initializeObject(): void
     {
+        $this->browserConstraints = BrowserConstraints::fromArray([]);
         $domain = $this->domainRepository->findOneByActiveRequest();
 
         // Set active asset collection to the current site's asset collection, if it has one, on the first view if a matching domain is found
@@ -167,6 +174,21 @@ class AssetController extends ActionController
         }
 
         $this->assetSources = $this->assetSourceService->getAssetSources();
+    }
+
+    /**
+     * @throws NoSuchArgumentException
+     */
+    public function initializeAction()
+    {
+        parent::initializeAction();
+
+        if ($this->request->hasArgument('browserConstraints')) {
+            $constraints = $this->request->getArgument('browserConstraints');
+            $this->browserConstraints = is_array($constraints) ? $this->browserConstraints::fromArray($constraints) : BrowserConstraints::fromJson($constraints);
+        }
+
+        $this->applyConstraintsToClassMembers($this->browserConstraints);
     }
 
     /**
@@ -185,7 +207,8 @@ class AssetController extends ActionController
             'activeTag' => $this->browserState->get('activeTag'),
             'activeAssetCollection' => $this->browserState->get('activeAssetCollection'),
             'assetSources' => $this->assetSources,
-            'variantsTabFeatureEnabled' => $this->settings['features']['variantsTab']['enable']
+            'variantsTabFeatureEnabled' => $this->settings['features']['variantsTab']['enable'],
+            'browserConstraints' => $this->browserConstraints
         ]);
     }
 
@@ -207,6 +230,15 @@ class AssetController extends ActionController
      */
     public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, AssetCollection $assetCollection = null, $assetSourceIdentifier = null): void
     {
+        if ($assetSourceIdentifier !== null && $this->browserConstraints->hasAssetSourceConstraint() && !in_array($assetSourceIdentifier, $this->browserConstraints->getAllowedAssetSourceIdentifiers(), true)) {
+            $assetSourceIdentifier = null;
+        }
+
+        if ($this->browserConstraints->getTypeFilter()->hasAllAllowed() === false) {
+            $this->view->assign('disableFilter', true);
+            $filter = $this->browserConstraints->getTypeFilter()->getAssetType();
+        }
+
         $allCollectionsCount = 0;
         // Calculating the asset-count of all collections before applying filters.
         foreach ($this->assetSources as $assetSource) {
@@ -958,6 +990,18 @@ class AssetController extends ActionController
     {
         if ($assetProxyRepository instanceof SupportsCollectionsInterface) {
             $assetProxyRepository->filterByCollection($this->getActiveAssetCollectionFromBrowserState());
+        }
+    }
+
+    /**
+     * @param BrowserConstraints $browserConstraints
+     */
+    private function applyConstraintsToClassMembers(BrowserConstraints $browserConstraints)
+    {
+        if ($browserConstraints->hasAssetSourceConstraint()) {
+            $this->assetSources = array_filter($this->assetSources, function (AssetSourceInterface $assetSource) use ($browserConstraints) {
+                return (in_array($assetSource->getIdentifier(), $browserConstraints->getAllowedAssetSourceIdentifiers(), true));
+            });
         }
     }
 }

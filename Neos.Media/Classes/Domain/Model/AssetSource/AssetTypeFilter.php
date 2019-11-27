@@ -40,6 +40,14 @@ final class AssetTypeFilter implements \JsonSerializable
     }
 
     /**
+     * @return bool
+     */
+    public function hasAllAllowed(): bool
+    {
+        return $this->assetType === 'All';
+    }
+
+    /**
      * @return string
      */
     public function __toString(): string

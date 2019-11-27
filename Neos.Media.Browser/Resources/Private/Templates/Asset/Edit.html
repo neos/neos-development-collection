@@ -18,14 +18,14 @@
                     <a href="#" role="tab">Overview</a>
                 </li>
                 <li role="presentation">
-                    <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier, overviewAction: 'edit'}">Variants</f:link.action>
+            <f:link.action action="variants" arguments="{assetSourceIdentifier: assetProxy.assetSource.identifier, assetProxyIdentifier: assetProxy.identifier, overviewAction: 'edit', browserConstraints: '{browserConstraints -> f:format.json()}'}">Variants</f:link.action>
                 </li>
             </ul>
             </f:if>
 
             <div class="neos-tab-content">
                 <div role="tabpanel" class="neos-tab-pane neos-active">
-                    <f:form method="post" action="update" object="{assetProxy.asset}" objectName="asset">
+            <f:form method="post" action="update" object="{assetProxy.asset}" objectName="asset" arguments="{browserConstraints: '{browserConstraints -> f:format.json()}'}">
                         <div class="neos-row-fluid">
                             <div class="neos-span6 neos-image-inputs">
                                 <fieldset>
@@ -111,7 +111,7 @@
                                         </tbody>
                                     </table>
                                     <f:if condition="{assetProxy.asset.inUse}">
-                                        <f:link.action action="relatedNodes" arguments="{asset:assetProxy.asset}" class="neos-button">
+                                <f:link.action action="relatedNodes" arguments="{asset:assetProxy.asset, browserConstraints: '{browserConstraints -> f:format.json()}'}" class="neos-button">
                                             {neos:backend.translate(id: 'relatedNodes', quantity: '{assetProxy.asset.usageCount}', arguments: {0: assetProxy.asset.usageCount}, package: 'Neos.Media.Browser')}
                                         </f:link.action>
                                     </f:if>
@@ -122,7 +122,7 @@
                             </div>
                         </div>
                         <div class="neos-footer">
-                            <f:link.action action="index" class="neos-button neos-action-cancel">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</f:link.action>
+                    <f:link.action action="index" arguments="{browserConstraints: '{browserConstraints -> f:format.json()}'}" class="neos-button neos-action-cancel">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</f:link.action>
                             <f:if condition="!{assetSource.readOnly}">
                                 <f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
                                     <f:link.action action="replaceAssetResource" arguments="{asset: assetProxy.asset}" class="neos-button" title="{neos:backend.translate(id: 'replaceAssetResource', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', container: 'body'}">
@@ -168,7 +168,7 @@
                             <div class="neos-modal-backdrop neos-in"></div>
                         </div>
                     </f:form>
-                    <f:form action="index" id="postHelper" method="post"></f:form>
+            <f:form action="index" id="postHelper" method="post" arguments="{browserConstraints: '{browserConstraints -> f:format.json()}'}"></f:form>
                 </div>
             </div>
 
